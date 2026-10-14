@@ -171,6 +171,8 @@ Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the mark
 
 In chat responses, use a GFM pipe table for comparisons where several rows share at least two comparable attributes. Use a list for single-attribute enumerations. Keep tables narrow (about four columns or fewer), with a header row and short cells so they remain readable when the host shows raw pipes. Do not draw tables with box-drawing characters, wrap a table in a code fence, or emit an empty or ceremonial table. An owner-specific preview rule, such as summarizing a publication body's table in one line, takes precedence. These chat-table rules do not govern tables inside publication bodies or file artifacts.
 
+In Markdown-rendered chat, documents and PR/issue bodies, write ranges with a hyphen (`146-149`) or spell out both endpoints. Escape a literal tilde as `\\~` outside inline code and fenced code; preserve exact quotations and identifiers. Do not use unescaped tildes for prose ranges: GFM may render intervening text as strikethrough.
+
 For authorized user-editable temporary input files, follow the owning skill's Artifact Paths input branch before creation and consumption. A prefilled template does not signal completed input; this rule grants no write authority.
 """ + OUTPUT_NOTATION_END + "\n"
 

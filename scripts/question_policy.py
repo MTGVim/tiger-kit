@@ -41,12 +41,12 @@ Minimum shape, even when already familiar:
 ➡️ <recommendation and reason, when supported>
 ```
 
-Always start the question block with the fixed level-two section title in the caller's language (`## Questions` in English, `## 질문` in Korean), even for one question; do not open with a separator or nest it under the preceding section. Separate questions with `---`, with a blank line before and after each separator to avoid a setext heading. Put context before the question block and make it the final substantive block: no plan, promise, or “answer and I will proceed” line afterward, except one short reply-format hint. An approval request is its own numbered `Q`, never buried in the proposal. Defer approval whose scope still depends on an unresolved answer.
+Always start the question block with the fixed level-two section title in the caller's language (`## Questions` in English, `## 질문` in Korean), even for one question; do not open with a separator or nest it under the preceding section. Separate questions with blank lines and bold `❓ **Q<n> · ...**` title lines; do not insert horizontal rules between questions. Put context before the question block and make it the final substantive block: no plan, promise, or “answer and I will proceed” line afterward, except one short reply-format hint. An approval request is its own numbered `Q`, never buried in the proposal. Defer approval whose scope still depends on an unresolved answer.
 """ + END + "\n"
 
 
 def question_template_errors(text: str, label: str) -> list[str]:
-    """Reject missing round boundaries and Markdown setext traps in examples."""
+    """Reject missing round titles and horizontal rules in question examples."""
     templates = [body for body in re.findall(r"```text\n(.*?)```", text, re.DOTALL)
                  if re.search(r"❓ \*\*Q\d+", body)]
     if not templates:
@@ -57,9 +57,8 @@ def question_template_errors(text: str, label: str) -> list[str]:
         if not lines or lines[0] not in ("## Questions", "## 질문"):
             errors.append(f"{label}: question example must start with a fixed level-two section title")
         for index, line in enumerate(lines):
-            if line.strip() == "---" and (index == 0 or index == len(lines) - 1
-                    or lines[index - 1].strip() or lines[index + 1].strip()):
-                errors.append(f"{label}: question separator needs blank lines before and after")
+            if re.fullmatch(r"\s*(?:-{3,}|\*{3,}|_{3,})\s*", line):
+                errors.append(f"{label}: question examples must not contain horizontal rules")
     return errors
 
 

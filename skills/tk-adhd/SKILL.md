@@ -55,6 +55,8 @@ Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the mark
 
 In chat responses, use a GFM pipe table for comparisons where several rows share at least two comparable attributes. Use a list for single-attribute enumerations. Keep tables narrow (about four columns or fewer), with a header row and short cells so they remain readable when the host shows raw pipes. Do not draw tables with box-drawing characters, wrap a table in a code fence, or emit an empty or ceremonial table. An owner-specific preview rule, such as summarizing a publication body's table in one line, takes precedence. These chat-table rules do not govern tables inside publication bodies or file artifacts.
 
+In Markdown-rendered chat, documents and PR/issue bodies, write ranges with a hyphen (`146-149`) or spell out both endpoints. Escape a literal tilde as `\~` outside inline code and fenced code; preserve exact quotations and identifiers. Do not use unescaped tildes for prose ranges: GFM may render intervening text as strikethrough.
+
 For authorized user-editable temporary input files, follow the owning skill's Artifact Paths input branch before creation and consumption. A prefilled template does not signal completed input; this rule grants no write authority.
 <!-- /tigerkit:output-notation -->
 
@@ -73,7 +75,7 @@ Minimum shape, even when already familiar:
 ➡️ <recommendation and reason, when supported>
 ```
 
-Always start the question block with the fixed level-two section title in the caller's language (`## Questions` in English, `## 질문` in Korean), even for one question; do not open with a separator or nest it under the preceding section. Separate questions with `---`, with a blank line before and after each separator to avoid a setext heading. Put context before the question block and make it the final substantive block: no plan, promise, or “answer and I will proceed” line afterward, except one short reply-format hint. An approval request is its own numbered `Q`, never buried in the proposal. Defer approval whose scope still depends on an unresolved answer.
+Always start the question block with the fixed level-two section title in the caller's language (`## Questions` in English, `## 질문` in Korean), even for one question; do not open with a separator or nest it under the preceding section. Separate questions with blank lines and bold `❓ **Q<n> · ...**` title lines; do not insert horizontal rules between questions. Put context before the question block and make it the final substantive block: no plan, promise, or “answer and I will proceed” line afterward, except one short reply-format hint. An approval request is its own numbered `Q`, never buried in the proposal. Defer approval whose scope still depends on an unresolved answer.
 <!-- /tigerkit:questions -->
 <!-- tigerkit:skill-feedback -->
 ## Skill Feedback

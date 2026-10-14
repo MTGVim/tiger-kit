@@ -670,7 +670,7 @@
     "tk-explain:behavior:explain-icon-negative",
     "tk-browser-verify:behavior:browser-input-final-text-handoff",
     "tk-browser-verify:behavior:browser-input-host-no-background",
-    "tk-browser-verify:behavior:browser-shared-claim-final-handoff",
+    "tk-browser-verify:behavior:browser-worktree-input-final-handoff",
     "tk-browser-verify:behavior:browser-token-target-environment",
     "tk-retro:behavior:retro-user-visible-delivery-evidence",
     "tk-retro:behavior:retro-cause-unknown-still-prevents",

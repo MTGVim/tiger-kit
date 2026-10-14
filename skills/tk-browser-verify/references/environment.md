@@ -75,72 +75,41 @@ must come from; do not substitute another environment or infer it from token val
 If that origin is unknown, resolve it before requesting the token. If no approved state
 can be established, return `Unverifiable` before a product mutation.
 
-## Worktree-shared development credentials (opt-in only)
+## Worktree-local short-lived token reuse
 
-For an explicitly authorized local/development task, prefer a previously verified token in
-the same Git common directory before creating another secret-input file. Resolve the exact
-application authentication **authority** (not the worktree-specific dev-server port), environment,
-role and non-secret account/profile label from repository facts and the user; never merge scopes
-or infer a role. Use `python3 <package>/scripts/shared_auth.py inspect --repo <worktree-root>
---authority <auth-origin> --environment <environment> --role <role> --profile <label>`.
-It resolves `git rev-parse --git-common-dir`, so linked worktrees share a protected scope even
-when their `.tigerkit` directories differ. The helper prints only status, timestamps, revision
-and an optional **local** credential-file path; it never prints token contents.
+When token authentication is required, establish authentication readiness once during prep
+before the pre-edit baseline. Public targets and existing safe sessions need no token input. Reuse the
+same worktree's run-owned secret-input file for baseline, after and revision captures while
+its short-lived access token remains valid. Keep it only for the exact verified application,
+login origin, environment and account/role; never discover or share credentials through Git's
+common directory or another worktree. No cache consent, scope label, claim or lease is needed.
 
-The default cache backend is a **local 0700 directory / 0600 file under Git's common directory**,
-not encrypted OS Keychain storage. Other processes running as the same OS user and filesystem
-backups may still access its contents. Never claim encryption. Use it only when the user has
-authorized development credential retention and local plaintext-at-rest is acceptable; if the
-organization requires keychain-backed or nonpersisted credentials, do not create this cache.
-An unsupported host ACL/backend, insecure permission, symlink, linked file or ambiguous Git
-identity is `Blocked | Unverifiable`, never a reason to downgrade protection. The helper blocks
-known production environment labels; never cache actual production credentials under an alias.
-The cache is outside the source tree and must never be committed, summarized or used for
-publication. Manual deletion/revocation is required when worktree sharing is no longer wanted.
+Keep the existing ignored `.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json`
+with directory `0700` and file `0600`. Before each injection, recheck exclusion, ownership,
+nonsymlink regular-file status and single hard link, and validate/consume the same snapshot
+without exposing values. Use a finite numeric JWT `exp` to reject expired input before use;
+decode privately, never print the token or claims. Decoding is only an expiry check, not
+signature verification or proof of access. Establish from the application contract that this
+is a short-lived access token, and check its session invalidation rules; neither a far-future
+`exp` nor a valid timestamp authorizes retention or proves the session is still valid.
+Use a documented expiry for non-JWT access tokens; do not invent a lifetime.
 
-A status of `ready` only means the *known expiration* has not passed;
-`needs-verification` means expiration is unknown. Neither proves authenticated access. Verify
-the actual target state through the existing approved, no-log header/cookie/storage bootstrap.
-A proven authentication failure invalidates only the exact observed cache revision using
-`invalidate --revision <observed-revision>`; reread before requesting user input, since another
-session may already have refreshed it. Never infer expiry from an arbitrary HTTP failure.
+Stop the run-owned loopback secret server immediately after each injection and independently
+verify authenticated target state. Retain a successfully authenticated short-lived development
+access token until its verified expiry, including between baseline and after. An unexpired
+file avoids another user prompt; a proven authentication rejection invalidates it and requires
+new input. An arbitrary HTTP/network failure alone does not prove invalidation. Delete expired
+or invalidated input before replacing it; do not overwrite pending user input. Enforce expiry
+at the next read and delete then; there is no background deletion daemon or promise of erasure
+at the exact expiry time. The user may delete the file earlier. Preserve only its non-secret
+path and target binding for the active task, never token values in parent/child receipts.
 
-For a missing/expired/invalidated scoped token, invoke `claim` before prompting the user.
-A `claimed` response gives a non-secret claim ID. Its owner invokes
-`prepare-input --claim-id <id> --run-id <run-id>` with the same trusted scope arguments,
-after the normal Artifact Paths ignore checks. This command creates or reuses the exact
-private `.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json`, then reports the
-**actual absolute and relative paths**, blank JSON template and required field without
-printing stored contents. Use those real paths in the final-text handoff under
-[artifact paths](artifact-paths.md), including the exact paused verification, target
-environment/login origin and how to fill and save `{"token": ""}`.
-Never start polling or request input without obtaining both paths from a successful
-`prepare-input` result. Failure to create/read back the path is `Blocked | Unverifiable`,
-not a guessed example path. The seeded blank file is `Pending`, never `Ready`.
-Before the final path message, start `await-input --claim-id <id>
---input <absolute-input-json> --seconds <1..180>` with the same scope arguments
-as a bounded background wait only when supported by the host. Apply the artifact-paths
-fallback otherwise. No server/browser or development-server lease may be held while waiting.
-The helper returns only `ready | pending | blocked`. A partial JSON save or empty token remains
-`pending`; a permission, ownership or symlink failure blocks immediately. If the active host
-permits another bounded wait, renew the owned claim and continue without asking the user for
-a completion message. Privately validate and consume the latest safe input snapshot,
-inject into the actual target and verify authenticated state; only then invoke
-`commit --claim-id <id> --input <absolute-input-json>` to atomically store the shared token.
-Pass an `--expires-at` only when verified from the application's contract. Immediately delete
-the one-shot input and loopback server on all exit paths regardless of cache write success.
-
-While an input prompt remains active, periodically `renew --claim-id <id>` within its reported
-lease. Another worktree receiving `pending` must NOT create its own input; it can use bounded
-`wait --since <last-revision> --seconds <1..180>` and re-inspect before using new credentials.
-This is a finite, run-owned background wait when supported, not a daemon, scheduler
-or promise to restart an ended conversation. The authentication claim is not a server
-lease; renew only the owned claim within a supported active wait. On interruption
-release the owned claim when possible; after lease expiry another run can claim. Do not overwrite another run's pending
-file, renew its claim or delete its tokens. An expired user input wait that can no longer
-remain active must report the exact existing input path and resumption procedure. If secure
-cache input fails, preserve the verifier's existing transient-only mode without making false
-shared-state claims. Project-specific refresh-token/API automation is out of scope.
+Never retain production credentials or refresh tokens. Credentials with unknown or long
+lifetimes use transient injection and are deleted no later than task completion, cancellation,
+failure or exception. Failure before successful authentication removes the supplied credential;
+an ordinary input handoff preserves the pending file. Keep only the already verified,
+unexpired short-lived development access-token file across successful phase cleanup.
+Project-specific refresh-token/API automation remains out of scope.
 
 When no safer temporary secret-input channel exists, first prove that
 `git ls-files -- .tigerkit/` returns no tracked paths and
@@ -168,7 +137,7 @@ return `Unverifiable`.
 Before showing the paths, start bounded metadata-change polling in the background
 when supported; the path message is the final text message of the turn, with no tool
 calls after it (see [artifact paths](artifact-paths.md), including the unsupported-host fallback).
-Release this run's server/browser resources and development-server lease before waiting;
+Release this run's server/browser resources before waiting;
 do not launch replacements until input is ready. Never report content, size or
 modification time. The initial JSON is non-empty and must remain `Pending`.
 On change, use a trusted local reader to validate JSON and all required fields without
@@ -185,53 +154,27 @@ loopback may extract only the validated credential field and return `Access-Cont
 the page and apply only the repository/application-supported cookie, header, or storage
 bootstrap. Return only injection success, never the value or the JSON wrapper.
 
-Stop the loopback server and delete the JSON input file and its run directory immediately
-after injection, then verify all are absent. Perform the same cleanup after failure,
-interruption, or exception. Cookie scope follows hostname rather than port: if the hostname
-changes, establish the approved state again. For OAuth plus OTP or any other interactive
-flow, use the approved transient injection path or return `Unverifiable`.
+Stop the exact run-owned loopback server after injection. Apply the token retention and
+cleanup rules above; cookie scope follows hostname rather than port, so a hostname change
+requires establishing the approved state again. For interactive OAuth/OTP, use the supported
+injection path or return `Unverifiable`.
 
-## Project-scoped agent development-server exclusion
+## Run-owned development server
 
-When an agent must launch a development server (including baseline and final-HEAD replay),
-use the bundled `scripts/dev_server_guard.py` instead of an uncoordinated background
-`Popen`. This is a per-Git-common-directory exclusive **runtime server lease**;
-linked worktrees serialize even if their ports, source revisions and cwd differ. Separate
-clones retain independent locks. An existing user-owned server is not an agent-owned lease
-and must never be stopped, attached to, or reclassified merely because it occupies a port.
+Choose an available port consistent with repository configuration and the approved API target;
+preserve ports already used by the user or another run. Launch the repository-proven server
+command and record the PID returned by that launch, cwd, command, host/port and bounded log
+path. Use the host's owned process handle when available. Independently check HTTP readiness
+and current-project build identity under a bounded timeout. There is no worktree mutex,
+Git-common-directory lock, supervisor or server lease.
 
-1. Resolve the actual worktree root, exact repository-proven server command, command cwd,
-   host/port, API target, verification target and browser provider first. Do not put
-   secrets in command arguments, logs, status metadata or the Git common directory.
-2. Call `python3 <package>/scripts/dev_server_guard.py start --repo <worktree-root>
-   --cwd <verified-server-cwd> --wait-seconds 120 --max-seconds 900 -- <server-command> [args...]`.
-   Save the returned random `run_id` in this verification phase only. A `queued` result
-   never means the server is running; poll `status --repo <worktree-root> --run-id <id>`
-   within a bounded wait. A second worktree's request remains queued until the first
-   releases the OS lock. Do not bypass a busy lock with a new port or manual process.
-3. Only after status becomes `running`, independently prove HTTP readiness and the
-   expected current-project build identity. `running` is a process fact, not an HTTP-ready
-   or authenticated application. A timeout, `blocked-orphan`, failed launch, stale process
-   or uncertain ownership is `Blocked | Unverifiable`; disclose the exact non-secret
-   limitation rather than silently taking another route.
-4. After the last browser action in this phase, call `stop --repo <same-worktree-root>
-   --run-id <id> --seconds 10` and check the returned terminal state, then `status`
-   again when necessary. `stopped` or `server-exited` with no cleanup residue releases
-   the lease. If shutdown is unconfirmed, do not claim cleanup succeeded. Never stop
-   another worktree's run, a user-owned development server or a provider-owned process.
-
-The supervisor lives only for this bounded run: on POSIX it holds a `flock` and
-manages its own child process group; on native Windows it uses `msvcrt.locking` and
-a kill-on-close Job Object assigned to its newly launched child. Assignment can race
-with a child starting its own descendants, so failed assignment or uncertain cleanup
-must not be reported as fully contained. No long-lived service, global scheduler,
-external lock package, or background task is installed. The supervisor times out its
-lock wait and running lifetime; this is not an authorization to leave a server alive
-during model/user interaction. An abrupt supervisor death can leave a POSIX child;
-before a new launch, suspected live orphans block the next run rather than being
-killed by name or port. Windows-native and WSL instances do not automatically share
-a compatible lock protocol, even when they access the same filesystem. Do not claim
-cross-boundary exclusion there without separately verified coordination.
+After each capture phase, stop only the process created by this launch, using its recorded
+PID/handle and independently verified process identity. If it creates children, record those
+owned child PIDs/handles during launch and stop only those verified children; never search by
+port or process name to terminate. An already exited owned process needs no signal. Confirm
+owned processes have exited and check the selected port without killing its current occupant.
+If ownership is uncertain or shutdown fails, report the observed cleanup residue, never a
+successful cleanup or a broad process termination. Do not stop user-owned or other-run servers.
 
 ## Server and serving source
 
@@ -239,8 +182,8 @@ In a `standalone` run with multiple viable `dev-server` commands, present the ca
 and selection to the user and obtain confirmation before starting one. In a `nested`
 run where the `parent` supplied the exact command, do not ask for the same decision
 again. Include `BROWSER=NONE`, or the repository-documented equivalent `auto-open`
-suppression, for a `react-scripts`/CRA server. Start a `long-running server` through the project-scoped run-owned supervisor above;
-record its run ID, owned PID, `cwd`, command basis, `port`, and bounded `log` path.
+suppression, for a `react-scripts`/CRA server. Start a `long-running server` through the host-supported background process API;
+record its launch-returned owned PID/handle, `cwd`, command basis, `port`, and bounded `log` path.
 Poll a concrete `HTTP`/`port` `readiness signal` under a `bounded timeout`;
 continue after `readiness` instead of waiting for process exit.
 

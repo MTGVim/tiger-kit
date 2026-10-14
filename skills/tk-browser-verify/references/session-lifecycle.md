@@ -28,20 +28,18 @@ be actually inspected. If the directory cannot be resolved, the image is missing
 inspection fails, required browser evidence is `Unverifiable`.
 
 After file-mediated authentication injection, independently verify the authenticated state.
-For an explicitly authorized shared development cache, commit the verified token atomically
-from the *same* validated input file and owned refresh claim; do not retain or cache a token
-that did not authenticate successfully. Whether cache commit succeeds or fails, immediately
-stop the exact run-owned loopback secret server, delete the mode-`0600`
-`.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json` file and its mode-`0700` run
-directory, and verify none remains. On failure, interruption or exception, always remove
-temporary secret input as well; release only this run's pending claim where possible.
-Do not defer secret cleanup until browser-session cleanup.
+Stop the exact run-owned loopback secret server immediately after injection. Apply
+[environment](environment.md)'s worktree-local token rules: preserve only successfully
+verified, unexpired short-lived development access tokens in the protected input file;
+remove expired, invalidated or unsuccessfully authenticated credentials. Unknown/long-lived
+credentials are deleted at task completion, cancellation, failure or exception. Never retain
+production credentials or refresh tokens. A normal pending-input handoff preserves its file.
+Verify required deletions without exposing file contents.
 
-After any baseline, after, or acceptance capture, close run-owned browser resources and stop the
-run-owned development server immediately through the exact supervisor run ID when using the
-project-scoped guard. Do not release or assume release of the Git-common-dir lock until the
-run-owned child shutdown is confirmed; never delete a held lock file to break a wait.
-Waiting for an active user's input or token update is not an excuse to retain the lease.
+After any baseline, after, or acceptance capture, close run-owned browser resources and stop
+the run-owned development server immediately using the recorded launch PID/handle and verified
+owned children. Confirm their exit; an already exited process needs no termination signal.
+Waiting for user input or token update is not an excuse to retain server/browser processes.
 If an abnormal exit leaves a suspected server orphan, report it for ownership-based
 recovery without broad process termination. Persist the inspected evidence and a replay recipe, not
 live processes or an authenticated browser profile. A parent continuing to implement or review
@@ -60,7 +58,7 @@ Clean up success, failure, interruption, and exception paths in this order:
 1. run-created pages/tabs;
 2. run-created contexts;
 3. direct browser instances started by this run;
-4. run-owned development server (graceful stop first, then exact verified process group if needed);
+4. run-owned development server (graceful stop first, then exact verified owned PIDs/handles if needed);
 5. run-owned `.tigerkit/tmp/tk-browser-verify/<run-id>/baseline-source/` trees after their servers have stopped.
 
 Before forced termination, match the PID and profile against process arguments. Never

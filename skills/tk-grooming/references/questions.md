@@ -15,10 +15,9 @@ Use the caller's language and this scannable format:
 
 Always start the question block with a fixed level-two section title in that language:
 `## Questions` in English or `## 질문` in Korean. Keep the same title for every round,
-including a single clarification or approval question. Do not open the block with `---`
-or nest its title under the preceding section. Use `---` only between questions, with
-a blank line on both sides; without the preceding blank line Markdown may turn the
-previous paragraph into a setext heading.
+including a single clarification or approval question. Keep context before this section.
+Separate questions with blank lines and bold `❓ **Q<n> · ...**` title lines.
+Do not insert horizontal rules before or between questions.
 
 When handing control back for answers, finish analysis, context, recommendations, limitations and
 plans before the frontier. The question frontier must be the final substantive block. Keep each
@@ -38,8 +37,6 @@ writing convenience is not an exception.
 ❓ **Q1 · <short title>**: <question and relevant choices>
 
 ➡️ <recommended answer and reason, when supported>
-
----
 
 ❓ **Q2 · <short title>**: <independent frontier question>
 
