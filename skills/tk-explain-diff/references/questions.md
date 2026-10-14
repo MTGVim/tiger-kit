@@ -13,11 +13,10 @@ shared-understanding gate, or new authority to its caller.
 
 Use the caller's language and this scannable format:
 
-Always start the question block with a fixed level-two section title in that language:
-`## Questions` in English or `## 질문` in Korean. Keep the same title for every round,
-including a single clarification or approval question. Keep context before this section.
-Separate questions with blank lines and bold `❓ **Q<n> · ...**` title lines.
-Do not insert horizontal rules before or between questions.
+Start the question block with a standalone horizontal rule (`---`) after the preceding
+context. Do not add a `## Questions` or `## 질문` heading. Apply the same format to every
+round, including a single clarification or approval question. Separate questions with blank
+lines and bold `❓ **Q<n> · ...**` title lines, without horizontal rules between questions.
 
 When handing control back for answers, finish analysis, context, recommendations, limitations and
 plans before the frontier. The question frontier must be the final substantive block. Keep each
@@ -32,7 +31,7 @@ host/system warning may follow only when its exact source mandates that placemen
 writing convenience is not an exception.
 
 ```text
-## Questions
+---
 
 ❓ **Q1 · <short title>**: <question and relevant choices>
 
