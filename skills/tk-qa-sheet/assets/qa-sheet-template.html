@@ -40,6 +40,8 @@ img, svg, video, canvas { max-width: 100%; height: auto; }
 pre { max-width: 100%; overflow-x: auto; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .ht-card { min-width: 0; max-width: 100%; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: calc(2 * var(--space)); }
+.ht-visual-stack { display: grid; gap: calc(2 * var(--space)); margin-block: calc(2 * var(--space)); min-width: 0; }
+.ht-visual-stack > * { margin-block: 0; }
 /* Opt-in document flow; outputs are a group, never a horizontal sequence. */
 .ht-flow { display: grid; gap: var(--space); min-width: 0; padding: 0; margin: 1rem 0; list-style: none; }
 .ht-flow > li { min-width: 0; }
