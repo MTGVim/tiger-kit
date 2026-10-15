@@ -44,11 +44,10 @@ PR 승인 미리보기는 절별 항목과 한두 줄 요약을 렌더링되는 
 KPI로 요약합니다. 숫자의 단위·수집 범위·상태 의미를 밝히며, 아이콘 없이도 내용이 전달됩니다.
 `tk-explain`과 `tk-explain-diff`는 실험 기간 동안 표현 모드를 지정하지 않으면 하나의 HTML에
 `standard`, `dialogue`, `dialogue-eli5` 세 탭을 모두 제공합니다. 개별 모드를 지정하면 그 뷰만
-생성하며, 세 뷰는 동일한 조사 근거·출처·검증 상태를 재사용합니다. 대화형 기본 역할은 🙋 독자와
-🧑‍💻 저자이고, `${XDG_CONFIG_HOME:-~/.config}/tigerkit/settings.json`의 `html.explain.reader` /
-`html.explain.author`에서 표시 이름과 이모지만 개인화할 수 있습니다. 역할 의미와 근거 계약은
-바뀌지 않습니다. 연속된 표·카드·흐름·대화·차트 같은 시각 블록은 공용 visual stack 간격을 사용해
-서로 붙어 보이지 않게 합니다.
+생성하며, 세 뷰는 동일한 조사 근거·출처·검증 상태를 재사용합니다. `dialogue-eli5`는 짧은 쉬운
+문답으로 시작한 뒤 근거에 맞는 시각 자료를 곁들인 산문 설명으로 이어집니다. 대화에는 독자·고객·
+저자 이름표와 이모지를 표시하지 않습니다. 연속된 표·카드·흐름·대화·차트 같은 시각 블록은 공용
+visual stack 간격을 사용해 서로 붙어 보이지 않게 합니다.
 데이터 차트는 [차트 설계 참조](skills/tk-explain/references/chart-design.md)와
 [오프라인 예제](skills/tk-explain/assets/chart-examples.html)를 활용합니다. 막대·선·영역·산점도와
 작은 관계 그래프 예제가 있으며, 상세 툴팁·계열 표시 전환·노드별 근거 확인을 제공합니다.

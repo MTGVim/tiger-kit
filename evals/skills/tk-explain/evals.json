@@ -793,14 +793,14 @@
       ]
     },
     {
-      "id": "explain-default-all-presentation-modes",
+      "id": "explain-default-all-presentation-modes-v2",
       "path": "success",
       "prompt": "$tk-explain DNS 재귀 조회를 `dns-three-views.html`로 설명해줘. 표현 모드는 따로 지정하지 않을게.",
-      "expected_output": "한 번 조사한 동일한 근거와 메커니즘으로 standard, dialogue, dialogue-eli5 세 뷰를 탭으로 제공하는 단일 오프라인 HTML을 만든다. 기본 대화 역할은 🙋 독자와 🧑‍💻 저자이며 세 뷰의 결론·제약·출처가 모순되지 않는다.",
+      "expected_output": "한 번 조사한 동일한 근거와 메커니즘으로 standard, dialogue, dialogue-eli5 세 뷰를 탭으로 제공하는 단일 오프라인 HTML을 만든다. dialogue-eli5는 짧은 쉬운 문답 뒤에 근거에 맞는 시각 자료를 곁들인 산문 설명으로 이어지며, 화면에 독자·고객·저자 이름표나 이모지를 표시하지 않는다. 세 뷰의 결론·제약·출처가 모순되지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "모드 미지정 기본값을 all로 해석해 동일한 verified content model을 standard/dialogue/dialogue-eli5 세 탭으로 렌더링한다. 각 탭을 별도 조사처럼 만들어 사실·출처를 갈라놓지 않고, dialogue는 현실적인 독자 질문에만 사용하며 code/evidence/수치/출처는 구조화된 형식을 유지한다."
+          "criterion": "모드 미지정 기본값을 all로 해석해 동일한 verified content model을 standard/dialogue/dialogue-eli5 세 탭으로 렌더링한다. 각 탭을 별도 조사처럼 만들어 사실·출처를 갈라놓지 않고, dialogue는 현실적인 질문에만 사용하며 code/evidence/수치/출처는 구조화된 형식을 유지한다. dialogue-eli5는 짧은 쉬운 문답 구획 뒤에 같은 메커니즘을 설명하는 산문과 근거에 맞는 시각 자료를 이어 붙인다. 화면에 독자·고객·저자 이름표와 이모지 아바타를 표시하지 않는다."
         },
         {
           "type": "path_exists",
@@ -824,12 +824,12 @@
         {
           "type": "path_text_contains",
           "path": "dns-three-views.html",
-          "text": "🙋"
+          "text": "쉬운 문답"
         },
         {
           "type": "path_text_contains",
           "path": "dns-three-views.html",
-          "text": "🧑‍💻"
+          "text": "font-size: .875rem"
         },
         {
           "type": "git_head_unchanged"
@@ -839,6 +839,16 @@
           "paths": [
             "dns-three-views.html"
           ]
+        },
+        {
+          "type": "path_text_absent",
+          "path": "dns-three-views.html",
+          "text": "🙋"
+        },
+        {
+          "type": "path_text_absent",
+          "path": "dns-three-views.html",
+          "text": "🧑‍💻"
         }
       ]
     }
@@ -846,5 +856,12 @@
   "renamed_from": {
     "skill": "tk-eli5",
     "reason": "성인 독자에게 필요한 배경지식과 실제 구성 요소를 설명하며 비유는 선택적으로 사용합니다."
-  }
+  },
+  "migrations": [
+    {
+      "from": "explain-default-all-presentation-modes",
+      "to": "explain-default-all-presentation-modes-v2",
+      "reason": "사용자 요청으로 대화의 역할 이름표와 이모지를 제거하므로, 기존 표시 확인을 쉬운 문답 구획과 참고문헌 글자 크기 검증으로 전환합니다."
+    }
+  ]
 }

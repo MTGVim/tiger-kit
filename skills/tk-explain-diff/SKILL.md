@@ -81,7 +81,9 @@ Use the presentation modes defined by [HTML output](references/html-output.md). 
 experiment is active, default to `all` when no mode is named. Build one verified change model and
 reuse it across the `standard`, `dialogue`, and `dialogue-eli5` tabs; do not repeat repository
 investigation per view. An explicit mode generates only that view. Keep exact source anchors,
-verification state, limits, code and structured evidence equivalent across modes.
+verification state, limits, code and structured evidence equivalent across modes. In `dialogue-eli5`,
+start with a short plain-language exchange, then explain the same change in prose with evidence-
+appropriate visuals. Do not display person labels or emoji.
 
 ## Deliver
 
