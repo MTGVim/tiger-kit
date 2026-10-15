@@ -116,6 +116,12 @@ Return observed literals, displayed hierarchy, and actually traversed connection
 or accessible name alone does not prove visible wording; inspect the actual visible text. This discovery is not a
 Content comparison pass and never invents the parent's missing acceptance basis. Return evidence to the requesting owner.
 
+<!-- tigerkit:resource-awareness -->
+## Resource Awareness
+
+Before this workflow starts a broad test, build, large lint or indexing job, development server, browser or desktop-app process, benchmark/prototype harness, or expensive Git hook that may materially load host memory, CPU, or I/O, read [resource awareness](references/resource-awareness.md) at the execution boundary. Skip clearly lightweight checks and ordinary Git commands.
+<!-- /tigerkit:resource-awareness -->
+
 ## Execution
 
 1. **Scope**: Fix the exact criteria, target/environment, current candidate, and approved interaction boundary. Browser evidence is an independent acceptance oracle; it never substitutes for appropriate automated regression protection.

@@ -26,6 +26,12 @@ external scratch fallback. A repository-native route/harness is allowed only whe
 selected runtime requires it; record and clean up only run-owned files.
 
 
+<!-- tigerkit:resource-awareness -->
+## Resource Awareness
+
+Before this workflow starts a broad test, build, large lint or indexing job, development server, browser or desktop-app process, benchmark/prototype harness, or expensive Git hook that may materially load host memory, CPU, or I/O, read [resource awareness](references/resource-awareness.md) at the execution boundary. Skip clearly lightweight checks and ordinary Git commands.
+<!-- /tigerkit:resource-awareness -->
+
 ## Workflow
 
 1. `hypothesis/success criteria`: Derive measurable criteria from the idea, reference,

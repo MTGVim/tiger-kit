@@ -19,6 +19,8 @@ Before approval, inspect the actual repository test surface:
 Do not treat test presence as sufficient protection. When possible, capture a bug first
 with an exact reproduction test.
 
+At execution time, before the first broad or otherwise high-load test command, read [resource awareness](resource-awareness.md). Skip clearly lightweight focused tests and do not repeat the host check for every test command.
+
 ## `N/A` and engineering exception
 
 - `N/A`: wording-only changes, visual-only judgment, or no useful automated behavior

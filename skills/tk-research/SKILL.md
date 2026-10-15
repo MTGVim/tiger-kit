@@ -65,6 +65,12 @@ or publish a ticket merely because a candidate exists. `tk-retro` owns
 session-specific process review and skill incidents; `tk-grooming` owns
 static existing-skill/rule/memory conflict audits.
 
+<!-- tigerkit:resource-awareness -->
+## Resource Awareness
+
+Before this workflow starts a broad test, build, large lint or indexing job, development server, browser or desktop-app process, benchmark/prototype harness, or expensive Git hook that may materially load host memory, CPU, or I/O, read [resource awareness](references/resource-awareness.md) at the execution boundary. Skip clearly lightweight checks and ordinary Git commands.
+<!-- /tigerkit:resource-awareness -->
+
 ## Lazy escalation and resume
 
 Use [persistent research](references/persistent-research.md) only when resume, evolving frontier/history,
