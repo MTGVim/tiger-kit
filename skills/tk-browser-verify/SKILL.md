@@ -43,7 +43,10 @@ agent or loads this skill into the owner's current conversation. Preserve that o
 A separate verifier child ends its own invocation by returning phase evidence; it does not implement the candidate.
 With same-agent Skill loading, finish the read-only verifier procedure, retain its evidence internally, and resume the
 owner procedure in the same turn. Do not send a final user-facing answer or wait for a new user message at that boundary.
-Product mutation belongs to the resumed owner's existing approval, never to this verifier's authority.
+Product mutation belongs to the resumed owner's existing approval, never to this verifier's authority. For nested
+execution, that approval must explicitly name the non-production verification environment, allowed entity types and
+create/update/delete operations, and cleanup policy. Do not infer or expand that scope; if an element is missing or the
+requested action falls outside it, do not submit the mutation.
 
 ## Headless Prerequisites
 
@@ -92,6 +95,8 @@ Use parent-provided values when available:
 - headless authentication and secret-free bootstrap method;
 - viewport, initial state, and server command/cwd/readiness;
 - screenshot mapping, replay procedure, nondeterministic exclusions, and allowed capture-only adjustments;
+- any approved test-data mutation scope: exact non-production environment, allowed entity types and create/update/delete
+  operations, and cleanup policy; absent or ambiguous scope means no data-changing interaction;
 - exact UI strings or verified entry paths;
 - exact visual reference or pre-change provenance and comparable viewport/DPR/zoom/font state when a design node,
   mockup, baseline screenshot, as-is/to-be comparison, or render-affecting candidate exists;

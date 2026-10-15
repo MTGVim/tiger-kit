@@ -150,6 +150,23 @@ Route each runtime AC by its target: URL-based UI that works in a normal browser
 go to `tk-app-verify`. Native window behavior belongs to `tk-app-verify` even when the same UI also
 works in a browser. Skip runtime verification when neither the change nor its AC affects runtime UI.
 
+For browser-visible changes, derive a complete impact inventory before approval: trace changed symbols
+through their callers to affected routes, screens, and triggers, following `tk-qa-sheet` Workflow step 1.
+Record each row's route, screen, trigger, and observable check.
+Include every row a headless verifier can exercise without unapproved side effects; representative
+sampling is not the default. Keep rows blocked by a verifier capability gap in the inventory with the
+missing capability recorded instead of silently dropping them. Keep excluded rows visible with one
+recorded reason: the row would mutate data without approved non-production authority, required test
+data is unavailable, or the user approved a cost exception. Representative sampling requires that
+explicit cost exception.
+
+When an affected row requires creating, updating, or deleting test data, include in the first answerable
+question frontier a request for explicit verification-environment mutation authority: the exact
+non-production target, allowed entity types and operations, and cleanup policy. Never infer this
+authority from local implementation approval. Without it, retain the row in the inventory but leave it
+unexecuted with the reason recorded. This authority does not permit payments, external communications,
+production-data changes, or account/permission changes.
+
 Before approval, bind the selected verifier, target/build/environment, pass conditions, comparable
 baseline/replay and evidence location in the runtime verification plan. For a render-affecting
 candidate, identify exact pre-change provenance and schedule that verifier's baseline before the

@@ -61,6 +61,11 @@ server running while implementation, review, or a paused human step proceeds. Af
 invoke the matching after capture/comparison with freshly owned runtime resources. Baseline-only evidence cannot
 satisfy final runtime acceptance, independent review, binding verification, or commit.
 
+When after evidence uses a short-lived authentication input, prioritize its validity window: after the focused change
+tests pass, invoke the matching after capture immediately, before the full test suite, build, or review. Run every
+required gate afterward; this order does not waive or weaken them. If later review remediation touches the verified
+screen's render or request path, apply the existing final-head replay rule before completion.
+
 When direct execution needs multiple commits, prefer a stronger repository convention; otherwise split by independently
 understandable, verifiable, and revertible work units rather than file type or layer. Keep each behavior with the tests
 that prove it and factual documentation that must change with it when practical. Keep one coherent judgment surface in

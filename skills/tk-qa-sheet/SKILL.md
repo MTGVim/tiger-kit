@@ -119,7 +119,10 @@ automated test generation, or PR publication. A parent's recommendation is not i
    report that count, the evidence head and current head, and exactly what a recapture needs.
    If recapture requires user-only authentication or other input, state the pending step and
    why the old evidence/session cannot satisfy it before giving any input-file mechanics. Optional PR
-   Markdown uses the same inventory and limitations. Hand that section to `tk-pr-open`;
+   Markdown uses the same inventory and limitations. Also report `수동 행 중 데이터 변경 없이 헤드리스로 실행 가능한 항목: <count>`.
+   Count only rows whose headless interaction path and required test data are verified; do not count rows that need
+   data mutation or depend on unavailable data or verifier capability. If the count cannot be established, report
+   `Unverifiable` with the reason. Hand any optional PR section to `tk-pr-open`;
    do not push, publish, edit a PR, or start QA investigation inside publication-only work.
 
 ## Source and boundaries

@@ -75,7 +75,7 @@ GitHub PR 본문·리뷰 답변·sweep 요약은 관계·순서·상태를 독�
 
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
-| [tk-prep](skills/tk-prep/SKILL.md) | `user` | 준비·승인부터 격리된 로컬 구현·검증·커밋까지 진행합니다. |
+| [tk-prep](skills/tk-prep/SKILL.md) | `user` | 준비·승인부터 격리된 로컬 구현·검증·커밋까지 진행하고 영향 진입점 전체를 런타임 계획에 담습니다. |
 | [tk-roadmap](skills/tk-roadmap/SKILL.md) | `user` | 목표와 제약을 인터뷰해 성과 중심 마일스톤을 만듭니다. |
 | [tk-audit](skills/tk-audit/SKILL.md) | `user` | 기술 일감·추적기 중복·정책 구조를 읽기 전용으로 감사합니다. |
 | [tk-prototype](skills/tk-prototype/SKILL.md) | `hybrid` | 판단에 필요한 폐기 가능한 UI·로직 비교물을 만듭니다. |
@@ -87,9 +87,9 @@ GitHub PR 본문·리뷰 답변·sweep 요약은 관계·순서·상태를 독�
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
 | [tk-review](skills/tk-review/SKILL.md) | `user` | 정확한 커밋 범위·PR·현재 작업 공간을 명세와 품질 관점에서 읽기 전용으로 검토합니다. |
-| [tk-browser-verify](skills/tk-browser-verify/SKILL.md) | `hybrid` | 브라우저 화면의 실행 근거를 수집하고 `headless` 방식으로 검증합니다. |
+| [tk-browser-verify](skills/tk-browser-verify/SKILL.md) | `hybrid` | 브라우저 화면을 `headless`로 검증하고, 데이터 변경은 부모가 승인한 비운영 범위에서만 수행합니다. |
 | [tk-app-verify](skills/tk-app-verify/SKILL.md) | `hybrid` | 데스크톱 앱의 창·상호작용·시각적 변경·접근성을 검증합니다. |
-| [tk-qa-sheet](skills/tk-qa-sheet/SKILL.md) | `user` | HTML QA 시트에서 자동 검증 근거와 사용자의 수동 체크를 구분합니다. |
+| [tk-qa-sheet](skills/tk-qa-sheet/SKILL.md) | `user` | HTML QA 시트에서 자동 근거와 수동 체크를 구분하고, 데이터 변경 없이 `headless`로 실행 가능한 수동 행 수를 보고합니다. |
 
 ### PR 관리
 
@@ -174,6 +174,9 @@ added claims를 직접 검사합니다.
 유지하고 주입 전에 JWT `exp` 또는 확인된 만료 시각을 검사합니다. 만료 시각이 남아 있어도
 세션 무효화로 인증이 거부되면 새 입력이 필요합니다. 만료·무효 토큰은 다음 읽기에서 삭제하며,
 정확한 만료 시각에 자동 삭제하는 데몬은 없습니다. 다른 작업 트리와 인증정보를 공유하지 않습니다.
+단기 토큰을 사용하는 변경 후 검증은 `focused test`가 통과한 직후 `after` 캡처를 먼저 수행하고, 이후 전체
+테스트·빌드·리뷰를 진행합니다. 후속 수정이 검증 화면의 `render` 또는 `request path`를 바꾸면 최종 변경본에서
+다시 촬영합니다.
 이전 공유 캐시를 사용했다면 업데이트만으로 기존 파일이 삭제되지는 않습니다. Git 공통
 디렉터리의 기존 `tigerkit-auth` 디렉터리는 현재 인증 흐름에서 읽거나 가져오지 않으며,
 사용자가 해당 캐시를 사용하던 실행을 종료한 뒤 경로와 소유권을 확인하여 수동 삭제해야 합니다.
