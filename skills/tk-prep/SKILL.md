@@ -158,20 +158,42 @@ works in a browser. Skip runtime verification when neither the change nor its AC
 
 For browser-visible changes, derive a complete impact inventory before approval: trace changed symbols
 through their callers to affected routes, screens, and triggers, following `tk-qa-sheet` Workflow step 1.
-Record each row's route, screen, trigger, and observable check.
-Include every row a headless verifier can exercise without unapproved side effects; representative
-sampling is not the default. Keep rows blocked by a verifier capability gap in the inventory with the
-missing capability recorded instead of silently dropping them. Keep excluded rows visible with one
-recorded reason: the row would mutate data without approved non-production authority, required test
-data is unavailable, or the user approved a cost exception. Representative sampling requires that
-explicit cost exception.
+Record each row's route, screen, trigger, observable check, value/string source (including its i18n
+namespace), validation schema, request path and mutation handler where applicable, visibility data
+condition, and any transformation such as a prefix. Record whether a changed string is compared,
+parsed, or transmitted; those uses need source-level tracing, unit tests, and review in addition to
+runtime display verification.
+
+Give each row one explicit status: `execute`, `covered-by:<row>`, `unauthorized-or-irreversible`, or
+`manual`. Use `unauthorized-or-irreversible` when required authority is absent or a write cannot be
+safely restored; use `manual` for other unexecuted reasons such as unavailable data or verifier
+capabilities. Execute at least one row for every distinct render path and request path. For every
+save flow, split client payload construction from backend saved-result checks when both are in scope.
+For every save handler, plan a safe pre-backend request-body capture as the no-mutation-authority
+evidence. Keep saved-result checks separate and leave those rows unexecuted unless explicit mutation
+authority is granted. With authority, execute at least one row for every distinct mutation handler
+and inspect the saved result through an independent reread. A row may use `covered-by:<row>` only when the
+executed row has the same value/string provenance, component wiring and effective props, render
+path, validation schema, request path and handler, visibility condition, and transformation. Record
+the evidence row and the shared component or schema that establishes each equivalence. Reuse of a
+component alone does not establish equivalence, and equivalent-path coverage is not representative
+sampling or a cost exception.
+Keep every other unexecuted row visible with one reason, including unavailable test data and
+verifier capability gaps; do not silently reduce the inventory.
 
 When an affected row requires creating, updating, or deleting test data, include in the first answerable
 question frontier a request for explicit verification-environment mutation authority: the exact
 non-production target, allowed entity types and operations, and cleanup policy. Never infer this
-authority from local implementation approval. Without it, retain the row in the inventory but leave it
-unexecuted with the reason recorded. This authority does not permit payments, external communications,
-production-data changes, or account/permission changes.
+authority from local implementation approval. Before asking, inspect repository/API evidence and only
+already-authorized read-only non-production facts for safe cleanup options. Prefer updating existing
+non-production test data with a restorable snapshot over create-then-delete when deletion is unavailable.
+State how the original will be restored and compared, preserve the distinction between `null` and
+`""`, and disclose the risk that cleanup may fail. This inspection does not authorize a live mutation.
+Without explicit authority, retain any saved-result row in the inventory but leave it unexecuted with
+the reason recorded; a separate request-body row may still be executed before backend transmission.
+This authority does not permit payments,
+external communications, production-data changes, or account/permission changes. A write that cannot
+be safely restored or is irreversible may remain excluded with its reason even when authority exists.
 
 Before approval, bind the selected verifier, target/build/environment, pass conditions, comparable
 baseline/replay and evidence location in the runtime verification plan. For a render-affecting
@@ -288,7 +310,12 @@ verification, review, or commit obligation remains actionable, continue executio
 limitation, a required user-owned decision, a safety boundary, or an explicit user stop/change of scope; name the actual
 reason and remaining work. Never end the parent turn merely to report baseline success.
 
-When the user wants to perform manual QA, recommend explicit `/tk-qa-sheet` for the requested checklist or HTML sheet; this does not replace required implementation verification or auto-invoke the user-only skill.
+When any uncovered row remains unexecuted because of missing authority, irreversibility, unavailable
+data, verifier limits, or another manual reason, state the number of those rows in the completion
+summary and recommend that the user start `/tk-qa-sheet` for follow-up. Exclude `covered-by` rows from
+that count because their equivalence evidence is recorded. Never auto-invoke the user-only skill.
+When the user asks for a manual QA checklist or HTML sheet, recommend explicit `/tk-qa-sheet`; it does
+not replace required implementation verification.
 
 For local execution, follow the already loaded local-execution reference. SDD additionally follows the private SDD
 protocol. Only after the final-response gate permits completion or a justified pause, return a compact result with the execution shape, Seed path or `none`, commits or handoff status, focused and

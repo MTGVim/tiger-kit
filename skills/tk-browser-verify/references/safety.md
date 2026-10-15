@@ -31,5 +31,18 @@ headers merely to inspect a payload. When an approved non-secret request body is
 intercept only the body inside the page by wrapping `fetch` or `XMLHttpRequest.send`; do not
 return headers, cookies, or transient authentication material.
 
+For every in-scope save handler, first prefer a page-scoped pre-backend capture that records only
+allowlisted, non-sensitive body fields and cancels the request before it can reach the backend.
+Verify and record that the request was blocked before transmission. This is the default when data
+mutation authority is absent; it proves client-side payload construction only, not backend acceptance
+or persistence. Never capture or retain a sensitive body. If safe body capture is unavailable,
+insufficient, or unsupported, do not send the request without explicit parent-scoped mutation
+authority. With authority for that exact environment, entity, operation, and cleanup policy, the
+fallback is one trusted UI submission followed by an independent reread; inspect the postcondition
+before considering any retry, and restore run-owned test data under the approved cleanup policy.
+Keep only the minimum authorized snapshot needed for restoration; never print or log sensitive
+original values. If safe snapshot, restoration, or comparison cannot be established, leave the
+saved-result check unexecuted and report the limitation.
+
 Never move or delete user screenshots, fixtures, profiles, or artifacts with unknown
 ownership. Limit ignore edits to the owning SKILL.md Artifact Paths setup; verify coverage before evidence writes.

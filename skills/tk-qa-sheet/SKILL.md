@@ -74,8 +74,13 @@ automated test generation, or PR publication. A parent's recommendation is not i
    bound to the current head exercised the same screen, entry path, trigger and expected
    result. Evidence from a different screen or entry path makes the check `partial`; keep
    only its unexercised part. Unit tests alone do not make a screen check `auto-verified`.
-   Keep data-changing checks `manual`. When the target head moves, inspect the diff from
-   each evidence head to the current head before changing verification state. A row is affected
+   A data-changing check may be `auto-verified` only when the exact mutation had explicit
+   authority, was actually executed, and current-head runtime evidence proves its saved result
+   through an independent reread for the same screen, entry path, trigger, and operation.
+   Request-body-only evidence covers payload construction, not backend persistence. Without
+   both authority and matching evidence, keep the saved-result check `manual`. When the target head
+   moves, inspect the diff from each evidence head to the current head before changing verification
+   state. A row is affected
    when that diff touches the screen's render path or request path. If the relevant paths are
    unchanged, keep the row `auto-verified` with its original evidence head and record the
    carry-forward reason in the result. If the row is affected and the runtime session is still

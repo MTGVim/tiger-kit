@@ -79,7 +79,13 @@ report the path-based carry-forward rationale. If the row is affected, prefer re
 the current head while the runtime session remains available. Otherwise demote it to `manual`
 and move the old run to `previousEvidence`. Evidence from another screen or entry path is
 `partial`; rewrite that row so its text describes only the unexercised part. Unit tests alone
-do not promote a screen check, and data-changing checks stay `manual`.
+do not promote a screen check. A data-changing check may be `auto-verified` when its exact
+mutation was explicitly authorized and actually executed, and run-owned runtime evidence bound to
+the current head proves the same screen, entry path, trigger, operation, and expected saved result
+through an independent reread. Request-body capture without backend submission can auto-verify only
+the payload-construction check, never a saved-result check. Preserve evidence `ref` and `head`; the
+label records verification evidence and is not product acceptance. If authority or current-head
+evidence is missing, keep the data-changing result `manual`.
 
 The HTML renderer places `auto-verified` rows in a collapsed `Automated` group as checked,
 disabled controls with their evidence reference. `partial` and `manual` rows remain editable

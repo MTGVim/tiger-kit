@@ -13,6 +13,13 @@ Use provider-native trusted pointer and keyboard APIs. Use `evaluate_script` onl
 observe state, computed values, or coordinates. Never treat `element.click()`,
 `form.submit()`, or `dispatchEvent()` as interaction evidence.
 
+Enter form values through trusted keyboard input and operate native date/select controls through
+their visible keyboard or pointer behavior. Do not assign DOM values or use scripted input that may
+bypass constraints such as `maxLength` or fail to exercise native control behavior. If a provider's
+`fill` operation is used, first establish that it produces user-equivalent trusted input and honors
+the control's constraints; otherwise type through the keyboard. Inspect the resulting visible value
+and, for save flows, the captured request body.
+
 A mutation claim requires the related network request and response. Acceptance
 verification connects the UI transition, request/response, and final UI state in one
 flow. A response, toast, or local DOM change alone is insufficient.
