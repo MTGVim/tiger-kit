@@ -163,8 +163,10 @@ with numerical readability checks and inspected/missing-check reporting. Verify 
 segmented theme radios are ordered `system / light / dark`: `system` leaves `data-theme` unset and
 follows emulated light/dark OS preference, while manual light/dark choices override it and
 restore after reload when storage is available. Confirm check reset preserves the theme and
-storage refusal leaves the sheet readable with `system` as the next-load fallback. Two
-editable rows plus a note must survive reload; IDs must be unique, counts accurate, code-only
+storage refusal leaves the sheet readable with `system` as the next-load fallback. When at
+least two editable rows exist, verify that two rows plus a note survive reload. With fewer
+than two editable rows, verify note persistence and `auto-verified` immutability instead, and
+report the editable-row check as `not applicable`. IDs must be unique, counts accurate, code-only
 status visible, reset must retain the note, auto-verified rows must stay checked after reset
 without becoming editable, and partial/manual rows must remain in the manual list. Verify
 evidence references and the collapsed Automated grouping from the final data, not just the

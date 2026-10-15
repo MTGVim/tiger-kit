@@ -31,6 +31,15 @@ headers merely to inspect a payload. When an approved non-secret request body is
 intercept only the body inside the page by wrapping `fetch` or `XMLHttpRequest.send`; do not
 return headers, cookies, or transient authentication material.
 
+Before classifying an approved data-changing check as `unauthorized-or-irreversible`, inspect
+the available restore path. If saving the original values again restores the state, treat the
+write as reversible; capture a minimal snapshot, restore it after the check, and compare the
+restored state with the snapshot. Disclose residual side effects such as a formerly empty field
+being populated. Stop and report the cleanup limitation if restoration cannot be verified.
+Apply an established user-owned verification-data policy only within its named nonproduction
+environment and operation scope; never infer authority from a tracked team setting or from the
+verifier's own role.
+
 For every in-scope save handler, first prefer a page-scoped pre-backend capture that records only
 allowlisted, non-sensitive body fields and cancels the request before it can reach the backend.
 Verify and record that the request was blocked before transmission. This is the default when data

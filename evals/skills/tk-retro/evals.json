@@ -317,6 +317,21 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "retro-report-only-disposition-concise-final",
+      "path": "success",
+      "prompt": "/tk-retro 회고 파일을 작성한다. 발견은 네 개이고 각 원인과 소유 계층, 수정 문구를 상세히 적는다.",
+      "expected_output": "보고서에는 각 발견의 근거, 영향, 원인, 예방, 소유 계층과 확인 방법을 둔다. 대화 응답은 가장 큰 문제 한두 줄과 보고서 경로만 남긴다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "상세 처분과 패치 문구는 보고서에만 두고, 대화 응답을 짧게 끝내며 구현 제안이나 추가 질문을 붙이지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

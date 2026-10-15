@@ -77,12 +77,14 @@ writes and fixes confined to the current repository are not dispositions for tha
 shared failure; do not offer or perform them as its remedy. Distinguish an independently
 proven local consumer override from a shared skill defect.
 
-Keep the final response concise, ordered by severity, and written in the user's
-language. No ceremonial empty table, forced finding count or automatic improvement
-list. When a cause remains unconfirmed, do not invent it. Name the decisive evidence
-and attempt to obtain it first when reachable within this session and authorized scope.
-Still propose a prevention that holds under every remaining supported hypothesis, with
-its owning layer and deciding check. For a skill-level incident, make that an exact
+Keep the final response to the most important finding in one or two concise lines and
+the report path, in the user's language. Put per-finding disposition, patch wording,
+and owning layers in the report only. Do not end with an implementation offer or
+follow-up question. No ceremonial empty table, forced finding count or automatic
+improvement list. When a cause remains unconfirmed, do not invent it. Name the decisive
+evidence and attempt to obtain it first when reachable within this session and authorized
+scope. Still propose a prevention that holds under every remaining supported hypothesis,
+with its owning layer and deciding check. For a skill-level incident, make that an exact
 skill/document patch proposal when supported. If no such safe prevention exists, explain
 why and what evidence would decide it instead of forcing a patch. Keep facts, hypotheses
 and preventive rationale distinct; a reasoned `no change` remains valid.
@@ -117,7 +119,7 @@ Create artifacts only when this skill's task authorizes them. Before any artifac
 <!-- tigerkit:output-notation -->
 ## Output Notation
 
-Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the marker, in generated headings, lists, choices, tables, diagrams, and summaries. Use `- Item` for unordered items. Do not generate Unicode circled/enclosed numbers, single-character parenthesized numbers, or keycap emoji as item markers; they can overlap adjacent text in terminal renderers. Preserve exact code, commands, URLs, quotations, identifiers, and verified UI labels unless explicitly authorized to edit them; apply this rule to the surrounding explanation instead.
+Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the marker, in generated headings, lists, choices, tables, diagrams, and summaries. Use `- Item` for unordered items. Do not generate Unicode circled/enclosed numbers, single-character parenthesized numbers, or keycap emoji as item markers; they can overlap adjacent text in terminal renderers. Show file paths as complete absolute paths; never abbreviate a path with `...` or `…`, including in examples, because terminal renderers make paths clickable. Preserve exact code, commands, URLs, quotations, identifiers, and verified UI labels unless explicitly authorized to edit them; apply this rule to the surrounding explanation instead.
 
 In chat responses, use a GFM pipe table for comparisons where several rows share at least two comparable attributes. Use a list for single-attribute enumerations. Keep tables narrow (about four columns or fewer), with a header row and short cells so they remain readable when the host shows raw pipes. Do not draw tables with box-drawing characters, wrap a table in a code fence, or emit an empty or ceremonial table. An owner-specific preview rule, such as summarizing a publication body's table in one line, takes precedence. These chat-table rules do not govern tables inside publication bodies or file artifacts.
 

@@ -127,6 +127,10 @@ mechanics when the reason is the missing final-head verification.
 Give the user both the repository-relative and absolute paths, the secret-free template,
 and instructions to fill and save it. A clipboard command must JSON-serialize into the
 named field, preserve other fields and keep secrets out of arguments/history.
+When the same session already received these instructions for the same input format, later
+requests show only one short reason and the actual absolute path. Repeat the template, issuing
+location, and input steps only for the first request or when the format changes. Do not preface
+the path with a progress plan.
 Do not launch an editor, file opener,
 GUI, terminal UI, or focus-changing application merely to collect the secret. Open it
 only after the path is shown and the user explicitly asks. Never ask for or accept the

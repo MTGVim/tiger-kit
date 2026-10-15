@@ -123,11 +123,12 @@ automated test generation, or PR publication. A parent's recommendation is not i
    exercised rows remain `manual` because their evidence belongs to an older affected head,
    report that count, the evidence head and current head, and exactly what a recapture needs.
    If recapture requires user-only authentication or other input, state the pending step and
-   why the old evidence/session cannot satisfy it before giving any input-file mechanics. Optional PR
-   Markdown uses the same inventory and limitations. Also report `수동 행 중 데이터 변경 없이 헤드리스로 실행 가능한 항목: <count>`.
-   Count only rows whose headless interaction path and required test data are verified; do not count rows that need
-   data mutation or depend on unavailable data or verifier capability. If the count cannot be established, report
-   `Unverifiable` with the reason. Hand any optional PR section to `tk-pr-open`;
+   why the old evidence/session cannot satisfy it before giving any input-file mechanics.
+   Also report the number of unexecuted `manual` checks currently executable headlessly under
+   established authority/policy and how many of those require a data mutation. Count only rows
+   whose interaction path and required test data are verified; exclude unavailable data and
+   verifier capability gaps. If either count cannot be established, report `Unverifiable` with
+   the reason. Optional PR Markdown uses the same inventory and limitations. Hand any optional PR section to `tk-pr-open`;
    do not push, publish, edit a PR, or start QA investigation inside publication-only work.
 
 ## Source and boundaries
@@ -171,7 +172,7 @@ Start the question block with a standalone horizontal rule (`---`) after the pre
 <!-- tigerkit:output-notation -->
 ## Output Notation
 
-Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the marker, in generated headings, lists, choices, tables, diagrams, and summaries. Use `- Item` for unordered items. Do not generate Unicode circled/enclosed numbers, single-character parenthesized numbers, or keycap emoji as item markers; they can overlap adjacent text in terminal renderers. Preserve exact code, commands, URLs, quotations, identifiers, and verified UI labels unless explicitly authorized to edit them; apply this rule to the surrounding explanation instead.
+Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the marker, in generated headings, lists, choices, tables, diagrams, and summaries. Use `- Item` for unordered items. Do not generate Unicode circled/enclosed numbers, single-character parenthesized numbers, or keycap emoji as item markers; they can overlap adjacent text in terminal renderers. Show file paths as complete absolute paths; never abbreviate a path with `...` or `…`, including in examples, because terminal renderers make paths clickable. Preserve exact code, commands, URLs, quotations, identifiers, and verified UI labels unless explicitly authorized to edit them; apply this rule to the surrounding explanation instead.
 
 In chat responses, use a GFM pipe table for comparisons where several rows share at least two comparable attributes. Use a list for single-attribute enumerations. Keep tables narrow (about four columns or fewer), with a header row and short cells so they remain readable when the host shows raw pipes. Do not draw tables with box-drawing characters, wrap a table in a code fence, or emit an empty or ceremonial table. An owner-specific preview rule, such as summarizing a publication body's table in one line, takes precedence. These chat-table rules do not govern tables inside publication bodies or file artifacts.
 

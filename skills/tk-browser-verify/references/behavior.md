@@ -24,6 +24,14 @@ A mutation claim requires the related network request and response. Acceptance
 verification connects the UI transition, request/response, and final UI state in one
 flow. A response, toast, or local DOM change alone is insufficient.
 
+For native HTML drag-and-drop controls such as SortableJS, enable CDP
+`Input.setInterceptDrags`, press and move from the handle to obtain the intercepted drag
+data, then use `Input.dispatchDragEvent` with `dragEnter`, `dragOver`, and `drop` at the
+target. For a closed native `<select>` that ignores trusted keyboard selection in headless
+mode, set the option value and dispatch `change` only as a documented input limitation;
+verify the resulting request and UI state independently, and do not describe this workaround
+as trusted user input.
+
 ## Conditional state and dialogs
 
 When UI appears only for a particular API state, prefer an `initScript` response mock
@@ -49,3 +57,6 @@ cycle.
 Verify that provider `fill(uid, "")` clears the value. If an empty fill is a no-op,
 fill a nonempty value and use trusted Backspace, or send one Backspace per actual
 character from the end of the field. Observe the empty value again before saving.
+
+For native date pickers, use trusted pointer input to select the date; do not set the control
+value through DOM evaluation and count that as interaction evidence.

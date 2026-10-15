@@ -334,6 +334,21 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "qa-authorized-data-evidence-and-empty-manual-selfcheck",
+      "path": "success",
+      "prompt": "현재 `head`에서 사용자 승인 아래 저장 흐름을 실행했고 결과와 재조회가 확인됐다. QA 시트에는 편집 가능한 행이 하나만 남았다. 완료 지표와 시트 자체 검증을 정한다.",
+      "expected_output": "해당 데이터 변경 행은 현재 `head`의 저장 결과 증거가 있으므로 `auto-verified`가 될 수 있다. 남은 `manual` 중 현재 권한으로 실행 가능한 행과 그중 데이터 변경이 필요한 수를 보고한다. 편집 행이 두 개 미만이면 메모 저장과 자동 행 불변성을 확인하고, 편집 행 점검은 `not applicable`로 쓴다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "실제 권한을 받아 실행한 현재 `head`의 저장 결과를 독립 재조회로 입증하면 `auto-verified` 처리할 수 있으나 요청 본문만으로는 승격하지 않는다. 현재 실행 가능한 `manual` 행 수와 변경이 필요한 수를 함께 보고하고, 편집 가능한 행이 두 개 미만이면 자체검사를 `not applicable`로 조정한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

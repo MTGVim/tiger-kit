@@ -181,14 +181,20 @@ sampling or a cost exception.
 Keep every other unexecuted row visible with one reason, including unavailable test data and
 verifier capability gaps; do not silently reduce the inventory.
 
-When an affected row requires creating, updating, or deleting test data, include in the first answerable
+When an affected row requires creating, updating, or deleting test data, first read the user-owned
+verification-data policy in [repository context](references/repository-context.md). If its exact
+non-production environment, entity type, and operation cover the row, plan within that standing
+authority without asking again. For any uncovered or ambiguous scope, include in the first answerable
 question frontier a request for explicit verification-environment mutation authority: the exact
 non-production target, allowed entity types and operations, and cleanup policy. Never infer this
-authority from local implementation approval. Before asking, inspect repository/API evidence and only
+authority from local implementation approval or a tracked team setting. Before asking, inspect repository/API evidence and only
 already-authorized read-only non-production facts for safe cleanup options. Prefer updating existing
 non-production test data with a restorable snapshot over create-then-delete when deletion is unavailable.
 State how the original will be restored and compared, preserve the distinction between `null` and
 `""`, and disclose the risk that cleanup may fail. This inspection does not authorize a live mutation.
+Before classifying a write as irreversible, inspect whether resaving the original values restores it;
+record the restore evidence and disclose any residual side effect. A reversible write may be executed
+within the exact authority above and the approved cleanup policy.
 Without explicit authority, retain any saved-result row in the inventory but leave it unexecuted with
 the reason recorded; a separate request-body row may still be executed before backend transmission.
 This authority does not permit payments,
@@ -329,7 +335,7 @@ Create artifacts only when this skill's task authorizes them. Before any artifac
 <!-- tigerkit:output-notation -->
 ## Output Notation
 
-Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the marker, in generated headings, lists, choices, tables, diagrams, and summaries. Use `- Item` for unordered items. Do not generate Unicode circled/enclosed numbers, single-character parenthesized numbers, or keycap emoji as item markers; they can overlap adjacent text in terminal renderers. Preserve exact code, commands, URLs, quotations, identifiers, and verified UI labels unless explicitly authorized to edit them; apply this rule to the surrounding explanation instead.
+Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the marker, in generated headings, lists, choices, tables, diagrams, and summaries. Use `- Item` for unordered items. Do not generate Unicode circled/enclosed numbers, single-character parenthesized numbers, or keycap emoji as item markers; they can overlap adjacent text in terminal renderers. Show file paths as complete absolute paths; never abbreviate a path with `...` or `…`, including in examples, because terminal renderers make paths clickable. Preserve exact code, commands, URLs, quotations, identifiers, and verified UI labels unless explicitly authorized to edit them; apply this rule to the surrounding explanation instead.
 
 In chat responses, use a GFM pipe table for comparisons where several rows share at least two comparable attributes. Use a list for single-attribute enumerations. Keep tables narrow (about four columns or fewer), with a header row and short cells so they remain readable when the host shows raw pipes. Do not draw tables with box-drawing characters, wrap a table in a code fence, or emit an empty or ceremonial table. An owner-specific preview rule, such as summarizing a publication body's table in one line, takes precedence. These chat-table rules do not govern tables inside publication bodies or file artifacts.
 
