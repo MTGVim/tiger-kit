@@ -59,7 +59,7 @@ Before any upload or PR body/comment update, reverify the explicitly selected ta
    Before `Pass`, verify byte-for-byte Markdown preservation, decodable `image/*` bytes from an authenticated fetch for
    every asset, and reachability of every linked upload object from the upload ref. Browser-session rendering is
    optional; report whether it was checked in the receipt without making it a `Pass` prerequisite.
-6. Remove only owned staging files on every exit path.
+6. Remove only owned staging files on every exit path. Write each deletion with the literal, fully resolved absolute run-owned staging path already recorded in this run; never derive the target from command substitution, a path file read back, or a glob piped through `head` or `tail`. If the exact literal path is unknown, list the candidates and stop instead of deleting.
 
 ## Execution Receipt · Single Evidence Record
 

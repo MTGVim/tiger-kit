@@ -219,6 +219,8 @@ After approval, recheck the repository, account, source branch, `HEAD`, base, ex
 Invalidate approval when an existing `PR`'s `actual state` materially differs from the approved `plan`.
 Invalidate the approval if any material `drift` exists.
 
+Run remote state changes (`push`, PR create/update, `gh pr ready`, `gh pr edit`) in a tool call separate from local cleanup. Record and recheck the remote result independently so a denied cleanup cannot block or obscure the publication result.
+
 For `single`, push only the exact approved `refspec`, and create or update only the specified `PR`.
 For `create`, apply the approved `PR state`; for `update`, change state only when explicitly approved.
 

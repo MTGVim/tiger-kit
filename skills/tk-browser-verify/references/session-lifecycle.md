@@ -61,6 +61,8 @@ Clean up success, failure, interruption, and exception paths in this order:
 4. run-owned development server (graceful stop first, then exact verified owned PIDs/handles if needed);
 5. run-owned `.tigerkit/tmp/tk-browser-verify/<run-id>/baseline-source/` trees after their servers have stopped.
 
+Write filesystem cleanup deletions with the literal, fully resolved absolute run-owned path already recorded in this run. Never derive a deletion target from command substitution, a path file read back, or a glob piped through `head` or `tail`. If the exact literal path is unknown, list the candidate paths and stop instead of deleting.
+
 Before forced termination, match the PID and profile against process arguments. Never
 use `killall`, broad `pkill`, or task-name bulk termination. Preserve evidence directories, provider-owned and
 attached browsers, user tabs/profiles, shared MCP/CDP instances, other verification runs,
