@@ -791,6 +791,56 @@
           "path": "chart.html"
         }
       ]
+    },
+    {
+      "id": "explain-default-all-presentation-modes",
+      "path": "success",
+      "prompt": "$tk-explain DNS 재귀 조회를 `dns-three-views.html`로 설명해줘. 표현 모드는 따로 지정하지 않을게.",
+      "expected_output": "한 번 조사한 동일한 근거와 메커니즘으로 standard, dialogue, dialogue-eli5 세 뷰를 탭으로 제공하는 단일 오프라인 HTML을 만든다. 기본 대화 역할은 🙋 독자와 🧑‍💻 저자이며 세 뷰의 결론·제약·출처가 모순되지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "모드 미지정 기본값을 all로 해석해 동일한 verified content model을 standard/dialogue/dialogue-eli5 세 탭으로 렌더링한다. 각 탭을 별도 조사처럼 만들어 사실·출처를 갈라놓지 않고, dialogue는 현실적인 독자 질문에만 사용하며 code/evidence/수치/출처는 구조화된 형식을 유지한다."
+        },
+        {
+          "type": "path_exists",
+          "path": "dns-three-views.html"
+        },
+        {
+          "type": "path_text_contains",
+          "path": "dns-three-views.html",
+          "text": "standard"
+        },
+        {
+          "type": "path_text_contains",
+          "path": "dns-three-views.html",
+          "text": "dialogue"
+        },
+        {
+          "type": "path_text_contains",
+          "path": "dns-three-views.html",
+          "text": "dialogue-eli5"
+        },
+        {
+          "type": "path_text_contains",
+          "path": "dns-three-views.html",
+          "text": "🙋"
+        },
+        {
+          "type": "path_text_contains",
+          "path": "dns-three-views.html",
+          "text": "🧑‍💻"
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": [
+            "dns-three-views.html"
+          ]
+        }
+      ]
     }
   ],
   "renamed_from": {
