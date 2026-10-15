@@ -2,7 +2,7 @@
 name: tk-explain
 description: "[user/auto] 개념의 배경지식과 실제 구조·동작을 설명하는 시각 자료나 자체 완결형 HTML 설명 자료를 요청할 때 사용합니다. 특정 변경 설명, 여러 챕터로 구성하는 학습 과정, 일반 텍스트 질문, 기존 글 교정, 제품 비교 시제품에는 사용하지 않습니다."
 disable-model-invocation: false
-argument-hint: "<topic and optional audience/output path>"
+argument-hint: "<topic and optional audience/output path> [standard|dialogue|dialogue-eli5|all]"
 metadata:
   tigerkit:
     kind: hybrid
@@ -43,6 +43,13 @@ Read [HTML output](references/html-output.md) for the shared offline and accessi
 ```text
 🤖 본 설명 자료는 AI가 작성했습니다.
 ```
+
+Use the presentation modes defined by [HTML output](references/html-output.md). While this
+experiment is active, default to `all` when the request does not name a mode. `all` produces one
+HTML artifact with `standard`, `dialogue`, and `dialogue-eli5` tabs over the same verified
+content and sources. An explicit mode generates only that view. Dialogue uses the semantic
+`reader` and `author` roles; their display label and emoji may come from the bounded user
+settings contract, but customization never changes the roles or evidence requirements.
 
 ## Verify and Return
 

@@ -170,6 +170,11 @@ the exact reply substance; do not repeat an already satisfied confirmation.
 If the parent-approved exact PR/head and resolution direction remain unchanged, the child must not ask for the same decision again.
 Return that PR to the user only when there is a material change, such as new feedback, head drift, or scope drift.
 
+For a batch briefing or publication summary whose relationships across PRs are materially easier
+to understand visually, read [GitHub-native PR visuals](references/github-visuals.md). Use Mermaid
+for verified dependency/order/state relationships, not as decoration; keep numeric status
+comparisons in a GFM table.
+
 ## Publication
 
 Child owners own their detailed publication order, reviewer semantics, replies, thread closure, summary format, refspec,

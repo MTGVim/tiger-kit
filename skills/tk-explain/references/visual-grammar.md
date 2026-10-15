@@ -36,6 +36,19 @@ split an overview and detail rather than mixing their conventions. Preserve sour
 edge direction, timing, guards, outcomes and unknown connections; never invent an edge to
 complete the layout. Name the visual's scope so a focused view does not imply full coverage.
 
+## Reader-author dialogue as a visual grammar
+
+Dialogue is a presentation grammar, not a substitute for evidence. Use it only when a realistic
+reader question makes background, intuition, a boundary or a likely misconception easier to
+follow. The reader must not ask artificial questions merely to restate the next paragraph, and the
+author must answer directly from verified claims while preserving uncertainty.
+
+Keep precise artifacts outside the dialogue when they are clearer there: code, file maps, numeric
+comparisons, tables, diagrams, verification outcomes and citations remain structured evidence.
+A dialogue view may point to those artifacts but must not paraphrase away a material condition.
+For an ELI5 dialogue, reduce prerequisites and sentence complexity while retaining the actual
+mechanism, technical terms needed for correctness, and the point where an analogy stops matching.
+
 ## Plan an evidence-backed visual storyboard
 
 For a nontrivial document, plan visuals only after establishing the prose claims and their evidence.

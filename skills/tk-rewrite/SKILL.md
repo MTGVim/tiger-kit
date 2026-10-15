@@ -22,6 +22,14 @@ Before editing prose, read [clear writing](references/clear-writing.md). Apply i
 1. **Reconstruct meaning.** Identify the conclusion, original problem, prior state, actors, causal or procedural order, evidence, conditions, alternatives, and unresolved decisions. Recover necessary background only from relevant facts already available in this conversation or supplied material. Lead with the conclusion or requested decision, then connect the background and actual mechanism. Preserve uncertainty if a necessary fact is missing or conflicting; do not invent project context or silently start web/repository research. Identify the output surface: restore needed context for standalone/shareable prose; in an explicit reply to a reader in the visible thread, keep the decision and new information without repeating their shared background. Do not infer shared context merely from the same chat. Restructure where it serves reader understanding within the request; the expression gate below does not require minimal character changes for structural work.
 2. **Refine expression.** Apply the shared criteria to the reconstructed text; each changed span must resolve an identified problem within the requested scope. Keep the restored background, actor distinctions, conditions, and level of certainty while removing awkward wording. Compare the final text against both the source and the reconstructed meaning; repair any detail lost during polishing. Do not emit the intermediate draft or run a second skill/agent merely to complete these passes.
 
+Before returning a rewrite, compare it with the source for two explicit failure modes. Reject
+`voice drift` when polishing unnecessarily flattens distinctive but valid author choices such as
+sentence length, directness, recurring vocabulary, formality, humor or emphasis that were not in
+scope to change. Reject `added claims` when the rewrite introduces a fact, causal relation,
+recommendation, confidence level, condition, actor, timing or scope that the source/background did
+not support. Clearer wording may make an existing relation explicit, but it may not strengthen or
+invent that relation.
+
 A request for tone only skips structural reconstruction and preserves content/order. A request for structure only skips style polishing and preserves wording where possible. Existing clear passages need no forced changes. Review-only requests receive consequential findings and, where useful, suggested local edits, not a full rewrite unless requested; explicit requests for variants receive only the requested variants.
 
 ## Scope and Completion

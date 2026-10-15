@@ -90,6 +90,11 @@ instruction asks for it; the PR's commit list already carries that history. Rece
 inform tone and section use, not commit-by-commit structure. When updating an existing PR after new
 commits, re-derive the affected sections from the current `base...HEAD` instead of appending per-commit lines.
 
+Before finalizing a body whose architecture, flow, state transition, dependency or migration
+relationship is materially easier to review visually, read [GitHub-native PR visuals](references/github-visuals.md).
+Use Mermaid selectively and evidence-first; prefer a table for exact numeric comparisons and keep
+material meaning available in prose.
+
 Before finalizing the body, assess material reversibility and blast radius from the verified publication input: affected callers, users, surfaces, data and contracts; the concrete rollback or recovery path; and any destructive migration, irreversible external side effect or compatibility break. Reverting code does not restore deleted data or undo external actions. Preserve unknown recovery evidence instead of describing the change as cheaply reversible. Put useful facts in the template's existing risk, rollback, migration or deployment section; preserve its headings, order, comments and checklists, without adding a duplicate section. If no template or stronger format applies, the fallback body may include a compact risk/recovery section when it adds information. Low-risk changes need no empty risk prose or decorative one-way/two-way labels. This assessment grants no implementation or new investigation authority.
 
 Apply UI Evidence to PR bodies and QA steps. Before publication, reconcile each required UI literal and navigation claim against the supplied evidence. Include a compact UI evidence gap report in the preparation output: item, source/status (observed, render-bound source, user-provided, or `Unverifiable`), limitation, and requested input. State explicitly when no required gaps remain; use N/A only when there are no UI claims. Keep user-provided text distinct from independent observation and retain unresolved items in the PR/QA limitations. Ask for the missing exact label, contextual capture, or connection evidence item by item; incorporate supplied answers only for the claims they support. Do not start a new investigation from this publication-only phase.

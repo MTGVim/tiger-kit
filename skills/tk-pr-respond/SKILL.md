@@ -173,6 +173,11 @@ requirement when it already covered that substance; never ask twice for the same
 Authorship never changes whether a finding must be investigated or addressed. It also never controls re-review targets:
 `CHANGES_REQUESTED`, approval, and review-request capability belong to accounts, so those paths use account identity only.
 
+When a reviewer reply or current-head summary must explain a nontrivial architecture, flow,
+dependency or state change, read [GitHub-native PR visuals](references/github-visuals.md). Use
+Mermaid only when it reduces review effort and every relationship is verified; keep exact values
+and compact comparisons in GFM tables.
+
 ## Publication
 
 Immediately before any remote write, recheck the exact repository, authenticated identity, open PR, fresh remote head,
