@@ -43,9 +43,14 @@ execution routing as a form/report. Explain important judgments with recommendat
 
 ## Evidence and questions
 
-Read the task source, instructions, code/callers, tests, commands, and Git state. Before interpreting repository
-behavior, requirements, ownership, impact, or domain meaning, or writing implementation/review prose that depends on
-them, lazy-load [domain context](references/domain-context.md) when repository-owned context exists. Read only the
+Read the task source, instructions, code/callers, tests, commands, and Git state. If the task source is a child work item,
+read its parent work item's body and comments as the next source lookup, before opening linked documents or asking the
+user. The parent's explicit shared rules, including fallback and unresolved-decision instructions, govern the child; do
+not replace them with a conflicting child-level suggestion or linked document. Read parent comments for clarifications
+and prior answers, and investigate any conflict that could change behavior before asking or proposing.
+Before interpreting repository behavior, requirements, ownership, impact, or domain meaning, or writing
+implementation/review prose that depends on them, lazy-load [domain context](references/domain-context.md) when
+repository-owned context exists. Read only the
 relevant mapped context; purely mechanical Git/ref/formatting work may skip it.
 When issue-tracker identity, project selection or discovery scope is material to
 this request and not confirmed by source or active instructions, read

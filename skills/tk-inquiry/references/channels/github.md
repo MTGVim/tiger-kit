@@ -2,9 +2,8 @@
 
 ## Draft shape and formatting
 
-- Use GitHub Flavored Markdown. Headings, tables, task lists, fenced code blocks and collapsible `<details>` sections are available in GitHub comments and pull request content; keep a comment focused on one topic and collapse only secondary evidence.
-- Put the request before supporting context. Use inline code for identifiers, API paths, filenames, states and short log excerpts; use fenced blocks for longer snippets.
-- Link code with a permanent URL pinned to a verified commit SHA, for example `https://github.com/{owner}/{repo}/blob/{commit-sha}/{path}#L12-L18`. Verify the repository, SHA, path and line range first. If any part is unknown, use a plain path or omit the link rather than guessing.
+- Use GitHub Flavored Markdown, but keep ordinary comments to a few short connected paragraphs without report-style headings. Put the concrete behavior and enough context before the focused ask. Use inline code for identifiers, API paths, filenames, states and short log excerpts; use fenced blocks only when a longer snippet is needed.
+- Describe code evidence in the comment. Do not add code or other source links by default; include only a useful issue or pull request link unless the user asks for source links. If the user requests a code permalink, pin it to a verified commit SHA and line range.
 - Mention a person or team only when its GitHub identity is verified. A valid mention can notify its target when repository access conditions allow it; leave a clear placeholder when the identity is unknown.
 - Put a supported issue-closing keyword in a pull request description or commit message only when closing the linked issue after merge is intended. Ordinary issue references in conversations can create links, so include cross-references only when useful.
 

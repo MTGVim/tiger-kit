@@ -23,7 +23,12 @@ send, or thread reply is owned by this skill.
 1. Read the current request and supplied conversation/issues. Identify the recipient
    role, communication channel, concrete answer or decision the user needs back,
    deadline if specified, prior answers and dependencies. Never invent an identity,
-   deadline, policy or missing answer.
+   deadline, policy or missing answer. When the destination is an existing issue or
+   chat thread, read the history of that exact thread before drafting, including any
+   history supplied in the current conversation. Use it to check prior asks and
+   answers, contradictions, participants, and the requester's established tone. If
+   the thread cannot be accessed, say so and use only supplied context; do not
+   invent its contents.
 2. Investigate facts available from authorized sources before asking. If the
    recipient/channel/required return is still material and user-owned, ask only
    these together in a short round. Ask about **the send, not the subject**.
@@ -31,20 +36,32 @@ send, or thread reply is owned by this skill.
    style, templates or project policy matter. Use exact user-supplied templates or
    matching project `questionnaire` policy. Missing required project style should
    trigger one scoped question and optional settings bootstrap, not fabricated voice.
-4. Compose questions with one decision per item, grouped only for readability and
-   ordered by impact. Include sufficient context and a clear way to answer without
-   requiring the recipient to know the original conversation. Differentiate a
-   requested decision, factual evidence and optional background. When the questions
-   follow an investigation you performed using logs, code, tickets, threads or
-   similar evidence, add a compact evidence frame before the asks if you reconstructed
-   an event sequence or the draft mixes observations with inferences. Summarize the
-   observed problem and direct cause only when evidence supports it; outline the
-   sequence with each step labeled as confirmed and linked to its source, or inferred
-   with the code path or calculation that supports it. Then number each request, label
-   it as a decision, fact check or improvement review in the user's language, and name
-   the data or action that would settle it. Use concise summary, reconstructed-sequence
-   and requests sections with headings in the user's language. Omit this frame for
-   simple questions that need no reconstruction.
+4. Compose each ask around one actionable answer, grouped only when that improves
+   readability. Include enough context for the recipient to understand and answer
+   without the original conversation. When investigation from logs, code, tickets,
+   threads or similar sources is material, state only supported observations and
+   causes. Use one concrete user-visible example when evidence provides one. Quote
+   the relevant requirement faithfully and identify its actual source, such as the
+   issue body, when one is available; do not invent one or attribute it to a team or
+   decision-maker unless the source does.
+   Keep observations and inferences distinct, and name the evidence that supports
+   each.
+
+   For documents, email, or a format the user explicitly requests, use `Summary`,
+   `Reconstructed sequence`, and `Requests` headings only when the material needs
+   them. Label sequence claims as confirmed with their source or inferred with their
+   support. For comments and DMs, omit headings and report-style sections by default.
+   Write a few short paragraphs in the requester's established work-comment voice.
+   Ask only questions whose answers change the requester's next action. When the
+   recipient owns the judgment, request their review instead of asking them to decide
+   for the requester. Keep the explanation concise and avoid decorative markers or
+   chatty endings.
+
+   In comments and DMs, describe the observed behavior before any code identifier;
+   put a needed identifier in parentheses. Include no source links by default. Add
+   only the relevant issue or ticket link when useful, and add code or other evidence
+   links only when the user asks. Use deadline or schedule-pressure language only
+   when the user supplied a deadline.
 5. Read only the reference for the selected destination: [Slack](references/channels/slack.md),
    [GitHub](references/channels/github.md), [Jira](references/channels/jira.md),
    [email](references/channels/email.md) or
