@@ -60,7 +60,11 @@ Use recovered project/session context only when repository/task identity matches
    failure, use one fresh reproduction and nearby control when available. Do not
    demand an experiment for every retrospective. Efficiency claims require a
    comparable baseline or stated budget. Mark causal claims unverifiable otherwise.
-6. When a candidate recommends creating/rewriting an Agent Skill, read
+6. Before drafting the artifact, read [retro report format](references/report-format.md).
+   Use its headings and per-finding fields, omitting optional sections only when they
+   add no evidence or decision. Keep confirmed facts, hypotheses, authority and validation
+   status visibly distinct; do not mix a proposal with an implemented change.
+7. When a candidate recommends creating/rewriting an Agent Skill, read
    [skill candidate criteria](references/skill-candidates.md). Prefer the existing
    skill or default model capability over a new skill.
 
@@ -77,17 +81,19 @@ writes and fixes confined to the current repository are not dispositions for tha
 shared failure; do not offer or perform them as its remedy. Distinguish an independently
 proven local consumer override from a shared skill defect.
 
-Keep the final response to the most important finding in one or two concise lines and
-the report path, in the user's language. Put per-finding disposition, patch wording,
-and owning layers in the report only. Do not end with an implementation offer or
-follow-up question. No ceremonial empty table, forced finding count or automatic
-improvement list. When a cause remains unconfirmed, do not invent it. Name the decisive
-evidence and attempt to obtain it first when reachable within this session and authorized
-scope. Still propose a prevention that holds under every remaining supported hypothesis,
-with its owning layer and deciding check. For a skill-level incident, make that an exact
-skill/document patch proposal when supported. If no such safe prevention exists, explain
-why and what evidence would decide it instead of forcing a patch. Keep facts, hypotheses
-and preventive rationale distinct; a reasoned `no change` remains valid.
+Use the shared result-summary order for the final response: keep `✅` to one or two concise
+lines with the main finding and report path, always include `🧹` for actual cleanup or no
+owned resources, and end with `👤` naming any remaining user action or `없음`. Omit other shared
+sections unless they contain a decision, recommendation or limitation. Put per-finding
+disposition, patch wording and owning layers in the report only. Do not end with an
+implementation offer or follow-up question. No ceremonial empty table, forced finding
+count or automatic improvement list. When a cause remains unconfirmed, do not invent it.
+Name the decisive evidence and attempt to obtain it first when reachable within this
+session and authorized scope. Still propose a prevention that holds under every remaining
+supported hypothesis, with its owning layer and deciding check. For a skill-level incident,
+make that an exact skill/document patch proposal when supported. If no such safe prevention
+exists, explain why and what evidence would decide it instead of forcing a patch. Keep facts,
+hypotheses and preventive rationale distinct; a reasoned `no change` remains valid.
 
 **Proposal-only authority:** Do not edit canonical skills, source code, AGENTS.md,
 rules, tests, Git state, or remote issues/PRs. Do not auto-invoke an implementation

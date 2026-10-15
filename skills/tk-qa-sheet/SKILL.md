@@ -42,11 +42,17 @@ automated test generation, or PR publication. A parent's recommendation is not i
    through callers to routes and affected UI entry points. Preserve source locations and
    coverage gaps internally; keep code-investigation mechanics out of the user's checklist.
    Recheck the target before delivery; a moved head invalidates the affected inventory.
-2. Collect missing labels and navigation through `tk-browser-verify` read-only discovery,
-   using its headless/provider/auth boundaries. Supply target, environment, locale, role,
-   and the exact missing evidence; allow no business mutations. A completed manual QA list
-   is not evidence that the product works. Retain unavailable screens and reasons.
-3. Group area → screen → check. Each check identifies a screen/route, trigger/component,
+2. Consume UI labels, entry paths, and run evidence already supplied by the user or an
+   existing verifier result. This workflow does not authenticate to or start the target
+   product, or invoke verification of its criteria. Step 5 may use `tk-browser-verify` only
+   for the local generated sheet's no-auth artifact self-check. Without supplied product
+   evidence, retain source-derived rows as `code-only`; a completed checklist is not product
+   verification.
+3. Group area → screen → check. Split any check that names multiple entry points or
+   surfaces (for example create and edit, or list and register) into one independently
+   checkable row per entry point. Preserve the Prep `criterion_id`; when none was supplied,
+   assign a unique `QA-001`, `QA-002`, ... ID after splitting and preserve it when regenerating
+   the same task. Each check identifies a screen/route, trigger/component,
    and observable expected behavior supported by the diff/spec. Explain a common pattern
    once, then keep independently checkable screen rows. Quote observed labels verbatim in
    backticks; label source-only entries `code-only`, including unobserved parent labels.
@@ -90,15 +96,36 @@ automated test generation, or PR publication. A parent's recommendation is not i
    When consuming a `tk-browser-verify` row map, preserve each `criterion_id` as `criterionId`,
    copy `evidence_ref` to `evidence.ref` and copy `head` exactly. Map `Fail` to `verification: failed`
    on that same row; retain its evidence and do not split the criterion into pass and manual rows.
+   Map `Pass` and `covered-by:<criterion_id>` to `auto-verified` only with the mapped evidence
+   and current row ID; preserve the coverage rationale for `covered-by`.
+   Map an authorized `out-of-scope` or `not-executed` row with no proven manual blocker to
+   `verification-gap`; convert a verified blocker to `manual` with its reason, search scope,
+   and unblock. Preserve `covered-by` evidence on the original criterion ID.
    Show `auto-verified` rows pre-checked and non-editable in a collapsed `Automated`
    group with their evidence reference. Keep `partial`, `failed`, and `manual` rows in the manual
    list while preserving their independent `observed | code-only` provenance. Demoted manual
    rows also show their previous evidence so they remain distinguishable from never-exercised
    checks. An `auto-verified` label is runtime evidence reuse, not product acceptance.
+
+   Classify every unexecuted row before delivery. A row within established authority that
+   has no execution record, no recorded `search_scope`, and no verified capability gap is
+   `verification-gap`, not human work. All read-only rows are within that authority; writes
+   are only within scope when explicit approval or validated policy-file authority covers
+   them. Do not ask for target credentials or run the target runtime here; report the gap to
+   the owning verification phase. Only missing/irreversible-write authority, unavailable data
+   after a recorded search, or a verified capability gap after an actual attempt remains
+   `manual`. Give each human-only manual row `manualReason`, `unblock`, and, for data or
+   capability limits, the attempted `searchScope`. Without runtime results, every otherwise
+   executable row is a gap. If the user explicitly requests a human checklist, show gap rows
+   as editable manual checks with `automatable: true`. Whenever gaps exist, put this next
+   step in both the sheet legend and chat report: run `/tk-browser-verify` without arguments
+   to attempt all gaps, then regenerate the sheet. Do not make the user choose row IDs or
+   invoke the verifier for product criteria from this user-only skill.
 4. Default to the HTML sheet: read [HTML output](references/html-output.md) and
    [data and rendering](references/qa-sheet-data.md), then copy
    [the template](assets/qa-sheet-template.html) to
-   `.tigerkit/qa/<task>-<topic>.html` after Artifact Paths checks. Replace `qa-data` JSON,
+   `.tigerkit/qa/<task>-<topic>.html` after Artifact Paths checks. Put the current candidate
+   commit in the top-level `qa-data.head`, then replace the remaining `qa-data` JSON,
    then run `python3 <package>/scripts/render_static_inventory.py <generated-file>` to
    regenerate its no-JS inventory from that same data. Keep the bundled runtime renderer
    unchanged while generating a task sheet. Preserve the same storage key and content
@@ -109,7 +136,8 @@ automated test generation, or PR publication. A parent's recommendation is not i
    a list without a file, or the optional PR section in step 6.
 5. For HTML, ask `tk-browser-verify` to verify the local file headlessly in a disposable
    run-owned profile: check two independent rows, enter a note, reload, and observe restoration;
-   also verify unique IDs, counts, code-only badges, reset preserving notes and theme, and no sample
+   also verify unique IDs, criterion/editable counts, the separate non-checkbox `verification-gap`
+   section and its command, code-only badges, reset preserving notes and theme, and no sample
    placeholders. Exercise the visible segmented theme radios in `system / light / dark` order: system
    must follow emulated OS light/dark preference without `data-theme`, manual choices must
    override it and restore after reload when storage is available, and storage refusal must
@@ -118,20 +146,23 @@ automated test generation, or PR publication. A parent's recommendation is not i
    no-JS reading must expose the final inventory while explaining
    that check/note persistence needs JavaScript. Close and delete only that profile. If the check cannot run, preserve the
    sheet and disclose `Unverifiable`; never claim persistence verification from source alone.
-6. Return the absolute file path (HTML only), total check count, `auto-verified`,
-   `partial`, `failed`, `manual`, head-demoted and code-only counts, fixed target, previous evidence
+6. Return the absolute file path (HTML only), inventory `head`, total criterion and editable-check counts,
+   `auto-verified`, `partial`, `failed`, `verification-gap`, `manual`, head-demoted and
+   code-only counts, fixed target, previous evidence
    head(s) for demoted rows, any evidence carried forward across an irrelevant diff and its
    path-based rationale, unverified screens/connections and reasons, actual self-check status
    and inspected viewports/themes or the exact unavailable render checks. When previously
    exercised rows remain `manual` because their evidence belongs to an older affected head,
    report that count, the evidence head and current head, and exactly what a recapture needs.
-   If recapture requires user-only authentication or other input, state the pending step and
-   why the old evidence/session cannot satisfy it before giving any input-file mechanics.
-   Also report the number of unexecuted `manual` checks currently executable headlessly under
-   established authority/policy and how many of those require a data mutation. Count only rows
-   whose interaction path and required test data are verified; exclude unavailable data and
-   verifier capability gaps. If either count cannot be established, report `Unverifiable` with
-   the reason. Optional PR Markdown uses the same inventory and limitations. Hand any optional PR section to `tk-pr-open`;
+   If a product row needs recapture and the verifier needs user-only authentication or input,
+   identify that pending verifier step and why the old evidence/session cannot satisfy it; do not collect
+   or store target credentials in this sheet workflow.
+   Report `verification-gap`, true `manual`, and automatable-manual counts separately, with
+   affected criterion IDs and each manual reason. Do not claim a row is human-only before an
+   authorized runtime attempt; data-unavailable and capability-limit reasons need recorded
+   search/attempt scope. If a classification cannot be established from available evidence,
+   report `Unverifiable` for that row. Optional PR Markdown uses the same inventory and
+   limitations. Hand any optional PR section to `tk-pr-open`;
    do not push, publish, edit a PR, or start QA investigation inside publication-only work.
 
 ## Source and boundaries
@@ -142,7 +173,8 @@ data validation and stable identity to TigerKit; omit repository-specific collec
 auth injection, server sharing and generation scripts.
 
 An inaccessible UI does not block a source-based inventory: mark every unsupported
-label/path `code-only`, carry the gaps, and continue the requested output. Missing diff or
+label/path `code-only`, carry the gaps, and continue the requested output. `code-only` is
+label provenance, not a reason to classify a row as human-only. Missing diff or
 repository identity blocks inventory; missing HTML self-check evidence blocks only its
 verified status. Questions and file handling grant no implementation/publication authority.
 

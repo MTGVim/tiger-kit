@@ -166,6 +166,13 @@ class ArtifactPolicyTests(unittest.TestCase):
             policy.output_directory(str(self.root / 'docs'), 'release-checklist', self.root)
 
 class InstalledArtifactGuardTests(unittest.TestCase):
+    def test_shared_reference_keeps_shell_at_repository_root_during_cleanup(self):
+        text = policy.ARTIFACT_REFERENCE
+        self.assertIn('Keep the shell working directory at the repository root', text)
+        self.assertIn('Never `cd` into a run-owned directory that will be deleted', text)
+        self.assertIn('never delete the current working directory or one of its ancestors', text)
+        self.assertLess(text.index('Run cleanup from the repository root'), text.index('Write every cleanup deletion'))
+
     def test_missing_or_changed_reference_blocks_installation(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

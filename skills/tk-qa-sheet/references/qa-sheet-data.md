@@ -10,6 +10,7 @@ inventory from that data. The final file needs no external assets or runtime gen
 {
   "title": "Task QA",
   "storageKey": "task-topic",
+  "head": "abc123",
   "environment": {"label": "Local QA", "baseUrl": "http://localhost:3000"},
   "legend": ["Scope, evidence rules and unresolved screens"],
   "groups": [
@@ -49,7 +50,10 @@ inventory from that data. The final file needs no external assets or runtime gen
 }
 ```
 
-Require nonblank `title`, `storageKey`, group/item titles and check texts. Require a
+New sheets require a nonblank top-level `head` for the candidate whose impact inventory they
+represent. The renderer accepts a missing `head` only for older sheets; a browser verifier
+must treat that lineage as unknown and reconcile it before runtime. Require nonblank `title`,
+`storageKey`, group/item titles and check texts. Require a
 nonempty `groups` array and nonempty `items`; optional `legend`/`notes` are string arrays.
 `checks` absent or empty makes the item itself a check. `heading: true` creates no checkbox;
 require at least one real check per item. `indent` is an integer from 0 to 3.
@@ -62,14 +66,25 @@ when the source contains an exact string. Known routes may appear
 in code formatting as technical literals; disclose their status separately from navigation.
 List user-provided text and missing click connections explicitly in notes/legend/limitations.
 
-`criterionId` is an optional stable ID supplied by the impact inventory or browser verifier. Keep it unchanged when transferring a verifier row; IDs must be unique across the sheet. The renderer displays it beside the row. Its generated checkbox ID remains separate and content-bound.
+Every new check row has a stable `criterionId`: keep the impact-inventory/browser-verifier ID unchanged, or assign `QA-001`, `QA-002`, ... after splitting entry points when none was supplied. Preserve those IDs when regenerating the same task; IDs must be unique across the sheet. The renderer accepts omitted IDs only for older sheets. A `verification-gap` row must have an ID so a no-argument verifier run can target and return it. The renderer displays it beside the row. Its generated checkbox ID remains separate and content-bound.
 
-`verification` is `manual | auto-verified | partial | failed`; missing values default to `manual`.
+When consuming a verifier row map, copy `evidence_ref` to `evidence.ref` and `head` unchanged. Map `Pass` and `covered-by:<criterion_id>` to `auto-verified` only with the mapped evidence on that row ID; retain the equivalence rationale for `covered-by`. Keep `Fail` as `failed` on the same criterion. An authorized `out-of-scope` or `not-executed` row without a proven manual blocker becomes `verification-gap`; a proven blocker becomes `manual` with `reason` mapped to `manualReason`, `search_scope` to `searchScope`, and the concrete `unblock`.
+
+`verification` is `manual | verification-gap | auto-verified | partial | failed`; missing values default to `manual` for older sheets. Use `verification-gap` for an unexecuted row that is within established authority and has no recorded execution, no recorded `searchScope`, and no verified capability gap. This state has no automated evidence and is displayed separately without an editable checkbox. It is not a human task.
 It applies to a standalone item or a non-heading child check and is independent from
 `provenance`. Items that contain child checks do not carry their own verification state.
 `auto-verified`, `partial`, and `failed` rows require an `evidence` object with nonblank `ref`
 and `head`: `ref` is the run ID or evidence path, and `head` is the commit head that
-evidence was bound to. Manual rows omit `evidence`. A manual row that was demoted because a
+evidence was bound to. Manual rows omit `evidence`. For every newly authored human-only `manual` row,
+set `manualReason` to `unauthorized-or-irreversible`, `data-unavailable-after-search`, or
+`verified-capability-gap`, and set `unblock` to its concrete next step. The latter two
+reasons require a nonblank `searchScope` describing the recorded search or attempted
+capability check. Missing/irreversible write authority is the only reason to exclude a write
+before an attempt. If a user explicitly asks for a human checklist, a gap may instead be an
+editable `manual` row with `automatable: true`; this is an explicit checklist exception and
+does not claim a human-only blocker. For backwards compatibility, the renderer
+accepts older manual rows with no `manualReason`, but new skill output must provide one.
+A manual row that was demoted because a
 later diff affected its screen may instead carry `previousEvidence` with the same `ref` and
 `head` shape. Never-exercised manual rows omit both fields, and `previousEvidence` never
 promotes a row to automatic verification.
@@ -97,9 +112,13 @@ label records verification evidence and is not product acceptance. If authority 
 evidence is missing, keep the data-changing result `manual`.
 
 The HTML renderer places `auto-verified` rows in a collapsed `Automated` group as checked,
-disabled controls with their evidence reference. `partial`, `failed`, and `manual` rows remain editable
-in the manual list; `partial` and `failed` rows show current evidence, while head-demoted manual rows show
-`previousEvidence` with an explicit previous-head label. Neither state is product acceptance.
+disabled controls with their evidence reference. `verification-gap` rows appear in a separate
+visible `자동 검증 필요` section without checkboxes, with a direction to run
+`/tk-browser-verify` without arguments and then regenerate the sheet. `partial`, `failed`, and
+`manual` rows remain editable in the manual list; `partial` and `failed` rows show current
+evidence, while head-demoted manual rows show `previousEvidence` with an explicit previous-head
+label. A `failed` row stays on that same criterion; a manual checkbox records follow-up work
+without changing the failed result.
 
 ## Screen links
 
@@ -177,7 +196,9 @@ least two editable rows exist, verify that two rows plus a note survive reload. 
 than two editable rows, verify note persistence and `auto-verified` immutability instead, and
 report the editable-row check as `not applicable`. IDs must be unique, counts accurate, code-only
 status visible, reset must retain the note, auto-verified rows must stay checked after reset
-without becoming editable, and partial/manual rows must remain in the manual list. Verify
+without becoming editable, partial/manual rows must remain in the manual list, and
+`verification-gap` rows must appear outside it without checkboxes. The gap direction must be
+visible in both interactive and no-JS views. Verify
 evidence references and the collapsed Automated grouping from the final data, not just the
 bundled sample. Preserve actual
 failure/limitation evidence; remove only the run-owned profile. Storage-denied environments

@@ -189,7 +189,14 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
   .badge.auto { color: var(--good); background: var(--hover); }
   .badge.partial { color: var(--accent); background: var(--hover); }
   .badge.failed { color: var(--bad); background: var(--hover); }
+  .badge.gap { color: var(--warn); background: var(--warn-bg); }
   .badge.demoted { color: var(--muted); background: var(--hover); }
+  .manual-detail { display: block; color: var(--muted); font-size: 12px; margin-left: 8px; }
+  .verification-gaps { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px 14px; margin-bottom: 12px; }
+  .verification-gaps > h2 { margin: 4px 0; }
+  .verification-gaps > p { color: var(--muted); margin: 4px 0 10px; }
+  .gap-group { background: var(--panel); border-top: 1px solid var(--line); padding-top: 4px; }
+  .gap-group h3 { font-size: 14px; margin: 8px 0; }
   .criterion-id { margin-left: 6px; color: var(--muted); font-size: 11px; white-space: nowrap; }
   .evidence { color: var(--muted); font-size: 11px; margin-left: 6px; overflow-wrap: anywhere; }
   details.automated { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px 14px; margin-bottom: 12px; }
@@ -239,18 +246,21 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
 <!--
   사용법: 아래 qa-data JSON을 채운 뒤 render_static_inventory.py로 정적 목록을 재생성한다.
   대화형 렌더링, 항목 id, 저장은 이 파일의 스크립트가 맡는다.
+  - head: 기준이 되는 현재 후보 commit (신규 시트 필수; 이전 시트는 누락될 수 있음)
   - storageKey: 작업 단위로 고유하게 (예: "<task>-<topic>"). 바꾸면 이전 체크와 메모를 읽지 않는다.
   - text 안의 `백틱` 은 화면에서 그대로 확인한 표기, 그 밖의 글은 설명이다.
   - provenance: "observed"(화면 확인) | "code-only"(기본)(코드 문자열만 확인, "코드 기준" 배지 표시)
-  - criterionId: 영향 인벤토리와 verifier가 공유하는 안정적인 행 ID (선택)
-  - verification: "manual"(기본) | "auto-verified" | "partial" | "failed"
+  - criterionId: 영향 인벤토리와 verifier가 공유하는 안정적인 행 ID (새 행 필수)
+  - verification: "manual"(기본) | "verification-gap" | "auto-verified" | "partial" | "failed"
   - auto-verified/partial/failed 는 evidence: {"ref":"run id 또는 evidence path","head":"근거가 묶인 head"} 를 가진다.
+  - verification-gap 은 criterionId가 있는 자동 검증 대기 행이며 수동 체크박스가 없다. 새 manual 행은 manualReason/unblock, 데이터·도구 한계라면 searchScope도 가진다.
   - checks 가 없는 item 은 item 자체가 체크 항목이다. heading: true 인 check 는 체크 없는 소제목이다.
 -->
 <script type="application/json" id="qa-data">
 {
   "title": "예시 작업 QA 시트",
   "storageKey": "example-task-qa",
+  "head": "sample-head",
   "legend": [
     "백틱 안의 메뉴, 탭, 버튼 문구는 대상 환경 화면에서 그대로 확인한 표기입니다.",
     "`코드 기준` 배지는 화면에서 보지 못하고 코드 문자열만 확인한 항목입니다.",
@@ -342,8 +352,14 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
   const nonblank = (v) => typeof v === "string" && v.trim().length > 0;
   const strings = (v) => v === undefined || (Array.isArray(v) && v.every((s) => typeof s === "string"));
   const provenance = (v) => v === undefined || v === "observed" || v === "code-only";
-  const verification = (v) => v === undefined || v === "manual" || v === "auto-verified" || v === "partial" || v === "failed";
+  const verification = (v) => v === undefined || v === "manual" || v === "verification-gap" || v === "auto-verified" || v === "partial" || v === "failed";
+  const manualReasons = new Set(["unauthorized-or-irreversible", "data-unavailable-after-search", "verified-capability-gap"]);
   const evidence = (v) => object(v) && nonblank(v.ref) && nonblank(v.head);
+  const manualDetails = (v) => {
+    if (v.manualReason === undefined) return v.searchScope === undefined && v.unblock === undefined;
+    if (!manualReasons.has(v.manualReason) || !nonblank(v.unblock)) return false;
+    return !["data-unavailable-after-search", "verified-capability-gap"].includes(v.manualReason) || nonblank(v.searchScope);
+  };
   const criterionIds = new Set();
   const criterionId = (v) => {
     if (v === undefined) return true;
@@ -353,10 +369,17 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
   };
   const validVerification = (v) => {
     if (!verification(v.verification)) return false;
+    if (v.automatable !== undefined && typeof v.automatable !== "boolean") return false;
     const mode = v.verification || "manual";
     if (mode === "manual") {
-      return v.evidence === undefined && (v.previousEvidence === undefined || evidence(v.previousEvidence));
+      return (v.automatable === undefined || typeof v.automatable === "boolean")
+        && v.evidence === undefined && (v.previousEvidence === undefined || evidence(v.previousEvidence))
+        && manualDetails(v);
     }
+    if (mode === "verification-gap") return nonblank(v.criterionId) && v.evidence === undefined
+      && v.previousEvidence === undefined && v.manualReason === undefined && v.searchScope === undefined
+      && v.unblock === undefined && v.automatable !== false;
+    if (v.automatable !== undefined || v.manualReason !== undefined || v.searchScope !== undefined || v.unblock !== undefined) return false;
     return v.previousEvidence === undefined && evidence(v.evidence);
   };
   const safeUrl = (v) => {
@@ -378,7 +401,8 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
       ? it.verification === undefined && it.evidence === undefined && it.previousEvidence === undefined
       : validVerification(it);
   };
-  const validData = (d) => object(d) && nonblank(d.title) && nonblank(d.storageKey) && strings(d.legend)
+  const validData = (d) => object(d) && nonblank(d.title) && nonblank(d.storageKey)
+    && (d.head === undefined || nonblank(d.head)) && strings(d.legend)
     && (d.environment === undefined || (object(d.environment) && nonblank(d.environment.label) && safeUrl(d.environment.baseUrl)))
     && Array.isArray(d.groups) && d.groups.length > 0 && d.groups.every((g) => object(g)
       && nonblank(g.title) && Array.isArray(g.items) && g.items.length > 0 && g.items.every(it => validItem(it)
@@ -428,12 +452,14 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
     ? `<span class="evidence">${label}: <code>${esc(value.ref)}</code> @ <code class="ht-token">${esc(value.head)}</code></span>`
     : "";
   const criterionHtml = value => value ? `<code class="criterion-id">${esc(value)}</code>` : "";
-  const checkLi = (id, text, prov, indent, mode = "manual", evidenceValue, previousEvidenceValue, criterionValue) => {
+  const checkLi = (id, text, prov, indent, mode = "manual", evidenceValue, previousEvidenceValue, criterionValue, row = {}) => {
     if (seen.has(id)) throw new Error("체크 항목 ID가 중복됩니다. 항목을 구별할 화면과 조건을 추가해 주세요.");
     seen.add(id);
     const provenanceBadge = prov !== "observed" ? '<span class="badge">코드 기준</span>' : "";
     const verificationBadge = mode === "auto-verified"
       ? '<span class="badge auto">자동 검증</span>'
+      : mode === "verification-gap"
+        ? '<span class="badge gap">자동 검증 필요</span>'
       : mode === "partial"
         ? '<span class="badge partial">부분 자동 확인</span>'
         : mode === "failed"
@@ -442,19 +468,26 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
     const auto = mode === "auto-verified";
     const attrs = auto ? ' checked disabled data-auto="true"' : "";
     const classes = auto ? " checked auto-verified" : mode === "partial" ? " partial" : "";
-    return `<li class="check${classes} lv${Math.min(indent || 0, 3)}"><label><input type="checkbox" data-id="${id}"${attrs}><span class="ctext">${fmt(text)}</span>${criterionHtml(criterionValue)}${provenanceBadge}${verificationBadge}${evidenceHtml(evidenceValue)}${evidenceHtml(previousEvidenceValue, "이전 근거")}</label></li>`;
+    if (mode === "verification-gap") return `<li class="check verification-gap lv${Math.min(indent || 0, 3)}"><div><span class="ctext">${fmt(text)}</span>${criterionHtml(criterionValue)}${provenanceBadge}${verificationBadge}</div></li>`;
+    const manualReasonLabels = { "unauthorized-or-irreversible": "권한 없음 또는 되돌릴 수 없는 쓰기", "data-unavailable-after-search": "검색 후에도 데이터를 찾지 못함", "verified-capability-gap": "실제 시도에서 도구 한계 확인" };
+    const manualInfo = mode === "manual" && row.manualReason
+      ? `<span class="manual-detail">이유: ${esc(manualReasonLabels[row.manualReason])}</span>${row.searchScope ? `<span class="manual-detail">탐색·시도 범위: ${fmt(row.searchScope)}</span>` : ""}<span class="manual-detail">해제 방법: ${fmt(row.unblock)}</span>`
+      : "";
+    const automatableBadge = mode === "manual" && row.automatable === true ? '<span class="badge gap">요청된 체크리스트 · 자동화 가능</span>' : "";
+    return `<li class="check${classes} lv${Math.min(indent || 0, 3)}"><label><input type="checkbox" data-id="${id}"${attrs}><span class="ctext">${fmt(text)}</span>${criterionHtml(criterionValue)}${provenanceBadge}${verificationBadge}${automatableBadge}${evidenceHtml(evidenceValue)}${evidenceHtml(previousEvidenceValue, "이전 근거")}</label>${manualInfo}</li>`;
   };
-  const modeMatches = (mode, automated) => automated ? mode === "auto-verified" : mode !== "auto-verified";
-  const renderItem = (g, it, automated) => {
+  const modeMatches = (mode, bucket) => bucket === "automated" ? mode === "auto-verified"
+    : bucket === "gap" ? mode === "verification-gap" : mode !== "auto-verified" && mode !== "verification-gap";
+  const renderItem = (g, it, bucket) => {
     if (!it.checks || !it.checks.length) {
       const mode = verificationMode(it.verification);
-      if (!modeMatches(mode, automated)) return "";
-      let row = `<li><ul class="checks">${checkLi(checkId(g, it), it.title, it.provenance, 0, mode, it.evidence, it.previousEvidence, it.criterionId)}</ul>`;
+      if (!modeMatches(mode, bucket)) return "";
+      let row = `<li><ul class="checks">${checkLi(checkId(g, it), it.title, it.provenance, 0, mode, it.evidence, it.previousEvidence, it.criterionId, it)}</ul>`;
       row += screenLink(it);
       if (it.notes && it.notes.length) row += `<ul class="notes">${it.notes.map((n) => `<li>${fmt(n)}</li>`).join("")}</ul>`;
       return row + "</li>";
     }
-    const matching = it.checks.filter((c) => !c.heading && modeMatches(verificationMode(c.verification), automated));
+    const matching = it.checks.filter((c) => !c.heading && modeMatches(verificationMode(c.verification), bucket));
     if (!matching.length) return "";
     let row = `<li><div class="ititle">${fmt(it.title)}${screenLink(it)}</div>`;
     if (it.notes && it.notes.length) row += `<ul class="notes">${it.notes.map((n) => `<li>${fmt(n)}</li>`).join("")}</ul>`;
@@ -465,10 +498,10 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
         continue;
       }
       const mode = verificationMode(c.verification);
-      if (!modeMatches(mode, automated)) continue;
+      if (!modeMatches(mode, bucket)) continue;
       row += checkLi(checkId(g, it, c.text), c.text,
         it.provenance === "observed" && c.provenance === "observed" ? "observed" : "code-only",
-        c.indent, mode, c.evidence, c.previousEvidence, c.criterionId);
+        c.indent, mode, c.evidence, c.previousEvidence, c.criterionId, c);
     }
     return row + "</ul></li>";
   };
@@ -481,7 +514,7 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
 
     let automated = "", automatedCount = 0;
     for (const g of data.groups) {
-      const items = g.items.map((it) => renderItem(g, it, true)).filter(Boolean);
+      const items = g.items.map((it) => renderItem(g, it, "automated")).filter(Boolean);
       if (!items.length) continue;
       automatedCount += g.items.reduce((count, it) => {
         if (!it.checks || !it.checks.length) return count + (verificationMode(it.verification) === "auto-verified" ? 1 : 0);
@@ -493,8 +526,21 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
       html += `<details class="automated"><summary>Automated <span class="gcount">${automatedCount} auto-verified</span></summary>${automated}</details>`;
     }
 
+    const gapCount = data.groups.reduce((count, g) => count + g.items.reduce((subtotal, it) => {
+      if (!it.checks || !it.checks.length) return subtotal + (verificationMode(it.verification) === "verification-gap" ? 1 : 0);
+      return subtotal + it.checks.filter((c) => !c.heading && verificationMode(c.verification) === "verification-gap").length;
+    }, 0), 0);
+    if (gapCount) {
+      let gaps = "";
+      for (const g of data.groups) {
+        const items = g.items.map((it) => renderItem(g, it, "gap")).filter(Boolean);
+        if (items.length) gaps += `<section class="gap-group"><h3>${fmt(g.title)}</h3><ul class="items">${items.join("")}</ul></section>`;
+      }
+      html += `<section class="verification-gaps"><h2>자동 검증 필요 <span class="gcount">${gapCount}건</span></h2><p>자동화 가능한 미실행 행입니다. <code>/tk-browser-verify</code>를 인자 없이 실행한 뒤 이 시트를 다시 생성하세요.</p>${gaps}</section>`;
+    }
+
     for (const g of data.groups) {
-      const items = g.items.map((it) => renderItem(g, it, false)).filter(Boolean);
+      const items = g.items.map((it) => renderItem(g, it, "manual")).filter(Boolean);
       if (!items.length) continue;
       html += `<section class="group"><h2>${fmt(g.title)} <span class="gcount"></span></h2><ul class="items">${items.join("")}</ul></section>`;
     }

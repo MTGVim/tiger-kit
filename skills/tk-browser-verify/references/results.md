@@ -22,8 +22,9 @@ not the later `after/` path. A later negative sample does not erase the observed
 Require these contract fields in nested and standalone results; keep nested results limited to:
 
 - status
-- `contract: <metadata.tigerkit.version>`; the current contract is `1.1.0`
-- `coverage: planned <N> / executed <n> / covered-by <c> / not-executed <m>`; the counts must reconcile to the full approved inventory
+- `contract: <metadata.tigerkit.version>`; the current contract is `1.2.0`
+- `scope: full-inventory | explicitly-scoped`; when scoped, identify the user's exact scope
+- `coverage: planned <N> / executed <n> / covered-by <c> / out-of-scope <o> / not-executed <m>`; the counts must reconcile to the full discovered inventory
 - `human_action: none | <N> (criterion IDs, reason and next action)`; nested returns use `none` when the parent owns all remaining work
 - `phase: baseline | after | acceptance`; for a successful pre-edit baseline also return `baseline_capture: Pass`,
   `verification_complete: false`, `run_id`, `replay_procedure`, and the exact `next_required`; include
@@ -33,9 +34,10 @@ Require these contract fields in nested and standalone results; keep nested resu
 - `capture_only_mutation: <description> | none`, also in the evidence index; include outlines/labels,
   hiding/removal, and runtime mocks, or explicitly `none` when no capture-only mutation occurred
 - one fact row per approved criterion with `criterion_id`, `result`, `route`, `entry`, `trigger`, `operation: read | create | update`, `input`, `evidence_kind`, `evidence_ref`, and `head`
+- use `result: out-of-scope` for inventory rows omitted only by explicit user scope; keep their IDs and scope reason in the full row map
 - use `result: covered-by:<criterion_id>` for covered rows, with the referenced row's `evidence_ref` and `head`; preserve the equivalence rationale in the full row map
-- `input: trusted | synthetic(<reason>)`; product interaction cannot Pass on synthetic input. Synthetic evidence is allowed only when the criterion itself permits a non-interaction probe
-- `evidence_kind`: one or more of `blocked-intercept | request+response | reread-runtime | reread-image | visual-pair | trace | accessibility | dom-runtime`; use the most direct evidence actually inspected
+- `input: trusted | synthetic(<reason>) | not-run`; product interaction cannot Pass on synthetic input. Synthetic evidence is allowed only when the criterion itself permits a non-interaction probe
+- `evidence_kind`: one or more of `blocked-intercept | request+response | reread-runtime | reread-image | visual-pair | trace | accessibility | dom-runtime | none`; use `none` and `evidence_ref: none` when no attempt produced evidence
 - for every `create` or `update` row, `Pass` requires `reread-runtime` on the same screen and field. If `reread-image` is used, the inspected image must show the field being judged
 - for every unexecuted row: `reason`, `search_scope` (page, filters, data conditions or the exact preflight boundary), and `unblock` (the concrete step that would permit execution)
 - non-sensitive auth mode
@@ -49,7 +51,7 @@ Require these contract fields in nested and standalone results; keep nested resu
 - cleanup fact, including exact run-owned server/browser shutdown, recorded launch PID/handle and confirmed exit and any verified residue; no baseline-to-final-head process hold
 - `automated_regression: protected | N/A | exception | unknown` as supplied/verified parent disposition
 
-Use the parent-provided inventory row ID verbatim as `criterion_id`. For direct calls without IDs, assign `BV-001`, `BV-002`, ... once in inventory order and preserve that mapping across retries and phases. `tk-prep` assigns IDs before handoff. Keep the same ID in the QA sheet's `criterionId`; map `evidence_ref` to the sheet's `evidence.ref`, and copy `head` unchanged. Never create a second criterion for a failed part of one row.
+Use the parent-provided or discovered inventory row ID verbatim as `criterion_id`. For direct calls without IDs, assign `BV-001`, `BV-002`, ... once in inventory order and preserve that mapping across retries and phases. A standalone no-argument or scope-only call discovers and reconciles the full same-task inventory before runtime startup; explicit narrowing records excluded rows as `out-of-scope`. `tk-prep` assigns IDs before handoff. Keep the same ID in the QA sheet's `criterionId`; map `evidence_ref` to the sheet's `evidence.ref`, and copy `head` unchanged. Never create a second criterion for a failed part of one row.
 
 When runtime evidence exists, maintain one bounded run-owned `README.md` as the evidence index and canonical full row map. Include each row's full fields above, detailed facts, capture mapping and any non-executed-row details. A standalone chat result may show only the compact row summary below and substitute the README's complete absolute path for the full map. Do not add other Markdown files to the evidence directory.
 
@@ -84,7 +86,7 @@ A standalone result, with no active owner task to resume, uses this shape. Requi
 ```text
 ## Verdict
 Status: Pass
-head `<sha>` · env `<environment>` · contract `1.1.0` · coverage planned 7 / executed 7 / covered-by 0 / not-executed 0
+head `<sha>` · env `<environment>` · contract `1.2.0` · scope full-inventory · coverage planned 7 / executed 7 / covered-by 0 / out-of-scope 0 / not-executed 0
 
 ### ✅ 검증한 것
 | ID | 판정 | 근거 종류 | 입력 |
@@ -107,7 +109,7 @@ Never promote a result to `Pass` without required runtime evidence.
 
 | Status | Meaning |
 | --- | --- |
-| `Pass` | Current inspected evidence covers every approved browser criterion |
+| `Pass` | Current inspected evidence covers every approved browser criterion; if `scope` is `explicitly-scoped`, this is not a full-inventory pass |
 | `Fail` | Current runtime evidence violates a criterion |
 | `Blocked` | A user-owned safety or target decision is required before execution |
 | `Unverifiable` | Required headless auth, environment, or evidence cannot be established |

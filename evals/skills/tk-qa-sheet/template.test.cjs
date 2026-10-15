@@ -210,6 +210,25 @@ test('auto-verified rows are separated, pre-checked and immutable while partial 
   assert.equal(result.ids.count.textContent, '1 / 3');
 });
 
+test('verification gaps are visible to automation but never presented as human checkboxes', () => {
+  const data = make([{ title: 'Area', items: [{ title: 'Screen', provenance: 'observed', checks: [
+    { text: 'Unattempted read', criterionId: 'UI-010', provenance: 'observed', verification: 'verification-gap' },
+    { text: 'Capability limited', criterionId: 'UI-011', provenance: 'observed', verification: 'manual',
+      manualReason: 'verified-capability-gap', searchScope: 'Page 1, filter X', unblock: 'Use a compatible provider' },
+    { text: 'Requested human checklist', criterionId: 'UI-012', verification: 'manual', automatable: true }
+  ] }]}]);
+  const result = run(data);
+  assert.match(result.html, /class="verification-gaps"/);
+  assert.match(result.html, /자동 검증 필요/);
+  assert.match(result.html, /\/tk-browser-verify/);
+  assert.match(result.html, /UI-010/);
+  assert.match(result.html, /Page 1, filter X/);
+  assert.match(result.html, /Use a compatible provider/);
+  assert.match(result.html, /요청된 체크리스트 · 자동화 가능/);
+  assert.equal(result.boxes.length, 2);
+  assert.equal(result.ids.count.textContent, '0 / 2');
+});
+
 test('promoting a stored manual row to auto clears stale completion before later demotion', () => {
   const manual = make([{ title: 'Area', items: [{ title: 'Screen' }] }]);
   const first = run(manual); toggle(first.boxes[0]);
@@ -249,7 +268,9 @@ test('malformed data and schema show an error without a partial sheet', () => {
     make([{ title: 'Area', items: [{ title: 'Missing evidence', verification: 'auto-verified' }] }]),
     make([{ title: 'Area', items: [{ title: 'Manual with evidence', evidence: { ref: 'run', head: 'abc' } }] }]),
     make([{ title: 'Area', items: [{ title: 'Auto with previous evidence', verification: 'auto-verified', evidence: { ref: 'run', head: 'abc' }, previousEvidence: { ref: 'old', head: 'def' } }] }]),
-    make([{ title: 'Area', items: [{ title: 'Bad previous evidence', previousEvidence: { ref: '', head: 'abc' } }] }])
+    make([{ title: 'Area', items: [{ title: 'Bad previous evidence', previousEvidence: { ref: '', head: 'abc' } }] }]),
+    make([{ title: 'Area', items: [{ title: 'Gap without stable ID', verification: 'verification-gap' }] }]),
+    make([{ title: 'Area', items: [{ title: 'Unscoped capability gap', manualReason: 'verified-capability-gap', unblock: 'Use a provider' }] }])
   ]) {
     const result = run(data);
     assert.match(result.body.error, /qa-data/);

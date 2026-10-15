@@ -3760,6 +3760,25 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "prep-splits-inventory-by-entry-point-before-status-and-id",
+      "path": "success",
+      "prompt": "/tk-prep 변경 영향 인벤토리를 준비해 주세요. 화면에 목록/등록이 있고 같은 레코드의 등록/수정 폼도 있습니다. 실행 상태와 안정 ID를 배정해 주세요.",
+      "expected_output": "목록과 등록, 등록과 수정 진입점을 각각 독립 행으로 나눈 뒤 서로 다른 안정 criterion_id와 각자의 상태를 배정합니다. 한 행의 성공이 다른 행을 가리지 않도록 합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "하나의 영향 인벤토리 행에 복수 진입점/화면을 묶지 않는다. 등록/수정, 목록/등록 행을 상태나 식별자를 지정하기 전에 각각 분리한다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

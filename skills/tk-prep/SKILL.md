@@ -162,7 +162,9 @@ Record each row's route, screen, trigger, observable check, value/string source 
 namespace), validation schema, request path and mutation handler where applicable, visibility data
 condition, and any transformation such as a prefix. Record whether a changed string is compared,
 parsed, or transmitted; those uses need source-level tracing, unit tests, and review in addition to
-runtime display verification. Assign each row a stable `criterion_id` once (for example `UI-001`),
+runtime display verification. Split any row naming multiple entry points or surfaces (for example,
+create and edit, or list and register) into one row per entry point before assigning status or IDs.
+Assign each row a stable `criterion_id` once (for example `UI-001`),
 preserve it through retries and handoffs, and pass it unchanged to `tk-browser-verify` and
 `tk-qa-sheet`. Include `route`, `entry`, `trigger`, `operation: read | create | update`,
 `evidence_ref`, and `head` in the verifier's mapped row. Every unexecuted row records `reason`,
