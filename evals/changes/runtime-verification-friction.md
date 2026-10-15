@@ -5,8 +5,8 @@
 
 ## 변경 내용
 
-- `skills/tk-prep/SKILL.md`, `skills/tk-prep/references/repository-context.md`: 사용자가 소유한 무시 설정의 `verificationDataPolicy`를 확인하고, 정확한 범위가 맞으면 재질문하지 않는다. 되돌릴 수 없다고 분류하기 전에 원복 경로를 확인한다.
-- `skills/tk-browser-verify/references/safety.md`: 원복과 잔여 부작용 확인을 명시하고, 권한 및 운영 데이터 경계를 보존한다.
+- `skills/tk-prep/SKILL.md`, `skills/tk-prep/references/repository-context.md`: 구조화된 사용자 관리 `verificationDataPolicy`가 정확한 QA/`dev` 범위를 허용하면 `policy-file authority`로 기록하고 재질문하지 않는다. 되돌릴 수 없다고 분류하기 전에 원복 경로를 확인한다.
+- `skills/tk-browser-verify/references/safety.md`: 구조화 정책의 권한 범위를 확인하며 원복·잔여 부작용 확인과 운영 데이터 경계를 보존한다.
 - `skills/tk-browser-verify/references/behavior.md`: 기본 드래그, 헤드리스 기본 선택 상자 우회와 날짜 선택기 입력 방법을 안내한다.
 - `skills/tk-browser-verify/references/environment.md`: 같은 세션에서 같은 형식의 비밀 입력을 반복 요청할 때 이유와 절대경로만 표시한다.
 - `skills/tk-qa-sheet/SKILL.md`, `skills/tk-qa-sheet/references/qa-sheet-data.md`: 현재 권한으로 실행 가능한 미실행 행과 데이터 변경이 필요한 행 수를 구분한다. 편집 행이 두 개보다 적을 때 자체 점검 기준을 적용하고, 승인된 저장 결과 증거를 자동 확인으로 인정한다.
@@ -24,10 +24,12 @@
 - `skills/tk-prep/SKILL.md`
 - `skills/tk-qa-sheet/SKILL.md`
 - `skills/tk-retro/SKILL.md`
+- `skills/tk-browser-verify/references/safety.md`
+- `skills/tk-prep/references/repository-context.md`
 
 ## 보존 경계
 
-운영 데이터 변경, 기존 데이터 삭제, 결제, 외부 발송, 계정·권한 변경, 채팅을 통한 비밀 입력, QA 시트 자동 실행을 허용하지 않는다. 추적형 팀 설정만으로 변경 권한을 부여하지 않는다. 원복은 복구 및 비교 경로가 확인된 경우에만 인정하며 잔여 효과를 공개한다.
+운영 데이터 변경, 기존 데이터 삭제, 결제, 외부 발송, 계정·권한 변경, 채팅을 통한 비밀 입력, QA 시트 자동 실행을 허용하지 않는다. 추적형 팀 설정의 자유 문구는 권한을 부여하지 않는다. 구조화 `verificationDataPolicy`만 정확히 일치하는 비운영 작업에 한해 제한된 권한을 부여한다. 원복은 복구 및 비교 경로가 확인된 경우에만 인정하며 잔여 효과를 공개한다.
 
 ## 검증 한계
 

@@ -695,6 +695,7 @@
     "tk-pr-image:behavior:upload-cleanup-uses-recorded-literal-path",
     "tk-pr-open:behavior:pr-open-separates-remote-write-from-local-cleanup",
     "tk-prep:behavior:prep-verification-policy-and-restoration-frontier",
+    "tk-prep:behavior:prep-verification-policy-does-not-escape-scope",
     "tk-browser-verify:behavior:browser-native-drag-select-and-repeat-token-prompt",
     "tk-qa-sheet:behavior:qa-authorized-data-evidence-and-empty-manual-selfcheck",
     "tk-retro:behavior:retro-report-only-disposition-concise-final"
