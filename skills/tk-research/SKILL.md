@@ -98,6 +98,10 @@ Essential unavailable evidence is `BLOCKED`, never convergence. No self-scheduli
 
 ## Human result
 
+Before drafting a report, read [report](references/report.md), [clear writing](references/clear-writing.md),
+[HTML output](references/html-output.md) and [the template](assets/report.html) in separate complete
+reads. If a tool archives or truncates any result, retrieve that same file fully before applying its
+rules.
 Lead with the recommendation and confidence. Explain decisive evidence, what was actually researched
 or tested, failed directions, current stage, unknowns and the next frontier/action. Cite sources beside
 claims with revision/date. Keep the result self-contained for `tk-prep` without implementation authority.

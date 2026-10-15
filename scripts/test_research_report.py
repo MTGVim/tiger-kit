@@ -1,9 +1,190 @@
 from pathlib import Path
+import re
 import subprocess
+import tempfile
 import unittest
 
 
 class ResearchReportTest(unittest.TestCase):
+    def report_html(self, *, navigation=True, empty_navigation=False):
+        root = Path(__file__).resolve().parents[1]
+        template = (root / 'skills/tk-research/assets/report.html').read_text(encoding='utf-8')
+        style = re.search(r'<style\b[^>]*>.*?</style>', template, re.I | re.S).group()
+        script = re.search(r'<script\b[^>]*>.*?</script>', template, re.I | re.S).group()
+        if not navigation:
+            nav = ''
+        elif empty_navigation:
+            nav = '''
+<nav class="ht-doc-nav"></nav><nav class="ht-doc-controls"></nav>
+'''
+        else:
+            nav = '''
+<nav class="ht-doc-nav"><a href="#overview">Overview</a><a href="#evidence">Evidence</a><a href="#verification">Verification</a><a href="#sources">Sources</a></nav>
+<nav class="ht-doc-controls"><a href="#document-top">Top</a><a href="#document-bottom">Bottom</a></nav>
+'''
+        return f'''<!doctype html>
+<html><head>{style}</head><body id="document-top">
+<main class="ht-doc-content">
+  <section id="overview"><h2>Overview</h2><p>Finding.<sup id="cite-1-1"><a href="#ref-1">[1]</a></sup></p></section>
+  <section id="evidence"><h2>Evidence</h2></section>
+  <section id="verification"><h2>Verification</h2></section>
+  <section id="sources"><h2>Sources</h2><ol><li id="ref-1">Source <a href="#cite-1-1">↩ 1</a></li></ol></section>
+</main>
+<footer id="document-bottom">🤖 본 보고서는 AI가 작성했습니다.</footer>
+{nav}
+{script}
+</body></html>'''
+
+    def check_report(self, html):
+        root = Path(__file__).resolve().parents[1]
+        checker = root / 'skills/tk-research/scripts/check_report.py'
+        with tempfile.TemporaryDirectory(prefix='tk-research-report-test-') as temp_dir:
+            report_path = Path(temp_dir) / 'report.html'
+            report_path.write_text(html, encoding='utf-8')
+            return subprocess.run(
+                ['python3', str(checker), str(report_path)],
+                capture_output=True, text=True, check=False)
+
+    def assert_rejected(self, html, expected_message):
+        result = self.check_report(html)
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn(expected_message, result.stderr)
+
+    def test_report_checker_accepts_template_and_complete_report(self):
+        root = Path(__file__).resolve().parents[1]
+        checker = root / 'skills/tk-research/scripts/check_report.py'
+        template = root / 'skills/tk-research/assets/report.html'
+        result = subprocess.run(
+            ['python3', str(checker), str(template)],
+            capture_output=True, text=True, check=False)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        result = self.check_report(self.report_html())
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_short_report_can_omit_both_navigation_controls(self):
+        html = self.report_html(navigation=False)
+        html = html.replace('  <section id="verification"><h2>Verification</h2></section>\n', '')
+        result = self.check_report(html)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_long_report_requires_both_navigation_controls(self):
+        self.assert_rejected(self.report_html(navigation=False), 'navigation')
+        html = self.report_html().replace(
+            '<nav class="ht-doc-controls"><a href="#document-top">Top</a>'
+            '<a href="#document-bottom">Bottom</a></nav>', '')
+        self.assert_rejected(html, 'navigation')
+
+    def test_navigation_exemption_cannot_leave_only_one_control(self):
+        html = self.report_html(navigation=False)
+        html = html.replace('  <section id="evidence"><h2>Evidence</h2></section>\n', '')
+        html = html.replace('  <section id="verification"><h2>Verification</h2></section>\n', '')
+        html = html.replace(
+            '</main>', '</main><nav class="ht-doc-nav"></nav>')
+        self.assert_rejected(html, 'navigation')
+
+    def test_present_navigation_must_contain_toc_and_movement_links(self):
+        result = self.check_report(self.report_html(empty_navigation=True))
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn('table of contents', result.stderr)
+        self.assertIn('top and bottom', result.stderr)
+        missing_toc_link = self.report_html().replace(
+            '<a href="#verification">Verification</a>', '')
+        self.assert_rejected(missing_toc_link, 'missing section links')
+        missing_bottom_link = self.report_html().replace(
+            '<a href="#document-bottom">Bottom</a>', '')
+        self.assert_rejected(missing_bottom_link, 'top and bottom')
+
+    def test_local_fragments_must_resolve_to_unique_ids(self):
+        broken_link = self.report_html().replace('href="#overview"', 'href="#missing"')
+        self.assert_rejected(broken_link, 'fragment')
+        broken_non_anchor_link = self.report_html().replace(
+            '</body>', '<link href="#missing">\n</body>')
+        self.assert_rejected(broken_non_anchor_link, 'fragment')
+        duplicate_id = self.report_html().replace(
+            '<section id="evidence">', '<section id="overview">')
+        self.assert_rejected(duplicate_id, 'duplicate id')
+
+    def test_unsafe_links_and_external_assets_are_rejected(self):
+        for url in ('javascript:alert(1)', 'java&#x09;script:alert(1)'):
+            unsafe_link = self.report_html().replace(
+                'href="#overview"', f'href="{url}"')
+            self.assert_rejected(unsafe_link, 'unsafe URL scheme')
+        for asset in (
+            '<script src="https://example.test/report.js"></script>',
+            '<link rel="stylesheet" href="https://example.test/report.css">',
+            '<img src="https://example.test/figure.png" alt="figure">',
+            '<source srcset="https://example.test/figure.png 1x">',
+            '<iframe src="https://example.test/widget"></iframe>',
+            '<video src="https://example.test/clip.mp4"></video>',
+            '<object data="https://example.test/widget"></object>',
+            '<svg><image href="https://example.test/figure.svg"></image></svg>',
+            '<svg><image xlink:href="https://example.test/figure.svg"></image></svg>',
+            '<svg><rect fill="url(https://example.test/paint.svg#gradient)"></rect></svg>',
+            '<svg><rect filter="url(https://example.test/filter.svg#blur)"></rect></svg>',
+            '<svg><rect stroke="u\\72l(https://example.test/paint.svg#gradient)"></rect></svg>',
+            '<style>@import url("https://example.test/report.css");</style>',
+            '<style>u\\72l(https://example.test/bg.png)</style>',
+            '<style>@\\69mport url("https://example.test/report.css")</style>',
+            '<div style="background-image:url(https://example.test/bg.png)"></div>',
+            '<div style=\'background-image:image-set("https://example.test/p.png" 1x)\'></div>',
+            '<script>fetch("https://example.test/data")</script>',
+            '<script>const image = new Image(); image.src = "https://example.test/pixel";</script>',
+            '<meta http-equiv="refresh" content="0;url=https://example.test/">',
+        ):
+            self.assert_rejected(
+                self.report_html().replace('</body>', asset + '\n</body>'),
+                'runtime',
+            )
+        local_svg_reference = self.report_html().replace(
+            '</body>', '<svg><defs><linearGradient id="local-gradient"></linearGradient>'
+            '</defs><rect fill="url(#local-gradient)"></rect></svg>\n</body>')
+        self.assertEqual(self.check_report(local_svg_reference).returncode, 0)
+        linked_source = self.report_html().replace(
+            '<li id="ref-1">Source ',
+            '<li id="ref-1"><a href="https://example.test/source">Source</a> ',
+        )
+        self.assertEqual(self.check_report(linked_source).returncode, 0)
+        event_handler = self.report_html().replace(
+            '<body id="document-top">',
+            '<body id="document-top" onload="fetch(\'https://example.test/\')">',
+        )
+        self.assert_rejected(event_handler, 'event handlers')
+
+    def test_citations_and_reference_backlinks_must_resolve(self):
+        broken_citation = self.report_html().replace(
+            '<a href="#ref-1">[1]</a>', '<a href="#missing-reference">[1]</a>')
+        self.assert_rejected(broken_citation, 'citation')
+        missing_backlink = self.report_html().replace(
+            '<a href="#cite-1-1">↩ 1</a>', '')
+        self.assert_rejected(missing_backlink, 'backlink')
+        multiple_citations = self.report_html().replace(
+            '<sup id="cite-1-1"><a href="#ref-1">[1]</a></sup>',
+            '<sup id="cite-1-1"><a href="#ref-1">[1]</a></sup> '
+            '<sup id="cite-1-2"><a href="#ref-1">[1]</a></sup>',
+        ).replace(
+            '<a href="#cite-1-1">↩ 1</a>',
+            '<a href="#cite-1-1">↩ 1</a> '
+            '<a href="#cite-1-2">↩ 2</a>',
+        )
+        self.assertEqual(self.check_report(multiple_citations).returncode, 0)
+        missing_second_backlink = multiple_citations.replace(
+            '<a href="#cite-1-2">↩ 2</a>', '')
+        self.assert_rejected(missing_second_backlink, 'backlink')
+
+    def test_ai_authorship_notice_must_be_positive_and_appear_in_a_footer(self):
+        for notice in (
+            '본 보고서는 AI가 작성하지 않았습니다.',
+            'This report was NOT written with AI.',
+        ):
+            html = self.report_html().replace(
+                '🤖 본 보고서는 AI가 작성했습니다.', notice)
+            self.assert_rejected(html, 'AI-authorship footer')
+        positive_english = self.report_html().replace(
+            '🤖 본 보고서는 AI가 작성했습니다.',
+            'This report was written with AI.',
+        )
+        self.assertEqual(self.check_report(positive_english).returncode, 0)
+
     def test_document_toc_defaults_to_left_rail_or_collapsible_mobile_control(self):
         root = Path(__file__).resolve().parents[1]
         script = (root / 'skills/tk-explain/assets/html-theme.js').read_text()

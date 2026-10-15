@@ -1,5 +1,9 @@
 # Human research report
 
+Before drafting, read [clear writing](clear-writing.md), [HTML output](html-output.md) and [the
+offline template](../assets/report.html) in separate complete reads. If a tool archives or truncates a
+result, retrieve that same file fully before applying its rules.
+
 Read when writing the final short-research report or a material persistent checkpoint projection.
 Apply [clear writing](clear-writing.md), [HTML output](html-output.md) and Artifact Paths; reuse their
 contracts directly without invoking another skill. Default to `.tigerkit/research/<slug>/report.html`,
@@ -12,8 +16,12 @@ readable projection, not an execution ledger or editable state UI; never recover
 edits back from HTML. Bind goal/research identity, evidence revision/date and projection freshness.
 Check ownership before overwrite; atomically replace only this project's report and reread it.
 
-Use [the offline template](../assets/report.html) as a minimal starting point, replacing illustrative
-content and removing irrelevant sections rather than adding empty ceremony. The report is decision-ready
+Copy [the offline template](../assets/report.html) as the complete document shell. Preserve its inline
+styles, theme control, navigation, movement controls, scripts, citation structure and AI-authorship
+footer. Replace illustrative content and remove irrelevant sections rather than writing a replacement
+shell or adding empty ceremony. A report with at most three sections may omit both navigation
+structures only when they add no value; a report with four or more includes both.
+The report is decision-ready
 at the evidence available now, including the first material persistent checkpoint: it should let the
 reader decide whether more research is needed, whether a candidate should become implementation work,
 or whether to stop. Core content answers: goal/downstream decision; recommendation/confidence/why;
@@ -27,6 +35,20 @@ Show meaningful changes in a timeline only when they exist. Preserve direction/e
 and relationships when relevant. A short report can combine these into a few sections. Label proposed
 tests as proposed, never executed. Escape untrusted text/attributes, validate source links and use no
 external assets, unsafe URL schemes, raw sensitive logs or HTML injection.
+
+Before reporting the report artifact as successful, run the package-local checker against the saved
+file and fix every failure:
+
+    python3 <package>/scripts/check_report.py /path/to/report.html
+
+The checker verifies that the table of contents links to every section, movement controls link to
+the top and bottom, local fragments resolve, citations link to reference entries with return links,
+URL schemes are safe, runtime HTML/CSS resources and common JavaScript network APIs are absent, and
+the footer has a positive AI-authorship notice. Safe source hyperlinks remain allowed. It does not
+establish screen behavior. Use tk-browser-verify for the
+template's navigation, links, keyboard, no-JavaScript and reduced-motion checks. If the verifier or
+render environment is unavailable, record the screen result as Unverifiable with the reason in the
+`검증 및 예외` section and in the completion response.
 
 For persistent research, regenerate only after a material checkpoint/conclusion or evidence-producing
 blocker. Unchanged resumes and no-action/no-delta runs preserve report bytes. A changed report cannot

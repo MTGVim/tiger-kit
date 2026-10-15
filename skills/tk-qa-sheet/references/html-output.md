@@ -42,7 +42,9 @@ For long document-like artifacts, preserve meaningful stable `<section id="...">
 native hash links for deep access, browser history and Find. Put the hierarchical table of contents
 in a fixed left rail on desktop, with a separate lower-right top/bottom control. On narrow screens,
 collapse the table of contents into a native disclosure at the lower left; keep the top/bottom
-control at the lower right. Short documents may omit both navigators when they add no value. Use the
+control at the lower right. A document with at most three section elements may omit both
+navigators only when they add no value. A document with four or more sections includes both
+navigators; never omit only one. Use the
 shared `.ht-document`, `.ht-doc-content`, `.ht-doc-nav`, `.ht-doc-toc` and `.ht-doc-controls`
 styles in the theme assets. The left rail and mobile disclosure must work without JavaScript.
 For example, adapt the labels/IDs:
@@ -319,8 +321,15 @@ Check card text and relationship labels for overlap/clipping as well as page wid
 
 For document-like HTML, make deterministic static checks the default before delivery:
 
+For research reports, every citation points to a reference entry and each reference entry links back
+to every citation occurrence that cites it. Preserve the explicit AI-authorship notice in the footer.
+
 - Every local fragment `href` resolves to exactly one ID, and IDs are unique.
-- No runtime-loaded external `<script>`, stylesheet `<link>`, or image source is present. Ordinary source links remain allowed.
+- When document navigation is present, the table of contents links to every section and the
+  movement controls link to both the top and bottom.
+- No runtime network requests are present, including resource-loading HTML/CSS references and
+  network APIs in inline scripts. Unsafe URL schemes are rejected; ordinary HTTPS source links
+  remain allowed.
 - The document has one valid `html[data-default-theme]` value and a working theme control with the `system`, `light`, and `dark` choices.
 - Every `<details>` has a first-child `<summary>`; answer reveals and secondary evidence start collapsed, while required conclusions and background remain outside collapsed sections.
 - There is exactly one non-empty, subject-specific `<title>`; it does not use a generic label or transient generated value.

@@ -65,7 +65,7 @@ class HTMLPolicyTest(unittest.TestCase):
         text = (ROOT / 'skills/tk-explain/references/html-output.md').read_text()
         for requirement in (
             'Every local fragment `href` resolves',
-            'No runtime-loaded external `<script>`',
+            'No runtime network requests are present',
             '`html[data-default-theme]`',
             'Every `<details>` has a first-child `<summary>`',
             'subject-specific `<title>`',
