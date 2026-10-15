@@ -267,6 +267,25 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "explain-diff-explicit-dialogue-eli5-mode",
+      "path": "success",
+      "prompt": "$tk-explain-diff HEAD^..HEAD를 `dialogue-eli5` 모드로 `.tigerkit/explanations/change-easy.html`에 설명해줘.",
+      "expected_output": "정확한 base/head와 주변 코드를 한 번 조사하고, 쉬운 독자/저자 대화 표현으로 렌더링하되 실제 메커니즘·조건·path:line 근거·검증 상태를 단순화해 잃지 않는다. standard/all 탭을 추가 생성하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "명시된 dialogue-eli5 한 뷰만 만든다. 쉬운 표현과 필요한 비유는 허용하지만 실제 변경 메커니즘, 경계, source anchor, uncertainty와 verification state를 보존하고 비유로 대체하지 않는다."
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/explanations/change-easy.html"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }
