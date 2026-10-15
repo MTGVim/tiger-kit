@@ -58,6 +58,8 @@ Ordinary local fixes require no tracker onboarding.
 Do not scan or create a documentation lifecycle; if fresher code/test/runtime evidence conflicts, surface it and confirm the source of truth.
 Before creating anything, find existing components, helpers, schemas, clients, patterns, and conventions; tie claims to `path:line`, command output, or fresh state. Before comparing a hard-to-reverse design, interface, schema, or migration choice, read only relevant ADR rationale and current evidence. Do not reopen a decision whose premise still holds; surface `revisit ADR` only when it changed, and never scan an unrelated ADR or context tree.
 
+When a source the user provided materially informs a frontier question, briefly surface the decision-relevant content you actually read before asking. Attribute it to the source and preserve its verification status; do not present source claims as independently verified. Keep this as concise context, not a confirmation round, and do not ask the user to repeat known facts. If the source could not be accessed or read, say so plainly and do not infer its contents; gather accessible evidence or defer any decision that depends on it.
+
 Maintain a small preparation tree in the current conversation only. Recompute it after investigation and each user answer.
 
 - `fact`: safely answerable from repository, runtime, tool, or supplied evidence; investigate instead of asking.
