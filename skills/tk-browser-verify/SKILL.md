@@ -7,6 +7,7 @@ metadata:
     kind: hybrid
     origin: tigerkit
     relationship: native
+    version: "1.1.0"
 ---
 
 # Browser Verification
@@ -168,8 +169,14 @@ never final acceptance: keep `verification_complete: false` and resume the appro
 Only a fully verified after/acceptance phase may claim completion. Record capture-only mutations,
 including outlines, and preserve secret redaction, provenance and cleanup facts.
 
+Every result row keeps the parent's inventory ID as `criterion_id`; direct calls assign `BV-001`, `BV-002`, ... once and preserve the mapping across phases. Include `contract: 1.1.0`, reconciled planned/executed/covered-by/not-executed counts, and one full facts row per criterion. Every unexecuted row names its reason, `search_scope`, and concrete `unblock`; finish with `human_action: none | <count and criterion IDs/reasons>`. `create` and `update` cannot Pass without a same-screen, same-field reread. Link each result row to evidence kind, evidence reference and exact candidate head.
+
 For a preflight blocked before runtime evidence exists, return the real `Blocked | Unverifiable`
-status, missing prerequisite and next required input; do not invent capture or success fields.
+status, missing prerequisite and next required input; do not invent capture or success fields. Nested
+returns stay emoji-free and machine-readable. A standalone result starts with `## Verdict` and the
+exact `Status: <token>`, follows the shared reader-facing result-summary block, and keeps the full
+criterion map in the evidence `README.md` so the chat report can stay compact. Its final substantive
+block is always `👤 사람이 할 일`; put a mandatory question block after it when required.
 Do not cause unauthorized payments, external communications, destructive/production-data mutations,
 or account/permission changes. Never promote incomplete runtime evidence to `Pass`.
 
@@ -177,6 +184,28 @@ or account/permission changes. Never promote incomplete runtime evidence to `Pas
 ## Artifact Paths
 
 Create artifacts only when this skill's task authorizes them. Before any artifact write, temporary checkout/transport, or ignore setup, read [artifact paths](references/artifact-paths.md) and apply its Git exclusion, safe-path, and ownership checks. Default repository-owned output to `.tigerkit/`; honor explicit final destinations. Conversation-only work skips this reference and performs no file or ignore setup. Artifact handling grants no unrelated mutation or publication authority.
+
+<!-- tigerkit:result-summary -->
+## Reader-facing Result Summary
+
+Use this shared structure only for a final user-facing session-completion message. It does not replace an owning skill's required artifact, publication preview, machine-readable nested return, approval checkpoint, verdict/status field or footer, or final question block. Keep those contracts exact. Nested phase returns remain compact and emoji-free.
+
+When no stricter owner format applies, keep the summary concise and use these headings in this order:
+
+```text
+### 🛠️ 변경/산출물        (내용이 있을 때만)
+### ✅ 확인한 것          (항상; 실제 확인·실행 내용을 기록)
+### 💭 결정              (기록할 결정이 있을 때만)
+### 💡 권고              (실행 가능한 권고가 있을 때만)
+### ⚠️ 한계              (예외, 실패, 미실행 또는 미해결 내용이 있을 때만)
+### 🧹 정리              (항상; 정리한 자원 또는 추가 정리 대상 없음)
+### 👤 사람이 할 일       (항상; 없음 또는 ID·이유·다음 행동)
+```
+
+Use emoji only at the start of section headings. Keep status and evidence values as exact machine-readable tokens. Omit empty optional sections. Report planned versus executed work and distinguish completed checks from skipped, failed, blocked or unverifiable work. Put every remaining user action, including uncovered manual rows, in `👤`; do not imply the user has no work when any remains. This is the last substantive block. If the owner requires a final question block, put `👤` immediately before it; if an exact status footer is mandatory, preserve it unchanged after the substantive blocks.
+
+Put complete absolute artifact/evidence paths on their own final lines in the relevant block. `🧹` reports only actual cleanup or the absence of owned resources; do not claim cleanup that was not checked.
+<!-- /tigerkit:result-summary -->
 
 <!-- tigerkit:output-notation -->
 ## Output Notation

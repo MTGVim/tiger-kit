@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Seed-first TigerKit release gate.
+"""Seed-first TigerKit release checklist.
 
-기존 결정론적 release gate의 정적 검사와 language/ledger/package 검사를 재사용하면서,
+기존 결정론적 release checklist의 정적 검사와 language/ledger/package 검사를 재사용하면서,
 모든 활성 skill의 baseline 계약 보존을 검증한다. 과거의 포괄적 교체 예외는 허용하지 않는다.
 """
 from __future__ import annotations
@@ -15,9 +15,9 @@ from pathlib import Path
 os.environ.setdefault("PYTHONDONTWRITEBYTECODE", "1")
 
 if __package__:
-    from . import run_release_gate as base
+    from . import run_release_checklist as base
     from .check_runtime_guard import validate_runtime_guard
-    from .sync_execution_protocol import feedback_errors, html_policy_errors
+    from .sync_execution_protocol import feedback_errors, html_policy_errors, result_summary_errors
     from .run_skill_evals import (
         compare_catalog_contracts,
         compare_eval_contracts,
@@ -30,9 +30,9 @@ if __package__:
     )
     from .validate_skills import validate_portable_artifacts
 else:
-    import run_release_gate as base
+    import run_release_checklist as base
     from check_runtime_guard import validate_runtime_guard
-    from sync_execution_protocol import feedback_errors, html_policy_errors
+    from sync_execution_protocol import feedback_errors, html_policy_errors, result_summary_errors
     from run_skill_evals import (
         compare_catalog_contracts,
         compare_eval_contracts,
@@ -81,20 +81,20 @@ def main() -> int:
     args = parse_args()
     base.ensure_clean_worktree()
     try:
-        output = output_directory(args.output, "release-gate", ROOT)
+        output = output_directory(args.output, "release-checklist", ROOT)
     except ValueError as exc:
         raise SystemExit(str(exc)) from exc
 
     baseline_sha = resolve_ref(args.baseline)
     candidate_sha = resolve_ref(args.candidate)
 
-    # 기존 gate를 candidate self-check 모드로 실행해 language, ledger, portable,
+    # 기본 검사기를 candidate self-check 모드로 실행해 language, ledger, portable,
     # unittest, package smoke와 diff 검사를 그대로 보존한다.
     self_output = output / "self-check"
     completed = subprocess.run(
         [
             "python3",
-            "scripts/run_release_gate.py",
+            "scripts/run_release_checklist.py",
             "--baseline",
             args.candidate,
             "--candidate",
@@ -108,14 +108,14 @@ def main() -> int:
         check=False,
     )
 
-    self_result_path = self_output / "release-gate.json"
+    self_result_path = self_output / "release-checklist.json"
     if self_result_path.is_file():
         self_result = json.loads(self_result_path.read_text(encoding="utf-8"))
     else:
         self_result = {
             "status": "Fail",
             "blocking_reasons": [
-                "candidate self-check did not produce release-gate.json",
+                "candidate self-check did not produce release-checklist.json",
                 completed.stderr[-1000:],
             ],
         }
@@ -151,11 +151,12 @@ def main() -> int:
         )
         ledger_errors, _ = base.validate_ledger_eval_coverage(candidate_contracts)
         contract_errors.extend(ledger_errors)
-        contract_errors.extend(base.readme_freshness_errors(baseline_root, candidate_root))
+        contract_errors.extend(base.readme_catalog_freshness_errors(baseline_root, candidate_root))
         contract_errors.extend(validate_portable_artifacts(candidate_root))
         contract_errors.extend(validate_artifact_guards(candidate_root))
         contract_errors.extend(validate_runtime_guard(candidate_root))
         contract_errors.extend(feedback_errors(candidate_root))
+        contract_errors.extend(result_summary_errors(candidate_root / "skills"))
         contract_errors.extend(html_policy_errors(candidate_root))
 
     self_blockers = [
@@ -176,7 +177,7 @@ def main() -> int:
         "blocking_reasons": blockers,
     }
 
-    (output / "release-gate.json").write_text(
+    (output / "release-checklist.json").write_text(
         json.dumps(result, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )

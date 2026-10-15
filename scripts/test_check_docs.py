@@ -1,6 +1,11 @@
 import unittest
 
-from check_docs import catalog_kind_errors, table_errors, readme_freshness_errors
+from check_docs import (
+    catalog_kind_errors,
+    readme_catalog_freshness_errors,
+    readme_structure_errors,
+    table_errors,
+)
 
 
 class DocumentationTests(unittest.TestCase):
@@ -49,8 +54,23 @@ class DocumentationTests(unittest.TestCase):
             with self.subTest(row=row):
                 self.assertTrue(catalog_kind_errors(text + row + '\n', {'tk-test': 'user-invoked'}))
 
+    def test_catalog_scope_is_kept_concise(self):
+        text = ('## 스킬 구성\n\n| 스킬 | 호출 | 소유 범위 |\n| --- | --- | --- |\n'
+                '| [tk-test](skills/tk-test/SKILL.md) | `user` | ' + '상세 동작을 설명합니다. ' * 10 + '|\n')
+        self.assertTrue(catalog_kind_errors(text, {'tk-test': 'user-invoked'}))
+
+    def test_readme_has_only_overview_install_catalog_and_reference_sections(self):
+        text = ('# TigerKit\n\n한 줄 소개입니다.\n\n## 설치\n\n명령을 실행합니다.\n'
+                '\n```bash\nnpx skills add example\n```\n\n## 스킬 구성\n\n목록입니다.\n'
+                '\n### 개발\n\n| 스킬 | 호출 | 역할 |\n| --- | --- | --- |\n'
+                '| [tk-test](skills/tk-test/SKILL.md) | `user` | 설명입니다. |\n'
+                '\n## 참고\n\n- [마이그레이션](MIGRATION.md)\n')
+        self.assertEqual(readme_structure_errors(text), [])
+        self.assertTrue(readme_structure_errors(text + '\n## 상세 가이드\n\n긴 설명입니다.\n'))
+        self.assertTrue(readme_structure_errors(text.replace('한 줄 소개입니다.', '첫째 소개입니다.\n둘째 소개입니다.')))
+
 class ReadmeFreshnessTests(unittest.TestCase):
-    def test_changed_skill_needs_readme_or_explicit_noop(self):
+    def test_behavior_only_skill_change_does_not_require_readme_edit(self):
         import tempfile
         from pathlib import Path
         with tempfile.TemporaryDirectory() as tmp:
@@ -62,13 +82,48 @@ class ReadmeFreshnessTests(unittest.TestCase):
                 (root / 'README.md').write_text('# Skills\n')
                 (root / 'skills/tk-example/SKILL.md').write_text('---\nname: tk-example\n---\nOld behavior\n')
             (current / 'skills/tk-example/SKILL.md').write_text('---\nname: tk-example\n---\nNew behavior\n')
-            self.assertTrue(readme_freshness_errors(base, current))
+            self.assertEqual(readme_catalog_freshness_errors(base, current), [])
+
+    def test_internal_contract_version_change_does_not_require_readme_edit(self):
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp) / 'before'
+            current = Path(tmp) / 'after'
+            for root, version in ((base, '1.0.0'), (current, '1.1.0')):
+                skill = root / 'skills/tk-example'
+                skill.mkdir(parents=True)
+                (root / 'evals/changes').mkdir(parents=True)
+                (root / 'README.md').write_text('# Skills\n')
+                (skill / 'SKILL.md').write_text(
+                    '---\nname: tk-example\ndescription: "[user/auto] Example"\nmetadata:\n'
+                    '  tigerkit:\n    kind: hybrid\n    version: "' + version + '"\n---\nBehavior\n'
+                )
+            self.assertEqual(readme_catalog_freshness_errors(base, current), [])
+
+    def test_catalog_metadata_change_needs_readme_or_explicit_noop(self):
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp) / 'before'
+            current = Path(tmp) / 'after'
+            for root in (base, current):
+                (root / 'skills/tk-example').mkdir(parents=True)
+                (root / 'evals/changes').mkdir(parents=True)
+                (root / 'README.md').write_text('# Skills\n')
+                (root / 'skills/tk-example/SKILL.md').write_text(
+                    '---\nname: tk-example\ndescription: "[user] Old scope"\nmetadata:\n  tigerkit:\n    kind: user-invoked\n---\nBehavior\n'
+                )
+            (current / 'skills/tk-example/SKILL.md').write_text(
+                '---\nname: tk-example\ndescription: "[user] New scope"\nmetadata:\n  tigerkit:\n    kind: user-invoked\n---\nBehavior\n'
+            )
+            self.assertTrue(readme_catalog_freshness_errors(base, current))
             (current / 'evals/changes/decision.md').write_text(
                 'README: no public change\nAffected: skills/tk-example/SKILL.md\nReason: internal guidance only.\n'
             )
-            self.assertEqual(readme_freshness_errors(base, current), [])
+            self.assertEqual(readme_catalog_freshness_errors(base, current), [])
             (current / 'README.md').write_text('# Skills\nPublic change reviewed\n')
-            self.assertEqual(readme_freshness_errors(base, current), [])
+            self.assertEqual(readme_catalog_freshness_errors(base, current), [])
 
 
 class NestedCheckoutTests(unittest.TestCase):

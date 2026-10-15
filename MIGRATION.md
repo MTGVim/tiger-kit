@@ -30,9 +30,13 @@ npx skills remove tk-to-questionnaire --global --agent claude-code codex hermes-
 
 격리 체크아웃은 기존 `tk-prep` 절차를 사용합니다. `Orca` 작업 공간은 `Orca`가 계속 관리하며, 여러 PR의 분류와 사용자 단위 `pr-triage.json` 설정은 `tk-pr-sweep`이 유지합니다. 기존 설정에 남은 이슈 분류·워크트리 예시는 자동 실행하거나 다른 설정으로 옮기지 않습니다.
 
-## 문서 최신화 릴리즈 게이트
+## README 카탈로그 최신화
 
-공개 `SKILL.md`가 변경되면 README도 업데이트하거나 변경된 `evals/changes/*.md`에 `README: no public change`를 명시하고 영향받는 스킬 경로와 이유를 남겨야 합니다. `scripts/check_docs.py` 정적 목록·호출 검사와 `run_seed_release_gate.py`의 기준 버전 비교 기반 최신화 검사를 함께 통과해야 합니다.
+README는 짧은 프로젝트 소개, 설치 방법, 간결한 스킬 카탈로그와 참고 링크를 소유합니다. 스킬의 상세 동작은 각 `SKILL.md`와 패키지 참조에 둡니다.
+
+스킬 동작 본문만 바뀌면 README를 갱신하지 않습니다. 스킬 추가·삭제·이름 변경이나 공개 카탈로그 메타데이터(호출 방식·한 줄 역할)가 바뀌면 카탈로그와 링크를 갱신합니다. README를 바꾸지 않는 경우에는 변경된 `evals/changes/*.md`에 `README: no public change`, 영향받는 스킬 경로와 이유를 기록합니다.
+
+`scripts/check_docs.py`는 README의 섹션·소개 길이·카탈로그 목록·호출 방식·링크를 검사합니다. 게시 전 필수 검사는 [릴리즈 체크리스트](RELEASE_CHECKLIST.md)를 따릅니다.
 
 ---
 
@@ -219,12 +223,12 @@ session.md routing
 - TigerKit `skill` 반복 `failure`·세션 비효율 → `tk-retro` 진단 및 예방안 제안
 - 개인 `cross-repo` `memory` → 외부 `memory`
 
-## `Release` `validation`
+## 릴리즈 체크리스트
 
-`Breaking` `eval`/`catalog` 전환은 다음 `gate`를 사용합니다.
+평가·카탈로그 계약을 바꾸는 경우에도 [릴리즈 체크리스트](RELEASE_CHECKLIST.md)의 필수 검사를 수행합니다. 기준 비교 명령은 다음과 같습니다.
 
 ```bash
-python3 scripts/run_seed_release_gate.py \
+python3 scripts/run_seed_release_checklist.py \
   --baseline "<previous-tag-or-commit>" \
   --candidate HEAD
 ```

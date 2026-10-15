@@ -87,8 +87,11 @@ automated test generation, or PR publication. A parent's recommendation is not i
    available, prefer recapturing it on the current head. Otherwise demote it to `manual` and
    preserve the old run as `previousEvidence`; never treat that previous evidence as current
    verification.
+   When consuming a `tk-browser-verify` row map, preserve each `criterion_id` as `criterionId`,
+   copy `evidence_ref` to `evidence.ref` and copy `head` exactly. Map `Fail` to `verification: failed`
+   on that same row; retain its evidence and do not split the criterion into pass and manual rows.
    Show `auto-verified` rows pre-checked and non-editable in a collapsed `Automated`
-   group with their evidence reference. Keep `partial` and `manual` rows in the manual
+   group with their evidence reference. Keep `partial`, `failed`, and `manual` rows in the manual
    list while preserving their independent `observed | code-only` provenance. Demoted manual
    rows also show their previous evidence so they remain distinguishable from never-exercised
    checks. An `auto-verified` label is runtime evidence reuse, not product acceptance.
@@ -116,7 +119,7 @@ automated test generation, or PR publication. A parent's recommendation is not i
    that check/note persistence needs JavaScript. Close and delete only that profile. If the check cannot run, preserve the
    sheet and disclose `Unverifiable`; never claim persistence verification from source alone.
 6. Return the absolute file path (HTML only), total check count, `auto-verified`,
-   `partial`, `manual`, head-demoted and code-only counts, fixed target, previous evidence
+   `partial`, `failed`, `manual`, head-demoted and code-only counts, fixed target, previous evidence
    head(s) for demoted rows, any evidence carried forward across an irrelevant diff and its
    path-based rationale, unverified screens/connections and reasons, actual self-check status
    and inspected viewports/themes or the exact unavailable render checks. When previously
@@ -169,6 +172,28 @@ Minimum shape, even when already familiar:
 
 Start the question block with a standalone horizontal rule (`---`) after the preceding context; do not add a `## Questions` or `## 질문` heading. Separate questions with blank lines and bold `❓ **Q<n> · ...**` title lines, without horizontal rules between questions. Put context before the question block and make it the final substantive block: no plan, promise, or “answer and I will proceed” line afterward, except one short reply-format hint. An approval request is its own numbered `Q`, never buried in the proposal. Defer approval whose scope still depends on an unresolved answer.
 <!-- /tigerkit:questions -->
+<!-- tigerkit:result-summary -->
+## Reader-facing Result Summary
+
+Use this shared structure only for a final user-facing session-completion message. It does not replace an owning skill's required artifact, publication preview, machine-readable nested return, approval checkpoint, verdict/status field or footer, or final question block. Keep those contracts exact. Nested phase returns remain compact and emoji-free.
+
+When no stricter owner format applies, keep the summary concise and use these headings in this order:
+
+```text
+### 🛠️ 변경/산출물        (내용이 있을 때만)
+### ✅ 확인한 것          (항상; 실제 확인·실행 내용을 기록)
+### 💭 결정              (기록할 결정이 있을 때만)
+### 💡 권고              (실행 가능한 권고가 있을 때만)
+### ⚠️ 한계              (예외, 실패, 미실행 또는 미해결 내용이 있을 때만)
+### 🧹 정리              (항상; 정리한 자원 또는 추가 정리 대상 없음)
+### 👤 사람이 할 일       (항상; 없음 또는 ID·이유·다음 행동)
+```
+
+Use emoji only at the start of section headings. Keep status and evidence values as exact machine-readable tokens. Omit empty optional sections. Report planned versus executed work and distinguish completed checks from skipped, failed, blocked or unverifiable work. Put every remaining user action, including uncovered manual rows, in `👤`; do not imply the user has no work when any remains. This is the last substantive block. If the owner requires a final question block, put `👤` immediately before it; if an exact status footer is mandatory, preserve it unchanged after the substantive blocks.
+
+Put complete absolute artifact/evidence paths on their own final lines in the relevant block. `🧹` reports only actual cleanup or the absence of owned resources; do not claim cleanup that was not checked.
+<!-- /tigerkit:result-summary -->
+
 <!-- tigerkit:output-notation -->
 ## Output Notation
 

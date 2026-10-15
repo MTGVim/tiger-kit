@@ -27,7 +27,7 @@
       "expected": {
         "answer": "unknown",
         "document_status": "incomplete",
-        "criterion": "검증 실행과 모든 게이트 통과를 혼동하지 않습니다."
+        "criterion": "검증 실행과 모든 필수 검사 통과를 혼동하지 않습니다."
       }
     },
     {
@@ -78,7 +78,7 @@
     {
       "id": "defined-condition",
       "reader_input": {
-        "document": "릴리즈 게이트는 전체 필수 검사의 통과를 뜻합니다. 이 조건을 만족할 때만 main에 push합니다.",
+        "document": "릴리즈 체크리스트는 전체 필수 검사의 통과를 뜻합니다. 이 조건을 만족할 때만 main에 push합니다.",
         "purpose": "처음 읽는 운영자를 위한 작업 안내",
         "questions": [
           "main에 push하려면 어떤 조건이 필요합니까?"

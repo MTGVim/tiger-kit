@@ -26,7 +26,7 @@ def status(item: dict, parent: dict | None = None) -> str:
     verification = item.get('verification', 'manual')
     evidence = item.get('evidence')
     previous = item.get('previousEvidence')
-    if verification not in ('manual', 'auto-verified', 'partial'):
+    if verification not in ('manual', 'auto-verified', 'partial', 'failed'):
         raise ValueError('invalid QA verification state')
 
     def valid_evidence(value):
@@ -47,8 +47,8 @@ def status(item: dict, parent: dict | None = None) -> str:
             raise ValueError('automated QA rows cannot carry previous evidence')
         if not valid_evidence(evidence):
             raise ValueError('automated QA evidence needs nonblank ref and head')
-        label = '자동 검증' if verification == 'auto-verified' else '부분 자동 확인'
-        klass = 'auto' if verification == 'auto-verified' else 'partial'
+        label = {'auto-verified': '자동 검증', 'partial': '부분 자동 확인', 'failed': '자동 실패'}[verification]
+        klass = {'auto-verified': 'auto', 'partial': 'partial', 'failed': 'failed'}[verification]
         parts.append(f'<span class="badge {klass}">' + label + '</span>')
         parts.append('<span class="evidence">근거: <code>' + html.escape(evidence['ref']) +
                      '</code> @ <code class="ht-token">' + html.escape(evidence['head']) + '</code></span>')
@@ -56,6 +56,19 @@ def status(item: dict, parent: dict | None = None) -> str:
 
 
 def inventory(data: dict) -> str:
+    criterion_ids: set[str] = set()
+
+    def criterion_id(item: dict) -> str:
+        value = item.get('criterionId')
+        if value is None:
+            return ''
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError('criterionId must be a nonblank string')
+        if value in criterion_ids:
+            raise ValueError('criterionId values must be unique')
+        criterion_ids.add(value)
+        return ' <code class="criterion-id">' + html.escape(value) + '</code>'
+
     parts = ['<noscript id="qa-static">', '<style>header,.layout{display:none}</style>',
              '<main class="qa-static"><h1>' + text(data['title']) + '</h1>',
              '<p>체크 목록은 아래에서 읽을 수 있습니다. 체크·메모 저장과 필터를 사용하려면 JavaScript를 켜 주세요.</p>']
@@ -67,7 +80,7 @@ def inventory(data: dict) -> str:
     for group in data['groups']:
         parts.append('<section class="group"><h2>' + text(group['title']) + '</h2><ul>')
         for item in group['items']:
-            parts.append('<li>' + text(item['title']) + status(item))
+            parts.append('<li>' + text(item['title']) + criterion_id(item) + status(item))
             if item.get('notes'):
                 parts.append('<ul>' + ''.join('<li>' + text(row) + '</li>' for row in item['notes']) + '</ul>')
             if item.get('checks'):
@@ -75,7 +88,7 @@ def inventory(data: dict) -> str:
                 for check in item['checks']:
                     tag = 'strong' if check.get('heading') else 'span'
                     badge = '' if check.get('heading') else status(check, item)
-                    parts.append(f'<li><{tag}>' + text(check['text']) + f'</{tag}>' + badge + '</li>')
+                    parts.append(f'<li><{tag}>' + text(check['text']) + f'</{tag}>' + criterion_id(check) + badge + '</li>')
                 parts.append('</ul>')
             parts.append('</li>')
         parts.append('</ul></section>')

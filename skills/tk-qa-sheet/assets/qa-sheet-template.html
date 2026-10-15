@@ -188,7 +188,9 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
   .badge { font-size: 11px; color: var(--warn); background: var(--warn-bg); border-radius: 4px; padding: 0 5px; margin-left: 6px; white-space: nowrap; }
   .badge.auto { color: var(--good); background: var(--hover); }
   .badge.partial { color: var(--accent); background: var(--hover); }
+  .badge.failed { color: var(--bad); background: var(--hover); }
   .badge.demoted { color: var(--muted); background: var(--hover); }
+  .criterion-id { margin-left: 6px; color: var(--muted); font-size: 11px; white-space: nowrap; }
   .evidence { color: var(--muted); font-size: 11px; margin-left: 6px; overflow-wrap: anywhere; }
   details.automated { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px 14px; margin-bottom: 12px; }
   details.automated > summary { cursor: pointer; font-weight: 700; }
@@ -240,8 +242,9 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
   - storageKey: 작업 단위로 고유하게 (예: "<task>-<topic>"). 바꾸면 이전 체크와 메모를 읽지 않는다.
   - text 안의 `백틱` 은 화면에서 그대로 확인한 표기, 그 밖의 글은 설명이다.
   - provenance: "observed"(화면 확인) | "code-only"(기본)(코드 문자열만 확인, "코드 기준" 배지 표시)
-  - verification: "manual"(기본) | "auto-verified" | "partial"
-  - auto-verified/partial 은 evidence: {"ref":"run id 또는 evidence path","head":"근거가 묶인 head"} 를 가진다.
+  - criterionId: 영향 인벤토리와 verifier가 공유하는 안정적인 행 ID (선택)
+  - verification: "manual"(기본) | "auto-verified" | "partial" | "failed"
+  - auto-verified/partial/failed 는 evidence: {"ref":"run id 또는 evidence path","head":"근거가 묶인 head"} 를 가진다.
   - checks 가 없는 item 은 item 자체가 체크 항목이다. heading: true 인 check 는 체크 없는 소제목이다.
 -->
 <script type="application/json" id="qa-data">
@@ -339,8 +342,15 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
   const nonblank = (v) => typeof v === "string" && v.trim().length > 0;
   const strings = (v) => v === undefined || (Array.isArray(v) && v.every((s) => typeof s === "string"));
   const provenance = (v) => v === undefined || v === "observed" || v === "code-only";
-  const verification = (v) => v === undefined || v === "manual" || v === "auto-verified" || v === "partial";
+  const verification = (v) => v === undefined || v === "manual" || v === "auto-verified" || v === "partial" || v === "failed";
   const evidence = (v) => object(v) && nonblank(v.ref) && nonblank(v.head);
+  const criterionIds = new Set();
+  const criterionId = (v) => {
+    if (v === undefined) return true;
+    if (!nonblank(v) || criterionIds.has(v)) return false;
+    criterionIds.add(v);
+    return true;
+  };
   const validVerification = (v) => {
     if (!verification(v.verification)) return false;
     const mode = v.verification || "manual";
@@ -354,13 +364,15 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
     try { const u = new URL(v); return !u.username && !u.password; } catch { return false; }
   };
   const validCheck = (c) => object(c) && nonblank(c.text) && provenance(c.provenance)
+    && criterionId(c.criterionId)
     && (c.heading === undefined || typeof c.heading === "boolean")
     && (c.indent === undefined || (Number.isInteger(c.indent) && c.indent >= 0 && c.indent <= 3))
-    && (c.heading ? c.verification === undefined && c.evidence === undefined && c.previousEvidence === undefined : validVerification(c));
+    && (c.heading ? c.criterionId === undefined && c.verification === undefined && c.evidence === undefined && c.previousEvidence === undefined : validVerification(c));
   const validItem = (it) => {
     if (!object(it) || !nonblank(it.title) || !provenance(it.provenance) || !strings(it.notes)) return false;
     if (it.checks !== undefined && (!Array.isArray(it.checks) || !it.checks.every(validCheck))) return false;
     const children = Array.isArray(it.checks) && it.checks.length > 0;
+    if (!criterionId(it.criterionId) || (children && it.criterionId !== undefined)) return false;
     if (children && !it.checks.some((c) => !c.heading)) return false;
     return children
       ? it.verification === undefined && it.evidence === undefined && it.previousEvidence === undefined
@@ -415,7 +427,8 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
   const evidenceHtml = (value, label = "근거") => value
     ? `<span class="evidence">${label}: <code>${esc(value.ref)}</code> @ <code class="ht-token">${esc(value.head)}</code></span>`
     : "";
-  const checkLi = (id, text, prov, indent, mode = "manual", evidenceValue, previousEvidenceValue) => {
+  const criterionHtml = value => value ? `<code class="criterion-id">${esc(value)}</code>` : "";
+  const checkLi = (id, text, prov, indent, mode = "manual", evidenceValue, previousEvidenceValue, criterionValue) => {
     if (seen.has(id)) throw new Error("체크 항목 ID가 중복됩니다. 항목을 구별할 화면과 조건을 추가해 주세요.");
     seen.add(id);
     const provenanceBadge = prov !== "observed" ? '<span class="badge">코드 기준</span>' : "";
@@ -423,18 +436,20 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
       ? '<span class="badge auto">자동 검증</span>'
       : mode === "partial"
         ? '<span class="badge partial">부분 자동 확인</span>'
-        : previousEvidenceValue ? '<span class="badge demoted">이전 head 검증</span>' : "";
+        : mode === "failed"
+          ? '<span class="badge failed">자동 실패</span>'
+          : previousEvidenceValue ? '<span class="badge demoted">이전 head 검증</span>' : "";
     const auto = mode === "auto-verified";
     const attrs = auto ? ' checked disabled data-auto="true"' : "";
     const classes = auto ? " checked auto-verified" : mode === "partial" ? " partial" : "";
-    return `<li class="check${classes} lv${Math.min(indent || 0, 3)}"><label><input type="checkbox" data-id="${id}"${attrs}><span class="ctext">${fmt(text)}</span>${provenanceBadge}${verificationBadge}${evidenceHtml(evidenceValue)}${evidenceHtml(previousEvidenceValue, "이전 근거")}</label></li>`;
+    return `<li class="check${classes} lv${Math.min(indent || 0, 3)}"><label><input type="checkbox" data-id="${id}"${attrs}><span class="ctext">${fmt(text)}</span>${criterionHtml(criterionValue)}${provenanceBadge}${verificationBadge}${evidenceHtml(evidenceValue)}${evidenceHtml(previousEvidenceValue, "이전 근거")}</label></li>`;
   };
   const modeMatches = (mode, automated) => automated ? mode === "auto-verified" : mode !== "auto-verified";
   const renderItem = (g, it, automated) => {
     if (!it.checks || !it.checks.length) {
       const mode = verificationMode(it.verification);
       if (!modeMatches(mode, automated)) return "";
-      let row = `<li><ul class="checks">${checkLi(checkId(g, it), it.title, it.provenance, 0, mode, it.evidence, it.previousEvidence)}</ul>`;
+      let row = `<li><ul class="checks">${checkLi(checkId(g, it), it.title, it.provenance, 0, mode, it.evidence, it.previousEvidence, it.criterionId)}</ul>`;
       row += screenLink(it);
       if (it.notes && it.notes.length) row += `<ul class="notes">${it.notes.map((n) => `<li>${fmt(n)}</li>`).join("")}</ul>`;
       return row + "</li>";
@@ -453,7 +468,7 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
       if (!modeMatches(mode, automated)) continue;
       row += checkLi(checkId(g, it, c.text), c.text,
         it.provenance === "observed" && c.provenance === "observed" ? "observed" : "code-only",
-        c.indent, mode, c.evidence, c.previousEvidence);
+        c.indent, mode, c.evidence, c.previousEvidence, c.criterionId);
     }
     return row + "</ul></li>";
   };

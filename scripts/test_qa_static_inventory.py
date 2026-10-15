@@ -61,9 +61,11 @@ class QAStaticInventoryTest(unittest.TestCase):
                 'environment': {'label':'QA environment', 'baseUrl':'https://qa.example.test'},
                 'groups': [{'title':'New group','items':[
                 {'title':'<img src=x onerror=alert(1)> `Literal`', 'checks':[
-                    {'text':'Check A', 'provenance':'observed', 'verification':'auto-verified',
+                    {'text':'Check A', 'criterionId':'UI-001', 'provenance':'observed', 'verification':'auto-verified',
                      'evidence':{'ref':'browser-run-7', 'head':'abc123'}},
-                    {'text':'Check B', 'provenance':'observed', 'verification':'partial',
+                    {'text':'Check B', 'criterionId':'UI-002', 'provenance':'observed', 'verification':'partial',
+                     'evidence':{'ref':'.tigerkit/evidence/run-7', 'head':'abc123'}},
+                    {'text':'Check failed', 'criterionId':'UI-003', 'provenance':'observed', 'verification':'failed',
                      'evidence':{'ref':'.tigerkit/evidence/run-7', 'head':'abc123'}},
                     {'text':'Check C', 'provenance':'observed', 'verification':'manual',
                      'previousEvidence':{'ref':'browser-run-6', 'head':'old456'}}]},
@@ -74,8 +76,9 @@ class QAStaticInventoryTest(unittest.TestCase):
             result = subprocess.run([sys.executable, str(HELPER), str(path)], capture_output=True, text=True)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             actual = path.read_text(); text = static_text(actual)
-            self.assertIn('Check A', text); self.assertIn('Check B', text); self.assertIn('Check C', text); self.assertIn('Second', text); self.assertIn('Note', text)
-            self.assertIn('자동 검증', text); self.assertIn('부분 자동 확인', text); self.assertIn('이전 head 검증', text)
+            self.assertIn('Check A', text); self.assertIn('Check B', text); self.assertIn('Check C', text); self.assertIn('Check failed', text); self.assertIn('Second', text); self.assertIn('Note', text)
+            self.assertIn('자동 검증', text); self.assertIn('부분 자동 확인', text); self.assertIn('자동 실패', text); self.assertIn('이전 head 검증', text)
+            self.assertIn('UI-001', text); self.assertIn('UI-002', text); self.assertIn('UI-003', text)
             self.assertIn('browser-run-7', text); self.assertIn('.tigerkit/evidence/run-7', text)
             self.assertIn('browser-run-6', text); self.assertIn('old456', text); self.assertIn('이전 근거', text)
             self.assertIn('QA environment (https://qa.example.test)', text)
@@ -84,13 +87,31 @@ class QAStaticInventoryTest(unittest.TestCase):
             self.assertNotIn('<img', region)
             self.assertIn('&lt;img', region)
             self.assertIn('코드 기준', text)
-            self.assertIn('Check A</span> <span class="badge">코드 기준</span>', region)
+            self.assertIn('Check A</span> <code class="criterion-id">UI-001</code>', region)
+            self.assertIn('<span class="badge">코드 기준</span>', region)
             self.assertNotIn('영역 A', text)
             before = re.sub(r'<noscript id="qa-static">.*?</noscript>', '', html, flags=re.S)
             after = re.sub(r'<noscript id="qa-static">.*?</noscript>', '', actual, flags=re.S)
             self.assertEqual(before, after)
             previous = path.read_bytes()
             subprocess.run([sys.executable, str(HELPER), str(path)], check=True, capture_output=True)
+            self.assertEqual(previous, path.read_bytes())
+
+    def test_duplicate_criterion_ids_are_rejected_without_replacing_file(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'qa.html'
+            html = TEMPLATE.read_text()
+            data = {'title': 'Task', 'storageKey': 'task', 'groups': [{'title': 'Area', 'items': [
+                {'title': 'One', 'criterionId': 'UI-001'},
+                {'title': 'Two', 'criterionId': 'UI-001'}
+            ]}]}
+            replacement = json.dumps(data).replace('<', '\\u003c')
+            html = re.sub(r'(id="qa-data">)(.*?)(</script>)', lambda m: m[1] + replacement + m[3], html, flags=re.S)
+            path.write_text(html)
+            previous = path.read_bytes()
+            result = subprocess.run([sys.executable, str(HELPER), str(path)], capture_output=True, text=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn('criterionId values must be unique', result.stderr)
             self.assertEqual(previous, path.read_bytes())
 
 

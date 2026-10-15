@@ -32,6 +32,36 @@ class EvalSotValidatorTest(unittest.TestCase):
         errors, _ = validate_skills.validate_all()
         self.assertEqual(errors, [])
 
+    def test_browser_verifier_contract_version_is_required_and_semver(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            skill_dir = root / "tk-browser-verify"
+            skill_dir.mkdir()
+            base = {
+                "name": "tk-browser-verify",
+                "description": "[user/auto] Browser verification",
+                "disable-model-invocation": False,
+                "metadata": {"tigerkit": {
+                    "kind": "hybrid", "origin": "tigerkit", "relationship": "native"
+                }},
+            }
+            with patch.object(validate_skills, "ROOT", root):
+                missing, _ = validate_skills.validate_frontmatter_and_body(
+                    "tk-browser-verify", skill_dir, base, "Verify browser criteria.\n"
+                )
+                versioned = json.loads(json.dumps(base))
+                versioned["metadata"]["tigerkit"]["version"] = "1.1.0"
+                valid, _ = validate_skills.validate_frontmatter_and_body(
+                    "tk-browser-verify", skill_dir, versioned, "Verify browser criteria.\n"
+                )
+                versioned["metadata"]["tigerkit"]["version"] = "1.1"
+                invalid, _ = validate_skills.validate_frontmatter_and_body(
+                    "tk-browser-verify", skill_dir, versioned, "Verify browser criteria.\n"
+                )
+            self.assertTrue(any("version is required" in error for error in missing))
+            self.assertFalse(any("metadata.tigerkit.version" in error for error in valid))
+            self.assertTrue(any("semantic version X.Y.Z" in error for error in invalid))
+
     def test_plain_chat_question_contract_is_present(self) -> None:
         from question_policy import question_errors
         self.assertEqual(question_errors(validate_skills.ROOT), [])

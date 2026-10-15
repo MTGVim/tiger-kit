@@ -6,50 +6,50 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
-import run_release_gate
+import run_release_checklist
 from run_skill_evals import load_catalog_contract, load_eval_contracts
 
 
-class ReleaseGateContractTest(unittest.TestCase):
-    def test_release_gate_rejects_non_portable_absolute_paths(self) -> None:
+class ReleaseChecklistContractTest(unittest.TestCase):
+    def test_release_checklist_rejects_non_portable_absolute_paths(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             artifact = root / "skills/tk-example/SKILL.md"
             artifact.parent.mkdir(parents=True)
             artifact.write_text("path = /" + "home/alice/private-app\n", encoding="utf-8")
-            errors = run_release_gate.validate_portable_artifacts(root)
+            errors = run_release_checklist.validate_portable_artifacts(root)
         self.assertTrue(any("non-portable absolute path" in error for error in errors))
 
-    def test_release_gate_rejects_dirty_worktree(self) -> None:
-        completed = run_release_gate.subprocess.CompletedProcess(
+    def test_release_checklist_rejects_dirty_worktree(self) -> None:
+        completed = run_release_checklist.subprocess.CompletedProcess(
             args=["git", "status"], returncode=0, stdout=" M README.md\n", stderr=""
         )
-        with patch.object(run_release_gate.subprocess, "run", return_value=completed):
+        with patch.object(run_release_checklist.subprocess, "run", return_value=completed):
             with self.assertRaisesRegex(ValueError, "clean worktree"):
-                run_release_gate.ensure_clean_worktree()
+                run_release_checklist.ensure_clean_worktree()
 
-    def test_release_gate_forbids_ci_workflows(self) -> None:
+    def test_release_checklist_forbids_ci_workflows(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            self.assertEqual(run_release_gate.validate_no_ci_workflows(root), [])
+            self.assertEqual(run_release_checklist.validate_no_ci_workflows(root), [])
             workflows = root / ".github" / "workflows"
             workflows.mkdir(parents=True)
-            self.assertTrue(run_release_gate.validate_no_ci_workflows(root))
-            (workflows / "temporary-release-gate.yml").write_text(
-                "name: temporary-release-gate\n", encoding="utf-8"
+            self.assertTrue(run_release_checklist.validate_no_ci_workflows(root))
+            (workflows / "temporary-release-checklist.yml").write_text(
+                "name: temporary-release-checklist\n", encoding="utf-8"
             )
-            errors = run_release_gate.validate_no_ci_workflows(root)
+            errors = run_release_checklist.validate_no_ci_workflows(root)
             self.assertTrue(any("temporary verification workflows" in error for error in errors), errors)
 
     def test_manifest_is_closed_and_references_existing_cases(self) -> None:
-        manifest = run_release_gate.load_manifest()
-        contracts = load_eval_contracts(run_release_gate.ROOT, None)
-        catalog = load_catalog_contract(run_release_gate.ROOT)
-        self.assertEqual(run_release_gate.validate_manifest_cases(contracts, catalog, manifest), [])
+        manifest = run_release_checklist.load_manifest()
+        contracts = load_eval_contracts(run_release_checklist.ROOT, None)
+        catalog = load_catalog_contract(run_release_checklist.ROOT)
+        self.assertEqual(run_release_checklist.validate_manifest_cases(contracts, catalog, manifest), [])
 
     def test_ledger_cases_check_existence_and_korean_prose(self) -> None:
-        contracts = load_eval_contracts(run_release_gate.ROOT, None)
-        errors, coverage = run_release_gate.validate_ledger_eval_coverage(contracts)
+        contracts = load_eval_contracts(run_release_checklist.ROOT, None)
+        errors, coverage = run_release_checklist.validate_ledger_eval_coverage(contracts)
         self.assertEqual(errors, [])
         self.assertTrue(coverage)
         self.assertTrue(all(row["hangul_assertions"] for row in coverage.values()))
@@ -69,7 +69,7 @@ class ReleaseGateContractTest(unittest.TestCase):
                 }
             }
         }
-        missing_errors, _ = run_release_gate.validate_ledger_eval_coverage(missing)
+        missing_errors, _ = run_release_checklist.validate_ledger_eval_coverage(missing)
         self.assertTrue(any("writes-ledger" in error for error in missing_errors))
         self.assertTrue(any("path_text_has_hangul" in error for error in missing_errors))
 
@@ -91,7 +91,7 @@ class ReleaseGateContractTest(unittest.TestCase):
                 }
             }
         }
-        prose_errors, _ = run_release_gate.validate_ledger_eval_coverage(missing_prose)
+        prose_errors, _ = run_release_checklist.validate_ledger_eval_coverage(missing_prose)
         self.assertTrue(any("path_text_has_korean_prose" in error for error in prose_errors))
 
     def test_language_regression_rejects_new_violation(self) -> None:
@@ -106,14 +106,14 @@ class ReleaseGateContractTest(unittest.TestCase):
                 }
             ],
         }
-        errors = run_release_gate.compare_language_regression(baseline, candidate)
+        errors = run_release_checklist.compare_language_regression(baseline, candidate)
         self.assertGreaterEqual(len(errors), 2)
         self.assertTrue(any("new English prose" in error for error in errors))
 
     def test_language_regression_rejects_duplicate_existing_violation(self) -> None:
         row_a = {"fingerprint": "AGENTS.md|A", "location": "AGENTS.md:1"}
         row_b = {"fingerprint": "AGENTS.md|B", "location": "AGENTS.md:2"}
-        errors = run_release_gate.compare_language_regression(
+        errors = run_release_checklist.compare_language_regression(
             {"violations": [row_a, row_b]},
             {"violations": [row_b, row_b]},
         )
@@ -136,7 +136,7 @@ class ReleaseGateContractTest(unittest.TestCase):
                 }
             ]
         }
-        self.assertEqual(run_release_gate.compare_language_regression(baseline, candidate), [])
+        self.assertEqual(run_release_checklist.compare_language_regression(baseline, candidate), [])
 
     def test_language_regression_allows_translation_with_less_english(self) -> None:
         baseline = {
@@ -157,7 +157,7 @@ class ReleaseGateContractTest(unittest.TestCase):
                 }
             ]
         }
-        self.assertEqual(run_release_gate.compare_language_regression(baseline, candidate), [])
+        self.assertEqual(run_release_checklist.compare_language_regression(baseline, candidate), [])
 
     def test_language_scan_ignores_literals_but_flags_prose(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -188,7 +188,7 @@ class ReleaseGateContractTest(unittest.TestCase):
                 "# English model-facing reference\nFollow the verified procedure.\n",
                 encoding="utf-8",
             )
-            report = run_release_gate.scan_language(root)
+            report = run_release_checklist.scan_language(root)
         self.assertEqual(report["files"], 5)
         rows = report["violations"]
         self.assertEqual(len(rows), 2)
@@ -209,7 +209,7 @@ class ReleaseGateContractTest(unittest.TestCase):
                     (root / optional).mkdir()
                     (root / optional / "keep.txt").write_text("keep\n", encoding="utf-8")
             self.assertEqual(
-                run_release_gate.consumer_install_errors(
+                run_release_checklist.consumer_install_errors(
                     source_root, {"tk-example": installed}
                 ),
                 [],
@@ -217,19 +217,19 @@ class ReleaseGateContractTest(unittest.TestCase):
             reference = installed / "references/keep.txt"
             reference.write_text("stale\n", encoding="utf-8")
             self.assertTrue(any("differs at references/keep.txt" in error for error in
-                run_release_gate.consumer_install_errors(source_root, {"tk-example": installed})))
+                run_release_checklist.consumer_install_errors(source_root, {"tk-example": installed})))
             reference.unlink()
             self.assertTrue(any("missing references/keep.txt" in error for error in
-                run_release_gate.consumer_install_errors(source_root, {"tk-example": installed})))
+                run_release_checklist.consumer_install_errors(source_root, {"tk-example": installed})))
             reference.write_text("keep\n", encoding="utf-8")
             (source / "LICENSE.txt").write_text("notice\n", encoding="utf-8")
             self.assertTrue(any("missing LICENSE.txt" in error for error in
-                run_release_gate.consumer_install_errors(source_root, {"tk-example": installed})))
+                run_release_checklist.consumer_install_errors(source_root, {"tk-example": installed})))
             (installed / "LICENSE.txt").write_text("notice\n", encoding="utf-8")
-            self.assertEqual(run_release_gate.consumer_install_errors(source_root, {"tk-example": installed}), [])
+            self.assertEqual(run_release_checklist.consumer_install_errors(source_root, {"tk-example": installed}), [])
             (installed / "evals").mkdir()
             (installed / "evals/evals.json").write_text("{}\n", encoding="utf-8")
-            errors = run_release_gate.consumer_install_errors(
+            errors = run_release_checklist.consumer_install_errors(
                 source_root, {"tk-example": installed}
             )
             self.assertTrue(any("authoring evals" in error for error in errors))

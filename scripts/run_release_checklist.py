@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run TigerKit's deterministic release gate."""
+"""Run TigerKit's deterministic release checklist."""
 from __future__ import annotations
 
 import argparse
@@ -14,9 +14,9 @@ from pathlib import Path
 from typing import Mapping
 
 try:
-    from .check_docs import readme_freshness_errors
+    from .check_docs import readme_catalog_freshness_errors
 except ImportError:
-    from check_docs import readme_freshness_errors
+    from check_docs import readme_catalog_freshness_errors
 
 os.environ.setdefault("PYTHONDONTWRITEBYTECODE", "1")
 
@@ -118,7 +118,7 @@ def ensure_clean_worktree(root: Path = ROOT) -> None:
         check=True,
     )
     if completed.stdout.strip():
-        raise ValueError("release gate requires a clean worktree; commit candidate changes first")
+        raise ValueError("release checklist requires a clean worktree; commit candidate changes first")
 
 
 def validate_no_ci_workflows(root: Path) -> list[str]:
@@ -249,7 +249,7 @@ def scan_language(root: Path) -> dict[str, object]:
         parts = relative_path.parts
         # SKILL.md and package-local references are model-facing contracts.
         # User-facing output, evals, agent metadata, and ledger/artifact prose
-        # remain Korean and stay covered by this gate.
+        # remain Korean and stay covered by this check.
         if (
             len(parts) >= 3
             and parts[0] == "skills"
@@ -546,7 +546,7 @@ def main() -> int:
     args = parse_args()
     ensure_clean_worktree()
     try:
-        output = output_directory(args.output, "release-gate", ROOT)
+        output = output_directory(args.output, "release-checklist", ROOT)
     except ValueError as exc:
         raise SystemExit(str(exc)) from exc
     manifest = load_manifest()
@@ -581,7 +581,7 @@ def main() -> int:
         ledger_errors, ledger_coverage = validate_ledger_eval_coverage(candidate_contracts)
         contract_errors.extend(ledger_errors)
         contract_errors.extend(compare_language_regression(baseline_language, candidate_language))
-        contract_errors.extend(readme_freshness_errors(baseline_root, candidate_root))
+        contract_errors.extend(readme_catalog_freshness_errors(baseline_root, candidate_root))
         contract_errors.extend(validate_portable_artifacts(candidate_root))
         contract_errors.extend(validate_no_ci_workflows(candidate_root))
         contract_errors.extend(validate_artifact_guards(candidate_root))
@@ -619,7 +619,7 @@ def main() -> int:
         "static": static_records,
         "blocking_reasons": blocking_reasons,
     }
-    (output / "release-gate.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    (output / "release-checklist.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 1 if blocking_reasons else 0
 

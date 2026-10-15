@@ -162,7 +162,11 @@ Record each row's route, screen, trigger, observable check, value/string source 
 namespace), validation schema, request path and mutation handler where applicable, visibility data
 condition, and any transformation such as a prefix. Record whether a changed string is compared,
 parsed, or transmitted; those uses need source-level tracing, unit tests, and review in addition to
-runtime display verification.
+runtime display verification. Assign each row a stable `criterion_id` once (for example `UI-001`),
+preserve it through retries and handoffs, and pass it unchanged to `tk-browser-verify` and
+`tk-qa-sheet`. Include `route`, `entry`, `trigger`, `operation: read | create | update`,
+`evidence_ref`, and `head` in the verifier's mapped row. Every unexecuted row records `reason`,
+`search_scope`, and `unblock`; do not collapse rows into a generic manual count.
 
 Give each row one explicit status: `execute`, `covered-by:<row>`, `unauthorized-or-irreversible`, or
 `manual`. Use `unauthorized-or-irreversible` when required authority is absent or a write cannot be
@@ -273,32 +277,16 @@ After approval:
 - direct/Seed → write+reread Ready Seed, then execute directly;
 - SDD → write+reread grammar-valid Ready Seed, load the private protocol, and execute its Unit/review/fix loops.
 
-## Reader-facing completion summary
+## Preparation-specific completion obligations
 
-Use the existing clear-writing criteria for final chat prose. In a substantive result,
-distinguish actual implementation, verified checks, recommendations, decisions and material
-limitations with content-specific short headings. Optional semantic emoji (for example,
-`🛠️` changed behavior, `✅` executed verification, `💭` a documented decision,
-`💡` an actionable recommendation, `⚠️` an exception) may prefix a heading only
-when the distinction helps scanning. Emoji never replace the status or evidence, and do
-not require a section when no such content exists. Never present a generated inner
-monologue as internal reasoning or invent a decision history.
-
-Reconcile the approved goal, decisions, acceptance conditions, required verification and
-implementation retro against the final candidate. Explain any material deviations,
-unmet conditions, skipped/failed verification, unresolved findings or unapproved exception
-with expected-versus-actual behavior, reason, consequence and next action. Keep success and
-failure distinct: local implementation may be complete while runtime verification remains
-unverified; do not imply overall Pass or remote publication. Put the material exception
-summary as the **last substantive block** of an ordinary completion response so a reader
-at the end of a long conversation can find it. Omit the block when no material exceptions
-exist; do not tack on a casual postscript or optional suggestion after it.
-
-Preserve owner-specific output boundaries: a mandatory last question block, approval
-checkpoint, exact verdict/status footer or publication preview takes precedence over
-this placement. When such a boundary applies, surface exceptional status in its owning
-required field/block rather than appending text after it. Do not turn a blocked action
-into an implicitly approved engineering exception.
+Follow the shared `tigerkit:result-summary` block for user-facing completion messages. Also
+reconcile the approved goal, decisions, acceptance conditions, required verification and
+implementation retro against the final candidate. Explain material deviations, unmet
+conditions, skipped/failed verification, unresolved findings or unapproved exceptions with
+expected-versus-actual behavior, reason, consequence and next action. Keep local implementation
+status distinct from runtime verification and remote publication; never imply an overall Pass
+or publication that was not established. Never present a generated inner monologue as internal
+reasoning or invent a decision history.
 
 ## Baseline continuation and final-response gate
 
@@ -319,9 +307,10 @@ limitation, a required user-owned decision, a safety boundary, or an explicit us
 reason and remaining work. Never end the parent turn merely to report baseline success.
 
 When any uncovered row remains unexecuted because of missing authority, irreversibility, unavailable
-data, verifier limits, or another manual reason, state the number of those rows in the completion
-summary and recommend that the user start `/tk-qa-sheet` for follow-up. Exclude `covered-by` rows from
-that count because their equivalence evidence is recorded. Never auto-invoke the user-only skill.
+data, verifier limits, or another manual reason, state the count and stable criterion IDs in
+`human_action`, with each row's reason and unblock step, and recommend that the user start `/tk-qa-sheet` for
+follow-up. Exclude `covered-by` rows from that count because their equivalence evidence is recorded.
+Never auto-invoke the user-only skill.
 When the user asks for a manual QA checklist or HTML sheet, recommend explicit `/tk-qa-sheet`; it does
 not replace required implementation verification.
 
@@ -333,6 +322,28 @@ required verification, runtime evidence, exceptions, review independence, and an
 ## Artifact Paths
 
 Create artifacts only when this skill's task authorizes them. Before any artifact write, temporary checkout/transport, or ignore setup, read [artifact paths](references/artifact-paths.md) and apply its Git exclusion, safe-path, and ownership checks. Default repository-owned output to `.tigerkit/`; honor explicit final destinations. Conversation-only work skips this reference and performs no file or ignore setup. Artifact handling grants no unrelated mutation or publication authority.
+
+<!-- tigerkit:result-summary -->
+## Reader-facing Result Summary
+
+Use this shared structure only for a final user-facing session-completion message. It does not replace an owning skill's required artifact, publication preview, machine-readable nested return, approval checkpoint, verdict/status field or footer, or final question block. Keep those contracts exact. Nested phase returns remain compact and emoji-free.
+
+When no stricter owner format applies, keep the summary concise and use these headings in this order:
+
+```text
+### 🛠️ 변경/산출물        (내용이 있을 때만)
+### ✅ 확인한 것          (항상; 실제 확인·실행 내용을 기록)
+### 💭 결정              (기록할 결정이 있을 때만)
+### 💡 권고              (실행 가능한 권고가 있을 때만)
+### ⚠️ 한계              (예외, 실패, 미실행 또는 미해결 내용이 있을 때만)
+### 🧹 정리              (항상; 정리한 자원 또는 추가 정리 대상 없음)
+### 👤 사람이 할 일       (항상; 없음 또는 ID·이유·다음 행동)
+```
+
+Use emoji only at the start of section headings. Keep status and evidence values as exact machine-readable tokens. Omit empty optional sections. Report planned versus executed work and distinguish completed checks from skipped, failed, blocked or unverifiable work. Put every remaining user action, including uncovered manual rows, in `👤`; do not imply the user has no work when any remains. This is the last substantive block. If the owner requires a final question block, put `👤` immediately before it; if an exact status footer is mandatory, preserve it unchanged after the substantive blocks.
+
+Put complete absolute artifact/evidence paths on their own final lines in the relevant block. `🧹` reports only actual cleanup or the absence of owned resources; do not claim cleanup that was not checked.
+<!-- /tigerkit:result-summary -->
 
 <!-- tigerkit:output-notation -->
 ## Output Notation

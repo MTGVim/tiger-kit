@@ -24,6 +24,18 @@ A mutation claim requires the related network request and response. Acceptance
 verification connects the UI transition, request/response, and final UI state in one
 flow. A response, toast, or local DOM change alone is insufficient.
 
+For save flows, record method, path and status with page-target protocol events in a
+host-side run recorder so evidence survives redirects, `history.back()`, and bfcache
+restoration. At `Network.requestWillBeSent`, extract only explicitly allowlisted,
+non-sensitive body fields; never retain headers or an unfiltered payload. For the
+default write block, install a matching request-stage Fetch interception before the
+trusted action. While the request is paused, correlate the allowlisted fields from
+`requestWillBeSent` or the paused request, call `Fetch.failRequest`, and verify that
+transmission was prevented; report `blocked-intercept`, which proves payload construction
+only. When the exact save is authorized, retain the request/response event pair and then
+verify the saved result by rereading the same screen and field in the newly entered page.
+Do not rely on a page-wrapped recorder as the durable source for a flow that navigates away.
+
 For native HTML drag-and-drop controls such as SortableJS, enable CDP
 `Input.setInterceptDrags`, press and move from the handle to obtain the intercepted drag
 data, then use `Input.dispatchDragEvent` with `dragEnter`, `dragOver`, and `drop` at the

@@ -9,10 +9,12 @@ from pathlib import Path
 if __package__:
     from . import audit_catalog, validate_skills
     from .artifact_policy import validate_artifact_guards
+    from .sync_execution_protocol import result_summary_errors
 else:
     import audit_catalog
     import validate_skills
     from artifact_policy import validate_artifact_guards
+    from sync_execution_protocol import result_summary_errors
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -112,27 +114,67 @@ def catalog_kind_errors(text: str, kinds: dict[str, str]) -> list[str]:
                     errors.append(f'README.md:{number}: {name} invocation must be {expected}')
                 if match.group('target') != f'skills/{name}/SKILL.md':
                     errors.append(f'README.md:{number}: {name} link must point to its owning SKILL.md')
+                if len(cells) >= 3 and len(cells[2]) > 100:
+                    errors.append(f'README.md:{number}: {name} scope must stay within 100 characters')
     return errors
 
 
-def readme_freshness_errors(baseline_root: Path, candidate_root: Path) -> list[str]:
-    """Check README review decisions for skill behavior changes."""
-    def normalized(text: str) -> str:
-        for marker in ("artifact-paths", "output-notation", "questions", "skill-feedback"):
-            start, end = "<!-- tigerkit:" + marker + " -->", "<!-- /tigerkit:" + marker + " -->"
-            if start in text and end in text:
-                text = text[:text.index(start)] + text[text.index(end) + len(end):]
-        return text.strip()
+def readme_structure_errors(text: str) -> list[str]:
+    """Keep the root README to an overview, installation, catalog, and pointers."""
+    lines = list(visible_lines(text))
+    headings = [line for _, line in lines if re.match(r'^#{1,2}\s', line)]
+    expected = ['# TigerKit', '## 설치', '## 스킬 구성', '## 참고']
+    errors = []
+    if headings != expected:
+        errors.append('README.md headings must be exactly: ' + ', '.join(expected))
 
-    def skill_bodies(root: Path) -> dict[str, str]:
-        return {
-            p.relative_to(root).as_posix(): normalized(p.read_text(encoding="utf-8"))
-            for p in (root / "skills").glob("tk-*/SKILL.md")
-        }
+    section = 'intro'
+    prose_counts = {'intro': 0, '설치': 0, '스킬 구성': 0}
+    reference_lines = []
+    for _, line in lines:
+        if line.startswith('## '):
+            section = line[3:]
+            continue
+        if line.startswith('#') or not line:
+            continue
+        if section == '참고':
+            reference_lines.append(line)
+        elif section in prose_counts and not line.startswith('|'):
+            prose_counts[section] += 1
 
-    before, after = skill_bodies(baseline_root), skill_bodies(candidate_root)
+    limits = {'intro': 1, '설치': 2, '스킬 구성': 2}
+    for section_name, limit in limits.items():
+        if prose_counts[section_name] > limit:
+            errors.append(f'README.md {section_name} section has too much prose; keep it to {limit} lines')
+    if any(not re.match(r'^- \[[^]]+\]\([^)]+\)$', line) for line in reference_lines):
+        errors.append('README.md 참고 section must contain only concise links')
+    if len(reference_lines) > 5:
+        errors.append('README.md 참고 section must stay within five links')
+    return errors
+
+
+def readme_catalog_freshness_errors(baseline_root: Path, candidate_root: Path) -> list[str]:
+    """Require README review when a skill's public catalog metadata changes."""
+    def catalog_metadata(root: Path) -> dict[str, tuple[object, object, object]]:
+        result = {}
+        for path in (root / "skills").glob("tk-*/SKILL.md"):
+            try:
+                data, _ = validate_skills.frontmatter(path)
+            except (OSError, UnicodeError, ValueError):
+                continue
+            result[path.relative_to(root).as_posix()] = (
+                data.get("name"),
+                data.get("description"),
+                validate_skills.nested(data, "metadata", "tigerkit", "kind"),
+            )
+        return result
+
+    before, after = catalog_metadata(baseline_root), catalog_metadata(candidate_root)
     changed = {p for p in before.keys() | after.keys() if before.get(p) != after.get(p)}
-    if not changed or (baseline_root / "README.md").read_bytes() != (candidate_root / "README.md").read_bytes():
+    if not changed:
+        return []
+    if ((baseline_root / "README.md").is_file() and (candidate_root / "README.md").is_file()
+            and (baseline_root / "README.md").read_bytes() != (candidate_root / "README.md").read_bytes()):
         return []
 
     note_root = candidate_root / "evals/changes"
@@ -146,7 +188,7 @@ def readme_freshness_errors(baseline_root: Path, candidate_root: Path) -> list[s
             accepted.update(path for path in changed if path in content)
     missing = sorted(changed - accepted)
     if missing:
-        return ["README.md must be updated, or a new/changed evals/changes/*.md "
+        return ["README.md catalog must be updated, or a new/changed evals/changes/*.md "
                 "must explain 'README: no public change' with each affected path: "
                 + ", ".join(missing)]
     return []
@@ -161,13 +203,16 @@ def main() -> int:
             errors.extend(f'{relative}: {e}' for e in table_errors(path.read_text(encoding='utf-8')))
     skills = validate_skills.discover_skills()
     kinds = {name: validate_skills.nested(data, 'metadata', 'tigerkit', 'kind') for name, (_, data, _) in skills.items()}
-    errors.extend(catalog_kind_errors((ROOT / 'README.md').read_text(encoding='utf-8'), kinds))
+    readme = (ROOT / 'README.md').read_text(encoding='utf-8')
+    errors.extend(readme_structure_errors(readme))
+    errors.extend(catalog_kind_errors(readme, kinds))
     parity = audit_catalog.readme_catalog_parity(set(skills), ROOT)
     for category, names in parity.items():
         if names:
             errors.append(f'README catalog {category}: {", ".join(names)}')
     errors.extend(validate_skills.validate_repo_links())
     errors.extend(validate_artifact_guards(ROOT))
+    errors.extend(result_summary_errors(ROOT / 'skills'))
     if errors:
         print('\n'.join(errors))
         return 1

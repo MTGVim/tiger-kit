@@ -17,7 +17,7 @@ import verification_policy
 
 class SyncExecutionProtocolTest(unittest.TestCase):
     def test_package_entry_points_remain_executable(self) -> None:
-        for module in ("scripts.validate_skills", "scripts.run_seed_release_gate"):
+        for module in ("scripts.validate_skills", "scripts.run_seed_release_checklist"):
             with self.subTest(module=module):
                 result = subprocess.run(
                     [sys.executable, "-B", "-m", module, "--help"],
@@ -167,6 +167,9 @@ class SyncExecutionProtocolTest(unittest.TestCase):
                 sync_execution_protocol.RESOURCE_AWARENESS_BLOCK,
                 (self.root / "skills" / name / "SKILL.md").read_text(encoding="utf-8"),
             )
+        for path in (self.root / "skills").glob("tk-*/SKILL.md"):
+            self.assertIn(sync_execution_protocol.RESULT_SUMMARY_BLOCK, path.read_text(encoding="utf-8"))
+        self.assertEqual(sync_execution_protocol.result_summary_errors(self.root / "skills"), [])
         sweep_execution = self.root / "skills/tk-pr-sweep/references/execution.md"
         self.assertIn(
             sync_execution_protocol.RESOURCE_AWARENESS_SWEEP_BLOCK,
@@ -181,6 +184,15 @@ class SyncExecutionProtocolTest(unittest.TestCase):
             self.assertEqual(self.run_main("--check"), 1)
             self.assertEqual(self.run_main(), 0)
             self.assertEqual(self.run_main("--check"), 0)
+
+    def test_result_summary_drift_fails_check_and_sync_repairs_it(self) -> None:
+        self.assertEqual(self.run_main(), 0)
+        path = self.root / "skills/tk-grill/SKILL.md"
+        path.write_text(path.read_text(encoding="utf-8").replace("Use this shared structure", "Use a local structure"), encoding="utf-8")
+        self.assertEqual(self.run_main("--check"), 1)
+        self.assertEqual(self.run_main(), 0)
+        self.assertEqual(self.run_main("--check"), 0)
+        self.assertIn(sync_execution_protocol.RESULT_SUMMARY_BLOCK, path.read_text(encoding="utf-8"))
 
     def test_check_fails_for_stale_copy_and_sync_repairs_it(self) -> None:
         self.assertEqual(self.run_main(), 0)

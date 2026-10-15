@@ -224,6 +224,46 @@ def output_notation_errors(skills_root: Path) -> list[str]:
     return errors
 
 
+RESULT_SUMMARY_MARKER = "<!-- tigerkit:result-summary -->"
+RESULT_SUMMARY_END = "<!-- /tigerkit:result-summary -->"
+RESULT_SUMMARY_BLOCK = RESULT_SUMMARY_MARKER + """
+## Reader-facing Result Summary
+
+Use this shared structure only for a final user-facing session-completion message. It does not replace an owning skill's required artifact, publication preview, machine-readable nested return, approval checkpoint, verdict/status field or footer, or final question block. Keep those contracts exact. Nested phase returns remain compact and emoji-free.
+
+When no stricter owner format applies, keep the summary concise and use these headings in this order:
+
+```text
+### 🛠️ 변경/산출물        (내용이 있을 때만)
+### ✅ 확인한 것          (항상; 실제 확인·실행 내용을 기록)
+### 💭 결정              (기록할 결정이 있을 때만)
+### 💡 권고              (실행 가능한 권고가 있을 때만)
+### ⚠️ 한계              (예외, 실패, 미실행 또는 미해결 내용이 있을 때만)
+### 🧹 정리              (항상; 정리한 자원 또는 추가 정리 대상 없음)
+### 👤 사람이 할 일       (항상; 없음 또는 ID·이유·다음 행동)
+```
+
+Use emoji only at the start of section headings. Keep status and evidence values as exact machine-readable tokens. Omit empty optional sections. Report planned versus executed work and distinguish completed checks from skipped, failed, blocked or unverifiable work. Put every remaining user action, including uncovered manual rows, in `👤`; do not imply the user has no work when any remains. This is the last substantive block. If the owner requires a final question block, put `👤` immediately before it; if an exact status footer is mandatory, preserve it unchanged after the substantive blocks.
+
+Put complete absolute artifact/evidence paths on their own final lines in the relevant block. `🧹` reports only actual cleanup or the absence of owned resources; do not claim cleanup that was not checked.
+""" + RESULT_SUMMARY_END + "\n"
+
+
+def result_summary_errors(skills_root: Path) -> list[str]:
+    errors = []
+    for path in sorted(skills_root.glob("tk-*/SKILL.md")):
+        text = path.read_text(encoding="utf-8")
+        if text.count(RESULT_SUMMARY_MARKER) != 1 or text.count(RESULT_SUMMARY_END) != 1 or RESULT_SUMMARY_BLOCK not in text:
+            errors.append(f"{path.parent.name}: sync the exact result summary block with scripts/sync_execution_protocol.py")
+    return errors
+
+
+def sync_result_summary(skills_root: Path) -> None:
+    for path in sorted(skills_root.glob("tk-*/SKILL.md")):
+        sync_marked_block(path, RESULT_SUMMARY_MARKER, RESULT_SUMMARY_END, RESULT_SUMMARY_BLOCK,
+                          OUTPUT_NOTATION_MARKER)
+
+
 def sync_output_notation(skills_root: Path) -> None:
     for path in sorted(skills_root.glob("tk-*/SKILL.md")):
         text = path.read_text(encoding="utf-8")
@@ -344,13 +384,14 @@ def main() -> int:
         sync_artifact_guards(ROOT)
         sync_questions(ROOT)
         sync_feedback(ROOT)
+        sync_result_summary(ROOT / "skills")
     drift = [
         (source, target)
         for source, target in pairs
         if not target.is_file() or target.read_bytes() != source.read_bytes()
     ]
     if args.check:
-        notation_errors = output_notation_errors(ROOT / "skills") + validate_artifact_guards(ROOT) + validate_runtime_guard(ROOT) + question_errors(ROOT) + verification_errors(ROOT) + feedback_errors(ROOT)
+        notation_errors = output_notation_errors(ROOT / "skills") + result_summary_errors(ROOT / "skills") + validate_artifact_guards(ROOT) + validate_runtime_guard(ROOT) + question_errors(ROOT) + verification_errors(ROOT) + feedback_errors(ROOT)
         notation_errors.extend(html_policy_errors(ROOT))
         if notation_errors:
             print("\n".join(notation_errors))

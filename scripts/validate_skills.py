@@ -13,9 +13,9 @@ from typing import Mapping
 import yaml
 
 try:
-    from .sync_execution_protocol import output_notation_errors, feedback_errors, html_policy_errors
+    from .sync_execution_protocol import output_notation_errors, result_summary_errors, feedback_errors, html_policy_errors
 except ImportError:
-    from sync_execution_protocol import output_notation_errors, feedback_errors, html_policy_errors
+    from sync_execution_protocol import output_notation_errors, result_summary_errors, feedback_errors, html_policy_errors
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -76,6 +76,7 @@ CORE_FRONTMATTER_FIELDS = {
 }
 HOST_EXTENSION_FIELDS = {"argument-hint", "disable-model-invocation"}
 KEBAB = re.compile(r"^tk-[a-z0-9]+(?:-[a-z0-9]+)*$")
+SEMVER = re.compile(r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$")
 LONG_OPTION = re.compile(r"--[a-z0-9]+(?:-[a-z0-9]+)*")
 LINK = re.compile(r"\[[^]]*]\(([^)]+)\)")
 _PORTABLE_PATH_SEGMENT = r"[^\s\x60\x22\x27<>()\[\]{}]+"
@@ -273,6 +274,7 @@ def validate_frontmatter_and_body(
     kind = nested(data, "metadata", "tigerkit", "kind")
     origin = nested(data, "metadata", "tigerkit", "origin")
     relationship = nested(data, "metadata", "tigerkit", "relationship")
+    version = nested(data, "metadata", "tigerkit", "version")
 
     errors.extend(
         _validate_model_facing_language(
@@ -293,6 +295,10 @@ def validate_frontmatter_and_body(
         errors.append(f"{label}: description must begin with {INVOCATION_LABELS[str(kind)]}")
     if relationship not in RELATIONSHIPS:
         errors.append(f"{label}: metadata.tigerkit.relationship is invalid")
+    if name == "tk-browser-verify" and version is None:
+        errors.append(f"{label}: metadata.tigerkit.version is required for result contract provenance")
+    elif version is not None and (not isinstance(version, str) or not SEMVER.fullmatch(version)):
+        errors.append(f"{label}: metadata.tigerkit.version must be semantic version X.Y.Z")
     if origin != "tigerkit" and not nested(data, "metadata", "tigerkit", "upstream-skill"):
         errors.append(f"{label}: external origin requires metadata.tigerkit.upstream-skill")
 
@@ -870,7 +876,7 @@ def validate_repository_contract(skill_names: set[str]) -> list[str]:
         "scripts/validate_skills.py",
         "scripts/sync_execution_protocol.py",
         "scripts/run_skill_evals.py",
-        "scripts/run_release_gate.py",
+        "scripts/run_release_checklist.py",
         "scripts/language_contract.py",
         "evals/catalog-routing.json",
         "evals/release-critical.json",
@@ -932,6 +938,7 @@ def validate_repository_contract(skill_names: set[str]) -> list[str]:
     errors.extend(validate_shared_external_contracts(SKILLS))
     errors.extend(validate_shared_clear_writing(SKILLS))
     errors.extend(output_notation_errors(SKILLS))
+    errors.extend(result_summary_errors(SKILLS))
     errors.extend(feedback_errors(ROOT))
     errors.extend(html_policy_errors(ROOT))
     errors.extend(validate_portable_artifacts(ROOT))

@@ -1,8 +1,6 @@
 # TigerKit
 
-`Claude Code`, `Codex`, `Hermes Agent`에서 필요한 순간에 골라 쓰는 에이전트 스킬 모음입니다.
-각 스킬은 독립된 역할과 완료 기준을 갖고, 조사·구현·검증·발행을 필요에 따라 조합합니다.
-작고 명확한 일반 수정은 스킬 없이 처리해도 됩니다.
+Claude Code, Codex, Hermes Agent에서 골라 쓰는 작고 조합 가능한 에이전트 스킬 모음입니다.
 
 ## 설치
 
@@ -11,200 +9,75 @@ npx skills add MTGVim/tiger-kit --global --agent claude-code codex hermes-agent 
 npx skills update --global --yes
 ```
 
-필요한 스킬만 선택할 수 있습니다. `Claude Code`와 `Hermes`에서는 `/tk-prep`,
-`Codex`에서는 `$tk-prep` 또는 스킬 선택기를 사용합니다.
-이름 변경과 제거는 [설치·마이그레이션](MIGRATION.md)을 참고하세요.
-
-## 어디서 시작하나요?
-
-- **만들기:** `tk-prep`에서 준비·승인·로컬 구현을 진행합니다. 작업 크기에 따라 직접 수정, `Ready Seed`, `SDD`, 인계를 선택하고 기본 브랜치에서는 작업 공간을 격리합니다.
-- **HTML 문서:** 긴 설명·연구·학습 자료는 우측 플로팅 목차와 위·아래 이동을 제공하며, 본문 각주 `[1]`을 호버하거나 키보드로 선택하면 참고문헌 내용이 표시되며, 하단 참고문헌과 왕복할 수 있습니다. JavaScript 없이도 핵심 탐색이 가능하고, 시스템·라이트·다크 테마와 동작 감소 설정을 지원합니다. 짧은 문서와 제품 시제품에는 탐색기를 강제하지 않습니다.
-  검증 결과는 참고문헌 앞의 하단 요약에서 항목별로 분리하고 항목명을 굵게 표시합니다. 정적 검사 완료와 화면 검증 불가를 구별하며, 최종 결과를 추가한 뒤에도 이 구조를 확인합니다.
-- **이해하기:** `tk-ask-repo`에서 현재 코드의 근거를 찾고, `tk-explain`·`tk-explain-diff`에서 배경지식부터 읽을 수 있는 오프라인 HTML 설명을 만듭니다.
-- **발굴·연구:** `tk-audit`에서 기술 일감을 감사하고, `tk-research`에서 접근법을 비교합니다.
-- **검증·발행:** `tk-review`와 필요한 실행 검증을 거쳐 `tk-pr-open`으로 발행합니다. 로컬 실행 승인은 원격 푸시나 PR 발행 승인으로 확대되지 않습니다.
-
-확인이 필요한 질문 블록은 앞에 `---`를 두고, `## 질문` 제목은 생략합니다. 질문 사이에는
-수평 구분선을 넣지 않으며, 질문 블록은 답변의 마지막에 배치합니다.
-PR 승인 미리보기는 절별 항목과 한두 줄 요약을 렌더링되는 Markdown으로 보여 주고,
-표·이미지 격자는 요약합니다. 발행할 원문과 템플릿은 승인 패킷에 그대로 보존합니다.
-일반 채팅에서는 여러 항목의 속성을 두 가지 이상 비교할 때 GFM 파이프 표를 사용하고, 단순
-나열은 목록으로 표시합니다. 표는 머리글과 짧은 셀을 갖춘 약 4열 이하로 구성하여 원문으로
-표시되어도 읽을 수 있게 합니다. 박스 문자나 코드 펜스로 표를 감싸지 않습니다. PR 승인
-미리보기처럼 소유 스킬의 별도 규칙이 우선하며, 게시 본문과 파일 안의 표에는 이 제한을 적용하지 않습니다.
-`tk-prep`의 완료 보고는 구현·검증·결정·제안을 짧은 제목으로 구분하고, 읽기에 도움이 되면
-의미에 맞는 이모지를 함께 사용합니다. 중요한 미충족 조건과 검증 누락은 마지막 본문 블록에
-모아 기대한 동작, 실제 결과, 이유와 다음 조치를 설명합니다. 필수 질문·판정·발행 형식이 있으면
-그 형식을 우선합니다. 결정 변화는 실제로 기록된 이전 판단과 새 근거가 있을 때만 타임라인으로
-보여 주며, 최종 결과만 알 수 있으면 비교표나 근거 관계도로 표현합니다.
-문서에서 입력·중심 처리·복수 결과·후속 재사용의 관계를 설명할 때에는 카드 흐름을 선택할 수
-있습니다. 동시 결과와 조건별 선택지를 구별하며, 결과 카드는 데스크톱 2열과 모바일 1열로
-배치합니다. 간단한 내용은 문장으로, 정확한 비교는 표로 표현합니다.
-완료 기준과 진단 항목은 필요할 때 아이콘 정보 행과 구분선으로 묶고, 근거가 있는 집계만
-KPI로 요약합니다. 숫자의 단위·수집 범위·상태 의미를 밝히며, 아이콘 없이도 내용이 전달됩니다.
-`tk-explain`과 `tk-explain-diff`는 실험 기간 동안 표현 모드를 지정하지 않으면 하나의 HTML에
-`standard`, `dialogue`, `dialogue-eli5` 세 탭을 모두 제공합니다. 개별 모드를 지정하면 그 뷰만
-생성하며, 세 뷰는 동일한 조사 근거·출처·검증 상태를 재사용합니다. `dialogue-eli5`는 짧은 쉬운
-문답으로 시작한 뒤 근거에 맞는 시각 자료를 곁들인 산문 설명으로 이어집니다. 대화에는 독자·고객·
-저자 이름표와 이모지를 표시하지 않습니다. 연속된 표·카드·흐름·대화·차트 같은 시각 블록은 공용
-visual stack 간격을 사용해 서로 붙어 보이지 않게 합니다.
-데이터 차트는 [차트 설계 참조](skills/tk-explain/references/chart-design.md)와
-[오프라인 예제](skills/tk-explain/assets/chart-examples.html)를 활용합니다. 막대·선·영역·산점도와
-작은 관계 그래프 예제가 있으며, 상세 툴팁·계열 표시 전환·노드별 근거 확인을 제공합니다.
-라이트·다크 테마와 키보드·터치 입력을 고려하고, JavaScript 없이도 정적 그림과 데이터 표를
-읽을 수 있습니다. 예제 데이터는 합성이며 실제 수치·출처로 바꾼 결과는 별도로 검증합니다.
-GitHub PR 본문·리뷰 답변·sweep 요약은 관계·순서·상태를 독자가 머릿속에서 다시 조립해야 하는
-경우 Mermaid를 적극 후보로 사용합니다. 구조·흐름·상태 전이는 Mermaid, 정확한 수치 비교는 GFM 표를
-우선하며, 모든 노드·간선·상태는 검증된 diff·코드·테스트·저장소 근거에 묶습니다. Mermaid가 렌더되지
-않아도 핵심 의미를 이해할 수 있는 짧은 설명을 함께 둡니다.
-`tk-grooming`은 전체 제안 표에 변경 위치를 표시하고, 저장소 밖(T1), 저장소 안의 미추적
-대상(T2), Git 추적 대상(T3) 순서로 적용합니다. 필요한 승인은 현재 단계만 묻고 기존 승인은
-유지합니다. 심볼릭 링크의 실제 대상과 공유 영향을 확인하며, T1·T2는 임시·자동 로드 디렉터리
-밖에 오래 유지되는 백업을 만들고 바이트 일치 결과와 경로를 보고합니다. T3가 현재 작업
-범위에 포함되지 않으면 담당 작업으로 넘길 제안만 합니다.
-앱·브라우저 검증에서는 클립보드·파일·알림을 쓰는 UI를 기본 대조군으로 고르지 않습니다.
-필요한 클립보드 변경은 전체 내용을 보호된 실행 소유 경로에 백업하고, 검증 뒤 복원 결과를
-확인해 보고합니다. 텍스트만 백업할 수 있다면 실행 전에 지원 범위를 알립니다.
+필요한 스킬만 선택할 수 있습니다. `Claude Code`와 `Hermes`에서는 `/tk-prep`, `Codex`에서는
+`$tk-prep` 또는 스킬 선택기를 사용합니다.
 
 ## 스킬 구성
 
-`user`는 사용자가 명시적으로 호출합니다. `hybrid`는 사용자가 호출하거나 작업에 맞으면
-에이전트가 선택할 수 있습니다. 행동과 권한은 링크된 `SKILL.md`가 정합니다.
+`user`는 사용자가 직접 호출하고, `hybrid`는 사용자가 호출하거나 에이전트가 작업에 맞게 선택합니다.
+상세한 동작과 권한은 각 스킬 문서를 확인하세요.
 
 ### 개발·기획
 
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
-| [tk-prep](skills/tk-prep/SKILL.md) | `user` | 준비·승인부터 격리된 로컬 구현·검증·커밋까지 진행하고 영향 진입점 전체를 런타임 계획에 담습니다. |
-| [tk-roadmap](skills/tk-roadmap/SKILL.md) | `user` | 목표와 제약을 인터뷰해 성과 중심 마일스톤을 만듭니다. |
-| [tk-audit](skills/tk-audit/SKILL.md) | `user` | 기술 일감·추적기 중복·정책 구조를 읽기 전용으로 감사합니다. |
-| [tk-prototype](skills/tk-prototype/SKILL.md) | `hybrid` | 판단에 필요한 폐기 가능한 UI·로직 비교물을 만듭니다. |
-| [tk-domain](skills/tk-domain/SKILL.md) | `hybrid` | 저장소 고유 용어와 지속할 결정 맥락을 작성·정제합니다. |
-| [tk-merge-conflict](skills/tk-merge-conflict/SKILL.md) | `hybrid` | 활성 Git 충돌의 양쪽 의도를 복원합니다. |
+| [tk-prep](skills/tk-prep/SKILL.md) | `user` | 작업을 준비하고 승인된 로컬 구현·검증을 진행합니다. |
+| [tk-roadmap](skills/tk-roadmap/SKILL.md) | `user` | 목표와 제약을 정리해 마일스톤을 만듭니다. |
+| [tk-audit](skills/tk-audit/SKILL.md) | `user` | 저장소의 기술 일감을 읽기 전용으로 감사합니다. |
+| [tk-prototype](skills/tk-prototype/SKILL.md) | `hybrid` | UI·로직 대안을 비교하는 시제품을 만듭니다. |
+| [tk-domain](skills/tk-domain/SKILL.md) | `hybrid` | 저장소 용어와 지속할 결정을 정리합니다. |
+| [tk-merge-conflict](skills/tk-merge-conflict/SKILL.md) | `hybrid` | 활성 Git 충돌의 의도를 복원하고 해결합니다. |
 
 ### 검토·검증
 
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
-| [tk-review](skills/tk-review/SKILL.md) | `user` | 정확한 커밋 범위·PR·현재 작업 공간을 명세와 품질 관점에서 읽기 전용으로 검토합니다. |
-| [tk-browser-verify](skills/tk-browser-verify/SKILL.md) | `hybrid` | 브라우저 화면을 `headless`로 검증하고, 데이터 변경은 부모가 승인한 비운영 범위에서만 수행합니다. |
-| [tk-app-verify](skills/tk-app-verify/SKILL.md) | `hybrid` | 데스크톱 앱의 창·상호작용·시각적 변경·접근성을 검증합니다. |
-| [tk-qa-sheet](skills/tk-qa-sheet/SKILL.md) | `user` | HTML QA 시트에서 자동 근거와 수동 체크를 구분하고, 데이터 변경 없이 `headless`로 실행 가능한 수동 행 수를 보고합니다. |
+| [tk-review](skills/tk-review/SKILL.md) | `user` | 지정한 변경을 명세와 품질 기준으로 검토합니다. |
+| [tk-browser-verify](skills/tk-browser-verify/SKILL.md) | `hybrid` | 브라우저 화면과 동작을 검증합니다. |
+| [tk-app-verify](skills/tk-app-verify/SKILL.md) | `hybrid` | 데스크톱 앱의 동작·화면·접근성을 검증합니다. |
+| [tk-qa-sheet](skills/tk-qa-sheet/SKILL.md) | `user` | 수동 점검을 기록하는 HTML 시트를 만듭니다. |
 
 ### PR 관리
 
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
-| [tk-pr-open](skills/tk-pr-open/SKILL.md) | `hybrid` | 검증된 커밋의 단일·연속 PR 발행을 준비하고 승인된 푸시·PR 생성을 수행합니다. |
-| [tk-pr-respond](skills/tk-pr-respond/SKILL.md) | `hybrid` | 한 PR의 리뷰·지원 CI를 분석하고 승인된 수정·검증·답변을 진행합니다. |
-| [tk-pr-rebase](skills/tk-pr-rebase/SKILL.md) | `hybrid` | 정확한 `PR`을 최신 기준 브랜치에 `rebase`하고 제한된 `force-with-lease`를 수행합니다. |
-| [tk-pr-sweep](skills/tk-pr-sweep/SKILL.md) | `user` | 여러 PR을 결정론적으로 분류하고 승인된 유지보수 묶음을 처리합니다. |
-| [tk-pr-image](skills/tk-pr-image/SKILL.md) | `hybrid` | 기존 PR에 로컬 검증 이미지를 올립니다. |
+| [tk-pr-open](skills/tk-pr-open/SKILL.md) | `hybrid` | 검증된 변경의 PR 발행을 준비하고 승인된 작업을 수행합니다. |
+| [tk-pr-respond](skills/tk-pr-respond/SKILL.md) | `hybrid` | 한 PR의 리뷰와 지원 CI에 대응합니다. |
+| [tk-pr-rebase](skills/tk-pr-rebase/SKILL.md) | `hybrid` | 지정한 PR을 최신 기준 브랜치에 리베이스합니다. |
+| [tk-pr-sweep](skills/tk-pr-sweep/SKILL.md) | `user` | 여러 PR을 분류하고 승인된 유지보수를 처리합니다. |
+| [tk-pr-image](skills/tk-pr-image/SKILL.md) | `hybrid` | PR에 로컬 검증 이미지를 올립니다. |
 
 ### 이해·연구·학습
 
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
-| [tk-ask-repo](skills/tk-ask-repo/SKILL.md) | `user` | 현재 저장소의 동작·값·영향·귀속을 근거와 함께 설명합니다. |
-| [tk-explain](skills/tk-explain/SKILL.md) | `hybrid` | 입력 명제와 조건을 보존하고 배경지식과 실제 구조·동작을 자체 완결형 HTML로 설명합니다. |
-| [tk-explain-diff](skills/tk-explain-diff/SKILL.md) | `hybrid` | 특정 코드 변경을 기존 구조와 실행 흐름부터 설명합니다. |
-| [tk-research](skills/tk-research/SKILL.md) | `hybrid` | 외부 비교부터 지속 연구·실험·재개까지 필요한 단계만 수행하고 HTML 결과를 제공합니다. |
-| [tk-teach](skills/tk-teach/SKILL.md) | `hybrid` | 실제 학습 기록으로 맞춤 수업·복습과 HTML 강의를 구성합니다. |
+| [tk-ask-repo](skills/tk-ask-repo/SKILL.md) | `user` | 저장소의 동작과 근거를 설명합니다. |
+| [tk-explain](skills/tk-explain/SKILL.md) | `hybrid` | 배경지식과 실제 동작을 HTML로 설명합니다. |
+| [tk-explain-diff](skills/tk-explain-diff/SKILL.md) | `hybrid` | 코드 변경의 배경과 실행 흐름을 설명합니다. |
+| [tk-research](skills/tk-research/SKILL.md) | `hybrid` | 근거를 조사하고 접근법을 비교합니다. |
+| [tk-teach](skills/tk-teach/SKILL.md) | `hybrid` | 학습 기록에 맞춰 수업과 복습을 구성합니다. |
 
 ### 대화·글쓰기
 
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
-| [tk-grill](skills/tk-grill/SKILL.md) | `user` | 아이디어·계획·결정을 인터뷰해 공통 이해를 확인합니다. |
-| [tk-inquiry](skills/tk-inquiry/SKILL.md) | `hybrid` | 조사 사실과 추정을 구분해 다른 담당자에게 보낼 질문 초안을 채널별 서식에 맞춰 작성합니다. |
-| [tk-adhd](skills/tk-adhd/SKILL.md) | `hybrid` | 답변과 작업 결과에서 핵심·실행 단계를 찾기 쉽게 구성합니다. |
-| [tk-rewrite](skills/tk-rewrite/SKILL.md) | `hybrid` | 기존 글의 맥락·구조와 표현을 정제합니다. |
+| [tk-grill](skills/tk-grill/SKILL.md) | `user` | 아이디어와 결정을 질문으로 구체화합니다. |
+| [tk-inquiry](skills/tk-inquiry/SKILL.md) | `hybrid` | 다른 담당자에게 보낼 질문 초안을 작성합니다. |
+| [tk-adhd](skills/tk-adhd/SKILL.md) | `hybrid` | 답변과 결과를 찾기 쉽게 구성합니다. |
+| [tk-rewrite](skills/tk-rewrite/SKILL.md) | `hybrid` | 기존 글의 맥락과 표현을 다듬습니다. |
 
 ### 세션·환경 관리
 
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
-| [tk-retro](skills/tk-retro/SKILL.md) | `hybrid` | 세션 과정과 스킬 사고를 회고하고, 익명화한 개선안을 기본적으로 `.tigerkit/retro/`에 저장합니다. |
-| [tk-compound](skills/tk-compound/SKILL.md) | `user` | 여러 완료 PR과 연결된 세션의 반복 문제를 읽기 전용으로 진단하고 재발 방지 후보를 제안합니다. |
-| [tk-grooming](skills/tk-grooming/SKILL.md) | `hybrid` | 스킬·지속 규칙·자동 기억의 중복·충돌·낡은 지침을 감사합니다. |
-| [tk-handoff](skills/tk-handoff/SKILL.md) | `hybrid` | 현재 대화의 현황을 확인하거나 재개용 인수인계를 작성·복원합니다. |
-| [tk-wizard](skills/tk-wizard/SKILL.md) | `hybrid` | 사람이 직접 해야 하는 설정·인증·이관 절차를 안내합니다. |
+| [tk-retro](skills/tk-retro/SKILL.md) | `hybrid` | 세션을 회고하고 개선안을 제안합니다. |
+| [tk-compound](skills/tk-compound/SKILL.md) | `user` | 완료 PR에서 반복 문제와 예방책을 찾습니다. |
+| [tk-grooming](skills/tk-grooming/SKILL.md) | `hybrid` | 스킬과 지속 규칙의 중복·충돌을 감사합니다. |
+| [tk-handoff](skills/tk-handoff/SKILL.md) | `hybrid` | 세션 현황을 확인하고 인수인계를 작성합니다. |
+| [tk-wizard](skills/tk-wizard/SKILL.md) | `hybrid` | 설정·인증·이관 절차를 안내합니다. |
 
-`tk-retro`는 화면에 전달된 내용에 관한 사고를 조사할 때 접근 가능한 현재 세션의 전달 기록을
-먼저 확인합니다. 원인이 미확정이어도 가능한 원인 모두에 유효한 예방책과 담당 스킬·문서,
-판정 방법을 제안하며, 안전한 예방책이 없으면 그 이유를 밝힙니다. 공용 스킬의 문제를
-개인 메모리나 현재 저장소에만 적용되는 조치로 대신 처리하지 않습니다.
+## 참고
 
-코드 리뷰에서는 현재 변경과 관련 있는 baseline 프로젝트 규칙만 선택합니다. 같은 PR이 새로
-추가하거나 수정한 규칙은 그 PR 자체를 통과시키는 권위로 사용하지 않고 후보 근거로 취급합니다.
-반복된 중요한 리뷰 피드백이나 명시적 팀 합의가 있으면 적용 범위를 가진 재사용 규칙 후보를 제안할 수
-있지만 `tk-review` 자체는 읽기 전용이며 규칙을 저장하지 않습니다. `tk-rewrite`는 의미 보존에 더해
-원저자의 유효한 말투를 불필요하게 평탄화하는 voice drift와 원문에 없는 주장·인과·확신을 추가하는
-added claims를 직접 검사합니다.
-## 프로젝트 설정
-
-`tk-compound`는 기본적으로 현재 저장소에서 최근 30일 동안 리뷰 활동이 있던 완료 PR을
-살펴봅니다. `--since`, `--focus` 또는 특정 PR로 범위를 좁힐 수 있습니다. 리뷰 의견과
-확인된 결함을 구별하고 현재 예방책을 대조하여, 이미 해결된 경우에는 `No change`로
-보고합니다. 기본 결과는 채팅이며 문서·규칙·메모리 생성이나 개선안 구현으로 자동 전환하지 않습니다.
-
-공유 정책은 선택적인 `tigerkit.config.json`, 개인 정책은 무시된 `.tigerkit/repository.json`에 둡니다.
-스크립트가 소비하는 ID·경로는 정형 타입을 유지하고, 모델이 해석하는 정책과
-`questionnaire.templates.<channel>` 템플릿은 `slack`, `github`, `jira`, `email`,
-`markdown` 키에 채널별 문자열로 작성할 수 있습니다.
-중요한 설정이 없으면 근거를 조사한 뒤 필요한 결정만 묻고, 확인한 설정을 저장해 작업을 이어갑니다.
-설정과 외부 자료는 원격 변경·메시지 전송·스크립트 실행 권한을 부여하지 않습니다.
-
-`Orca` 작업 공간과 콜백은 `orca.yaml`·`.worktreeinclude`를 따릅니다.
-`tk-prep`의 격리 절차와 `tk-pr-sweep`의 사용자 단위 `pr-triage.json` 설정은 각 스킬이 유지합니다.
-`tk-pr-sweep`은 계정별로 최신 PR 대화 코멘트를 추적합니다. 필요하면 `informationalCommentMarkers`에 리포트
-도구의 `HTML` 주석 접두어를 등록해 상태 코멘트만 답글 분류에서 제외할 수 있습니다.
-
-## 브라우저 검증의 인증 및 실행 자원
-
-`tk-prep`에서 승인된 화면 변경은 기존 순서대로 구현 전 기준 화면을 먼저 촬영합니다.
-`tk-browser-verify`는 해당 캡처가 끝나면 실행 소유 브라우저와 개발서버를 즉시
-종료하고, 스크린샷과 재실행 조건만 유지합니다. 에이전트는 사용 중인 포트를 피하고,
-서버 기동 때 받은 PID와 확인된 실행 소유 자식 PID만 종료합니다. 포트나 프로세스 이름으로
-찾아 종료하지 않으며, 구현과 리뷰를 마친 뒤 최종 변경본 검증에 필요한 자원만 다시 시작합니다.
-여러 작업 트리의 서버 실행을 직렬화하는 잠금과 `supervisor`는 사용하지 않습니다.
-
-토큰 인증이 필요한 경우에만 준비 단계에서 단기 `access` 토큰을 한 번 입력받고, 인증을 확인한 개발용 토큰은
-같은 작업 트리의 무시된 입력 파일에서 만료까지 재사용합니다. 디렉터리 `0700`, 파일 `0600`을
-유지하고 주입 전에 JWT `exp` 또는 확인된 만료 시각을 검사합니다. 만료 시각이 남아 있어도
-세션 무효화로 인증이 거부되면 새 입력이 필요합니다. 만료·무효 토큰은 다음 읽기에서 삭제하며,
-정확한 만료 시각에 자동 삭제하는 데몬은 없습니다. 다른 작업 트리와 인증정보를 공유하지 않습니다.
-단기 토큰을 사용하는 변경 후 검증은 `focused test`가 통과한 직후 `after` 캡처를 먼저 수행하고, 이후 전체
-테스트·빌드·리뷰를 진행합니다. 후속 수정이 검증 화면의 `render` 또는 `request path`를 바꾸면 최종 변경본에서
-다시 촬영합니다.
-이전 공유 캐시를 사용했다면 업데이트만으로 기존 파일이 삭제되지는 않습니다. Git 공통
-디렉터리의 기존 `tigerkit-auth` 디렉터리는 현재 인증 흐름에서 읽거나 가져오지 않으며,
-사용자가 해당 캐시를 사용하던 실행을 종료한 뒤 경로와 소유권을 확인하여 수동 삭제해야 합니다.
-수명이 불명확하거나 긴 자격증명은 작업 종료 시 삭제하고, 운영용 자격증명과 `refresh` 토큰은
-보관하지 않습니다. 제한된 권한은 암호화가 아니므로 동일한 운영체제 계정의 프로세스와
-백업에서는 내용을 읽을 수 있습니다.
-
-새 입력이 필요하면 대상 환경과 확인된 로그인 주소, 준비한 JSON 입력 파일의 실제 상대경로와
-절대경로를 각각 독립된 줄에 안내합니다. 호스트가 지원하면 제한된 백그라운드 감시를 먼저
-시작하고, 경로 안내는 턴의 마지막 일반 텍스트 메시지로 전달합니다. 대기 중 서버와 브라우저는
-종료합니다. 감시나 자동 재개를 지원하지 않는 호스트에서는 기존 파일과 재개 방법을 안내합니다.
-자세한 조건은 [브라우저 인증 참조](skills/tk-browser-verify/references/environment.md)를 확인하세요.
-
-Markdown 범위는 `146-149행` 또는 “146행부터 149행까지”로 적고, 코드 밖에서 물결표가
-필요하면 이스케이프합니다. 질문은 `---` 다음에 빈 줄과 굵은 `Q` 제목으로 표시하며,
-질문 사이에는 수평 구분선을 넣지 않습니다.
-
-## 유지보수
-
-원격 CI 없이 로컬 릴리즈 게이트를 실행합니다.
-
-```bash
-python3 scripts/run_seed_release_gate.py --baseline origin/main --candidate HEAD
-```
-
-게이트는 README의 스킬 누락·삭제 잔재·중복, 호출 방식, 스킬 링크, 문서 표와
-공개 계약 변경에 따른 README 갱신 여부를 검사합니다. 행동 설명은 실제 스킬과 독립 검수로 대조합니다.
-공개 변화가 없는 변경은 [문서 최신화 절차](MIGRATION.md#문서-최신화-릴리즈-게이트)에 따라 사유를 남깁니다.
-
-`Matt Pocock`의 [스킬 구성](https://github.com/mattpocock/skills)을 참고했습니다.
-개별 증류 근거와 [저작권 고지](NOTICE.md)를 보존합니다.
+- [설치 마이그레이션](MIGRATION.md)
+- [릴리즈 체크리스트](RELEASE_CHECKLIST.md)
+- [출처와 저작권 고지](NOTICE.md)

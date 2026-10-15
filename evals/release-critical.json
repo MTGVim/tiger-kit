@@ -698,7 +698,13 @@
     "tk-prep:behavior:prep-verification-policy-does-not-escape-scope",
     "tk-browser-verify:behavior:browser-native-drag-select-and-repeat-token-prompt",
     "tk-qa-sheet:behavior:qa-authorized-data-evidence-and-empty-manual-selfcheck",
-    "tk-retro:behavior:retro-report-only-disposition-concise-final"
+    "tk-retro:behavior:retro-report-only-disposition-concise-final",
+    "tk-browser-verify:behavior:browser-result-coverage-and-stable-ids",
+    "tk-browser-verify:behavior:browser-save-events-survive-history-navigation",
+    "tk-browser-verify:behavior:browser-sensitive-screen-is-planned-before-first-capture",
+    "tk-qa-sheet:behavior:qa-preserves-failed-verifier-row-identity",
+    "tk-qa-sheet:behavior:qa-reader-facing-summary-uses-shared-result-order",
+    "tk-prep:behavior:prep-assigns-stable-runtime-criterion-ids"
   ],
   "catalog_cases": [
     "catalog:behavior:native-app-runtime-verify",

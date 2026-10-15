@@ -36,7 +36,7 @@ Agent가 읽는 문서는 길이가 아니라 **행동 대비 load**로 판단�
 - `Skill body` 크기는 정합성 관문이 아니라 검토 신호입니다. 새롭거나 단순한 `skill`은 가능하면 수백 `token` 안에 두고, 큰 본문은 `progressive disclosure`와 `instruction load`를 검토하되 필요한 행동·안전·권한 `guard`를 예산 때문에 제거하지 않습니다. 스킬 개선 후보의 적합성과 검증 기준은 `skills/tk-retro/references/skill-candidates.md`를 참고합니다.
 - 최종 변경이 사용자에게 공개된 동작, 명령어, 경로, 설정, 계약, 설치·운영 절차를 바꾸고 기존 `README.md` 또는 저장소 문서가 그 사실을 소유한다면 같은 작업 단위에서 최신화합니다. 공개 사실이 바뀌지 않았거나 정확한 소유 문서가 없다면 의례적인 문서 수정, 광범위한 문서 검색, 새 문서 생성을 수행하지 않습니다.
 - 일반 steering은 해야 할 행동을 직접 쓰는 positive form을 선호하되, publication authority, destructive mutation, secret, freshness, cross-scope safety boundary의 hard stop은 약화하지 않습니다.
-- 설치된 `skill`의 `runtime behavior`나 `safety boundary`를 이 `AGENTS.md`에만 두지 않습니다. 설치 사용자에게 필요한 규칙은 `owning SKILL.md` 또는 `package-local reference`에 있어야 하며, 여러 `package`가 같은 `runtime guard`를 공유하면 `exact canonical block`과 `release validation`으로 누락·`drift`를 실패시킵니다.
+- 설치된 `skill`의 `runtime behavior`나 `safety boundary`를 이 `AGENTS.md`에만 두지 않습니다. 설치 사용자에게 필요한 규칙은 `owning SKILL.md` 또는 `package-local reference`에 있어야 하며, 여러 `package`가 같은 `runtime guard`를 공유하면 `exact canonical block`과 릴리즈 체크리스트 검사로 누락·`drift`를 실패시킵니다.
 
 ## `Adaptive prep` `product` `work`
 
@@ -235,7 +235,7 @@ $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 원자적 교체에 필요한 동일 디렉터리의 임시 파일은 같은 파일시스템에서 실행 소유권을 확인하고 성공 후 정리합니다.
 설명은 `.tigerkit/explanations/`, 학습은 `.tigerkit/study/<topic>/`, 저장한 조사는 `.tigerkit/research/`를
 기본으로 사용합니다. 명시한 최종 목적지는 존중합니다. `scripts/artifact_policy.py`가 공통 정책을 소유하며
-파일을 쓰지 않는 스킬의 쓰기 금지 경계, 파일을 쓰는 스킬의 조건부 본문·패키지 로컬 참조와 실행 도구를 릴리즈 게이트에서 검사합니다.
+파일을 쓰지 않는 스킬의 쓰기 금지 경계, 파일을 쓰는 스킬의 조건부 본문·패키지 로컬 참조와 실행 도구를 릴리즈 체크리스트의 자동 검사에서 확인합니다.
 
 ## 반복 발견
 
@@ -259,42 +259,11 @@ evals/catalog-routing.json
 evals/release-critical.json
 ```
 
-`run_seed_release_gate.py`는 모든 활성 `skill`과 `catalog`의 `baseline` 계약을 보존합니다. 또한 `SKILL.md`의 공개 계약을 변경한 후보에 README 갱신이 없으면 차단합니다. 공개 변화가 없는 예외는 해당 릴리즈에서 변경한 `evals/changes/*.md`에 `README: no public change`와 정확한 대상 경로·이유를 기록해야 합니다.
+`run_seed_release_checklist.py`는 모든 활성 `skill`과 `catalog`의 `baseline` 계약을 보존합니다. README는 소개·설치·짧은 스킬 카탈로그만 소유합니다. 스킬 동작 본문만 바뀌면 README 갱신을 요구하지 않으며, 공개 카탈로그 메타데이터가 바뀌면 README를 갱신하거나 해당 릴리즈의 `evals/changes/*.md`에 `README: no public change`와 정확한 대상 경로·이유를 기록해야 합니다.
 과거의 `replaced_skill_eval_contracts`와 `replace_catalog_contract` 포괄 예외는 허용하지 않습니다.
 식별자 변경은 해당 평가의 명시적 `migration`으로 처리하고, 실제 폐기만 폐기 목록에 기록합니다.
 
-## 필수 검사
+## 릴리즈 체크리스트
 
-```bash
-python3 scripts/sync_execution_protocol.py --check
-python3 scripts/validate_skills.py
-python3 scripts/validate_skills.py --links-only
-python3 -B -m unittest discover -s scripts -p 'test_*.py'
-python3 scripts/audit_catalog.py --check
-python3 scripts/check_docs.py
-node --check skills/tk-pr-sweep/scripts/triage.mjs
-node --test skills/tk-pr-sweep/scripts/triage.test.mjs
-npx --yes skills@1.5.9 add . --list
-npx --yes skills add . --list
-git diff --check
-```
-
-`Release` `candidate`:
-
-```bash
-python3 scripts/run_seed_release_gate.py \
-  --baseline "$(git rev-parse origin/main)" \
-  --candidate HEAD
-```
-
-### `main` 푸시 전 체크리스트
-
-- [ ] `origin/main`을 다시 확인하고 비교 기준이 최신인지 확인합니다.
-- [ ] 후보 변경을 모두 커밋하고 작업 트리가 깨끗한지 확인합니다.
-- [ ] 위의 필수 검사를 모두 통과합니다. 문서 표·링크·스킬 목록·호출 방식·공유 정책을 검사하고, 변경된 공개 동작의 설명은 독립 검수로 대조합니다.
-- [ ] `run_seed_release_gate.py`를 최신 `origin/main` 기준으로 실행하고 최종 `status`가 `Pass`인지 확인합니다.
-- [ ] `blocking_reasons`, `contract_errors`, `Unverifiable` 상태가 남아 있지 않은지 확인합니다.
-- [ ] 검증 뒤 `origin/main`이 이동했다면 새 기준으로 릴리즈 게이트를 다시 실행합니다.
-- [ ] 이 체크리스트를 만족한 뒤에만 `main`을 갱신합니다.
-
-모든 `validation`은 `local-only`입니다.
+`main` 반영 전에 릴리즈 체크리스트 문서의 로컬 검사와 확인 항목을 모두 통과합니다.
+체크리스트가 이 저장소의 필수 명령과 README 작성 기준을 소유합니다. 원격 CI는 사용하지 않습니다.

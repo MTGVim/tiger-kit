@@ -23,6 +23,7 @@ inventory from that data. The final file needs no external assets or runtime gen
           "notes": ["Shared pattern or missing connection"],
           "checks": [
             {
+              "criterionId": "UI-001",
               "text": "Observed trigger and expected behavior",
               "provenance": "observed",
               "verification": "auto-verified",
@@ -30,6 +31,7 @@ inventory from that data. The final file needs no external assets or runtime gen
               "indent": 0
             },
             {
+              "criterionId": "UI-002",
               "text": "Only the unexercised branch remains",
               "provenance": "observed",
               "verification": "partial",
@@ -60,15 +62,22 @@ when the source contains an exact string. Known routes may appear
 in code formatting as technical literals; disclose their status separately from navigation.
 List user-provided text and missing click connections explicitly in notes/legend/limitations.
 
-`verification` is `manual | auto-verified | partial`; missing values default to `manual`.
+`criterionId` is an optional stable ID supplied by the impact inventory or browser verifier. Keep it unchanged when transferring a verifier row; IDs must be unique across the sheet. The renderer displays it beside the row. Its generated checkbox ID remains separate and content-bound.
+
+`verification` is `manual | auto-verified | partial | failed`; missing values default to `manual`.
 It applies to a standalone item or a non-heading child check and is independent from
 `provenance`. Items that contain child checks do not carry their own verification state.
-`auto-verified` and `partial` rows require an `evidence` object with nonblank `ref`
+`auto-verified`, `partial`, and `failed` rows require an `evidence` object with nonblank `ref`
 and `head`: `ref` is the run ID or evidence path, and `head` is the commit head that
 evidence was bound to. Manual rows omit `evidence`. A manual row that was demoted because a
 later diff affected its screen may instead carry `previousEvidence` with the same `ref` and
 `head` shape. Never-exercised manual rows omit both fields, and `previousEvidence` never
 promotes a row to automatic verification.
+
+Set a verifier `Fail` row to `failed` without splitting it into a passed part and a manual
+remainder. Preserve the verifier evidence in `evidence`; the row remains in the editable manual
+list so a person can record a follow-up check, while the `failed` result and its evidence remain
+visible. A manual checkbox does not rewrite the verifier result.
 
 Use `auto-verified` only for run-owned automated runtime evidence that exercised the same
 screen, entry path, trigger and expected result. Normally that evidence is on the current head.
@@ -88,8 +97,8 @@ label records verification evidence and is not product acceptance. If authority 
 evidence is missing, keep the data-changing result `manual`.
 
 The HTML renderer places `auto-verified` rows in a collapsed `Automated` group as checked,
-disabled controls with their evidence reference. `partial` and `manual` rows remain editable
-in the manual list; `partial` rows show current evidence, while head-demoted manual rows show
+disabled controls with their evidence reference. `partial`, `failed`, and `manual` rows remain editable
+in the manual list; `partial` and `failed` rows show current evidence, while head-demoted manual rows show
 `previousEvidence` with an explicit previous-head label. Neither state is product acceptance.
 
 ## Screen links

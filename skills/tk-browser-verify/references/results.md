@@ -22,6 +22,9 @@ not the later `after/` path. A later negative sample does not erase the observed
 Require these contract fields in nested and standalone results; keep nested results limited to:
 
 - status
+- `contract: <metadata.tigerkit.version>`; the current contract is `1.1.0`
+- `coverage: planned <N> / executed <n> / covered-by <c> / not-executed <m>`; the counts must reconcile to the full approved inventory
+- `human_action: none | <N> (criterion IDs, reason and next action)`; nested returns use `none` when the parent owns all remaining work
 - `phase: baseline | after | acceptance`; for a successful pre-edit baseline also return `baseline_capture: Pass`,
   `verification_complete: false`, `run_id`, `replay_procedure`, and the exact `next_required`; include
   `resume_parent: required` when the active parent has approved implementation remaining
@@ -29,16 +32,26 @@ Require these contract fields in nested and standalone results; keep nested resu
   multi-capture, visual/responsive, or render-affecting branch applies
 - `capture_only_mutation: <description> | none`, also in the evidence index; include outlines/labels,
   hiding/removal, and runtime mocks, or explicitly `none` when no capture-only mutation occurred
-- Facts per criterion
+- one fact row per approved criterion with `criterion_id`, `result`, `route`, `entry`, `trigger`, `operation: read | create | update`, `input`, `evidence_kind`, `evidence_ref`, and `head`
+- use `result: covered-by:<criterion_id>` for covered rows, with the referenced row's `evidence_ref` and `head`; preserve the equivalence rationale in the full row map
+- `input: trusted | synthetic(<reason>)`; product interaction cannot Pass on synthetic input. Synthetic evidence is allowed only when the criterion itself permits a non-interaction probe
+- `evidence_kind`: one or more of `blocked-intercept | request+response | reread-runtime | reread-image | visual-pair | trace | accessibility | dom-runtime`; use the most direct evidence actually inspected
+- for every `create` or `update` row, `Pass` requires `reread-runtime` on the same screen and field. If `reread-image` is used, the inspected image must show the field being judged
+- for every unexecuted row: `reason`, `search_scope` (page, filters, data conditions or the exact preflight boundary), and `unblock` (the concrete step that would permit execution)
 - non-sensitive auth mode
 - absolute evidence directory
 - baseline provenance and replay procedure when a visual pair is required
 - one ordered row per inspected screenshot with its path, exact origin-free `display_route` or explicit omission,
   criterion, state/region, `capture_method`, effective viewport, role, and comparison result; otherwise the direct trace/a11y/DOM/runtime/request evidence
 - the same per-capture method/effective viewport in the evidence index, including reason and effect for exceptions
+- for sensitive screens, the capture plan's sensitive region and pre-capture clip/mask; never retain a full-page/raw original
 - limitation
 - cleanup fact, including exact run-owned server/browser shutdown, recorded launch PID/handle and confirmed exit and any verified residue; no baseline-to-final-head process hold
 - `automated_regression: protected | N/A | exception | unknown` as supplied/verified parent disposition
+
+Use the parent-provided inventory row ID verbatim as `criterion_id`. For direct calls without IDs, assign `BV-001`, `BV-002`, ... once in inventory order and preserve that mapping across retries and phases. `tk-prep` assigns IDs before handoff. Keep the same ID in the QA sheet's `criterionId`; map `evidence_ref` to the sheet's `evidence.ref`, and copy `head` unchanged. Never create a second criterion for a failed part of one row.
+
+When runtime evidence exists, maintain one bounded run-owned `README.md` as the evidence index and canonical full row map. Include each row's full fields above, detailed facts, capture mapping and any non-executed-row details. A standalone chat result may show only the compact row summary below and substitute the README's complete absolute path for the full map. Do not add other Markdown files to the evidence directory.
 
 A successful baseline is intermediate evidence, never acceptance. The verifier must release
 its owned server, context and browser before returning phase evidence to the parent. A later
@@ -66,7 +79,30 @@ not create a ceremonial screenshot; return the image-publication requirement as 
 non-`Pass` criterion, preserve owned failure evidence, return its real status, and never emit a `verification_status:
 Pass` manifest entry for it.
 
-A standalone result, with no active owner task to resume, starts with `## Verdict` and exact `Status: <token>`, then shows verified facts, required limitations, evidence paths, and the cleanup fact. Standalone baseline success remains capture-only with `verification_complete: false`.
+A standalone result, with no active owner task to resume, uses this shape. Required `## Verdict` and exact status stay first; the shared reader-facing summary block controls section order. `✅`, `🧹`, and `👤` are always present. `🛠️`, `💭`, `💡`, and `⚠️` appear only when they have content. The complete row map lives in the evidence README so the conversation stays short:
+
+```text
+## Verdict
+Status: Pass
+head `<sha>` · env `<environment>` · contract `1.1.0` · coverage planned 7 / executed 7 / covered-by 0 / not-executed 0
+
+### ✅ 검증한 것
+| ID | 판정 | 근거 종류 | 입력 |
+| --- | --- | --- | --- |
+| R1 | Pass | visual-pair | trusted |
+| R6 | Pass | request+response, reread-runtime | trusted |
+
+### 🧹 정리
+- 소유한 서버·브라우저 종료 확인 · 단기 토큰은 만료까지 보존
+
+근거:
+<evidence README absolute path>
+
+### 👤 사람이 할 일
+- 없음
+```
+
+For each unexecuted row, put its reason, `search_scope`, and `unblock` in the full row map and include its ID and next action in `👤 사람이 할 일`. Preserve an exact mandatory status footer after substantive sections when an owning contract requires one. Standalone baseline success remains capture-only with `verification_complete: false`.
 Never promote a result to `Pass` without required runtime evidence.
 
 | Status | Meaning |

@@ -142,7 +142,7 @@ heartbeat and automatic UI opening. Demo scientific outcomes were not reproduced
 `ce-ideate/references/html-rendering.md` navigation/self-contained invariants and output-HTML plan;
 adapt native semantic sections, sticky/compact TOC, hashes and details; omit CDN fonts, mandatory
 HTML-only authority and donor orchestration. Donor styling/palette is not copied. Shared writing
-and HTML behavior remain owned by `tk-rewrite` and `tk-explain` and copied through release validation.
+and HTML behavior remain owned by `tk-rewrite` and `tk-explain` and copied and checked by the release checklist.
 MDN `nav`/`details` and W3C bypass-blocks describe native navigation/accessibility semantics, not
 research efficacy. Comparative local evals preserve ties and cost/resume/negative-result limits.
 

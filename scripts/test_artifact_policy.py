@@ -30,12 +30,12 @@ class ArtifactPolicyTests(unittest.TestCase):
         self.assertFalse(path.exists())
 
     def test_default_evidence_and_explicit_final_destination(self):
-        default = policy.output_directory(None, 'release-gate', self.root)
-        self.assertTrue(default.is_relative_to(self.root / '.tigerkit/evidence/release-gate'))
+        default = policy.output_directory(None, 'release-checklist', self.root)
+        self.assertTrue(default.is_relative_to(self.root / '.tigerkit/evidence/release-checklist'))
         external = Path(self.temp.name) / 'chosen-final'
-        self.assertEqual(policy.output_directory(str(external), 'release-gate', self.root), external)
+        self.assertEqual(policy.output_directory(str(external), 'release-checklist', self.root), external)
         local = self.root / '.tigerkit/evidence/chosen'
-        self.assertEqual(policy.output_directory(str(local), 'release-gate', self.root), local)
+        self.assertEqual(policy.output_directory(str(local), 'release-checklist', self.root), local)
 
     def test_missing_ignore_is_created_before_artifact_write(self):
         (self.root / '.gitignore').unlink()
@@ -157,13 +157,13 @@ class ArtifactPolicyTests(unittest.TestCase):
             policy.output_directory(str(base / 'tmp/out'), 'eval', self.root)
 
     def test_existing_results_and_product_directory_are_preserved(self):
-        old = policy.output_directory(None, 'release-gate', self.root)
+        old = policy.output_directory(None, 'release-checklist', self.root)
         (old / 'result').write_text('keep')
         with self.assertRaises(ValueError):
-            policy.output_directory(str(old), 'release-gate', self.root)
+            policy.output_directory(str(old), 'release-checklist', self.root)
         self.assertEqual((old / 'result').read_text(), 'keep')
         with self.assertRaises(ValueError):
-            policy.output_directory(str(self.root / 'docs'), 'release-gate', self.root)
+            policy.output_directory(str(self.root / 'docs'), 'release-checklist', self.root)
 
 class InstalledArtifactGuardTests(unittest.TestCase):
     def test_missing_or_changed_reference_blocks_installation(self):
