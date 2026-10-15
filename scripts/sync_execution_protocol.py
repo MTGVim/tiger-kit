@@ -37,6 +37,11 @@ EXTERNAL_CONTRACT_SOURCE = ROOT / "skills/tk-prep/references/external-contracts.
 EXTERNAL_CONTRACT_TARGET = ROOT / "skills/tk-wizard/references/external-contracts.md"
 CLEAR_WRITING_SOURCE = ROOT / "skills/tk-rewrite/references/clear-writing.md"
 CLEAR_WRITING_TARGET = ROOT / "skills/tk-explain/references/clear-writing.md"
+PR_VISUAL_SOURCE = ROOT / "skills/tk-pr-open/references/github-visuals.md"
+PR_VISUAL_TARGETS = (
+    ROOT / "skills/tk-pr-respond/references/github-visuals.md",
+    ROOT / "skills/tk-pr-sweep/references/github-visuals.md",
+)
 DOMAIN_CONTEXT_TARGETS = (
     ROOT / "skills/tk-ask-repo/references/domain-context.md",
     ROOT / "skills/tk-audit/references/domain-context.md",
@@ -216,6 +221,7 @@ def main() -> int:
         for name in REVIEW_FILES
     )
     pairs.append((EXTERNAL_CONTRACT_SOURCE, EXTERNAL_CONTRACT_TARGET))
+    pairs.extend((PR_VISUAL_SOURCE, target) for target in PR_VISUAL_TARGETS)
     context = ROOT / "skills/tk-audit/references/repository-context.md"
     if context.is_file():
         pairs.extend((context, ROOT / "skills" / name / "references/repository-context.md")
