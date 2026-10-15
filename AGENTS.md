@@ -134,7 +134,7 @@ Ready `Seed`는 `fresh` `lower-capability` `executor`가 원 대화 없이 다�
 - `tk-pr-respond`: `exact` `one-PR` `feedback`/지원 CI `resolution`과 `bounded` `publication`.
 - `tk-pr-rebase`: `exact` `rebase` + `force-with-lease`.
 - `tk-pr-sweep`: `deterministic` `multi-PR` `triage`와 승인된 `child` `maintenance`.
-- `tk-to-questionnaire`: 외부 담당자에게 보낼 질문 초안 작성만 담당하며 게시·전송 권한 없음.
+- `tk-inquiry`: 외부 담당자에게 보낼 질문 초안 작성만 담당하며 게시·전송 권한 없음.
 - `tk-teach`: 미션·실제 학습 기록에 따라 다음 수업을 선택하고 검증된 자료를 유지하며, 과거 tk-study 과정은 보존.
 - `tk-retro`: 세션 회고, 관찰된 Agent Skill 사고 진단과 재발 방지 제안 전용. 실제 수정은 별도 구현 담당자가 맡습니다.
 - `tk-compound`: 여러 완료 PR과 연결된 세션 이력의 반복 문제를 읽기 전용으로 진단하고 최소 예방책을 제안합니다. 기본 결과는 채팅이며 지식 문서·메모리·규칙을 작성하거나 자동 승격하지 않습니다.

@@ -946,7 +946,7 @@ cognitive-debt 장부나 merge/edit 강제는 `tk-explain-diff`의 단일 변경
 
 ## 2026-10-08: `Pocock` 참고 신규 스킬·`tk-teach` 전환 (#435)
 
-- `tk-to-questionnaire`: `Matt Pocock` `skills/productivity/to-questionnaire/SKILL.md` (MIT)의 사용자에게 질문 내용이 아닌 발송 목적·수신자를 묻는 인터뷰를 **`keep`**; `Slack`/`Jira`/이메일/`Markdown`용 문자열 템플릿을 **`adapt`**; 항상 파일 생성, 자동 전송을 **`omit`**.
+- `tk-inquiry`: `Matt Pocock` `skills/productivity/to-questionnaire/SKILL.md` (MIT)의 사용자에게 질문 내용이 아닌 발송 목적·수신자를 묻는 인터뷰를 **`keep`**; `Slack`/`GitHub`/`Jira`/이메일/`Markdown`용 서식을 **`adapt`**; 항상 파일 생성, 자동 전송을 **`omit`**.
 - `tk-teach`: `Matt Pocock` `skills/productivity/teach/SKILL.md`, `MISSION-FORMAT.md`, `LEARNING-RECORD-FORMAT.md` (MIT)의 실제 학습 기록 기반 맞춤 진도를 **`keep`**; 기존 TigerKit 오프라인 HTML 코스·출처·검증과 주제별 영속 학습 공간 지원으로 **`adapt`**; 루트 workspace 프레임워크, 학습 진도 추측·자동 알림을 **`omit`**. 기존 `tk-study` 코드·증류 이력은 Git 역사에서 확인할 수 있습니다.
 
 외부 소스 실행 검증과 각 새 스킬의 에이전트 행동 평가는 별도 실제 호스트 실행이 필요한 미검증 영역입니다. 각 설치 패키지의 MIT 원저작자 고지는 `LICENSE.txt`에 보존됩니다.

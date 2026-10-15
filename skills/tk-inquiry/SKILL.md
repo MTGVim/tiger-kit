@@ -1,8 +1,8 @@
 ---
-name: tk-to-questionnaire
-description: "[user/auto] 사용자가 답할 수 없는 사실이나 결정을 다른 담당자에게 묻기 위한 Jira 댓글, Slack 메시지, 이메일 또는 문서용 질문 초안을 작성합니다. 현재 사용자와 결정을 확정하는 tk-grill, 메시지 전송, 이슈 수정은 담당하지 않습니다."
+name: tk-inquiry
+description: "[user/auto] 사용자가 답할 수 없는 사실이나 결정을 다른 담당자에게 묻기 위한 Slack 메시지, GitHub 댓글, Jira 댓글, 이메일 또는 문서용 질문 초안을 작성합니다. 현재 사용자와 결정을 확정하는 tk-grill, 메시지 전송, 이슈 수정은 담당하지 않습니다."
 disable-model-invocation: false
-argument-hint: "<recipient and answer needed> [jira|slack|email|markdown] [save <path>]"
+argument-hint: "<recipient and answer needed> [slack|github|jira|email|markdown] [save <path>]"
 metadata:
   tigerkit:
     kind: hybrid
@@ -10,7 +10,7 @@ metadata:
     relationship: adapted
 ---
 
-# Stakeholder Questionnaire
+# Stakeholder Inquiry
 
 Create a **sendable draft of questions** for another person or team holding missing
 knowledge. Do not interrogate the current user about answers only that recipient
@@ -34,15 +34,24 @@ send, or thread reply is owned by this skill.
 4. Compose questions with one decision per item, grouped only for readability and
    ordered by impact. Include sufficient context and a clear way to answer without
    requiring the recipient to know the original conversation. Differentiate a
-   requested decision, factual evidence and optional background.
-5. Adapt formatting to the selected destination:
-   - `slack`: short message, readable bullets, clear @mention only when verified;
-   - `jira`: comment with relevant issue context, decisions and acceptance evidence;
-   - `email`: subject, greeting, response instructions and closing;
-   - `markdown`: shareable standalone questionnaire.
-   Use a configured template only for this formatting role. Fill only known
-   placeholders `{recipient}`, `{context}`, `{questions}`, `{deadline}`;
-   missing values are omitted or labeled unknown, not guessed.
+   requested decision, factual evidence and optional background. When the questions
+   follow an investigation you performed using logs, code, tickets, threads or
+   similar evidence, add a compact evidence frame before the asks if you reconstructed
+   an event sequence or the draft mixes observations with inferences. Summarize the
+   observed problem and direct cause only when evidence supports it; outline the
+   sequence with each step labeled as confirmed and linked to its source, or inferred
+   with the code path or calculation that supports it. Then number each request, label
+   it as a decision, fact check or improvement review in the user's language, and name
+   the data or action that would settle it. Use concise summary, reconstructed-sequence
+   and requests sections with headings in the user's language. Omit this frame for
+   simple questions that need no reconstruction.
+5. Read only the reference for the selected destination: [Slack](references/channels/slack.md),
+   [GitHub](references/channels/github.md), [Jira](references/channels/jira.md),
+   [email](references/channels/email.md) or
+   [Markdown](references/channels/markdown.md). Apply its formatting and mention
+   rules. Use a configured template only for this formatting role. Fill only known
+   placeholders `{recipient}`, `{context}`, `{questions}`, `{deadline}`; omit missing
+   values or label them unknown, and never guess.
 6. Return the complete draft in the conversation, ready to copy. Create a Markdown
    file only on explicit save and after Artifact Paths safety checks; a named
    destination controls the output path. Do not create artifacts for every message.

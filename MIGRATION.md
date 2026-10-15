@@ -8,9 +8,23 @@ npx skills list --global
 npx skills remove tk-study --global --agent claude-code codex hermes-agent
 ```
 
-## 질문 초안 (`tk-to-questionnaire`)
+## 질문 초안 스킬 이름 변경 (`tk-inquiry`)
 
-`Slack`·`Jira`·이메일 등 다른 담당자에게 보낼 질문 초안을 만듭니다. 게시나 전송은 수행하지 않습니다. 선택적인 `questionnaire.templates`에 채널별 문자열 템플릿을 저장할 수 있습니다.
+`tk-to-questionnaire`의 현재 이름은 `tk-inquiry`입니다. 이전 이름을 호출하는
+문서·예약·자동화는 새 이름으로 바꿔야 하며, 이전 호출명을 위한 별칭은 제공하지
+않습니다. 새 스킬은 다른 담당자에게 보낼 질문 초안만 작성하며 게시나 전송은
+수행하지 않습니다. 조사에서 경위를 재구성한 경우에는 관찰 사실과 추정을 구분한
+뒤 확인 요청을 작성합니다. `Slack`, `GitHub`, `Jira`, 이메일, 독립 Markdown 문서는
+채널별 레퍼런스에 따라 서식을 적용합니다. 선택적인 `questionnaire.templates`에는
+채널별 문자열 템플릿을 저장할 수 있습니다.
+
+전역 설치에서 새 이름을 확인한 뒤 이전 패키지를 제거합니다.
+
+```bash
+npx skills add MTGVim/tiger-kit --global --agent claude-code codex hermes-agent --skill tk-inquiry --yes
+npx skills list --global
+npx skills remove tk-to-questionnaire --global --agent claude-code codex hermes-agent
+```
 
 프로젝트 공유 정책은 `tigerkit.config.json`, 개인 정책은 무시된 `.tigerkit/repository.json`에 둡니다. 스크립트가 소비하는 ID와 경로는 정형 타입을 유지하고, 모델이 판단하는 정책은 `key: string`으로 작성합니다. 설정 저장은 원격 변경 권한이 아닙니다.
 

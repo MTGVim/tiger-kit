@@ -120,6 +120,11 @@
       "from": "study-learning",
       "to": "teach-learning",
       "reason": "tk-study를 장기학습 기반 tk-teach로 전환한다. 구 스킬은 별칭을 유지하지 않는다."
+    },
+    {
+      "from": "questionnaire-other-stakeholder",
+      "to": "inquiry-other-stakeholder",
+      "reason": "사용자 제안에 따라 스킬 이름을 tk-inquiry로 바꾸고, 기존 평가 계약을 새 이름으로 이전하면서 동작 범위와 안전 검증을 보존합니다."
     }
   ],
   "cases": [
@@ -916,18 +921,18 @@
       "critical": true
     },
     {
-      "id": "questionnaire-other-stakeholder",
+      "id": "inquiry-other-stakeholder",
       "boundary": "external respondent questions vs user interview",
-      "prompt": "$tk-to-questionnaire 다른 담당자가 답해야 할 Jira 확인 질문을 댓글 초안으로 작성해줘.",
-      "focus_skill": "tk-to-questionnaire",
-      "expected_selected_skill": "tk-to-questionnaire",
+      "prompt": "$tk-inquiry 다른 담당자가 답해야 할 Jira 확인 질문을 댓글 초안으로 작성해줘.",
+      "focus_skill": "tk-inquiry",
+      "expected_selected_skill": "tk-inquiry",
       "critical": true
     },
     {
       "id": "grill-vs-questionnaire",
       "boundary": "current user decision interview vs absent recipient message",
       "prompt": "$tk-grill 내 설계 결정을 같이 검토해줘.",
-      "focus_skill": "tk-to-questionnaire",
+      "focus_skill": "tk-inquiry",
       "expected_selected_skill": "tk-grill",
       "critical": true
     },

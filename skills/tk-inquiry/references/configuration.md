@@ -1,4 +1,4 @@
-# Questionnaire configuration
+# Inquiry configuration
 
 Read only when drafting an outbound question set for a real recipient/channel.
 Use current user-requested style first, then locally ignored
@@ -10,7 +10,7 @@ package.
 The `questionnaire` section may contain:
 - `policy`: string, tone and evidence conventions for all channels;
 - `formatPolicy`: string, optional recipient-specific editorial guidelines;
-- `templates`: map from channel key (`slack`, `jira`, `email`,
+- `templates`: map from channel key (`slack`, `github`, `jira`, `email`,
   `markdown`) to a **string** containing exemplar text and/or
   `{recipient}`, `{context}`, `{questions}`, `{deadline}`.
 
@@ -34,6 +34,7 @@ Example:
     "policy": "Ask brief, polite Korean questions and name the response owner.",
     "templates": {
       "slack": "안녕하세요. 다음 사항을 확인 부탁드립니다.\n{questions}",
+      "github": "## 확인 요청\n\n{context}\n\n{questions}",
       "jira": "확인 요청: {context}\n{questions}",
       "email": "안녕하세요. 아래 결정 사항 확인 부탁드립니다.\n{questions}"
     }

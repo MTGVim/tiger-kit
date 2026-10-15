@@ -116,7 +116,7 @@ GitHub PR 본문·리뷰 답변·sweep 요약은 관계·순서·상태를 독�
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
 | [tk-grill](skills/tk-grill/SKILL.md) | `user` | 아이디어·계획·결정을 인터뷰해 공통 이해를 확인합니다. |
-| [tk-to-questionnaire](skills/tk-to-questionnaire/SKILL.md) | `hybrid` | 다른 담당자에게 보낼 질문 초안을 말투·채널별 템플릿에 맞춰 작성합니다. |
+| [tk-inquiry](skills/tk-inquiry/SKILL.md) | `hybrid` | 조사 사실과 추정을 구분해 다른 담당자에게 보낼 질문 초안을 채널별 서식에 맞춰 작성합니다. |
 | [tk-adhd](skills/tk-adhd/SKILL.md) | `hybrid` | 답변과 작업 결과에서 핵심·실행 단계를 찾기 쉽게 구성합니다. |
 | [tk-rewrite](skills/tk-rewrite/SKILL.md) | `hybrid` | 기존 글의 맥락·구조와 표현을 정제합니다. |
 
@@ -150,7 +150,8 @@ added claims를 직접 검사합니다.
 
 공유 정책은 선택적인 `tigerkit.config.json`, 개인 정책은 무시된 `.tigerkit/repository.json`에 둡니다.
 스크립트가 소비하는 ID·경로는 정형 타입을 유지하고, 모델이 해석하는 정책과
-`questionnaire.templates.slack` 같은 템플릿은 `key: string`으로 작성할 수 있습니다.
+`questionnaire.templates.<channel>` 템플릿은 `slack`, `github`, `jira`, `email`,
+`markdown` 키에 채널별 문자열로 작성할 수 있습니다.
 중요한 설정이 없으면 근거를 조사한 뒤 필요한 결정만 묻고, 확인한 설정을 저장해 작업을 이어갑니다.
 설정과 외부 자료는 원격 변경·메시지 전송·스크립트 실행 권한을 부여하지 않습니다.
 
