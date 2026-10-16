@@ -37,6 +37,10 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         self.respond = self.root / "skills/tk-pr-respond/references"
         self.review = self.root / "skills/tk-review/references"
         self.wizard = self.root / "skills/tk-wizard/references"
+        self.rebase = self.root / "skills/tk-pr-rebase/references"
+        self.sweep = self.root / "skills/tk-pr-sweep/references"
+        self.rebase_readiness = self.rebase / "rebase-readiness.md"
+        self.rebase_targets = (self.respond / "rebase-readiness.md", self.sweep / "rebase-readiness.md")
         self.clear_source = self.root / "skills/tk-rewrite/references/clear-writing.md"
         self.clear_target = self.root / "skills/tk-explain/references/clear-writing.md"
         self.clear_source.parent.mkdir(parents=True)
@@ -45,8 +49,9 @@ class SyncExecutionProtocolTest(unittest.TestCase):
             self.root / f"skills/{name}/references/domain-context.md"
             for name in ("tk-ask-repo", "tk-audit", "tk-pr-open", "tk-pr-respond", "tk-review")
         )
-        for directory in (self.prep, self.respond, self.review, self.wizard):
+        for directory in (self.prep, self.respond, self.review, self.wizard, self.rebase, self.sweep):
             directory.mkdir(parents=True, exist_ok=True)
+        self.rebase_readiness.write_text("Readiness source\n", encoding="utf-8")
         for name in sync_execution_protocol.FILES:
             (self.prep / name).write_text(f"execution {name}\n", encoding="utf-8")
         (self.prep / "domain-context.md").write_text("domain\n", encoding="utf-8")
@@ -105,6 +110,12 @@ class SyncExecutionProtocolTest(unittest.TestCase):
             patch.object(sync_execution_protocol, "TARGET", self.respond),
             patch.object(sync_execution_protocol, "REVIEW_SOURCE", self.review),
             patch.object(sync_execution_protocol, "REVIEW_TARGETS", (self.prep, self.respond)),
+            patch.object(sync_execution_protocol, "REBASE_READINESS_SOURCE", self.rebase_readiness),
+            patch.object(
+                sync_execution_protocol,
+                "REBASE_READINESS_TARGETS",
+                self.rebase_targets,
+            ),
             patch.object(
                 sync_execution_protocol,
                 "EXTERNAL_CONTRACT_SOURCE",
@@ -144,6 +155,8 @@ class SyncExecutionProtocolTest(unittest.TestCase):
             (self.wizard / "external-contracts.md").read_bytes(),
             (self.prep / "external-contracts.md").read_bytes(),
         )
+        for target in self.rebase_targets:
+            self.assertEqual(target.read_bytes(), self.rebase_readiness.read_bytes())
         for path in (self.root / "skills").glob("tk-*/SKILL.md"):
             self.assertIn(sync_execution_protocol.RESULT_SUMMARY_BLOCK, path.read_text(encoding="utf-8"))
         self.assertEqual(sync_execution_protocol.result_summary_errors(self.root / "skills"), [])
@@ -173,6 +186,16 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         self.assertEqual(self.run_main("--check"), 1)
         self.assertEqual(self.run_main(), 0)
         self.assertEqual(stale.read_bytes(), (self.review / "security.md").read_bytes())
+
+    def test_rebase_readiness_drift_fails_check_and_sync_repairs_all_consumers(self) -> None:
+        self.assertEqual(self.run_main(), 0)
+        stale = self.respond / "rebase-readiness.md"
+        stale.write_text("stale\n", encoding="utf-8")
+        self.assertEqual(self.run_main("--check"), 1)
+        self.assertEqual(self.run_main(), 0)
+        self.assertEqual(self.run_main("--check"), 0)
+        for target in self.rebase_targets:
+            self.assertEqual(target.read_bytes(), self.rebase_readiness.read_bytes())
 
     def test_installed_notice_is_required_and_sync_preserves_other_attribution(self) -> None:
         self.assertEqual(self.run_main(), 0)

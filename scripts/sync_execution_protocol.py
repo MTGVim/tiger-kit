@@ -42,6 +42,11 @@ PR_VISUAL_TARGETS = (
     ROOT / "skills/tk-pr-respond/references/github-visuals.md",
     ROOT / "skills/tk-pr-sweep/references/github-visuals.md",
 )
+REBASE_READINESS_SOURCE = ROOT / "skills/tk-pr-rebase/references/rebase-readiness.md"
+REBASE_READINESS_TARGETS = (
+    ROOT / "skills/tk-pr-respond/references/rebase-readiness.md",
+    ROOT / "skills/tk-pr-sweep/references/rebase-readiness.md",
+)
 DOMAIN_CONTEXT_TARGETS = (
     ROOT / "skills/tk-ask-repo/references/domain-context.md",
     ROOT / "skills/tk-audit/references/domain-context.md",
@@ -282,6 +287,7 @@ def main() -> int:
     )
     pairs.append((EXTERNAL_CONTRACT_SOURCE, EXTERNAL_CONTRACT_TARGET))
     pairs.extend((PR_VISUAL_SOURCE, target) for target in PR_VISUAL_TARGETS)
+    pairs.extend((REBASE_READINESS_SOURCE, target) for target in REBASE_READINESS_TARGETS)
     context = ROOT / "skills/tk-audit/references/repository-context.md"
     if context.is_file():
         pairs.extend((context, ROOT / "skills" / name / "references/repository-context.md")

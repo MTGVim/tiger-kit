@@ -43,7 +43,7 @@ npx skills update --global --yes
 | --- | --- | --- |
 | [tk-pr-open](skills/tk-pr-open/SKILL.md) | `hybrid` | 검증된 변경의 PR 발행을 준비하고 승인된 작업을 수행합니다. |
 | [tk-pr-respond](skills/tk-pr-respond/SKILL.md) | `hybrid` | 한 PR의 리뷰와 지원 CI에 대응합니다. |
-| [tk-pr-rebase](skills/tk-pr-rebase/SKILL.md) | `hybrid` | 지정한 PR을 최신 기준 브랜치에 리베이스합니다. |
+| [tk-pr-rebase](skills/tk-pr-rebase/SKILL.md) | `hybrid` | 지정 PR의 기준 브랜치 갱신과 `tk-pr-sweep`·`tk-pr-respond`의 승인된 작업 넘김을 처리합니다. |
 | [tk-pr-sweep](skills/tk-pr-sweep/SKILL.md) | `user` | 여러 PR을 분류하고 승인된 유지보수를 처리합니다. |
 | [tk-pr-image](skills/tk-pr-image/SKILL.md) | `hybrid` | PR에 로컬 검증 이미지를 올립니다. |
 

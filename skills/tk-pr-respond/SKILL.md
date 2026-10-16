@@ -48,7 +48,8 @@ The user needs to know what the review means, how it will be addressed, why that
 At the start, fresh-read exactly one open PR.
 
 - repository and authenticated identity
-- PR author, base/head ref, and SHA
+- PR author, base/head repository and ref, and exact base/head SHA
+- mergeability and exact base freshness
 - checks and evidence from failed GitHub Actions
 - reviews, inline threads, and conversation comments
 - unresolved threads
@@ -57,6 +58,9 @@ At the start, fresh-read exactly one open PR.
 
 Complete all required pagination. Do not treat cached lists or previous Markdown ledgers as current truth.
 If identity, the exact PR/head, or remote authority is ambiguous, stop as `Blocked` before mutation.
+Before building the response plan, read [PR base and rebase readiness](references/rebase-readiness.md) and assess the exact open PR's current mergeability, base SHA, and head SHA. This is a single-PR read; do not run the multi-PR Sweep inventory here.
+
+Include the rebase outcome and its evidence in the plan when the base is conflicted, behind, current, or unverifiable. A failed check, review request, or `blocked` state alone is not a rebase signal. A reply-only response may proceed without rebasing when the reply is otherwise valid. Do not add a history rewrite silently. If an approved code-changing response also needs an update, include the exact base/head, target branch, rebase route, and bounded force-with-lease publication in the same user approval, then hand off to `tk-pr-rebase` instead of duplicating its procedure.
 
 When re-entering after any attempted publication, including an uncertain POST/push result, read
 [publication recovery](references/publication-recovery.md) before planning mutations. Reconcile already
@@ -121,6 +125,7 @@ At minimum, cover:
 - any special security or user-experience concerns
 - the `tk-browser-verify` plan for browser-visible changes
 - bounded publication scope for push/reply/resolve/re-review
+- whether the exact PR needs a base update or rebase, with the evidence and route if included
 - practical execution shape: reply-only, direct, or SDD
 
 For every code-changing route, keep the semantic Review Plan from the code-change reference in the approved current
@@ -142,9 +147,9 @@ TigerKit decides only `reply-only | direct | SDD`; host/user model selection rem
 Do not mark the task `Blocked` merely because model-control capability is unavailable.
 
 Obtain one user approval for the current plan. That approval covers the exact listed dispositions, code changes, replies,
-resolutions, and issue creations; it does not authorize adjacent cleanup or unlisted tickets. Do not split publication for
-the same plan into a separate second question.
-However, if the PR head/thread/check/identity changes materially after approval, invalidate the approval and explain only what changed.
+resolutions, issue creations, and any explicitly listed rebase plus bounded publication; it does not authorize adjacent
+cleanup or unlisted tickets. Do not split publication for the same plan into a separate second question.
+However, if the PR head/thread/check/identity changes materially after approval, invalidate the approval and explain only what changed. A `tk-pr-rebase` child may change the head only when that exact transition was approved; after the child returns, verify the PR head equals its `new_head` and reread all feedback, threads, checks, and review state before continuing.
 A verified normal fast-forward during publication recovery may retain approval only under the recovery reference's
 ancestry, unchanged response validity, and exact action-scope checks; it does not authorize new fixes or feedback.
 
@@ -215,6 +220,7 @@ Do not merge, close, tag, release, plain force push, or resolve unrelated thread
 
 For an exact PR handed off by an active `tk-pr-sweep`, do not ask again about material decisions already approved by the parent.
 The child confirms the PR fresh state and parent-approved scope, then proceeds immediately when they match.
+If the parent did not approve the rebase route and its bounded history-rewrite publication, return the newly discovered conflict or base-drift decision to the parent instead of adding it to the approved work.
 
 Reply-only handoffs need no workspace solely for isolation. An explicitly approved index-only handoff uses the exact
 PR/head/row identity and run ownership under [code-change execution](references/code-change.md), without a workspace path.

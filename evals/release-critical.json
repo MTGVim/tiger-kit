@@ -713,7 +713,12 @@
     "tk-retro:behavior:retro-report-uses-stable-evidence-and-disposition-format",
     "tk-explain:behavior:explain-default-all-presentation-modes-v3",
     "tk-explain-diff:behavior:explain-diff-explicit-easy-dialogue-mode",
-    "tk-research:behavior:research-report-all-document-modes"
+    "tk-research:behavior:research-report-all-document-modes",
+    "tk-pr-respond:behavior:pr-respond-recommends-update-for-verified-behind-base",
+    "tk-pr-respond:behavior:pr-respond-does-not-infer-rebase-from-check-failure",
+    "tk-pr-respond:behavior:pr-respond-keeps-unknown-base-readiness-unverifiable",
+    "tk-pr-sweep:behavior:pr-sweep-shares-evidence-bound-rebase-readiness",
+    "tk-pr-rebase:behavior:pr-rebase-respond-child-returns-expected-head"
   ],
   "catalog_cases": [
     "catalog:behavior:native-app-runtime-verify",

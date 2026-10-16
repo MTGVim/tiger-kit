@@ -105,6 +105,8 @@ At minimum, inspect:
   request-eligible reviewer named by the current-head `tigerkit:pr-rereview` evidence
 - exactly one current-head summary marker after successfully published actionable replies or code changes; skip it when no reply or code change was published
 
+For the exact mergeability state and base/head SHA, apply [PR base and rebase readiness](references/rebase-readiness.md). Keep this reference as the shared assessment; Sweep remains the owner of multi-PR inventory and ordering.
+
 Do not treat a cached user-supplied list or a previous `.tigerkit/pr-sweep.md` as current truth.
 
 ## `--report`
@@ -168,7 +170,7 @@ hold or block before mutation.
 Representative routes:
 
 - review feedback or repository-caused GitHub Actions failure → follow the `tk-pr-respond` procedure
-- merge conflict or base drift → follow the `tk-pr-rebase` procedure
+- merge conflict or base drift → follow the `tk-pr-rebase` procedure using the shared readiness assessment
 - external CI, queued/flaky/infrastructure failures, or pending human review → wait
 - unsupported state → report-only
 
