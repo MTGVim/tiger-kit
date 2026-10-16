@@ -65,6 +65,8 @@ Before creating anything, find existing components, helpers, schemas, clients, p
 
 When a source the user provided materially informs a frontier question, briefly surface the decision-relevant content you actually read before asking. Attribute it to the source and preserve its verification status; do not present source claims as independently verified. Keep this as concise context, not a confirmation round, and do not ask the user to repeat known facts. If the source could not be accessed or read, say so plainly and do not infer its contents; gather accessible evidence or defer any decision that depends on it.
 
+Before recommending a solution, distinguish the reported symptom from the intended result and the scenario where it matters. Use the request and investigated evidence; label a material inference as an inference, and state it only when it could change scope, behavior, acceptance, or verification. If the intended result is already clear, continue without a recap or confirmation question; ask only remaining material user-owned decisions through the existing frontier.
+
 Maintain a small preparation tree in the current conversation only. Recompute it after investigation and each user answer.
 
 - `fact`: safely answerable from repository, runtime, tool, or supplied evidence; investigate instead of asking.
