@@ -91,6 +91,18 @@ keyboard, no-JS, reduced motion and unobscured control/target geometry.
 Keep the native disclosure open in the HTML so the left rail remains available without JavaScript;
 the theme script may collapse it by default on narrow screens.
 
+For document-like artifacts and document portions of QA sheets, use the shared document shell as a
+component contract, not a visual suggestion. Build the header
+with `.ht-topbar` and `.ht-topbar-title`; put the theme fieldset inside it with
+`.ht-theme-control`, `.ht-theme-label`, `.ht-theme-buttons` and `.ht-theme-option` around the native
+radio inputs. Keep the document body, content, navigation, disclosure and controls on their shared
+`.ht-document`, `.ht-doc-content`, `.ht-doc-nav`, `.ht-doc-toc` and `.ht-doc-controls` classes.
+Reuse the shared theme CSS and script unchanged. Do not replace or override their shell geometry,
+surface or control rules with page-level selectors, duplicate `.ht-doc-content` layout rules,
+one-off theme tokens, or substitute class names. Add scoped styles for content figures and cards;
+leave shell layout to the shared component rules. The theme control's `data-ht-theme-control`
+attribute alone is insufficient because it enables the script but does not apply the shared styling.
+
 ## Citations and references
 
 For document prose, place numbered superscript citations immediately beside supported claims,
@@ -217,8 +229,10 @@ limitations even when their wording differs.
 
 Dialogue has two semantic roles only: `reader` asks realistic questions a target reader may
 actually have, and `author` answers from the verified explanation. These roles guide the exchange
-but are not displayed as person labels. Use distinct question-and-answer blocks with accessible
-structure; do not render `독자`, `고객`, or `저자` labels or emoji avatars.
+and remain distinct in accessible structure. Honor an explicit or established user preference for
+visible role labels, names or emoji; do not impose a generic no-label/no-emoji default over that
+preference. Without such a preference, distinguish the roles through question-and-answer structure
+without inventing names or avatars. Role markers are dialogue labels, not numbered-item markers.
 
 ## Visual block rhythm
 
@@ -343,10 +357,13 @@ to every citation occurrence that cites it. Preserve the explicit AI-authorship 
 - Every `<details>` has a first-child `<summary>`; answer reveals and secondary evidence start collapsed, while required conclusions and background remain outside collapsed sections.
 - There is exactly one non-empty, subject-specific `<title>`; it does not use a generic label or transient generated value.
 
-Use `tk-browser-verify` for a document only when it contains a hand-authored SVG whose visual rendering matters,
-an interactive figure, browser-specific behavior that static checks cannot establish, or the user requests screen
-verification. Keep the browser checks for prototype UI and QA-sheet interactions under their owning skill. A
-document that meets its static checks does not need a browser run solely to repeat those checks.
+Use `tk-browser-verify` when a document contains a hand-authored SVG whose visual rendering matters,
+an interactive figure, browser-specific behavior that static checks cannot establish, a composed or
+customized shared document shell/theme/navigation, or the user requests screen verification. For the
+shared shell, inspect the rendered topbar and theme control, desktop left rail, narrow-screen TOC
+disclosure, and their spacing against the content in light and dark themes. Keep browser checks for
+prototype UI and QA-sheet interactions under their owning skill. A document that meets its static
+checks but does not meet a render trigger does not need a browser run solely to repeat those checks.
 
 Present verification outcomes in a visible lower-document summary before references. Give each
 check its own paragraph, list item, or term/description pair, with a bold label (`<strong>` or a

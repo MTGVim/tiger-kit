@@ -70,9 +70,30 @@ class HTMLPolicyTest(unittest.TestCase):
             'Every `<details>` has a first-child `<summary>`',
             'subject-specific `<title>`',
             'an interactive figure',
-            'Keep the browser checks for prototype UI and QA-sheet interactions',
+            'Keep browser checks for',
+            'customized shared document shell/theme/navigation',
+            'desktop left rail, narrow-screen TOC',
+            'Do not replace or override their shell geometry',
+            'data-ht-theme-control`\nattribute alone is insufficient',
         ):
             self.assertIn(requirement, text)
+
+    def test_explain_dialogue_respects_established_role_preferences(self):
+        skill = (ROOT / 'skills/tk-explain/SKILL.md').read_text()
+        contract = (ROOT / 'skills/tk-explain/references/html-output.md').read_text()
+        self.assertIn("user's explicit or established preference for role labels and emoji", skill)
+        self.assertIn('Honor an explicit or established user preference for', contract)
+        self.assertNotIn('do not render `독자`, `고객`, or `저자` labels or emoji avatars', contract)
+
+    def test_shared_document_shell_styles_are_canonical(self):
+        css = (ROOT / 'skills/tk-explain/assets/html-theme.css').read_text()
+        report = (ROOT / 'skills/tk-research/assets/report.html').read_text()
+        report_custom_css = report.split('/* /tigerkit:html-theme.css */', 1)[1]
+        self.assertIn('.ht-topbar { position: sticky;', css)
+        self.assertIn('.ht-topbar .ht-theme-control { margin: 0; width: 100%; }', css)
+        self.assertIn('@media (max-width: 760px)', css)
+        self.assertNotRegex(report_custom_css, r'\.ht-doc-content\s*\{[^}]*\b(?:width|margin|position)\s*:')
+        self.assertNotRegex(report_custom_css, r'\.ht-topbar\s*\{')
 
     def test_shared_citation_preview_contract(self):
         css = (ROOT / 'skills/tk-explain/assets/html-theme.css').read_text()

@@ -90,6 +90,13 @@ pre { max-width: 100%; overflow-x: auto; }
 
 /* Document navigation is opt-in; prototype/checklist interfaces retain their own shell. */
 .ht-document { --ht-nav-width: 15rem; --ht-nav-gap: 2rem; padding: 1.5rem calc(1.5rem + env(safe-area-inset-right, 0px)) calc(6rem + env(safe-area-inset-bottom, 0px)) 1.5rem; }
+.ht-topbar { position: sticky; top: 0; z-index: 3; display: grid; grid-template-columns: minmax(0, 1fr) minmax(18rem, 22rem); align-items: center; gap: 1rem; padding: .75rem 2rem; background: var(--panel); border-bottom: 1px solid var(--line); }
+.ht-topbar > * { min-width: 0; max-width: 100%; }
+.ht-topbar-title { margin: 0; font-weight: 700; overflow-wrap: anywhere; }
+.ht-topbar .ht-theme-control { margin: 0; width: 100%; }
+@media (max-width: 760px) {
+  .ht-topbar { position: static; grid-template-columns: minmax(0, 1fr); padding: .75rem 1.2rem; gap: .5rem; }
+}
 html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scroll-padding-top: var(--ht-anchor-offset); }
 .ht-doc-content { min-width: 0; width: calc(100% - var(--ht-nav-width) - var(--ht-nav-gap)); max-width: 76rem; margin: 1.5rem auto 1.5rem calc(var(--ht-nav-width) + var(--ht-nav-gap)); padding: clamp(1.25rem, 3vw, 2.5rem); background: var(--panel); border: 1px solid var(--line); border-radius: calc(1.5 * var(--radius)); box-shadow: 0 12px 36px #10131912; }
 .ht-doc-content > :first-child { margin-block-start: 0; }

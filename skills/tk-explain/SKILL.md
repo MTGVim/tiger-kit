@@ -47,8 +47,10 @@ Read [HTML output](references/html-output.md) for the shared offline and accessi
 Use the presentation modes defined by [HTML output](references/html-output.md). While this
 experiment is active, default to `all` when the request does not name a mode. `all` produces one
 HTML artifact with `standard`, `dialogue`, and `dialogue-eli5` tabs over the same verified
-content and sources. An explicit mode generates only that view. Keep dialogue roles semantic,
-without visible person labels or emoji. The `dialogue-eli5` tab opens with a short, distinct plain-language exchange, then continues into prose and evidence-appropriate visualizations.
+content and sources. An explicit mode generates only that view. Keep dialogue roles semantically
+distinct and honor the user's explicit or established preference for role labels and emoji; do not
+let a generic style default override that preference. The `dialogue-eli5` tab opens with a short,
+distinct plain-language exchange, then continues into prose and evidence-appropriate visualizations.
 
 ## Verify and Return
 
