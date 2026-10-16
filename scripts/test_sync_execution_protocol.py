@@ -50,8 +50,6 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         for name in sync_execution_protocol.FILES:
             (self.prep / name).write_text(f"execution {name}\n", encoding="utf-8")
         (self.prep / "domain-context.md").write_text("domain\n", encoding="utf-8")
-        resource_source = Path(__file__).resolve().parents[1] / "skills/tk-prep/references/resource-awareness.md"
-        shutil.copyfile(resource_source, self.prep / "resource-awareness.md")
         for name in sync_execution_protocol.REVIEW_FILES:
             (self.review / name).write_text(f"review {name}\n", encoding="utf-8")
         (self.prep / "external-contracts.md").write_text("external\n", encoding="utf-8")
@@ -87,15 +85,6 @@ class SyncExecutionProtocolTest(unittest.TestCase):
                 path = self.root / "skills" / name / "SKILL.md"
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_text((path.read_text() if path.exists() else "") + block)
-        for name, anchor in sync_execution_protocol.RESOURCE_AWARENESS_SKILL_ANCHORS.items():
-            path = self.root / "skills" / name / "SKILL.md"
-            path.parent.mkdir(parents=True, exist_ok=True)
-            prior = path.read_text(encoding="utf-8") if path.exists() else ""
-            if anchor not in prior:
-                path.write_text(prior + "\n" + anchor, encoding="utf-8")
-        sweep_execution = self.root / "skills/tk-pr-sweep/references/execution.md"
-        sweep_execution.parent.mkdir(parents=True, exist_ok=True)
-        sweep_execution.write_text("## Queue progress\n", encoding="utf-8")
         repo = Path(__file__).resolve().parents[1]
         for relative in sync_execution_protocol.CHART_FILES:
             target = self.root / "skills/tk-explain" / relative
@@ -129,7 +118,6 @@ class SyncExecutionProtocolTest(unittest.TestCase):
             patch.object(sync_execution_protocol, "DOMAIN_CONTEXT_TARGETS", self.domain_targets),
             patch.object(sync_execution_protocol, "CLEAR_WRITING_SOURCE", self.clear_source),
             patch.object(sync_execution_protocol, "CLEAR_WRITING_TARGET", self.clear_target),
-            patch.object(sync_execution_protocol, "RESOURCE_AWARENESS_SOURCE", self.prep / "resource-awareness.md"),
             patch.object(sys, "argv", ["sync_execution_protocol.py", *args]),
             redirect_stdout(io.StringIO()),
         ):
@@ -156,25 +144,9 @@ class SyncExecutionProtocolTest(unittest.TestCase):
             (self.wizard / "external-contracts.md").read_bytes(),
             (self.prep / "external-contracts.md").read_bytes(),
         )
-        resource_reference = (self.prep / "resource-awareness.md").read_bytes()
-        for name in sync_execution_protocol.RESOURCE_AWARENESS_CONSUMERS:
-            self.assertEqual(
-                (self.root / "skills" / name / "references/resource-awareness.md").read_bytes(),
-                resource_reference,
-            )
-        for name in sync_execution_protocol.RESOURCE_AWARENESS_SKILL_ANCHORS:
-            self.assertIn(
-                sync_execution_protocol.RESOURCE_AWARENESS_BLOCK,
-                (self.root / "skills" / name / "SKILL.md").read_text(encoding="utf-8"),
-            )
         for path in (self.root / "skills").glob("tk-*/SKILL.md"):
             self.assertIn(sync_execution_protocol.RESULT_SUMMARY_BLOCK, path.read_text(encoding="utf-8"))
         self.assertEqual(sync_execution_protocol.result_summary_errors(self.root / "skills"), [])
-        sweep_execution = self.root / "skills/tk-pr-sweep/references/execution.md"
-        self.assertIn(
-            sync_execution_protocol.RESOURCE_AWARENESS_SWEEP_BLOCK,
-            sweep_execution.read_text(encoding="utf-8"),
-        )
 
     def test_research_and_repository_context_drift_fail_and_repair(self) -> None:
         self.assertEqual(self.run_main(), 0)
@@ -201,11 +173,6 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         self.assertEqual(self.run_main("--check"), 1)
         self.assertEqual(self.run_main(), 0)
         self.assertEqual(stale.read_bytes(), (self.review / "security.md").read_bytes())
-        resource_stale = self.root / "skills/tk-browser-verify/references/resource-awareness.md"
-        resource_stale.write_text("stale resource policy\n", encoding="utf-8")
-        self.assertEqual(self.run_main("--check"), 1)
-        self.assertEqual(self.run_main(), 0)
-        self.assertEqual(resource_stale.read_bytes(), (self.prep / "resource-awareness.md").read_bytes())
 
     def test_installed_notice_is_required_and_sync_preserves_other_attribution(self) -> None:
         self.assertEqual(self.run_main(), 0)

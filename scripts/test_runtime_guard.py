@@ -9,23 +9,6 @@ import check_runtime_guard
 
 
 class RuntimeGuardTest(unittest.TestCase):
-    def add_resource_guards(self, root: Path) -> None:
-        source = check_runtime_guard.ROOT / "skills/tk-prep/references/resource-awareness.md"
-        for name in check_runtime_guard.RESOURCE_AWARENESS_CONSUMERS:
-            reference = root / "skills" / name / "references/resource-awareness.md"
-            reference.parent.mkdir(parents=True, exist_ok=True)
-            reference.write_bytes(source.read_bytes())
-        for name in check_runtime_guard.RESOURCE_AWARENESS_SKILL_CONSUMERS:
-            path = root / "skills" / name / "SKILL.md"
-            path.parent.mkdir(parents=True, exist_ok=True)
-            prior = path.read_text(encoding="utf-8") if path.exists() else ""
-            if check_runtime_guard.RESOURCE_AWARENESS_MARKER not in prior:
-                path.write_text(prior + check_runtime_guard.RESOURCE_AWARENESS_BLOCK, encoding="utf-8")
-        sweep = root / "skills/tk-pr-sweep/references/execution.md"
-        prior = sweep.read_text(encoding="utf-8") if sweep.exists() else ""
-        if check_runtime_guard.RESOURCE_AWARENESS_SWEEP_MARKER not in prior:
-            sweep.write_text(prior + check_runtime_guard.RESOURCE_AWARENESS_SWEEP_BLOCK, encoding="utf-8")
-
     def add_ui_guards(self, root: Path) -> None:
         for name in check_runtime_guard.UI_EVIDENCE_CONSUMERS:
             path = root / "skills" / name / "SKILL.md"
@@ -35,7 +18,6 @@ class RuntimeGuardTest(unittest.TestCase):
             reference = path.parent / "references/ui-evidence.md"
             reference.parent.mkdir(exist_ok=True)
             reference.write_text(check_runtime_guard.UI_EVIDENCE_REFERENCE)
-        self.add_resource_guards(root)
 
     def test_current_repository_runtime_guards_are_synchronized(self) -> None:
         self.assertEqual(check_runtime_guard.validate_runtime_guard(), [])
@@ -69,68 +51,6 @@ class RuntimeGuardTest(unittest.TestCase):
             )
             errors = check_runtime_guard.validate_runtime_guard(root)
             self.assertTrue(any("tk-prep" in error for error in errors))
-
-    def test_resource_awareness_blocks_missing_drift_and_duplicates_fail(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            for consumers, block in (
-                (check_runtime_guard.RUNTIME_GUARD_CONSUMERS, check_runtime_guard.RUNTIME_GUARD_BLOCK),
-                (check_runtime_guard.APPROVAL_GUARD_CONSUMERS, check_runtime_guard.APPROVAL_GUARD_BLOCK),
-            ):
-                for name in consumers:
-                    path = root / "skills" / name / "SKILL.md"
-                    path.parent.mkdir(parents=True, exist_ok=True)
-                    path.write_text((path.read_text(encoding="utf-8") if path.exists() else "") + block, encoding="utf-8")
-            self.add_ui_guards(root)
-            self.assertEqual(check_runtime_guard.validate_runtime_guard(root), [])
-
-            for name in check_runtime_guard.RESOURCE_AWARENESS_SKILL_CONSUMERS:
-                path = root / "skills" / name / "SKILL.md"
-                original = path.read_text(encoding="utf-8")
-                for changed in (
-                    original.replace(check_runtime_guard.RESOURCE_AWARENESS_BLOCK, ""),
-                    original.replace("execution boundary", "command start"),
-                    original + check_runtime_guard.RESOURCE_AWARENESS_BLOCK,
-                ):
-                    with self.subTest(consumer=name):
-                        path.write_text(changed, encoding="utf-8")
-                        errors = check_runtime_guard.validate_runtime_guard(root)
-                        self.assertTrue(any(name in error and "resource-awareness" in error for error in errors), errors)
-                path.write_text(original, encoding="utf-8")
-
-            sweep = root / "skills/tk-pr-sweep/references/execution.md"
-            original = sweep.read_text(encoding="utf-8")
-            for changed in (
-                original.replace(check_runtime_guard.RESOURCE_AWARENESS_SWEEP_BLOCK, ""),
-                original.replace("sequence the high-load rows", "parallelize the high-load rows"),
-                original + check_runtime_guard.RESOURCE_AWARENESS_SWEEP_BLOCK,
-            ):
-                sweep.write_text(changed, encoding="utf-8")
-                errors = check_runtime_guard.validate_runtime_guard(root)
-                self.assertTrue(any("tk-pr-sweep" in error and "resource-aware dispatch" in error for error in errors), errors)
-            sweep.write_text(original, encoding="utf-8")
-
-    def test_resource_awareness_reference_drift_fails_each_consumer(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            for consumers, block in (
-                (check_runtime_guard.RUNTIME_GUARD_CONSUMERS, check_runtime_guard.RUNTIME_GUARD_BLOCK),
-                (check_runtime_guard.APPROVAL_GUARD_CONSUMERS, check_runtime_guard.APPROVAL_GUARD_BLOCK),
-            ):
-                for name in consumers:
-                    path = root / "skills" / name / "SKILL.md"
-                    path.parent.mkdir(parents=True, exist_ok=True)
-                    path.write_text((path.read_text(encoding="utf-8") if path.exists() else "") + block, encoding="utf-8")
-            self.add_ui_guards(root)
-            for name in check_runtime_guard.RESOURCE_AWARENESS_CONSUMERS:
-                if name == "tk-prep":
-                    continue
-                reference = root / "skills" / name / "references/resource-awareness.md"
-                original = reference.read_bytes()
-                reference.write_text("stale resource policy\n", encoding="utf-8")
-                errors = check_runtime_guard.validate_runtime_guard(root)
-                self.assertTrue(any(name in error and "resource-awareness.md" in error for error in errors), errors)
-                reference.write_bytes(original)
 
     def test_approval_guard_missing_or_duplicated_fails(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

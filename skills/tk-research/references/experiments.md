@@ -3,8 +3,6 @@
 Read this only for metric/mechanically evaluated research or consequential noisy results.
 Ordinary qualitative research uses its observable evidence and falsifier without extra metric setup.
 
-Before executing a benchmark, replay harness, prototype, or other experiment expected to materially load the host, read [resource awareness](resource-awareness.md). Skip small deterministic checks.
-
 For a small deterministic fixture, prefer one existing or stdlib check and a concise outcome over a new evaluator harness. Create a harness only when it resolves a real reproducibility/evaluation gap. A contract can be a fixed command, input revision/hash and success predicate in the existing record; it needs no separate JSON schema, directory or duplicate narrative. Ordinary source-supported conclusions do not need a mechanical experiment merely to restate the source.
 
 ## Protected evaluation contract

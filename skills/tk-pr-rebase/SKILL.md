@@ -74,12 +74,6 @@ expected force-with-lease
 
 Require local `HEAD == old_head`, remote PR head `== old_head`, and a clean dedicated workspace.
 
-<!-- tigerkit:resource-awareness -->
-## Resource Awareness
-
-Before this workflow starts a broad test, build, large lint or indexing job, development server, browser or desktop-app process, benchmark/prototype harness, or expensive Git hook that may materially load host memory, CPU, or I/O, read [resource awareness](references/resource-awareness.md) at the execution boundary. Skip clearly lightweight checks and ordinary Git commands.
-<!-- /tigerkit:resource-awareness -->
-
 ## Rebase and conflict
 
 Rebase onto the exact `base_sha`.

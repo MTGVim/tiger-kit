@@ -55,12 +55,6 @@ provider or unprovable access/evidence is `Unverifiable`. Resolve app permission
 Credentials and private screen content stay out of chat, notes, logs and receipts; use the host's
 approved secret channel or return `Unverifiable` for a required unavailable authentication path.
 
-<!-- tigerkit:resource-awareness -->
-## Resource Awareness
-
-Before this workflow starts a broad test, build, large lint or indexing job, development server, browser or desktop-app process, benchmark/prototype harness, or expensive Git hook that may materially load host memory, CPU, or I/O, read [resource awareness](references/resource-awareness.md) at the execution boundary. Skip clearly lightweight checks and ordinary Git commands.
-<!-- /tigerkit:resource-awareness -->
-
 ## Execution
 
 1. **Identity**: Inspect the selected provider's current app/process/window inventory. Match the

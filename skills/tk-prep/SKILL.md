@@ -143,12 +143,6 @@ For every direct or SDD code review, load [independent review protocol](referenc
 review scope meets those references' stated conditions. Conditional lenses do not change the protocol's review seats.
 When the cause and exact RED seam are obvious, proceed directly. Lazy-load [diagnosis](references/diagnosis.md) only for hard, flaky, performance, or difficult-to-reproduce bugs and establish a red-capable loop before a fix hypothesis. If that is impossible, record why and do not apply a speculative fix.
 
-<!-- tigerkit:resource-awareness -->
-## Resource Awareness
-
-Before this workflow starts a broad test, build, large lint or indexing job, development server, browser or desktop-app process, benchmark/prototype harness, or expensive Git hook that may materially load host memory, CPU, or I/O, read [resource awareness](references/resource-awareness.md) at the execution boundary. Skip clearly lightweight checks and ordinary Git commands.
-<!-- /tigerkit:resource-awareness -->
-
 ## Runtime verification
 
 Route each runtime AC by its target: URL-based UI that works in a normal browser goes to

@@ -39,12 +39,6 @@ identifier, enum inference, or unverified grouped claim.
 
 Do not create `pr-sweep.md`, `pr-respond.md`, or worker receipts. Do not reuse another PR identity's Seed or `sdd.md`.
 
-<!-- tigerkit:resource-aware-dispatch -->
-### Resource-aware child dispatch
-
-Before concurrently launching multiple approved child rows whose routes may start high-load tests, builds, browser/app verification, or expensive hooks, read [resource awareness](resource-awareness.md). If the current status is `caution`, `critical`, or `unknown`, or known active work is already heavy, sequence the high-load rows and pass conservative worker caps to each child. This best-effort check cannot observe or coordinate unseen sessions and does not guarantee a host-wide worker cap. Do not add a scheduler, shared lock, or capacity ledger.
-<!-- /tigerkit:resource-aware-dispatch -->
-
 ## Queue progress
 
 A row-local failure does not stop later independent rows. Stop the Sweep only for a systemic failure such as identity or

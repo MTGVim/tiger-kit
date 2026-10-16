@@ -9,48 +9,15 @@ try:
     from .verification_policy import verification_errors, sync_verification
     from .question_policy import question_errors, sync_questions
     from .artifact_policy import sync_artifact_guards, validate_artifact_guards
-    from .check_runtime_guard import (
-        RESOURCE_AWARENESS_BLOCK,
-        RESOURCE_AWARENESS_CONSUMERS,
-        RESOURCE_AWARENESS_END,
-        RESOURCE_AWARENESS_MARKER,
-        RESOURCE_AWARENESS_SWEEP_BLOCK,
-        RESOURCE_AWARENESS_SWEEP_END,
-        RESOURCE_AWARENESS_SWEEP_MARKER,
-        UI_EVIDENCE_CONSUMERS,
-        UI_EVIDENCE_REFERENCE,
-        validate_runtime_guard,
-    )
+    from .check_runtime_guard import UI_EVIDENCE_CONSUMERS, UI_EVIDENCE_REFERENCE, validate_runtime_guard
 except ImportError:
     from verification_policy import verification_errors, sync_verification
     from question_policy import question_errors, sync_questions
     from artifact_policy import sync_artifact_guards, validate_artifact_guards
-    from check_runtime_guard import (
-        RESOURCE_AWARENESS_BLOCK,
-        RESOURCE_AWARENESS_CONSUMERS,
-        RESOURCE_AWARENESS_END,
-        RESOURCE_AWARENESS_MARKER,
-        RESOURCE_AWARENESS_SWEEP_BLOCK,
-        RESOURCE_AWARENESS_SWEEP_END,
-        RESOURCE_AWARENESS_SWEEP_MARKER,
-        UI_EVIDENCE_CONSUMERS,
-        UI_EVIDENCE_REFERENCE,
-        validate_runtime_guard,
-    )
+    from check_runtime_guard import UI_EVIDENCE_CONSUMERS, UI_EVIDENCE_REFERENCE, validate_runtime_guard
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-RESOURCE_AWARENESS_SOURCE = ROOT / "skills/tk-prep/references/resource-awareness.md"
-RESOURCE_AWARENESS_SKILL_ANCHORS = {
-    "tk-prep": "## Runtime verification\n",
-    "tk-browser-verify": "## Execution\n",
-    "tk-app-verify": "## Execution\n",
-    "tk-pr-rebase": "## Rebase and conflict\n",
-    "tk-pr-respond": "## Publication\n",
-    "tk-research": "## Lazy escalation and resume\n",
-    "tk-prototype": "## Workflow\n",
-}
-RESOURCE_AWARENESS_SWEEP_ANCHOR = "## Queue progress\n"
 SOURCE = ROOT / "skills/tk-prep/references"
 TARGET = ROOT / "skills/tk-pr-respond/references"
 FILES = ("testing.md", "sdd.md", "sdd-interaction.md", "sdd-recovery.md", "sdd-transport.md", "diagnosis.md", "test-doubles.md")
@@ -258,6 +225,26 @@ def result_summary_errors(skills_root: Path) -> list[str]:
     return errors
 
 
+def sync_marked_block(path: Path, marker: str, end_marker: str, block: str, anchor: str) -> None:
+    text = path.read_text(encoding="utf-8")
+    if marker in text or end_marker in text:
+        if text.count(marker) != 1 or text.count(end_marker) != 1:
+            raise ValueError(f"{path}: malformed marked block")
+        start = text.index(marker)
+        end = text.index(end_marker, start) + len(end_marker)
+        if text[end:end + 1] == "\n":
+            end += 1
+        text = text[:start] + block + text[end:]
+    else:
+        index = text.find(anchor)
+        if index == -1:
+            text = text.rstrip() + "\n\n" + block
+        else:
+            text = text[:index] + block + "\n" + text[index:]
+    if text != path.read_text(encoding="utf-8"):
+        path.write_text(text, encoding="utf-8")
+
+
 def sync_result_summary(skills_root: Path) -> None:
     for path in sorted(skills_root.glob("tk-*/SKILL.md")):
         sync_marked_block(path, RESULT_SUMMARY_MARKER, RESULT_SUMMARY_END, RESULT_SUMMARY_BLOCK,
@@ -282,58 +269,6 @@ def sync_output_notation(skills_root: Path) -> None:
             path.write_text(text, encoding="utf-8")
 
 
-def sync_marked_block(path: Path, marker: str, end_marker: str, block: str, anchor: str) -> None:
-    text = path.read_text(encoding="utf-8")
-    if marker in text or end_marker in text:
-        if text.count(marker) != 1 or text.count(end_marker) != 1:
-            raise ValueError(f"{path}: malformed resource-awareness block")
-        start = text.index(marker)
-        end = text.index(end_marker, start) + len(end_marker)
-        if text[end:end + 1] == "\n":
-            end += 1
-        text = text[:start] + block + text[end:]
-    else:
-        index = text.find(anchor)
-        if index == -1:
-            text = text.rstrip() + "\n\n" + block
-        else:
-            text = text[:index] + block + "\n" + text[index:]
-    if text != path.read_text(encoding="utf-8"):
-        path.write_text(text, encoding="utf-8")
-
-
-def sync_resource_awareness(root: Path) -> None:
-    source = root / "skills/tk-prep/references/resource-awareness.md"
-    if not source.is_file():
-        raise FileNotFoundError(f"canonical resource-awareness reference is missing: {source}")
-    for name in RESOURCE_AWARENESS_CONSUMERS:
-        target = root / "skills" / name / "references/resource-awareness.md"
-        target.parent.mkdir(parents=True, exist_ok=True)
-        if target != source and (
-            not target.is_file() or target.read_bytes() != source.read_bytes()
-        ):
-            shutil.copyfile(source, target)
-
-    for name, anchor in RESOURCE_AWARENESS_SKILL_ANCHORS.items():
-        path = root / "skills" / name / "SKILL.md"
-        sync_marked_block(
-            path,
-            RESOURCE_AWARENESS_MARKER,
-            RESOURCE_AWARENESS_END,
-            RESOURCE_AWARENESS_BLOCK,
-            anchor,
-        )
-
-    sweep_path = root / "skills/tk-pr-sweep/references/execution.md"
-    sync_marked_block(
-        sweep_path,
-        RESOURCE_AWARENESS_SWEEP_MARKER,
-        RESOURCE_AWARENESS_SWEEP_END,
-        RESOURCE_AWARENESS_SWEEP_BLOCK,
-        RESOURCE_AWARENESS_SWEEP_ANCHOR,
-    )
-
-
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
@@ -347,11 +282,6 @@ def main() -> int:
     )
     pairs.append((EXTERNAL_CONTRACT_SOURCE, EXTERNAL_CONTRACT_TARGET))
     pairs.extend((PR_VISUAL_SOURCE, target) for target in PR_VISUAL_TARGETS)
-    pairs.extend(
-        (RESOURCE_AWARENESS_SOURCE, ROOT / "skills" / name / "references/resource-awareness.md")
-        for name in RESOURCE_AWARENESS_CONSUMERS
-        if name != "tk-prep"
-    )
     context = ROOT / "skills/tk-audit/references/repository-context.md"
     if context.is_file():
         pairs.extend((context, ROOT / "skills" / name / "references/repository-context.md")
@@ -379,7 +309,6 @@ def main() -> int:
             path.parent.mkdir(exist_ok=True)
             path.write_text(UI_EVIDENCE_REFERENCE, encoding="utf-8")
     if not args.check:
-        sync_resource_awareness(ROOT)
         sync_verification(ROOT)
         sync_artifact_guards(ROOT)
         sync_questions(ROOT)

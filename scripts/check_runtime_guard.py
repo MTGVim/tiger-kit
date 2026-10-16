@@ -95,37 +95,6 @@ In completion reports and pre-publication preparation, explicitly list every req
 """
 
 
-RESOURCE_AWARENESS_CONSUMERS = (
-    "tk-prep",
-    "tk-browser-verify",
-    "tk-app-verify",
-    "tk-pr-rebase",
-    "tk-pr-respond",
-    "tk-pr-sweep",
-    "tk-research",
-    "tk-prototype",
-)
-RESOURCE_AWARENESS_SKILL_CONSUMERS = tuple(
-    name for name in RESOURCE_AWARENESS_CONSUMERS if name != "tk-pr-sweep"
-)
-RESOURCE_AWARENESS_MARKER = "<!-- tigerkit:resource-awareness -->"
-RESOURCE_AWARENESS_END = "<!-- /tigerkit:resource-awareness -->"
-RESOURCE_AWARENESS_BLOCK = """<!-- tigerkit:resource-awareness -->
-## Resource Awareness
-
-Before this workflow starts a broad test, build, large lint or indexing job, development server, browser or desktop-app process, benchmark/prototype harness, or expensive Git hook that may materially load host memory, CPU, or I/O, read [resource awareness](references/resource-awareness.md) at the execution boundary. Skip clearly lightweight checks and ordinary Git commands.
-<!-- /tigerkit:resource-awareness -->
-"""
-RESOURCE_AWARENESS_SWEEP_MARKER = "<!-- tigerkit:resource-aware-dispatch -->"
-RESOURCE_AWARENESS_SWEEP_END = "<!-- /tigerkit:resource-aware-dispatch -->"
-RESOURCE_AWARENESS_SWEEP_BLOCK = """<!-- tigerkit:resource-aware-dispatch -->
-### Resource-aware child dispatch
-
-Before concurrently launching multiple approved child rows whose routes may start high-load tests, builds, browser/app verification, or expensive hooks, read [resource awareness](resource-awareness.md). If the current status is `caution`, `critical`, or `unknown`, or known active work is already heavy, sequence the high-load rows and pass conservative worker caps to each child. This best-effort check cannot observe or coordinate unseen sessions and does not guarantee a host-wide worker cap. Do not add a scheduler, shared lock, or capacity ledger.
-<!-- /tigerkit:resource-aware-dispatch -->
-"""
-
-
 def validate_runtime_guard(root: Path = ROOT) -> list[str]:
     errors: list[str] = []
     for name in RUNTIME_GUARD_CONSUMERS:
@@ -156,43 +125,6 @@ def validate_runtime_guard(root: Path = ROOT) -> list[str]:
         reference = path.parent / "references/ui-evidence.md"
         if not reference.is_file() or reference.read_text(encoding="utf-8") != UI_EVIDENCE_REFERENCE:
             errors.append(f"skills/{name}/references/ui-evidence.md: UI evidence collection reference must match")
-
-    for name in RESOURCE_AWARENESS_SKILL_CONSUMERS:
-        path = root / "skills" / name / "SKILL.md"
-        text = path.read_text(encoding="utf-8") if path.is_file() else ""
-        if (
-            text.count(RESOURCE_AWARENESS_MARKER) != 1
-            or text.count(RESOURCE_AWARENESS_END) != 1
-            or text.count(RESOURCE_AWARENESS_BLOCK) != 1
-        ):
-            errors.append(f"skills/{name}/SKILL.md: resource-awareness pointer must match exactly once")
-
-    canonical_resource_reference = root / "skills/tk-prep/references/resource-awareness.md"
-    if not canonical_resource_reference.is_file():
-        errors.append("skills/tk-prep/references/resource-awareness.md: canonical resource-awareness reference is missing")
-        canonical_resource_bytes = None
-    else:
-        canonical_resource_bytes = canonical_resource_reference.read_bytes()
-        if not canonical_resource_bytes.strip():
-            errors.append("skills/tk-prep/references/resource-awareness.md: canonical resource-awareness reference is empty")
-
-    for name in RESOURCE_AWARENESS_CONSUMERS:
-        reference = root / "skills" / name / "references/resource-awareness.md"
-        if (
-            canonical_resource_bytes is None
-            or not reference.is_file()
-            or reference.read_bytes() != canonical_resource_bytes
-        ):
-            errors.append(f"skills/{name}/references/resource-awareness.md: shared resource-awareness reference must match")
-
-    sweep_execution = root / "skills/tk-pr-sweep/references/execution.md"
-    sweep_text = sweep_execution.read_text(encoding="utf-8") if sweep_execution.is_file() else ""
-    if (
-        sweep_text.count(RESOURCE_AWARENESS_SWEEP_MARKER) != 1
-        or sweep_text.count(RESOURCE_AWARENESS_SWEEP_END) != 1
-        or sweep_text.count(RESOURCE_AWARENESS_SWEEP_BLOCK) != 1
-    ):
-        errors.append("skills/tk-pr-sweep/references/execution.md: resource-aware dispatch block must match exactly once")
 
     agents = root / "AGENTS.md"
     if agents.is_file() and RUNTIME_GUARD_MARKER in agents.read_text(encoding="utf-8"):
