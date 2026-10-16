@@ -1,13 +1,14 @@
 # Human research report
 
-Before drafting, read [clear writing](clear-writing.md), [HTML output](html-output.md) and [the
-offline template](../assets/report.html) in separate complete reads. If a tool archives or truncates a
-result, retrieve that same file fully before applying its rules.
+Before drafting, read [clear writing](clear-writing.md) and this report contract. Use the
+[section-level routing table](explanation-routing.md) to select formats and read only the chosen
+entries in [the technique reference](explanation-techniques.md). The renderer reads the complete
+offline template for you, so do not load `assets/report.html` or the full shared HTML reference.
 
 Read when writing the final short-research report or a material persistent checkpoint projection.
-Apply [clear writing](clear-writing.md), [HTML output](html-output.md) and Artifact Paths; reuse their
-contracts directly without invoking another skill. Default to `.tigerkit/research/<slug>/report.html`,
-or an explicit safe destination. The directory/report alone never starts a durable project.
+Apply [clear writing](clear-writing.md) and Artifact Paths; reuse their contracts directly without
+invoking another skill. Default to `.tigerkit/research/<slug>/report.html`, or an explicit safe
+destination. The directory/report alone never starts a durable project.
 When a verified structure, flow, timeline or comparison relationship is clearer in a figure
 than prose/table, read [visual grammar](visual-grammar.md). Do not add decorative diagrams.
 
@@ -16,19 +17,44 @@ readable projection, not an execution ledger or editable state UI; never recover
 edits back from HTML. Bind goal/research identity, evidence revision/date and projection freshness.
 Check ownership before overwrite; atomically replace only this project's report and reread it.
 
-Copy [the offline template](../assets/report.html) as the complete document shell. Preserve its inline
-styles, theme control, navigation, movement controls, scripts, citation structure and AI-authorship
-footer. Replace illustrative content and remove irrelevant sections rather than writing a replacement
-shell or adding empty ceremony. A report with at most three sections may omit both navigation
-structures only when they add no value; a report with four or more includes both.
-By default, render the full report in `standard`, `dialogue`, and `easy-dialogue` modes in the same
-HTML file. Adapt the recommendation, conclusion, first-use term explanations, optional glossary,
-evidence explanations and limitations throughout each mode. Keep factual claims, confidence,
-source set, citation meaning, verification outcomes, status and next actions equivalent. Repeat
-mode-specific citation and reference IDs within each version and keep every citation/backlink pair
-inside its own mode. The shared table of contents and movement links must stay in the current mode;
-the native mode selector is the only presentation switch. An explicit single-mode request may emit
-only that mode. Never produce only a conversational opening followed by a standard conclusion.
+Write one coherent report and choose one suitable technique for each section. Never add duplicate
+views, hidden tabs or a document-mode selector. Use a clear conversational voice by default and
+preserve evidence, uncertainty, confidence, limitations and next actions in the same document.
+
+Render through `scripts/render_report.py`. Author a JSON content file with this shape:
+
+```json
+{
+  "title": "Subject and conclusion",
+  "topbar_title": "Short reader-facing conclusion",
+  "meta": "Evidence date, scope and revision",
+  "sections": [
+    {"id": "overview", "title": "목표와 결론", "html": "<p>...</p>"},
+    {"id": "verification", "title": "검증 및 예외", "html": "<ul>...</ul>"}
+  ],
+  "sources": [
+    {"id": "ref-1", "title": "Source title", "url": "https://example.test/source",
+     "local_path": "", "date": "2026-01-01", "revision": "v1",
+     "link_unavailable": false, "citations": ["cite-1"]}
+  ],
+  "extra_css": ""
+}
+```
+
+Include `overview` and `verification` sections. Add any other relevant sections as `{id, title,
+html}` objects; section HTML is a fragment, not a complete page. Put each citation in that content as
+`<sup id="cite-1"><a href="#ref-1">[1]</a></sup>` and list the matching citation ID under its
+source; the renderer creates reference entries, return links, and the table of contents. Use a
+verified HTTPS URL, a local path, or set `link_unavailable` to `true`; the checker warns when all
+three are absent. The renderer escapes title, section-title, source and metadata fields, selects the
+theme from the user settings (an explicit request wins), and copies the offline shell, navigation,
+theme control, scripts and footer. `extra_css` is optional local CSS; the checker rejects network
+references and altered scripts. Report any theme-settings bootstrap or invalid-settings warning in
+the completion summary.
+
+Run the renderer and then run the package-local checker against the saved output. Preserve the
+renderer-owned document shell and replace content only through the declared fields. Long reports
+include both navigation structures; the renderer keeps them for short reports too.
 The report is decision-ready
 at the evidence available now, including the first material persistent checkpoint: it should let the
 reader decide whether more research is needed, whether a candidate should become implementation work,
@@ -47,6 +73,7 @@ external assets, unsafe URL schemes, raw sensitive logs or HTML injection.
 Before reporting the report artifact as successful, run the package-local checker against the saved
 file and fix every failure:
 
+    python3 <package>/scripts/render_report.py --input /path/to/report-content.json --output /path/to/report.html
     python3 <package>/scripts/check_report.py /path/to/report.html
 
 The checker verifies that the table of contents links to every section, movement controls link to

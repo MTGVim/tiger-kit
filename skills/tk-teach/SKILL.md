@@ -1,11 +1,11 @@
 ---
 name: tk-teach
-description: "[user/auto] 사용자의 목표·실제 학습 기록·오개념을 바탕으로 다음 수업을 선택하며 주제별 장기 학습을 이어갑니다. 처음 학습할 때는 신뢰할 만한 출처에서 조사하고 여러 챕터의 오프라인 HTML 강의도 생성합니다. 짧은 개념 설명이나 제품 구현에는 사용하지 않습니다."
-disable-model-invocation: false
+description: "[user] 사용자의 목표·실제 학습 기록·오개념을 바탕으로 다음 수업을 선택하며 주제별 장기 학습을 이어갑니다. 처음 학습할 때는 신뢰할 만한 출처에서 조사하고 여러 챕터의 오프라인 HTML 강의도 생성합니다. 짧은 개념 설명이나 제품 구현에는 사용하지 않습니다."
+disable-model-invocation: true
 argument-hint: "[topic or --resume [topic]] [learning goal] [output path]"
 metadata:
   tigerkit:
-    kind: hybrid
+    kind: user-invoked
     origin: tigerkit
     relationship: adapted
 ---
@@ -146,12 +146,12 @@ Honor explicit Markdown (default `lesson.md` when no filename is given) or custo
 TigerKit-owned intermediate and learning-state files stay in the current identity-verified learning workspace (new `.tigerkit/teach/<topic>/`, explicit authorized path or continued legacy `.tigerkit/study/<topic>/`). An explicit
 existing final file needs overwrite authorization. Transient work uses `.tigerkit/tmp/tk-teach/<run-id>/`.
 
-For HTML lessons and courses, default to the complete `standard`, `dialogue`, and `easy-dialogue`
-views in the same document. Keep the mode selector consistent across the course so chapter links,
-the glossary, conclusions and practice remain in the selected view. Reuse the same researched
-content and answers across views; adapt explanatory prose without duplicating research or changing
-what an exercise tests. Honor an explicit single-mode request. The HTML modes do not apply to
-explicit Markdown output.
+For HTML lessons and courses, create one continuous document. Use the section-level routing
+and technique reference from [HTML output](references/html-output.md) to match each section to its
+content. Keep every section informative and avoid rendering duplicate modes or hidden tabs. Use a
+clear conversational voice by default. When the learner asks for simpler wording, adapt the same
+lesson while preserving the researched facts, exercise answers and limitations. Explicit Markdown
+output keeps its existing format.
 
 Verify prerequisite order, outcome coverage, claim support, examples, chapter navigation and
 question/answer separation. For executable coding exercises, read [exercise verification](references/exercise-verification.md)

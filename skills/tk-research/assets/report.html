@@ -2,7 +2,7 @@
 <html lang="ko" data-default-theme="system">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>연구 보고서 · 작성 템플릿</title>
+<title>{{REPORT_TITLE}} · 연구 보고서</title>
 <style>
 /* tigerkit:html-theme.css */
 :root {
@@ -39,6 +39,15 @@ img, svg, video, canvas { max-width: 100%; height: auto; }
 pre { max-width: 100%; overflow-x: auto; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .ht-card { min-width: 0; max-width: 100%; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: calc(2 * var(--space)); }
+.ht-lede { margin: .2rem 0 .8rem; font-size: 1.1875rem; font-weight: 700; line-height: 1.5; }
+.ht-tldr { margin: 0 0 1rem; padding: .8rem 1rem; background: var(--hover); border-radius: var(--radius); }
+.ht-tldr ol { margin: .2rem 0 0; padding-inline-start: 1.2rem; }
+.ht-route { margin: 0 0 1rem; padding: .1rem .7rem; border-inline-start: 1px solid var(--accent); color: var(--muted); font-size: var(--font-body); }
+.ht-route strong { color: var(--text); }
+.ht-chat { display: grid; gap: .5rem; min-width: 0; margin-block: .75rem; }
+.ht-chat-turn { min-width: 0; max-width: 85%; margin: 0; padding: .5rem .85rem; border: 1px solid var(--line); border-radius: 1rem 1rem 1rem .25rem; background: var(--hover); overflow-wrap: anywhere; }
+.ht-chat-turn[data-speaker="reader"] { justify-self: end; border-color: var(--accent); border-radius: 1rem 1rem .25rem 1rem; background: var(--panel); }
+.ht-visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .ht-visual-stack { display: grid; gap: calc(2 * var(--space)); margin-block: calc(2 * var(--space)); min-width: 0; }
 .ht-visual-stack > * { margin-block: 0; }
 /* Opt-in document flow; outputs are a group, never a horizontal sequence. */
@@ -46,7 +55,7 @@ pre { max-width: 100%; overflow-x: auto; }
 .ht-flow > li { min-width: 0; }
 .ht-flow :is(h3, h4) { margin-block: 0 .5rem; }
 .ht-flow .ht-card > :last-child { margin-block-end: 0; }
-.ht-flow-focus { border-inline-start: 4px solid var(--accent); }
+.ht-flow-focus { border-inline-start: 1px solid var(--accent); }
 .ht-flow-results { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(2 * var(--space)); min-width: 0; padding: 0; margin: 0; list-style: none; }
 .ht-flow-results > :only-child { grid-column: 1 / -1; }
 .ht-flow-link { margin: var(--space) 0 0; text-align: center; color: var(--muted); }
@@ -60,7 +69,7 @@ pre { max-width: 100%; overflow-x: auto; }
 .ht-info-icon { color: var(--accent); line-height: 1.65; }
 .ht-info-icon svg { display: block; width: 1.5rem; height: 1.5rem; }
 .ht-status { display: inline; font-size: var(--font-small); font-weight: 600; overflow-wrap: anywhere; }
-.ht-callout { min-width: 0; padding: 1rem; border-inline-start: 3px solid var(--accent); background: var(--hover); }
+.ht-callout { min-width: 0; padding: 1rem; border-inline-start: 1px solid var(--accent); background: var(--hover); }
 .ht-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: 1rem; margin-block: 1rem; }
 .ht-kpis > div { min-width: 0; padding: .75rem; border-block-end: 1px solid var(--line); }
 .ht-kpis dt { color: var(--muted); }
@@ -93,30 +102,14 @@ pre { max-width: 100%; overflow-x: auto; }
 .ht-topbar > * { min-width: 0; max-width: 100%; }
 .ht-topbar-title { margin: 0; font-weight: 700; overflow-wrap: anywhere; }
 .ht-topbar .ht-theme-control { margin: 0; width: 100%; }
-.ht-mode-control { grid-column: 1 / -1; min-width: 0; width: 100%; max-width: 100%; margin: 0; padding: 0; border: 0; }
-.ht-mode-label { margin-block-end: .25rem; color: var(--muted); font-size: var(--font-small); }
-.ht-mode-buttons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; min-width: 0; max-width: 100%; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
-.ht-mode-option { position: relative; min-width: 0; cursor: pointer; }
-.ht-mode-option + .ht-mode-option { border-left: 1px solid var(--line); }
-.ht-mode-option input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-.ht-mode-option span { display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 44px; padding: 6px 10px; background: var(--panel); color: var(--text); text-align: center; overflow-wrap: anywhere; }
-.ht-mode-option:hover span { background: var(--hover); }
-.ht-mode-option input:checked + span { background: var(--accent); color: var(--panel); font-weight: 700; }
-.ht-mode-option input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: -3px; }
-/* Without :has support, leave every mode readable; native radios switch views where supported. */
-.ht-document [data-html-mode] { display: block; }
-html:has(.ht-mode-control) .ht-document [data-html-mode] { display: none; }
-html:has(#ht-mode-standard:checked) .ht-document [data-html-mode="standard"],
-html:has(#ht-mode-dialogue:checked) .ht-document [data-html-mode="dialogue"],
-html:has(#ht-mode-easy-dialogue:checked) .ht-document [data-html-mode="easy-dialogue"] { display: block; }
 @media (max-width: 760px) {
   .ht-topbar { position: static; grid-template-columns: minmax(0, 1fr); padding: .75rem 1.2rem; gap: .5rem; }
-  .ht-mode-control { grid-column: auto; }
 }
 html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scroll-padding-top: var(--ht-anchor-offset); }
-html:has(.ht-document .ht-mode-control) { --ht-anchor-offset: 12rem; }
 .ht-doc-content { min-width: 0; width: calc(100% - var(--ht-nav-width) - var(--ht-nav-gap)); max-width: 76rem; margin: 1.5rem auto 1.5rem calc(var(--ht-nav-width) + var(--ht-nav-gap)); padding: clamp(1.25rem, 3vw, 2.5rem); background: var(--panel); border: 1px solid var(--line); border-radius: calc(1.5 * var(--radius)); box-shadow: 0 12px 36px #10131912; }
 .ht-doc-content > :first-child { margin-block-start: 0; }
+.ht-document .ht-doc-content > section[id] { margin: 0; padding-block: 1.5rem .5rem; border-block-start: 1px solid var(--line); }
+.ht-document .ht-doc-content > section[id] > h2 { margin-block-start: 0; }
 .ht-doc-content > :last-child { margin-block-end: 0; }
 .ht-document :is(section[id], li[id], sup[id], footer[id]) { scroll-margin-top: 1rem; }
 .ht-document li[id^="ref-"] { font-size: .875rem; line-height: 1.55; }
@@ -164,64 +157,58 @@ html:has(.ht-document .ht-mode-control) { --ht-anchor-offset: 12rem; }
 }
 @media (prefers-reduced-motion: reduce) { html:has(.ht-document) { scroll-behavior: auto; } }
 /* /tigerkit:html-theme.css */
-*{box-sizing:border-box}.skip{position:absolute;left:1rem;top:-5rem}.skip:focus{top:1rem;z-index:20;background:var(--panel);padding:1rem}main{min-width:0}h1{line-height:1.2;letter-spacing:-.04em}h2{line-height:1.4}section{background:var(--hover);border:1px solid var(--line);border-radius:var(--radius);padding:calc(3 * var(--space));margin:1.5rem 0}.kicker,.meta{color:var(--muted)}.kicker{letter-spacing:.12em;font-size:.85rem}.lead{font-size:1em}.badge{display:inline-block;border:1px solid var(--accent);border-radius:1rem;padding:0 .7rem;color:var(--accent)}dl{display:grid;grid-template-columns:8rem minmax(0,1fr);gap:.5rem}dt{font-weight:700}dd{margin:0}main details{border-top:1px solid var(--line);margin-top:1rem;padding-top:1rem}summary{cursor:pointer;font-weight:600}footer{color:var(--muted);font-size:.85rem;margin:2rem 0}
-@media(max-width:760px){section{padding:1.1rem;max-width:100%}dl{grid-template-columns:1fr}dd{margin-bottom:.6rem}}
+*{box-sizing:border-box}.skip{position:absolute;left:1rem;top:-5rem}.skip:focus{top:1rem;z-index:20;background:var(--panel);padding:1rem}main{min-width:0}h1{line-height:1.2;letter-spacing:-.04em}h2{line-height:1.4;margin:0 0 .75rem}section{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;padding:1.75rem 0 .5rem;margin:0}.kicker,.meta{color:var(--muted)}.kicker{letter-spacing:.12em;font-size:.85rem}.lead{font-size:1em}.badge{display:inline-block;border:1px solid var(--accent);border-radius:1rem;padding:0 .7rem;color:var(--accent)}dl{display:grid;grid-template-columns:8rem minmax(0,1fr);gap:.5rem}dt{font-weight:700}dd{margin:0}main details{border-top:1px solid var(--line);margin-top:1rem;padding-top:1rem}summary{cursor:pointer;font-weight:600}footer{color:var(--muted);font-size:.85rem;margin:2rem 0}
+@media(max-width:760px){section{padding:1.25rem 0 .5rem;max-width:100%}dl{grid-template-columns:1fr}dd{margin-bottom:.6rem}}
 
 </style>
+<!-- tigerkit:extra-css -->{{REPORT_EXTRA_CSS}}<!-- /tigerkit:extra-css -->
 <body class="ht-document" id="document-top">
 <!-- Replace the top-bar title with the subject and conclusion; put identifiers in secondary metadata. -->
-<header class="ht-topbar"><p class="ht-topbar-title">연구 주제와 결론을 적습니다</p><fieldset class="ht-theme-control" data-ht-theme-control hidden><legend class="ht-theme-label">테마</legend><div class="ht-theme-buttons"><label class="ht-theme-option"><input type="radio" name="ht-theme" value="system" data-theme-choice="system"><span>시스템</span></label><label class="ht-theme-option"><input type="radio" name="ht-theme" value="light" data-theme-choice="light"><span>라이트</span></label><label class="ht-theme-option"><input type="radio" name="ht-theme" value="dark" data-theme-choice="dark"><span>다크</span></label></div></fieldset>
-<fieldset class="ht-mode-control"><legend class="ht-mode-label">문서 형식</legend><div class="ht-mode-buttons"><label class="ht-mode-option"><input type="radio" id="ht-mode-standard" name="ht-mode" value="standard" checked><span>기본형</span></label><label class="ht-mode-option"><input type="radio" id="ht-mode-dialogue" name="ht-mode" value="dialogue"><span>대화형</span></label><label class="ht-mode-option"><input type="radio" id="ht-mode-easy-dialogue" name="ht-mode" value="easy-dialogue"><span>쉬운 대화형</span></label></div></fieldset></header>
+<header class="ht-topbar"><p class="ht-topbar-title">{{REPORT_TOPBAR_TITLE}}</p><fieldset class="ht-theme-control" data-ht-theme-control hidden><legend class="ht-theme-label">테마</legend><div class="ht-theme-buttons"><label class="ht-theme-option"><input type="radio" name="ht-theme" value="system" data-theme-choice="system"><span>시스템</span></label><label class="ht-theme-option"><input type="radio" name="ht-theme" value="light" data-theme-choice="light"><span>라이트</span></label><label class="ht-theme-option"><input type="radio" name="ht-theme" value="dark" data-theme-choice="dark"><span>다크</span></label></div></fieldset>
+</header>
 <a class="skip" href="#overview">본문으로 이동</a>
 <main id="main" class="ht-doc-content" tabindex="-1">
-<header><p class="kicker">RESEARCH · 작성 템플릿</p><h1>연구 목표를 적습니다</h1><p class="meta">이 파일의 예시 문구는 연구 결과가 아닙니다. 검증한 현재 사실로 교체하세요.</p></header>
+<header><p class="kicker">RESEARCH</p><h1>{{REPORT_TITLE}}</h1><p class="meta">{{REPORT_META}}</p></header>
+<!-- tigerkit:generated-sections:start -->
 <section id="overview"><h2>목표와 결론</h2>
-<div data-html-mode="standard"><p class="lead">가장 중요한 결론과 근거를 먼저 적습니다.<sup id="cite-standard-1-1"><a href="#ref-standard-1" aria-label="참고문헌 1">[1]</a></sup></p></div>
-<div data-html-mode="dialogue"><p class="lead">결론은 무엇이고, 무엇을 근거로 삼았나요?<sup id="cite-dialogue-1-1"><a href="#ref-dialogue-1" aria-label="참고문헌 1">[1]</a></sup></p><p>검증한 결론과 그 근거를 바로 이어 설명합니다.</p></div>
-<div data-html-mode="easy-dialogue"><p class="lead">그래서 지금 알게 된 점은 무엇인가요?<sup id="cite-easy-dialogue-1-1"><a href="#ref-easy-dialogue-1" aria-label="참고문헌 1">[1]</a></sup></p><p>확인한 사실을 쉬운 말로 설명하고, 아직 모르는 점도 함께 적습니다.</p></div>
+<p class="lead">가장 중요한 결론과 근거를 먼저 적습니다.<sup id="cite-1-1"><a href="#ref-1" aria-label="참고문헌 1">[1]</a></sup></p>
 <dl><dt>판단할 문제</dt><dd>결과가 어떤 다음 결정을 도와야 하는지 적습니다.</dd><dt>신뢰도</dt><dd>높음·보통·낮음과 그 이유를 적습니다.</dd><dt>근거 시점</dt><dd>실제로 확인한 날짜와 리비전을 적습니다.</dd></dl></section>
-<!-- If reader-unfamiliar terms need a separate glossary, retain canonical terms in dt and put a complete definition in each mode-specific dd. Define every term at first use. -->
+<!-- If unfamiliar terms need a glossary, use the heading “용어 정리” and keep each definition complete and searchable. Define every term at first use. -->
 <section id="context"><h2>문제와 배경</h2>
-<div data-html-mode="standard"><p>이 연구가 해결하려는 문제와 필요한 배경을 설명합니다. 용어와 통계의 의미를 짧게 풀이합니다.</p></div>
-<div data-html-mode="dialogue"><p>왜 이 문제를 조사하나요?</p><p>필요한 배경과 용어를 설명한 뒤, 어떤 결정을 도울지 밝힙니다.</p></div>
-<div data-html-mode="easy-dialogue"><p>먼저 어떤 문제인지 알아볼까요?</p><p>어려운 말을 먼저 풀어 쓰고, 이 조사가 어떤 선택에 도움을 주는지 설명합니다.</p></div></section>
+<p>이 연구가 해결하려는 문제와 필요한 배경을 설명합니다. 용어와 통계의 의미를 짧게 풀이합니다.</p>
+</section>
 <section id="status"><h2>현재 상태</h2>
-<div data-html-mode="standard"><p><span class="badge">작성 전</span> 현재 연구 단계와 의미 있는 진행 경과를 적습니다. 지속 연구에서는 전체 발견·실험·인계 내역의 개수를 정본과 대조합니다.</p></div>
-<div data-html-mode="dialogue"><p><span class="badge">작성 전</span> 지금 어디까지 확인했나요?</p><p>실제로 끝낸 조사와 아직 남은 일을 구분합니다. 지속 연구는 전체 발견·실험·인계 내역과 정본을 대조합니다.</p></div>
-<div data-html-mode="easy-dialogue"><p><span class="badge">작성 전</span> 지금까지 무엇을 확인했나요?</p><p>끝낸 일과 아직 하지 않은 일을 나누어 적습니다. 이어서 하는 연구는 기록 전체와 맞춰 봅니다.</p></div></section>
+<p><span class="badge">작성 전</span> 현재 연구 단계와 의미 있는 진행 경과를 적습니다. 지속 연구에서는 전체 발견·실험·인계 내역의 개수를 정본과 대조합니다.</p>
+</section>
 <section id="directions"><h2>검토한 방향</h2>
-<div data-html-mode="standard"><p>기준안, 다른 접근법, 지지하거나 제외한 방향과 근거를 적습니다. 실행하지 않은 자원 보류는 반증과 구분합니다.<sup id="cite-standard-1-2"><a href="#ref-standard-1" aria-label="참고문헌 1">[1]</a></sup></p></div>
-<div data-html-mode="dialogue"><p>다른 방법은 무엇이었고, 왜 선택하거나 제외했나요?</p><p>확인한 근거로 판단을 설명합니다. 실행하지 못한 방법은 틀렸다고 단정하지 않고 보류로 표시합니다.<sup id="cite-dialogue-1-2"><a href="#ref-dialogue-1" aria-label="참고문헌 1">[1]</a></sup></p></div>
-<div data-html-mode="easy-dialogue"><p>다른 방법도 살펴봤나요?</p><p>실제로 시험한 방법과 시간이나 자원이 부족해 하지 못한 방법을 나누어 적습니다.<sup id="cite-easy-dialogue-1-2"><a href="#ref-easy-dialogue-1" aria-label="참고문헌 1">[1]</a></sup></p></div></section>
+<p>기준안, 다른 접근법, 지지하거나 제외한 방향과 근거를 적습니다. 실행하지 않은 자원 보류는 반증과 구분합니다.<sup id="cite-1-2"><a href="#ref-1" aria-label="참고문헌 1">[1]</a></sup></p>
+</section>
 <section id="experiments"><h2>조사와 실험</h2>
-<div data-html-mode="standard"><p>모든 발견과 실험의 ID, 주제, 판정을 짧게 표시하고 상세 근거는 펼쳐 볼 수 있게 적습니다. 실제로 읽은 자료와 수행한 테스트를 구별합니다. 수행하지 않은 실험은 계획으로 표시합니다.</p></div>
-<div data-html-mode="dialogue"><p>무엇을 직접 확인했나요?</p><p>읽은 자료와 실제 테스트를 구분하고, 발견과 실험의 ID와 판정을 보여 줍니다. 하지 않은 일은 계획으로 표시합니다.</p></div>
-<div data-html-mode="easy-dialogue"><p>무엇을 읽고 무엇을 시험했나요?</p><p>자료를 읽은 일과 테스트를 한 일을 따로 적습니다. 아직 하지 않은 테스트는 계획이라고 표시합니다.</p></div>
+<p>모든 발견과 실험의 ID, 주제, 판정을 짧게 표시하고 상세 근거는 펼쳐 볼 수 있게 적습니다. 실제로 읽은 자료와 수행한 테스트를 구별합니다. 수행하지 않은 실험은 계획으로 표시합니다.</p>
 <details><summary>상세 근거와 절차</summary><p>긴 부가 근거를 여기에 적습니다. 핵심 결론과 필요한 배경은 접지 않습니다.</p></details></section>
 <section id="unknowns"><h2>불확실성과 한계</h2>
-<div data-html-mode="standard"><p>상충 근거, 확인하지 못한 범위, 측정 한계와 다음 결정을 바꿀 조건을 적습니다.</p></div>
-<div data-html-mode="dialogue"><p>아직 확인하지 못한 점은 무엇인가요?</p><p>엇갈리는 근거와 조사하지 못한 범위를 밝히고, 어떤 새 근거가 결론을 바꿀 수 있는지 설명합니다.</p></div>
-<div data-html-mode="easy-dialogue"><p>아직 모르는 부분은 무엇인가요?</p><p>확인하지 못한 범위와 측정의 한계를 적습니다. 어떤 새 정보가 나오면 결론이 달라질지도 설명합니다.</p></div></section>
+<p>상충 근거, 확인하지 못한 범위, 측정 한계와 다음 결정을 바꿀 조건을 적습니다.</p>
+</section>
 <section id="frontier"><h2>다음 행동</h2>
-<div data-html-mode="standard"><p>가장 정보 가치가 높은 다음 질문과 재개 조건, 준비된 인계 후보, 대기 조건과 승인 상태를 적습니다.</p></div>
-<div data-html-mode="dialogue"><p>다음에 무엇을 확인하면 가장 도움이 되나요?</p><p>재개 조건, 준비된 인계 후보, 대기 조건과 승인 상태를 함께 설명합니다.</p></div>
-<div data-html-mode="easy-dialogue"><p>다음에는 무엇을 살펴보면 좋을까요?</p><p>다시 시작할 조건과 이미 준비된 다음 작업, 기다리는 이유와 승인 상태를 적습니다.</p></div></section>
+<p>가장 정보 가치가 높은 다음 질문과 재개 조건, 준비된 인계 후보, 대기 조건과 승인 상태를 적습니다.</p>
+</section>
 <section id="verification"><h2>검증 및 예외</h2>
-<!-- Keep each check in a separate item with a strong label after final-result injection. These factual outcomes are shared across modes. -->
+<!-- Keep each check in a separate item with a strong label after final-result injection. -->
 <ul>
 <li><strong>정적 검증:</strong> 미기록. 실제로 수행한 구조 검사와 결과, 확인하지 못한 범위를 적습니다.</li>
 <li><strong>화면 검증:</strong> 미기록. 실제로 확인한 화면 크기와 테마, 조작 및 결과를 적습니다. 수행하지 못했다면 검증 불가 상태와 이유를 적습니다.</li>
 </ul></section>
-<section id="sources"><h2>참고문헌</h2><!-- Repeat each verified source list per mode, with citation and backlink IDs scoped to that mode. -->
-<ol data-html-mode="standard"><li id="ref-standard-1">실제로 읽은 근거의 제목·링크·날짜·리비전으로 교체합니다. 이 항목은 인용 형식 예시이며 연구 근거가 아닙니다. <a href="#cite-standard-1-1" aria-label="인용 1의 첫 위치로 복귀">↩ 1</a> <a href="#cite-standard-1-2" aria-label="인용 1의 두 번째 위치로 복귀">↩ 2</a></li></ol>
-<ol data-html-mode="dialogue"><li id="ref-dialogue-1">실제로 읽은 근거의 제목·링크·날짜·리비전으로 교체합니다. 이 항목은 인용 형식 예시이며 연구 근거가 아닙니다. <a href="#cite-dialogue-1-1" aria-label="인용 1의 첫 위치로 복귀">↩ 1</a> <a href="#cite-dialogue-1-2" aria-label="인용 1의 두 번째 위치로 복귀">↩ 2</a></li></ol>
-<ol data-html-mode="easy-dialogue"><li id="ref-easy-dialogue-1">실제로 읽은 근거의 제목·링크·날짜·리비전으로 교체합니다. 이 항목은 인용 형식 예시이며 연구 근거가 아닙니다. <a href="#cite-easy-dialogue-1-1" aria-label="인용 1의 첫 위치로 복귀">↩ 1</a> <a href="#cite-easy-dialogue-1-2" aria-label="인용 1의 두 번째 위치로 복귀">↩ 2</a></li></ol></section>
+<section id="sources"><h2>참고문헌</h2><!-- Include one source entry per verified source. -->
+<ol><li id="ref-1">실제로 읽은 근거의 제목·링크·날짜·리비전으로 교체합니다. 이 항목은 인용 형식 예시이며 연구 근거가 아닙니다. <a href="#cite-1-1" aria-label="인용 1의 첫 위치로 복귀">↩ 1</a> <a href="#cite-1-2" aria-label="인용 1의 두 번째 위치로 복귀">↩ 2</a></li></ol>
+</section>
+<!-- tigerkit:generated-sections:end -->
 <footer id="document-bottom">HTML은 연구 사실을 읽기 쉽게 표시한 사본이며 실행 상태의 정본이 아닙니다.<br>🤖 본 보고서는 AI가 작성했습니다.</footer>
 </main>
 <nav class="ht-doc-nav" aria-label="문서 탐색">
 <h2 class="ht-doc-nav-heading">목차</h2>
 <details class="ht-doc-toc" open><summary aria-label="목차 열기 또는 닫기">목차</summary>
 <div class="ht-doc-toc-panel" tabindex="-1"><ol>
+<!-- tigerkit:generated-toc:start -->
 <li><a href="#overview">목표와 결론</a></li>
 <li><a href="#context">문제와 배경</a></li>
 <li><a href="#status">현재 상태</a></li>
@@ -231,6 +218,7 @@ html:has(.ht-document .ht-mode-control) { --ht-anchor-offset: 12rem; }
 <li><a href="#frontier">다음 행동</a></li>
 <li><a href="#verification">검증 및 예외</a></li>
 <li><a href="#sources">참고문헌</a></li>
+<!-- tigerkit:generated-toc:end -->
 </ol></div></details>
 </nav>
 <nav class="ht-doc-controls" aria-label="문서 이동">

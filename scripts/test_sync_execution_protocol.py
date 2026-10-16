@@ -91,6 +91,17 @@ class SyncExecutionProtocolTest(unittest.TestCase):
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_text((path.read_text() if path.exists() else "") + block)
         repo = Path(__file__).resolve().parents[1]
+        for name in ("explanation-routing.md", "explanation-techniques.md"):
+            canonical = repo / "skills/tk-explain/references" / name
+            target = self.root / "skills/tk-explain/references" / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(canonical, target)
+            for consumer in sync_execution_protocol.HTML_CONSUMERS:
+                if consumer == "tk-explain":
+                    continue
+                copy = self.root / "skills" / consumer / "references" / name
+                copy.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(canonical, copy)
         for relative in sync_execution_protocol.CHART_FILES:
             target = self.root / "skills/tk-explain" / relative
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -145,6 +156,13 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         for name in ("clear-writing.md", "html-output.md", "visual-grammar.md"):
             self.assertEqual((self.root / "skills/tk-research/references" / name).read_bytes(),
                              (self.root / "skills/tk-explain/references" / name).read_bytes())
+        for name in ("explanation-routing.md", "explanation-techniques.md"):
+            expected = (self.root / "skills/tk-explain/references" / name).read_bytes()
+            for consumer in sync_execution_protocol.HTML_CONSUMERS:
+                self.assertEqual(
+                    (self.root / "skills" / consumer / "references" / name).read_bytes(),
+                    expected,
+                )
         context = (self.root / "skills/tk-audit/references/repository-context.md").read_bytes()
         for name in ("tk-prep", "tk-research"):
             self.assertEqual((self.root / "skills" / name / "references/repository-context.md").read_bytes(), context)

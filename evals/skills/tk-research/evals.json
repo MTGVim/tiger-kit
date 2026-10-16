@@ -1681,14 +1681,14 @@
       ]
     },
     {
-      "id": "research-report-all-document-modes",
+      "id": "research-report-single-document-renderer",
       "path": "success",
-      "prompt": "$tk-research 공식 문서에서 HTTP 캐시의 `ETag`와 `If-None-Match` 동작을 조사해 `cache-report.html`로 정리해줘. 표현 모드는 따로 지정하지 않을게.",
-      "expected_output": "기본형·대화형·쉬운 대화형으로 같은 결론, 근거와 출처를 담은 오프라인 보고서를 만든다. 각 모드의 설명에는 결론, 핵심 용어 풀이, 제약과 확인되지 않은 범위가 모두 있다. 각주와 참고문헌 링크는 현재 모드 안에서 이동한다.",
+      "prompt": "$tk-research 공식 문서에서 HTTP 캐시의 `ETag`와 `If-None-Match` 동작을 조사해 `cache-report.html`로 정리해줘.",
+      "expected_output": "보고서 생성 스크립트로 단일 오프라인 보고서를 만든다. 내용에 맞는 섹션별 기법을 사용하고, 출처 각주와 복귀 링크를 보존하며 문서 모드와 숨은 탭을 두지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "모드 미지정 HTML 보고서에는 기본형, 대화형, 쉬운 대화형 세 가지 완전한 문서 모드가 있다. 결론과 핵심 용어 설명, 제약, 확인되지 않은 범위가 각 모드에 맞게 서술된다. 세 모드가 같은 확인된 사실과 출처를 사용하고 각 모드의 각주·참고문헌 링크가 서로 교차하지 않는다."
+          "criterion": "보고서 생성 스크립트를 사용해 검증된 결론과 근거가 담긴 하나의 오프라인 보고서를 만든다. 템플릿의 테마, 탐색 링크, 스크립트, 출처 각주와 복귀 링크를 보존하고, 각 섹션은 내용에 맞는 기법을 사용한다. 반복 모드나 숨은 탭이 없다."
         },
         {
           "type": "path_exists",
@@ -1697,17 +1697,27 @@
         {
           "type": "path_text_contains",
           "path": "cache-report.html",
-          "text": "기본형"
+          "text": "ETag"
         },
         {
           "type": "path_text_contains",
           "path": "cache-report.html",
-          "text": "대화형"
+          "text": "If-None-Match"
         },
         {
           "type": "path_text_contains",
           "path": "cache-report.html",
-          "text": "쉬운 대화형"
+          "text": "304"
+        },
+        {
+          "type": "path_text_absent",
+          "path": "cache-report.html",
+          "text": "ht-mode-control"
+        },
+        {
+          "type": "path_text_absent",
+          "path": "cache-report.html",
+          "text": "data-html-mode"
         },
         {
           "type": "git_head_unchanged"
@@ -1729,6 +1739,12 @@
     "reason": "기존 `bounded` 연구와 지속 연구를 단일 `tk-research` 담당자로 통합하고 모든 평가를 이관합니다."
   },
   "migrations": [
+    {
+      "from": "research-report-all-document-modes",
+      "to": "research-report-single-document-renderer",
+      "allow_assertion_changes": true,
+      "reason": "전체 문서 모드 복제를 단일 렌더링 문서와 섹션별 기법 선택으로 바꿉니다."
+    },
     {
       "source_skill": "tk-autoresearch",
       "from": "discovery-context-start",

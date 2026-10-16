@@ -793,48 +793,53 @@
       ]
     },
     {
-      "id": "explain-default-all-presentation-modes-v3",
+      "id": "explain-default-section-level-techniques",
       "path": "success",
-      "prompt": "$tk-explain DNS 재귀 조회를 `dns-three-views.html`로 설명해줘. 표현 모드는 따로 지정하지 않을게.",
-      "expected_output": "한 번 조사한 동일한 근거와 메커니즘으로 기본형, 대화형, 쉬운 대화형을 한 오프라인 HTML 문서에 제공한다. 결론·배경 용어·용어 풀이·제약·출처 설명은 세 모드 모두에 맞게 다시 쓴다. 증거와 수치는 동일하게 유지하고 각 모드의 각주·참고문헌 링크는 그 모드 안에서만 이동한다.",
+      "prompt": "$tk-explain DNS 재귀 조회를 `dns-explanation.html`로 설명해줘.",
+      "expected_output": "검증된 근거를 담은 오프라인 HTML 한 문서. 섹션별 내용에 맞는 기법을 고르고, 대화체를 기본으로 사용하며, 반복 모드와 숨은 탭을 만들지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "모드 미지정 기본값은 세 문서 모드이며, 동일한 검증된 근거를 바탕으로 결론·배경 용어·용어 풀이·제약·출처 설명까지 각 모드의 독자에게 맞게 쓴다. 증거와 수치는 세 모드에서 같고 각주·참고문헌 링크는 자기 모드 안에서 이동한다. 대화형에는 현실적인 질문을 사용하고 구조화할 근거는 표나 목록으로 유지한다. 화면에는 독자·고객·저자 이름표와 이모지 아바타를 표시하지 않는다."
+          "criterion": "하나의 연속된 문서에 한 문장 결론과 검증된 근거를 담는다. 섹션마다 내용에 맞는 기법 하나를 선택하고, 자연스러운 대화체를 기본으로 사용한다. 같은 설명을 다른 모드나 탭에 복제하지 않으며, 문서 구조에 맞지 않는 선호 기법을 강제하지 않는다."
         },
         {
           "type": "path_exists",
-          "path": "dns-three-views.html"
+          "path": "dns-explanation.html"
         },
         {
           "type": "path_text_contains",
-          "path": "dns-three-views.html",
-          "text": "기본형"
+          "path": "dns-explanation.html",
+          "text": "DNS"
         },
         {
           "type": "path_text_contains",
-          "path": "dns-three-views.html",
-          "text": "대화형"
+          "path": "dns-explanation.html",
+          "text": "재귀 조회"
         },
         {
           "type": "path_text_contains",
-          "path": "dns-three-views.html",
-          "text": "쉬운 대화형"
+          "path": "dns-explanation.html",
+          "text": "DNS 캐시"
         },
         {
           "type": "path_text_contains",
-          "path": "dns-three-views.html",
-          "text": "easy-dialogue"
+          "path": "dns-explanation.html",
+          "text": "네임서버"
+        },
+        {
+          "type": "path_text_contains",
+          "path": "dns-explanation.html",
+          "text": "응답"
         },
         {
           "type": "path_text_absent",
-          "path": "dns-three-views.html",
-          "text": "쉬운 문답"
+          "path": "dns-explanation.html",
+          "text": "ht-mode-control"
         },
         {
-          "type": "path_text_contains",
-          "path": "dns-three-views.html",
-          "text": "font-size: .875rem"
+          "type": "path_text_absent",
+          "path": "dns-explanation.html",
+          "text": "data-html-mode"
         },
         {
           "type": "git_head_unchanged"
@@ -842,17 +847,17 @@
         {
           "type": "changed_paths_equal",
           "paths": [
-            "dns-three-views.html"
+            "dns-explanation.html"
           ]
         },
         {
           "type": "path_text_absent",
-          "path": "dns-three-views.html",
+          "path": "dns-explanation.html",
           "text": "🙋"
         },
         {
           "type": "path_text_absent",
-          "path": "dns-three-views.html",
+          "path": "dns-explanation.html",
           "text": "🧑‍💻"
         }
       ]
@@ -872,6 +877,11 @@
       "from": "explain-default-all-presentation-modes-v2",
       "to": "explain-default-all-presentation-modes-v3",
       "reason": "기본 출력을 완전한 세 문서 모드로 바꾸고 사용자용 이름 및 전체 문서 표현 계약을 고정합니다."
+    },
+    {
+      "from": "explain-default-all-presentation-modes-v3",
+      "to": "explain-default-section-level-techniques",
+      "reason": "전체 문서 모드 복제를 섹션별 기법 선택으로 바꾸고 한 문서의 근거와 결론을 검증합니다."
     }
   ]
 }

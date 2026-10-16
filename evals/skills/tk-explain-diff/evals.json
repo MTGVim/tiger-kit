@@ -269,31 +269,31 @@
       ]
     },
     {
-      "id": "explain-diff-explicit-easy-dialogue-mode",
+      "id": "explain-diff-section-level-technique",
       "path": "success",
-      "prompt": "$tk-explain-diff HEAD^..HEAD를 `easy-dialogue` 모드로 `.tigerkit/explanations/change-easy.html`에 설명해줘.",
-      "expected_output": "정확한 base/head와 주변 코드를 한 번 조사하고, 쉬운 대화형으로 문서 전체를 쓴다. 결론·용어 풀이·제약·path:line 근거·검증 상태를 보존하고 출처 링크는 같은 모드 안에서 이동한다. 화면에 사람 역할 이름표나 이모지 아바타를 표시하지 않는다.",
+      "prompt": "$tk-explain-diff HEAD^..HEAD 변경을 섹션별 내용에 맞는 설명 방식으로 `.tigerkit/explanations/change.html`에 설명해줘.",
+      "expected_output": "정확한 base/head와 주변 코드를 조사하고, 한 문서에서 결론·용어 풀이·제약·path:line 근거·검증 상태를 설명한다. 각 섹션은 내용에 맞는 기법을 사용하고 반복 모드나 숨은 탭은 없다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "명시된 easy-dialogue 한 모드만 만든다. 결론부터 용어 풀이와 제약까지 문서 전체를 쉽고 자연스러운 대화로 쓴다. 실제 변경 메커니즘과 경계, source anchor, 불확실성 및 verification state를 보존하며 비유로 대체하지 않는다. 화면에 역할 이름표와 이모지 아바타를 표시하지 않는다."
+          "criterion": "한 문서를 만들고 결론부터 용어 풀이와 제약까지 변경 근거를 보존한다. 섹션마다 변경 내용에 맞는 기법을 고르고 자연스러운 대화체를 기본으로 사용한다. 실제 변경 메커니즘과 경계, source anchor, 불확실성 및 verification state를 보존하며 비유로 대체하지 않고 반복 모드나 숨은 탭을 만들지 않는다."
         },
         {
           "type": "path_exists",
-          "path": ".tigerkit/explanations/change-easy.html"
+          "path": ".tigerkit/explanations/change.html"
         },
         {
           "type": "git_head_unchanged"
         },
         {
           "type": "path_text_absent",
-          "path": ".tigerkit/explanations/change-easy.html",
-          "text": "🙋"
+          "path": ".tigerkit/explanations/change.html",
+          "text": "ht-mode-control"
         },
         {
           "type": "path_text_absent",
-          "path": ".tigerkit/explanations/change-easy.html",
-          "text": "🧑‍💻"
+          "path": ".tigerkit/explanations/change.html",
+          "text": "data-html-mode"
         }
       ]
     }
@@ -303,6 +303,11 @@
       "from": "explain-diff-explicit-dialogue-eli5-mode",
       "to": "explain-diff-explicit-easy-dialogue-mode",
       "reason": "쉬운 대화형 이름을 표준화하고 요청한 모드가 결론과 용어 풀이까지 문서 전체에 적용되는지 확인합니다."
+    },
+    {
+      "from": "explain-diff-explicit-easy-dialogue-mode",
+      "to": "explain-diff-section-level-technique",
+      "reason": "전역 쉬운 대화 모드를 섹션별 기법 선택으로 바꾸고 변경 근거와 검증 상태를 확인합니다."
     }
   ]
 }

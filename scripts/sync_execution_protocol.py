@@ -154,6 +154,11 @@ def html_policy_errors(root: Path) -> list[str]:
             target = root / "skills" / name / relative
             if not canonical.is_file() or not target.is_file() or target.read_bytes() != canonical.read_bytes():
                 errors.append(f"{target.relative_to(root)}: shared HTML contract/asset drift")
+        for relative in ("references/explanation-routing.md", "references/explanation-techniques.md"):
+            canonical = source / relative
+            target = root / "skills" / name / relative
+            if not canonical.is_file() or not target.is_file() or target.read_bytes() != canonical.read_bytes():
+                errors.append(f"{target.relative_to(root)}: shared explanation routing drift")
         clear_target = root / "skills" / name / "references/clear-writing.md"
         if not CLEAR_WRITING_SOURCE.is_file() or not clear_target.is_file() or clear_target.read_bytes() != CLEAR_WRITING_SOURCE.read_bytes():
             errors.append(f"{clear_target.relative_to(root)}: shared clear-writing drift")
@@ -297,6 +302,8 @@ def main() -> int:
             pairs.append((CLEAR_WRITING_SOURCE, ROOT / "skills" / name / "references/clear-writing.md"))
             if name != "tk-explain":
                 pairs.append((ROOT / "skills/tk-explain/references/html-output.md", ROOT / "skills" / name / "references/html-output.md"))
+                for relative in ("references/explanation-routing.md", "references/explanation-techniques.md"):
+                    pairs.append((ROOT / "skills/tk-explain" / relative, ROOT / "skills" / name / relative))
                 for relative in CHART_FILES:
                     pairs.append((ROOT / "skills/tk-explain" / relative, ROOT / "skills" / name / relative))
     for name in HTML_CONSUMERS:

@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "limits": {
+    "max_skill_md_bytes": 36000,
+    "max_total_skill_md_bytes": 500000,
+    "max_total_description_chars": 4000,
+    "max_single_description_chars": 210,
+    "max_shared_block_bytes": 165000,
+    "max_shared_block_ratio_ppm": 360000,
+    "always_read": {
+      "tk-research-report": {
+        "before_paths": [
+          "skills/tk-research/SKILL.md",
+          "skills/tk-research/references/report.md",
+          "skills/tk-research/references/clear-writing.md",
+          "skills/tk-research/references/html-output.md",
+          "skills/tk-research/assets/report.html"
+        ],
+        "paths": [
+          "skills/tk-research/SKILL.md",
+          "skills/tk-research/references/report.md",
+          "skills/tk-research/references/clear-writing.md",
+          "skills/tk-research/references/explanation-routing.md"
+        ],
+        "max_bytes": 46000
+      }
+    }
+  },
+  "max_growth_ratio": 0.1,
+  "rationales": {}
+}

@@ -803,6 +803,19 @@ def compare_eval_contracts(
                             "without an explicit migration"
                         )
                     continue
+                migration = migration_rows.get(case_id, {})
+                allow_assertion_changes = migration.get("allow_assertion_changes", False)
+                if not isinstance(allow_assertion_changes, bool):
+                    errors.append(
+                        f"{skill}: behavior migration for {case_id!r} must set "
+                        "allow_assertion_changes to a boolean"
+                    )
+                    allow_assertion_changes = False
+                if allow_assertion_changes and not migrated:
+                    errors.append(
+                        f"{skill}: allow_assertion_changes requires a migrated behavior case {case_id!r}"
+                    )
+                    allow_assertion_changes = False
                 if skill in renamed or transferred:
                     # Only relocate package fixture paths; preserve every other assertion value.
                     def relocate(value: object) -> object:
@@ -820,7 +833,8 @@ def compare_eval_contracts(
                         case_id,
                         baseline_case,
                         candidate_case,
-                        exact_assertions=skill in merged or transferred or not migrated,
+                        exact_assertions=(skill in merged or transferred or not migrated)
+                        and not allow_assertion_changes,
                     )
                 )
     return errors

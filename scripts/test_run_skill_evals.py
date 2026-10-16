@@ -1410,6 +1410,28 @@ class RunnerContractTest(unittest.TestCase):
         data["migrations"] = [{"source_skill": "tk-second", "from": "tk-second", "to": "replacement", "reason": "Rename case"}]
         self.assertTrue(any("weakened assertion" in e for e in compare_eval_contracts(baseline, candidate)))
 
+    def test_merged_case_migration_can_replace_assertion_values_with_explicit_opt_in(self):
+        import copy
+        baseline, candidate = self.merged_contracts()
+        data = candidate["tk-combined"]["behavior"]
+        data["evals"][1]["id"] = "replacement"
+        data["evals"][1]["assertions"][0]["text"] = "new expected content"
+        data["migrations"] = [{
+            "source_skill": "tk-second",
+            "from": "tk-second",
+            "to": "replacement",
+            "reason": "The source behavior intentionally changed.",
+            "allow_assertion_changes": True,
+        }]
+        self.assertEqual(compare_eval_contracts(baseline, candidate), [])
+
+        broken = copy.deepcopy(candidate)
+        broken["tk-combined"]["behavior"]["evals"][1]["assertions"] = []
+        self.assertTrue(any(
+            "removed mechanical" in error
+            for error in compare_eval_contracts(baseline, broken)
+        ))
+
     def test_merge_validates_sources_and_conflicts(self):
         import copy
         baseline, candidate = self.merged_contracts()

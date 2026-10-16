@@ -1,6 +1,6 @@
 {
   "skill": "tk-teach",
-  "kind": "hybrid",
+  "kind": "user-invoked",
   "queries": [
     {
       "id": "train-explicit",
@@ -17,7 +17,7 @@
     {
       "id": "validation-True-0",
       "split": "validation",
-      "query": "`Kafka`를 처음 배우는데 조사해서 배경부터 가르쳐 주세요.",
+      "query": "$tk-teach `Kafka`를 처음 배우는데 조사해서 배경부터 가르쳐 주세요.",
       "should_trigger": true,
       "facets": [
         "formal"
@@ -26,7 +26,7 @@
     {
       "id": "validation-True-1",
       "split": "validation",
-      "query": "처음 보는 `Raft` 조사해서 학습 자료 만들어줘",
+      "query": "$tk-teach 처음 보는 `Raft` 조사해서 학습 자료 만들어줘",
       "should_trigger": true,
       "facets": [
         "casual"
@@ -35,7 +35,7 @@
     {
       "id": "validation-True-2",
       "split": "validation",
-      "query": "분산합의 배워보고 싶어 조사해서 갈쳐줘",
+      "query": "$tk-teach 분산합의 배워보고 싶어 조사해서 갈쳐줘",
       "should_trigger": true,
       "facets": [
         "typo"
@@ -44,7 +44,7 @@
     {
       "id": "validation-True-3",
       "split": "validation",
-      "query": "`OAuth`를 조사하고 필요한 배경부터 가르쳐줘",
+      "query": "$tk-teach `OAuth`를 조사하고 필요한 배경부터 가르쳐줘",
       "should_trigger": true,
       "facets": [
         "ko-en"
@@ -53,7 +53,7 @@
     {
       "id": "validation-True-4",
       "split": "validation",
-      "query": "TCP 조사해서 가르쳐줘",
+      "query": "$tk-teach TCP 조사해서 가르쳐줘",
       "should_trigger": true,
       "facets": [
         "short"
@@ -62,7 +62,7 @@
     {
       "id": "validation-True-5",
       "split": "validation",
-      "query": "`React`는 아는데 브라우저 스케줄링을 조사해서 예측 문제와 함께 가르쳐줘",
+      "query": "$tk-teach `React`는 아는데 브라우저 스케줄링을 조사해서 예측 문제와 함께 가르쳐줘",
       "should_trigger": true,
       "facets": [
         "compound"
@@ -71,7 +71,7 @@
     {
       "id": "validation-True-6",
       "split": "validation",
-      "query": "양자 오류 정정을 처음 배우는 성인에게 근거를 조사하고 학습 자료를 만들어 주세요.",
+      "query": "$tk-teach 양자 오류 정정을 처음 배우는 성인에게 근거를 조사하고 학습 자료를 만들어 주세요.",
       "should_trigger": true,
       "facets": [
         "formal"
@@ -80,7 +80,7 @@
     {
       "id": "validation-True-7",
       "split": "validation",
-      "query": "MVCC를 조사하고 배경과 실제 예외를 배울 자료를 만들어줘",
+      "query": "$tk-teach MVCC를 조사하고 배경과 실제 예외를 배울 자료를 만들어줘",
       "should_trigger": true,
       "facets": [
         "compound"
@@ -161,7 +161,7 @@
     {
       "id": "course-dependent-chapters",
       "split": "validation",
-      "query": "브라우저 식별과 어뷰즈 방어를 선수지식부터 여러 챕터로 공부할 과정을 만들어줘.",
+      "query": "$tk-teach 브라우저 식별과 어뷰즈 방어를 선수지식부터 여러 챕터로 공부할 과정을 만들어줘.",
       "should_trigger": true,
       "facets": [
         "compound"
@@ -188,7 +188,7 @@
     {
       "id": "short-lesson-positive",
       "split": "validation",
-      "query": "tk-teach 이번에는 한 챕터만 이어서 가르쳐줘",
+      "query": "$tk-teach 이번에는 한 챕터만 이어서 가르쳐줘",
       "should_trigger": true,
       "facets": [
         "casual"

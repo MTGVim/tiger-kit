@@ -32,6 +32,15 @@ img, svg, video, canvas { max-width: 100%; height: auto; }
 pre { max-width: 100%; overflow-x: auto; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .ht-card { min-width: 0; max-width: 100%; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: calc(2 * var(--space)); }
+.ht-lede { margin: .2rem 0 .8rem; font-size: 1.1875rem; font-weight: 700; line-height: 1.5; }
+.ht-tldr { margin: 0 0 1rem; padding: .8rem 1rem; background: var(--hover); border-radius: var(--radius); }
+.ht-tldr ol { margin: .2rem 0 0; padding-inline-start: 1.2rem; }
+.ht-route { margin: 0 0 1rem; padding: .1rem .7rem; border-inline-start: 1px solid var(--accent); color: var(--muted); font-size: var(--font-body); }
+.ht-route strong { color: var(--text); }
+.ht-chat { display: grid; gap: .5rem; min-width: 0; margin-block: .75rem; }
+.ht-chat-turn { min-width: 0; max-width: 85%; margin: 0; padding: .5rem .85rem; border: 1px solid var(--line); border-radius: 1rem 1rem 1rem .25rem; background: var(--hover); overflow-wrap: anywhere; }
+.ht-chat-turn[data-speaker="reader"] { justify-self: end; border-color: var(--accent); border-radius: 1rem 1rem .25rem 1rem; background: var(--panel); }
+.ht-visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .ht-visual-stack { display: grid; gap: calc(2 * var(--space)); margin-block: calc(2 * var(--space)); min-width: 0; }
 .ht-visual-stack > * { margin-block: 0; }
 /* Opt-in document flow; outputs are a group, never a horizontal sequence. */
@@ -39,7 +48,7 @@ pre { max-width: 100%; overflow-x: auto; }
 .ht-flow > li { min-width: 0; }
 .ht-flow :is(h3, h4) { margin-block: 0 .5rem; }
 .ht-flow .ht-card > :last-child { margin-block-end: 0; }
-.ht-flow-focus { border-inline-start: 4px solid var(--accent); }
+.ht-flow-focus { border-inline-start: 1px solid var(--accent); }
 .ht-flow-results { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(2 * var(--space)); min-width: 0; padding: 0; margin: 0; list-style: none; }
 .ht-flow-results > :only-child { grid-column: 1 / -1; }
 .ht-flow-link { margin: var(--space) 0 0; text-align: center; color: var(--muted); }
@@ -53,7 +62,7 @@ pre { max-width: 100%; overflow-x: auto; }
 .ht-info-icon { color: var(--accent); line-height: 1.65; }
 .ht-info-icon svg { display: block; width: 1.5rem; height: 1.5rem; }
 .ht-status { display: inline; font-size: var(--font-small); font-weight: 600; overflow-wrap: anywhere; }
-.ht-callout { min-width: 0; padding: 1rem; border-inline-start: 3px solid var(--accent); background: var(--hover); }
+.ht-callout { min-width: 0; padding: 1rem; border-inline-start: 1px solid var(--accent); background: var(--hover); }
 .ht-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: 1rem; margin-block: 1rem; }
 .ht-kpis > div { min-width: 0; padding: .75rem; border-block-end: 1px solid var(--line); }
 .ht-kpis dt { color: var(--muted); }
@@ -86,30 +95,14 @@ pre { max-width: 100%; overflow-x: auto; }
 .ht-topbar > * { min-width: 0; max-width: 100%; }
 .ht-topbar-title { margin: 0; font-weight: 700; overflow-wrap: anywhere; }
 .ht-topbar .ht-theme-control { margin: 0; width: 100%; }
-.ht-mode-control { grid-column: 1 / -1; min-width: 0; width: 100%; max-width: 100%; margin: 0; padding: 0; border: 0; }
-.ht-mode-label { margin-block-end: .25rem; color: var(--muted); font-size: var(--font-small); }
-.ht-mode-buttons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; min-width: 0; max-width: 100%; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
-.ht-mode-option { position: relative; min-width: 0; cursor: pointer; }
-.ht-mode-option + .ht-mode-option { border-left: 1px solid var(--line); }
-.ht-mode-option input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-.ht-mode-option span { display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 44px; padding: 6px 10px; background: var(--panel); color: var(--text); text-align: center; overflow-wrap: anywhere; }
-.ht-mode-option:hover span { background: var(--hover); }
-.ht-mode-option input:checked + span { background: var(--accent); color: var(--panel); font-weight: 700; }
-.ht-mode-option input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: -3px; }
-/* Without :has support, leave every mode readable; native radios switch views where supported. */
-.ht-document [data-html-mode] { display: block; }
-html:has(.ht-mode-control) .ht-document [data-html-mode] { display: none; }
-html:has(#ht-mode-standard:checked) .ht-document [data-html-mode="standard"],
-html:has(#ht-mode-dialogue:checked) .ht-document [data-html-mode="dialogue"],
-html:has(#ht-mode-easy-dialogue:checked) .ht-document [data-html-mode="easy-dialogue"] { display: block; }
 @media (max-width: 760px) {
   .ht-topbar { position: static; grid-template-columns: minmax(0, 1fr); padding: .75rem 1.2rem; gap: .5rem; }
-  .ht-mode-control { grid-column: auto; }
 }
 html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scroll-padding-top: var(--ht-anchor-offset); }
-html:has(.ht-document .ht-mode-control) { --ht-anchor-offset: 12rem; }
 .ht-doc-content { min-width: 0; width: calc(100% - var(--ht-nav-width) - var(--ht-nav-gap)); max-width: 76rem; margin: 1.5rem auto 1.5rem calc(var(--ht-nav-width) + var(--ht-nav-gap)); padding: clamp(1.25rem, 3vw, 2.5rem); background: var(--panel); border: 1px solid var(--line); border-radius: calc(1.5 * var(--radius)); box-shadow: 0 12px 36px #10131912; }
 .ht-doc-content > :first-child { margin-block-start: 0; }
+.ht-document .ht-doc-content > section[id] { margin: 0; padding-block: 1.5rem .5rem; border-block-start: 1px solid var(--line); }
+.ht-document .ht-doc-content > section[id] > h2 { margin-block-start: 0; }
 .ht-doc-content > :last-child { margin-block-end: 0; }
 .ht-document :is(section[id], li[id], sup[id], footer[id]) { scroll-margin-top: 1rem; }
 .ht-document li[id^="ref-"] { font-size: .875rem; line-height: 1.55; }

@@ -55,7 +55,7 @@ npx skills update --global --yes
 | [tk-explain](skills/tk-explain/SKILL.md) | `hybrid` | 배경지식과 실제 동작을 HTML로 설명합니다. |
 | [tk-explain-diff](skills/tk-explain-diff/SKILL.md) | `hybrid` | 코드 변경의 배경과 실행 흐름을 설명합니다. |
 | [tk-research](skills/tk-research/SKILL.md) | `hybrid` | 근거를 조사하고 접근법을 비교합니다. |
-| [tk-teach](skills/tk-teach/SKILL.md) | `hybrid` | 학습 기록에 맞춰 수업과 복습을 구성합니다. |
+| [tk-teach](skills/tk-teach/SKILL.md) | `user` | 학습 기록에 맞춰 수업과 복습을 구성합니다. |
 
 ### 대화·글쓰기
 

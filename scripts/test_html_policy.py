@@ -41,10 +41,10 @@ class HTMLPolicyTest(unittest.TestCase):
         self.assertIn('class="ht-doc-content"', text)
         self.assertIn('class="ht-doc-nav-heading"', text)
         self.assertIn('<summary aria-label="목차 열기 또는 닫기">', text)
-        self.assertIn('id="cite-standard-1-2"', text)
-        self.assertIn('href="#cite-standard-1-2"', text)
-        self.assertIn('data-html-mode="easy-dialogue"', text)
-        self.assertIn('value="easy-dialogue"', text)
+        self.assertIn('id="cite-1-2"', text)
+        self.assertIn('href="#cite-1-2"', text)
+        self.assertNotIn('data-html-mode', text)
+        self.assertNotIn('ht-mode-control', text)
         self.assertNotIn('grid-template-columns:15rem', text)
 
     def test_document_surface_and_left_navigation_contract(self):
@@ -63,6 +63,18 @@ class HTMLPolicyTest(unittest.TestCase):
         self.assertIn('class="ht-doc-controls"', report)
         self.assertIn('<details class="ht-doc-toc" open>', report)
 
+    def test_research_sections_are_flat_and_use_one_pixel_rules(self):
+        css = (ROOT / 'skills/tk-explain/assets/html-theme.css').read_text()
+        report = (ROOT / 'skills/tk-research/assets/report.html').read_text()
+        custom_css = report.split('/* /tigerkit:html-theme.css */', 1)[1].split('</style>', 1)[0]
+        section_rule = re.search(r'(?<![-\w])section\s*\{([^}]*)\}', custom_css)
+        self.assertIsNotNone(section_rule)
+        self.assertRegex(section_rule.group(1), r'border-top:\s*1px solid var\(--line\)')
+        self.assertRegex(section_rule.group(1), r'background:\s*transparent')
+        self.assertRegex(section_rule.group(1), r'border:\s*0')
+        self.assertIn('border-block-start: 1px solid var(--line)', css)
+        self.assertNotRegex(css, r'border(?:-[\w-]+)?\s*:\s*[2-9]px')
+
     def test_document_static_checks_and_conditional_browser_verification_contract(self):
         text = (ROOT / 'skills/tk-explain/references/html-output.md').read_text()
         normalized = ' '.join(text.split())
@@ -78,34 +90,33 @@ class HTMLPolicyTest(unittest.TestCase):
             'desktop left rail, narrow-screen TOC',
             'Do not replace or override their shell geometry',
             'data-ht-theme-control`\nattribute alone is insufficient',
-            'complete document in three selectable modes by default',
-            'the opening conclusion, section explanations, term definitions and limitations',
-            'The mode selector is the only control that switches presentation modes',
-            'IDs must be `ht-mode-standard`, `ht-mode-dialogue`, and `ht-mode-easy-dialogue`',
-            'matching the shared theme CSS selectors',
+            'create one coherent document from verified content and sources',
+            'Choose one primary technique per section',
+            'Avoid decorative thick borders; visible keyboard focus outlines are the exception',
+            'Preserve every template `<script>` block exactly',
+            'do not use `@import`, `url(...)`, remote fonts, or `image-set(...)`',
         ):
             self.assertIn(' '.join(requirement.split()), normalized)
 
-    def test_document_modes_use_consistent_labels_and_full_document_content(self):
+    def test_section_level_routing_replaces_document_modes(self):
         text = (ROOT / 'skills/tk-explain/references/html-output.md').read_text()
         explain = (ROOT / 'skills/tk-explain/SKILL.md').read_text()
         diff = (ROOT / 'skills/tk-explain-diff/SKILL.md').read_text()
+        teach = (ROOT / 'skills/tk-teach/SKILL.md').read_text()
         normalized_explain = ' '.join(explain.split())
         normalized_diff = ' '.join(diff.split())
-        self.assertIn('`standard` (`기본형`)', text)
-        self.assertIn('`dialogue` (`대화형`)', text)
-        self.assertIn('`easy-dialogue` (`쉬운 대화형`)', text)
-        self.assertIn('do not use `쉬운 문답` as a mode or section title', text)
-        self.assertNotIn('while this experiment is active', text)
-        self.assertIn('conclusion, first-use term explanations, glossary and limitations', normalized_explain)
-        self.assertIn('Adapt the conclusion, term explanations, limitations and walkthrough prose', normalized_diff)
+        self.assertIn('one primary technique per section', ' '.join(text.split()))
+        self.assertIn('explanation-routing.md', text)
+        self.assertIn('avoid repeating the same content', normalized_explain)
+        self.assertIn('avoid repeating the same content', normalized_diff)
+        self.assertIn('avoid rendering duplicate modes or hidden tabs', ' '.join(teach.split()))
 
-    def test_explain_dialogue_respects_established_role_preferences(self):
+    def test_explanations_default_to_natural_conversation(self):
         skill = (ROOT / 'skills/tk-explain/SKILL.md').read_text()
         contract = (ROOT / 'skills/tk-explain/references/html-output.md').read_text()
-        self.assertIn("user's explicit or established preference for role labels and emoji", skill)
-        self.assertIn('Honor an explicit or established user preference for', contract)
-        self.assertNotIn('do not render `독자`, `고객`, or `저자` labels or emoji avatars', contract)
+        self.assertIn('clear conversational voice by default', skill)
+        self.assertIn('only when the user has explicitly requested them', contract)
+        self.assertIn('Do not add visible `질문:` or `답변:`', contract)
 
     def test_shared_document_shell_styles_are_canonical(self):
         css = (ROOT / 'skills/tk-explain/assets/html-theme.css').read_text()
@@ -113,11 +124,11 @@ class HTMLPolicyTest(unittest.TestCase):
         report_custom_css = report.split('/* /tigerkit:html-theme.css */', 1)[1]
         self.assertIn('.ht-topbar { position: sticky;', css)
         self.assertIn('.ht-topbar .ht-theme-control { margin: 0; width: 100%; }', css)
-        self.assertIn('.ht-mode-control { grid-column: 1 / -1;', css)
-        self.assertIn('html:has(#ht-mode-easy-dialogue:checked)', css)
-        self.assertIn('.ht-document [data-html-mode] { display: block; }', css)
-        self.assertIn('html:has(.ht-mode-control) .ht-document [data-html-mode] { display: none; }', css)
-        self.assertIn('[data-html-mode="easy-dialogue"]', css)
+        self.assertNotIn('.ht-mode-control', css)
+        self.assertNotIn('[data-html-mode]', css)
+        self.assertIn('.ht-chat-turn[data-speaker="reader"]', css)
+        self.assertIn('border-inline-start: 1px solid var(--accent)', css)
+        self.assertIn('.ht-document .ht-doc-content > section[id]', css)
         self.assertIn('@media (max-width: 760px)', css)
         self.assertNotRegex(report_custom_css, r'\.ht-doc-content\s*\{[^}]*\b(?:width|margin|position)\s*:')
         self.assertNotRegex(report_custom_css, r'\.ht-topbar\s*\{')

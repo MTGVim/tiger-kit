@@ -11,11 +11,6 @@ from urllib.parse import unquote
 
 
 SHORT_REPORT_MAX_SECTIONS = 3
-DOCUMENT_MODES = {
-    "standard": "기본형",
-    "dialogue": "대화형",
-    "easy-dialogue": "쉬운 대화형",
-}
 TEMPLATE_PATH = Path(__file__).resolve().parents[1] / "assets" / "report.html"
 VOID_ELEMENTS = {
     "area", "base", "br", "col", "embed", "hr", "img", "input", "link",
@@ -99,16 +94,6 @@ def class_tokens(element):
     return set(element.attrs.get("class", "").split())
 
 
-def mode_for(element):
-    current = element
-    while current is not None:
-        mode = current.attrs.get("data-html-mode")
-        if mode:
-            return mode
-        current = current.parent
-    return None
-
-
 def fragment_id(href):
     return unquote(href[1:]) if href.startswith("#") else None
 
@@ -128,14 +113,14 @@ def decode_css_escapes(css):
     return CSS_ESCAPE.sub(replace, css)
 
 
-def inline_code_blocks(source):
+def inline_code_blocks(source, tags):
     parser = ReportParser()
     parser.feed(source)
     parser.close()
     return [
         (element.tag, tuple(sorted(element.attrs.items())), element.text_content())
         for element in parser.root.descendants()
-        if element.tag in {"style", "script"}
+        if element.tag in tags
     ]
 
 
@@ -145,9 +130,32 @@ def check_report(source, template_source):
     parser.close()
     elements = list(parser.root.descendants())
     errors = []
+    warnings = []
 
-    if inline_code_blocks(source) != inline_code_blocks(template_source):
-        errors.append("runtime inline style/script blocks must match the offline template")
+    template_styles = inline_code_blocks(template_source, {"style"})
+    report_styles = inline_code_blocks(source, {"style"})
+    template_scripts = inline_code_blocks(template_source, {"script"})
+    report_scripts = inline_code_blocks(source, {"script"})
+    if report_styles[:len(template_styles)] != template_styles:
+        errors.append("the complete offline template styles must be preserved before optional inline styles")
+    if report_scripts != template_scripts:
+        errors.append("runtime inline scripts must match the offline template exactly")
+
+    titles = [element for element in elements if element.tag == "title"]
+    if len(titles) != 1 or not titles[0].text_content().strip():
+        errors.append("report must have exactly one non-empty title")
+    html_roots = [element for element in elements if element.tag == "html"]
+    if len(html_roots) != 1:
+        errors.append("report must have exactly one html root")
+    else:
+        root_attrs = html_roots[0].attrs
+        default_theme = root_attrs.get("data-default-theme")
+        if default_theme not in {"system", "light", "dark"}:
+            errors.append("html root needs a valid data-default-theme")
+        if default_theme in {"light", "dark"} and root_attrs.get("data-theme") != default_theme:
+            errors.append("explicit light/dark default must also set data-theme for first paint")
+        if default_theme == "system" and "data-theme" in root_attrs:
+            errors.append("system default must omit data-theme")
 
     ids_by_value = defaultdict(list)
     for element in elements:
@@ -159,49 +167,29 @@ def check_report(source, template_source):
         if len(matches) > 1:
             errors.append(f"duplicate id {identifier!r} appears {len(matches)} times")
 
-    mode_elements = [
+    if any("data-html-mode" in element.attrs for element in elements):
+        errors.append("reports must use one continuous document without presentation modes")
+    if any("ht-mode-control" in class_tokens(element) for element in elements) or any(
+        element.attrs.get("name") == "ht-mode" for element in elements
+    ):
+        errors.append("reports must not include a document mode selector")
+    theme_controls = [
         element for element in elements
-        if element.attrs.get("data-html-mode")
+        if element.tag == "fieldset" and "ht-theme-control" in class_tokens(element)
     ]
-    modes = {element.attrs["data-html-mode"] for element in mode_elements}
-    if not modes:
-        errors.append("report must declare its rendered document mode or modes")
-    elif not modes.issubset(DOCUMENT_MODES) or len(modes) not in {1, 3}:
-        errors.append("report must contain one explicit mode or all three document modes")
-    mode_controls = [
+    theme_inputs = [
         element for element in elements
-        if element.tag == "fieldset" and "ht-mode-control" in class_tokens(element)
+        if element.tag == "input" and element.attrs.get("name") == "ht-theme"
     ]
-    mode_inputs = [
-        element for element in elements
-        if element.tag == "input" and element.attrs.get("name") == "ht-mode"
-    ]
-    if len(mode_controls) > 1:
-        errors.append("document mode selector must appear once")
-    if len(modes) == 3 and len(mode_controls) != 1:
-        errors.append("three-mode report needs one native document mode selector")
-    if mode_controls:
-        values = [element.attrs.get("value", "") for element in mode_inputs]
-        if (len(values) != len(set(values)) or set(values) != modes
-                or any(element.attrs.get("type") != "radio" for element in mode_inputs)):
-            errors.append("document mode selector must offer exactly the rendered modes as radios")
-        if sum("checked" in element.attrs for element in mode_inputs) != 1:
-            errors.append("document mode selector must have exactly one checked mode")
-        for element in mode_inputs:
-            mode = element.attrs.get("value", "")
-            if element.attrs.get("id") != f"ht-mode-{mode}":
-                errors.append(
-                    "document mode radio ids must match the shared theme selectors"
-                )
-            labels = [
-                ancestor for ancestor in elements
-                if ancestor.tag == "label" and element in list(ancestor.descendants())
-            ]
-            label_text = labels[0].text_content().strip() if labels else ""
-            if label_text != DOCUMENT_MODES.get(mode):
-                errors.append(f"document mode {mode!r} needs its visible Korean label")
-    elif modes and len(modes) == 1 and mode_inputs:
-        errors.append("single-mode report must omit the unused document mode selector")
+    if len(theme_controls) != 1 or "data-ht-theme-control" not in theme_controls[0].attrs:
+        errors.append("report must retain one functional shared theme control")
+    if [element.attrs.get("value") for element in theme_inputs] != ["system", "light", "dark"]:
+        errors.append("theme control must offer system, light, and dark in order")
+    for element in elements:
+        if element.tag == "details":
+            children = [child for child in element.children if isinstance(child, Element) or child.strip()]
+            if not children or not isinstance(children[0], Element) or children[0].tag != "summary":
+                errors.append("every details element must start with a summary")
 
     for element in elements:
         href_attributes = [
@@ -220,12 +208,6 @@ def check_report(source, template_source):
                 if not target_id or len(matches) != 1:
                     errors.append(
                         f"fragment link {value!r} resolves to {len(matches)} IDs"
-                    )
-                elif mode_for(element) != mode_for(matches[0]) and (
-                    mode_for(element) is not None or mode_for(matches[0]) is not None
-                ):
-                    errors.append(
-                        f"cross-mode fragment link {value!r} leaves its document mode"
                     )
             elif attribute in href_attributes and value and element.tag != "a":
                 errors.append(
@@ -281,27 +263,12 @@ def check_report(source, template_source):
     controls = [
         element for element in elements if "ht-doc-controls" in class_tokens(element)
     ]
-    for section in sections:
-        section_modes = {
-            element.attrs["data-html-mode"]
-            for element in section.descendants()
-            if element.attrs.get("data-html-mode")
-        }
-        if section_modes and section_modes != modes:
-            errors.append(
-                f"section #{section.attrs.get('id', '')} has incomplete document modes"
-            )
     overview = next(
         (section for section in sections if section.attrs.get("id") == "overview"),
         None,
     )
-    overview_modes = {
-        element.attrs["data-html-mode"]
-        for element in overview.descendants()
-        if element.attrs.get("data-html-mode")
-    } if overview else set()
-    if overview is None or overview_modes != modes:
-        errors.append("the report conclusion must appear in every rendered mode")
+    if overview is None or len(overview.text_content().strip()) < 20:
+        errors.append("the report needs a substantive conclusion in #overview")
 
     if bool(navigators) != bool(controls):
         errors.append("document navigation must include both .ht-doc-nav and .ht-doc-controls")
@@ -378,6 +345,28 @@ def check_report(source, template_source):
         citation_targets[target_id].add(citation_id)
 
     for reference_id, reference in references.items():
+        has_source_url = any(
+            element.tag == "a" and re.match(r"^https?://", element.attrs.get("href", ""), re.I)
+            for element in [reference, *reference.descendants()]
+        )
+        def looks_like_local_path(value):
+            value = value.strip()
+            return bool(value) and (
+                value.startswith((".", "/", "~"))
+                or "/" in value
+                or "\\" in value
+                or re.fullmatch(r"[\w.-]+\.[A-Za-z0-9]{1,8}", value) is not None
+            )
+
+        has_local_path = any(
+            element.tag == "code" and looks_like_local_path(element.text_content())
+            for element in [reference, *reference.descendants()]
+        )
+        has_no_link_note = "링크 없음" in re.sub(r"\s+", " ", reference.text_content())
+        if not (has_source_url or has_local_path or has_no_link_note):
+            warnings.append(
+                f'reference #{reference_id} has no source URL, local path, or explicit "링크 없음" note'
+            )
         backlink_ids = {
             fragment_id(element.attrs["href"])
             for element in reference.descendants()
@@ -405,7 +394,7 @@ def check_report(source, template_source):
     ):
         errors.append("AI-authorship footer is missing")
 
-    return errors
+    return errors, warnings
 
 
 def main(argv=None):
@@ -425,15 +414,15 @@ def main(argv=None):
         print(f"FAIL {TEMPLATE_PATH}: cannot read offline template ({error})", file=sys.stderr)
         return 2
 
-    errors = check_report(source, template_source)
+    errors, warnings = check_report(source, template_source)
     if errors:
         for error in errors:
             print(f"FAIL {args.report}: {error}", file=sys.stderr)
         return 1
 
-    print(
-        f"PASS {args.report}: report structure, navigation, citations, footer and safe links"
-    )
+    for warning in warnings:
+        print(f"WARN {args.report}: {warning}", file=sys.stderr)
+    print(f"PASS {args.report}: report structure, navigation, citations, footer and safe links")
     return 0
 
 

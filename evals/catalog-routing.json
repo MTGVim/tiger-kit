@@ -707,9 +707,17 @@
     {
       "id": "teach-learning",
       "boundary": "조사·학습·변경 설명·리뷰 소유권 구분",
-      "prompt": "`Kafka` 처음 배우는데 조사해서 가르쳐줘.",
+      "prompt": "$tk-teach `Kafka` 처음 배우는데 조사해서 가르쳐줘.",
       "focus_skill": "tk-teach",
       "expected_selected_skill": "tk-teach",
+      "critical": true
+    },
+    {
+      "id": "teach-implicit-disabled",
+      "boundary": "명시 호출 없이는 학습 스킬을 자동 선택하지 않음",
+      "prompt": "`Kafka` 처음 배우는데 조사해서 가르쳐줘.",
+      "focus_skill": "tk-teach",
+      "expected_selected_skill": null,
       "critical": true
     },
     {

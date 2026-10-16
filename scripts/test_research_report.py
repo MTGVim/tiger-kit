@@ -1,42 +1,19 @@
+import json
+import os
 from pathlib import Path
 import re
 import subprocess
+import sys
 import tempfile
 import unittest
 
 
 class ResearchReportTest(unittest.TestCase):
-    def report_html(self, *, navigation=True, empty_navigation=False,
-                    modes=("standard", "dialogue", "easy-dialogue")):
+    def report_html(self, *, navigation=True, empty_navigation=False):
         root = Path(__file__).resolve().parents[1]
         template = (root / 'skills/tk-research/assets/report.html').read_text(encoding='utf-8')
         style = re.search(r'<style\b[^>]*>.*?</style>', template, re.I | re.S).group()
         script = re.search(r'<script\b[^>]*>.*?</script>', template, re.I | re.S).group()
-        labels = {"standard": "기본형", "dialogue": "대화형", "easy-dialogue": "쉬운 대화형"}
-        selectors = ''.join(
-            f'<label class="ht-mode-option"><input type="radio" id="ht-mode-{mode}" name="ht-mode" value="{mode}"'
-            f'{" checked" if index == 0 else ""}><span>{labels[mode]}</span></label>'
-            for index, mode in enumerate(modes)
-        )
-        mode_selector = (
-            f'<fieldset class="ht-mode-control"><legend>문서 형식</legend>'
-            f'<div class="ht-mode-buttons">{selectors}</div></fieldset>'
-            if len(modes) == 3 else ''
-        )
-        variants = ''.join(
-            f'<div data-html-mode="{mode}"><p>{labels[mode]} finding.'
-            f'<sup id="cite-{mode}-1-1"><a href="#ref-{mode}-1">[1]</a></sup></p></div>'
-            for mode in modes
-        )
-        evidence = ''.join(
-            f'<div data-html-mode="{mode}"><p>{labels[mode]} evidence.</p></div>'
-            for mode in modes
-        )
-        sources = ''.join(
-            f'<ol data-html-mode="{mode}"><li id="ref-{mode}-1">{labels[mode]} source '
-            f'<a href="#cite-{mode}-1-1">↩ 1</a></li></ol>'
-            for mode in modes
-        )
         if not navigation:
             nav = ''
         elif empty_navigation:
@@ -49,13 +26,13 @@ class ResearchReportTest(unittest.TestCase):
 <nav class="ht-doc-controls"><a href="#document-top">Top</a><a href="#document-bottom">Bottom</a></nav>
 '''
         return f'''<!doctype html>
-<html><head>{style}</head><body class="ht-document" id="document-top">
-<header class="ht-topbar">{mode_selector}</header>
+<html lang="en" data-default-theme="system"><head><title>Evidence-backed report</title>{style}</head><body class="ht-document" id="document-top">
+<header class="ht-topbar"><p class="ht-topbar-title">A decision supported by current evidence</p><fieldset class="ht-theme-control" data-ht-theme-control hidden><input type="radio" name="ht-theme" value="system"><input type="radio" name="ht-theme" value="light"><input type="radio" name="ht-theme" value="dark"></fieldset></header>
 <main class="ht-doc-content">
-  <section id="overview"><h2>Overview</h2>{variants}</section>
-  <section id="evidence"><h2>Evidence</h2>{evidence}</section>
+  <section id="overview"><h2>Overview</h2><p>A substantive conclusion supported by current evidence.<sup id="cite-1-1"><a href="#ref-1">[1]</a></sup></p></section>
+  <section id="evidence"><h2>Evidence</h2><p>Evidence summary.</p></section>
   <section id="verification"><h2>Verification</h2></section>
-  <section id="sources"><h2>Sources</h2>{sources}</section>
+  <section id="sources"><h2>Sources</h2><ol><li id="ref-1"><a href="https://example.test/source">Source</a> <a href="#cite-1-1">↩ 1</a></li></ol></section>
 </main>
 <footer id="document-bottom">🤖 본 보고서는 AI가 작성했습니다.</footer>
 {nav}
@@ -88,25 +65,91 @@ class ResearchReportTest(unittest.TestCase):
         result = self.check_report(self.report_html())
         self.assertEqual(result.returncode, 0, result.stderr)
 
-    def test_explicit_single_mode_is_complete_without_alternate_views(self):
-        result = self.check_report(self.report_html(modes=("easy-dialogue",)))
-        self.assertEqual(result.returncode, 0, result.stderr)
+    def test_renderer_builds_checked_report_and_resolves_theme_preference(self):
+        root = Path(__file__).resolve().parents[1]
+        renderer = root / 'skills/tk-research/scripts/render_report.py'
+        checker = root / 'skills/tk-research/scripts/check_report.py'
+        payload = {
+            'title': 'ETag {{REPORT_META}} validation supports efficient cache checks',
+            'topbar_title': '{{REPORT_TITLE}} lets the server confirm whether a cached response changed',
+            'meta': 'Official documentation reviewed on 2026-10-16: {{REPORT_TOPBAR_TITLE}}.',
+            'sections': [
+                {
+                    'id': 'overview',
+                    'title': '목표와 결론',
+                    'html': '<p>ETag validation reduces transfer when a representation is unchanged.'
+                            '<sup id="cite-1"><a href="#ref-1">[1]</a></sup></p>',
+                },
+                {
+                    'id': 'verification',
+                    'title': '검증 및 예외',
+                    'html': '<ul><li><strong>정적 검증:</strong> 완료.</li>'
+                            '<li><strong>화면 검증:</strong> 검증 불가. 화면 검증이 필요하지 않은 단순 보고서.</li></ul>'
+                            '<p>{{REPORT_TITLE}} and {{REPORT_META}}</p>',
+                },
+            ],
+            'sources': [
+                {
+                    'id': 'ref-1', 'title': 'HTTP caching documentation',
+                    'url': 'https://example.test/http-cache', 'local_path': '',
+                    'date': '2026-10-16', 'revision': 'current',
+                    'link_unavailable': False, 'citations': ['cite-1'],
+                },
+            ],
+        }
+        with tempfile.TemporaryDirectory(prefix='tk-report-renderer-') as directory:
+            workspace = Path(directory)
+            input_path = workspace / 'content.json'
+            output_path = workspace / 'report.html'
+            input_path.write_text(json.dumps(payload), encoding='utf-8')
+            original_payload = input_path.read_bytes()
+            env = dict(os.environ, XDG_CONFIG_HOME=str(workspace / 'config'))
+            rejected = subprocess.run(
+                [sys.executable, str(renderer), '--input', str(input_path), '--output', str(input_path)],
+                cwd=root, env=env, capture_output=True, text=True, check=False)
+            self.assertNotEqual(rejected.returncode, 0)
+            self.assertIn('must not overwrite', rejected.stderr)
+            self.assertEqual(input_path.read_bytes(), original_payload)
+            template_path = root / 'skills/tk-research/assets/report.html'
+            template_before = template_path.read_bytes()
+            rejected = subprocess.run(
+                [sys.executable, str(renderer), '--input', str(input_path), '--output', str(template_path)],
+                cwd=root, env=env, capture_output=True, text=True, check=False)
+            self.assertNotEqual(rejected.returncode, 0)
+            self.assertEqual(template_path.read_bytes(), template_before)
+            result = subprocess.run(
+                [sys.executable, str(renderer), '--input', str(input_path), '--output', str(output_path)],
+                cwd=root, env=env, capture_output=True, text=True, check=False)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertIn('created default HTML theme settings', result.stderr)
+            rendered = output_path.read_text(encoding='utf-8')
+            self.assertIn('data-default-theme="system"', rendered)
+            self.assertIn('<title>ETag {{REPORT_META}} validation supports efficient cache checks · 연구 보고서</title>', rendered)
+            self.assertIn('<p class="ht-topbar-title">{{REPORT_TITLE}} lets the server', rendered)
+            self.assertIn('Official documentation reviewed on 2026-10-16: {{REPORT_TOPBAR_TITLE}}.', rendered)
+            self.assertIn('<p>{{REPORT_TITLE}} and {{REPORT_META}}</p>', rendered)
+            settings = workspace / 'config/tigerkit/settings.json'
+            self.assertEqual(json.loads(settings.read_text()), {'html': {'theme': 'system'}})
+            checked = subprocess.run([sys.executable, str(checker), str(output_path)],
+                                     capture_output=True, text=True, check=False)
+            self.assertEqual(checked.returncode, 0, checked.stdout + checked.stderr)
+            result = subprocess.run(
+                [sys.executable, str(renderer), '--input', str(input_path), '--output', str(output_path),
+                 '--theme', 'light'], cwd=root, env=env, capture_output=True, text=True, check=False)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            rendered = output_path.read_text(encoding='utf-8')
+            self.assertIn('data-default-theme="light"', rendered)
+            self.assertIn('data-theme="light"', rendered)
+            self.assertNotIn('data-html-mode', rendered)
 
-    def test_mode_selector_ids_match_css_selectors(self):
+    def test_reports_reject_modes_and_selectors(self):
         report = self.report_html().replace(
-            'id="ht-mode-easy-dialogue"', 'id="easy-dialogue-mode"', 1)
-        self.assert_rejected(report, 'radio ids must match the shared theme selectors')
-
-    def test_three_modes_are_complete_and_internal_links_stay_in_mode(self):
-        missing_easy_conclusion = self.report_html().replace(
-            'data-html-mode="easy-dialogue"><p>쉬운 대화형 finding.',
-            'data-html-mode="dialogue"><p>쉬운 대화형 finding.',
-            1,
-        )
-        self.assert_rejected(missing_easy_conclusion, 'incomplete document modes')
-        cross_mode_citation = self.report_html().replace(
-            'href="#ref-standard-1"', 'href="#ref-dialogue-1"', 1)
-        self.assert_rejected(cross_mode_citation, 'cross-mode fragment')
+            '<header class="ht-topbar">',
+            '<header class="ht-topbar"><fieldset class="ht-mode-control">Modes</fieldset>', 1)
+        self.assert_rejected(report, 'document mode selector')
+        report = self.report_html().replace(
+            '<p>Evidence summary.</p>', '<p data-html-mode="standard">Evidence summary.</p>', 1)
+        self.assert_rejected(report, 'without presentation modes')
 
     def test_conclusion_is_required_even_without_navigation(self):
         report = re.sub(
@@ -117,7 +160,7 @@ class ResearchReportTest(unittest.TestCase):
             r'  <section id="evidence">.*?</section>\n',
             '', report, flags=re.S,
         )
-        self.assert_rejected(report, 'report conclusion must appear in every rendered mode')
+        self.assert_rejected(report, 'substantive conclusion in #overview')
 
     def test_short_report_can_omit_both_navigation_controls(self):
         html = self.report_html(navigation=False)
@@ -197,36 +240,58 @@ class ResearchReportTest(unittest.TestCase):
             '</body>', '<svg><defs><linearGradient id="local-gradient"></linearGradient>'
             '</defs><rect fill="url(#local-gradient)"></rect></svg>\n</body>')
         self.assertEqual(self.check_report(local_svg_reference).returncode, 0)
-        linked_source = self.report_html().replace(
-            '<li id="ref-standard-1">기본형 source ',
-            '<li id="ref-standard-1"><a href="https://example.test/source">Source</a> ',
-        )
-        self.assertEqual(self.check_report(linked_source).returncode, 0)
         event_handler = self.report_html().replace(
             '<body class="ht-document" id="document-top">',
             '<body class="ht-document" id="document-top" onload="fetch(\'https://example.test/\')">',
         )
         self.assert_rejected(event_handler, 'event handlers')
 
+    def test_extra_inline_css_is_allowed_but_network_css_and_script_drift_fail(self):
+        extra_css = self.report_html().replace(
+            '</head>', '<style>.ht-chat-turn{border:1px solid var(--line)}</style></head>')
+        self.assertEqual(self.check_report(extra_css).returncode, 0)
+        for css in (
+            '<style>@import url("https://example.test/theme.css");</style>',
+            '<style>@font-face{font-family:Remote;src:url(https://example.test/font.woff2)}</style>',
+        ):
+            self.assert_rejected(
+                self.report_html().replace('</head>', '</head>' + css),
+                'runtime network CSS',
+            )
+        changed_script = self.report_html().replace(
+            '</body>', '<script>document.body.dataset.changed="yes"</script></body>')
+        self.assert_rejected(changed_script, 'inline scripts must match')
+
+    def test_missing_source_link_is_a_warning_and_explicit_note_resolves_it(self):
+        unlinked = self.report_html().replace(
+            '<a href="https://example.test/source">Source</a>', 'Source', 1)
+        result = self.check_report(unlinked)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('WARN', result.stderr)
+        linked_unavailable = unlinked.replace('Source ', 'Source · 링크 없음 ', 1)
+        result = self.check_report(linked_unavailable)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotIn('WARN', result.stderr)
+
     def test_citations_and_reference_backlinks_must_resolve(self):
         broken_citation = self.report_html().replace(
-            '<a href="#ref-standard-1">[1]</a>', '<a href="#missing-reference">[1]</a>')
+            '<a href="#ref-1">[1]</a>', '<a href="#missing-reference">[1]</a>')
         self.assert_rejected(broken_citation, 'citation')
         missing_backlink = self.report_html().replace(
-            '<a href="#cite-standard-1-1">↩ 1</a>', '')
+            '<a href="#cite-1-1">↩ 1</a>', '')
         self.assert_rejected(missing_backlink, 'backlink')
         multiple_citations = self.report_html().replace(
-            '<sup id="cite-standard-1-1"><a href="#ref-standard-1">[1]</a></sup>',
-            '<sup id="cite-standard-1-1"><a href="#ref-standard-1">[1]</a></sup> '
-            '<sup id="cite-standard-1-2"><a href="#ref-standard-1">[1]</a></sup>',
+            '<sup id="cite-1-1"><a href="#ref-1">[1]</a></sup>',
+            '<sup id="cite-1-1"><a href="#ref-1">[1]</a></sup> '
+            '<sup id="cite-1-2"><a href="#ref-1">[1]</a></sup>',
         ).replace(
-            '<a href="#cite-standard-1-1">↩ 1</a>',
-            '<a href="#cite-standard-1-1">↩ 1</a> '
-            '<a href="#cite-standard-1-2">↩ 2</a>',
+            '<a href="#cite-1-1">↩ 1</a>',
+            '<a href="#cite-1-1">↩ 1</a> '
+            '<a href="#cite-1-2">↩ 2</a>',
         )
         self.assertEqual(self.check_report(multiple_citations).returncode, 0)
         missing_second_backlink = multiple_citations.replace(
-            '<a href="#cite-standard-1-2">↩ 2</a>', '')
+            '<a href="#cite-1-2">↩ 2</a>', '')
         self.assert_rejected(missing_second_backlink, 'backlink')
 
     def test_ai_authorship_notice_must_be_positive_and_appear_in_a_footer(self):

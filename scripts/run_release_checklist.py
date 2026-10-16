@@ -587,6 +587,7 @@ def main() -> int:
         contract_errors.extend(validate_artifact_guards(candidate_root))
         commands = [
             ["python3", "scripts/sync_execution_protocol.py", "--check"],
+            ["python3", "scripts/check_token_budget.py", "--check"],
             ["python3", "scripts/check_docs.py"],
             ["node", "--check", "skills/tk-pr-sweep/scripts/triage.mjs"],
             ["node", "--test", "skills/tk-pr-sweep/scripts/triage.test.mjs"],

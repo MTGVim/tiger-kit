@@ -16,6 +16,7 @@ os.environ.setdefault("PYTHONDONTWRITEBYTECODE", "1")
 
 if __package__:
     from . import run_release_checklist as base
+    from .check_token_budget import compare_token_budget
     from .check_runtime_guard import validate_runtime_guard
     from .sync_execution_protocol import feedback_errors, html_policy_errors, result_summary_errors
     from .run_skill_evals import (
@@ -31,6 +32,7 @@ if __package__:
     from .validate_skills import validate_portable_artifacts
 else:
     import run_release_checklist as base
+    from check_token_budget import compare_token_budget
     from check_runtime_guard import validate_runtime_guard
     from sync_execution_protocol import feedback_errors, html_policy_errors, result_summary_errors
     from run_skill_evals import (
@@ -152,6 +154,7 @@ def main() -> int:
         ledger_errors, _ = base.validate_ledger_eval_coverage(candidate_contracts)
         contract_errors.extend(ledger_errors)
         contract_errors.extend(base.readme_catalog_freshness_errors(baseline_root, candidate_root))
+        contract_errors.extend(compare_token_budget(baseline_root, candidate_root))
         contract_errors.extend(validate_portable_artifacts(candidate_root))
         contract_errors.extend(validate_artifact_guards(candidate_root))
         contract_errors.extend(validate_runtime_guard(candidate_root))

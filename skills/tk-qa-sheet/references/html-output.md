@@ -103,12 +103,11 @@ one-off theme tokens, or substitute class names. Add scoped styles for content f
 leave shell layout to the shared component rules. The theme control's `data-ht-theme-control`
 attribute alone is insufficient because it enables the script but does not apply the shared styling.
 
-When a document uses multiple presentation modes, add one `.ht-mode-control` fieldset to the top bar
-with native radios named `ht-mode` and values `standard`, `dialogue`, and `easy-dialogue`. Their
-IDs must be `ht-mode-standard`, `ht-mode-dialogue`, and `ht-mode-easy-dialogue`, matching the shared
-theme CSS selectors; label them `기본형`, `대화형`, and `쉬운 대화형`. Wrap mode-specific prose and
-references in elements marked `data-html-mode` with the matching value. Keep shared facts and
-mode-neutral navigation outside those wrappers. The native radios switch modes without JavaScript.
+A document uses one continuous presentation. Select one explanation technique for each section by
+its content, using [section-level routing](explanation-routing.md). Read only the selected technique
+entries in [explanation techniques](explanation-techniques.md). Do not render whole-document modes,
+tabs or duplicate versions of the same content. A technique preference explicitly requested by the
+user takes precedence only when it fits the section; otherwise choose by content.
 
 ## Citations and references
 
@@ -190,9 +189,12 @@ missing-file bootstrap is part of an authorized HTML artifact generation and gra
 configuration mutation. If the file exists but `html.theme` is absent, null or blank, use
 `system` without rewriting it. If existing JSON is unreadable, malformed, has the wrong type, or
 contains any other nonblank theme value, preserve the file, fall back to `system`, and report the
-limitation. Preserve unrelated keys. Do not display speaker names such as `독자`, `고객`, or
-`저자`, and do not use avatar emoji in dialogue. Keep each question and answer as a clearly separated, accessible turn; the wording and
-layout must identify the exchange without implying a real customer.
+limitation. Preserve unrelated keys. Use a clear conversational voice by default. Honor visible
+speaker labels or emoji only when the user has explicitly requested them; do not infer or store a
+speaker-label preference. When a section benefits from an exchange, use short natural turns in
+`.ht-chat` and `.ht-chat-turn`, with semantic speaker markers and visually hidden role labels by
+default. Do not add visible `질문:` or `답변:` prefixes or copy the same prose into both a paragraph
+and a dialogue.
 
 Put the resolved generation default in `html[data-default-theme]`. For `light` or `dark`, also
 put that value in `html[data-theme]` so the first paint does not depend on the operating-system
@@ -208,55 +210,44 @@ three-segment native radio control with at least 40px control height and a layou
 the viewport; wrap every localStorage operation in try/catch. Never let storage refusal break
 reading or controls.
 
-## Whole-document presentation modes
+## Section-level explanation techniques
 
-For document-like HTML produced by `tk-explain`, `tk-explain-diff`, `tk-research` and `tk-teach`,
-provide the complete document in three selectable modes by default. This is a stable feature, not
-an experiment. Use one verified content and evidence model, then render its reader-facing prose in
-these modes:
+For document-like HTML, create one coherent document from verified content and sources. Read
+[section-level routing](explanation-routing.md) before choosing formats, then read only the matching
+entries from [explanation techniques](explanation-techniques.md). Choose one primary technique per
+section. Use a different technique later only when that section serves a different purpose or has a
+different content type. Each section must add distinct information instead of restating another.
 
-- `standard` (`기본형`): ordinary document prose with the existing cards, tables, diagrams and
-  evidence.
-- `dialogue` (`대화형`): explain the whole document through short, natural reader/author exchanges
-  where they improve understanding. This includes the opening conclusion, section explanations,
-  term definitions and limitations; do not leave them in a different voice because they occur near
-  the beginning or end. Keep code, numeric comparisons, evidence, verification results and source
-  references in their precise structured forms.
-- `easy-dialogue` (`쉬운 대화형`): explain the whole document in shorter, plain-language exchanges.
-  Include the conclusion, glossary and limitations in this mode; do not limit it to an introductory
-  question-and-answer block followed by standard prose. Preserve technical names and the real
-  mechanism, define unfamiliar terms before relying on them, and use an analogy only when it is
-  accurate and its boundary is clear. Never replace evidence with the analogy or childlike wording.
-  The former `dialogue-eli5` token is accepted as an alias for `easy-dialogue`; render the label
-  `쉬운 대화형` and do not use `쉬운 문답` as a mode or section title.
-- `all`: the default when the request does not select one mode. Render the complete document in
-  all three modes inside one offline HTML artifact. Keep conclusions, material limitations,
-  terminology, sources and verification state equivalent even when their wording differs. Reuse
-  the same evidence and do not repeat research or invent facts to make views feel distinct.
+Use a clear, conversational voice throughout the document. Short reader-and-author turns and chat
+bubbles can explain a multi-actor exchange when the section benefits from them. Do not write a script
+with visible question/answer prefixes, copy paragraphs into dialogue, or invent speaker names and
+avatars. Keep technical names, code, measurements, citations, verification outcomes and other
+evidence in precise structured forms. Preserve an explicitly stated user preference for role labels
+or emoji.
 
-An explicit mode in the request narrows the artifact to that mode. The three-mode default applies
-only to document-like HTML. It does not turn interactive comparison prototypes or QA sheets into
-three copies; those interfaces keep their owning interaction and comparison contracts. An explicit
-Markdown output also keeps its existing format.
+Default to a capable adult reader. Explain terms at first use. If later sections supply essential
+definitions for terms already used in the opening, add a short searchable glossary titled
+`용어 정리` after the opening conclusion. When the user asks for a simpler explanation, simplify the
+same document and retain its evidence and limitations; do not generate an alternate version.
 
-Keep document navigation mode-neutral: a table-of-contents or top/bottom link moves to the same
-section in the currently selected mode and never changes the selected mode. Keep citation and
-reference IDs unique per mode, and make each citation/backlink pair target only its own mode.
-The mode selector is the only control that switches presentation modes. It must use keyboard- and
-touch-accessible native controls and remain understandable without JavaScript. When generating a
-single explicit mode, omit other mode content rather than leaving hidden alternatives in the file.
+Start with a one-sentence conclusion, followed by a compact summary when useful. Name sections for
+their subject or decision, not for the technique used. A stored or explicitly stated format preference
+is a tie-breaker only when multiple techniques fit equally well; never use a preferred technique that
+mismatches the section content. Do not infer a learning style or reader level without evidence.
 
-Dialogue has two semantic roles only: `reader` asks realistic questions a target reader may
-actually have, and `author` answers from the verified explanation. These roles guide the exchange
-and remain distinct in accessible structure. Honor an explicit or established user preference for
-visible role labels, names or emoji; do not impose a generic no-label/no-emoji default over that
-preference. Without such a preference, distinguish the roles through question-and-answer structure
-without inventing names or avatars. Role markers are dialogue labels, not numbered-item markers.
+Separate document sections with 1px token-colored rules rather than nested section cards. Avoid
+decorative thick borders; visible keyboard focus outlines are the exception. Keep the shared document
+content panel as the only enclosing surface unless a specific figure needs a card.
+
+Keep the first inline `<style>` block exactly equal to the shared offline template. Add a later
+content-specific `<style>` block only when a component needs it; retain inline self-contained CSS
+and do not use `@import`, `url(...)`, remote fonts, or `image-set(...)`. Preserve every template
+`<script>` block exactly. The report checker enforces these boundaries.
 
 ## Visual block rhythm
 
 Consecutive visualization containers need visible vertical rhythm. Wrap adjacent cards, tables,
-flows, diagrams, dialogue blocks, KPI groups or other figure-like containers in
+flows, diagrams, chat turns, KPI groups or other figure-like containers in
 `.ht-visual-stack`, or otherwise preserve the same spacing contract. Do not rely on each child
 component's incidental margins: mixed component types must not visually touch. Keep the spacing
 responsive and avoid adding empty decorative containers.
@@ -372,6 +363,9 @@ to every citation occurrence that cites it. Preserve the explicit AI-authorship 
 - No runtime network requests are present, including resource-loading HTML/CSS references and
   network APIs in inline scripts. Unsafe URL schemes are rejected; ordinary HTTPS source links
   remain allowed.
+- Research report references include an HTTPS source link, a local path in `<code>`, or an explicit
+  `링크 없음` note. The report checker warns when none is present; resolve the warning when source
+  information is available.
 - The document has one valid `html[data-default-theme]` value and a working theme control with the `system`, `light`, and `dark` choices.
 - Every `<details>` has a first-child `<summary>`; answer reveals and secondary evidence start collapsed, while required conclusions and background remain outside collapsed sections.
 - There is exactly one non-empty, subject-specific `<title>`; it does not use a generic label or transient generated value.

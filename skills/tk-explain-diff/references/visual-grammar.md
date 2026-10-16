@@ -36,18 +36,20 @@ split an overview and detail rather than mixing their conventions. Preserve sour
 edge direction, timing, guards, outcomes and unknown connections; never invent an edge to
 complete the layout. Name the visual's scope so a focused view does not imply full coverage.
 
-## Reader-author dialogue as a visual grammar
+## Reader-author exchange
 
-Dialogue is a presentation grammar, not a substitute for evidence. Use it only when a realistic
-reader question makes background, intuition, a boundary or a likely misconception easier to
-follow. The reader must not ask artificial questions merely to restate the next paragraph, and the
-author must answer directly from verified claims while preserving uncertainty.
+Use a short exchange as one section technique when a realistic reader question makes background,
+intuition, a boundary or a likely misconception easier to follow. Do not ask artificial questions
+merely to restate the next paragraph. Answer directly from verified claims and preserve uncertainty.
+Use `.ht-chat` and `.ht-chat-turn` for HTML bubbles; keep role labels visually hidden unless the user
+explicitly requests visible labels or emoji.
 
 Keep precise artifacts outside the dialogue when they are clearer there: code, file maps, numeric
 comparisons, tables, diagrams, verification outcomes and citations remain structured evidence.
-A dialogue view may point to those artifacts but must not paraphrase away a material condition.
-For easy-dialogue mode, reduce prerequisites and sentence complexity while retaining the actual
-mechanism, technical terms needed for correctness, and the point where an analogy stops matching.
+An exchange may point to those artifacts but must not paraphrase away a material condition. When the
+user asks for simpler wording, reduce prerequisites and sentence complexity in the same document
+while retaining the actual mechanism, technical terms needed for correctness, and the point where an
+analogy stops matching.
 
 ## Plan an evidence-backed visual storyboard
 

@@ -16,6 +16,7 @@
 
 ```bash
 python3 scripts/sync_execution_protocol.py --check
+python3 scripts/check_token_budget.py --check
 python3 scripts/validate_skills.py
 python3 scripts/validate_skills.py --links-only
 python3 -B -m unittest discover -s scripts -p 'test_*.py'
@@ -27,6 +28,10 @@ npx --yes skills@1.5.9 add . --list
 npx --yes skills add . --list
 git diff --check
 ```
+
+`scripts/check_token_budget.py`는 스킬 문서의 바이트 수, 설명 글자 수, 상시 참조 파일의 크기,
+동기화 블록의 크기와 비율, 새로 중복된 문장을 측정합니다. 이 값은 컨텍스트 크기의 근사
+지표이며 모델 토큰 수, 이미지 비용, 평가별 실행 비용을 직접 측정하지 않습니다.
 
 ## 기준 버전 비교
 
@@ -44,6 +49,7 @@ python3 scripts/run_seed_release_checklist.py \
 - [ ] 후보 변경을 커밋하고 작업 트리가 깨끗한지 확인합니다.
 - [ ] 위의 필수 검사를 모두 통과합니다.
 - [ ] 문서 표·링크·스킬 목록·호출 방식·공유 정책을 검사하고, 공개 동작 설명은 독립 검수와 대조합니다.
+- [ ] 새로 추가한 상시 참조 문장은 하나씩 삭제 전후로 동작을 비교합니다. 삭제해도 변화가 없는 문장은 추가하지 않습니다.
 - [ ] 기준 버전 비교 결과가 `Pass`이며 `blocking_reasons`, `contract_errors`, `Unverifiable` 상태가 없습니다.
 - [ ] 검증 뒤 `origin/main`이 이동하면 새 기준으로 검사를 다시 실행합니다.
 - [ ] 모든 항목을 만족한 뒤에만 `main`을 갱신합니다.

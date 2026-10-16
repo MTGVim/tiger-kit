@@ -2,7 +2,7 @@
 name: tk-explain
 description: "[user/auto] 개념의 배경지식과 실제 구조·동작을 설명하는 시각 자료나 자체 완결형 HTML 설명 자료를 요청할 때 사용합니다. 특정 변경 설명, 여러 챕터로 구성하는 학습 과정, 일반 텍스트 질문, 기존 글 교정, 제품 비교 시제품에는 사용하지 않습니다."
 disable-model-invocation: false
-argument-hint: "<topic and optional audience/output path> [standard|dialogue|easy-dialogue|all]"
+argument-hint: "<topic and optional audience/output path>"
 metadata:
   tigerkit:
     kind: hybrid
@@ -44,14 +44,11 @@ Read [HTML output](references/html-output.md) for the shared offline and accessi
 🤖 본 설명 자료는 AI가 작성했습니다.
 ```
 
-Use the stable presentation modes defined by [HTML output](references/html-output.md). When the
-request does not name a mode, default to `all`: one HTML artifact with complete `standard`,
-`dialogue`, and `easy-dialogue` views over the same verified content and sources. Render the
-conclusion, first-use term explanations, glossary and limitations in the selected mode's voice,
-while keeping factual evidence and citations equivalent. An explicit mode generates only that
-view; accept `dialogue-eli5` as a legacy alias for `easy-dialogue`. Keep dialogue roles semantically
-distinct and honor the user's explicit or established preference for role labels and emoji; do not
-let a generic style default override that preference.
+Write one complete document. Read the section-level routing and technique reference through
+[HTML output](references/html-output.md); select one suitable technique for each section and avoid
+repeating the same content in another mode or tab. Use a clear conversational voice by default.
+When the user requests simpler wording, simplify the same document without removing evidence,
+technical names, or limitations. Honor a previously stated format preference when it matches the section.
 
 ## Verify and Return
 
