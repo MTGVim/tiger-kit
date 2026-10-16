@@ -46,7 +46,7 @@ author must answer directly from verified claims while preserving uncertainty.
 Keep precise artifacts outside the dialogue when they are clearer there: code, file maps, numeric
 comparisons, tables, diagrams, verification outcomes and citations remain structured evidence.
 A dialogue view may point to those artifacts but must not paraphrase away a material condition.
-For an ELI5 dialogue, reduce prerequisites and sentence complexity while retaining the actual
+For easy-dialogue mode, reduce prerequisites and sentence complexity while retaining the actual
 mechanism, technical terms needed for correctness, and the point where an analogy stops matching.
 
 ## Plan an evidence-backed visual storyboard

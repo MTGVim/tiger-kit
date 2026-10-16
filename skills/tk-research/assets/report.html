@@ -93,10 +93,28 @@ pre { max-width: 100%; overflow-x: auto; }
 .ht-topbar > * { min-width: 0; max-width: 100%; }
 .ht-topbar-title { margin: 0; font-weight: 700; overflow-wrap: anywhere; }
 .ht-topbar .ht-theme-control { margin: 0; width: 100%; }
+.ht-mode-control { grid-column: 1 / -1; min-width: 0; width: 100%; max-width: 100%; margin: 0; padding: 0; border: 0; }
+.ht-mode-label { margin-block-end: .25rem; color: var(--muted); font-size: var(--font-small); }
+.ht-mode-buttons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; min-width: 0; max-width: 100%; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.ht-mode-option { position: relative; min-width: 0; cursor: pointer; }
+.ht-mode-option + .ht-mode-option { border-left: 1px solid var(--line); }
+.ht-mode-option input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.ht-mode-option span { display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 44px; padding: 6px 10px; background: var(--panel); color: var(--text); text-align: center; overflow-wrap: anywhere; }
+.ht-mode-option:hover span { background: var(--hover); }
+.ht-mode-option input:checked + span { background: var(--accent); color: var(--panel); font-weight: 700; }
+.ht-mode-option input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: -3px; }
+/* Without :has support, leave every mode readable; native radios switch views where supported. */
+.ht-document [data-html-mode] { display: block; }
+html:has(.ht-mode-control) .ht-document [data-html-mode] { display: none; }
+html:has(#ht-mode-standard:checked) .ht-document [data-html-mode="standard"],
+html:has(#ht-mode-dialogue:checked) .ht-document [data-html-mode="dialogue"],
+html:has(#ht-mode-easy-dialogue:checked) .ht-document [data-html-mode="easy-dialogue"] { display: block; }
 @media (max-width: 760px) {
   .ht-topbar { position: static; grid-template-columns: minmax(0, 1fr); padding: .75rem 1.2rem; gap: .5rem; }
+  .ht-mode-control { grid-column: auto; }
 }
 html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scroll-padding-top: var(--ht-anchor-offset); }
+html:has(.ht-document .ht-mode-control) { --ht-anchor-offset: 12rem; }
 .ht-doc-content { min-width: 0; width: calc(100% - var(--ht-nav-width) - var(--ht-nav-gap)); max-width: 76rem; margin: 1.5rem auto 1.5rem calc(var(--ht-nav-width) + var(--ht-nav-gap)); padding: clamp(1.25rem, 3vw, 2.5rem); background: var(--panel); border: 1px solid var(--line); border-radius: calc(1.5 * var(--radius)); box-shadow: 0 12px 36px #10131912; }
 .ht-doc-content > :first-child { margin-block-start: 0; }
 .ht-doc-content > :last-child { margin-block-end: 0; }
@@ -151,27 +169,53 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
 
 </style>
 <body class="ht-document" id="document-top">
-<a class="skip" href="#main">본문으로 이동</a>
 <!-- Replace the top-bar title with the subject and conclusion; put identifiers in secondary metadata. -->
-<header class="ht-topbar"><p class="ht-topbar-title">연구 주제와 결론을 적습니다</p><fieldset class="ht-theme-control" data-ht-theme-control hidden><legend class="ht-theme-label">테마</legend><div class="ht-theme-buttons"><label class="ht-theme-option"><input type="radio" name="ht-theme" value="system" data-theme-choice="system"><span>시스템</span></label><label class="ht-theme-option"><input type="radio" name="ht-theme" value="light" data-theme-choice="light"><span>라이트</span></label><label class="ht-theme-option"><input type="radio" name="ht-theme" value="dark" data-theme-choice="dark"><span>다크</span></label></div></fieldset></header>
+<header class="ht-topbar"><p class="ht-topbar-title">연구 주제와 결론을 적습니다</p><fieldset class="ht-theme-control" data-ht-theme-control hidden><legend class="ht-theme-label">테마</legend><div class="ht-theme-buttons"><label class="ht-theme-option"><input type="radio" name="ht-theme" value="system" data-theme-choice="system"><span>시스템</span></label><label class="ht-theme-option"><input type="radio" name="ht-theme" value="light" data-theme-choice="light"><span>라이트</span></label><label class="ht-theme-option"><input type="radio" name="ht-theme" value="dark" data-theme-choice="dark"><span>다크</span></label></div></fieldset>
+<fieldset class="ht-mode-control"><legend class="ht-mode-label">문서 형식</legend><div class="ht-mode-buttons"><label class="ht-mode-option"><input type="radio" id="ht-mode-standard" name="ht-mode" value="standard" checked><span>기본형</span></label><label class="ht-mode-option"><input type="radio" id="ht-mode-dialogue" name="ht-mode" value="dialogue"><span>대화형</span></label><label class="ht-mode-option"><input type="radio" id="ht-mode-easy-dialogue" name="ht-mode" value="easy-dialogue"><span>쉬운 대화형</span></label></div></fieldset></header>
+<a class="skip" href="#overview">본문으로 이동</a>
 <main id="main" class="ht-doc-content" tabindex="-1">
 <header><p class="kicker">RESEARCH · 작성 템플릿</p><h1>연구 목표를 적습니다</h1><p class="meta">이 파일의 예시 문구는 연구 결과가 아닙니다. 검증한 현재 사실로 교체하세요.</p></header>
-<section id="overview"><h2>목표와 결론</h2><p class="lead">가장 중요한 결론과 근거를 먼저 적습니다.<sup id="cite-1-1"><a href="#ref-1" aria-label="참고문헌 1">[1]</a></sup></p><dl><dt>판단할 문제</dt><dd>결과가 어떤 다음 결정을 도와야 하는지 적습니다.</dd><dt>신뢰도</dt><dd>높음·보통·낮음과 그 이유를 적습니다.</dd><dt>근거 시점</dt><dd>실제로 확인한 날짜와 리비전을 적습니다.</dd></dl></section>
-<!-- If reader-unfamiliar terms precede their explanations, insert an expanded term list here: one-line definitions linked to detailed sections. Still define each term at first use. Omit the list otherwise. -->
-<section id="context"><h2>문제와 배경</h2><p>이 연구가 해결하려는 문제와 필요한 배경을 설명합니다. 분야 밖 독자를 위해 용어와 통계의 의미를 짧게 풀이합니다.</p></section>
-<section id="status"><h2>현재 상태</h2><p><span class="badge">작성 전</span> 현재 연구 단계와 의미 있는 진행 경과를 적습니다. 지속 연구에서는 전체 발견·실험·인계 내역의 개수를 정본과 대조합니다.</p></section>
-<section id="directions"><h2>검토한 방향</h2><p>기준안, 다른 접근법, 지지하거나 제외한 방향과 근거를 적습니다. 실행하지 않은 자원 보류는 반증과 구분합니다.<sup id="cite-1-2"><a href="#ref-1" aria-label="참고문헌 1">[1]</a></sup></p></section>
-<section id="experiments"><h2>조사와 실험</h2><p>모든 발견과 실험의 ID, 주제, 판정을 짧게 표시하고 상세 근거는 펼쳐 볼 수 있게 적습니다. 실제로 읽은 자료와 수행한 테스트를 구별합니다. 수행하지 않은 실험은 계획으로 표시합니다.</p><details><summary>상세 근거와 절차</summary><p>긴 부가 근거를 여기에 적습니다. 핵심 결론과 필요한 배경은 접지 않습니다.</p></details></section>
-<section id="unknowns"><h2>불확실성과 한계</h2><p>상충 근거, 확인하지 못한 범위, 측정 한계와 다음 결정을 바꿀 조건을 적습니다.</p></section>
-<section id="frontier"><h2>다음 행동</h2><p>가장 정보 가치가 높은 다음 질문과 재개 조건, 준비된 인계 후보, 대기 조건과 승인 상태를 적습니다.</p></section>
+<section id="overview"><h2>목표와 결론</h2>
+<div data-html-mode="standard"><p class="lead">가장 중요한 결론과 근거를 먼저 적습니다.<sup id="cite-standard-1-1"><a href="#ref-standard-1" aria-label="참고문헌 1">[1]</a></sup></p></div>
+<div data-html-mode="dialogue"><p class="lead">결론은 무엇이고, 무엇을 근거로 삼았나요?<sup id="cite-dialogue-1-1"><a href="#ref-dialogue-1" aria-label="참고문헌 1">[1]</a></sup></p><p>검증한 결론과 그 근거를 바로 이어 설명합니다.</p></div>
+<div data-html-mode="easy-dialogue"><p class="lead">그래서 지금 알게 된 점은 무엇인가요?<sup id="cite-easy-dialogue-1-1"><a href="#ref-easy-dialogue-1" aria-label="참고문헌 1">[1]</a></sup></p><p>확인한 사실을 쉬운 말로 설명하고, 아직 모르는 점도 함께 적습니다.</p></div>
+<dl><dt>판단할 문제</dt><dd>결과가 어떤 다음 결정을 도와야 하는지 적습니다.</dd><dt>신뢰도</dt><dd>높음·보통·낮음과 그 이유를 적습니다.</dd><dt>근거 시점</dt><dd>실제로 확인한 날짜와 리비전을 적습니다.</dd></dl></section>
+<!-- If reader-unfamiliar terms need a separate glossary, retain canonical terms in dt and put a complete definition in each mode-specific dd. Define every term at first use. -->
+<section id="context"><h2>문제와 배경</h2>
+<div data-html-mode="standard"><p>이 연구가 해결하려는 문제와 필요한 배경을 설명합니다. 용어와 통계의 의미를 짧게 풀이합니다.</p></div>
+<div data-html-mode="dialogue"><p>왜 이 문제를 조사하나요?</p><p>필요한 배경과 용어를 설명한 뒤, 어떤 결정을 도울지 밝힙니다.</p></div>
+<div data-html-mode="easy-dialogue"><p>먼저 어떤 문제인지 알아볼까요?</p><p>어려운 말을 먼저 풀어 쓰고, 이 조사가 어떤 선택에 도움을 주는지 설명합니다.</p></div></section>
+<section id="status"><h2>현재 상태</h2>
+<div data-html-mode="standard"><p><span class="badge">작성 전</span> 현재 연구 단계와 의미 있는 진행 경과를 적습니다. 지속 연구에서는 전체 발견·실험·인계 내역의 개수를 정본과 대조합니다.</p></div>
+<div data-html-mode="dialogue"><p><span class="badge">작성 전</span> 지금 어디까지 확인했나요?</p><p>실제로 끝낸 조사와 아직 남은 일을 구분합니다. 지속 연구는 전체 발견·실험·인계 내역과 정본을 대조합니다.</p></div>
+<div data-html-mode="easy-dialogue"><p><span class="badge">작성 전</span> 지금까지 무엇을 확인했나요?</p><p>끝낸 일과 아직 하지 않은 일을 나누어 적습니다. 이어서 하는 연구는 기록 전체와 맞춰 봅니다.</p></div></section>
+<section id="directions"><h2>검토한 방향</h2>
+<div data-html-mode="standard"><p>기준안, 다른 접근법, 지지하거나 제외한 방향과 근거를 적습니다. 실행하지 않은 자원 보류는 반증과 구분합니다.<sup id="cite-standard-1-2"><a href="#ref-standard-1" aria-label="참고문헌 1">[1]</a></sup></p></div>
+<div data-html-mode="dialogue"><p>다른 방법은 무엇이었고, 왜 선택하거나 제외했나요?</p><p>확인한 근거로 판단을 설명합니다. 실행하지 못한 방법은 틀렸다고 단정하지 않고 보류로 표시합니다.<sup id="cite-dialogue-1-2"><a href="#ref-dialogue-1" aria-label="참고문헌 1">[1]</a></sup></p></div>
+<div data-html-mode="easy-dialogue"><p>다른 방법도 살펴봤나요?</p><p>실제로 시험한 방법과 시간이나 자원이 부족해 하지 못한 방법을 나누어 적습니다.<sup id="cite-easy-dialogue-1-2"><a href="#ref-easy-dialogue-1" aria-label="참고문헌 1">[1]</a></sup></p></div></section>
+<section id="experiments"><h2>조사와 실험</h2>
+<div data-html-mode="standard"><p>모든 발견과 실험의 ID, 주제, 판정을 짧게 표시하고 상세 근거는 펼쳐 볼 수 있게 적습니다. 실제로 읽은 자료와 수행한 테스트를 구별합니다. 수행하지 않은 실험은 계획으로 표시합니다.</p></div>
+<div data-html-mode="dialogue"><p>무엇을 직접 확인했나요?</p><p>읽은 자료와 실제 테스트를 구분하고, 발견과 실험의 ID와 판정을 보여 줍니다. 하지 않은 일은 계획으로 표시합니다.</p></div>
+<div data-html-mode="easy-dialogue"><p>무엇을 읽고 무엇을 시험했나요?</p><p>자료를 읽은 일과 테스트를 한 일을 따로 적습니다. 아직 하지 않은 테스트는 계획이라고 표시합니다.</p></div>
+<details><summary>상세 근거와 절차</summary><p>긴 부가 근거를 여기에 적습니다. 핵심 결론과 필요한 배경은 접지 않습니다.</p></details></section>
+<section id="unknowns"><h2>불확실성과 한계</h2>
+<div data-html-mode="standard"><p>상충 근거, 확인하지 못한 범위, 측정 한계와 다음 결정을 바꿀 조건을 적습니다.</p></div>
+<div data-html-mode="dialogue"><p>아직 확인하지 못한 점은 무엇인가요?</p><p>엇갈리는 근거와 조사하지 못한 범위를 밝히고, 어떤 새 근거가 결론을 바꿀 수 있는지 설명합니다.</p></div>
+<div data-html-mode="easy-dialogue"><p>아직 모르는 부분은 무엇인가요?</p><p>확인하지 못한 범위와 측정의 한계를 적습니다. 어떤 새 정보가 나오면 결론이 달라질지도 설명합니다.</p></div></section>
+<section id="frontier"><h2>다음 행동</h2>
+<div data-html-mode="standard"><p>가장 정보 가치가 높은 다음 질문과 재개 조건, 준비된 인계 후보, 대기 조건과 승인 상태를 적습니다.</p></div>
+<div data-html-mode="dialogue"><p>다음에 무엇을 확인하면 가장 도움이 되나요?</p><p>재개 조건, 준비된 인계 후보, 대기 조건과 승인 상태를 함께 설명합니다.</p></div>
+<div data-html-mode="easy-dialogue"><p>다음에는 무엇을 살펴보면 좋을까요?</p><p>다시 시작할 조건과 이미 준비된 다음 작업, 기다리는 이유와 승인 상태를 적습니다.</p></div></section>
 <section id="verification"><h2>검증 및 예외</h2>
-<!-- Keep each check in a separate item with a strong label after final-result injection. These are placeholders, not passing results. -->
+<!-- Keep each check in a separate item with a strong label after final-result injection. These factual outcomes are shared across modes. -->
 <ul>
 <li><strong>정적 검증:</strong> 미기록. 실제로 수행한 구조 검사와 결과, 확인하지 못한 범위를 적습니다.</li>
 <li><strong>화면 검증:</strong> 미기록. 실제로 확인한 화면 크기와 테마, 조작 및 결과를 적습니다. 수행하지 못했다면 검증 불가 상태와 이유를 적습니다.</li>
 </ul></section>
-<section id="sources"><h2>참고문헌</h2><!-- Replace citation examples with verified claim/source bindings; reuse numbers for repeated sources. -->
-<ol><li id="ref-1">실제로 읽은 근거의 제목·링크·날짜·리비전으로 교체합니다. 이 항목은 인용 형식 예시이며 연구 근거가 아닙니다. <a href="#cite-1-1" aria-label="인용 1의 첫 위치로 복귀">↩ 1</a> <a href="#cite-1-2" aria-label="인용 1의 두 번째 위치로 복귀">↩ 2</a></li></ol></section>
+<section id="sources"><h2>참고문헌</h2><!-- Repeat each verified source list per mode, with citation and backlink IDs scoped to that mode. -->
+<ol data-html-mode="standard"><li id="ref-standard-1">실제로 읽은 근거의 제목·링크·날짜·리비전으로 교체합니다. 이 항목은 인용 형식 예시이며 연구 근거가 아닙니다. <a href="#cite-standard-1-1" aria-label="인용 1의 첫 위치로 복귀">↩ 1</a> <a href="#cite-standard-1-2" aria-label="인용 1의 두 번째 위치로 복귀">↩ 2</a></li></ol>
+<ol data-html-mode="dialogue"><li id="ref-dialogue-1">실제로 읽은 근거의 제목·링크·날짜·리비전으로 교체합니다. 이 항목은 인용 형식 예시이며 연구 근거가 아닙니다. <a href="#cite-dialogue-1-1" aria-label="인용 1의 첫 위치로 복귀">↩ 1</a> <a href="#cite-dialogue-1-2" aria-label="인용 1의 두 번째 위치로 복귀">↩ 2</a></li></ol>
+<ol data-html-mode="easy-dialogue"><li id="ref-easy-dialogue-1">실제로 읽은 근거의 제목·링크·날짜·리비전으로 교체합니다. 이 항목은 인용 형식 예시이며 연구 근거가 아닙니다. <a href="#cite-easy-dialogue-1-1" aria-label="인용 1의 첫 위치로 복귀">↩ 1</a> <a href="#cite-easy-dialogue-1-2" aria-label="인용 1의 두 번째 위치로 복귀">↩ 2</a></li></ol></section>
 <footer id="document-bottom">HTML은 연구 사실을 읽기 쉽게 표시한 사본이며 실행 상태의 정본이 아닙니다.<br>🤖 본 보고서는 AI가 작성했습니다.</footer>
 </main>
 <nav class="ht-doc-nav" aria-label="문서 탐색">

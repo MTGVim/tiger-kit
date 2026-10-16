@@ -146,6 +146,13 @@ Honor explicit Markdown (default `lesson.md` when no filename is given) or custo
 TigerKit-owned intermediate and learning-state files stay in the current identity-verified learning workspace (new `.tigerkit/teach/<topic>/`, explicit authorized path or continued legacy `.tigerkit/study/<topic>/`). An explicit
 existing final file needs overwrite authorization. Transient work uses `.tigerkit/tmp/tk-teach/<run-id>/`.
 
+For HTML lessons and courses, default to the complete `standard`, `dialogue`, and `easy-dialogue`
+views in the same document. Keep the mode selector consistent across the course so chapter links,
+the glossary, conclusions and practice remain in the selected view. Reuse the same researched
+content and answers across views; adapt explanatory prose without duplicating research or changing
+what an exercise tests. Honor an explicit single-mode request. The HTML modes do not apply to
+explicit Markdown output.
+
 Verify prerequisite order, outcome coverage, claim support, examples, chapter navigation and
 question/answer separation. For executable coding exercises, read [exercise verification](references/exercise-verification.md)
 before claiming validation; when safe runtime is available, require actual reference-pass and

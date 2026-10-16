@@ -1679,6 +1679,46 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "research-report-all-document-modes",
+      "path": "success",
+      "prompt": "$tk-research 공식 문서에서 HTTP 캐시의 `ETag`와 `If-None-Match` 동작을 조사해 `cache-report.html`로 정리해줘. 표현 모드는 따로 지정하지 않을게.",
+      "expected_output": "기본형·대화형·쉬운 대화형으로 같은 결론, 근거와 출처를 담은 오프라인 보고서를 만든다. 각 모드의 설명에는 결론, 핵심 용어 풀이, 제약과 확인되지 않은 범위가 모두 있다. 각주와 참고문헌 링크는 현재 모드 안에서 이동한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "모드 미지정 HTML 보고서에는 기본형, 대화형, 쉬운 대화형 세 가지 완전한 문서 모드가 있다. 결론과 핵심 용어 설명, 제약, 확인되지 않은 범위가 각 모드에 맞게 서술된다. 세 모드가 같은 확인된 사실과 출처를 사용하고 각 모드의 각주·참고문헌 링크가 서로 교차하지 않는다."
+        },
+        {
+          "type": "path_exists",
+          "path": "cache-report.html"
+        },
+        {
+          "type": "path_text_contains",
+          "path": "cache-report.html",
+          "text": "기본형"
+        },
+        {
+          "type": "path_text_contains",
+          "path": "cache-report.html",
+          "text": "대화형"
+        },
+        {
+          "type": "path_text_contains",
+          "path": "cache-report.html",
+          "text": "쉬운 대화형"
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": [
+            "cache-report.html"
+          ]
+        }
+      ]
     }
   ],
   "merged_from": {

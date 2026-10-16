@@ -710,7 +710,10 @@
     "tk-prep:behavior:prep-splits-inventory-by-entry-point-before-status-and-id",
     "tk-qa-sheet:behavior:qa-unexecuted-authorized-reads-are-verification-gaps",
     "tk-qa-sheet:behavior:qa-explicit-human-checklist-marks-automatable-gaps",
-    "tk-retro:behavior:retro-report-uses-stable-evidence-and-disposition-format"
+    "tk-retro:behavior:retro-report-uses-stable-evidence-and-disposition-format",
+    "tk-explain:behavior:explain-default-all-presentation-modes-v3",
+    "tk-explain-diff:behavior:explain-diff-explicit-easy-dialogue-mode",
+    "tk-research:behavior:research-report-all-document-modes"
   ],
   "catalog_cases": [
     "catalog:behavior:native-app-runtime-verify",

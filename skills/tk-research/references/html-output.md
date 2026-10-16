@@ -103,6 +103,13 @@ one-off theme tokens, or substitute class names. Add scoped styles for content f
 leave shell layout to the shared component rules. The theme control's `data-ht-theme-control`
 attribute alone is insufficient because it enables the script but does not apply the shared styling.
 
+When a document uses multiple presentation modes, add one `.ht-mode-control` fieldset to the top bar
+with native radios named `ht-mode` and values `standard`, `dialogue`, and `easy-dialogue`. Their
+IDs must be `ht-mode-standard`, `ht-mode-dialogue`, and `ht-mode-easy-dialogue`, matching the shared
+theme CSS selectors; label them `기본형`, `대화형`, and `쉬운 대화형`. Wrap mode-specific prose and
+references in elements marked `data-html-mode` with the matching value. Keep shared facts and
+mode-neutral navigation outside those wrappers. The native radios switch modes without JavaScript.
+
 ## Citations and references
 
 For document prose, place numbered superscript citations immediately beside supported claims,
@@ -201,31 +208,43 @@ three-segment native radio control with at least 40px control height and a layou
 the viewport; wrap every localStorage operation in try/catch. Never let storage refusal break
 reading or controls.
 
-## Explanation presentation modes
+## Whole-document presentation modes
 
-For `tk-explain` and `tk-explain-diff`, presentation is a renderer choice over one verified
-content model, not three independent investigations. Support these exact modes:
+For document-like HTML produced by `tk-explain`, `tk-explain-diff`, `tk-research` and `tk-teach`,
+provide the complete document in three selectable modes by default. This is a stable feature, not
+an experiment. Use one verified content and evidence model, then render its reader-facing prose in
+these modes:
 
-- `standard`: ordinary document prose with the existing cards, tables, diagrams and evidence.
-- `dialogue`: use short reader/author exchanges only where a realistic question reduces the
-  cost of understanding background, intuition, a boundary or a common misconception. Keep code,
-  numeric comparisons, evidence, verification and source anchors in their ordinary structured
-  forms instead of forcing them into speech bubbles.
-- `dialogue-eli5`: begin with a short, visually distinct plain-language question-and-answer
-  section titled `쉬운 문답`, then continue with prose that explains the same mechanism and
-  caveats in more depth.
-  Use evidence-appropriate diagrams or data visualizations where they clarify the explanation;
-  never invent numbers or force a chart onto a qualitative mechanism. Minimize assumed prerequisites,
-  shorten sentences and use a simple analogy only when it is accurate and its limit is clear. Do not
-  replace the real mechanism with the analogy or childlike vocabulary.
-- `all`: render `standard`, `dialogue` and `dialogue-eli5` as three accessible tabs in the
-  same HTML file. Reuse the same evidence model, citations, verification state and source anchors;
-  do not triple source collection or fabricate different facts to make the views feel distinct.
+- `standard` (`기본형`): ordinary document prose with the existing cards, tables, diagrams and
+  evidence.
+- `dialogue` (`대화형`): explain the whole document through short, natural reader/author exchanges
+  where they improve understanding. This includes the opening conclusion, section explanations,
+  term definitions and limitations; do not leave them in a different voice because they occur near
+  the beginning or end. Keep code, numeric comparisons, evidence, verification results and source
+  references in their precise structured forms.
+- `easy-dialogue` (`쉬운 대화형`): explain the whole document in shorter, plain-language exchanges.
+  Include the conclusion, glossary and limitations in this mode; do not limit it to an introductory
+  question-and-answer block followed by standard prose. Preserve technical names and the real
+  mechanism, define unfamiliar terms before relying on them, and use an analogy only when it is
+  accurate and its boundary is clear. Never replace evidence with the analogy or childlike wording.
+  The former `dialogue-eli5` token is accepted as an alias for `easy-dialogue`; render the label
+  `쉬운 대화형` and do not use `쉬운 문답` as a mode or section title.
+- `all`: the default when the request does not select one mode. Render the complete document in
+  all three modes inside one offline HTML artifact. Keep conclusions, material limitations,
+  terminology, sources and verification state equivalent even when their wording differs. Reuse
+  the same evidence and do not repeat research or invent facts to make views feel distinct.
 
-While the modes are under evaluation, use `all` when the active request does not name a mode.
-An explicit mode in the request wins. In `all`, all three tabs must be keyboard reachable, work
-by tap/click, remain readable at narrow widths, and expose equivalent material conclusions and
-limitations even when their wording differs.
+An explicit mode in the request narrows the artifact to that mode. The three-mode default applies
+only to document-like HTML. It does not turn interactive comparison prototypes or QA sheets into
+three copies; those interfaces keep their owning interaction and comparison contracts. An explicit
+Markdown output also keeps its existing format.
+
+Keep document navigation mode-neutral: a table-of-contents or top/bottom link moves to the same
+section in the currently selected mode and never changes the selected mode. Keep citation and
+reference IDs unique per mode, and make each citation/backlink pair target only its own mode.
+The mode selector is the only control that switches presentation modes. It must use keyboard- and
+touch-accessible native controls and remain understandable without JavaScript. When generating a
+single explicit mode, omit other mode content rather than leaving hidden alternatives in the file.
 
 Dialogue has two semantic roles only: `reader` asks realistic questions a target reader may
 actually have, and `author` answers from the verified explanation. These roles guide the exchange

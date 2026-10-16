@@ -2,7 +2,7 @@
 name: tk-explain-diff
 description: "[user/auto] 특정 PR·브랜치·커밋 범위·작업 트리 변경을 배경과 실행 흐름부터 이해하려고 할 때 사용합니다. 결함 리뷰, 변경 구현, 일반 개념 설명에는 사용하지 않습니다."
 disable-model-invocation: false
-argument-hint: "<PR, branch, commit range, or workspace diff> [audience] [output path] [standard|dialogue|dialogue-eli5|all]"
+argument-hint: "<PR, branch, commit range, or workspace diff> [audience] [output path] [standard|dialogue|easy-dialogue|all]"
 metadata:
   tigerkit:
     kind: hybrid
@@ -77,13 +77,14 @@ visible neighbor changed. When deletion or movement rewires relationships, use s
 views when an overlay would obscure which edge belongs to which version. Prefer this bounded
 neighborhood over a whole-repository dependency map.
 
-Use the presentation modes defined by [HTML output](references/html-output.md). While this
-experiment is active, default to `all` when no mode is named. Build one verified change model and
-reuse it across the `standard`, `dialogue`, and `dialogue-eli5` tabs; do not repeat repository
-investigation per view. An explicit mode generates only that view. Keep exact source anchors,
-verification state, limits, code and structured evidence equivalent across modes. In `dialogue-eli5`,
-start with a short plain-language exchange, then explain the same change in prose with evidence-
-appropriate visuals. Do not display person labels or emoji.
+Use the stable presentation modes defined by [HTML output](references/html-output.md). When no
+mode is named for an HTML artifact, default to `all`: present the complete change explanation in
+`standard`, `dialogue`, and `easy-dialogue` views within one file. Reuse one verified change model;
+do not repeat repository investigation per view. Adapt the conclusion, term explanations,
+limitations and walkthrough prose across the whole document. Keep exact source anchors, verification
+state, code, numeric facts and structured evidence equivalent. An explicit mode generates only that
+view; accept `dialogue-eli5` as a legacy alias for `easy-dialogue`. Respect the user's established
+preference for dialogue labels or emoji, and never invent names or avatars when no preference exists.
 
 ## Deliver
 

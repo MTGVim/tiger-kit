@@ -41,8 +41,10 @@ class HTMLPolicyTest(unittest.TestCase):
         self.assertIn('class="ht-doc-content"', text)
         self.assertIn('class="ht-doc-nav-heading"', text)
         self.assertIn('<summary aria-label="목차 열기 또는 닫기">', text)
-        self.assertIn('id="cite-1-2"', text)
-        self.assertIn('href="#cite-1-2"', text)
+        self.assertIn('id="cite-standard-1-2"', text)
+        self.assertIn('href="#cite-standard-1-2"', text)
+        self.assertIn('data-html-mode="easy-dialogue"', text)
+        self.assertIn('value="easy-dialogue"', text)
         self.assertNotIn('grid-template-columns:15rem', text)
 
     def test_document_surface_and_left_navigation_contract(self):
@@ -63,6 +65,7 @@ class HTMLPolicyTest(unittest.TestCase):
 
     def test_document_static_checks_and_conditional_browser_verification_contract(self):
         text = (ROOT / 'skills/tk-explain/references/html-output.md').read_text()
+        normalized = ' '.join(text.split())
         for requirement in (
             'Every local fragment `href` resolves',
             'No runtime network requests are present',
@@ -75,8 +78,27 @@ class HTMLPolicyTest(unittest.TestCase):
             'desktop left rail, narrow-screen TOC',
             'Do not replace or override their shell geometry',
             'data-ht-theme-control`\nattribute alone is insufficient',
+            'complete document in three selectable modes by default',
+            'the opening conclusion, section explanations, term definitions and limitations',
+            'The mode selector is the only control that switches presentation modes',
+            'IDs must be `ht-mode-standard`, `ht-mode-dialogue`, and `ht-mode-easy-dialogue`',
+            'matching the shared theme CSS selectors',
         ):
-            self.assertIn(requirement, text)
+            self.assertIn(' '.join(requirement.split()), normalized)
+
+    def test_document_modes_use_consistent_labels_and_full_document_content(self):
+        text = (ROOT / 'skills/tk-explain/references/html-output.md').read_text()
+        explain = (ROOT / 'skills/tk-explain/SKILL.md').read_text()
+        diff = (ROOT / 'skills/tk-explain-diff/SKILL.md').read_text()
+        normalized_explain = ' '.join(explain.split())
+        normalized_diff = ' '.join(diff.split())
+        self.assertIn('`standard` (`기본형`)', text)
+        self.assertIn('`dialogue` (`대화형`)', text)
+        self.assertIn('`easy-dialogue` (`쉬운 대화형`)', text)
+        self.assertIn('do not use `쉬운 문답` as a mode or section title', text)
+        self.assertNotIn('while this experiment is active', text)
+        self.assertIn('conclusion, first-use term explanations, glossary and limitations', normalized_explain)
+        self.assertIn('Adapt the conclusion, term explanations, limitations and walkthrough prose', normalized_diff)
 
     def test_explain_dialogue_respects_established_role_preferences(self):
         skill = (ROOT / 'skills/tk-explain/SKILL.md').read_text()
@@ -91,6 +113,11 @@ class HTMLPolicyTest(unittest.TestCase):
         report_custom_css = report.split('/* /tigerkit:html-theme.css */', 1)[1]
         self.assertIn('.ht-topbar { position: sticky;', css)
         self.assertIn('.ht-topbar .ht-theme-control { margin: 0; width: 100%; }', css)
+        self.assertIn('.ht-mode-control { grid-column: 1 / -1;', css)
+        self.assertIn('html:has(#ht-mode-easy-dialogue:checked)', css)
+        self.assertIn('.ht-document [data-html-mode] { display: block; }', css)
+        self.assertIn('html:has(.ht-mode-control) .ht-document [data-html-mode] { display: none; }', css)
+        self.assertIn('[data-html-mode="easy-dialogue"]', css)
         self.assertIn('@media (max-width: 760px)', css)
         self.assertNotRegex(report_custom_css, r'\.ht-doc-content\s*\{[^}]*\b(?:width|margin|position)\s*:')
         self.assertNotRegex(report_custom_css, r'\.ht-topbar\s*\{')

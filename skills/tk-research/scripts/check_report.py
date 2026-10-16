@@ -11,6 +11,11 @@ from urllib.parse import unquote
 
 
 SHORT_REPORT_MAX_SECTIONS = 3
+DOCUMENT_MODES = {
+    "standard": "기본형",
+    "dialogue": "대화형",
+    "easy-dialogue": "쉬운 대화형",
+}
 TEMPLATE_PATH = Path(__file__).resolve().parents[1] / "assets" / "report.html"
 VOID_ELEMENTS = {
     "area", "base", "br", "col", "embed", "hr", "img", "input", "link",
@@ -40,9 +45,10 @@ NETWORK_SCRIPT = re.compile(
 
 
 class Element:
-    def __init__(self, tag, attrs=None):
+    def __init__(self, tag, attrs=None, parent=None):
         self.tag = tag
         self.attrs = attrs or {}
+        self.parent = parent
         self.children = []
 
     def descendants(self):
@@ -67,7 +73,7 @@ class ReportParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
         element = Element(tag.lower(), {
             name.lower(): value or "" for name, value in attrs
-        })
+        }, parent=self.stack[-1])
         self.stack[-1].children.append(element)
         if tag.lower() not in VOID_ELEMENTS:
             self.stack.append(element)
@@ -75,7 +81,7 @@ class ReportParser(HTMLParser):
     def handle_startendtag(self, tag, attrs):
         element = Element(tag.lower(), {
             name.lower(): value or "" for name, value in attrs
-        })
+        }, parent=self.stack[-1])
         self.stack[-1].children.append(element)
 
     def handle_endtag(self, tag):
@@ -91,6 +97,16 @@ class ReportParser(HTMLParser):
 
 def class_tokens(element):
     return set(element.attrs.get("class", "").split())
+
+
+def mode_for(element):
+    current = element
+    while current is not None:
+        mode = current.attrs.get("data-html-mode")
+        if mode:
+            return mode
+        current = current.parent
+    return None
 
 
 def fragment_id(href):
@@ -143,6 +159,50 @@ def check_report(source, template_source):
         if len(matches) > 1:
             errors.append(f"duplicate id {identifier!r} appears {len(matches)} times")
 
+    mode_elements = [
+        element for element in elements
+        if element.attrs.get("data-html-mode")
+    ]
+    modes = {element.attrs["data-html-mode"] for element in mode_elements}
+    if not modes:
+        errors.append("report must declare its rendered document mode or modes")
+    elif not modes.issubset(DOCUMENT_MODES) or len(modes) not in {1, 3}:
+        errors.append("report must contain one explicit mode or all three document modes")
+    mode_controls = [
+        element for element in elements
+        if element.tag == "fieldset" and "ht-mode-control" in class_tokens(element)
+    ]
+    mode_inputs = [
+        element for element in elements
+        if element.tag == "input" and element.attrs.get("name") == "ht-mode"
+    ]
+    if len(mode_controls) > 1:
+        errors.append("document mode selector must appear once")
+    if len(modes) == 3 and len(mode_controls) != 1:
+        errors.append("three-mode report needs one native document mode selector")
+    if mode_controls:
+        values = [element.attrs.get("value", "") for element in mode_inputs]
+        if (len(values) != len(set(values)) or set(values) != modes
+                or any(element.attrs.get("type") != "radio" for element in mode_inputs)):
+            errors.append("document mode selector must offer exactly the rendered modes as radios")
+        if sum("checked" in element.attrs for element in mode_inputs) != 1:
+            errors.append("document mode selector must have exactly one checked mode")
+        for element in mode_inputs:
+            mode = element.attrs.get("value", "")
+            if element.attrs.get("id") != f"ht-mode-{mode}":
+                errors.append(
+                    "document mode radio ids must match the shared theme selectors"
+                )
+            labels = [
+                ancestor for ancestor in elements
+                if ancestor.tag == "label" and element in list(ancestor.descendants())
+            ]
+            label_text = labels[0].text_content().strip() if labels else ""
+            if label_text != DOCUMENT_MODES.get(mode):
+                errors.append(f"document mode {mode!r} needs its visible Korean label")
+    elif modes and len(modes) == 1 and mode_inputs:
+        errors.append("single-mode report must omit the unused document mode selector")
+
     for element in elements:
         href_attributes = [
             name for name in element.attrs
@@ -160,6 +220,12 @@ def check_report(source, template_source):
                 if not target_id or len(matches) != 1:
                     errors.append(
                         f"fragment link {value!r} resolves to {len(matches)} IDs"
+                    )
+                elif mode_for(element) != mode_for(matches[0]) and (
+                    mode_for(element) is not None or mode_for(matches[0]) is not None
+                ):
+                    errors.append(
+                        f"cross-mode fragment link {value!r} leaves its document mode"
                     )
             elif attribute in href_attributes and value and element.tag != "a":
                 errors.append(
@@ -215,6 +281,28 @@ def check_report(source, template_source):
     controls = [
         element for element in elements if "ht-doc-controls" in class_tokens(element)
     ]
+    for section in sections:
+        section_modes = {
+            element.attrs["data-html-mode"]
+            for element in section.descendants()
+            if element.attrs.get("data-html-mode")
+        }
+        if section_modes and section_modes != modes:
+            errors.append(
+                f"section #{section.attrs.get('id', '')} has incomplete document modes"
+            )
+    overview = next(
+        (section for section in sections if section.attrs.get("id") == "overview"),
+        None,
+    )
+    overview_modes = {
+        element.attrs["data-html-mode"]
+        for element in overview.descendants()
+        if element.attrs.get("data-html-mode")
+    } if overview else set()
+    if overview is None or overview_modes != modes:
+        errors.append("the report conclusion must appear in every rendered mode")
+
     if bool(navigators) != bool(controls):
         errors.append("document navigation must include both .ht-doc-nav and .ht-doc-controls")
     elif len(navigators) > 1 or len(controls) > 1:

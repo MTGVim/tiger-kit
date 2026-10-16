@@ -86,10 +86,28 @@ pre { max-width: 100%; overflow-x: auto; }
 .ht-topbar > * { min-width: 0; max-width: 100%; }
 .ht-topbar-title { margin: 0; font-weight: 700; overflow-wrap: anywhere; }
 .ht-topbar .ht-theme-control { margin: 0; width: 100%; }
+.ht-mode-control { grid-column: 1 / -1; min-width: 0; width: 100%; max-width: 100%; margin: 0; padding: 0; border: 0; }
+.ht-mode-label { margin-block-end: .25rem; color: var(--muted); font-size: var(--font-small); }
+.ht-mode-buttons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; min-width: 0; max-width: 100%; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.ht-mode-option { position: relative; min-width: 0; cursor: pointer; }
+.ht-mode-option + .ht-mode-option { border-left: 1px solid var(--line); }
+.ht-mode-option input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.ht-mode-option span { display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 44px; padding: 6px 10px; background: var(--panel); color: var(--text); text-align: center; overflow-wrap: anywhere; }
+.ht-mode-option:hover span { background: var(--hover); }
+.ht-mode-option input:checked + span { background: var(--accent); color: var(--panel); font-weight: 700; }
+.ht-mode-option input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: -3px; }
+/* Without :has support, leave every mode readable; native radios switch views where supported. */
+.ht-document [data-html-mode] { display: block; }
+html:has(.ht-mode-control) .ht-document [data-html-mode] { display: none; }
+html:has(#ht-mode-standard:checked) .ht-document [data-html-mode="standard"],
+html:has(#ht-mode-dialogue:checked) .ht-document [data-html-mode="dialogue"],
+html:has(#ht-mode-easy-dialogue:checked) .ht-document [data-html-mode="easy-dialogue"] { display: block; }
 @media (max-width: 760px) {
   .ht-topbar { position: static; grid-template-columns: minmax(0, 1fr); padding: .75rem 1.2rem; gap: .5rem; }
+  .ht-mode-control { grid-column: auto; }
 }
 html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scroll-padding-top: var(--ht-anchor-offset); }
+html:has(.ht-document .ht-mode-control) { --ht-anchor-offset: 12rem; }
 .ht-doc-content { min-width: 0; width: calc(100% - var(--ht-nav-width) - var(--ht-nav-gap)); max-width: 76rem; margin: 1.5rem auto 1.5rem calc(var(--ht-nav-width) + var(--ht-nav-gap)); padding: clamp(1.25rem, 3vw, 2.5rem); background: var(--panel); border: 1px solid var(--line); border-radius: calc(1.5 * var(--radius)); box-shadow: 0 12px 36px #10131912; }
 .ht-doc-content > :first-child { margin-block-start: 0; }
 .ht-doc-content > :last-child { margin-block-end: 0; }

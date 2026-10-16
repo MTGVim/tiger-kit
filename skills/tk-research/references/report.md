@@ -21,6 +21,14 @@ styles, theme control, navigation, movement controls, scripts, citation structur
 footer. Replace illustrative content and remove irrelevant sections rather than writing a replacement
 shell or adding empty ceremony. A report with at most three sections may omit both navigation
 structures only when they add no value; a report with four or more includes both.
+By default, render the full report in `standard`, `dialogue`, and `easy-dialogue` modes in the same
+HTML file. Adapt the recommendation, conclusion, first-use term explanations, optional glossary,
+evidence explanations and limitations throughout each mode. Keep factual claims, confidence,
+source set, citation meaning, verification outcomes, status and next actions equivalent. Repeat
+mode-specific citation and reference IDs within each version and keep every citation/backlink pair
+inside its own mode. The shared table of contents and movement links must stay in the current mode;
+the native mode selector is the only presentation switch. An explicit single-mode request may emit
+only that mode. Never produce only a conversational opening followed by a standard conclusion.
 The report is decision-ready
 at the evidence available now, including the first material persistent checkpoint: it should let the
 reader decide whether more research is needed, whether a candidate should become implementation work,

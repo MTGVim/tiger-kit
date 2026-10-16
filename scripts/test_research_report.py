@@ -6,11 +6,37 @@ import unittest
 
 
 class ResearchReportTest(unittest.TestCase):
-    def report_html(self, *, navigation=True, empty_navigation=False):
+    def report_html(self, *, navigation=True, empty_navigation=False,
+                    modes=("standard", "dialogue", "easy-dialogue")):
         root = Path(__file__).resolve().parents[1]
         template = (root / 'skills/tk-research/assets/report.html').read_text(encoding='utf-8')
         style = re.search(r'<style\b[^>]*>.*?</style>', template, re.I | re.S).group()
         script = re.search(r'<script\b[^>]*>.*?</script>', template, re.I | re.S).group()
+        labels = {"standard": "기본형", "dialogue": "대화형", "easy-dialogue": "쉬운 대화형"}
+        selectors = ''.join(
+            f'<label class="ht-mode-option"><input type="radio" id="ht-mode-{mode}" name="ht-mode" value="{mode}"'
+            f'{" checked" if index == 0 else ""}><span>{labels[mode]}</span></label>'
+            for index, mode in enumerate(modes)
+        )
+        mode_selector = (
+            f'<fieldset class="ht-mode-control"><legend>문서 형식</legend>'
+            f'<div class="ht-mode-buttons">{selectors}</div></fieldset>'
+            if len(modes) == 3 else ''
+        )
+        variants = ''.join(
+            f'<div data-html-mode="{mode}"><p>{labels[mode]} finding.'
+            f'<sup id="cite-{mode}-1-1"><a href="#ref-{mode}-1">[1]</a></sup></p></div>'
+            for mode in modes
+        )
+        evidence = ''.join(
+            f'<div data-html-mode="{mode}"><p>{labels[mode]} evidence.</p></div>'
+            for mode in modes
+        )
+        sources = ''.join(
+            f'<ol data-html-mode="{mode}"><li id="ref-{mode}-1">{labels[mode]} source '
+            f'<a href="#cite-{mode}-1-1">↩ 1</a></li></ol>'
+            for mode in modes
+        )
         if not navigation:
             nav = ''
         elif empty_navigation:
@@ -23,12 +49,13 @@ class ResearchReportTest(unittest.TestCase):
 <nav class="ht-doc-controls"><a href="#document-top">Top</a><a href="#document-bottom">Bottom</a></nav>
 '''
         return f'''<!doctype html>
-<html><head>{style}</head><body id="document-top">
+<html><head>{style}</head><body class="ht-document" id="document-top">
+<header class="ht-topbar">{mode_selector}</header>
 <main class="ht-doc-content">
-  <section id="overview"><h2>Overview</h2><p>Finding.<sup id="cite-1-1"><a href="#ref-1">[1]</a></sup></p></section>
-  <section id="evidence"><h2>Evidence</h2></section>
+  <section id="overview"><h2>Overview</h2>{variants}</section>
+  <section id="evidence"><h2>Evidence</h2>{evidence}</section>
   <section id="verification"><h2>Verification</h2></section>
-  <section id="sources"><h2>Sources</h2><ol><li id="ref-1">Source <a href="#cite-1-1">↩ 1</a></li></ol></section>
+  <section id="sources"><h2>Sources</h2>{sources}</section>
 </main>
 <footer id="document-bottom">🤖 본 보고서는 AI가 작성했습니다.</footer>
 {nav}
@@ -61,6 +88,37 @@ class ResearchReportTest(unittest.TestCase):
         result = self.check_report(self.report_html())
         self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_explicit_single_mode_is_complete_without_alternate_views(self):
+        result = self.check_report(self.report_html(modes=("easy-dialogue",)))
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_mode_selector_ids_match_css_selectors(self):
+        report = self.report_html().replace(
+            'id="ht-mode-easy-dialogue"', 'id="easy-dialogue-mode"', 1)
+        self.assert_rejected(report, 'radio ids must match the shared theme selectors')
+
+    def test_three_modes_are_complete_and_internal_links_stay_in_mode(self):
+        missing_easy_conclusion = self.report_html().replace(
+            'data-html-mode="easy-dialogue"><p>쉬운 대화형 finding.',
+            'data-html-mode="dialogue"><p>쉬운 대화형 finding.',
+            1,
+        )
+        self.assert_rejected(missing_easy_conclusion, 'incomplete document modes')
+        cross_mode_citation = self.report_html().replace(
+            'href="#ref-standard-1"', 'href="#ref-dialogue-1"', 1)
+        self.assert_rejected(cross_mode_citation, 'cross-mode fragment')
+
+    def test_conclusion_is_required_even_without_navigation(self):
+        report = re.sub(
+            r'  <section id="overview">.*?</section>\n',
+            '', self.report_html(navigation=False), flags=re.S,
+        )
+        report = re.sub(
+            r'  <section id="evidence">.*?</section>\n',
+            '', report, flags=re.S,
+        )
+        self.assert_rejected(report, 'report conclusion must appear in every rendered mode')
+
     def test_short_report_can_omit_both_navigation_controls(self):
         html = self.report_html(navigation=False)
         html = html.replace('  <section id="verification"><h2>Verification</h2></section>\n', '')
@@ -76,8 +134,8 @@ class ResearchReportTest(unittest.TestCase):
 
     def test_navigation_exemption_cannot_leave_only_one_control(self):
         html = self.report_html(navigation=False)
-        html = html.replace('  <section id="evidence"><h2>Evidence</h2></section>\n', '')
-        html = html.replace('  <section id="verification"><h2>Verification</h2></section>\n', '')
+        html = re.sub(r'  <section id="evidence">.*?</section>\n', '', html, flags=re.S)
+        html = re.sub(r'  <section id="verification">.*?</section>\n', '', html, flags=re.S)
         html = html.replace(
             '</main>', '</main><nav class="ht-doc-nav"></nav>')
         self.assert_rejected(html, 'navigation')
@@ -140,35 +198,35 @@ class ResearchReportTest(unittest.TestCase):
             '</defs><rect fill="url(#local-gradient)"></rect></svg>\n</body>')
         self.assertEqual(self.check_report(local_svg_reference).returncode, 0)
         linked_source = self.report_html().replace(
-            '<li id="ref-1">Source ',
-            '<li id="ref-1"><a href="https://example.test/source">Source</a> ',
+            '<li id="ref-standard-1">기본형 source ',
+            '<li id="ref-standard-1"><a href="https://example.test/source">Source</a> ',
         )
         self.assertEqual(self.check_report(linked_source).returncode, 0)
         event_handler = self.report_html().replace(
-            '<body id="document-top">',
-            '<body id="document-top" onload="fetch(\'https://example.test/\')">',
+            '<body class="ht-document" id="document-top">',
+            '<body class="ht-document" id="document-top" onload="fetch(\'https://example.test/\')">',
         )
         self.assert_rejected(event_handler, 'event handlers')
 
     def test_citations_and_reference_backlinks_must_resolve(self):
         broken_citation = self.report_html().replace(
-            '<a href="#ref-1">[1]</a>', '<a href="#missing-reference">[1]</a>')
+            '<a href="#ref-standard-1">[1]</a>', '<a href="#missing-reference">[1]</a>')
         self.assert_rejected(broken_citation, 'citation')
         missing_backlink = self.report_html().replace(
-            '<a href="#cite-1-1">↩ 1</a>', '')
+            '<a href="#cite-standard-1-1">↩ 1</a>', '')
         self.assert_rejected(missing_backlink, 'backlink')
         multiple_citations = self.report_html().replace(
-            '<sup id="cite-1-1"><a href="#ref-1">[1]</a></sup>',
-            '<sup id="cite-1-1"><a href="#ref-1">[1]</a></sup> '
-            '<sup id="cite-1-2"><a href="#ref-1">[1]</a></sup>',
+            '<sup id="cite-standard-1-1"><a href="#ref-standard-1">[1]</a></sup>',
+            '<sup id="cite-standard-1-1"><a href="#ref-standard-1">[1]</a></sup> '
+            '<sup id="cite-standard-1-2"><a href="#ref-standard-1">[1]</a></sup>',
         ).replace(
-            '<a href="#cite-1-1">↩ 1</a>',
-            '<a href="#cite-1-1">↩ 1</a> '
-            '<a href="#cite-1-2">↩ 2</a>',
+            '<a href="#cite-standard-1-1">↩ 1</a>',
+            '<a href="#cite-standard-1-1">↩ 1</a> '
+            '<a href="#cite-standard-1-2">↩ 2</a>',
         )
         self.assertEqual(self.check_report(multiple_citations).returncode, 0)
         missing_second_backlink = multiple_citations.replace(
-            '<a href="#cite-1-2">↩ 2</a>', '')
+            '<a href="#cite-standard-1-2">↩ 2</a>', '')
         self.assert_rejected(missing_second_backlink, 'backlink')
 
     def test_ai_authorship_notice_must_be_positive_and_appear_in_a_footer(self):

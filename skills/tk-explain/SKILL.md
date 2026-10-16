@@ -2,7 +2,7 @@
 name: tk-explain
 description: "[user/auto] 개념의 배경지식과 실제 구조·동작을 설명하는 시각 자료나 자체 완결형 HTML 설명 자료를 요청할 때 사용합니다. 특정 변경 설명, 여러 챕터로 구성하는 학습 과정, 일반 텍스트 질문, 기존 글 교정, 제품 비교 시제품에는 사용하지 않습니다."
 disable-model-invocation: false
-argument-hint: "<topic and optional audience/output path> [standard|dialogue|dialogue-eli5|all]"
+argument-hint: "<topic and optional audience/output path> [standard|dialogue|easy-dialogue|all]"
 metadata:
   tigerkit:
     kind: hybrid
@@ -44,13 +44,14 @@ Read [HTML output](references/html-output.md) for the shared offline and accessi
 🤖 본 설명 자료는 AI가 작성했습니다.
 ```
 
-Use the presentation modes defined by [HTML output](references/html-output.md). While this
-experiment is active, default to `all` when the request does not name a mode. `all` produces one
-HTML artifact with `standard`, `dialogue`, and `dialogue-eli5` tabs over the same verified
-content and sources. An explicit mode generates only that view. Keep dialogue roles semantically
+Use the stable presentation modes defined by [HTML output](references/html-output.md). When the
+request does not name a mode, default to `all`: one HTML artifact with complete `standard`,
+`dialogue`, and `easy-dialogue` views over the same verified content and sources. Render the
+conclusion, first-use term explanations, glossary and limitations in the selected mode's voice,
+while keeping factual evidence and citations equivalent. An explicit mode generates only that
+view; accept `dialogue-eli5` as a legacy alias for `easy-dialogue`. Keep dialogue roles semantically
 distinct and honor the user's explicit or established preference for role labels and emoji; do not
-let a generic style default override that preference. The `dialogue-eli5` tab opens with a short,
-distinct plain-language exchange, then continues into prose and evidence-appropriate visualizations.
+let a generic style default override that preference.
 
 ## Verify and Return
 
