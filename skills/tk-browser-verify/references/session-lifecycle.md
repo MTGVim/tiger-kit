@@ -29,12 +29,13 @@ inspection fails, required browser evidence is `Unverifiable`.
 
 After file-mediated authentication injection, independently verify the authenticated state.
 Stop the exact run-owned loopback secret server immediately after injection. Apply
-[environment](environment.md)'s worktree-local token rules: preserve only successfully
-verified, unexpired short-lived development access tokens in the protected input file;
-remove expired, invalidated or unsuccessfully authenticated credentials. Unknown/long-lived
-credentials are deleted at task completion, cancellation, failure or exception. Never retain
-production credentials or refresh tokens. A normal pending-input handoff preserves its file.
-Verify required deletions without exposing file contents.
+[environment](environment.md)'s worktree-local authentication rules: preserve the protected
+non-production access/session and optional refresh input across baseline, after, revision,
+interruption and failed captures. Expiry blocks use of stale access material and triggers
+supported renewal; it does not delete the file. Leave its removal to explicit user direction
+or authorized worktree cleanup. Never retain production credentials or one-time secrets.
+A normal pending-input handoff also preserves its file. Verify required deletions without
+exposing contents; do not delete a containing directory that still holds retained auth input.
 
 After any baseline, after, or acceptance capture, close run-owned browser resources and stop
 the run-owned development server immediately using the recorded launch PID/handle and verified

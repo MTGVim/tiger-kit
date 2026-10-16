@@ -160,7 +160,7 @@ For authorized user-editable temporary input files, follow the owning skill's Ar
 <!-- tigerkit:questions -->
 ## User Questions
 
-Before sending any user-owned clarification, choice, or approval, read [question rounds](references/questions.md) in this turn. Ask the whole answerable frontier in one plain-chat round; resolve facts first, preserve existing authorization, and skip question ceremony when no decision remains. Do not use question tools for ordinary TigerKit questions.
+Before sending any user-owned clarification, choice, or approval, read [question rounds](references/questions.md) in this turn, reusing identical content already read this turn and still in this context. Hash-check uncertain copies; another agent's read is insufficient. Ask the whole answerable frontier in one plain-chat round; resolve facts first, preserve existing authorization, and skip question ceremony when no decision remains. Do not use question tools for ordinary TigerKit questions.
 
 Minimum shape, even when already familiar:
 

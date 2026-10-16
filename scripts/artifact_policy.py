@@ -13,7 +13,7 @@ NO_ARTIFACT_SKILLS = frozenset(("tk-adhd", "tk-grill", "tk-ask-repo", "tk-review
 ARTIFACT_BLOCK = """<!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-Create artifacts only when this skill's task authorizes them. Before any artifact write, temporary checkout/transport, or ignore setup, read [artifact paths](references/artifact-paths.md) and apply its Git exclusion, safe-path, and ownership checks. Default repository-owned output to `.tigerkit/`; honor explicit final destinations. Conversation-only work skips this reference and performs no file or ignore setup. Artifact handling grants no unrelated mutation or publication authority.
+Create artifacts only when this skill's task authorizes them. Before any artifact write, temporary checkout/transport, or ignore setup, read [artifact paths](references/artifact-paths.md) and apply its Git exclusion, safe-path, and ownership checks. Reuse identical content still in this context; hash-check uncertain copies and reread changed/lost content. Always repeat fresh safety checks. Default repository-owned output to `.tigerkit/`; honor explicit final destinations. Conversation-only work skips this reference and performs no file or ignore setup. Artifact handling grants no unrelated mutation or publication authority.
 """
 NO_ARTIFACT_BLOCK = """<!-- tigerkit:artifact-paths -->
 ## Artifact Paths
@@ -41,7 +41,19 @@ Present the input handoff as the final user-visible text message of the turn, th
 
 The watcher uses bounded metadata-change polling without reporting content or metadata values. File existence, non-zero size or modification alone is not completion: the seeded template is already non-empty. After a change, a trusted local reader may parse without returning contents, validate the exact requested keys/types and nonblank required text fields, and report only `Pending | Ready | Unsafe`. Reject duplicate or unexpected keys. An unchanged template, missing/blank field, malformed or partly saved JSON stays `Pending`; preserve the user's bytes and wait for the next change. Explain only the missing field name or syntax requirement, never raw values or parser excerpts. Before use, recheck safe path, ownership and secret permissions and reparse the current file; validate and consume the same snapshot. Unsafe replacement stops the file branch as `Blocked | Unverifiable`.
 
-When ready and the host can resume execution, continue the exact authorized pending step without requesting a separate user completion message. Renew bounded waits only while the host-supported task remains active; if the host cannot wait, preserve the same run-owned path and explain resumption. On resumption, privately validate the existing run-owned file once before waiting for another change. Pass only validated fields to the approved consumer, never the JSON wrapper as a credential. Delete secret input and its run directory immediately after consumption on success, failure or exception and verify no residue, except for tk-browser-verify's explicitly defined worktree-local token lifecycle: retain only successfully verified short-lived development access tokens until verified expiry; remove expired/invalidated input on the next read, and unknown/long-lived input at task completion or cancellation/failure/exception. Never retain production credentials or refresh tokens. Ordinary input follows its run-owned temporary lifecycle. Preserve the existing host-native hidden-input option when safer.
+When ready and the host can resume execution, continue the exact authorized pending step without requesting a separate user completion message. Renew bounded waits only while the host-supported task remains active; if the host cannot wait, preserve the same run-owned path and explain resumption. On resumption, privately validate the existing run-owned file once before waiting for another change. Pass only validated fields to the approved consumer, never the JSON wrapper as a credential. Delete one-time secret input and its run directory immediately after consumption on success, failure or exception and verify no residue. Application authentication follows the scoped exception below; ordinary input follows its run-owned temporary lifecycle. Preserve the existing host-native hidden-input option when safer.
+
+For application authentication, read [worktree-local authentication](authentication.md) only when that branch is needed.
+'''
+AUTHENTICATION_REFERENCE = '''# Worktree-local application authentication
+
+For authorized non-production application authentication, reuse the protected input file within the same task/worktree, application, verified login origin, environment and account/role. Preserve its non-secret path and target binding for continuation by relevant skills; do not discover credentials in another worktree or Git's common directory. Keep access/session material and an optional refresh token until user-requested removal or authorized worktree cleanup. Stage completion, interruption, failed verification, access-token expiry and ordinary resource cleanup do not delete this file. This exception excludes passwords, OTPs, recovery codes and production credentials; their transient cleanup remains unchanged. Never include auth files in evidence, Git, handoffs or global caches.
+
+Before use, recheck the safe path, ownership, exclusion and secret permissions; validate the current snapshot and authenticated target state privately. Expiry is a use restriction, not a file-deletion trigger. Never inject known expired/rejected access material or treat an unknown lifetime as valid. Resolve readiness from the application's supported session/expiry check without inventing a lifetime. Before requesting replacement input, inspect existing safe session state and the repository/application-supported renewal path. Use its verified endpoint, client authentication, cookie/header/body and response contract; a refresh token alone is insufficient. Refresh only the same authorized identity/scope through the supported trusted transport, without credential-bearing redirects or logging.
+
+Use one renewal owner for the task; parent/child consumers serialize renewal through it and re-read after renewal. Reuse the project's existing client coordination when available; do not claim cross-process locking or create a global token manager. Privately validate renewal results and atomically update the same protected file, including a rotated refresh token, without overwriting concurrent user edits. A missing refresh field preserves the old value only when the application contract permits it. If a rotating refresh request has an ambiguous outcome, reconcile supported session state before reuse; never blindly retry an old refresh token or race another consumer.
+
+Request the smallest missing user input only when supported autonomous recovery is unavailable or proven to require fresh login (for example missing renewal material or a revoked/expired refresh grant). Network/HTTP failure alone does not prove that credentials are invalid: preserve the file, diagnose the failure, and report a blocked/unverifiable step if it cannot proceed. Confirm restored authentication independently before resuming. This is an active-task procedure, not background refresh or a guarantee that the host will resume after a session ends.
 '''
 ARTIFACT_REFERENCE = """# Artifact Paths
 
@@ -144,6 +156,7 @@ def sync_artifact_guards(root: Path = ROOT) -> None:
             reference = path.parent / 'references/artifact-paths.md'
             reference.parent.mkdir(exist_ok=True)
             reference.write_text(artifact_reference(path.parent.name), encoding='utf-8')
+            (reference.parent / 'authentication.md').write_text(AUTHENTICATION_REFERENCE, encoding='utf-8')
 
 
 def validate_artifact_guards(root: Path = ROOT) -> list[str]:
@@ -156,6 +169,9 @@ def validate_artifact_guards(root: Path = ROOT) -> list[str]:
         if path.parent.name not in NO_ARTIFACT_SKILLS:
             if not reference.is_file() or reference.read_text(encoding='utf-8') != artifact_reference(path.parent.name):
                 errors.append(f'{reference.relative_to(root)}: artifact reference must match canonical checks')
+            authentication = reference.parent / 'authentication.md'
+            if not authentication.is_file() or authentication.read_text(encoding='utf-8') != AUTHENTICATION_REFERENCE:
+                errors.append(f'{authentication.relative_to(root)}: authentication reference must match canonical checks')
         elif reference.exists():
             errors.append(f'{reference.relative_to(root)}: non-writing skill must not carry a writer reference')
     return errors

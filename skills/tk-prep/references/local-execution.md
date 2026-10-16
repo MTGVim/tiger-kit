@@ -100,9 +100,9 @@ it. A commit that only records already-verified content does not require replay 
 
 When a nested browser verifier returns successful after evidence before the parent has finished review/remediation,
 tell it that the verified path may still receive commits and preserve its replay metadata only until the parent establishes
-the final head. The verifier releases its run-owned browser/server and one-shot secret server after each capture. It may retain only its protected worktree-local, verified short-lived development access-token input until verified expiry under tk-browser-verify's authentication contract. If authentication
-expires before a required final-head replay, request new transient input through the verifier's ordinary authentication
-path and explain why the previous state can no longer satisfy that replay.
+the final head. The verifier releases its run-owned browser/server and one-shot secret server after each capture. It retains protected worktree-local non-production authentication input and uses supported renewal under tk-browser-verify's authentication contract; phase cleanup and access expiry do not delete that file. If authentication
+expires before a required final-head replay, use the verifier's supported renewal path first. Request only missing
+input when autonomous recovery is unavailable or fresh login is required, and explain the concrete limitation.
 
 For direct and SDD execution, preserve scope and UI literals, use the exact review range, run acceptance review, retain
 automated regression protection, and create only approved local commits. Invoke the planned verifier (`tk-browser-verify`

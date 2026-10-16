@@ -82,8 +82,8 @@ All required scenarios must be executable headlessly. Use this priority order:
 
 1. no authentication required
 2. reuse an existing safe, verifiable, run-owned authenticated session/profile
-3. reuse the same worktree's protected, verified short-lived access-token input under [environment](references/environment.md), checking expiry before each injection
-4. temporarily inject user-supplied short-lived token/session material through a repository/application-supported header, cookie, or storage bootstrap
+3. reuse the same worktree's protected authentication input and restore expired access through the application's supported renewal path under [environment](references/environment.md)
+4. request only missing token/session or renewal material when autonomous recovery is unavailable, then inject through the repository/application-supported bootstrap
 5. use username/password only for fully non-interactive login without OTP, MFA, SSO, CAPTCHA, passkey, or device approval
 
 Do not guess the authentication injection method. Tie it to repository/application evidence or a user-specified method and
@@ -92,10 +92,9 @@ verify the resulting authenticated state.
 Do not store usernames, passwords, tokens, OTPs, cookies, session values, recovery codes, or sensitive identities in
 the conversation, `.tigerkit/*.md`, prompts, logs, summaries, or child receipts.
 Record only non-sensitive facts such as `auth mode: token-headless` or `authenticated state established`.
-Only the protected worktree-local secret-input file may retain successfully verified short-lived
-development access tokens until their verified expiry under [environment](references/environment.md).
-Never retain production credentials or refresh tokens, or share token files between worktrees.
-Unknown/long-lived input is removed at task completion. Never print file contents.
+Retain authorized non-production access/session and optional refresh material only in the protected
+worktree-local input under [environment](references/environment.md); stage cleanup and expiry do not delete it.
+Never retain production credentials or share token files between worktrees. Never print file contents.
 
 If safe headless authentication cannot be established, do not fall back to a visible browser; return `Unverifiable`.
 
@@ -198,7 +197,7 @@ or account/permission changes. Never promote incomplete runtime evidence to `Pas
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-Create artifacts only when this skill's task authorizes them. Before any artifact write, temporary checkout/transport, or ignore setup, read [artifact paths](references/artifact-paths.md) and apply its Git exclusion, safe-path, and ownership checks. Default repository-owned output to `.tigerkit/`; honor explicit final destinations. Conversation-only work skips this reference and performs no file or ignore setup. Artifact handling grants no unrelated mutation or publication authority.
+Create artifacts only when this skill's task authorizes them. Before any artifact write, temporary checkout/transport, or ignore setup, read [artifact paths](references/artifact-paths.md) and apply its Git exclusion, safe-path, and ownership checks. Reuse identical content still in this context; hash-check uncertain copies and reread changed/lost content. Always repeat fresh safety checks. Default repository-owned output to `.tigerkit/`; honor explicit final destinations. Conversation-only work skips this reference and performs no file or ignore setup. Artifact handling grants no unrelated mutation or publication authority.
 
 <!-- tigerkit:result-summary -->
 ## Reader-facing Result Summary
@@ -237,7 +236,7 @@ For authorized user-editable temporary input files, follow the owning skill's Ar
 <!-- tigerkit:questions -->
 ## User Questions
 
-Before sending any user-owned clarification, choice, or approval, read [question rounds](references/questions.md) in this turn. Ask the whole answerable frontier in one plain-chat round; resolve facts first, preserve existing authorization, and skip question ceremony when no decision remains. Do not use question tools for ordinary TigerKit questions.
+Before sending any user-owned clarification, choice, or approval, read [question rounds](references/questions.md) in this turn, reusing identical content already read this turn and still in this context. Hash-check uncertain copies; another agent's read is insufficient. Ask the whole answerable frontier in one plain-chat round; resolve facts first, preserve existing authorization, and skip question ceremony when no decision remains. Do not use question tools for ordinary TigerKit questions.
 
 Minimum shape, even when already familiar:
 

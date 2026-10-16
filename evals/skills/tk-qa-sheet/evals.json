@@ -448,6 +448,21 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "qa-authoring-contract-without-renderer-search",
+      "path": "success",
+      "prompt": "`QA` `HTML`을 작성합니다. 데이터 블록, 탭 제목 변경 방법, 편집 가능한 체크/자동 체크와 메모 `selector`가 필요합니다.",
+      "expected_output": "`qa-sheet-data.md`의 계약 표로 `script#qa-data`와 `JSON` `title`, 허용된 `HTML` `title` 교체, 편집/자동 체크 및 메모 `selector`를 확인합니다. `renderer` 코드를 수정하지 않고 `helper`로 정적 목록을 재생성하며 단순 `selector` 존재를 검증 통과로 주장하지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`qa-sheet-data.md`의 계약 표로 `script#qa-data`와 `JSON` `title`, 허용된 `HTML` `title` 교체, 편집/자동 체크 및 메모 `selector`를 확인합니다. `renderer` 코드를 수정하지 않고 `helper`로 정적 목록을 재생성하며 단순 `selector` 존재를 검증 통과로 주장하지 않습니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

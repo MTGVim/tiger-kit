@@ -69,47 +69,49 @@ non-interactive login path. Do not capture secret values; verify the authenticat
 target state.
 
 There is no browser bypass for interactive login, OTP, MFA, SSO, CAPTCHA, passkey, or
-device approval. Request a short-lived token/session through the temporary secret-input
-channel. State the exact target environment and repository-verified login origin the token
-must come from; do not substitute another environment or infer it from token validity alone.
-If that origin is unknown, resolve it before requesting the token. If no approved state
-can be established, return `Unverifiable` before a product mutation.
+device approval. First recover existing scoped authentication through the supported application
+session/refresh path. Request missing token/session or renewal input only when recovery is
+unavailable or fresh login is required. State the exact target environment and repository-verified
+login origin; do not infer either from token validity. If that origin is unknown, resolve it
+before requesting input. If no approved state can be established, return `Unverifiable` before
+product mutation.
 
-## Worktree-local short-lived token reuse
+## Worktree-local authentication reuse and renewal
 
-When token authentication is required, establish authentication readiness once during prep
-before the pre-edit baseline. Public targets and existing safe sessions need no token input. Reuse the
-same worktree's run-owned secret-input file for baseline, after and revision captures while
-its short-lived access token remains valid. Keep it only for the exact verified application,
-login origin, environment and account/role; never discover or share credentials through Git's
-common directory or another worktree. No cache consent, scope label, claim or lease is needed.
+Establish readiness during prep before baseline. Public targets and safe existing sessions need
+no token input. Apply [worktree-local authentication](authentication.md)'s contract for every related consumer. Keep the same protected
+`.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json` across baseline, after and revisions,
+including access expiry, capture failure and interruption; preserve the non-secret path/target
+binding in active-task handoffs. Reuse is limited to the verified application/login origin,
+environment and account/role in this task/worktree. Remove it on explicit user direction or
+authorized worktree cleanup, not ordinary phase cleanup. Keep directory `0700` and file `0600`;
+recheck Git exclusion, ownership, nonsymlink regular-file status and single hard link before use.
 
-Keep the existing ignored `.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json`
-with directory `0700` and file `0600`. Before each injection, recheck exclusion, ownership,
-nonsymlink regular-file status and single hard link, and validate/consume the same snapshot
-without exposing values. Use a finite numeric JWT `exp` to reject expired input before use;
-decode privately, never print the token or claims. Decoding is only an expiry check, not
-signature verification or proof of access. Establish from the application contract that this
-is a short-lived access token, and check its session invalidation rules; neither a far-future
-`exp` nor a valid timestamp authorizes retention or proves the session is still valid.
-Use a documented expiry for non-JWT access tokens; do not invent a lifetime.
+Privately check a finite numeric JWT `exp` or documented non-JWT expiry before injection;
+decoding is not signature verification or proof of access. Never inject expired/rejected access
+material. Unknown lifetime requires the application's supported readiness check, not an invented
+expiry. An authentication rejection does not establish that a separate refresh grant is invalid.
 
-Stop the run-owned loopback secret server immediately after each injection and independently
-verify authenticated target state. Retain a successfully authenticated short-lived development
-access token until its verified expiry, including between baseline and after. An unexpired
-file avoids another user prompt; a proven authentication rejection invalidates it and requires
-new input. An arbitrary HTTP/network failure alone does not prove invalidation. Delete expired
-or invalidated input before replacing it; do not overwrite pending user input. Enforce expiry
-at the next read and delete then; there is no background deletion daemon or promise of erasure
-at the exact expiry time. The user may delete the file earlier. Preserve only its non-secret
-path and target binding for the active task, never token values in parent/child receipts.
+Before asking again, inspect the existing application auth client and supported refresh contract:
+trusted endpoint, required client authentication/header/cookie/body, response fields and rotation.
+Use the existing authorized renewal route; collect a refresh token only if that route needs one.
+Keep refresh material in the protected file/approved secret consumer, never page-visible storage
+or the bootstrap server; inject only the app-required access/session fields. If the app itself
+requires browser-managed refresh, use its documented isolated bootstrap rather than exposing
+extra fields. Serialize renewal through one task owner, validate and atomically save rotated
+values without overwriting concurrent edits, then re-read and independently verify target auth.
+If a rotating request's result is uncertain, reconcile supported state before retrying. Network
+failure alone does not prove invalidation or justify deleting the file/requesting new credentials.
+If restoration is unavailable, report the concrete limitation and request only necessary input.
+Do not replay a product write automatically after an auth error; first reconcile its outcome
+under the owning mutation authority.
 
-Never retain production credentials or refresh tokens. Credentials with unknown or long
-lifetimes use transient injection and are deleted no later than task completion, cancellation,
-failure or exception. Failure before successful authentication removes the supplied credential;
-an ordinary input handoff preserves the pending file. Keep only the already verified,
-unexpired short-lived development access-token file across successful phase cleanup.
-Project-specific refresh-token/API automation remains out of scope.
+Stop the run-owned loopback secret server immediately after every injection; close owned
+browser/dev-server resources after capture. Authentication-file retention never keeps processes
+or a user browser profile alive. Never print tokens/claims or store them in evidence, Git,
+parent/child receipts, another worktree or a global cache. Production credentials, passwords,
+OTPs and recovery codes keep their transient lifecycle. This procedure creates no background
+refresher or cross-process lock and cannot guarantee continuation after a host session ends.
 
 When no safer temporary secret-input channel exists, first prove that
 `git ls-files -- .tigerkit/` returns no tracked paths and

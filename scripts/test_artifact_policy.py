@@ -189,6 +189,13 @@ class InstalledArtifactGuardTests(unittest.TestCase):
             reference.write_text(original.replace('Only exit 1', 'Any exit'))
             self.assertTrue(policy.validate_artifact_guards(root))
             reference.write_text(original)
+            authentication = root / 'skills/tk-research/references/authentication.md'
+            self.assertTrue(authentication.is_file())
+            auth_original = authentication.read_text()
+            authentication.unlink()
+            self.assertTrue(policy.validate_artifact_guards(root))
+            authentication.write_text(auth_original)
+            self.assertEqual(policy.validate_artifact_guards(root), [])
             retro_reference = root / 'skills/tk-retro/references/artifact-paths.md'
             retro_reference.write_text((policy.ARTIFACT_REFERENCE + policy.USER_INPUT_REFERENCE).replace('Only exit 1', 'Any exit'))
             self.assertTrue(policy.validate_artifact_guards(root))

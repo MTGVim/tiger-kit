@@ -5,6 +5,11 @@ contract, not an automation runner. [Provider registry](providers.json) owns ide
 capabilities, detection hints and canonical usage URLs; [provider knowledge](provider-knowledge.md)
 owns integration limits. Registry metadata never proves current availability or safe delivery.
 
+Read only the selected provider's knowledge section. `notes` uses a Markdown heading slug,
+not a literal search string: for `#browser-cdp`, locate `## Browser CDP` and read through
+the next level-two heading. Enumerate headings once if needed; do not repeatedly grep the
+hyphenated slug in prose or reload the whole file after a literal-search miss.
+
 ## Discover and select
 
 1. Determine the scope and required capabilities from the actual criterion. Browser verification

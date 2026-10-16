@@ -43,7 +43,7 @@ Sources and fixed revisions are recorded in `references/sources.md`; original no
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-Create artifacts only when this skill's task authorizes them. Before any artifact write, temporary checkout/transport, or ignore setup, read [artifact paths](references/artifact-paths.md) and apply its Git exclusion, safe-path, and ownership checks. Default repository-owned output to `.tigerkit/`; honor explicit final destinations. Conversation-only work skips this reference and performs no file or ignore setup. Artifact handling grants no unrelated mutation or publication authority.
+Create artifacts only when this skill's task authorizes them. Before any artifact write, temporary checkout/transport, or ignore setup, read [artifact paths](references/artifact-paths.md) and apply its Git exclusion, safe-path, and ownership checks. Reuse identical content still in this context; hash-check uncertain copies and reread changed/lost content. Always repeat fresh safety checks. Default repository-owned output to `.tigerkit/`; honor explicit final destinations. Conversation-only work skips this reference and performs no file or ignore setup. Artifact handling grants no unrelated mutation or publication authority.
 
 <!-- tigerkit:result-summary -->
 ## Reader-facing Result Summary
@@ -82,7 +82,7 @@ For authorized user-editable temporary input files, follow the owning skill's Ar
 <!-- tigerkit:questions -->
 ## User Questions
 
-Before sending any user-owned clarification, choice, or approval, read [question rounds](references/questions.md) in this turn. Ask the whole answerable frontier in one plain-chat round; resolve facts first, preserve existing authorization, and skip question ceremony when no decision remains. Do not use question tools for ordinary TigerKit questions.
+Before sending any user-owned clarification, choice, or approval, read [question rounds](references/questions.md) in this turn, reusing identical content already read this turn and still in this context. Hash-check uncertain copies; another agent's read is insufficient. Ask the whole answerable frontier in one plain-chat round; resolve facts first, preserve existing authorization, and skip question ceremony when no decision remains. Do not use question tools for ordinary TigerKit questions.
 
 Minimum shape, even when already familiar:
 

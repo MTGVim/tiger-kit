@@ -220,6 +220,12 @@ Do not merge, close, tag, release, plain force push, or resolve unrelated thread
 
 For an exact PR handed off by an active `tk-pr-sweep`, do not ask again about material decisions already approved by the parent.
 The child confirms the PR fresh state and parent-approved scope, then proceeds immediately when they match.
+Include the applicable execution/authority contract text, source revision, exact PR/head, approved
+actions, workspace provenance and pending evidence in the handoff. A fresh child must receive
+the actual applicable rules, not an "already read" claim. A fork may reuse rules actually inherited
+and still present at the same revision; otherwise read the missing owning sections. A leaf with
+a complete task-local contract need not reload the whole controller SKILL.md merely for context;
+this never waives required conditional references, fresh-state checks or leaf/authority boundaries.
 If the parent did not approve the rebase route and its bounded history-rewrite publication, return the newly discovered conflict or base-drift decision to the parent instead of adding it to the approved work.
 
 Reply-only handoffs need no workspace solely for isolation. An explicitly approved index-only handoff uses the exact
@@ -249,7 +255,7 @@ Use exactly one final state matching the actual result: `Status: Pass | Pending 
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-Create artifacts only when this skill's task authorizes them. Before any artifact write, temporary checkout/transport, or ignore setup, read [artifact paths](references/artifact-paths.md) and apply its Git exclusion, safe-path, and ownership checks. Default repository-owned output to `.tigerkit/`; honor explicit final destinations. Conversation-only work skips this reference and performs no file or ignore setup. Artifact handling grants no unrelated mutation or publication authority.
+Create artifacts only when this skill's task authorizes them. Before any artifact write, temporary checkout/transport, or ignore setup, read [artifact paths](references/artifact-paths.md) and apply its Git exclusion, safe-path, and ownership checks. Reuse identical content still in this context; hash-check uncertain copies and reread changed/lost content. Always repeat fresh safety checks. Default repository-owned output to `.tigerkit/`; honor explicit final destinations. Conversation-only work skips this reference and performs no file or ignore setup. Artifact handling grants no unrelated mutation or publication authority.
 
 <!-- tigerkit:result-summary -->
 ## Reader-facing Result Summary
@@ -288,7 +294,7 @@ For authorized user-editable temporary input files, follow the owning skill's Ar
 <!-- tigerkit:questions -->
 ## User Questions
 
-Before sending any user-owned clarification, choice, or approval, read [question rounds](references/questions.md) in this turn. Ask the whole answerable frontier in one plain-chat round; resolve facts first, preserve existing authorization, and skip question ceremony when no decision remains. Do not use question tools for ordinary TigerKit questions.
+Before sending any user-owned clarification, choice, or approval, read [question rounds](references/questions.md) in this turn, reusing identical content already read this turn and still in this context. Hash-check uncertain copies; another agent's read is insufficient. Ask the whole answerable frontier in one plain-chat round; resolve facts first, preserve existing authorization, and skip question ceremony when no decision remains. Do not use question tools for ordinary TigerKit questions.
 
 Minimum shape, even when already familiar:
 

@@ -4,6 +4,29 @@ Read for the default HTML sheet or an explicitly requested HTML sheet. Copy the 
 `script#qa-data` JSON, then use the bundled helper to regenerate its static reading
 inventory from that data. The final file needs no external assets or runtime generator.
 
+## Authoring and inspection contract
+
+Use this map without searching the template implementation. Keep its runtime renderer,
+styles and control wiring unchanged. These selectors inspect the generated sheet, not the
+product being checked; a match alone does not prove a passing runtime result.
+
+| Purpose | Contract or selector |
+| --- | --- |
+| Editable data | Replace only the JSON text in `script#qa-data` using a serializer and the escaping rule below. |
+| Browser tab title | Set JSON `title`; runtime sets `document.title` and `#title` from it. The static HTML `<title>` may also match that plain-text title with HTML escaping; do not edit renderer code. |
+| No-JS inventory | Regenerate `noscript#qa-static` with `scripts/render_static_inventory.py`; do not hand-edit it. |
+| Rendered heading and inventory | `#title`, `#main`; compare rendered text and row coverage with the final JSON. |
+| Editable checks | `#main li.check input[type="checkbox"]:not(:disabled)`; generated `data-id` values own persistence identity. |
+| Automated checks | `#main input[data-auto="true"]`; require checked and disabled state, including after reset. |
+| Unverified automatic criteria | `#main li.verification-gap`; require visible direction text and no checkbox. |
+| Filter and reset | `#onlyOpen`, `#reset`; inspect behavior as required below. |
+| Notes and save status | `#notes`, `#saved`; reload to test restoration rather than trusting a status label. |
+| Count and storage failure | `#count`, `#storage-warning`; verify counts against data and warning behavior when storage is denied. |
+
+Reuse these selectors as lookup points, not a new mandatory checklist; the existing self-check
+below owns required scenarios. A selector mismatch requires inspecting the installed template
+version rather than inventing a replacement contract.
+
 ## Data
 
 ```json
