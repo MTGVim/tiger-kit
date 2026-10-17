@@ -77,9 +77,9 @@ visible neighbor changed. When deletion or movement rewires relationships, use s
 views when an overlay would obscure which edge belongs to which version. Prefer this bounded
 neighborhood over a whole-repository dependency map.
 
-Write one complete explanation from the verified change model. Read the section-level routing
-and technique reference through [HTML output](references/html-output.md); choose one suitable
-technique per section and avoid repeating the same content in modes or tabs. Use a clear
+Write one complete explanation from the verified change model. Follow [HTML output](references/html-output.md)
+for HTML and consult its presentation routing only when a supporting format is unclear. Prose and
+tables are valid; avoid repeating the same content in modes or tabs. Use a clear
 conversational voice by default. When the user asks for simpler wording, adapt the same document
 while preserving exact source anchors, verification state, code, numeric facts, uncertainty and
 limitations. Honor an explicit user preference when it fits the section content.

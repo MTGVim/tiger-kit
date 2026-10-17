@@ -23,6 +23,21 @@
           "skills/tk-research/references/explanation-routing.md"
         ],
         "max_bytes": 46000
+      },
+      "tk-explain-html": {
+        "before_paths": [
+          "skills/tk-explain/SKILL.md",
+          "skills/tk-explain/references/clear-writing.md",
+          "skills/tk-explain/references/html-output.md",
+          "skills/tk-explain/references/explanation-routing.md",
+          "skills/tk-explain/references/artifact-paths.md"
+        ],
+        "paths": [
+          "skills/tk-explain/SKILL.md",
+          "skills/tk-explain/references/html-output.md",
+          "skills/tk-explain/references/artifact-paths.md"
+        ],
+        "max_bytes": 55000
       }
     }
   },

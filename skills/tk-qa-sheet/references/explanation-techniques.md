@@ -24,7 +24,10 @@ evidence, and document-shell rules remain in html-output.md.
 ## 04. Zine Comic
 - Use when an idea can be divided into a small number of visual panels.
 - Give each panel one idea and keep dialogue to a few lines. Use 1px panel rules.
-- Avoid long sequences; more than six panels can be hard to scan.
+- Let panel count and size follow the explanation. Split where a question, event or state changes;
+  keep longer sequences navigable without shrinking meaning or lettering into a preset grid.
+- If an image is unavailable, preserve the explanatory relationships with accessible text, tables
+  or HTML/SVG shapes; dialogue alone cannot replace information carried by the drawing.
 
 ## 05. Scrollytelling
 - Use when a process changes state in a meaningful order.

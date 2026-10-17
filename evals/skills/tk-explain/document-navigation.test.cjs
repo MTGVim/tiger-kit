@@ -18,12 +18,18 @@ async function geometry(page, width) {
     const content = document.querySelector('main').getBoundingClientRect();
     const bar = document.querySelector('.ht-topbar').getBoundingClientRect();
     const theme = document.querySelector('[data-ht-theme-control]').getBoundingClientRect();
+    const title = document.querySelector('.ht-topbar-title').getBoundingClientRect();
+    const themeVisible = getComputedStyle(document.querySelector('[data-ht-theme-control]')).display !== 'none';
     return {width: innerWidth, scrollWidth: document.documentElement.scrollWidth,
       nav: {left: nav.left, right: nav.right, top: nav.top, bottom: nav.bottom},
       controls: {left: controls.left, right: controls.right, top: controls.top, bottom: controls.bottom},
       panel: {left: panel.left, right: panel.right, top: panel.top, bottom: panel.bottom},
       contentLeft: content.left, height: innerHeight,
-      themeInBar: theme.top >= bar.top && theme.bottom <= bar.bottom};
+      themeInBar: theme.top >= bar.top && theme.bottom <= bar.bottom,
+      headerFits: title.width > 0 && title.left >= bar.left && title.right <= bar.right &&
+        (!themeVisible || (theme.width > 0 && theme.left >= bar.left && theme.right <= bar.right &&
+         (title.right <= theme.left || theme.right <= title.left ||
+          title.bottom <= theme.top || theme.bottom <= title.top)))};
   });
   assert.equal(measured.width, width);
   assert.ok(measured.scrollWidth <= width, JSON.stringify(measured));
@@ -32,7 +38,7 @@ async function geometry(page, width) {
   assert.ok(measured.controls.left >= 0 && measured.controls.right <= width && measured.controls.top >= 0 && measured.controls.bottom <= measured.height);
   if (width > 960) assert.ok(measured.nav.right < measured.contentLeft, JSON.stringify(measured));
   if (width <= 960) assert.ok(measured.panel.left >= 0 && measured.panel.right <= width && measured.panel.top >= 0 && measured.panel.bottom <= measured.height);
-  if (width >= 1280) assert.ok(measured.themeInBar);
+  if (width > 960) { assert.ok(measured.themeInBar); assert.ok(measured.headerFits, JSON.stringify(measured)); }
   return measured;
 }
 async function atHash(page, id) {
@@ -49,7 +55,7 @@ async function atHash(page, id) {
 (async () => {
   const browser = await chromium.launch({headless: true, executablePath});
   try {
-    for (const width of [1280, 390, 500]) for (const colorScheme of ['light', 'dark']) {
+    for (const width of [1280, 1084, 390, 500]) for (const colorScheme of ['light', 'dark']) {
       const context = await browser.newContext({viewport: {width, height: 900}, deviceScaleFactor: 1, locale: 'ko-KR', colorScheme});
       const page = await context.newPage(); const errors = [], requests = [];
       page.on('pageerror', error => errors.push(error.message));

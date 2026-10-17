@@ -107,11 +107,10 @@ one-off theme tokens, or substitute class names. Add scoped styles for content f
 leave shell layout to the shared component rules. The theme control's `data-ht-theme-control`
 attribute alone is insufficient because it enables the script but does not apply the shared styling.
 
-A document uses one continuous presentation. Select one explanation technique for each section by
-its content, using [section-level routing](explanation-routing.md). Read only the selected technique
-entries in [explanation techniques](explanation-techniques.md). Do not render whole-document modes,
-tabs or duplicate versions of the same content. A technique preference explicitly requested by the
-user takes precedence only when it fits the section; otherwise choose by content.
+A document uses one continuous presentation. Prose and semantic tables are valid without a named
+technique. Consult [presentation routing](explanation-routing.md) when a format choice is unclear;
+read only the relevant entries in [explanation techniques](explanation-techniques.md). Avoid duplicate
+versions in modes or hidden tabs. Honor an explicit technique preference when it fits the content.
 
 ## Citations and references
 
@@ -145,8 +144,10 @@ navigation rules without changing the behavior of their test/checklist interface
 
 Rewrite source prose for the reader instead of dumping state, findings or logs. Preserve exact
 code, identifiers and necessary quotations as marked evidence, with context. Before finalizing
-reader-facing prose, headings, labels or captions, read and apply the calling package's
-`clear-writing.md`, synchronized from `tk-rewrite`. Start each section with its conclusion.
+reader-facing prose, headings, labels or captions, connect concrete subjects, actions, conditions
+and consequences while preserving claim-evidence bindings. Use the calling skill's writing procedure;
+read its `clear-writing.md` for editing or a specific ambiguity rather than an unconditional extra pass.
+Let each section's opening establish its subject and purpose without repeating an answer formula.
 Use content-specific headings that name the subject, decision, evidence or limitation; do not
 narrate the assistant's reading order with generic headings such as `먼저 볼 것`, `먼저 확인할 것`
 or `처음 읽는 분께` when the actual topic can be named. Keep table cells to about one sentence
@@ -216,11 +217,10 @@ reading or controls.
 
 ## Section-level explanation techniques
 
-For document-like HTML, create one coherent document from verified content and sources. Read
-[section-level routing](explanation-routing.md) before choosing formats, then read only the matching
-entries from [explanation techniques](explanation-techniques.md). Choose one primary technique per
-section. Use a different technique later only when that section serves a different purpose or has a
-different content type. Each section must add distinct information instead of restating another.
+For document-like HTML, create one coherent document from verified content and sources. Choose
+supporting presentation only where it improves understanding. Use [presentation routing](explanation-routing.md)
+for an uncertain choice and selected [techniques](explanation-techniques.md) for implementation detail.
+Each section adds distinct information; prose and tables need no technique assignment.
 
 Use a clear, conversational voice throughout the document. Short reader-and-author turns and chat
 bubbles can explain a multi-actor exchange when the section benefits from them. Do not write a script
@@ -256,103 +256,10 @@ flows, diagrams, chat turns, KPI groups or other figure-like containers in
 component's incidental margins: mixed component types must not visually touch. Keep the spacing
 responsive and avoid adding empty decorative containers.
 
-## Data visualization
+## Conditional figure authoring
 
-When numeric data or an evidence-backed relationship graph benefits from a visual, read
-[chart design](chart-design.md) and inspect the matching section of the standalone
-[chart examples](../assets/chart-examples.html). Adapt one relevant example and its scoped
-styles/interaction, not the whole gallery. Keep the final HTML self-contained; do not require
-the installed package, a CDN, or a chart runtime to remain available to its reader.
-
-Choose form before color: one number uses a stat tile; observed-versus-baseline uses one emphasis
-color and gray baseline; more than seven categories uses a table. Use a fixed categorical order
-without cycling colors, one hue for sequential values, and two hues with a gray midpoint for
-diverging values. Status colors identify status only. Use one axis; split different units into
-small multiples. Use text tokens for labels, not series colors. Two or more series need a legend;
-up to four also need direct labels. Every chart includes a value-table alternative, a hover tooltip
-(at least SVG `<title>`) and non-color cues. Add one sentence explaining how to read each chart,
-including units and the comparison's meaning. Check contrast and color-vision-deficiency distinction;
-use an appropriately licensed tool or independently authored check, never copy a proprietary bundle.
-Do not invent charts, measurements or a passing palette check when the content/evidence lacks them.
-
-## Render-safe authoring
-
-Apply these rules before the first render check so common layout defects are prevented instead of
-discovered one by one.
-
-For compact criteria/finding groups, use a semantic list with `role="list"` and the opt-in
-`.ht-info-list` styles inside one `.ht-card` container. Each `.ht-info-row` contains a
-decorative `.ht-info-icon` (`aria-hidden="true"`, inline SVG or text) and one shrinkable
-content block. Keep the item number/label, status meaning, judgment, basis and action as
-visible text in DOM reading order. Use ordered lists or explicit ASCII numbering only when
-order matters. Icons and CSS removal must not remove meaning. Use a short heading and body
-in `.ht-callout` for an actual note/limitation; a static callout is not a live `alert`.
-
-For a diagnostic summary, use `.ht-kpis` on a `<dl>`, with one `<div><dt>Label and unit</dt>
-<dd>Verified value</dd></div>` per supported metric. Auto-wrap on narrow screens. Define the
-source window/data nature visibly and calculate each value from the same records that feed
-the finding list; never fill absent data with zero. Keep status text `.ht-status` optional,
-with an explicit meaning and evidence. Reuse normal numbered citations beside the relevant
-judgment. Separate rows with spacing/dividers rather than mandatory independent cards or
-large badges; do not alter checklist/prototype interaction UI.
-
-Verify four criteria, mixed-language multiline labels, long links and status text at desktop
-and mobile in all themes. Check heading/list/definition-list semantics and accessible text,
-keyboard links, reduced motion, no-JS and icon/CSS removal. For report fixtures, mark example
-data explicitly; compare KPI totals/statuses against source records, and exercise empty and
-partial data plus a prose/table negative case. A DOM accessibility check is not a claim that
-every screen reader was executed.
-
-For a card flow selected under the document skill's visual grammar, use a labeled
-`<figure>` with an ordered `.ht-flow` list. Each list item is one stage; group its
-outputs in an unordered `.ht-flow-results` list of `.ht-card` elements. Keep DOM
-order equal to reading order; use real headings and explicit relationship text in
-`.ht-flow-link`. A decorative arrow is `aria-hidden`; it does not supply a missing
-relationship. `.ht-flow-focus` can emphasize the central process with the accent
-token. All classes are opt-in and reuse the common theme, without a renderer or JS.
-
-Adapt this minimal structure, naming every input, result and supported relationship:
-
-```html
-<figure aria-labelledby="flow-title">
-  <figcaption id="flow-title">Input, processing and simultaneous results</figcaption>
-  <ol class="ht-flow">
-    <li><div class="ht-card"><h3>Input set</h3><p>Verified input scope.</p></div>
-      <p class="ht-flow-link"><span aria-hidden="true">↓</span> Inputs enter processing.</p></li>
-    <li><div class="ht-card ht-flow-focus"><h3>Central process</h3><p>What changes.</p></div>
-      <p class="ht-flow-link"><span aria-hidden="true">↓</span> Produces both results.</p></li>
-    <li><h3>Simultaneous results</h3><ul class="ht-flow-results">
-      <li class="ht-card"><h4>Result A</h4><p>Its distinct purpose.</p></li>
-      <li class="ht-card"><h4>Result B</h4><p>Its distinct purpose.</p></li>
-    </ul><p class="ht-flow-link"><span aria-hidden="true">↓</span> Both results support reuse.</p></li>
-    <li class="ht-card"><h3>Reuse</h3><p>The supported downstream use.</p></li>
-  </ol>
-</figure>
-```
-
-Use two output columns on desktop and one below 600px; one output spans the group
-without an empty slot. Let cards grow with their text, use shrinkable tracks and
-wrap long Korean/English labels. Do not use fixed card heights, positional arrows
-between columns or color alone to distinguish stages/choices. Verify 1, 2 and 4
-results, long labels, simultaneous/alternative wording, DOM order, no-JS reading,
-keyboard targets and light/dark/system/reduced-motion at the required viewports.
-Check card text and relationship labels for overlap/clipping as well as page width.
-
-- Grid or flex tracks that can contain `pre`, tables, long code, or unbounded prose use
-  `minmax(0, 1fr)` and the child uses `min-width: 0`; do not use page-level clipping or
-  `overflow-x: hidden` to hide an overflow defect.
-- Size inline SVG for the narrowest required viewport. The smallest readable label must remain at
-  least 11 CSS px after scaling (`font-size * rendered-width / viewBox-width`). If a before/after
-  or multi-panel figure cannot meet that threshold, use one SVG per panel and stack panels on narrow
-  screens instead of shrinking the text.
-- Short identifiers in table cells, such as commit SHAs, IDs, and status tokens, stay on one line.
-  Use `.ht-token` or an equivalent local rule for them. Long paths and URLs may wrap or use their
-  own bounded horizontal scroller.
-- Text using `white-space: nowrap` in a header or toolbar must have a proven bounded width or
-  switch back to wrapping at the mobile breakpoint. A shared utility class must not accidentally
-  force a longer environment label or title to stay on one line.
-- Programmatic scrolling performed only to position a verification capture uses instant behavior.
-  Smooth scrolling must not leave the intended target outside the captured viewport.
+For charts, SVG, card flows or diagnostic figures, read [figure authoring](html-figures.md).
+Keep ordinary prose and tables on the shared semantic components without loading figure details.
 
 ## Static checks and render verification
 
@@ -382,7 +289,13 @@ disclosure, and their spacing against the content in light and dark themes. Keep
 prototype UI and QA-sheet interactions under their owning skill. A document that meets its static
 checks but does not meet a render trigger does not need a browser run solely to repeat those checks.
 
-Present verification outcomes in a visible lower-document summary before references. Give each
+Keep material limitations beside the claims they qualify and keep sources findable. Return build,
+static and browser checks in the delivery receipt or evidence attachment, separately from the
+author's reading judgment and any observed reader response. Render success does not prove reader
+understanding. Do not add a reader-facing QA section solely to narrate production work.
+
+When the requested artifact is an audit/test report or its owning report template explicitly
+requires verification outcomes, retain that report's visible lower-document summary before references. Give each
 check its own paragraph, list item, or term/description pair, with a bold label (`<strong>` or a
 bold `<dt>`), explicit outcome and supporting evidence or limitation. Keep completed static checks
 separate from unperformed, failed or unverifiable screen checks; static success cannot establish
@@ -407,5 +320,9 @@ of readability; unreadable output is a functional defect and cannot pass the aff
 
 For document-like artifacts, verify that the theme control is inside the top bar and visible in
 the initial viewport. On desktop, its `getBoundingClientRect().top` must fall within the top bar's
-vertical bounds. Check that the title still identifies the subject without ticket keys or generic
+vertical bounds. Inspect the title and control together at the affected desktop breakpoint:
+both must have positive rendered width, stay inside the header and not overlap. Page-level overflow
+checks alone cannot establish this. Check text for replacement characters or suspicious runs of
+question marks against its source; warn and inspect rather than banning or replacing normal question
+sentences and code operators. Check that the title still identifies the subject without ticket keys or generic
 labels, and that any required term list follows the opening conclusion, expanded with working links.

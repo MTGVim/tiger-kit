@@ -69,6 +69,7 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         research.write_text("Primary evidence\n", encoding="utf-8")
         self.clear_target.parent.mkdir(parents=True, exist_ok=True)
         (self.clear_target.parent / "html-output.md").write_text("Offline native navigation\n", encoding="utf-8")
+        (self.clear_target.parent / "html-figures.md").write_text("Conditional figure authoring\n", encoding="utf-8")
         (self.clear_target.parent / "visual-grammar.md").write_text("Question-led representation\n", encoding="utf-8")
         discovery = self.root / "skills/tk-audit/references/repository-context.md"
         discovery.parent.mkdir(parents=True, exist_ok=True)

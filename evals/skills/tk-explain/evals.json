@@ -877,6 +877,63 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "causal-continuity-when-simplifying",
+      "path": "success",
+      "prompt": "$tk-explain 가상 상품 서비스의 캐시 TTL을 `ttl.html`로 설명해줘. `A`는 9시 59분에 10,000원을 캐시했고 TTL은 5분이다. 원본은 10시에 12,000원으로 바뀐다. 10시 1분에 `A`가 무엇을 보는지, TTL이 1분이면 왜 달라지는지 쉽게 설명해줘. 연습 문제는 생략해줘.",
+      "expected_output": "조건·원인·결과가 연결된 단일 HTML과 분리된 실행 확인 결과",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "캐시 갱신·만료 정책 가정을 명시하고, 동일 예시에서 5분 TTL과 1분 TTL의 만료 시각 및 조회 결과 차이가 생기는 이유를 본문으로 연결한다. 단순화해도 원본 변경 시각·조회 시각·필수 조건을 유지한다. 화면 검사 통과를 독자 이해 확인이라고 주장하지 않으며 제작 QA 기록만을 위한 본문 절을 추가하지 않는다."
+        },
+        {
+          "type": "path_exists",
+          "path": "ttl.html"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "content-led-comic-fallback",
+      "path": "success",
+      "prompt": "$tk-explain 캐시 미스부터 갱신, 만료, 재조회까지 아홉 번의 상태 전환을 만화로 설명해줘. 이미지 기능이 없으면 오프라인 HTML 도형으로 진행해줘. `comic-cache.html`에 저장해줘.",
+      "expected_output": "상태 전환과 조건을 보존한 만화 또는 의미를 보존한 도형 폴백",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "컷 수를 6개에 맞추려고 상태나 조건을 삭제하지 않는다. 이미지가 없을 때 대사만 나열하지 않고 필요한 데이터·상태·관계를 접근 가능한 HTML/SVG 또는 표로 유지한다. 실제 정보와 가상 예시를 구분한다."
+        },
+        {
+          "type": "path_exists",
+          "path": "comic-cache.html"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "plain-explanation-conditional-reference-load",
+      "path": "success",
+      "prompt": "$tk-explain HTTP 캐시의 `fresh`와 `stale`을 비유나 차트 없이 짧은 본문과 표로 `plain-cache.html`에 설명해줘. 연습 문제는 생략해줘.",
+      "expected_output": "필요한 설명과 근거를 보존한 본문·표 중심 HTML",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "형식을 채우기 위한 질문·요약·반응을 반복하지 않는다. HTML·경로 안전 계약을 유지하고 필요한 경우에만 글쓰기 상세·기법·그림 참조를 읽는다. HTML 본문에 화면 검사 과정만을 위한 QA 절을 추가하지 않는다. 필요한 원인 설명이나 한계를 줄여서 길이만 맞추지 않는다."
+        },
+        {
+          "type": "path_exists",
+          "path": "plain-cache.html"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "renamed_from": {

@@ -91,7 +91,7 @@ class HTMLPolicyTest(unittest.TestCase):
             'Do not replace or override their shell geometry',
             'data-ht-theme-control`\nattribute alone is insufficient',
             'create one coherent document from verified content and sources',
-            'Choose one primary technique per section',
+            'prose and tables need no technique assignment',
             'Avoid decorative thick borders; visible keyboard focus outlines are the exception',
             'Preserve every template `<script>` block exactly',
             'do not use `@import`, `url(...)`, remote fonts, or `image-set(...)`',
@@ -105,7 +105,7 @@ class HTMLPolicyTest(unittest.TestCase):
         teach = (ROOT / 'skills/tk-teach/SKILL.md').read_text()
         normalized_explain = ' '.join(explain.split())
         normalized_diff = ' '.join(diff.split())
-        self.assertIn('one primary technique per section', ' '.join(text.split()))
+        self.assertIn('prose and tables need no technique assignment', ' '.join(text.split()))
         self.assertIn('explanation-routing.md', text)
         self.assertIn('avoid repeating the same content', normalized_explain)
         self.assertIn('avoid repeating the same content', normalized_diff)
@@ -263,6 +263,7 @@ class HTMLPolicyTest(unittest.TestCase):
 
     def test_shared_contract_contains_render_safe_authoring_rules(self):
         text = (ROOT / 'skills/tk-explain/references/html-output.md').read_text()
+        text += (ROOT / 'skills/tk-explain/references/html-figures.md').read_text()
         self.assertIn('## Render-safe authoring', text)
         self.assertIn('11 CSS px after scaling', text)
         self.assertIn('emulated mobile CSS viewport width matching `innerWidth`', text)
