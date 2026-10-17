@@ -1,6 +1,6 @@
 # Plain-chat Question Rounds
 
-Apply only when a question genuinely belongs to the user; this reference does not add an interview,
+Apply when a prerequisite fails or a question genuinely belongs to the user; this reference adds no interview,
 shared-understanding gate, or new authority to its caller.
 
 1. Investigate safely answerable facts from current evidence instead of asking for them.
@@ -10,6 +10,14 @@ shared-understanding gate, or new authority to its caller.
    questions until their prerequisites settle; impose no fixed count or round size.
 4. Include a recommendation and reason when supported. Wait for user answers, update the decisions
    and evidence, then recompute the frontier. An empty frontier needs no invented question ceremony.
+
+## Unmet prerequisites
+
+Hold only the affected action; continue independent authorized work. Investigate safe facts and apply remedies already covered by the active authorization. This reference grants no installation, repository initialization, permission expansion, safety bypass or publication authority.
+
+When recovery needs a user choice or additional authority, present available concrete options with their exact target, proposed change and impact, and request only the missing decision or permission using the question format below. For a missing tool, inspect available supported alternatives first; request installation when needed instead of installing automatically or silently substituting a different deliverable. For insufficient permissions, identify the required target and access; do not bypass restrictions. If no safe remedy is available, report the specific blocked action and smallest missing input.
+
+After approval, recheck the prerequisite and resume the original requested work through completion, including its file deliverable. Setup alone or a chat explanation does not complete a requested artifact. Reuse an existing approval for the same remedy and target; recheck state without asking again. Repeated requests or frustration are not permission to bypass a safety condition. If recovery is declined, preserve the affected branch as blocked and continue independent work; disclose what remains undelivered. Resume only when the active host permits execution; do not promise background or automatic cross-session continuation.
 
 Use the caller's language and this scannable format:
 

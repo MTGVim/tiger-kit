@@ -21,6 +21,26 @@ class ArtifactPolicyTests(unittest.TestCase):
     def git(self, *args):
         return subprocess.run(['git', *args], cwd=self.root, check=True, capture_output=True)
 
+    def test_no_repository_preserves_files_until_explicit_setup_then_resumes(self):
+        folder = Path(self.temp.name) / 'lesson-folder'
+        folder.mkdir()
+        original = folder / 'existing.txt'
+        original.write_bytes(b'preserve\r\n')
+        with self.assertRaises(subprocess.CalledProcessError):
+            policy.artifact_directory('study/http-cache', folder)
+        self.assertEqual(sorted(p.name for p in folder.iterdir()), ['existing.txt'])
+        self.assertEqual(original.read_bytes(), b'preserve\r\n')
+        # The fixture represents separately approved setup, not helper authority.
+        subprocess.run(['git', 'init', '-q', str(folder)], check=True, capture_output=True)
+        destination = policy.artifact_directory('study/http-cache', folder) / 'lesson.html'
+        destination.write_text('<h1>HTTP cache</h1>')
+        self.assertTrue(destination.is_file())
+        self.assertEqual(original.read_bytes(), b'preserve\r\n')
+        self.assertEqual(subprocess.check_output(['git', '-C', str(folder), 'ls-files']), b'')
+        first_ignore = (folder / '.gitignore').read_bytes()
+        policy.checked_artifact_root(folder)
+        self.assertEqual((folder / '.gitignore').read_bytes(), first_ignore)
+
     def test_scratch_is_ignored_local_and_cleaned(self):
         with policy.scratch_directory('eval', self.root) as value:
             path = Path(value)

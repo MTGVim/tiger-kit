@@ -76,9 +76,13 @@ For example, adapt the labels/IDs:
 
 Inline the existing theme script after the markup for optional current-section marking,
 Escape/outside dismissal, focus return and focus transfer to native anchor targets. Do not
-intercept hash navigation or replace browser history. Use `:target` as the no-JS cue; expose
-`aria-current="location"` with a non-color-only cue when JS is available. Keep the popup within
-viewport and safe-area bounds at desktop/mobile widths. Keep keyboard order and visible focus.
+intercept hash navigation or replace browser history. Native anchors remain usable without JS;
+expose `aria-current="location"` with a non-color-only cue when JS is available. TOC and top/bottom
+navigation must not draw an outline around the destination content section or heading, including
+after programmatic focus transfer. Keep the shared static-target suppression; custom static
+wrappers need the same narrowly scoped treatment. Never disable outlines globally: preserve
+visible keyboard focus on links, buttons, inputs and other interactive controls. Keep the popup
+within viewport and safe-area bounds at desktop/mobile widths and preserve keyboard order.
 Smooth anchor scrolling is the default; reduced motion uses immediate scrolling. Set the
 `--ht-anchor-offset` to the actual sticky header height plus breathing room, and verify targets
 remain visible. Verification-only positioning uses instant scrolling. Required background and

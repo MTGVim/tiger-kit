@@ -861,6 +861,22 @@
           "text": "🧑‍💻"
         }
       ]
+    },
+    {
+      "id": "html-toc-target-without-outline",
+      "path": "boundary",
+      "prompt": "`$tk-explain`으로 목차가 있는 HTML을 만들어줘. 목차를 누르면 이동한 본문 영역에 테두리가 생기지 않게 하고 키보드 탐색은 보존해줘.",
+      "expected_output": "HTML 목차를 포인터나 키보드로 활성화해도 이동 대상 본문·제목에 `outline`을 그리지 않는다. 네이티브 해시·스크롤·포커스 이동은 유지하며 링크·버튼·입력의 키보드 포커스 표시는 보존한다. `JavaScript` 없이도 앵커 이동이 가능하고 전역 `outline: none`으로 우회하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "HTML 목차를 포인터나 키보드로 활성화해도 이동 대상 본문·제목에 `outline`을 그리지 않는다. 네이티브 해시·스크롤·포커스 이동은 유지하며 링크·버튼·입력의 키보드 포커스 표시는 보존한다. `JavaScript` 없이도 앵커 이동이 가능하고 전역 `outline: none`으로 우회하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": true
     }
   ],
   "renamed_from": {

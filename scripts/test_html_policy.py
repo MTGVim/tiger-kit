@@ -133,6 +133,11 @@ class HTMLPolicyTest(unittest.TestCase):
         self.assertNotRegex(report_custom_css, r'\.ht-doc-content\s*\{[^}]*\b(?:width|margin|position)\s*:')
         self.assertNotRegex(report_custom_css, r'\.ht-topbar\s*\{')
 
+    def test_native_navigation_does_not_frame_content_targets(self):
+        css = (ROOT / 'skills/tk-explain/assets/html-theme.css').read_text()
+        self.assertNotRegex(css, r'\.ht-document\s+:target\s*\{[^}]*outline:\s*[1-9]')
+        self.assertRegex(css, r':focus-visible\s*\{[^}]*outline:\s*2px solid')
+
     def test_shared_citation_preview_contract(self):
         css = (ROOT / 'skills/tk-explain/assets/html-theme.css').read_text()
         script = (ROOT / 'skills/tk-explain/assets/html-theme.js').read_text()
