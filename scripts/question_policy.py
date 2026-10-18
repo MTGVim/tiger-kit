@@ -29,7 +29,10 @@ SOFTWARE.
 BLOCK = MARKER + """
 ## User Questions
 
-When an unmet prerequisite or material user-owned decision remains, read [question rounds and recovery](references/questions.md). Reuse guidance still in context; resolve researchable facts and reuse matching authorization before asking. Ask only the currently answerable decision frontier, in the reference's plain-chat format, with any approval as its own question. No remaining decision means no question or confirmation ceremony.
+Resolve researchable facts and reuse matching authorization before asking.
+For an unmet prerequisite or material user-owned decision, read [question rounds and recovery](references/questions.md)
+(reuse it if still in context). Ask only answerable decisions in its plain-chat format,
+with approval separate. Otherwise continue without confirmation.
 """ + END + "\n"
 
 

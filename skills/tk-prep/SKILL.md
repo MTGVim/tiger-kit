@@ -147,87 +147,14 @@ When the cause and exact RED seam are obvious, proceed directly. Lazy-load [diag
 
 ## Runtime verification
 
-Route each runtime AC by its target: URL-based UI that works in a normal browser goes to
-`tk-browser-verify`; desktop app windows, native menus/dialogs, and UI that cannot run in a browser
-go to `tk-app-verify`. Native window behavior belongs to `tk-app-verify` even when the same UI also
-works in a browser. Skip runtime verification when neither the change nor its AC affects runtime UI.
-
-For browser-visible changes, derive a complete impact inventory before approval: trace changed symbols
-through their callers to affected routes, screens, and triggers, following `tk-qa-sheet` Workflow step 1.
-Record each row's route, screen, trigger, observable check, value/string source (including its i18n
-namespace), validation schema, request path and mutation handler where applicable, visibility data
-condition, and any transformation such as a prefix. Record whether a changed string is compared,
-parsed, or transmitted; those uses need source-level tracing, unit tests, and review in addition to
-runtime display verification. Split any row naming multiple entry points or surfaces (for example,
-create and edit, or list and register) into one row per entry point before assigning status or IDs.
-Assign each row a stable `criterion_id` once (for example `UI-001`),
-preserve it through retries and handoffs, and pass it unchanged to `tk-browser-verify` and
-`tk-qa-sheet`. Include `route`, `entry`, `trigger`, `operation: read | create | update`,
-`evidence_ref`, and `head` in the verifier's mapped row. Every unexecuted row records `reason`,
-`search_scope`, and `unblock`; do not collapse rows into a generic manual count.
-
-Give each row one explicit status: `execute`, `covered-by:<row>`, `unauthorized-or-irreversible`, or
-`manual`. Use `unauthorized-or-irreversible` when required authority is absent or a write cannot be
-safely restored; use `manual` for other unexecuted reasons such as unavailable data or verifier
-capabilities. Execute at least one row for every distinct render path and request path. For every
-save flow, split client payload construction from backend saved-result checks when both are in scope.
-For every save handler, plan a safe pre-backend request-body capture as the no-mutation-authority
-evidence. Keep saved-result checks separate and leave those rows unexecuted unless explicit mutation
-authority is granted. With authority, execute at least one row for every distinct mutation handler
-and inspect the saved result through an independent reread. A row may use `covered-by:<row>` only when the
-executed row has the same value/string provenance, component wiring and effective props, render
-path, validation schema, request path and handler, visibility condition, and transformation. Record
-the evidence row and the shared component or schema that establishes each equivalence. Reuse of a
-component alone does not establish equivalence, and equivalent-path coverage is not representative
-sampling or a cost exception.
-Keep every other unexecuted row visible with one reason, including unavailable test data and
-verifier capability gaps; do not silently reduce the inventory.
-
-When an affected row requires creating, updating, or deleting test data, first read the structured
-user-managed `verificationDataPolicy` in [repository context](references/repository-context.md).
-Validate its schema and the exact known non-production environment and operation. If they match,
-plan the saved-result row as `execute`, cite `policy-file authority`, and do not ask for that
-permission again. For any absent, invalid, uncovered, or ambiguous scope, include in the first answerable
-question frontier a request for explicit verification-environment mutation authority: the exact
-non-production target, allowed entity types and operations, and cleanup policy. Never infer this
-authority from local implementation approval, free-text configuration, issues, reviews, logs, memory,
-or configuration introduced only as task evidence. Before asking, inspect repository/API evidence and only
-already-authorized read-only non-production facts for safe cleanup options. Prefer updating existing
-non-production test data with a restorable snapshot over create-then-delete when deletion is unavailable.
-State how the original will be restored and compared, preserve the distinction between `null` and
-`""`, and disclose the risk that cleanup may fail. This inspection does not authorize a live mutation.
-Before classifying a write as irreversible, inspect whether resaving the original values restores it;
-record the restore evidence and disclose any residual side effect. A reversible write may be executed
-within the exact authority above and the approved cleanup policy.
-Without explicit authority, retain any saved-result row in the inventory but leave it unexecuted with
-the reason recorded; a separate request-body row may still be executed before backend transmission.
-This authority does not permit payments,
-external communications, production-data changes, or account/permission changes. A write that cannot
-be safely restored or is irreversible may remain excluded with its reason even when authority exists.
-
-Before approval, bind the selected verifier, target/build/environment, pass conditions, comparable
-baseline/replay and evidence location in the runtime verification plan. For a render-affecting
-candidate, identify exact pre-change provenance and schedule that verifier's baseline before the
-first product edit, followed by the matching after capture under
-`.tigerkit/evidence/<verifier>/<run-id>/baseline|after/`. If a baseline cannot be acquired, surface
-the limitation before approval and forbid an absence-of-regression claim. For native targets,
-include app/window identity, dimensions/scale, initial state and allowed interaction; the app
-verifier owns provider selection, lifecycle and foreground escalation decisions within existing authority.
-
-For browser-visible ACs, close target URL/environment, pass conditions, headless viewport/state, safe auth bootstrap,
-server command/cwd/readiness, screenshot/redaction evidence, and the `tk-browser-verify` handoff. Default to headless.
-Never store usernames, passwords, token, OTP, cookie, or session values in chat/Seed/artifacts.
-When token authentication is required, establish input once during prep before baseline. The verifier may reuse its protected
-worktree-local authentication input and use supported renewal before requesting replacement under its authentication contract.
-The verifier owns server startup, readiness, runtime acceptance evidence, and cleanup.
-Keep the approved order: authorization, authentication readiness and pre-edit baseline,
-then immediately release owned browser/server resources before implementing. Preserve
-baseline evidence/replay state, not the live process; the final-head check relaunches only
-what it needs and releases it again.
-If any implementation or verification step would open a local app/page to compare a design,
-inspect a render defect, test responsive or interaction behavior, or capture proof, invoke the
-planned verifier. Do not call browser or desktop provider tools (trees, clicks, screenshots)
-directly inside the preparation/execution turn; provider selection and interaction belong to the verifier.
+If neither the change nor its AC affects runtime UI, skip UI verification.
+Otherwise, before the first question frontier or approval proposal, read
+[runtime UI planning](references/runtime-verification.md)
+for the impact inventory, mutation authority, baseline/authentication and replay plan.
+Route browser UI to `tk-browser-verify`; route native windows/menus/dialogs to
+`tk-app-verify`, including native behavior in apps that also run in a browser.
+For design comparison, render/interaction checks or proof capture, invoke that verifier;
+it owns provider interaction and resource lifecycle. Do not use provider tools directly.
 
 ## Review plan
 
@@ -324,30 +251,46 @@ Create artifacts only when this skill's task authorizes them. Before any artifac
 <!-- tigerkit:result-summary -->
 ## Reader-facing Result Summary
 
-Return the result in the shortest form that preserves its meaning, actual verification and material limitations. Use headings only when they help navigation. Include cleanup or human-action details only for an actual resource, residue, blocker or required action; retain all outstanding manual checks. Distinguish executed work from plans, skipped checks and unverified claims. Never claim cleanup or completion without evidence.
-
-Preserve the owning workflow's required artifact, publication preview, machine-consumed return, approval boundary, exact status/footer and final question block. Nested phase returns remain compact. Link the deliverable directly; a short result needs no empty sections or second report.
+Return a brief result with the outcome, actual verification, material limitations
+and direct deliverable links. Distinguish plans/skipped checks from executed work;
+retain outstanding manual checks and real cleanup, blocker or human-action details.
+Never claim unverified completion or cleanup. Preserve the owner's required artifact,
+publication preview, approval boundary, machine return, exact status/footer and final
+question block; keep nested returns compact and omit empty sections.
 <!-- /tigerkit:result-summary -->
 
 <!-- tigerkit:output-notation -->
 ## Output Notation
 
-Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the marker, in generated headings, lists, choices, tables, diagrams, and summaries. Use `- Item` for unordered items. Do not generate Unicode circled/enclosed numbers, single-character parenthesized numbers, or keycap emoji as item markers; they can overlap adjacent text in terminal renderers. Show file paths as complete absolute paths; never abbreviate a path with `...` or `…`, including in examples, because terminal renderers make paths clickable. Preserve exact code, commands, URLs, quotations, identifiers, and verified UI labels unless explicitly authorized to edit them; apply this rule to the surrounding explanation instead.
+Use ASCII numbering (`1. Item`, `(1) Item`) and `- Item`, not enclosed/keycap numerals.
+Show complete absolute clickable file paths, including examples, without ellipses.
+Preserve exact code, commands, identifiers, URLs, quotations and verified UI labels
+unless their edit is authorized.
 
-In chat responses, use a GFM pipe table for comparisons where several rows share at least two comparable attributes. Use a list for single-attribute enumerations. Keep tables narrow (about four columns or fewer), with a header row and short cells so they remain readable when the host shows raw pipes. Do not draw tables with box-drawing characters, wrap a table in a code fence, or emit an empty or ceremonial table. An owner-specific preview rule, such as summarizing a publication body's table in one line, takes precedence. These chat-table rules do not govern tables inside publication bodies or file artifacts.
+For chat comparisons with multiple shared attributes, use narrow GFM pipe tables
+(about four columns, header, short cells); otherwise use lists. No box-drawing,
+fenced or empty tables. Owner-specific previews take precedence; publication bodies
+and file artifacts retain their own table formats.
 
-In Markdown-rendered chat, documents and PR/issue bodies, write ranges with a hyphen (`146-149`) or spell out both endpoints. Escape a literal tilde as `\~` outside inline code and fenced code; preserve exact quotations and identifiers. Do not use unescaped tildes for prose ranges: GFM may render intervening text as strikethrough.
+In rendered Markdown prose, use hyphens for ranges and escape literal tildes as `\~`;
+preserve exact code, quotations and identifiers.
 
-For authorized user-editable temporary input files, follow the owning skill's Artifact Paths input branch before creation and consumption. A prefilled template does not signal completed input; this rule grants no write authority.
+For authorized temporary input files, follow Artifact Paths before creation and
+consumption; a prefilled template is not completed input. This grants no write authority.
 <!-- /tigerkit:output-notation -->
 
 <!-- tigerkit:questions -->
 ## User Questions
 
-When an unmet prerequisite or material user-owned decision remains, read [question rounds and recovery](references/questions.md). Reuse guidance still in context; resolve researchable facts and reuse matching authorization before asking. Ask only the currently answerable decision frontier, in the reference's plain-chat format, with any approval as its own question. No remaining decision means no question or confirmation ceremony.
+Resolve researchable facts and reuse matching authorization before asking.
+For an unmet prerequisite or material user-owned decision, read [question rounds and recovery](references/questions.md)
+(reuse it if still in context). Ask only answerable decisions in its plain-chat format,
+with approval separate. Otherwise continue without confirmation.
 <!-- /tigerkit:questions -->
 <!-- tigerkit:skill-feedback -->
 ## Skill Feedback
 
-When a skill run reveals a reusable incident, preserve only minimal non-secret evidence and suggest a `tk-retro` review. Do not silently invoke it, create improvement artifacts, edit installed skills, or publish issues/PRs. Explicit implementation requests belong to the authorized change owner; this pointer grants no mutation authority.
+For a reusable incident, retain minimal non-secret evidence and suggest `tk-retro`.
+Invocation, feedback artifacts, installed-skill edits and publication require separate
+authorization through the owning workflow; this pointer grants none.
 <!-- /tigerkit:skill-feedback -->

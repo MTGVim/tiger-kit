@@ -161,30 +161,46 @@ Create artifacts only when this skill's task authorizes them. Before any artifac
 <!-- tigerkit:result-summary -->
 ## Reader-facing Result Summary
 
-Return the result in the shortest form that preserves its meaning, actual verification and material limitations. Use headings only when they help navigation. Include cleanup or human-action details only for an actual resource, residue, blocker or required action; retain all outstanding manual checks. Distinguish executed work from plans, skipped checks and unverified claims. Never claim cleanup or completion without evidence.
-
-Preserve the owning workflow's required artifact, publication preview, machine-consumed return, approval boundary, exact status/footer and final question block. Nested phase returns remain compact. Link the deliverable directly; a short result needs no empty sections or second report.
+Return a brief result with the outcome, actual verification, material limitations
+and direct deliverable links. Distinguish plans/skipped checks from executed work;
+retain outstanding manual checks and real cleanup, blocker or human-action details.
+Never claim unverified completion or cleanup. Preserve the owner's required artifact,
+publication preview, approval boundary, machine return, exact status/footer and final
+question block; keep nested returns compact and omit empty sections.
 <!-- /tigerkit:result-summary -->
 
 <!-- tigerkit:output-notation -->
 ## Output Notation
 
-Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the marker, in generated headings, lists, choices, tables, diagrams, and summaries. Use `- Item` for unordered items. Do not generate Unicode circled/enclosed numbers, single-character parenthesized numbers, or keycap emoji as item markers; they can overlap adjacent text in terminal renderers. Show file paths as complete absolute paths; never abbreviate a path with `...` or `…`, including in examples, because terminal renderers make paths clickable. Preserve exact code, commands, URLs, quotations, identifiers, and verified UI labels unless explicitly authorized to edit them; apply this rule to the surrounding explanation instead.
+Use ASCII numbering (`1. Item`, `(1) Item`) and `- Item`, not enclosed/keycap numerals.
+Show complete absolute clickable file paths, including examples, without ellipses.
+Preserve exact code, commands, identifiers, URLs, quotations and verified UI labels
+unless their edit is authorized.
 
-In chat responses, use a GFM pipe table for comparisons where several rows share at least two comparable attributes. Use a list for single-attribute enumerations. Keep tables narrow (about four columns or fewer), with a header row and short cells so they remain readable when the host shows raw pipes. Do not draw tables with box-drawing characters, wrap a table in a code fence, or emit an empty or ceremonial table. An owner-specific preview rule, such as summarizing a publication body's table in one line, takes precedence. These chat-table rules do not govern tables inside publication bodies or file artifacts.
+For chat comparisons with multiple shared attributes, use narrow GFM pipe tables
+(about four columns, header, short cells); otherwise use lists. No box-drawing,
+fenced or empty tables. Owner-specific previews take precedence; publication bodies
+and file artifacts retain their own table formats.
 
-In Markdown-rendered chat, documents and PR/issue bodies, write ranges with a hyphen (`146-149`) or spell out both endpoints. Escape a literal tilde as `\~` outside inline code and fenced code; preserve exact quotations and identifiers. Do not use unescaped tildes for prose ranges: GFM may render intervening text as strikethrough.
+In rendered Markdown prose, use hyphens for ranges and escape literal tildes as `\~`;
+preserve exact code, quotations and identifiers.
 
-For authorized user-editable temporary input files, follow the owning skill's Artifact Paths input branch before creation and consumption. A prefilled template does not signal completed input; this rule grants no write authority.
+For authorized temporary input files, follow Artifact Paths before creation and
+consumption; a prefilled template is not completed input. This grants no write authority.
 <!-- /tigerkit:output-notation -->
 
 <!-- tigerkit:questions -->
 ## User Questions
 
-When an unmet prerequisite or material user-owned decision remains, read [question rounds and recovery](references/questions.md). Reuse guidance still in context; resolve researchable facts and reuse matching authorization before asking. Ask only the currently answerable decision frontier, in the reference's plain-chat format, with any approval as its own question. No remaining decision means no question or confirmation ceremony.
+Resolve researchable facts and reuse matching authorization before asking.
+For an unmet prerequisite or material user-owned decision, read [question rounds and recovery](references/questions.md)
+(reuse it if still in context). Ask only answerable decisions in its plain-chat format,
+with approval separate. Otherwise continue without confirmation.
 <!-- /tigerkit:questions -->
 <!-- tigerkit:skill-feedback -->
 ## Skill Feedback
 
-When a skill run reveals a reusable incident, preserve only minimal non-secret evidence and suggest a `tk-retro` review. Do not silently invoke it, create improvement artifacts, edit installed skills, or publish issues/PRs. Explicit implementation requests belong to the authorized change owner; this pointer grants no mutation authority.
+For a reusable incident, retain minimal non-secret evidence and suggest `tk-retro`.
+Invocation, feedback artifacts, installed-skill edits and publication require separate
+authorization through the owning workflow; this pointer grants none.
 <!-- /tigerkit:skill-feedback -->
