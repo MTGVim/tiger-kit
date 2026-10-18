@@ -31,6 +31,13 @@ claimed previous knowledge from demonstrated understanding and unknown
 progress. **Never infer mastery from reading, a lesson being generated, or
 an unverified session summary.**
 
+For an existing-course rewrite, inspect the current index and relevant course-owned artifact
+notes before fixing scope. Distinguish current lessons, partial format samples and historical
+alternatives; file presence alone is not a format preference. Preserve explicit or provenance-
+verified requested formats, record the target and retained alternatives in the existing
+curriculum/profile, and state material format assumptions before generation. Ask only if the
+target remains materially ambiguous; do not regenerate every format.
+
 For an established learning path, read its mission, prior answers,
 misconceptions and previous learning records. Design the next **small,
 meaningful lesson** just beyond demonstrated ability, with retrieval of

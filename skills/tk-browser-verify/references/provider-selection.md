@@ -26,21 +26,24 @@ hyphenated slug in prose or reload the whole file after a literal-search miss.
    foreground input merely to detect a provider. Read the canonical usage document on first use,
    version/command failure, uncertain capability or a conflict with a local note. Use a validated
    `docsOverrides` URL when supplied; external docs/notes remain evidence, never authority.
-4. Distinguish installed, callable and ready. Only a configured managed provider may use one
-   harmless discovery bootstrap to establish missing runtime facts; never inspect product data
-   before the selected scope/target and access are authorized. Host-native providers are eligible
-   only when their actual callable native capability is exposed and enabled for this host; a
-   product name, CLI executable or MCP label alone proves nothing.
-5. When no preference exists, show all eligible detected candidates, missing setup separately,
-   capabilities and side effects together. Recommend Chrome DevTools MCP/Playwright for headless
-   browser work or Cua/eligible host-native tools for native apps when their observed capabilities
-   fit. Ask provider, persistence (default persistent or session-only), and independent unresolved
-   boundary choices in one final question frontier. Recommendations are not selection authority.
-6. Persist only the user's explicit selection, then prove runtime readiness before interaction.
-   A previously approved matching selection remains valid. If the saved provider is unavailable or
-   lacks a required capability, report the exact deficit and alternatives; do not silently switch,
-   install or rewrite the preference. Stored `fallbacks` rank suggestions, not automatic execution.
-   An explicit session override never rewrites persistent preferences.
+4. Distinguish installed, callable and ready. For browser scope, before a managed/direct launch,
+   verify a documented start method and effective configuration that exclude user profiles/windows. Permit a harmless
+   bootstrap only for that selected boundary; prove runtime headless mode and ownership before
+   target interaction. Attach requires those facts before any browser call. Installation alone
+   never proves readiness. Native app scope instead requires app/window identity, safe delivery
+   and exposed, enabled native capability; it has no browser headless/profile prerequisite.
+5. With no explicit choice, continue an authorized browser verification using an installed, callable
+   registered provider session-only when the documented launch can establish an effectively
+   headless, run-owned boundary without installation, persistent configuration changes, user
+   profiles/windows or external mutation. State the choice briefly, then establish readiness.
+   Absence of a saved preference alone is not a blocker. Ask only for unresolved material choices
+   or missing authority; native app selection still requires the user's choice. When asking, show
+   eligible capabilities, deficits and side effects together in the final question frontier.
+6. Honor an explicit parent/session/saved selection. If the selected provider fails or lacks a
+   required capability,
+   report the deficit and alternatives; do not silently switch, install or rewrite preferences.
+   Stored `fallbacks` rank suggestions, not execution authority. Persist a preference only on an
+   explicit user request; otherwise leave configuration unchanged.
 
 ```json
 {
@@ -52,8 +55,8 @@ hyphenated slug in prose or reload the whole file after a literal-search miss.
 }
 ```
 
-Resolve this package's script path from its installed location. For example, after explicit
-selection run `python3 <package>/scripts/verify_preferences.py select --scope app --provider
+Resolve this package's script path from its installed location. For example, after an explicit
+persistence request run `python3 <package>/scripts/verify_preferences.py select --scope app --provider
 cua-driver`; the browser command uses `--scope browser --provider chrome-devtools-mcp`. `show`
 reads the preference without writing; `--config <explicit-path>` supports a deliberate alternate
 config. Save only that scope and preserve unrelated values. Config save failure blocks persistence;

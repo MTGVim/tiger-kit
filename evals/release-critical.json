@@ -49,7 +49,7 @@
     "tk-app-verify:behavior:app-cua-platform-fixture-selection",
     "tk-browser-verify:behavior:browser-selected-chrome-reuses-current-fixture",
     "tk-browser-verify:behavior:browser-selected-playwright-reuses-current-fixture",
-    "tk-browser-verify:behavior:browser-first-provider-selection-final-frontier",
+    "tk-browser-verify:behavior:browser-requested-provider-preference-final-frontier",
     "tk-browser-verify:behavior:browser-saved-provider-capability-deficit",
     "tk-browser-verify:behavior:browser-signedin-extension-headless-conflict",
     "tk-prep:behavior:handoff-question-frontier-is-final",

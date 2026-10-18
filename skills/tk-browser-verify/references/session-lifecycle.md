@@ -10,7 +10,7 @@ browser process, and provider profile; the verification run owns only the pages,
 contexts, evidence, and development server that it creates. Prefer an ephemeral provider
 profile, but allow a headless dedicated persistent provider profile with a disclosed storage
 limitation. Never reuse the user's default browsing profile. If effective headless mode or
-ownership cannot be proven after the permitted managed-launch bootstrap, return
+ownership cannot be proven after the permitted managed/direct-launch bootstrap, return
 `Unverifiable`; do not retry with a visible browser.
 
 Before the first write to repository-local evidence, prove that

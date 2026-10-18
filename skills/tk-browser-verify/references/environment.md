@@ -1,6 +1,6 @@
 # Headless environment
 
-Use the explicit preference/session choice under [provider selection](provider-selection.md).
+Use the provider selected under [provider selection](provider-selection.md).
 Discover native, Playwright-compatible, MCP and installed CLI/CDP paths without silently routing
 between them. When a required capability is missing, present the deficit and eligible alternatives
 in the final question frontier. Do not install a browser dependency for one run. Classify the
