@@ -92,7 +92,7 @@ class SyncExecutionProtocolTest(unittest.TestCase):
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_text((path.read_text() if path.exists() else "") + block)
         repo = Path(__file__).resolve().parents[1]
-        for name in ("explanation-routing.md", "explanation-techniques.md"):
+        for name in ("explanation-techniques.md",):
             canonical = repo / "skills/tk-explain/references" / name
             target = self.root / "skills/tk-explain/references" / name
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -157,7 +157,7 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         for name in ("clear-writing.md", "html-output.md", "visual-grammar.md"):
             self.assertEqual((self.root / "skills/tk-research/references" / name).read_bytes(),
                              (self.root / "skills/tk-explain/references" / name).read_bytes())
-        for name in ("explanation-routing.md", "explanation-techniques.md"):
+        for name in ("explanation-techniques.md",):
             expected = (self.root / "skills/tk-explain/references" / name).read_bytes()
             for consumer in sync_execution_protocol.HTML_CONSUMERS:
                 self.assertEqual(
@@ -192,7 +192,7 @@ class SyncExecutionProtocolTest(unittest.TestCase):
     def test_result_summary_drift_fails_check_and_sync_repairs_it(self) -> None:
         self.assertEqual(self.run_main(), 0)
         path = self.root / "skills/tk-grill/SKILL.md"
-        path.write_text(path.read_text(encoding="utf-8").replace("Use this shared structure", "Use a local structure"), encoding="utf-8")
+        path.write_text(path.read_text(encoding="utf-8").replace(sync_execution_protocol.RESULT_SUMMARY_BLOCK, sync_execution_protocol.RESULT_SUMMARY_BLOCK.replace("Return", "Skip", 1)), encoding="utf-8")
         self.assertEqual(self.run_main("--check"), 1)
         self.assertEqual(self.run_main(), 0)
         self.assertEqual(self.run_main("--check"), 0)

@@ -29,19 +29,7 @@ SOFTWARE.
 BLOCK = MARKER + """
 ## User Questions
 
-On an unmet prerequisite or before any user-owned question, read [question rounds and recovery](references/questions.md). Reuse identical content read this turn and still in context; hash-check uncertain copies. Another agent's read is insufficient. Resolve facts first, preserve authorization, and ask the whole answerable frontier in one plain-chat round. Skip ceremony when no decision remains; do not use question tools for ordinary TigerKit questions.
-
-Minimum shape, even when already familiar:
-
-```text
----
-
-❓ **Q1 · <short title>**: <question and relevant choices>
-
-➡️ <recommendation and reason, when supported>
-```
-
-Start the question block with a standalone horizontal rule (`---`) after the preceding context; do not add a `## Questions` or `## 질문` heading. Separate questions with blank lines and bold `❓ **Q<n> · ...**` title lines, without horizontal rules between questions. Put context before the question block and make it the final substantive block: no plan, promise, or “answer and I will proceed” line afterward, except one short reply-format hint. An approval request is its own numbered `Q`, never buried in the proposal. Defer approval whose scope still depends on an unresolved answer.
+When an unmet prerequisite or material user-owned decision remains, read [question rounds and recovery](references/questions.md). Reuse guidance still in context; resolve researchable facts and reuse matching authorization before asking. Ask only the currently answerable decision frontier, in the reference's plain-chat format, with any approval as its own question. No remaining decision means no question or confirmation ceremony.
 """ + END + "\n"
 
 
@@ -69,7 +57,6 @@ def question_errors(root: Path) -> list[str]:
     if not source.is_file():
         return ["missing canonical tk-grill question rounds reference"]
     errors = question_template_errors(source.read_text(encoding="utf-8"), "canonical question rounds")
-    errors.extend(question_template_errors(BLOCK, "canonical question guard"))
     notice = root / "skills/tk-grill/LICENSE.txt"
     notice_text = QUESTION_NOTICE.strip()
     if not notice.is_file():

@@ -269,14 +269,14 @@
       ]
     },
     {
-      "id": "explain-diff-section-level-technique",
+      "id": "explain-diff-content-led-optional-technique",
       "path": "success",
       "prompt": "$tk-explain-diff HEAD^..HEAD 변경을 섹션별 내용에 맞는 설명 방식으로 `.tigerkit/explanations/change.html`에 설명해줘.",
-      "expected_output": "정확한 base/head와 주변 코드를 조사하고, 한 문서에서 결론·용어 풀이·제약·path:line 근거·검증 상태를 설명한다. 각 섹션은 내용에 맞는 기법을 사용하고 반복 모드나 숨은 탭은 없다.",
+      "expected_output": "한 문서에서 변경 배경과 전후 동작, 제약을 연결하고 정확한 `base/head`와 `source anchor`, 불확실성 및 `verification state`를 보존한다. 필요한 부분에만 설명 기법을 사용하고 중복 모드와 숨은 탭을 만들지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "한 문서를 만들고 결론부터 용어 풀이와 제약까지 변경 근거를 보존한다. 섹션마다 변경 내용에 맞는 기법을 고르고 자연스러운 대화체를 기본으로 사용한다. 실제 변경 메커니즘과 경계, source anchor, 불확실성 및 verification state를 보존하며 비유로 대체하지 않고 반복 모드나 숨은 탭을 만들지 않는다."
+          "criterion": "한 문서에서 변경 배경과 전후 동작, 제약을 연결하고 정확한 `base/head`와 `source anchor`, 불확실성 및 `verification state`를 보존한다. 필요한 부분에만 설명 기법을 사용하고 중복 모드와 숨은 탭을 만들지 않는다."
         },
         {
           "type": "path_exists",
@@ -296,6 +296,21 @@
           "text": "data-html-mode"
         }
       ]
+    },
+    {
+      "id": "change-explanation-without-four-part-checklist",
+      "path": "success",
+      "prompt": "/tk-explain-diff 파일 없는 정책 시뮬레이션입니다. 검증된 `base/head`와 호출 흐름에서 `retry` 책임이 각 호출자에서 공통 `client`로 이동했고 외부 응답 계약은 유지됩니다. 유지보수자에게 필요한 설명 구성을 제시하세요.",
+      "expected_output": "변경 이유와 전후 책임, 실행 흐름, 유지된 계약을 연결하고 버전별 증거를 보존한다. 파일 나열이나 네 개 고정 제목과 이해 확인 문제를 강제하지 않고 출처 확인과 실행 검증을 구별한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "변경 이유와 전후 책임, 실행 흐름, 유지된 계약을 연결하고 버전별 증거를 보존한다. 파일 나열이나 네 개 고정 제목과 이해 확인 문제를 강제하지 않고 출처 확인과 실행 검증을 구별한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "migrations": [
@@ -306,8 +321,14 @@
     },
     {
       "from": "explain-diff-explicit-easy-dialogue-mode",
-      "to": "explain-diff-section-level-technique",
+      "to": "explain-diff-content-led-optional-technique",
       "reason": "전역 쉬운 대화 모드를 섹션별 기법 선택으로 바꾸고 변경 근거와 검증 상태를 확인합니다."
+    },
+    {
+      "from": "explain-diff-section-level-technique",
+      "to": "explain-diff-content-led-optional-technique",
+      "allow_assertion_changes": true,
+      "reason": "2026-10-18 회고 F3/F4에 따라 고정 기법·빈 완료 제목 요구를 선택적 표현으로 바꾸며 근거·산출물·권한·기계 반환 검증은 보존합니다."
     }
   ]
 }

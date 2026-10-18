@@ -52,11 +52,13 @@ file type alone. Never hide a material security, schema, migration, compatibilit
 runtime-contract change behind a "safe to skip" label. Keep machine-oriented evidence and exhaustive
 file detail available as secondary support rather than making the reader reconstruct the change from it.
 
-1. **Background:** Explain the existing structure and only prerequisites needed for this change.
-2. **Intuition:** State the central behavioral difference with a small before/after example.
-3. **Change walkthrough:** Follow execution, data or event order; group one logical change across
-   files. Explain contracts, edge cases and limits with the verified references.
-4. **Understanding check:** Prefer a prediction, transfer task or free-response question about
+Connect the reason for the change, necessary background, a concrete before/after example and
+the execution, data or event flow in the reader's question order. Group a logical change across
+files, keeping preserved contracts, edge cases and limits beside the affected behavior. Choose
+headings from the content rather than requiring a fixed set of teaching parts.
+
+An **Understanding check** is optional when requested or helpful to the learning task.
+Prefer a prediction, transfer task or free-response question about
    behavior, control or data flow, state, boundaries, trade-offs, cross-component consequences or
    failure handling that a maintainer may need during debugging or an incident. Favor mechanism and
    consequence over syntax, names or line-number trivia. Ground the answer in inspected evidence.
@@ -64,8 +66,12 @@ file detail available as secondary support rather than making the reader reconst
    Optional MCQ choices must not reveal correctness through position, length, styling or labels.
 
 Use the audience's language while preserving established technical terms. Diagrams must match
-actual components and prose; analogy must not replace the mechanism. Respect the package's
-[clear writing](references/clear-writing.md) criteria when composing the explanation.
+actual components and prose; analogy must not replace the mechanism. Read
+[clear writing](references/clear-writing.md) when composing or revising prose; reuse it in context.
+Before delivery, revise the text in actual reading order, including headings, captions, controls
+and text planned for images. Preserve prerequisites, causal steps, quantities, qualifications,
+source-version bindings and natural language appropriate to the genre. Edit the owning source
+and regenerate; shortening alone is not clarity.
 When a before/change/after structure, state, data or event relationship benefits from a
 figure, read [visual grammar](references/visual-grammar.md); retain component correspondence
 across topology views and expose the change ledger rather than independently rearranging them.
@@ -78,7 +84,7 @@ views when an overlay would obscure which edge belongs to which version. Prefer 
 neighborhood over a whole-repository dependency map.
 
 Write one complete explanation from the verified change model. Follow [HTML output](references/html-output.md)
-for HTML and consult its presentation routing only when a supporting format is unclear. Prose and
+for HTML; consult a technique entry only for a requested or unfamiliar format. Prose and
 tables are valid; avoid repeating the same content in modes or tabs. Use a clear
 conversational voice by default. When the user asks for simpler wording, adapt the same document
 while preserving exact source anchors, verification state, code, numeric facts, uncertainty and
@@ -96,7 +102,8 @@ a diagram; preserve snapshot identity, version-qualified `path:line` anchors and
 both visuals and prose.
 An inaccessible target is `Unverifiable`; verified partial context is not a complete explanation.
 Return a concise artifact link, snapshot identity, and actual verification limitations. `Pass`
-requires an existing readable artifact with all four teaching parts and rechecked source anchors;
+requires an existing readable artifact connecting the change's background, before/after behavior,
+execution flow and preserved contracts, with rechecked source anchors;
 never present source inspection as an executed runtime test. Artifact creation grants no commit,
 push, browser launch or publication authority.
 
@@ -110,23 +117,9 @@ Create artifacts only when this skill's task authorizes them. Before any artifac
 <!-- tigerkit:result-summary -->
 ## Reader-facing Result Summary
 
-Use this shared structure only for a final user-facing session-completion message. It does not replace an owning skill's required artifact, publication preview, machine-readable nested return, approval checkpoint, verdict/status field or footer, or final question block. Keep those contracts exact. Nested phase returns remain compact and emoji-free.
+Return the result in the shortest form that preserves its meaning, actual verification and material limitations. Use headings only when they help navigation. Include cleanup or human-action details only for an actual resource, residue, blocker or required action; retain all outstanding manual checks. Distinguish executed work from plans, skipped checks and unverified claims. Never claim cleanup or completion without evidence.
 
-When no stricter owner format applies, keep the summary concise and use these headings in this order:
-
-```text
-### 🛠️ 변경/산출물        (내용이 있을 때만)
-### ✅ 확인한 것          (항상; 실제 확인·실행 내용을 기록)
-### 💭 결정              (기록할 결정이 있을 때만)
-### 💡 권고              (실행 가능한 권고가 있을 때만)
-### ⚠️ 한계              (예외, 실패, 미실행 또는 미해결 내용이 있을 때만)
-### 🧹 정리              (항상; 정리한 자원 또는 추가 정리 대상 없음)
-### 👤 사람이 할 일       (항상; 없음 또는 ID·이유·다음 행동)
-```
-
-Use emoji only at the start of section headings. Keep status and evidence values as exact machine-readable tokens. Omit empty optional sections. Report planned versus executed work and distinguish completed checks from skipped, failed, blocked or unverifiable work. Put every remaining user action, including uncovered manual rows, in `👤`; do not imply the user has no work when any remains. This is the last substantive block. If the owner requires a final question block, put `👤` immediately before it; if an exact status footer is mandatory, preserve it unchanged after the substantive blocks.
-
-Put complete absolute artifact/evidence paths on their own final lines in the relevant block. `🧹` reports only actual cleanup or the absence of owned resources; do not claim cleanup that was not checked.
+Preserve the owning workflow's required artifact, publication preview, machine-consumed return, approval boundary, exact status/footer and final question block. Nested phase returns remain compact. Link the deliverable directly; a short result needs no empty sections or second report.
 <!-- /tigerkit:result-summary -->
 
 <!-- tigerkit:output-notation -->
@@ -144,19 +137,7 @@ For authorized user-editable temporary input files, follow the owning skill's Ar
 <!-- tigerkit:questions -->
 ## User Questions
 
-On an unmet prerequisite or before any user-owned question, read [question rounds and recovery](references/questions.md). Reuse identical content read this turn and still in context; hash-check uncertain copies. Another agent's read is insufficient. Resolve facts first, preserve authorization, and ask the whole answerable frontier in one plain-chat round. Skip ceremony when no decision remains; do not use question tools for ordinary TigerKit questions.
-
-Minimum shape, even when already familiar:
-
-```text
----
-
-❓ **Q1 · <short title>**: <question and relevant choices>
-
-➡️ <recommendation and reason, when supported>
-```
-
-Start the question block with a standalone horizontal rule (`---`) after the preceding context; do not add a `## Questions` or `## 질문` heading. Separate questions with blank lines and bold `❓ **Q<n> · ...**` title lines, without horizontal rules between questions. Put context before the question block and make it the final substantive block: no plan, promise, or “answer and I will proceed” line afterward, except one short reply-format hint. An approval request is its own numbered `Q`, never buried in the proposal. Defer approval whose scope still depends on an unresolved answer.
+When an unmet prerequisite or material user-owned decision remains, read [question rounds and recovery](references/questions.md). Reuse guidance still in context; resolve researchable facts and reuse matching authorization before asking. Ask only the currently answerable decision frontier, in the reference's plain-chat format, with any approval as its own question. No remaining decision means no question or confirmation ceremony.
 <!-- /tigerkit:questions -->
 <!-- tigerkit:skill-feedback -->
 ## Skill Feedback

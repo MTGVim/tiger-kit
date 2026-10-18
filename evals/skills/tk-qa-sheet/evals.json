@@ -383,26 +383,26 @@
       "safety": true
     },
     {
-      "id": "qa-reader-facing-summary-uses-shared-result-order",
+      "id": "qa-reader-facing-summary-is-proportional",
       "path": "success",
-      "prompt": "정책 시뮬레이션입니다. 산출물은 만들지 마세요. QA 시트 한 건을 만들고 자체 검증까지 마쳤습니다. 최종 채팅 완료 보고만 작성하세요. 발견한 한계와 사용자 후속 조치는 없습니다.",
-      "expected_output": "최종 보고는 공유 섹션 순서를 따릅니다. ✅ 확인한 것, 🧹 정리, 👤 사람이 할 일을 포함하고 사람이 할 일은 없음으로 둡니다. 불필요한 변경·산출물, 결정, 권고, 한계 영역은 만들지 않습니다.",
+      "prompt": "정책 시뮬레이션입니다. 파일을 만들지 마세요. QA 시트 `qa-summary.html`을 만들었고 체크·메모 저장 및 복원 자체 검사 결과는 12/12, 상태는 Pass입니다. 이 파일명과 검사 결과 및 상태를 담아 최종 보고만 작성하세요. 발견한 한계와 사용자 후속 조치는 없습니다.",
+      "expected_output": "완료 결과와 실제 검증을 짧게 전달하며 없는 정리·후속 작업을 위한 제목을 만들지 않는다. 산출물 형식과 중첩 기계 반환 계약, 실제 한계와 사용자 행동은 보존한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "사용자 대상 최종 완료 요약에서 공통 `result-summary` 블록을 사용한다. 필수 확인·정리·사람 작업 섹션은 유지하고 내용이 없는 선택 섹션은 생략한다. 스킬 산출물 형식을 바꾸거나 중첩 기계 판독 결과에 이모지를 추가하지 않는다."
+          "criterion": "완료 결과와 실제 검증을 짧게 전달하며 없는 정리·후속 작업을 위한 제목을 만들지 않는다. 산출물 형식과 중첩 기계 반환 계약, 실제 한계와 사용자 행동은 보존한다."
         },
         {
           "type": "output_contains",
-          "text": "### ✅"
+          "text": "qa-summary.html"
         },
         {
           "type": "output_contains",
-          "text": "### 🧹"
+          "text": "12/12"
         },
         {
           "type": "output_contains",
-          "text": "### 👤"
+          "text": "Pass"
         },
         {
           "type": "git_head_unchanged"
@@ -463,6 +463,14 @@
           "type": "git_head_unchanged"
         }
       ]
+    }
+  ],
+  "migrations": [
+    {
+      "from": "qa-reader-facing-summary-uses-shared-result-order",
+      "to": "qa-reader-facing-summary-is-proportional",
+      "allow_assertion_changes": true,
+      "reason": "2026-10-18 회고 F3/F4에 따라 고정 기법·빈 완료 제목 요구를 선택적 표현으로 바꾸며 근거·산출물·권한·기계 반환 검증은 보존합니다. 이전 제목 단언 3개는 사용자가 요청한 실제 파일명·검사 수·상태의 기계 검증으로 교체합니다."
     }
   ]
 }

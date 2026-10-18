@@ -1,3 +1,20 @@
+# Outcome-led teaching reassessment (2026-10-18)
+
+Reviewed `mattpocock/skills` at `49dd158d1076134a641b33efb035946536778336`:
+[teach](https://github.com/mattpocock/skills/blob/49dd158d1076134a641b33efb035946536778336/skills/productivity/teach/SKILL.md)
+and [rationale and reported limits](https://github.com/mattpocock/skills/blob/49dd158d1076134a641b33efb035946536778336/docs/productivity/teach.md).
+The implementation and rationale were inspected; no separate executable upstream teach eval
+was found in the pinned tree, and learning efficacy was not reproduced.
+
+- `keep`: mission, trusted sources, a narrow useful capability, necessary knowledge before
+  practice, prompt feedback and next-unit selection from actual learning evidence.
+- `adapt`: connect prerequisites, explanation, a worked case, changed-condition application
+  and reasoned retry feedback. Preserve existing course research, offline assets, state
+  identity and legacy continuation; a focused lesson needs no course scaffold.
+- `omit`: a universal page length, panel count, character or dialogue format; exact quiz answer
+  length; automatic opening, community dispatch or a scheduler. A favorable artifact review
+  does not establish mastery. Data visualization remains available when it reveals a mechanism.
+
 # Teach: longitudinal learning state upgrade (2026-10-08)
 
 Source: Matt Pocock `mattpocock/skills`, `skills/productivity/teach/SKILL.md`,

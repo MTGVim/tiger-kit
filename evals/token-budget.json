@@ -19,8 +19,7 @@
         "paths": [
           "skills/tk-research/SKILL.md",
           "skills/tk-research/references/report.md",
-          "skills/tk-research/references/clear-writing.md",
-          "skills/tk-research/references/explanation-routing.md"
+          "skills/tk-research/references/clear-writing.md"
         ],
         "max_bytes": 46000
       },
@@ -34,13 +33,16 @@
         ],
         "paths": [
           "skills/tk-explain/SKILL.md",
+          "skills/tk-explain/references/clear-writing.md",
           "skills/tk-explain/references/html-output.md",
           "skills/tk-explain/references/artifact-paths.md"
         ],
-        "max_bytes": 55000
+        "max_bytes": 67000
       }
     }
   },
   "max_growth_ratio": 0.1,
-  "rationales": {}
+  "rationales": {
+    "budget_increase:always_read:tk-explain-html": "F2 explicitly requires the existing meaning-preserving clear-writing reference for new prose; the profile now counts that previously conditional file. Shared reporting/question blocks and routing files are reduced; other caps stay unchanged."
+  }
 }

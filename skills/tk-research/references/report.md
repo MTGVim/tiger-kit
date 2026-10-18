@@ -1,8 +1,7 @@
 # Human research report
 
-Before drafting, read [clear writing](clear-writing.md) and this report contract. Use the
-[section-level routing table](explanation-routing.md) to select formats and read only the chosen
-entries in [the technique reference](explanation-techniques.md). The renderer reads the complete
+Before drafting, read [clear writing](clear-writing.md) and this report contract. Consult only the relevant
+[technique entry](explanation-techniques.md) for a requested or unfamiliar format. The renderer reads the complete
 offline template for you, so do not load `assets/report.html` or the full shared HTML reference.
 
 Read when writing the final short-research report or a material persistent checkpoint projection.
@@ -17,7 +16,7 @@ readable projection, not an execution ledger or editable state UI; never recover
 edits back from HTML. Bind goal/research identity, evidence revision/date and projection freshness.
 Check ownership before overwrite; atomically replace only this project's report and reread it.
 
-Write one coherent report and choose one suitable technique for each section. Never add duplicate
+Write one coherent report; prose and tables need no technique assignment. Never add duplicate
 views, hidden tabs or a document-mode selector. Use a clear conversational voice by default and
 preserve evidence, uncertainty, confidence, limitations and next actions in the same document.
 

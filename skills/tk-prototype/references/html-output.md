@@ -108,8 +108,8 @@ leave shell layout to the shared component rules. The theme control's `data-ht-t
 attribute alone is insufficient because it enables the script but does not apply the shared styling.
 
 A document uses one continuous presentation. Prose and semantic tables are valid without a named
-technique. Consult [presentation routing](explanation-routing.md) when a format choice is unclear;
-read only the relevant entries in [explanation techniques](explanation-techniques.md). Avoid duplicate
+technique. Consult only a relevant [technique entry](explanation-techniques.md) for a requested
+or unfamiliar format. Avoid duplicate
 versions in modes or hidden tabs. Honor an explicit technique preference when it fits the content.
 
 ## Citations and references
@@ -146,12 +146,11 @@ Rewrite source prose for the reader instead of dumping state, findings or logs. 
 code, identifiers and necessary quotations as marked evidence, with context. Before finalizing
 reader-facing prose, headings, labels or captions, connect concrete subjects, actions, conditions
 and consequences while preserving claim-evidence bindings. Use the calling skill's writing procedure;
-read its `clear-writing.md` for editing or a specific ambiguity rather than an unconditional extra pass.
+read its `clear-writing.md` when composing or revising prose and reuse it in the active context.
 Let each section's opening establish its subject and purpose without repeating an answer formula.
 Use content-specific headings that name the subject, decision, evidence or limitation; do not
 narrate the assistant's reading order with generic headings such as `먼저 볼 것`, `먼저 확인할 것`
-or `처음 읽는 분께` when the actual topic can be named. Keep table cells to about one sentence
-(roughly 120 characters); move long secondary evidence
+or `처음 읽는 분께` when the actual topic can be named. Keep table cells scannable; move long secondary evidence
 into `<details>` without hiding essential background. Embed needed local content; show an external
 local path as code rather than a broken file link. Use unique component classes for distinct roles.
 Body text is the largest non-heading text, except KPI values and hero figures. Define domain and
@@ -217,10 +216,9 @@ reading or controls.
 
 ## Section-level explanation techniques
 
-For document-like HTML, create one coherent document from verified content and sources. Choose
-supporting presentation only where it improves understanding. Use [presentation routing](explanation-routing.md)
-for an uncertain choice and selected [techniques](explanation-techniques.md) for implementation detail.
-Each section adds distinct information; prose and tables need no technique assignment.
+For document-like HTML, create one coherent document from verified content and sources.
+Choose supporting presentation only where it improves understanding; prose and tables need no
+technique assignment. Keep each section informative without duplicating another view.
 
 Use a clear, conversational voice throughout the document. Short reader-and-author turns and chat
 bubbles can explain a multi-actor exchange when the section benefits from them. Do not write a script

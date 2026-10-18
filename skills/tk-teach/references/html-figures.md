@@ -12,16 +12,6 @@ When numeric data or an evidence-backed relationship graph benefits from a visua
 styles/interaction, not the whole gallery. Keep the final HTML self-contained; do not require
 the installed package, a CDN, or a chart runtime to remain available to its reader.
 
-Choose form before color: one number uses a stat tile; observed-versus-baseline uses one emphasis
-color and gray baseline; more than seven categories uses a table. Use a fixed categorical order
-without cycling colors, one hue for sequential values, and two hues with a gray midpoint for
-diverging values. Status colors identify status only. Use one axis; split different units into
-small multiples. Use text tokens for labels, not series colors. Two or more series need a legend;
-up to four also need direct labels. Every chart includes a value-table alternative, a hover tooltip
-(at least SVG `<title>`) and non-color cues. Add one sentence explaining how to read each chart,
-including units and the comparison's meaning. Check contrast and color-vision-deficiency distinction;
-use an appropriately licensed tool or independently authored check, never copy a proprietary bundle.
-Do not invent charts, measurements or a passing palette check when the content/evidence lacks them.
 
 ## Render-safe authoring
 

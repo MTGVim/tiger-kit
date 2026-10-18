@@ -106,7 +106,7 @@ class HTMLPolicyTest(unittest.TestCase):
         normalized_explain = ' '.join(explain.split())
         normalized_diff = ' '.join(diff.split())
         self.assertIn('prose and tables need no technique assignment', ' '.join(text.split()))
-        self.assertIn('explanation-routing.md', text)
+        self.assertIn('explanation-techniques.md', text)
         self.assertIn('avoid repeating the same content', normalized_explain)
         self.assertIn('avoid repeating the same content', normalized_diff)
         self.assertIn('avoid rendering duplicate modes or hidden tabs', ' '.join(teach.split()))
@@ -268,12 +268,6 @@ class HTMLPolicyTest(unittest.TestCase):
         self.assertIn('11 CSS px after scaling', text)
         self.assertIn('emulated mobile CSS viewport width matching `innerWidth`', text)
         self.assertIn('`.ht-token`', text)
-
-    def test_clear_writing_rejects_fragmentary_korean_headings(self):
-        text = (ROOT / 'skills/tk-rewrite/references/clear-writing.md').read_text()
-        self.assertIn('요청 함수의 이동 위치', text)
-        self.assertIn('colloquial interrogative ending', text)
-        self.assertIn('dangling connective ending', text)
 
     def test_final_head_replay_and_reason_first_auth_contracts(self):
         local = (ROOT / 'skills/tk-prep/references/local-execution.md').read_text()

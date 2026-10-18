@@ -41,8 +41,7 @@ complete the layout. Name the visual's scope so a focused view does not imply fu
 Use a short exchange as one section technique when a realistic reader question makes background,
 intuition, a boundary or a likely misconception easier to follow. Do not ask artificial questions
 merely to restate the next paragraph. Answer directly from verified claims and preserve uncertainty.
-Use `.ht-chat` and `.ht-chat-turn` for HTML bubbles; keep role labels visually hidden unless the user
-explicitly requests visible labels or emoji.
+Use the existing HTML output contract for dialogue markup and role-label visibility.
 
 Keep precise artifacts outside the dialogue when they are clearer there: code, file maps, numeric
 comparisons, tables, diagrams, verification outcomes and citations remain structured evidence.

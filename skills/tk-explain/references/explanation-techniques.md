@@ -1,7 +1,12 @@
 # Explanation Technique Reference
 
-Read only the entries selected by explanation-routing.md. Shared offline HTML, citation, accessibility,
-evidence, and document-shell rules remain in html-output.md.
+Read only an entry needed for a requested or unfamiliar presentation. Prose and semantic tables
+need no technique assignment. Choose by the reader's question: compare states, trace an order,
+inspect a boundary or change an input. Shared offline HTML, citation, accessibility, evidence and
+shell rules remain in html-output.md; diagram relationships and layout belong to visual-grammar.md.
+Treat this personal collection's user's first-hand feedback as evidence for that user, without
+generalizing it to other readers. Honor an explicit fitting format preference; do not infer learning
+styles. Sketch comedy, Feynman and social-thread formats remain request-only.
 
 ## 01. Five-Step Ladder
 - Use when beginners and practitioners need the same document at different depths.

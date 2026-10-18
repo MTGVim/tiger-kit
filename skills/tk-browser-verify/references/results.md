@@ -81,30 +81,14 @@ not create a ceremonial screenshot; return the image-publication requirement as 
 non-`Pass` criterion, preserve owned failure evidence, return its real status, and never emit a `verification_status:
 Pass` manifest entry for it.
 
-A standalone result, with no active owner task to resume, uses this shape. Required `## Verdict` and exact status stay first; the shared reader-facing summary block controls section order. `✅`, `🧹`, and `👤` are always present. `🛠️`, `💭`, `💡`, and `⚠️` appear only when they have content. The complete row map lives in the evidence README so the conversation stays short:
+A standalone result, with no active owner task to resume, starts with required `## Verdict` and
+exact `Status: <token>`. Preserve the contract, head/environment identity, scope and coverage
+counts. Summarize actual verification, material limits, cleanup or residue and outstanding user
+actions without empty sections. Keep the complete criterion row map in the evidence README.
 
-```text
-## Verdict
-Status: Pass
-head `<sha>` · env `<environment>` · contract `1.2.0` · scope full-inventory · coverage planned 7 / executed 7 / covered-by 0 / out-of-scope 0 / not-executed 0
-
-### ✅ 검증한 것
-| ID | 판정 | 근거 종류 | 입력 |
-| --- | --- | --- | --- |
-| R1 | Pass | visual-pair | trusted |
-| R6 | Pass | request+response, reread-runtime | trusted |
-
-### 🧹 정리
-- 소유한 서버·브라우저 종료 확인 · 단기 토큰은 만료까지 보존
-
-근거:
-<evidence README absolute path>
-
-### 👤 사람이 할 일
-- 없음
-```
-
-For each unexecuted row, put its reason, `search_scope`, and `unblock` in the full row map and include its ID and next action in `👤 사람이 할 일`. Preserve an exact mandatory status footer after substantive sections when an owning contract requires one. Standalone baseline success remains capture-only with `verification_complete: false`.
+For each unexecuted row, put its reason, `search_scope`, and `unblock` in the full map, and include
+its ID and next action when the user must act. Preserve any owning contract's exact status footer.
+Standalone baseline success remains capture-only with `verification_complete: false`.
 Never promote a result to `Pass` without required runtime evidence.
 
 | Status | Meaning |

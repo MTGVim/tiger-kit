@@ -15,7 +15,7 @@ MULTIPLE = SINGLE.replace("\n```", "\n\n❓ **Q2 · Approval**: Approve?\n```")
 
 class QuestionTemplateTests(unittest.TestCase):
     def test_single_and_multiple_rounds_start_with_a_divider(self):
-        for text in (SINGLE, MULTIPLE, BLOCK):
+        for text in (SINGLE, MULTIPLE, (ROOT / "skills/tk-grill/references/questions.md").read_text()):
             with self.subTest(text=text):
                 self.assertEqual(question_template_errors(text, "example"), [])
 

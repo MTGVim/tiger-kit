@@ -58,15 +58,14 @@ After: 정책 변경이 미치는 영향을 검토한 뒤 변경 사항을 반�
 
 Complete sentences are for prose. Headings, table cells, diagram labels, and buttons may use concise phrases when the relationship is clear from the layout. Do not turn every visual label into a paragraph. A label such as `캐시 조회` can accompany a sentence explaining what is looked up and why.
 
-Korean headings should name their content with a noun phrase that ends in a content noun, or use a
-complete sentence when the heading states a conclusion. Do not end a heading with a bound noun such
-as `것` or capability `수` in constructions such as `할 수`, a colloquial interrogative ending
-such as `-나` or `-니`, or a dangling connective ending. A lexical count noun such as `사용자 수`
-is not this bound-noun case. Keep established technical terms and verified UI literals exact.
+Choose Korean headings for the genre and content: a concise noun phrase, a supported conclusion
+or a meaningful reader question can work. Keep the subject and relationship clear; repair dangling
+endings when they obscure meaning rather than banning interrogative forms. Preserve established
+technical terms, verified UI literals and explicit user style.
 
 ```text
-Before: 먼저 볼 것 / 요청 함수가 어디로 갔나
-After: 변경의 핵심 / 요청 함수의 이동 위치
+Before: 먼저 볼 것
+After: 변경의 핵심
 ```
 
 ```text

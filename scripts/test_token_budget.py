@@ -75,7 +75,8 @@ class TokenBudgetTest(unittest.TestCase):
         temporary, _, candidate = self.roots()
         with temporary:
             path = candidate / 'skills/tk-prep/SKILL.md'
-            path.write_text(path.read_text() + '\n' + ('x' * 1000), encoding='utf-8')
+            ceiling = json.loads((candidate / 'evals/token-budget.json').read_text())['limits']['max_skill_md_bytes']
+            path.write_text(path.read_text() + '\n' + ('x' * ceiling), encoding='utf-8')
             errors, _, _ = static_errors(candidate)
             self.assertTrue(any('token budget exceeded: skill_md_max_bytes' in e for e in errors), errors)
 

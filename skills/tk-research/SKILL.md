@@ -98,14 +98,17 @@ Essential unavailable evidence is `BLOCKED`, never convergence. No self-scheduli
 
 ## Human result
 
-Before drafting a report, read [report](references/report.md), [clear writing](references/clear-writing.md),
-the [section-level routing table](references/explanation-routing.md) and only the selected
-[technique entries](references/explanation-techniques.md). Generate the file with the package-local
+Before drafting a report, read [report](references/report.md) and [clear writing](references/clear-writing.md).
+Consult a [technique entry](references/explanation-techniques.md) only for a requested or unfamiliar format. Generate the file with the package-local
 renderer; it reads the complete template and shared shell. If a tool archives or truncates a required
 reference, retrieve that same file fully before applying its rules.
 Lead with the recommendation and confidence. Explain decisive evidence, what was actually researched
 or tested, failed directions, current stage, unknowns and the next frontier/action. Cite sources beside
 claims with revision/date. Keep the result self-contained for `tk-prep` without implementation authority.
+Before delivery, revise authored text in actual reading order, including headings, captions,
+controls, feedback and text planned for images. Preserve causal steps, quantities, qualifications
+and claim-evidence bindings; use natural language appropriate to the report's genre. Edit the
+owning content source and regenerate; shorter wording alone is not clearer reasoning.
 Every initial research request returns a current, decision-ready offline [report](references/report.md)
 before the research turn completes: at short-research conclusion, or at the first material persistent
 checkpoint/conclusion/blocker after automatic escalation. Later persistent runs regenerate it only at
@@ -122,23 +125,9 @@ Create artifacts only when this skill's task authorizes them. Before any artifac
 <!-- tigerkit:result-summary -->
 ## Reader-facing Result Summary
 
-Use this shared structure only for a final user-facing session-completion message. It does not replace an owning skill's required artifact, publication preview, machine-readable nested return, approval checkpoint, verdict/status field or footer, or final question block. Keep those contracts exact. Nested phase returns remain compact and emoji-free.
+Return the result in the shortest form that preserves its meaning, actual verification and material limitations. Use headings only when they help navigation. Include cleanup or human-action details only for an actual resource, residue, blocker or required action; retain all outstanding manual checks. Distinguish executed work from plans, skipped checks and unverified claims. Never claim cleanup or completion without evidence.
 
-When no stricter owner format applies, keep the summary concise and use these headings in this order:
-
-```text
-### 🛠️ 변경/산출물        (내용이 있을 때만)
-### ✅ 확인한 것          (항상; 실제 확인·실행 내용을 기록)
-### 💭 결정              (기록할 결정이 있을 때만)
-### 💡 권고              (실행 가능한 권고가 있을 때만)
-### ⚠️ 한계              (예외, 실패, 미실행 또는 미해결 내용이 있을 때만)
-### 🧹 정리              (항상; 정리한 자원 또는 추가 정리 대상 없음)
-### 👤 사람이 할 일       (항상; 없음 또는 ID·이유·다음 행동)
-```
-
-Use emoji only at the start of section headings. Keep status and evidence values as exact machine-readable tokens. Omit empty optional sections. Report planned versus executed work and distinguish completed checks from skipped, failed, blocked or unverifiable work. Put every remaining user action, including uncovered manual rows, in `👤`; do not imply the user has no work when any remains. This is the last substantive block. If the owner requires a final question block, put `👤` immediately before it; if an exact status footer is mandatory, preserve it unchanged after the substantive blocks.
-
-Put complete absolute artifact/evidence paths on their own final lines in the relevant block. `🧹` reports only actual cleanup or the absence of owned resources; do not claim cleanup that was not checked.
+Preserve the owning workflow's required artifact, publication preview, machine-consumed return, approval boundary, exact status/footer and final question block. Nested phase returns remain compact. Link the deliverable directly; a short result needs no empty sections or second report.
 <!-- /tigerkit:result-summary -->
 
 <!-- tigerkit:output-notation -->
@@ -156,19 +145,7 @@ For authorized user-editable temporary input files, follow the owning skill's Ar
 <!-- tigerkit:questions -->
 ## User Questions
 
-On an unmet prerequisite or before any user-owned question, read [question rounds and recovery](references/questions.md). Reuse identical content read this turn and still in context; hash-check uncertain copies. Another agent's read is insufficient. Resolve facts first, preserve authorization, and ask the whole answerable frontier in one plain-chat round. Skip ceremony when no decision remains; do not use question tools for ordinary TigerKit questions.
-
-Minimum shape, even when already familiar:
-
-```text
----
-
-❓ **Q1 · <short title>**: <question and relevant choices>
-
-➡️ <recommendation and reason, when supported>
-```
-
-Start the question block with a standalone horizontal rule (`---`) after the preceding context; do not add a `## Questions` or `## 질문` heading. Separate questions with blank lines and bold `❓ **Q<n> · ...**` title lines, without horizontal rules between questions. Put context before the question block and make it the final substantive block: no plan, promise, or “answer and I will proceed” line afterward, except one short reply-format hint. An approval request is its own numbered `Q`, never buried in the proposal. Defer approval whose scope still depends on an unresolved answer.
+When an unmet prerequisite or material user-owned decision remains, read [question rounds and recovery](references/questions.md). Reuse guidance still in context; resolve researchable facts and reuse matching authorization before asking. Ask only the currently answerable decision frontier, in the reference's plain-chat format, with any approval as its own question. No remaining decision means no question or confirmation ceremony.
 <!-- /tigerkit:questions -->
 <!-- tigerkit:skill-feedback -->
 ## Skill Feedback

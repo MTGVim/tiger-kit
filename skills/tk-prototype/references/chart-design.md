@@ -27,8 +27,19 @@ and tooltip; rounding for axis ticks must not change the plotted position.
 
 Only the first four numeric forms and a small graph have bundled runnable recipes. Other forms
 require custom implementation and their own validation; do not imply the gallery implements them.
-Use prose for a single fact and a table for dense exact comparisons. Apply HTML output's
-category/series limits. Never discard records simply to fit a preset; split views or use a table.
+Use prose for a single fact and a table for dense exact comparisons. Never discard records simply
+to fit a preset; split views or use a table.
+
+Choose form before color: one number uses a stat tile; observed-versus-baseline uses one emphasis
+color and gray baseline; more than seven categories uses a table. Use a fixed categorical order
+without cycling colors, one hue for sequential values, and two hues with a gray midpoint for
+diverging values. Status colors identify status only. Use one axis; split different units into
+small multiples. Use text tokens for labels, not series colors. Two or more series need a legend;
+up to four also need direct labels. Every chart includes a value-table alternative, a hover tooltip
+(at least SVG `<title>`) and non-color cues. Add one sentence explaining how to read each chart,
+including units and the comparison's meaning. Check contrast and color-vision-deficiency distinction;
+use an appropriately licensed tool or independently authored check, never copy a proprietary bundle.
+Do not invent charts, measurements or a passing palette check when the content/evidence lacks them.
 
 ## Compose a polished figure
 
