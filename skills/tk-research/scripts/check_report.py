@@ -185,6 +185,22 @@ def check_report(source, template_source):
         errors.append("report must retain one functional shared theme control")
     if [element.attrs.get("value") for element in theme_inputs] != ["system", "light", "dark"]:
         errors.append("theme control must offer system, light, and dark in order")
+    theme_options = [element for element in elements if "ht-theme-option" in class_tokens(element)]
+    for option in theme_options:
+        children = [child for child in option.children if isinstance(child, Element)]
+        valid = (
+            option.tag == "label" and len(children) == 2
+            and children[0] in theme_inputs
+            and children[0].attrs.get("type") == "radio"
+            and children[1].tag == "span" and children[1].text_content().strip()
+            and len(theme_controls) == 1 and option in list(theme_controls[0].descendants())
+        )
+        if not valid:
+            errors.append("each ht-theme-option needs a radio input immediately followed by a non-empty span")
+    if len(theme_options) != 3 or any(
+        input_element.parent not in theme_options for input_element in theme_inputs
+    ):
+        errors.append("all theme inputs must use ht-theme-option labels with input + span")
     for element in elements:
         if element.tag == "details":
             children = [child for child in element.children if isinstance(child, Element) or child.strip()]
@@ -296,6 +312,21 @@ def check_report(source, template_source):
                 ".ht-doc-nav table of contents is missing section links: "
                 + ", ".join(sorted(missing_toc_ids))
             )
+
+        for link in navigators[0].descendants():
+            if link.tag != "a" or not link.attrs.get("href", "").startswith("#"):
+                continue
+            matches = ids_by_value.get(fragment_id(link.attrs["href"]), [])
+            if len(matches) != 1:
+                continue  # The fragment check already reports invalid targets.
+            target = matches[0]
+            heading = target if re.fullmatch(r"h[1-6]", target.tag) else next(
+                (child for child in target.children
+                 if isinstance(child, Element) and re.fullmatch(r"h[1-6]", child.tag)), None,
+            )
+            heading_text = " ".join(heading.text_content().split()) if heading else ""
+            if not heading_text or heading_text not in " ".join(link.text_content().split()):
+                errors.append(f"TOC link {link.attrs['href']!r} must contain its target heading's full text")
 
         movement_ids = {
             fragment_id(element.attrs["href"])

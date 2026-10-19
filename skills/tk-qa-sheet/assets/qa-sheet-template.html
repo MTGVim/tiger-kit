@@ -118,6 +118,26 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
 .ht-document:is(:target, :focus),
 .ht-document :is(section, article, main, header, footer, h1, h2, h3, h4, h5, h6)[id]:is(:target, :focus) { outline: none; }
 
+/* Mark the fragment heading briefly without leaving a persistent frame. */
+@keyframes ht-target-flash {
+  from { outline-color: var(--accent); }
+  to { outline-color: transparent; }
+}
+.ht-document .ht-doc-content section[id]:target > :is(h1, h2, h3, h4, h5, h6),
+.ht-document .ht-doc-content :is(h1, h2, h3, h4, h5, h6)[id]:target {
+  outline: 2px solid transparent;
+  outline-offset: 4px;
+  border-radius: calc(.5 * var(--radius));
+  animation: ht-target-flash 1.5s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ht-document .ht-doc-content section[id]:target > :is(h1, h2, h3, h4, h5, h6),
+  .ht-document .ht-doc-content :is(h1, h2, h3, h4, h5, h6)[id]:target {
+    animation: none;
+    background: var(--hover);
+  }
+}
+
 /* A return link may focus the citation superscript; keep link keyboard focus visible. */
 .ht-document sup[id^="cite-"]:is(:target, :focus-visible) { outline: none; }
 .ht-citation-preview {

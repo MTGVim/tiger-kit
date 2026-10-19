@@ -138,6 +138,14 @@ class HTMLPolicyTest(unittest.TestCase):
         self.assertNotRegex(css, r'\.ht-document\s+:target\s*\{[^}]*outline:\s*[1-9]')
         self.assertRegex(css, r':focus-visible\s*\{[^}]*outline:\s*2px solid')
 
+    def test_fragment_cue_expires_and_respects_reduced_motion(self):
+        css = (ROOT / 'skills/tk-explain/assets/html-theme.css').read_text()
+        self.assertRegex(css, r'@keyframes ht-target-flash\s*\{\s*from\s*\{[^}]*var\(--accent\)')
+        self.assertRegex(css, r'to\s*\{\s*outline-color: transparent;')
+        self.assertIn('animation: ht-target-flash 1.5s ease-out;', css)
+        self.assertNotIn('animation: ht-target-flash 1.5s ease-out forwards', css)
+        self.assertRegex(css, r'@media \(prefers-reduced-motion: reduce\)\s*\{[^}]*\[id\]:target[^}]*animation: none;\s*background: var\(--hover\)')
+
     def test_shared_citation_preview_contract(self):
         css = (ROOT / 'skills/tk-explain/assets/html-theme.css').read_text()
         script = (ROOT / 'skills/tk-explain/assets/html-theme.js').read_text()

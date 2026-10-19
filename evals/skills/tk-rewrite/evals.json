@@ -2169,6 +2169,36 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "rewrite-proofread-malformed-conjugation",
+      "path": "success",
+      "prompt": "$tk-rewrite 맞춤법과 활용만 다듬어 주세요. 원문: 변경 사항은 내부 검증을 거칠습니다. 운영 반영은 아직 하지 않았습니다.",
+      "expected_output": "검증을 거칠습니다를 검증을 거칩니다처럼 올바른 활용으로 고치고 운영 미반영 상태를 보존한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "거치다의 잘못된 활용을 고친다. 검증이 완료됐다고 바꾸거나 운영 반영이 끝났다고 주장하지 않고, 원문에 없는 절차나 조언을 추가하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "rewrite-proofread-preserve-valid-conjugations",
+      "path": "boundary",
+      "prompt": "$tk-rewrite 오타만 고쳐 주세요. 원문: 표면이 거칠습니다. 이 부품은 내일 검증을 거칠 예정입니다. 문서의 코드 예시는 `검증을 거칠습니다`입니다.",
+      "expected_output": "문맥상 올바른 거칠습니다와 거칠 예정입니다를 보존하고, 보호된 코드 예시를 고치지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "형용사 거칠다의 올바른 활용과 검증을 거치다의 미래 계획을 일괄 치환하지 않는다. 내일이라는 일정과 계획 상태, 코드 예시의 정확한 문자열을 보존한다. 실제 오류가 없으면 수정하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

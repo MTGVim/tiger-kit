@@ -47,10 +47,23 @@ navigators only when they add no value. A document with four or more sections in
 navigators; never omit only one. Use the
 shared `.ht-document`, `.ht-doc-content`, `.ht-doc-nav`, `.ht-doc-toc` and `.ht-doc-controls`
 styles in the theme assets. The left rail and mobile disclosure must work without JavaScript.
+Use the target heading's full text in each TOC link. Shorten an overlong heading itself,
+or put a short label above the full heading in a `<small>` line inside the same link.
 For example, adapt the labels/IDs:
 
 ```html
 <body class="ht-document" id="document-top">
+<header class="ht-topbar">
+  <p class="ht-topbar-title">문서 주제와 결론</p>
+  <fieldset class="ht-theme-control" data-ht-theme-control hidden>
+    <legend class="ht-theme-label">테마</legend>
+    <div class="ht-theme-buttons">
+      <label class="ht-theme-option"><input type="radio" name="ht-theme" value="system"><span>시스템</span></label>
+      <label class="ht-theme-option"><input type="radio" name="ht-theme" value="light"><span>라이트</span></label>
+      <label class="ht-theme-option"><input type="radio" name="ht-theme" value="dark"><span>다크</span></label>
+    </div>
+  </fieldset>
+</header>
 <!-- Document content, with meaningful section IDs. -->
 <main class="ht-doc-content">
   <!-- Sections and footer. -->
@@ -78,9 +91,11 @@ Inline the existing theme script after the markup for optional current-section m
 Escape/outside dismissal, focus return and focus transfer to native anchor targets. Do not
 intercept hash navigation or replace browser history. Native anchors remain usable without JS;
 expose `aria-current="location"` with a non-color-only cue when JS is available. TOC and top/bottom
-navigation must not draw an outline around the destination content section or heading, including
-after programmatic focus transfer. Keep the shared static-target suppression; custom static
-wrappers need the same narrowly scoped treatment. Never disable outlines globally: preserve
+navigation must not leave a persistent outline around the destination section or heading,
+including after programmatic focus transfer. Keep the shared static-target suppression and
+brief heading cue: its outline fades within about 1.5 seconds; reduced motion uses a static
+background cue instead. CSS `:target` does not replay the animation when the same hash is clicked
+again. Custom static wrappers need the same narrowly scoped treatment. Never disable outlines globally: preserve
 visible keyboard focus on links, buttons, inputs and other interactive controls. Keep the popup
 within viewport and safe-area bounds at desktop/mobile widths and preserve keyboard order.
 Smooth anchor scrolling is the default; reduced motion uses immediate scrolling. Set the
@@ -172,6 +187,8 @@ and three native radio inputs named `ht-theme` whose values are `system`, `light
 that order. Style the labels as one segmented control with body-size text and at least 40px target
 height. Keep the native radio semantics so Tab enters the group and arrow keys change the selected
 value. The script reveals it only when functional. Do not collapse this control into a small select.
+Each `.ht-theme-option` contains the radio input immediately followed by a non-empty `<span>`
+holding the visible label; the shared CSS styles only that span.
 
 In document-like artifacts, place the theme control at the right end of a top bar that spans the
 page; keep it sticky on desktop and in normal flow on narrow screens so it does not stack with
@@ -269,6 +286,9 @@ to every citation occurrence that cites it. Preserve the explicit AI-authorship 
 - Every local fragment `href` resolves to exactly one ID, and IDs are unique.
 - When document navigation is present, the table of contents links to every section and the
   movement controls link to both the top and bottom.
+- Each TOC link contains its target heading's full text, comparing normalized whitespace.
+- Each `.ht-theme-option` label contains one `input[type="radio"][name="ht-theme"]`
+  immediately followed by a non-empty `span`; all three theme inputs use this structure.
 - No runtime network requests are present, including resource-loading HTML/CSS references and
   network APIs in inline scripts. Unsafe URL schemes are rejected; ordinary HTTPS source links
   remain allowed.

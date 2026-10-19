@@ -27,7 +27,7 @@ class ResearchReportTest(unittest.TestCase):
 '''
         return f'''<!doctype html>
 <html lang="en" data-default-theme="system"><head><title>Evidence-backed report</title>{style}</head><body class="ht-document" id="document-top">
-<header class="ht-topbar"><p class="ht-topbar-title">A decision supported by current evidence</p><fieldset class="ht-theme-control" data-ht-theme-control hidden><input type="radio" name="ht-theme" value="system"><input type="radio" name="ht-theme" value="light"><input type="radio" name="ht-theme" value="dark"></fieldset></header>
+<header class="ht-topbar"><p class="ht-topbar-title">A decision supported by current evidence</p><fieldset class="ht-theme-control" data-ht-theme-control hidden><legend class="ht-theme-label">Theme</legend><div class="ht-theme-buttons"><label class="ht-theme-option"><input type="radio" name="ht-theme" value="system"><span>System</span></label><label class="ht-theme-option"><input type="radio" name="ht-theme" value="light"><span>Light</span></label><label class="ht-theme-option"><input type="radio" name="ht-theme" value="dark"><span>Dark</span></label></div></fieldset></header>
 <main class="ht-doc-content">
   <section id="overview"><h2>Overview</h2><p>A substantive conclusion supported by current evidence.<sup id="cite-1-1"><a href="#ref-1">[1]</a></sup></p></section>
   <section id="evidence"><h2>Evidence</h2><p>Evidence summary.</p></section>
@@ -64,6 +64,27 @@ class ResearchReportTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         result = self.check_report(self.report_html())
         self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_theme_labels_require_styled_input_span_structure(self):
+        html = self.report_html()
+        for replacement in ('System', '<span> </span>', '<em>System</em>',
+                            '<em></em><span>System</span>'):
+            with self.subTest(replacement=replacement):
+                self.assert_rejected(html.replace('<span>System</span>', replacement),
+                                     'non-empty span')
+        self.assert_rejected(html.replace('class="ht-theme-option"', 'class="other"'),
+                             'all theme inputs')
+        self.assert_rejected(html.replace('type="radio"', 'type="text"'), 'radio input')
+
+    def test_toc_labels_preserve_target_heading_text(self):
+        html = self.report_html()
+        self.assert_rejected(html.replace('href="#evidence">Evidence', 'href="#evidence">Facts'),
+                             "target heading's full text")
+        for label in ('Short label<small>Evidence</small>', ' Evidence\n '):
+            with self.subTest(label=label):
+                result = self.check_report(html.replace('href="#evidence">Evidence',
+                                                       'href="#evidence">' + label))
+                self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_renderer_builds_checked_report_and_resolves_theme_preference(self):
         root = Path(__file__).resolve().parents[1]

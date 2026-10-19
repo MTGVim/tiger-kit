@@ -24,6 +24,12 @@ contract, not a claim of a verified upstream project-familiarity rule.
 
 Original MIT notices are in the calling package's `LICENSE.txt`.
 
+The final Korean proofreading pass is an independently authored maintenance extension from
+the user's 2026-10-19 malformed-conjugation feedback. Keep contextual correction and protected
+literals; adapt a final reread to catch newly introduced errors; omit word blacklists and
+automatic replacement. Paired repository evals distinguish `검증을 거칠습니다` from the valid
+adjective `표면이 거칠습니다` and future construction `거칠 예정입니다`.
+
 Evaluative intensity versus certainty draws on `dotoricode/korean-humanizer`, `4fc566b7d7ded76887f7a85c0886e44796e5e38c` (`references/ko-ai-signals.md` and native-skill QA). Concession preservation draws on `conorbronsdon/avoid-ai-writing`, `bdeb726580634868b254972d8eab1a9340d9db16` (`FALSE_CONCESSION`, PR #359 and its fixtures). Adapt semantic preservation and must-not-overcorrect cases; omit detector regexes, taxonomy, output templates and runtime tooling.
 
 Claim-evidence binding also draws on `AIScientists-Dev/academic-humanizer`,

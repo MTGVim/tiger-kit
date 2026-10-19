@@ -51,6 +51,19 @@ Apply this section only to Korean prose. Respect explicit user style requirement
 
 Retain sentence components, particles, and endings needed to express the relationship. Replace noun piles and vague possessives with an explicit subject and verb. Concrete Sino-Korean and established technical vocabulary are useful when accurate; do not replace them just to use simpler words. Use customary translations or transliterations when clearer, and retain original terms otherwise. These rules do not translate code, comments, logs, commands, or commit messages.
 
+After the final edit, reread the actual headings and sentences for typos, spacing, particles,
+collocations and verb/adjective conjugations, including errors introduced while polishing.
+Resolve a suspicious form from its intended word and sentence context, not a word blacklist;
+preserve valid forms, tense, modality and protected literals. Correct only a clear error;
+when meaning is ambiguous, retain it or ask rather than inventing a replacement.
+
+```text
+Incorrect: 검증을 거칠습니다.
+Correct: 검증을 거칩니다.
+Preserve: 표면이 거칠습니다.
+Preserve: 검증을 거칠 예정입니다.
+```
+
 ```text
 Before: 정책 변경 영향 검토 후 반영 예정.
 After: 정책 변경이 미치는 영향을 검토한 뒤 변경 사항을 반영할 예정입니다.
