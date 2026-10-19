@@ -49,6 +49,16 @@ unverified; the calling package's `LICENSE.txt` preserves the MIT notice.
 
 Sources inform behavior; their runtime and stylistic instructions are not dependencies or authority.
 
+- Live-figure selection (issue #460): rechecked `nicobailon/visual-explainer` at
+  `5f378868e0ea745a6284b51e710c390f0c76f72c`, `plugins/visual-explainer/SKILL.md`
+  (figure selection), `references/motion.md` (Live figure), and `eval/` methodology,
+  prompts and judge. Keep parameter-driven consequences; adapt selection examples
+  to the existing static/step-through boundary. Shared calculation, small controls,
+  assumptions and static fallback already belong to `html-output.md` and existing
+  evals; do not duplicate them. Omit kit, renderer, templates and figure-first
+  defaults. No live-figure-specific upstream behavior eval or efficacy result was
+  found; upstream runtime efficacy was not reproduced. Existing MIT notice applies.
+
 - `Unclecheng-li/AI_Animation`, `skills/flowchart/SKILL.md`, revision `22ce6df3754c3d914caee78e59b24903191f01bc`: keep user-controlled stepping and playback with pause/reset; adapt motion to explanatory transitions and a paused initial state. Omit mandatory continuous animation, scene/line quotas, CDN fonts, and fixed visual styling.
 - `CopilotKit/OpenGenerativeUI`, `apps/agent/skills/advanced-visualization/SKILL.md`, revision `457e60cdf7f63fb78004486e1dc7ba753194696d`, Parts 8–9: keep direct manipulation, self-explanatory visuals and non-color-only cues; adapt its content-dependent visual selection to an offline explanation with complete reset and visible causal differences. Omit sandbox/tool contracts, host bridges, external libraries, and widget-only narration rules.
 

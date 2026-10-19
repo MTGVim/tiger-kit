@@ -4,6 +4,13 @@ Read only when a concept's cause and effect depends on input, identity, state, o
 
 ## Let the reader cause the difference
 
+Choose a live figure when varying a parameter reveals the claim: for example, how
+worker concurrency changes queue completion time, or how a retry delay changes
+waiting time. Each control must change a relevant consequence, rather than merely
+reveal a caption or animate an unchanged picture. Prefer a static figure for fixed
+structure and a step-through for event order alone, such as DNS lookup; neither
+needs a parameter slider.
+
 Choose the smallest useful experiment: edit a value, reorder items, toggle a condition, or trigger an event. For stateful concepts, provide a native input for the reader's own local-state value and a separate causal change; a button that generates a preset value cannot substitute for editing. Give one short experiment instruction, such as predict the outcome, change the input, then compare what actually happened. Every instruction must correspond to a working control. Keep prerequisites, mechanism, and material caveats beside the experiment rather than replacing them with controls.
 
 For a comparison of alternative rules, start from one shared set of experiment inputs and apply the same causal change to every alternative. Let the reader edit the common input once rather than manually copying it between alternatives; apply the exact same entered value, not different generated suffixes or transformations. Define what that edit targets: a baseline editor updates the same original entity/state in every alternative, using its original association rather than its current display position; an editor for the currently displayed entity applies the same event to that entity in every alternative. Label the scope clearly and preserve the current order and relevant history. Track each retained instance's identity and each state value's intended entity as separate fields. On an edit, update the value and its intended entity together; preserve both across reordering. Derive value-mismatch markers and conclusions from that intended entity versus the current displayed entity, not from the instance's initial identity or a changed-order flag. Keep the instance identity visible so state ownership and value provenance are not conflated.

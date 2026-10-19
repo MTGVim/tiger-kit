@@ -949,6 +949,44 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "explain-live-figure-parameter-selection",
+      "path": "success",
+      "prompt": "$tk-explain 작업 5개를 각 2초에 처리하는 `worker queue`를 `worker-concurrency.html`로 설명해줘. 작업은 모두 0초에 도착하고 `worker`당 한 번에 하나씩 대기 순서대로 처리하며 추가 비용은 없어. 동시 처리 수를 1에서 2, 다시 3으로 바꾸면서 대기열과 전체 완료 시간이 왜 달라지는지 직접 살펴보고 싶어.",
+      "expected_output": "동시 처리 수를 조작하면 작업 배치 그림, 전체 완료 시간과 인과 설명이 같은 모델에서 갱신되는 작은 `live figure`를 선택한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "파라미터 변화가 이해를 돕기 때문에 `live figure`를 선택한다. 동시 처리 수 1, 2, 3에서 전체 완료 시간은 각각 10초, 6초, 4초이며 작업 5개의 배치와 설명이 일치한다. 실제 `worker` 실행이나 측정값이라고 주장하지 않고 단순화 가정을 표시한다. 캡션 공개나 동일한 그림의 장식 애니메이션으로 조작을 대체하지 않는다. 기존 공통 모델·오프라인·접근성·전체 초기화 계약을 유지하며 실제 실행한 검증 범위를 구별한다."
+        },
+        {
+          "type": "path_exists",
+          "path": "worker-concurrency.html"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "explain-event-order-without-parameter-slider",
+      "path": "boundary",
+      "prompt": "$tk-explain 캐시가 없는 DNS 재귀 조회에서 브라우저, 재귀 리졸버, 루트·TLD·권한 서버를 거쳐 응답이 돌아오는 순서만 `dns-order.html`에 설명해줘. TTL 조절이나 성능 실험은 필요 없어.",
+      "expected_output": "고정된 조회 관계는 정적 그림으로, 중간 순서가 도움이 되면 `step-through`로 표현하며 `live figure`를 강제하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "질문에 필요한 실제 조회 순서와 관계를 정적 그림 또는 수동 `step-through`로 설명한다. 순서를 보여 주는 기능과 파라미터를 바꾸는 실험을 구분하고 TTL·동시 처리 수·속도 같은 불필요한 변수나 `slider`를 추가하지 않는다. `live figure`나 별도 모델·`renderer`·`runtime`을 기본값으로 강제하지 않으며 기존 오프라인·접근성·출처 계약을 유지한다."
+        },
+        {
+          "type": "path_exists",
+          "path": "dns-order.html"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "renamed_from": {
