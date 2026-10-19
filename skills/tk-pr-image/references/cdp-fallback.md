@@ -48,7 +48,8 @@ disabled. Do not submit an empty comment to test the upload.
 
 ## Verification and cleanup
 
-After the skill updates the requested body/comment, preserve the exact generated Markdown and verify the uploaded
+After the skill updates the requested body/comment, preserve every generated image token byte-for-byte,
+verify its single occurrence and correct role/caption association, and verify the uploaded
 objects through authenticated image-byte checks and upload-ref reachability. Inspect the rendered PR page only when
 requested or when it is needed to investigate a concrete rendering concern. Do not treat a placeholder, Markdown
 presence, or fixed delay as proof of image bytes. Do not expose JWTs or query strings from signed URLs.

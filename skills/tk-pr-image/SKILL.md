@@ -46,6 +46,11 @@ Before any upload or PR body/comment update, reverify the explicitly selected ta
    footer or append it at the end. Preserve unrelated body content. For manifest artifacts, use the supplied criterion,
    role, exact `display_route`, state/region, viewport, and comparison in the caption; never derive them from a filename,
    OCR, raw URL, or producer identity. Keep `visual-preservation` baseline and after visibly labeled as one pair.
+   For every pair, with or without a manifest, add a title naming the verified route/screen,
+   one expected-behavior sentence, role headers such as `수정 전` / `수정 후`, one image row,
+   and a caption row beneath describing each image's observation. Carry supplied evidence;
+   disclose missing route/screen evidence rather than inventing it. Staging filenames are
+   not headers, captions or an adequate description.
 3. Select and execute an eligible route using
    [gh-attach](references/gh-attach.md), or read
    [CDP fallback](references/cdp-fallback.md) only after CDP is selected.
@@ -56,7 +61,8 @@ Before any upload or PR body/comment update, reverify the explicitly selected ta
    extension installation remains here. Resume the exact repository, target, image set, and
    route after the wizard completes.
 5. Update only the requested body or comment through the GitHub API or equivalent.
-   Before `Pass`, verify byte-for-byte Markdown preservation, decodable `image/*` bytes from an authenticated fetch for
+   Before `Pass`, reread the target and verify every generated image token appears byte-for-byte exactly once,
+   the pair roles/captions remain correctly associated, decodable `image/*` bytes from an authenticated fetch for
    every asset, and reachability of every linked upload object from the upload ref. Browser-session rendering is
    optional; report whether it was checked in the receipt without making it a `Pass` prerequisite.
 6. Remove only owned staging files on every exit path. Write each deletion with the literal, fully resolved absolute run-owned staging path already recorded in this run; never derive the target from command substitution, a path file read back, or a glob piped through `head` or `tail`. If the exact literal path is unknown, list the candidates and stop instead of deleting.
@@ -75,7 +81,7 @@ Route: gh-attach | CDP
 Entry: <exact reviewed command | browser route>
 Generated Markdown: <asset refs | none>
 Remote ref: <refs/uploads/issues/<pr-number> | none | unknown>
-Verification: Markdown byte match: <Pass | Fail | unavailable>; image bytes/type: <Pass | Fail | unavailable>; upload ref reachability: <Pass | Fail | unavailable>; rendering: <checked | not performed | unavailable>
+Verification: image-token byte match and single occurrence: <Pass | Fail | unavailable>; image bytes/type: <Pass | Fail | unavailable>; upload ref reachability: <Pass | Fail | unavailable>; rendering: <checked | not performed | unavailable>
 Changed: <body/comment changed | unchanged | unknown>
 Cleanup: <owned staging path removed | failed | not applicable>
 Status: Pass | Fail | Pending | Blocked | Unverifiable
@@ -107,8 +113,9 @@ and artifacts not tied to the current run. If required evidence is missing or in
 - Do not log or return a signed URL, JWT, or raw secret-bearing query string. This does not prohibit a verified-safe,
   origin-free `display_route`; preserve its pathname, query, and fragment exactly as supplied by the manifest.
 - Redact only secret-bearing values (signed parameters, JWTs, tokens) in displayed output; preserve rendering parameters
-  such as `raw=true`. Keep the extension's generated Markdown privately for the authorized body/comment mutation and
-  insert it verbatim, with captions outside that block; never rebuild links from redacted or summarized output. Do not
+  such as `raw=true`. Keep each generated image Markdown token byte-for-byte, including its alt,
+  URL and rendering parameters; surrounding table layout may be recomposed with captions beneath the images.
+  Never rebuild links from redacted or summarized output. Do not
   copy secret-bearing originals into logs, receipts, or evidence artifacts.
 
 ## Failure Handling

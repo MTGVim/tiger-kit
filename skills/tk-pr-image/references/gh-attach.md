@@ -75,7 +75,9 @@ gh attach --repo <owner>/<repo> <pr-number> <image>...
 ```
 
 Do not pass `--comment`. Collect only the generated image Markdown so the skill can
-preserve exact body/comment placement. Insert that Markdown verbatim; add captions outside the generated block.
+preserve exact body/comment placement. Preserve every generated image Markdown token
+byte-for-byte, including its URL and rendering parameters. Recompose surrounding table layout
+with role headers, one image row and one caption row beneath; retain each image's role and pair.
 Keep display redaction separate from the private mutation input. Reject empty output, unexpected non-Markdown
 output, links for another repository or reference, and output that omits any input
 image.
@@ -87,7 +89,8 @@ the upload reference may remain.
 
 ## Verification
 
-Re-read the raw selected body/comment and compare the inserted Markdown byte-for-byte with the extension's generated
+Re-read the raw selected body/comment and verify every generated image token appears byte-for-byte exactly once.
+Compare tokens with the extension's generated
 Markdown. For every asset, verify all of the following before `Pass`:
 
 - The inserted URL resolves to image content, not a file-view HTML page. A `blob` page without a rendering parameter

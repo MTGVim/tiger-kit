@@ -448,7 +448,7 @@
     "tk-pr-open:behavior:pr-evidence-required-manifest-no-extra-question",
     "tk-pr-open:behavior:pr-evidence-docs-without-images-na",
     "tk-pr-open:behavior:pr-evidence-explicit-no-images-reuses-choice",
-    "tk-pr-image:behavior:upload-preserves-generated-markdown-verbatim",
+    "tk-pr-image:behavior:upload-preserves-generated-image-tokens",
     "tk-pr-image:behavior:upload-redacts-only-secret-values-in-display",
     "tk-pr-image:behavior:upload-fails-blob-html-despite-img-element",
     "tk-pr-image:behavior:upload-unverifiable-without-browser-render",

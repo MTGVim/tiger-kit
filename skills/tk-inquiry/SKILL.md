@@ -45,7 +45,17 @@ send, or thread reply is owned by this skill.
    issue body, when one is available; do not invent one or attribute it to a team or
    decision-maker unless the source does.
    Keep observations and inferences distinct, and name the evidence that supports
-   each.
+   each. In every channel, verify sequence claims against comparable event timestamps
+   with the same precision and timezone; a commit author date does not establish push
+   time. If timing is unresolved or overlaps message composition, state the current
+   state without asserting order. Attribute the basis of an earlier statement only
+   when its author supplied that basis.
+
+   When correcting the requester's earlier statement about another team's work,
+   own the correction and state the current behavior. Include the other team's
+   revision history only when the recipient needs it to act. When concepts could
+   be confused, define each once briefly near the start, then reuse those terms
+   instead of re-explaining them in every paragraph.
 
    For documents, email, or a format the user explicitly requests, use `Summary`,
    `Reconstructed sequence`, and `Requests` headings only when the material needs

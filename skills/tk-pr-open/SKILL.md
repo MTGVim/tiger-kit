@@ -127,7 +127,9 @@ the question. If sensitive content motivates withholding, offer a bounded crop o
 alongside "do not upload"; create only the selected derivative, preserve its claim and pair, and re-inspect it before upload.
 An explicit active-task image choice resolves this ambiguity without another question. With no images or image-backed
 claim, use `N/A`. A selected upload authorizes the exact image set through `tk-pr-image` after the owning PR exists;
-do not fabricate a required manifest for it.
+carry the criterion, verified route/screen literals, expected behavior and per-image observations
+from the approval preview in that handoff, even without a manifest. Do not start a new investigation.
+Do not fabricate a required manifest for it.
 
 Validate generic fields rather than producer identity: `evidence_required`, `evidence_kind`, `verification_status`,
 criterion, inspected artifact paths, `display_route` or its exact omission limitation, state/region, viewport, comparison,
