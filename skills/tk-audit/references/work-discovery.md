@@ -11,6 +11,11 @@ findings without changed constraints or measured friction. Propose new product f
 the active request or discovery context explicitly permits them and repository evidence supports them.
 Do not turn a technical audit into unsolicited market/product research.
 
+When tracked code or configuration changes over time, missing documentation infrastructure
+may be a `next` opportunity, not a defect by itself. Read [documentation](documentation.md)
+only for that opportunity's evidence, priority and smallest missing parts; this does not
+start the `docs` focus's full comparison.
+
 ## Tracker-aware deduplication
 
 Before calling a candidate new, inspect the primary and all supplied/configured work sources with

@@ -722,6 +722,102 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "audit-docs-cross-checks-contracts",
+      "path": "success",
+      "prompt": "`$tk-audit` `docs` 정책 시뮬레이션입니다. 실제 도구 실행이나 수정 없이 `evals/skills/tk-audit/fixtures/documentation.md`의 저장소 스냅샷 `A`를 감사해 주세요.",
+      "expected_output": "스킬 본문과 `frontmatter`, 테스트와 `eval`의 기대값을 대조하고 현재 코드·문서 모순을 정확한 경로와 줄로 보고합니다. 한정된 예시와 날짜가 붙은 과거 보고는 결함으로 올리지 않고 대조하지 못한 문서는 공개합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "스킬 본문과 `frontmatter`, 테스트와 `eval`의 기대값을 대조하고 현재 코드·문서 모순을 정확한 경로와 줄로 보고합니다. 한정된 예시와 날짜가 붙은 과거 보고는 결함으로 올리지 않고 대조하지 못한 문서는 공개합니다."
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "audit-standard-keeps-category-breadth",
+      "path": "success",
+      "prompt": "`$tk-audit` `standard` 정책 시뮬레이션입니다. 실제 도구 실행이나 수정 없이 `evals/skills/tk-audit/fixtures/documentation.md`의 저장소 스냅샷 `A`를 감사해 주세요.",
+      "expected_output": "`standard`의 기존 `correctness`·`testing`·`DX`·`documentation` 검토를 유지하며 인자 처리 오류와 그 누락된 테스트를 문서 대조 때문에 놓치지 않습니다. `docs` 전용 전체 대조를 `standard`의 필수 절차로 추가하지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`standard`의 기존 `correctness`·`testing`·`DX`·`documentation` 검토를 유지하며 인자 처리 오류와 그 누락된 테스트를 문서 대조 때문에 놓치지 않습니다. `docs` 전용 전체 대조를 `standard`의 필수 절차로 추가하지 않습니다."
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "audit-next-docs-opportunity-not-defect",
+      "path": "success",
+      "prompt": "`$tk-audit` `next` 정책 시뮬레이션입니다. 실제 도구 실행이나 수정 없이 `evals/skills/tk-audit/fixtures/documentation.md`의 저장소 스냅샷 `B`와 `C`에 대한 다음 작업을 제안해 주세요.",
+      "expected_output": "문서 기반 부재는 결함이 아닌 `next` 기회로 분리하고 누락된 최소 구성만 제안합니다. 휴면 저장소는 우선순위를 낮추고 지침 파일 부분으로 한정합니다. 지침 파일은 수정하지 않고 로딩·`import` 규칙은 현재 도구 근거로 확인하도록 하며 임의 개수로 `Diátaxis` 디렉터리를 만들지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "문서 기반 부재는 결함이 아닌 `next` 기회로 분리하고 누락된 최소 구성만 제안합니다. 휴면 저장소는 우선순위를 낮추고 지침 파일 부분으로 한정합니다. 지침 파일은 수정하지 않고 로딩·`import` 규칙은 현재 도구 근거로 확인하도록 하며 임의 개수로 `Diátaxis` 디렉터리를 만들지 않습니다."
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "audit-docs-ref-and-mechanism-evidence",
+      "path": "success",
+      "prompt": "`$tk-audit` `docs` 정책 시뮬레이션입니다. 실제 도구 실행이나 수정 없이 `evals/skills/tk-audit/fixtures/documentation.md`의 저장소 스냅샷 `D`를 감사해 주세요.",
+      "expected_output": "뒤처진 로컬 상태와 원격 `ref`를 구분하여 원격에서도 유효한 문서 모순만 해당 `ref`로 보고합니다. 의미상 목록 누락에는 대응표를 제안하고 경로 검사를 대책으로 삼지 않습니다. 실행 증거 없는 리뷰 설정은 동작 미확인으로 남기고 지침 파일은 제안으로만 다룹니다. 로컬 `HEAD`와 `immutable` 비교 `SHA`를 함께 보존하고, 저장 전 `ref` 이동은 기존 `ledger` `preflight` 경계에 따라 중단합니다. 후속 구현 대상에서도 다시 검증합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "뒤처진 로컬 상태와 원격 `ref`를 구분하여 원격에서도 유효한 문서 모순만 해당 `ref`로 보고합니다. 의미상 목록 누락에는 대응표를 제안하고 경로 검사를 대책으로 삼지 않습니다. 실행 증거 없는 리뷰 설정은 동작 미확인으로 남기고 지침 파일은 제안으로만 다룹니다. 로컬 `HEAD`와 `immutable` 비교 `SHA`를 함께 보존하고, 저장 전 `ref` 이동은 기존 `ledger` `preflight` 경계에 따라 중단합니다. 후속 구현 대상에서도 다시 검증합니다."
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "audit-docs-upstream-ref-drift-blocks-ledger",
+      "path": "boundary",
+      "prompt": "`$tk-audit` `docs` `save` 정책 시뮬레이션입니다. 파일이나 도구를 실제로 변경·실행하지 마세요. 로컬 `HEAD=aaa`, `upstream=bbb`에서 문서 누락을 비교했습니다. 로컬에는 결함이 없고 `bbb`에만 있습니다. `ledger`를 쓰기 직전에 `upstream`이 `ccc`로 바뀌었습니다. `bbb` `finding`을 현재 `HEAD` 결함으로 저장해 주세요.",
+      "expected_output": "비교 `ref` 이동을 `ledger` `preflight` `drift`로 처리해 저장을 중단하며, `bbb` 근거를 `aaa` 또는 `ccc`에서 검증된 결함으로 바꾸지 않습니다. 재감사 필요성과 원래 비교 `SHA`를 보존합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "로컬 `HEAD`와 비교 `SHA`를 구분하고, `ref`가 바뀌면 재감사 전 `ledger` 쓰기를 중단하며 `upstream-only` 결함을 현재 `HEAD`에 잘못 귀속하지 않습니다."
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": true
     }
   ],
   "renamed_from": {

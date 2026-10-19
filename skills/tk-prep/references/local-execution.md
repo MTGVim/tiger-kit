@@ -109,13 +109,17 @@ automated regression protection, and create only approved local commits. Invoke 
 or `tk-app-verify`) for every applicable runtime AC; its evidence does not replace automated protection. SDD's whole-change final review already
 satisfies the broad review gate.
 
-During final exact-scope review, when the actual diff changes a public command, path, configuration key, environment
-variable, API contract, or installation/build/deployment/onboarding procedure, compare it with an exact repository-owned
-document only if preparation already identified that document as the owner of the changed fact. Correct only stale factual
-content in the same approved local change, using the repository's generator instead of editing generated output directly.
-Do not search the documentation tree, invent a new document, or edit voice, structure, strategy, or nearby prose. Skip this
-check when the public fact did not change or no exact owner was already known. A correction that requires a new product
-decision or material scope expansion returns to preparation for revision and reapproval.
+During final exact-scope review, follow repository-defined documentation mappings, bounded searches and verification
+commands; run the defined checks and report their results. When the diff changes a public command, path, configuration
+key, environment variable, API contract, or installation/build/deployment/onboarding procedure, compare the changed fact
+with its known repository-owned documents. If no procedure exists, an optional search of root documents and documentation
+directories using changed paths or symbols may identify an owner; do not read an unrelated documentation tree. Without
+a repository procedure, skip this check when no public fact changed.
+Correct only claims made stale by the approved change, using the repository's generator for generated documentation.
+Preserve accurate matches, voice, structure, strategy, and nearby prose; create no new documents or lifecycle. Never
+modify instruction or rule files (`AGENTS.md`, `CLAUDE.md`, `.claude/rules/**`), even when the procedure requests a mapping
+row there; report the exact proposed update instead. A correction requiring a new product decision or material scope
+expansion returns to preparation for revision and reapproval.
 
 Material Goal/Scope/approved Decision/AC/security/required Verification drift returns to preparation for revision and
 reapproval. A reversible engineering ambiguity may receive a visible `Ruling:` with its reason and cost if wrong.

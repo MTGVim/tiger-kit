@@ -7,8 +7,9 @@ without this conversation or the `audit session`.
   repository rules, and relevant `exemplar`s.
 - **Boundaries**: Include the `in/out` scope, assumptions, dependencies, and concrete
   `STOP/report-back` conditions.
-- **Verification**: Include commands, expected results, the `audited HEAD`, and how to
-  handle `drift`.
+- **Verification**: Include commands, expected results, the `audited HEAD`, any pinned
+  `docs` comparison commit, and how to handle `drift`. Recheck upstream-only findings
+  against the executor's actual target; they do not establish a local HEAD defect.
 - **Safety**: Include only `secret` locations and credential types. Do not copy `values`,
   `cookies`, `tokens`, or `private identity` data.
 

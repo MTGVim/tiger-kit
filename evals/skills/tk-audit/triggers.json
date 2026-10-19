@@ -154,6 +154,18 @@
       "split": "validation",
       "query": "`Jira`와 겹치지 않는 일감을 찾아 주세요.",
       "should_trigger": false
+    },
+    {
+      "id": "docs-validation-explicit",
+      "split": "validation",
+      "query": "`$tk-audit` `docs` 스킬 본문과 테스트 및 `eval`의 문서 정합성을 감사해 주세요.",
+      "should_trigger": true
+    },
+    {
+      "id": "docs-validation-negative-implicit",
+      "split": "validation",
+      "query": "문서와 코드가 맞는지 확인해 주세요.",
+      "should_trigger": false
     }
   ],
   "migrations": [

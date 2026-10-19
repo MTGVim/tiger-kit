@@ -39,7 +39,10 @@ checklist, not as quotas.
 - **DX / tooling**: Check missing or broken typecheck/lint/format configuration,
   onboarding, environment documentation, and executable diagnostics.
 - **Documentation**: Check stale public/API/setup documentation or missing decisions
-  with concrete maintenance cost.
+  with concrete maintenance cost. Only the `docs` focus runs the full comparison in
+  [documentation](documentation.md); bare and `standard` keep this general check and
+  their other categories. Missing documentation infrastructure alone is a `next`
+  opportunity, not a finding.
 - **Direction**: Check only evidence-backed next-step candidates supported by repository
   intent, TODO clusters, flags, roadmaps, or unfinished modules.
 

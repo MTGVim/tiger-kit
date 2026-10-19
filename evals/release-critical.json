@@ -121,7 +121,7 @@
     "tk-prep:behavior:prep-ordinary-comment-skips-assertion-ceremony",
     "tk-prep:behavior:prep-syncs-known-public-document-from-final-diff",
     "tk-prep:behavior:prep-internal-refactor-skips-document-sync",
-    "tk-prep:behavior:prep-unknown-document-owner-skips-broad-search",
+    "tk-prep:behavior:prep-unknown-document-owner-allows-targeted-search",
     "tk-prep:behavior:prep-document-sync-material-expansion-requires-reapproval",
     "tk-audit:behavior:audit-architecture-doctrine-is-not-a-finding",
     "tk-audit:behavior:audit-architecture-hotspot-needs-behavior-evidence",

@@ -2,7 +2,7 @@
 name: tk-audit
 description: "[user] 저장소를 읽기 전용으로 감사하고, 다른 실행자나 `tk-prep`이 재사용할 수 있는 우선순위가 있는 근거 기반 `AUD-*` `finding`을 작성합니다."
 license: MIT
-argument-hint: "[quick|standard|deep] [security|perf|tests|architecture|policy|branch|next] [save]"
+argument-hint: "[quick|standard|deep] [security|perf|tests|architecture|docs|policy|branch|next] [save]"
 disable-model-invocation: true
 metadata:
   tigerkit:
@@ -37,7 +37,7 @@ When durable findings are needed, the only owned artifact is repository-local `.
 
 - `bare`: Audit all categories at standard depth.
 - `quick | standard | deep`: Change the depth and bounded coverage.
-- `security | perf | tests | architecture`: Focus on one category.
+- `security | perf | tests | architecture | docs`: Focus on one category; `docs` uses [documentation](references/documentation.md).
 - `policy`: Focus on business-policy complexity using [policy-refactoring.md](references/policy-refactoring.md).
 - `branch`: Inspect merge-base changes and direct consumers, and mark `introduced | pre-existing`.
 - `next`: Discover evidence-backed technical work and check existing trackers using [work discovery](references/work-discovery.md); separate opportunities from defects.
@@ -80,7 +80,7 @@ durable recovery. Audit depth alone does not require an artifact.
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Ledger preflight
 
-When persistence is required, before writing `.tigerkit/audit.md`, freshly recheck the current `HEAD`, requested scope, existing `AUD-*` IDs,
+When persistence is required, before writing `.tigerkit/audit.md`, freshly recheck the current `HEAD`, any pinned `docs` comparison ref, requested scope, existing `AUD-*` IDs,
 cited evidence, and the audited/unaudited boundary. If any of these changed, conflict, or cannot be read, stop with
 `Status: Blocked` or `Status: Unverifiable` and do not write the ledger. Only after the preflight passes, atomically
 update the ledger.
@@ -90,7 +90,7 @@ update the ledger.
 ## Failure Paths
 
 - If repository instructions, the selected reference, or required evidence is unavailable, stop that scope and record it as unaudited; do not infer coverage.
-- If cited evidence cannot be reproduced at the audited `HEAD`, mark the finding unverifiable or stale and do not claim verification.
+- If cited evidence cannot be reproduced at the audited `HEAD` (or a `docs` finding's explicitly pinned comparison commit), mark the finding unverifiable or stale and do not claim verification.
 - If the scope or modifier is invalid, ask one clarifying question before reading beyond the minimum needed to identify the problem.
 - If the atomic `.tigerkit/audit.md` update fails, preserve the existing ledger, report the write failure, and do not fall back to an untracked or global copy.
 
@@ -127,7 +127,7 @@ An `Audit finding` alone grants no product-change or remote authority.
 ## Safety
 
 During a partial audit, do not delete existing findings; mark unaudited scope.
-Do not claim verification when the evidence cannot be reproduced at the current HEAD.
+Do not claim verification when evidence cannot be reproduced at the current HEAD or the finding's explicitly pinned `docs` comparison commit; never attribute upstream-only evidence to local HEAD.
 `.tigerkit/` is local scratch; do not create a global archive or current pointer.
 
 At completion, concisely summarize the key `finding`s and any unaudited scope.
