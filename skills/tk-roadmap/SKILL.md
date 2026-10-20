@@ -17,6 +17,10 @@ an unclear situation to a reviewable roadmap, including nontechnical initiatives
 a repository. Think across beneficiary value, organizational viability, feasibility,
 and operating burden; a role perspective grants no organizational decision authority.
 
+## Visual questions
+
+If roadmap choices require comparing screen arrangements, read [visual questions](references/visual-questions.md) for an HTML question aid without a separate save request. Continue nonvisual planning in conversation and preserve the prohibition on implementation or publication.
+
 ## Adaptive interview
 
 With no arguments, use relevant current conversation context. If no topic is known,

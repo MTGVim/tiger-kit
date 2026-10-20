@@ -10,7 +10,7 @@
 | --- | --- |
 | `tk-browser-verify`, `tk-wizard` | 비밀 입력 파일을 직접 생성합니다. 빈 원시 값 파일을 `input.json` 객체와 필수 필드 검증으로 이전합니다. |
 | `tk-app-verify` | 인증·권한 설정을 `tk-wizard`에 위임합니다. 기존 위임을 유지하고 파일 분기에 공통 참조를 포함합니다. |
-| `tk-prep`, `tk-pr-respond`, `tk-pr-sweep`, `tk-pr-open`, `tk-pr-rebase`, `tk-pr-image` | 승인·설정·검증의 소비자입니다. 현재 별도 입력 파일 생성 계약은 없으며 향후 승인된 파일 입력에 공통 명세를 적용합니다. |
+| `tk-prep`, `tk-pr-respond`, `tk-pr-sweep`, `tk-pr-open`, `tk-pr-rebase`, `tk-pr-media` | 승인·설정·검증의 소비자입니다. 현재 별도 입력 파일 생성 계약은 없으며 향후 승인된 파일 입력에 공통 명세를 적용합니다. |
 | `tk-audit`, `tk-discover`, `tk-domain`, `tk-explain`, `tk-explain-diff`, `tk-grooming`, `tk-handoff`, `tk-learn`, `tk-merge-conflict`, `tk-prototype`, `tk-research`, `tk-rewrite`, `tk-roadmap`, `tk-skill-diagnose`, `tk-study` | 보고서·초안·학습자료·상태·설정·임시 실행 자료를 만들 수 있습니다. 이 산출물과 기계 전송 파일의 형식은 보존하고, 사용자에게 값을 채우게 하는 새 임시 파일에만 JSON을 적용합니다. |
 | `tk-adhd`, `tk-grill`, `tk-ask-repo`, `tk-review` | 파일을 생성하지 않습니다. 출력 표기 규칙이 쓰기 권한을 확장하지 않으며 기존 쓰기 금지 경계를 보존합니다. |
 

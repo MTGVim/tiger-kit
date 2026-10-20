@@ -9,7 +9,7 @@
     {
       "from": "upload-vs-pr-open-existing-pr",
       "to": "pr-image-vs-pr-open-existing-pr",
-      "reason": "기존 이미지 첨부 스킬의 호출명을 tk-pr-image로 단축하며 선택 조건을 유지합니다."
+      "reason": "기존 이미지 첨부 스킬의 호출명을 tk-pr-media로 단축하며 선택 조건을 유지합니다."
     },
     {
       "from": "status-orientation",
@@ -125,6 +125,11 @@
       "from": "questionnaire-other-stakeholder",
       "to": "inquiry-other-stakeholder",
       "reason": "사용자 제안에 따라 스킬 이름을 tk-inquiry로 바꾸고, 기존 평가 계약을 새 이름으로 이전하면서 동작 범위와 안전 검증을 보존합니다."
+    },
+    {
+      "from": "pr-image-vs-pr-open-existing-pr",
+      "to": "pr-image-vs-pr-open-existing-pr-media",
+      "reason": "이미지 첨부 담당 스킬을 영상까지 확장한 이름으로 바꾸며 기존 선택 조건을 보존합니다."
     }
   ],
   "cases": [
@@ -321,11 +326,11 @@
       "critical": true
     },
     {
-      "id": "pr-image-vs-pr-open-existing-pr",
-      "boundary": "tk-pr-image 기존 `PR` 이미지 첨부 `vs` tk-pr-open `PR` 생성",
+      "id": "pr-image-vs-pr-open-existing-pr-media",
+      "boundary": "tk-pr-media 기존 `PR` 이미지 첨부 `vs` tk-pr-open `PR` 생성",
       "prompt": "현재 PR 본문에 이 로컬 `screenshot` 파일을 첨부해줘.",
-      "focus_skill": "tk-pr-image",
-      "expected_selected_skill": "tk-pr-image",
+      "focus_skill": "tk-pr-media",
+      "expected_selected_skill": "tk-pr-media",
       "critical": true
     },
     {

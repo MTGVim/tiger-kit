@@ -18,5 +18,5 @@
 기본 설치 경로를 소유한 기존 평가 두 개는 명시적 `migration`으로 바꾸고, 기존 승인·업로드 경계는 유지합니다.
 추가 지시는 `gh-attach` 경로에서만 읽는 참조에 두며 다른 스킬과 공통 질문 참조는 바꾸지 않습니다.
 
-`README: no public change`. `skills/tk-pr-image/references/gh-attach.md`의 설치·검토 절차만 바뀌며
+`README: no public change`. `skills/tk-pr-media/references/gh-attach.md`의 설치·검토 절차만 바뀌며
 `README.md`가 소유하는 스킬명, 호출 방식, 카탈로그 설명은 바뀌지 않습니다.

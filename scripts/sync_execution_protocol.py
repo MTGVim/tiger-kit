@@ -289,6 +289,10 @@ def main() -> int:
         for target in REVIEW_TARGETS
         for name in REVIEW_FILES
     )
+    visual_questions = ROOT / "skills/tk-grill/references/visual-questions.md"
+    if visual_questions.is_file():
+        pairs.extend((visual_questions, ROOT / "skills" / name / "references/visual-questions.md")
+                     for name in ("tk-prep", "tk-roadmap") if (ROOT / "skills" / name).is_dir())
     pairs.append((EXTERNAL_CONTRACT_SOURCE, EXTERNAL_CONTRACT_TARGET))
     pairs.extend((PR_VISUAL_SOURCE, target) for target in PR_VISUAL_TARGETS)
     pairs.extend((REBASE_READINESS_SOURCE, target) for target in REBASE_READINESS_TARGETS)

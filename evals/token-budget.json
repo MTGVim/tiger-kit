@@ -43,6 +43,8 @@
   },
   "max_growth_ratio": 0.1,
   "rationales": {
-    "budget_increase:always_read:tk-explain-html": "F2 explicitly requires the existing meaning-preserving clear-writing reference for new prose; the profile now counts that previously conditional file. Shared reporting/question blocks and routing files are reduced; other caps stay unchanged."
+    "budget_increase:always_read:tk-explain-html": "F2 explicitly requires the existing meaning-preserving clear-writing reference for new prose; the profile now counts that previously conditional file. Shared reporting/question blocks and routing files are reduced; other caps stay unchanged.",
+    "skill_md:skills/tk-grill/SKILL.md": "조건부 와이어프레임 산출물에 필요한 canonical artifact guard로 전환하고 시각적 질문 참조만 추가합니다. 비시각적 실행은 새 참조를 읽지 않습니다.",
+    "skill_md:skills/tk-pr-media/SKILL.md": "tk-pr-image 이름 변경으로 기존 본문을 이전하며 선택형 GIF와 MP4의 분기 포인터를 추가합니다. 새 검증 절차는 해당 조건부 참조에서만 읽습니다."
   }
 }

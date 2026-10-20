@@ -178,6 +178,10 @@ Before capture, classify `appear | disappear | change | remain unchanged` in [vi
 Apply the corresponding outline placement and judge intended changes separately from preserved regions.
 An unapproved difference in a preserved region is `Fail`; complete every required comparison axis.
 
+## Optional motion evidence
+
+When the current request or approved repository opt-in selects GIF/MP4, read [motion evidence](references/motion-evidence.md). Keep screenshot/assertion verdicts independent and report optional-media generation separately. Otherwise skip this branch and its tools.
+
 ## Evidence and phase return
 
 Before storing runtime evidence or returning an executed phase, read [evidence and results](references/results.md).

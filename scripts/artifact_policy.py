@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACT_MARKER = '<!-- tigerkit:artifact-paths -->'
-NO_ARTIFACT_SKILLS = frozenset(("tk-adhd", "tk-grill", "tk-ask-repo", "tk-review"))
+NO_ARTIFACT_SKILLS = frozenset(("tk-adhd", "tk-ask-repo", "tk-review"))
 ARTIFACT_BLOCK = """<!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 

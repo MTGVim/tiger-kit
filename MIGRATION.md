@@ -1,3 +1,12 @@
+## PR 미디어 첨부 스킬 전환 (`tk-pr-media`)
+
+`tk-pr-image`는 GIF와 MP4 첨부를 지원하는 `tk-pr-media`로 바뀌었습니다. 이전 호출명 별칭은 없습니다. 새 패키지를 설치한 뒤 이전 패키지를 제거하고 문서·자동화의 호출명을 갱신합니다. 기존 이미지·비교 쌍과 선택된 게시 대상은 유지됩니다.
+
+```bash
+npx skills add MTGVim/tiger-kit --global --agent claude-code codex hermes-agent --skill tk-pr-media --yes
+npx skills remove tk-pr-image --global --agent claude-code codex hermes-agent
+```
+
 ## 장기 학습 스킬 전환 (tk-teach)
 
 기존 `tk-study`는 `tk-teach`로 이름을 변경했습니다. 기존 HTML 강의·커리큘럼 생성은 유지하면서, 학습 미션과 실제 답변·오개념을 `learning-records/`에 누적해 다음 수업과 복습에 반영합니다. 자동 숙달 추정이나 글로벌 학습자 DB는 없습니다. 새 기본 과정은 무시된 `.tigerkit/teach/<topic>/`에 저장하며, 이전 `.tigerkit/study/<topic>/`는 신원을 확인한 경우 그 자리에서 이어서 학습할 수 있습니다. 타 장비/팀 공유가 필요하면 명시한 Git 추적 학습 워크스페이스에 승인하여 저장합니다. 기존 자료를 자동 이동·삭제하지 않습니다.

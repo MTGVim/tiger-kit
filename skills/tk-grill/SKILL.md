@@ -23,7 +23,7 @@ Own the interview from a rough idea, decision, or plan through confirmed shared
 understanding. Keep all state in the current conversation.
 
 Do not create or modify source, tests, config, Git state, tickets, `Seed`, SDD, domain
-artifacts, scratch files, ledgers, or task graphs. Do not invoke another skill or begin
+artifacts, general scratch files, ledgers, or task graphs. The Visual questions branch alone permits one HTML comparison under `.tigerkit/tmp/tk-grill/<run-id>/` and its required ignore setup. Do not invoke another skill or begin
 implementation automatically. After synthesis, offer only relevant optional routes:
 
 - `tk-prep` when the result has become an implementation request or ticket;
@@ -52,6 +52,10 @@ Work in rounds:
 Do not turn fact-finding into unbounded research. Investigate only facts that can
 materially change the current decision tree.
 
+## Visual questions
+
+For unresolved spatial alternatives, read [visual questions](references/visual-questions.md) and attach one HTML comparison to the numbered text round. Keep other decisions in chat; the Boundary permits only this question aid and its canonical artifact setup.
+
 ## Question contract
 
 Goals, priorities, trade-off preferences, scope, meaning, tone, and accepted risk belong
@@ -74,7 +78,7 @@ When the frontier appears empty:
    and continue from the new frontier.
 4. After confirmation, return a compact synthesis of the purpose or conclusion, key
    decisions and reasons, intentionally open assumptions or risks, and optional next
-   routes. Do not create an artifact unless a separately selected owner later does so.
+   routes. Create no additional artifact; keep only an already-authorized visual question aid.
 
 ## Source
 
@@ -90,7 +94,7 @@ copyright and MIT notice are in [LICENSE.txt](LICENSE.txt).
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-This skill creates no artifacts. Do not create temporary files, write reports, or edit ignore rules for this invocation; return the result in the conversation.
+Create artifacts only when this skill's task authorizes them. Before any artifact write, temporary checkout/transport, or ignore setup, read [artifact paths](references/artifact-paths.md) and apply its Git exclusion, safe-path, and ownership checks. Reuse identical content still in this context; hash-check uncertain copies and reread changed/lost content. Always repeat fresh safety checks. Default repository-owned output to `.tigerkit/`; honor explicit final destinations. Conversation-only work skips this reference and performs no file or ignore setup. Artifact handling grants no unrelated mutation or publication authority.
 
 <!-- tigerkit:result-summary -->
 ## Reader-facing Result Summary

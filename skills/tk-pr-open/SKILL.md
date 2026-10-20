@@ -126,7 +126,7 @@ pair or individual image. A template limiting screenshots to UI changes is recom
 the question. If sensitive content motivates withholding, offer a bounded crop or redaction of the same inspected image
 alongside "do not upload"; create only the selected derivative, preserve its claim and pair, and re-inspect it before upload.
 An explicit active-task image choice resolves this ambiguity without another question. With no images or image-backed
-claim, use `N/A`. A selected upload authorizes the exact image set through `tk-pr-image` after the owning PR exists;
+claim, use `N/A`. A selected upload authorizes the exact image set through `tk-pr-media` after the owning PR exists;
 carry the criterion, verified route/screen literals, expected behavior and per-image observations
 from the approval preview in that handoff, even without a manifest. Do not start a new investigation.
 Do not fabricate a required manifest for it.
@@ -138,9 +138,14 @@ Before remote publication, stop as `Blocked` when a required entry is missing, n
 An optional entry may be omitted; an absent or uninspected artifact is not valid optional evidence.
 
 Do not upload actual secret-bearing screenshots or unverified captures.
-If an image is required, pass the exact generic manifest entry to `tk-pr-image` after the owning `PR` exists.
+If an image is required, pass the exact generic manifest entry to `tk-pr-media` after the owning `PR` exists.
 Publish every valid entry marked `evidence_required: true`; do not downgrade `visual-preservation` because its baseline and
 after are identical or show no unintended difference. Require both labeled roles for that evidence kind.
+Optional motion supplements stay separate from the required image manifest. Carry only selected,
+inspected, run-owned GIF/MP4 artifacts with criteria/head, dimensions/duration, observations and
+sampling warnings to `tk-pr-media`; preserve an existing exact user selection without asking again.
+Generation opt-in alone does not select remote publication. Media failure leaves the independently
+verified application/required screenshot result intact, but explicitly requested media remains incomplete.
 For a stack, attach evidence to the layer that owns the browser-visible acceptance; do not copy the same evidence to unrelated lower layers.
 
 ## Publication approval packet

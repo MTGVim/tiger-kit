@@ -1,11 +1,11 @@
 {
-  "skill": "tk-pr-image",
+  "skill": "tk-pr-media",
   "kind": "hybrid",
   "queries": [
     {
       "id": "train-explicit",
       "split": "train",
-      "query": "$tk-pr-image",
+      "query": "$tk-pr-media",
       "should_trigger": true
     },
     {
@@ -17,7 +17,7 @@
     {
       "id": "validation-positive-1",
       "split": "validation",
-      "query": "/tk-pr-image 이 PNG를 현재 PR 본문에 넣어줘",
+      "query": "/tk-pr-media 이 PNG를 현재 PR 본문에 넣어줘",
       "should_trigger": true,
       "facets": [
         "formal"
@@ -157,6 +157,48 @@
       "facets": [
         "typo"
       ]
+    },
+    {
+      "id": "media-video-0",
+      "split": "validation",
+      "query": "기존 PR 본문에 검증 MP4를 첨부해 주세요.",
+      "should_trigger": true,
+      "facet": "formal"
+    },
+    {
+      "id": "media-video-1",
+      "split": "validation",
+      "query": "이 PR에 짧은 GIF 근거도 올려줘",
+      "should_trigger": true,
+      "facet": "casual"
+    },
+    {
+      "id": "media-video-2",
+      "split": "validation",
+      "query": "이 피알에 검증 동영상 첨부좀",
+      "should_trigger": true,
+      "facet": "typo"
+    },
+    {
+      "id": "media-video-3",
+      "split": "validation",
+      "query": "PR `body`에 `local` mp4 `evidence` 올려 주세요",
+      "should_trigger": true,
+      "facet": "ko-en"
+    },
+    {
+      "id": "media-video-4",
+      "split": "validation",
+      "query": "PR에 영상 첨부",
+      "should_trigger": true,
+      "facet": "short"
+    },
+    {
+      "id": "media-video-5",
+      "split": "validation",
+      "query": "PR 내용은 그대로 두고 선택한 GIF와 MP4만 첨부해 주세요.",
+      "should_trigger": true,
+      "facet": "compound"
     }
   ]
 }

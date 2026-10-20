@@ -1,0 +1,2 @@
+interface:
+  short_description: "[user/auto] 기존 GitHub PR에 로컬 이미지·GIF·영상 근거를 업로드합니다."

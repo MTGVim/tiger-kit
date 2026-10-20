@@ -1,8 +1,8 @@
 ---
-name: tk-pr-image
-description: "[user/auto] 기존 GitHub PR body 또는 지정된 comment에 local evidence image를 업로드합니다. 명시적 이미지 요청이나 정확한 evidence handoff에만 사용합니다."
+name: tk-pr-media
+description: "[user/auto] 기존 GitHub PR 본문 또는 지정된 댓글에 로컬 이미지·GIF·MP4를 첨부합니다. 명시적 미디어 요청이나 정확한 근거 인계에만 사용합니다."
 disable-model-invocation: false
-argument-hint: "<PR and local image path(s)>"
+argument-hint: "<PR and local media path(s)>"
 metadata:
   tigerkit:
     kind: hybrid
@@ -10,11 +10,17 @@ metadata:
     relationship: native
 ---
 
-# GitHub PR Image Upload
+# GitHub PR Media Upload
 
-Handle explicit local-image evidence requests for an existing GitHub PR or an exact
+Handle explicit local image/video evidence requests for an existing GitHub PR or an exact
 `tk-pr-open` generic manifest handoff with `evidence_required: true`. Only the parent handoff is an
 automatic trigger.
+
+## Optional motion supplements
+
+For a selected MP4, read [native video attachments](references/video-upload.md); it owns the distinct upload/byte/player checks instead of the image-only extension steps. A valid optional supplement carries media type, run-owned path, criteria/head, duration/viewport, inspected frames and sampling warnings; never require it to impersonate the required image manifest. Upload it only when `publication_selected: true` or the user explicitly selected that exact artifact/target.
+
+For selected GIF frame assembly, use the reviewed extension with `--gif`, an explicit `.gif` name and delay matching the frame sequence. Capture stderr separately without `--json` at v0.7.0. Preserve all frame-cap/reduction/oversize warnings, verify actual image/gif bytes and multiple decoded frames, and inspect animation when claiming playback. The 5MiB target is not a hard limit; disclose oversize and altered timing. Existing required screenshot pairs remain unchanged.
 
 ## Scope
 
@@ -70,7 +76,7 @@ Before any upload or PR body/comment update, reverify the explicitly selected ta
 ## Execution Receipt · Single Evidence Record
 
 Record every upload attempt in the single receipt below. It is not a separate lifecycle
-output; it is the sole evidence record used for the `## GitHub image upload` result and
+output; it is the sole evidence record used for the `## GitHub media upload` result and
 approval/verification decisions. Use `none` or `unavailable` for absent values; never guess.
 
 ```text
@@ -134,7 +140,7 @@ blocked, the parent cannot claim full completion.
 
 ## Result
 
-Start the terminal response with `## GitHub image upload`. Include `## Uploaded`,
+Start the terminal response with `## GitHub media upload`. Include `## Uploaded`,
 `## Verification`, and `## Cleanup` when applicable. End the result-owning section with exactly
 one `Status: Pass|Fail|Pending|Blocked|Unverifiable` line. Expose asset URLs only when safe and
 redact signed parameters.

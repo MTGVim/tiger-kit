@@ -41,6 +41,10 @@ merge, publication/release, destructive cleanup, secrets, or unrelated Git mutat
 **Keep conversation natural and state strict.** Do not expose durable-artifact classification or
 execution routing as a form/report. Explain important judgments with recommendations and reasons.
 
+## Visual questions
+
+When an unresolved UX choice changes layout or navigation, read [visual questions](references/visual-questions.md). Before implementation approval, only that HTML question aid and canonical ignore setup may be written; product and Seed remain unchanged.
+
 ## Evidence and questions
 
 Read the task source, instructions, code/callers, tests, commands, and Git state. If the task source is a child work item,
