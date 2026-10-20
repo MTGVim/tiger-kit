@@ -10,6 +10,7 @@ import json
 import math
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import tempfile
@@ -64,6 +65,22 @@ def srt_time(ms: float) -> str:
     return f"{value // 3600000:02}:{value // 60000 % 60:02}:{value // 1000 % 60:02},{value % 1000:03}"
 
 
+def subtitle_filter() -> bool:
+    result = subprocess.run(["ffmpeg", "-hide_banner", "-filters"], capture_output=True, text=True, check=True)
+    return any(len(parts := line.split()) > 1 and parts[1] == "subtitles" for line in result.stdout.splitlines())
+
+
+def diagnostic(exc: subprocess.CalledProcessError) -> str:
+    raw = exc.stderr or b""
+    if isinstance(raw, bytes): raw = raw.decode("utf-8", errors="replace")
+    tail = "\n".join(raw.splitlines()[-4:])
+    # Redact to the line boundary: paths and header values may contain spaces.
+    tail = re.sub(r"(?im)(token|password|authorization|cookie|secret|api[_-]?key)\s*[:=][^\r\n]*", r"\1=<redacted>", tail)
+    tail = re.sub(r"https?://[^\r\n]*|(?:[A-Za-z]:)?[/\\][^\r\n]*", "<path-or-url>", tail)
+    tail = re.sub(r"(['\"])[^'\"\n]*\1", "<quoted-value>", tail)
+    return f"ffmpeg/ffprobe exited {exc.returncode}: " + tail[-600:]
+
+
 def build(manifest: Path, output: Path, audio: Path | None = None) -> dict:
     if not shutil.which("ffmpeg") or not shutil.which("ffprobe"):
         raise ValueError("installed ffmpeg and ffprobe are required; nothing was downloaded")
@@ -76,6 +93,12 @@ def build(manifest: Path, output: Path, audio: Path | None = None) -> dict:
     if kind not in {".mp4", ".gif"}:
         raise ValueError("output must have an .mp4 or .gif suffix")
     warnings = []
+    burn = bool(captions) and subtitle_filter()
+    sidecar = output.with_suffix(".srt") if captions else None
+    if sidecar and (sidecar.resolve() != sidecar or (sidecar.exists() and not sidecar.is_file())):
+        raise ValueError("caption sidecar must be a regular run-owned file")
+    if captions and not burn:
+        warnings.append("ffmpeg lacks the subtitles filter; hard captions blocked, soft captions retained")
     if kind == ".gif" and audio is not None:
         warnings.append("GIF has no audio; narration omitted")
         audio = None
@@ -104,13 +127,21 @@ def build(manifest: Path, output: Path, audio: Path | None = None) -> dict:
                                   c["text"].replace("\r", " ").replace("\n", " ")
                                   for i, c in enumerate(captions))
             (stage / "captions.srt").write_text(text + "\n", encoding="utf-8")
+            if sidecar.exists() and sidecar.read_bytes() != (stage / "captions.srt").read_bytes():
+                raise ValueError("existing caption sidecar differs; it was preserved")
         cmd = ["ffmpeg", "-v", "error", "-nostdin", "-n", "-threads", "1", "-f", "concat", "-safe", "1", "-i", "frames.txt"]
         if audio is not None:
             cmd += ["-i", str(audio)]
+        soft = bool(captions) and not burn and kind == ".mp4"
+        if soft:
+            cmd += ["-i", "captions.srt"]
         filters = "fps=10,pad=ceil(iw/2)*2:ceil(ih/2)*2"
-        if captions:
-            filters += ",subtitles=captions.srt"
+        if burn:
+            filters += ",subtitles=filename=captions.srt"
         if kind == ".mp4":
+            cmd += ["-map", "0:v:0"]
+            if audio is not None: cmd += ["-map", "1:a:0"]
+            if soft: cmd += ["-map", f"{2 if audio is not None else 1}:0", "-c:s", "mov_text"]
             cmd += ["-vf", filters, "-t", str(end / 1000), "-c:v", "libx264", "-threads", "1", "-pix_fmt", "yuv420p", "-movflags", "+faststart"]
             cmd += ["-af", "apad", "-c:a", "aac", "-ac", "1", "-b:a", "48k"] if audio is not None else ["-an"]
         else:
@@ -126,6 +157,12 @@ def build(manifest: Path, output: Path, audio: Path | None = None) -> dict:
             raise ValueError("encoded duration/codec differs from the frame timeline")
         subprocess.run(["ffmpeg", "-v", "error", "-nostdin", "-i", str(movie), "-f", "null", "-"],
                        env=env, capture_output=True, check=True)
+        if sidecar:
+            try:
+                os.link(stage / "captions.srt", sidecar)
+            except FileExistsError:
+                if sidecar.resolve() != sidecar or not sidecar.is_file() or sidecar.read_bytes() != (stage / "captions.srt").read_bytes():
+                    raise ValueError("caption sidecar appeared during encoding; it was preserved") from None
         # Exclusive create preserves unrelated files even if output appeared during encoding.
         try:
             os.link(movie, output)
@@ -135,6 +172,10 @@ def build(manifest: Path, output: Path, audio: Path | None = None) -> dict:
         warnings.append("GIF exceeds the 5MiB target; retained locally with an oversize warning")
     return {"path": str(output), "media_type": "video/mp4" if kind == ".mp4" else "image/gif", "duration_ms": end,
             "fps": 10, "audio": audio is not None, "warnings": warnings,
+            "media_status": "blocked" if captions and not burn else "ready",
+            "prerequisite": "ffmpeg-subtitles-filter" if captions and not burn else None,
+            "subtitles": "hard" if burn else "soft" if soft else "sidecar" if captions else "none",
+            "captions_path": str(sidecar) if sidecar else None,
             "verification_status": "not-assessed", "source_frames_preserved": True}
 
 
@@ -145,11 +186,12 @@ def main() -> int:
     parser.add_argument("--audio", type=Path)
     args = parser.parse_args()
     try:
-        print(json.dumps(build(args.manifest, args.output, args.audio), ensure_ascii=False))
-        return 0
+        result = build(args.manifest, args.output, args.audio)
+        print(json.dumps(result, ensure_ascii=False))
+        return 2 if result["media_status"] == "blocked" else 0
     except (ValueError, KeyError, TypeError, OSError, subprocess.SubprocessError) as exc:
         print(json.dumps({"media_status": "failed", "error": type(exc).__name__,
-                          "detail": str(exc) if isinstance(exc, ValueError) else "media assembly failed; input frames preserved"}))
+                          "detail": str(exc) if isinstance(exc, ValueError) else diagnostic(exc) if isinstance(exc, subprocess.CalledProcessError) else "media assembly failed; input frames preserved"}))
         return 1
 
 

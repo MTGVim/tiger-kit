@@ -35,6 +35,12 @@ it needs already-installed ffmpeg/ffprobe. It installs nothing. Run it with `--m
 or longer than the movie is omitted with a warning, leaving the captioned movie. No engine import
 or download belongs to this assembler. If tools are absent, inspect supported alternatives and
 follow prerequisite recovery; do not silently substitute a different requested deliverable.
+When captions are requested, the assembler checks the installed subtitles filter. Without it,
+it returns `media_status: blocked`, `prerequisite: ffmpeg-subtitles-filter` and exit 2 while
+preserving a decodable video and matching SRT sidecar (plus a soft subtitle track for MP4).
+Do not report burned captions or a finished captioned GIF. Route any user-only installation
+step through `tk-wizard`; inspect package conflicts and PATH rather than assuming an OS recipe.
+Encoding errors include bounded redacted diagnostics; inputs and unrelated outputs stay intact.
 
 ## GIF
 

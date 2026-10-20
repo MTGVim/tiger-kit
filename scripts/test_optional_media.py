@@ -5,9 +5,11 @@ import json
 from pathlib import Path
 import shutil
 import struct
+import subprocess
 import tempfile
 import unittest
 import zlib
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -34,6 +36,18 @@ class OptionalMediaTests(unittest.TestCase):
             "captions": [{"start_ms": 0, "end_ms": 1000, "text": "Observed result"}]}))
         return manifest
 
+    def test_diagnostic_hides_whole_space_containing_paths_and_credentials(self):
+        error = subprocess.CalledProcessError(1, ["ffprobe"], stderr=(
+            "/run/Private Project Name/movie.mp4: Invalid data found\n"
+            "Authorization: Bearer EXAMPLE_TEST_VALUE\n"
+            "password=words with spaces\n"
+            "No such filter: 'subtitles'\n").encode())
+        detail = movie.diagnostic(error)
+        for private in ["Project Name", "EXAMPLE_TEST_VALUE", "words with spaces", "/run/"]:
+            self.assertNotIn(private, detail)
+        self.assertIn("No such filter", detail)
+        self.assertLess(len(detail), 650)
+
     def test_rejects_ambiguous_timing_and_outside_frames(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory); path = self.fixture(root)
@@ -46,6 +60,27 @@ class OptionalMediaTests(unittest.TestCase):
             outside = root.parent / "outside.png"; data["frames"][0]["path"] = str(outside)
             path.write_text(json.dumps(data))
             with self.assertRaises(ValueError): movie.load_manifest(path)
+
+    @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "media tools unavailable")
+    def test_missing_subtitles_filter_retains_soft_captions_and_names_prerequisite(self):
+        real_run = subprocess.run
+        def without_subtitles(command, *args, **kwargs):
+            if command[0] == "ffmpeg" and "-filters" in command:
+                return subprocess.CompletedProcess(command, 0, "Filters:\n ... fps V->V\n", "")
+            return real_run(command, *args, **kwargs)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); manifest = self.fixture(root)
+            with patch.object(movie.subprocess, "run", side_effect=without_subtitles):
+                result = movie.build(manifest, root / "fallback.mp4")
+                gif_result = movie.build(manifest, root / "fallback.gif")
+            self.assertEqual(result["media_status"], "blocked")
+            self.assertEqual(result["prerequisite"], "ffmpeg-subtitles-filter")
+            self.assertEqual(result["subtitles"], "soft")
+            self.assertIn("Observed result", (root / "fallback.srt").read_text())
+            self.assertTrue(any(s["codec_name"] == "mov_text" for s in movie.probe(root / "fallback.mp4")["streams"]))
+            self.assertEqual(gif_result["media_status"], "blocked")
+            self.assertEqual(gif_result["subtitles"], "sidecar")
+            self.assertTrue((root / "fallback.gif").is_file())
 
     @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "media tools unavailable")
     def test_removed_narration_and_missing_audio_preserve_captioned_movie(self):
