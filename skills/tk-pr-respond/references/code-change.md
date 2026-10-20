@@ -5,6 +5,9 @@ workspace and Seed handling; perform no mutation until the plan has current appr
 
 ## Workspace isolation
 
+When nested under Sweep, honor its supplied setup owner, readiness evidence and execution width. Reuse the prepared
+workspace without repeating initialization; return to the parent before adding unplanned heavyweight setup or checks.
+
 Inspect branch/HEAD, linked-worktree state, unrelated work, and submodule status. Treat `GIT_DIR != GIT_COMMON` as a
 linked-worktree signal only after excluding submodules with `git rev-parse --show-superproject-working-tree`; it does not
 prove that the checkout belongs to this PR.

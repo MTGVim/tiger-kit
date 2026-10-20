@@ -15,6 +15,10 @@ Before creating a workspace, inspect the row's Git state. Treat `GIT_DIR != GIT_
 after excluding submodules with `git rev-parse --show-superproject-working-tree`; it does not prove row ownership. Reuse a
 host-created workspace only when path, exact PR head, row identity, and dedicated provenance are fresh and unambiguous.
 
+Before creating workspaces or dispatching children, select setup and execution width under **Resource bounds** below.
+When Orca is installed, read [repository workspace setup](workspace-setup.md) before choosing the creation route; honor
+its effective setup/archive hooks instead of adding a duplicate dependency install or bypassing its lifecycle.
+
 Prefer an available agent-callable native mechanism such as `EnterWorktree`, `WorktreeCreate`, `/worktree`, or
 `--worktree`, then fresh-read its path, branch or detached state, and HEAD. Use manual `git worktree` only when no safe
 native mechanism exists. Start from the approved head, avoid collisions and unrelated work, and verify the result. Do not
@@ -28,8 +32,8 @@ host-managed workspace lifecycle and do not add general cleanup authority.
 ## Child scope and Seed
 
 Sweep is a PR queue controller, not a task-level SDD controller. The PR owner handles Units and reviewers inside one
-workspace. Run rows whose owner selects SDD sequentially by default to avoid multiplying nested controllers. Other safe
-rows may retain PR-level concurrency. Do not create a scheduler or capacity ledger.
+workspace. Run rows whose owner selects SDD sequentially by default to avoid multiplying nested controllers. Apply the
+resource bounds below to every other row; pass setup ownership, completion evidence and execution width to each child.
 
 Never create a Sweep-wide Seed. A child uses a marked, exact-PR/head Ready `.tigerkit/seed.md` only when its owner selects
 durable context or SDD. Reply-only work uses neither a Seed nor workspace solely for isolation; pure rebase follows its
@@ -38,6 +42,20 @@ boundary. For visible UI text, pass the exact rendered string or verified entry 
 identifier, enum inference, or unverified grouped claim.
 
 Do not create `pr-sweep.md`, `pr-respond.md`, or worker receipts. Do not reuse another PR identity's Seed or `sdd.md`.
+
+## Resource bounds
+
+Across all repositories in this Sweep, default code/Git-mutating rows to batches of one: finish the current child's
+setup, work, verification and owned process cleanup before creating or dispatching the next workspace. Do not prewarm
+all worktrees or start installs in the background. Missing or unverified setup hooks keep this default; installing a
+package manager or finding a script is not proof of safe concurrency.
+
+Allow concurrent code/Git rows only when every participating row has a verified lightweight setup hook and their actual
+install, build, test and server workloads fit the execution host's available resources without shared writable state.
+A hook that runs `npm install`, equivalent dependency initialization or an unbounded workload remains sequential.
+Never install into or mutate shared dependencies concurrently. Independent read-only/reply-only rows may overlap when safe.
+Reassess before a child adds heavyweight work; let active work finish and admit no further resource-heavy row until safe.
+Do not create a scheduler, global lock, capacity configuration or ledger; use the existing queue and child handoff.
 
 ## Queue progress
 

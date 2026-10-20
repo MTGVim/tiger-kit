@@ -156,8 +156,9 @@ Once the user approves the batch plan, that approval grants authority only for t
 Do not request the same approval again for each child or for the host-native workspace mechanism used to realize that approved isolation.
 
 After approval, if any row mutates code/Git or dispatches child work, read [approved execution](references/execution.md)
-before starting the first child. It owns workspace isolation, conditional per-PR Seeds, nested SDD scheduling, row-local
-failure handling, and final queue triage. `--report` and pre-approval planning never load it.
+before creating any workspace or starting the first child. It owns workspace isolation, setup reuse and resource bounds,
+conditional per-PR Seeds, nested SDD scheduling, row-local failure handling, and final queue triage. `--report` and
+pre-approval planning never load it.
 
 ## Per-PR handling
 
