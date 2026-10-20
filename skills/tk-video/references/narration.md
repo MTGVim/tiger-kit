@@ -1,43 +1,64 @@
 # Optional Qwen3 narration
 
-Read only when narration is explicitly selected. Use `scripts/narration/qwen3.py` and
-`qwen3-files.json`; no assembler or verifier imports this adapter. Removing them and this reference/
-SKILL pointer leaves captioned GIF/MP4 and screenshot verification usable. Source-only regression
-coverage lives in `scripts/test_qwen3_narration.py`; retain the no-narration assembly regression.
+Read only when narration is explicitly selected. The removable front door is
+`scripts/narration/qwen3.py`; `mlx_backend.py` is its optional Apple backend. No assembler or verifier
+imports either. Removing this directory, this reference/SKILL pointer and the source-only
+`scripts/test_qwen3_narration.py` leaves captioned GIF/MP4 usable; retain no-narration regressions.
 
-## Installation and reuse
+## Engine, installation and reuse
 
-Use `Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice` revision
-`85e237c12c027371202489a0ec509ded67b5e4b5` with `qwen-tts==0.1.1`. The manifest pins every snapshot
-file's SHA256 and the PyPI wheel hash. The official code is `QwenLM/Qwen3-TTS` (Apache-2.0);
-PyPI 0.1.1 lists the older `Qwen/Qwen3-TTS` project URL. Do not fork or substitute an unreviewed
-model/package. Preserve the model README and the wheel's license/attribution. A mirror must match
-the same pinned hashes; do not publish a mirror or put weights in TigerKit Git history.
+Native Apple Silicon defaults to `mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-8bit` with
+`mlx-audio`; other environments retain official `qwen-tts` with
+`Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice`. `--engine auto | mlx | pytorch` selects the route explicitly.
+Use the versions, revisions, wheel SHA256 and exact snapshot file hashes in `mlx-files.json` or
+`qwen3-files.json`; inspect that selected manifest rather than substituting a current package/tag.
+The MLX manifest also pins its compatible `mlx` version. The converted model retains Apache-2.0;
+retain the model README and package license/attribution. No fork, clone-voice model, Supertonic,
+ASR or resident server belongs to this path. A mirror must match the same pinned bytes; do not
+publish mirrors or put weights in TigerKit Git history.
 
-Inspect available Python/device/dependencies first. Propose the dedicated venv, exact pinned
-wheel and dependencies, model download size and cache location before the first installation;
-reuse matching user approval. No global pip or automatic installation follows from selecting video.
-Use `${XDG_CACHE_HOME:-~/.cache}/tigerkit/tts/qwen3/` for `venv`, installation caches and
-`snapshots/<revision>`. Download the pinned wheel to this cache, verify its SHA256 from the manifest,
-then install it with its dependencies into that venv. Keep a single shared disk installation;
-reuse a hash-verified snapshot offline on later runs without requesting reinstall approval.
-Preserve another run's resources and partial/mismatched files; do not delete the shared cache.
+Inspect available Python/device/dependencies first. Propose the selected dedicated venv, pinned
+wheel/dependencies, model download size and cache location before first installation; reuse
+matching user approval. No global pip or automatic installation follows from selecting video.
+Use `${XDG_CACHE_HOME:-~/.cache}/tigerkit/tts/mlx/` on Apple Silicon or `tts/qwen3/` for PyTorch,
+with `venv`, installation caches and `snapshots/<revision>`. Verify the selected wheel SHA256
+before installing it into that venv. Reuse verified disk snapshots offline on later runs; preserve
+another run's resources and partial/mismatched files rather than deleting the shared cache.
 
-After download approval, use the venv Python to run `qwen3.py --download --verify` (or supply
-`--model-dir <snapshot>`). Without `--download`, verification and synthesis perform no download.
-The adapter verifies the exact nonsymlink snapshot file set and all bytes before inference, sets
-HF/Transformers offline mode and passes the absolute snapshot directory, never a repository ID,
-to `from_pretrained`. This avoids nested tokenizer/processor Hub lookups. Start a fresh process
-for synthesis and exit after the requested scene batch; no resident server. Concurrent processes
-share disk files but each loads its own model memory. Do not promise one shared memory instance.
+After download approval, use the selected venv Python with `qwen3.py --download --verify`, adding
+`--engine` or `--model-dir` when explicitly selected. Without `--download`, verification and
+synthesis do not download. Verify exact nonsymlink snapshot files before inference and pass the
+absolute snapshot path, never a repository ID, to model/tokenizer loaders. The adapter sets offline
+mode and redirects XDG/HF/Torch/Numba runtime caches into the selected engine's `runtime-cache`.
+It compares top-level `~/.cache` and `~/Library/Caches` names before/after and reports new entries
+outside the owned cache on success or CLI failure, plus inaccessible scans. This is a limited
+inventory, not ownership proof or a recursive audit. Attribute unexpected entries to the run
+before cleaning only those exact paths; creation time alone does not prove ownership.
+
+Launch synthesis in a fresh owned process with a bounded deadline and stall check established
+before launch. Report completion, error or real stagnation, not every sentence/progress line.
+Stop only that process when its limit expires and retain a `timeout` result. For a new runtime or
+benchmark variant, finish downloads and pass one representative sentence/decode smoke before
+full sequential measurement; retry smoke after a prerequisite failure and exclude it from timing.
+No global watcher, benchmark driver or parallel measurement is introduced by this skill.
+
+Report `peak_footprint_bytes` as the primary Mac process-memory figure, `peak_rss_bytes` separately,
+and `peak_mlx_active_bytes` as the narrower allocator metric. Kernel peak footprint is read for
+the actual synthesis process; if unavailable, retain null and a limitation rather than relabeling
+RSS or GPU allocation. Return MLX `cache_limit: 0` and `sentence_count`. Concurrent runs share disk
+but load separate model memory. Sentence batching has no verified 7GB upper bound.
 
 ## Synthesize and inspect
 
-Write pronunciation-corrected Korean text to run-owned UTF-8 files. Use
+Write pronunciation-corrected Korean text to run-owned UTF-8 files, one complete sentence per
+line. Generate sentences sequentially, trim each measured onset and join accepted audio; do not
+send a full long paragraph in one model request or infer a fixed memory ceiling from sentence length. Use
 `qwen3.py --text-file <file> --output <new.wav>`; `--speaker serena` is the default and
 `--speaker sohee` is the only alternative. The 0.6B model ignores `instruct`; do not offer style
-instructions or silently upgrade to 1.7B. `--device auto` selects an available CUDA/MPS/CPU device;
-report the actual device and failure rather than claiming an untested host works.
+instructions or silently upgrade to 1.7B. The MLX backend uses Metal GPU with `mx.set_cache_limit(0)` before loading/generation and clears
+released allocations between sentences. PyTorch `--device auto` selects an available CUDA/MPS/CPU
+device; use `--engine pytorch --device <device>` for an explicit PyTorch route. Report failures
+without switching engines or silently trying MLX CPU.
 
 Use the parent's resolved `evidenceMedia.voice` when supplied. Otherwise resolve `voice` per field:
 current explicit request > `.tigerkit/repository.json` > user
