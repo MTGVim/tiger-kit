@@ -25,7 +25,9 @@ fits MP4. Reuse supplied material and approved choices without another routine q
 List each scene's source, caption, optional narration and hold or observed timestamp. Label rendered
 cards in the picture/caption; never reenact unavailable software behavior or present a diagram as a
 capture. Keep claims, source versions and unverified intervals explicit. For real browser states,
-invoke `tk-browser-verify`; for native windows invoke `tk-app-verify`. Those owners retain provider,
+invoke `tk-browser-verify` with `phase: media-capture` for a demo or explanation without acceptance
+criteria; an explicitly requested acceptance check retains its verification contract and optional
+motion-evidence supplement. For native windows invoke `tk-app-verify`. Those owners retain provider,
 authentication, test data, actual input/capture and resource lifecycle. Return to this skill with
 ordered, publication-safe frame paths and provenance. Do not import a sibling skill's script path.
 If that owner is unavailable, report the missing capture; do not invent a replacement.
@@ -40,14 +42,18 @@ Read [assembly](references/assembly.md) for the scene/capture manifest, owned pa
 Use `explainer` holds for presentation and preserve actual timestamps in `evidence` mode. Keep
 assertion screenshots unchanged and independent from the movie. Use 10fps H.264 MP4 with optional
 mono 48kbps AAC, or GIF without audio. Follow prerequisite recovery for unavailable tools.
+If hard-caption support is missing after installed-tool discovery, present the `tk-wizard`
+installation-guidance question before returning the blocked result. Do not implement a frame-compositing workaround.
 
 When narration is explicitly selected, read [narration](references/narration.md). Its isolated
 engine is removable: assembly accepts ordinary audio and requires no TTS imports. Use authored
 pronunciation corrections; do not add ASR or another automatic download.
 
 Run the finished-media checks and inspect the generated contact sheet plus representative decoded
-frames, including the initial/final state and every material caption or scene transition. Listen
-to selected narration for meaning, names and clipping. A decode pass is not visual or pronunciation
+frames, including the initial/final state and every material caption or scene transition. Return
+`human_action: listen` with the names/numbers/terms to check and relevant sample paths for selected
+narration; retain it as pending until the user confirms meaning, pronunciation and clipping.
+A decode pass is not visual or pronunciation
 inspection. Distinguish uninspected intervals and report real limitations. Repair a defective cut
 and rerun affected checks; never edit the receipt to make the movie pass.
 
@@ -61,7 +67,8 @@ transients after accepted outputs decode. Release capture resources through thei
 
 Generation authorizes no publication. Hand selected attachments to `tk-pr-media` only when upload
 is separately authorized. This skill changes no application source, Git state, global settings,
-credentials or caches. It creates only the requested movie, scene sources and run-owned evidence.
+credentials. It creates only the requested movie, scene sources and run-owned evidence, plus the
+dedicated narration cache only under the installation approval described in the narration reference.
 
 Design sources and deliberate omissions are recorded in [sources](references/sources.md).
 
@@ -78,7 +85,6 @@ For an unmet prerequisite or material user-owned decision, read [question rounds
 (reuse it if still in context). Ask only answerable decisions in its plain-chat format,
 with approval separate. Otherwise continue without confirmation.
 <!-- /tigerkit:questions -->
-
 <!-- tigerkit:skill-feedback -->
 ## Skill Feedback
 

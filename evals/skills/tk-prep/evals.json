@@ -3962,6 +3962,74 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "prep-media-user-defaults",
+      "path": "success",
+      "prompt": "사용자 설정은 `evidenceMedia` `enabled=true`, `format=mp4`, `narration=true`, `voice=sohee`입니다. 저장소 개인 설정에는 `format=gif`만 있습니다. 이번 요청은 영상 형식을 지정하지 않았습니다.",
+      "expected_output": "영상 기본값의 계층과 승인 경계를 지키며 원래 작업을 계속합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "필드별 우선순위로 `enabled=true`, `format=gif`, `narration=true`, `voice=sohee`를 적용합니다. 다른 저장소에서도 사용자 기본값을 재사용하고 영상이 스크린샷/판정이나 게시 권한을 대신하지 않습니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": false
+    },
+    {
+      "id": "prep-media-save-offer",
+      "path": "success",
+      "prompt": "영상 설정이 전혀 없습니다. 런타임 계획 요약의 `GIF` 제안은 이번만 수락하며 기본값 저장은 거절합니다. 이후 같은 작업의 `prep` 단계를 다시 진행합니다.",
+      "expected_output": "영상 기본값의 계층과 승인 경계를 지키며 원래 작업을 계속합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "기존 영상 제안 줄에 저장 안내를 한 번만 포함하고 별도 질문 단계를 만들지 않습니다. 이번 `run`에서만 `GIF`를 적용하며 사용자 설정을 쓰지 않고 활성 대화에서 저장 안내 거절을 유지해 반복하지 않습니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": false
+    },
+    {
+      "id": "prep-media-save-approved",
+      "path": "success",
+      "prompt": "사용자 설정의 `html.theme`와 `verificationDataPolicy`는 유지하세요. 사용자 설정 경로에 `evidenceMedia` `enabled=true`, `format=mp4`, `narration=true`, `voice=sohee`를 기본값으로 저장하는 것을 승인합니다.",
+      "expected_output": "영상 기본값의 계층과 승인 경계를 지키며 원래 작업을 계속합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "승인한 사용자 설정 경로에 `evidenceMedia`만 원자적으로 병합하고 다시 읽어 확인합니다. `html.theme` 및 `verificationDataPolicy`를 보존하고 설치/업로드 권한으로 확장하지 않으며 다른 저장소에서도 같은 기본값을 적용합니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": false
+    },
+    {
+      "id": "prep-media-invalid-defaults",
+      "path": "success",
+      "prompt": "사용자 `evidenceMedia.voice`가 `unknown`이고 팀 설정에서는 `enabled=true`입니다. 런타임 검증을 진행해 주세요.",
+      "expected_output": "영상 기본값의 계층과 승인 경계를 지키며 원래 작업을 계속합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "잘못된 `evidenceMedia`를 거부하고 안전한 미디어 기본값을 적용합니다. 하위 팀 설정으로 영상을 자동 활성화하거나 파일을 덮어쓰지 않으며 미디어 때문에 `prep`이나 검증을 막지 않습니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": false
     }
   ],
   "migrations": [

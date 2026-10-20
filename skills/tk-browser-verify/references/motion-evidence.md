@@ -1,10 +1,38 @@
 # Optional capture for video
 
-Read only when the current request, accepted runtime-plan summary or approved repository opt-in
-selects a GIF/MP4 supplement. Use current instructions first, then approved
-`.tigerkit/repository.json` over `tigerkit.config.json`: optional `evidenceMedia` has
-`enabled: boolean`, `format: auto | gif | mp4`, `narration: boolean` (default false).
-Reject malformed values; absence means disabled. Preferences grant no installs or publication.
+Read when a demo capture is requested or the current request, accepted runtime-plan summary or
+approved opt-in selects a GIF/MP4 supplement. Resolve `evidenceMedia` per field in this order:
+current explicit request, `.tigerkit/repository.json`, user
+`${XDG_CONFIG_HOME:-~/.config}/tigerkit/settings.json`, team `tigerkit.config.json`, then defaults.
+Missing upper fields retain lower values. Optional keys are `enabled: boolean`,
+`format: auto | gif | mp4`, `narration: boolean`, `voice: serena | sohee`.
+Defaults are `enabled: false`, `format: auto`, `narration: false`, `voice: serena`.
+Reject a malformed `evidenceMedia` object and use these safe defaults for the run; disclose the
+invalid setting and preserve its file rather than silently enabling media through a lower layer.
+Pass the resolved voice to `tk-video` only when narration is selected. Preferences grant no installs
+or publication, and a missing movie never blocks verification.
+
+## Media-only phase
+
+Use `phase: media-capture` for `tk-video` demo or explanation captures without an acceptance basis,
+including a video-only joint invocation without a QA sheet, ticket criteria or Seed. Resolve the
+target and bounded scenario from the request/current change; resolve only material unknown choices
+with the user. Do not manufacture a QA inventory or pass self-authored acceptance criteria.
+Explicit acceptance verification uses the existing inventory and visual contract instead.
+
+Retain headless/provider selection, authentication, safe inputs, approved data-mutation scope,
+server readiness, capture redaction and owned-resource cleanup. Follow environment, behavior,
+safety and session-lifecycle references when their branches apply. Capture actual states without
+acceptance outlines or assertion substitutions. Stop immediately when a required element/state
+cannot be found; retain partial captures and the concrete limitation rather than recording guesses.
+Record scene-boundary times and final DOM/runtime values separately from the movie.
+
+Return only `phase: media-capture`, the capture manifest/provenance, observed final-state facts,
+limitations and actual cleanup/residue facts. An incomplete run retains its missing-capture reason
+and next required input. Do not emit `Status: Pass/Fail`, criterion verdicts, `visual_contract` or
+`verification_complete`; the capture is not an acceptance result. Return to `tk-video` for assembly.
+
+## Capture and handoff
 
 Keep screenshots, assertions, timing checks and publication manifests independent from media.
 Capture approved publication-safe states on the selected headless provider in the verification
@@ -13,6 +41,21 @@ rerun a mutating scenario for a movie. Unsupported capture omits only media. Pre
 monotonic timestamps, a fixed viewport, criterion/head provenance and a truthful final end time.
 No nearby screencast frame replaces the independent assertion screenshot; brief loading states
 and debounce claims still require direct runtime assertions.
+
+On the already selected CDP-capable provider, use `Page.startScreencast` (PNG/JPEG), consume
+`Page.screencastFrame`, and acknowledge every event using `Page.screencastFrameAck` with its
+`sessionId`. Stop the screencast on every exit. Verify supported protocol parameters rather than
+installing another recorder or switching providers. Preserve actual monotonic event timestamps;
+normalize the first frame to zero and record the real capture end. A stable screen may send no
+new frames: hold its last frame until the next timestamp/end instead of fabricating frame times.
+The API has no crop-region option; apply an approved, consistent post-capture crop if needed and
+retain source provenance. Do not replace this with repeated `Page.captureScreenshot` calls for
+movie frames or add Puppeteer just for `page.screencast()`. Other selected providers may use their
+existing supported capture API; unsupported capture remains a media limitation.
+
+For narration-paced recapture, accept measured per-scene minimum holds only for an authorized
+non-mutating scenario. Record the new actual scene starts/end and diagnostic final values.
+Do not rerun a mutating flow, slow existing evidence or claim deliberate waits measure latency.
 
 Write an ordered capture manifest in the owned evidence run: `mode: evidence`, `frames` with
 absolute PNG/JPEG `path` and `timestamp_ms` starting at zero, and `end_ms` after the last frame.

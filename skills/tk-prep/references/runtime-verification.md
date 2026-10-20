@@ -86,7 +86,27 @@ what it needs and releases it again.
 For a flow/time-dependent criterion or an explicit QA/demo audience, add one media suggestion to
 the existing runtime-plan approval summary: short GIF for a brief flow, MP4 for a longer explanation,
 or none. Do not generate it before approval or add a routine question. Accepting the selected
-media in that summary, a direct request or approved repository `evidenceMedia` opt-in enables a
+media in that summary, a direct request or approved `evidenceMedia` opt-in enables a
 `tk-video` handoff. Browser/native capture still belongs to the respective verifier. No media
 selection grants installation or publication authority. Preserve timing assertions and screenshot
 pairs. Narration is optional; its absence cannot block prep or verification.
+
+Resolve optional `evidenceMedia` fields independently: current explicit instruction > ignored
+`.tigerkit/repository.json` > user `${XDG_CONFIG_HOME:-~/.config}/tigerkit/settings.json` > team
+`tigerkit.config.json` > defaults (`enabled: false`, `format: auto`, `narration: false`,
+`voice: serena`). A missing upper field retains a lower value. Validate `enabled`/`narration`
+as booleans, `format` as `auto | gif | mp4`, and `voice` as `serena | sohee`; reject a malformed
+media object, disclose it and use safe media defaults for that run without overwriting its file.
+Pass the effective format/narration/voice to the capture/movie owners.
+If saved `gif` and selected narration conflict, resolve voice MP4 versus caption-only GIF in that
+same approval summary; do not silently change format, disable narration or claim audio in a GIF.
+
+When no saved media choice exists, append `이 선택을 기본값으로 저장할까요?` to that same
+media suggestion line as the user accepts or declines it. Name the user settings destination and
+exact proposed values; do not create another question stage or treat accepting this run's movie
+as consent to save. Save only when the user approves the destination and values, merging only
+the approved `evidenceMedia` fields atomically while preserving unrelated settings; reread them
+before continuing. On refusal or no save consent, apply only the current run's media choice.
+Remember the declined/offered prompt in the active conversation so retries and child phases do
+not repeat it; do not persist a prompt ledger, hidden opt-in or refusal flag. A new independent
+run may offer it again. An explicit request to save defaults uses the same approval/write contract.

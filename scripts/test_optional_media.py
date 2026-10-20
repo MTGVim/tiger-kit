@@ -67,7 +67,7 @@ class OptionalMediaTests(unittest.TestCase):
     def test_missing_subtitles_filter_retains_soft_captions_and_names_prerequisite(self):
         real_run = subprocess.run
         def without_subtitles(command, *args, **kwargs):
-            if command[0] == "ffmpeg" and "-filters" in command:
+            if Path(command[0]).name == "ffmpeg" and "-filters" in command:
                 return subprocess.CompletedProcess(command, 0, "Filters:\n ... fps V->V\n", "")
             return real_run(command, *args, **kwargs)
         with tempfile.TemporaryDirectory() as directory:
@@ -83,6 +83,58 @@ class OptionalMediaTests(unittest.TestCase):
             self.assertEqual(gif_result["media_status"], "blocked")
             self.assertEqual(gif_result["subtitles"], "sidecar")
             self.assertTrue((root / "fallback.gif").is_file())
+
+    def test_keg_discovery_and_explicit_override(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); (root / "bin").mkdir()
+            keg = root / "bin/ffmpeg"; keg.touch(); keg.chmod(0o755)
+            probe = root / "bin/ffprobe"; probe.touch(); probe.chmod(0o755)
+            def which(name):
+                return {"ffmpeg": "/path/ffmpeg", "ffprobe": "/path/ffprobe", "brew": "/path/brew", "chosen": "/chosen/ffmpeg"}.get(name)
+            with patch.dict(movie.os.environ, {}, clear=True), patch.object(movie.shutil, "which", side_effect=which), \
+                    patch.object(movie, "subtitle_filter", side_effect=lambda path: path == str(keg)), \
+                    patch.object(movie.subprocess, "run", return_value=subprocess.CompletedProcess([], 0, str(root), "")) as run:
+                self.assertEqual(movie.media_tools(None, True), (str(keg), str(probe), True))
+                run.assert_called_once()
+                run.reset_mock()
+                self.assertEqual(movie.media_tools("chosen", True), ("/chosen/ffmpeg", "/path/ffprobe", False))
+                run.assert_not_called()
+                with self.assertRaises(ValueError): movie.media_tools("missing", True)
+
+    @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "media tools unavailable")
+    def test_observed_scenes_preserve_offsets_and_reject_cross_scene_speech(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); manifest = self.fixture(root); audio = root / "speech.wav"
+            with wave.open(str(audio), "wb") as wav:
+                wav.setparams((1, 2, 22050, 0, "NONE", "not compressed"))
+                wav.writeframes(b"".join(struct.pack("<h", int(8000 * math.sin(i * 2 * math.pi * 440 / 22050))) for i in range(4410)))
+            data = json.loads(manifest.read_text()); data["narration_requested"] = True
+            data["scenes"] = [{"start_ms": 200, "audio_path": str(audio)}, {"start_ms": 700, "audio_path": str(audio)}]
+            manifest.write_text(json.dumps(data))
+            result = movie.build(manifest, root / "observed.mp4")
+            self.assertEqual(result["media_status"], "ready")
+            self.assertEqual(result["timing"], "observed")
+            self.assertEqual(result["duration_ms"], 1000)
+            raw = subprocess.run([result["ffmpeg_path"], "-v", "error", "-i", result["path"], "-map", "0:a:0", "-ac", "1", "-ar", "22050", "-f", "s16le", "-"], capture_output=True, check=True).stdout
+            samples = struct.unpack("<" + "h" * (len(raw)//2), raw)
+            def rms(start, stop):
+                interval = samples[round(start*22050):round(stop*22050)]
+                return math.sqrt(sum(v*v for v in interval)/len(interval))
+            for start, stop in [(.02,.15),(.47,.63),(.94,.98)]: self.assertLess(rms(start,stop), 100)
+            for start, stop in [(.23,.36),(.74,.86)]: self.assertGreater(rms(start,stop), 1000)
+            if result["subtitles"] == "hard":
+                stream = next(s for s in movie.probe(root / "observed.mp4")["streams"] if s["codec_type"] == "video")
+                self.assertEqual(stream["width"], 64)
+                self.assertGreater(stream["height"], 64)
+            data["scenes"][1]["start_ms"] = 300
+            manifest.write_text(json.dumps(data))
+            with self.assertRaises(ValueError): movie.build(manifest, root / "overlap.mp4")
+            data["scenes"][1]["start_ms"] = 900
+            manifest.write_text(json.dumps(data))
+            with self.assertRaises(ValueError): movie.build(manifest, root / "overrun.mp4")
+            data["scenes"][1]["start_ms"] = 700
+            manifest.write_text(json.dumps(data))
+            with self.assertRaises(ValueError): movie.build(manifest, root / "mixed.mp4", audio)
 
     @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "media tools unavailable")
     def test_explainer_stills_use_presentation_holds(self):

@@ -119,6 +119,57 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "video-media-only-no-verdict",
+      "path": "success",
+      "prompt": "기준이나 `QA` 시트 없이 `tk-video`와 `tk-browser-verify`를 호출합니다. 현재 변경 기능의 시연 `GIF`를 만들어 주세요.",
+      "expected_output": "`media-capture`로 실제 화면만 캡처하며 수용 판정을 만들지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`phase:` `media-capture`에서 `manifest`, 관찰된 최종 상태와 정리 사실을 반환합니다. 임의 `BV` 기준이나 `Status:` `Pass/Fail`, `verification_complete`를 출력하지 않으며 `headless/auth/`정리 경계를 지킵니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": false
+    },
+    {
+      "id": "video-narration-paced-capture",
+      "path": "success",
+      "prompt": "비변경 시연의 기존 영상이 음성보다 짧습니다. 나레이션 `MP4`를 만들어 주세요.",
+      "expected_output": "측정한 음성 길이를 전달해 다시 캡처하고 관찰된 장면 시작에 배치합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "장면별 `WAV`를 먼저 합성하고 실측 길이로 안전한 재캡처를 요청합니다. `evidence` `scenes` `start_ms/audio_path`로 배치하고 겹침과 초과를 거부하며 기존 시간을 늘리거나 변경 시나리오를 재실행하지 않습니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": false
+    },
+    {
+      "id": "video-qwen-offline-human-listen",
+      "path": "success",
+      "prompt": "검증된 `Qwen3` 캐시가 있고 이번에는 `sohee`로 나레이션을 요청합니다. 숫자와 기술 용어가 포함되어 있습니다.",
+      "expected_output": "고정된 캐시를 재설치 없이 오프라인으로 사용하고 청취할 항목을 반환합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`qwen-tts` 0.1.1과 고정 `revision/`해시를 검증한 로컬 `snapshot`을 사용하며 `sohee`를 명시합니다. `human_action:` `listen`에 숫자/고유명사/용어 목록과 음성 경로를 붙이고 실제 청취 완료를 주장하지 않습니다. `0.6B` `instruct`나 상주 서버를 추가하지 않습니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": false
     }
   ]
 }

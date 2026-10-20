@@ -18,6 +18,15 @@ and path ownership before reading it. Do not rewrite a malformed/unsupported
 file, combine conflicting identities, infer issue tracker access, or copy
 credentials into settings.
 
+| Setting | Precedence, highest first |
+| --- | --- |
+| `evidenceMedia` fields | current request > `.tigerkit/repository.json` > user `${XDG_CONFIG_HOME:-~/.config}/tigerkit/settings.json` > `tigerkit.config.json` > safe defaults |
+
+This personal-media preference adds the existing user settings layer without changing unrelated
+repository-policy precedence. Its schema and one-line save offer belong to the owning runtime-plan approval summary. Preserve existing `html`, `verificationDataPolicy`
+and other user settings during an approved atomic merge/readback. The save offer remains within
+the existing runtime-plan summary; absence of this preference does not trigger setup onboarding.
+
 A missing **material** decision triggers minimal onboarding within the owning
 skill: inspect repo origin, existing tracker/issue facts, existing
 config and current user answers, then ask only the unresolved project-owned

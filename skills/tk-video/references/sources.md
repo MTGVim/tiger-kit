@@ -8,6 +8,6 @@ reasons. It is prior art, not a supported runtime dependency or imported impleme
 
 Keep: stills for sequences, measured narration holds, truthful capture boundaries and finished-cut
 inspection. Adapt: explicit explanation mode, deterministic basic media checks, libass preflight
-and soft-caption fallback. Preserve TigerKit's 10fps, ppaso opt-in and independent application verdict.
+and soft-caption fallback. Preserve TigerKit's 10fps, explicit narration opt-in and independent application verdict.
 Omit: ASR verification, automatic tool/model acquisition, terminal/log reels, Windows support and
 mandatory committed movie pipelines. Authoring and evidence stay under TigerKit's artifact policy.
