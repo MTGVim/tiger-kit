@@ -63,6 +63,60 @@ class OptionalMediaTests(unittest.TestCase):
             path.write_text(json.dumps(data))
             with self.assertRaises(ValueError): movie.load_manifest(path)
 
+    def test_frame_rate_selection_keeps_format_defaults_and_validates_overrides(self):
+        frames = [(None, stamp) for stamp in [0, 50, 100, 150, 5000]]
+        self.assertEqual(movie.frame_rate({}, frames, ".mp4", None), (20, "timestamps"))
+        self.assertEqual(movie.frame_rate({"source_fps": 60}, frames, ".mp4", None), (30, "source_fps"))
+        self.assertEqual(movie.frame_rate({"source_fps": 24}, frames, ".mp4", 12), (12, "override"))
+        self.assertEqual(movie.frame_rate({"source_fps": 24}, frames, ".gif", None), (10, "default"))
+        self.assertEqual(movie.frame_rate({"mode": "explainer"}, frames, ".mp4", None), (10, "default"))
+        self.assertEqual(movie.frame_rate({}, frames[:2], ".mp4", None), (10, "fallback"))
+        for value in [0, -1, True, float("nan"), float("inf"), 31]:
+            with self.assertRaises(ValueError): movie.frame_rate({}, frames, ".mp4", value)
+        for value in [0, -1, True, float("nan")]:
+            with self.assertRaises(ValueError): movie.frame_rate({"source_fps": value}, frames, ".mp4", None)
+
+    @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "media tools unavailable")
+    def test_capture_rate_preserves_motion_frames_and_caps_dense_input(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); frames = []
+            for i in range(72):
+                path = root / f"motion-{i}.png"; png(path, (i * 3, 120, 220 - i * 2))
+                frames.append({"path": str(path), "timestamp_ms": i * 1000 / 18})
+            manifest = root / "frames.json"
+            data = {"mode": "evidence", "frames": frames, "end_ms": 4000}
+            manifest.write_text(json.dumps(data))
+            native = movie.build(manifest, root / "native.mp4")
+            sampled = movie.build(manifest, root / "ten.mp4", fps=10)
+            fractional = movie.build(manifest, root / "fractional.mp4", fps=17.5)
+            gif = movie.build(manifest, root / "animation.gif")
+            custom_gif = movie.build(manifest, root / "custom.gif", fps=5)
+            self.assertAlmostEqual(native["fps"], 18)
+            self.assertEqual(native["fps_source"], "timestamps")
+            self.assertAlmostEqual(sampled["fps"], 10)
+            self.assertAlmostEqual(fractional["fps"], 17.5)
+            self.assertAlmostEqual(fractional["encoded_duration_ms"], 4000, delta=1)
+            self.assertAlmostEqual(gif["fps"], 10)
+            self.assertAlmostEqual(custom_gif["fps"], 5)
+            for name, count in [("native.mp4", 72), ("ten.mp4", 40), ("fractional.mp4", 70)]:
+                stream = next(s for s in movie.probe(root / name)["streams"] if s["codec_type"] == "video")
+                self.assertEqual(int(stream["nb_frames"]), count)
+            self.assertEqual(native["duration_ms"], 4000)
+            self.assertAlmostEqual(native["encoded_duration_ms"], 4000, delta=1)
+            self.assertLess((root / "animation.gif").stat().st_size, 5 * 1024 * 1024)
+            # Real timestamps above 25fps must survive the image demuxer's time base.
+            for row in data["frames"]: row["timestamp_ms"] /= 2
+            data["end_ms"] = 2000; data["source_fps"] = 36
+            manifest.write_text(json.dumps(data))
+            dense = movie.build(manifest, root / "capped.mp4")
+            self.assertAlmostEqual(dense["fps"], 30)
+            self.assertEqual(int(next(s for s in movie.probe(root / "capped.mp4")["streams"] if s["codec_type"] == "video")["nb_frames"]), 60)
+            self.assertAlmostEqual(dense["encoded_duration_ms"], 2000, delta=1)
+            decoded = subprocess.run([dense["ffmpeg_path"], "-v", "error", "-i", dense["path"],
+                "-map", "0:v:0", "-f", "framemd5", "-"], capture_output=True, text=True, check=True).stdout
+            hashes = [line.split(",")[-1].strip() for line in decoded.splitlines() if not line.startswith("#")]
+            self.assertEqual(len(set(hashes)), 60)
+
     @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "media tools unavailable")
     def test_missing_subtitles_filter_retains_soft_captions_and_names_prerequisite(self):
         real_run = subprocess.run

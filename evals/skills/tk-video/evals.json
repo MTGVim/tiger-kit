@@ -170,6 +170,23 @@
         }
       ],
       "safety": false
+    },
+    {
+      "id": "video-source-fps-by-format",
+      "path": "success",
+      "prompt": "원본 프레임률이 `18fps`인 캡처로 MP4와 GIF를 만들어 주세요. 기존 관찰 시간과 자막·음성을 보존해 주세요. 별도 출력 프레임률은 지정하지 않았습니다.",
+      "expected_output": "MP4는 원본 프레임률을 상한 `30fps` 안에서 사용하고 GIF는 기본 `10fps`를 적용합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`source_fps`가 실제 캡처 메타데이터라면 사용하고, 없으면 프레임 시각 간격에서 추정했다는 한계를 명시합니다. `--fps`로 직접 지정할 수 있고 실제 출력 `fps`와 선택 근거를 반환합니다. `explainer` 장면 유지 시간이나 관찰 시간을 바꾸지 않으며 GIF의 `5MiB` 경고와 디코드·길이 검사를 보존합니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": false
     }
   ]
 }

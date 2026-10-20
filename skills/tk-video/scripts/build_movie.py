@@ -6,6 +6,7 @@ No downloads, recorder, browser control or narration-engine imports occur here.
 from __future__ import annotations
 
 import argparse
+from fractions import Fraction
 import hashlib
 import json
 import math
@@ -13,6 +14,7 @@ import os
 from pathlib import Path
 import re
 import shutil
+from statistics import median
 import subprocess
 import tempfile
 import wave
@@ -31,6 +33,26 @@ def number(value: object) -> float:
     if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
         raise ValueError("timestamps must be finite numbers")
     return float(value)
+
+
+def frame_rate(data: dict, frames: list, kind: str, override: float | None) -> tuple[float, str]:
+    if override is not None:
+        rate = number(override)
+        if not 0 < rate <= 30:
+            raise ValueError("fps must be positive and at most 30")
+        return rate, "override"
+    if kind == ".gif" or data.get("mode", "evidence") == "explainer":
+        return 10.0, "default"
+    if "source_fps" in data:
+        rate = number(data["source_fps"])
+        if rate <= 0:
+            raise ValueError("source_fps must be positive")
+        return min(30.0, rate), "source_fps"
+    if len(frames) >= 3:
+        # CDP may omit stable frames: exclude the final hold and resist isolated idle gaps.
+        interval = median(b[1] - a[1] for a, b in zip(frames, frames[1:]))
+        return min(30.0, 1000 / interval), "timestamps"
+    return 10.0, "fallback"
 
 
 def timeline(data: dict, root: Path, ffprobe: str = "ffprobe") -> tuple[list[tuple[Path, float]], float, list[dict]]:
@@ -187,7 +209,8 @@ def scene_audio(scenes: list, root: Path, stage: Path, env: dict, ffmpeg: str) -
     return output, speech_end
 
 
-def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str | None = None) -> dict:
+def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str | None = None,
+          fps: float | None = None) -> dict:
     manifest = regular(manifest)
     data = json.loads(manifest.read_text(encoding="utf-8"))
     ffmpeg, ffprobe, caption_support = media_tools(ffmpeg, True)
@@ -205,7 +228,14 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
     kind = output.suffix.lower()
     if kind not in {".mp4", ".gif"}:
         raise ValueError("output must have an .mp4 or .gif suffix")
+    selected_fps, fps_source = frame_rate(data, frames, kind, fps)
+    rate = Fraction(selected_fps).limit_denominator(100000)
+    rate_text = f"{rate.numerator}/{rate.denominator}"
     warnings = []
+    if fps_source == "timestamps":
+        warnings.append("source fps estimated from median capture intervals; idle/event-driven captures may not expose the original rate")
+    elif fps_source == "fallback":
+        warnings.append("source fps unavailable: fewer than three frames; using 10fps")
     errors = []
     contact = output.with_name(output.name + ".contact.png")
     if contact.resolve() != contact or contact.exists():
@@ -250,8 +280,9 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
             shutil.copyfile(image, stage / name)
             hashes.append(hashlib.sha256((stage / name).read_bytes()).digest())
             stop = frames[i + 1][1] if i + 1 < len(frames) else end
-            lines.extend([f"file '{name}'", f"duration {(stop - stamp) / 1000:.9f}"])
+            lines.extend([f"file '{name}'", "option framerate 1000000", f"duration {(stop - stamp) / 1000:.9f}"])
         lines.append(f"file 'frame-{len(frames)-1:06}{frames[-1][0].suffix.lower()}'")
+        lines.append("option framerate 1000000")
         if mode == "evidence":
             longest = current = 0.0
             for i, digest in enumerate(hashes):
@@ -268,13 +299,14 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
             (stage / "captions.srt").write_text(text + "\n", encoding="utf-8")
             if sidecar.exists() and sidecar.read_bytes() != (stage / "captions.srt").read_bytes():
                 raise ValueError("existing caption sidecar differs; it was preserved")
-        cmd = [ffmpeg, "-v", "error", "-nostdin", "-n", "-threads", "1", "-f", "concat", "-safe", "1", "-i", "frames.txt"]
+        # Only generated relative frame names/options enter this private concat file.
+        cmd = [ffmpeg, "-v", "error", "-nostdin", "-n", "-threads", "1", "-f", "concat", "-safe", "0", "-i", "frames.txt"]
         if audio is not None:
             cmd += ["-i", str(audio)]
         soft = bool(captions) and not burn and kind == ".mp4"
         if soft:
             cmd += ["-i", "captions.srt"]
-        filters = "fps=10,pad=ceil(iw/2)*2:ceil(ih/2)*2"
+        filters = f"fps={rate_text},pad=ceil(iw/2)*2:ceil(ih/2)*2"
         if burn:
             # Evidence frames preserve the complete UI; captions live in an appended band.
             if mode == "evidence":
@@ -294,8 +326,13 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
         movie = stage / ("movie" + kind)
         info = probe(movie, ffprobe)
         stream = next(s for s in info["streams"] if s["codec_type"] == "video")
-        if stream["codec_name"] != ("h264" if kind == ".mp4" else "gif") or abs(float(info["format"]["duration"]) - end / 1000) > .15:
+        actual_fps = float(Fraction(stream["avg_frame_rate"]))
+        # An encoded final frame is quantized to one output-frame interval.
+        duration_tolerance = max(.15, 1 / selected_fps)
+        if stream["codec_name"] != ("h264" if kind == ".mp4" else "gif") or abs(float(info["format"]["duration"]) - end / 1000) > duration_tolerance:
             raise ValueError("encoded duration/codec differs from the frame timeline")
+        if kind == ".mp4" and not math.isclose(actual_fps, float(rate), rel_tol=.001):
+            raise ValueError("encoded fps differs from the selected frame rate")
         subprocess.run([ffmpeg, "-v", "error", "-nostdin", "-i", str(movie), "-f", "null", "-"],
                        env=env, capture_output=True, check=True)
         audio_streams = [s for s in info["streams"] if s["codec_type"] == "audio"]
@@ -332,7 +369,9 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
         warnings.append("GIF exceeds the 5MiB target; retained locally with an oversize warning")
     return {"path": str(output), "media_type": "video/mp4" if kind == ".mp4" else "image/gif", "duration_ms": end,
             "mode": mode, "timing": "observed" if mode == "evidence" else "presentation",
-            "fps": 10, "audio": audio is not None, "warnings": warnings,
+            "fps": actual_fps, "selected_fps": float(rate), "fps_source": fps_source,
+            "encoded_duration_ms": float(info["format"]["duration"]) * 1000,
+            "audio": audio is not None, "warnings": warnings,
             "ffmpeg_path": ffmpeg, "ffprobe_path": ffprobe,
             "media_status": "failed" if errors else "blocked" if captions and not burn else "ready",
             "media_validation": {"status": "fail" if errors else "pass", "errors": errors},
@@ -349,9 +388,10 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--audio", type=Path)
     parser.add_argument("--ffmpeg", help="Use this installed ffmpeg; overrides TIGERKIT_FFMPEG and discovery")
+    parser.add_argument("--fps", type=float, help="Override output fps (positive, at most 30); scene times stay unchanged")
     args = parser.parse_args()
     try:
-        result = build(args.manifest, args.output, args.audio, args.ffmpeg)
+        result = build(args.manifest, args.output, args.audio, args.ffmpeg, args.fps)
         print(json.dumps(result, ensure_ascii=False))
         return 2 if result["media_status"] == "blocked" else 1 if result["media_status"] == "failed" else 0
     except (ValueError, KeyError, TypeError, OSError, subprocess.SubprocessError) as exc:

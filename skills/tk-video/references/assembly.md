@@ -16,6 +16,19 @@ An observed capture keeps the existing schema and actual elapsed time:
 {"mode":"evidence","frames":[{"path":"/absolute/run/frame-0.png","timestamp_ms":0},{"path":"/absolute/run/frame-1.png","timestamp_ms":100}],"end_ms":1000,"captions":[{"start_ms":0,"end_ms":1000,"text":"Observed result"}]}
 ```
 
+MP4 uses optional positive numeric `source_fps` from actual capture metadata, capped at 30fps.
+Without it, estimate the cadence from the median adjacent frame-timestamp interval (excluding
+the final hold); report `fps_source: timestamps` and the event-driven/idle-capture uncertainty.
+Fewer than three frames cannot establish cadence and fall back to 10fps with a warning. GIF and
+`explainer` default to 10fps; a still's hold is not a capture-rate measurement.
+`--fps <number>` explicitly selects a positive output rate up to 30 for either format without
+changing source timestamps, scene holds or audio offsets. The result distinguishes measured
+encoded `fps`, `selected_fps`, `fps_source` and `encoded_duration_ms` from the manifest's duration.
+Fractional rates remain fractional. Encoding quantizes the final endpoint to a frame interval;
+retain duration/decode checks with tolerance of at most the greater of 150ms and one frame.
+The private generated concat list uses a microsecond image time base so 25fps image defaults
+cannot discard sub-40ms capture intervals before the selected-rate filter runs.
+
 A stills explanation uses explicit holds; absent narration/hold defaults to 3000ms:
 
 ```json

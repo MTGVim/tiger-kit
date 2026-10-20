@@ -59,8 +59,11 @@ Do not rerun a mutating flow, slow existing evidence or claim deliberate waits m
 
 Write an ordered capture manifest in the owned evidence run: `mode: evidence`, `frames` with
 absolute PNG/JPEG `path` and `timestamp_ms` starting at zero, and `end_ms` after the last frame.
-Include approved captions and capture identity in the handoff. Pass it to `tk-video` for selected
-assembly, narration and finished-media inspection, without importing its script path. A missing
+Include approved captions and capture identity in the handoff. Include `source_fps` only when
+the provider exposes a real capture-rate value; do not invent
+one from idle gaps or a requested output rate. Otherwise retain frame timestamps for estimation.
+Pass it to `tk-video` for selected assembly, narration and finished-media inspection,
+without importing its script path. A missing
 video skill or failed movie never changes the application verdict or required screenshots.
 Return the explicit movie limitation and keep the manifest for resumption.
 
