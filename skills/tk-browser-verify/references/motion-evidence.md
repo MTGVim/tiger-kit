@@ -67,3 +67,7 @@ frames not retained as assertion/failure evidence. Preserve a valid output and t
 evidence on encoding failure; never delete unrelated input files or claim unverified cleanup.
 Release owned capture/server resources on every exit through the existing lifecycle contract.
 
+## Optional narration module
+
+When narration is explicitly selected, read [narration](narration.md). Removing that module and
+this pointer leaves GIF, captions, MP4 assembly and verification unchanged.
