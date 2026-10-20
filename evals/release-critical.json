@@ -718,7 +718,11 @@
     "tk-pr-respond:behavior:pr-respond-does-not-infer-rebase-from-check-failure",
     "tk-pr-respond:behavior:pr-respond-keeps-unknown-base-readiness-unverifiable",
     "tk-pr-sweep:behavior:pr-sweep-shares-evidence-bound-rebase-readiness",
-    "tk-pr-rebase:behavior:pr-rebase-respond-child-returns-expected-head"
+    "tk-pr-rebase:behavior:pr-rebase-respond-child-returns-expected-head",
+    "tk-pr-image:behavior:upload-rejects-moved-reviewed-upstream-tag",
+    "tk-pr-image:behavior:upload-peels-annotated-tag-before-commit-match",
+    "tk-pr-image:behavior:upload-blocks-unavailable-reviewed-commit-mapping",
+    "tk-pr-image:behavior:upload-approved-upstream-install-rechecks-commit"
   ],
   "catalog_cases": [
     "catalog:behavior:native-app-runtime-verify",

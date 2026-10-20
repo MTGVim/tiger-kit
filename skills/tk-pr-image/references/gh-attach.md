@@ -19,25 +19,36 @@ Read `gh extension list` before running any extension command, including
 the single row whose `NAME` is exactly `gh attach`.
 
 ```text
-reviewed-fork
-  REPO=MTGVim/gh-attach
-  VERSION=v0.7.0-mtgvim.1
-
 reviewed-upstream
   REPO=enthus-appdev/gh-attach
   VERSION=v0.7.0
+  COMMIT=663d13d6e42b98eadf6f1d9a517813b8a0f4eaf1
+
+reviewed-fork (existing installation only)
+  REPO=MTGVim/gh-attach
+  VERSION=v0.7.0-mtgvim.1
+  COMMIT=77e51e2a0b8e099b6e9fc7310ad0c2d5a319c60b
 
 unreviewed-upstream
   REPO=enthus-appdev/gh-attach
-  VERSION=<other proven version/ref>
+  VERSION=<other proven version/ref, or reviewed tag with a different commit>
 
 absent
   gh extension list succeeded, but no gh attach row exists
 
 unknown
   list failed; or the row is duplicate, incomplete, ambiguous, or belongs to
-  another distribution; or provenance/version cannot be proved
+  another distribution; or provenance/version/commit cannot be proved
 ```
+
+Before classifying either reviewed distribution, resolve its exact tag through the
+GitHub Git refs API and peel annotated tag objects through the Git tags API until
+the object type is `commit`. Require equality with the full `COMMIT` above. A tag
+object SHA, abbreviated SHA, version string, or release `target_commitish` is not
+that commit. Reuse matching fresh evidence within this run; repeat after installation
+or a changed installation. A proven upstream mismatch is `unreviewed-upstream`;
+an unavailable mapping or fork mismatch is `unknown`. Do not run the extension to
+discover this evidence. Source-revision mapping does not prove installed binary integrity.
 
 A `GitHub CLI` extension is not an executable verified, signed, or endorsed by
 `GitHub`. Successful `gh attach --help`, executable presence, a public repository, or
@@ -50,15 +61,22 @@ reinstallation, or fork replacement. For `unreviewed-upstream`, briefly explain 
 supply-chain risk and require one explicit current-turn choice before execution:
 
 - use the currently installed version;
-- replace it with `gh extension install MTGVim/gh-attach --pin v0.7.0-mtgvim.1`;
+- replace it with `gh extension install enthus-appdev/gh-attach --pin v0.7.0`;
 - use the `CDP` fallback.
 
+Offer the reviewed upstream installation only while its tag resolves to the pinned
+commit. Reinstalling a moved tag does not recover that commit; offer provenance
+recovery or `CDP` instead, and identify any approved use of the changed revision as unreviewed.
+
 Do not execute or replace the installed extension before approval. For `unknown`, do
-not execute the binary; offer provenance recovery, the reviewed fork, or `CDP`. For
-`absent`, recommend the reviewed pinned fork and also offer `CDP`, but do not install
-automatically. After the user selects and authorizes the reviewed fork, this skill may run the
+not execute the binary; offer provenance recovery, reviewed upstream, or `CDP`. For
+`absent`, recommend reviewed pinned upstream and also offer `CDP`, but do not install
+automatically. After the user selects and authorizes a reviewed installation, verify its tag mapping and run the
 pinned `gh extension install` command once; do not delegate that agent-executable step to
-`tk-wizard`. Read `gh extension list` again and reclassify before executing the extension.
+`tk-wizard`. Binary extension pins use release tags, not arbitrary source commit SHAs.
+Read `gh extension list` again and recheck the commit mapping before executing the extension.
+Preserve a separately approved installation of the reviewed fork; never require it as
+the default or silently switch to a personal/private mirror when upstream is unavailable.
 
 ## Execution authority and operation
 
@@ -115,10 +133,10 @@ values in logs, artifacts, or the final response, and never feed redacted diagno
 
 ## Reviewed dependencies
 
-Only these two distributions are trusted without another question:
+Only these exact distributions and resolved commits are reviewed:
 
-- [`MTGVim/gh-attach@v0.7.0-mtgvim.1`](https://github.com/MTGVim/gh-attach/releases/tag/v0.7.0-mtgvim.1)
-- [`enthus-appdev/gh-attach@v0.7.0`](https://github.com/enthus-appdev/gh-attach/releases/tag/v0.7.0)
+- [`enthus-appdev/gh-attach@v0.7.0`](https://github.com/enthus-appdev/gh-attach/commit/663d13d6e42b98eadf6f1d9a517813b8a0f4eaf1), the default installation source.
+- [`MTGVim/gh-attach@v0.7.0-mtgvim.1`](https://github.com/MTGVim/gh-attach/commit/77e51e2a0b8e099b6e9fc7310ad0c2d5a319c60b), retained for existing or separately approved installations.
 
 The reviewed fork release has no application-source changes from upstream `v0.7.0`
 and includes `LICENSE`, `THIRD_PARTY_NOTICES.txt`, and checksums. `TigerKit` does not
