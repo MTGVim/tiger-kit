@@ -2760,6 +2760,21 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "browser-selected-video-capture-owner",
+      "path": "success",
+      "prompt": "`$tk-browser-verify` 이 화면을 검증하면서 GIF도 만들어 주세요. 영상 조립은 일부러 실패하게 합니다.",
+      "expected_output": "실제 시간과 캡처 출처를 매니페스트로 tk-video에 넘기고 `assertion` 스크린샷은 독립적으로 유지합니다. 영상 실패를 보고하지만 이미 확인한 앱 판정을 바꾸지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "실제 시간과 캡처 출처를 매니페스트로 tk-video에 넘기고 `assertion` 스크린샷은 독립적으로 유지합니다. 영상 실패를 보고하지만 이미 확인한 앱 판정을 바꾸지 않습니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "migrations": [

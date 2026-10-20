@@ -2,7 +2,9 @@
 
 Read only when narration is explicitly selected. The isolated module is
 `scripts/narration/ppaso.py` plus `ppaso-files.json`; the sole runtime pointer is in
-motion-evidence.md. Remove those files, this reference and that pointer to remove narration.
+SKILL.md. Remove those files, this reference and that pointer to remove narration; in the
+source repository also remove its dedicated `scripts/test_optional_narration.py`. Retain the
+assembler's no-narration regression.
 No other verifier, prep, uploader or movie assembler imports this module. Subtitles, GIF,
 MP4 and screenshot/assertion verification must still work without it or its dependencies.
 
@@ -33,10 +35,12 @@ Optional `--user-dict <json>` maps exact terms to Korean pronunciations. Normali
 in the authored script while preserving original UI literals in evidence and captions. The module
 checks decodable, finite, nonempty, nonsilent audio. Listen to a representative sample for names,
 numbers, clipped endings and meaning; determinism is not proof of correct pronunciation.
-No ASR round trip or Whisper download is required. Bind narration only to observed states.
+No ASR round trip or Whisper download is required. Bind captured-state claims to observed states; identify authored diagrams and concept explanation
+as rendered scenes. Do not narrate an unobserved application outcome as fact.
 
-Pass an accepted WAV to the independent movie assembler's generic `--audio` input. If speech
-does not fit the actual timeline, retain subtitles and report omitted audio; never cut speech,
-invent observed waiting time or silently change a timing claim. Retain an explicitly requested
+Pass an accepted WAV to the independent assembler's generic full-track `--audio` input, or use
+per-scene `audio_path` in `explainer`. Presentation holds may follow measured speech. For an
+observed evidence timeline, retain subtitles and report omitted audio when it does not fit;
+never cut speech, invent observed waiting time or silently change a timing claim. Retain an explicitly requested
 but undelivered narration limitation. Clean only known run-owned temporary resources and report
 residue; this module changes neither application acceptance nor screenshot publication.

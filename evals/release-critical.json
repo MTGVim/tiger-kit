@@ -735,7 +735,20 @@
     "tk-pr-media:behavior:gif-warnings-and-soft-size-target",
     "tk-pr-media:behavior:native-video-has-no-extension-upload-ref",
     "tk-pr-media:behavior:video-player-missing-is-not-full-pass",
-    "tk-pr-media:behavior:generation-opt-in-is-not-upload-selection"
+    "tk-pr-media:behavior:generation-opt-in-is-not-upload-selection",
+    "tk-prep:behavior:prep-video-single-approval-summary",
+    "tk-prep:behavior:prep-no-video-for-nonvisual-refactor",
+    "tk-explain:behavior:explain-selected-video-handoff",
+    "tk-explain-diff:behavior:explain-diff-selected-flow-video",
+    "tk-app-verify:behavior:app-selected-video-native-handoff",
+    "tk-browser-verify:behavior:browser-selected-video-capture-owner",
+    "tk-video:behavior:video-explainer-stills",
+    "tk-video:behavior:video-evidence-capture-handoff",
+    "tk-video:behavior:video-missing-subtitles",
+    "tk-video:behavior:video-no-narration-module",
+    "tk-video:behavior:video-rendered-not-observed",
+    "tk-video:behavior:video-silent-selected-narration",
+    "tk-video:behavior:video-upload-not-selected"
   ],
   "catalog_cases": [
     "catalog:behavior:native-app-runtime-verify",
@@ -808,6 +821,10 @@
     "catalog:behavior:compound-vs-retro",
     "catalog:behavior:compound-vs-grooming",
     "catalog:behavior:compound-vs-review",
-    "catalog:behavior:compound-vs-domain"
+    "catalog:behavior:compound-vs-domain",
+    "catalog:behavior:video-software-demo",
+    "catalog:behavior:video-concept-explainer",
+    "catalog:behavior:video-vs-verification",
+    "catalog:behavior:video-existing-edit-negative"
   ]
 }

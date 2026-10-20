@@ -60,3 +60,15 @@ regions too. Use a non-sensitive origin-free `display_route` only when the repre
 actually has one; for native windows record an explicit native-surface omission and keep app/window
 identity in ordinary evidence. Never invent a web route, upload evidence, or emit a `Pass`
 manifest entry for an unverified/failing criterion.
+
+## Optional video handoff
+
+Only for requested or approved video, collect publication-safe frames with actual timestamps
+when the selected native provider supports it. Keep app/window/build identity, scale and capture
+origin in the handoff. Pass an owned `mode: evidence` manifest (`frames` with absolute `path` and
+`timestamp_ms`, plus `end_ms`) to `tk-video`; do not call another package's script path.
+The verifier retains actual capture, input, permissions, test data and resource lifecycle.
+Missing Screen Recording permission or unsupported recording omits media without changing an
+independently supported app verdict. If that same deficit also blocks required screenshots,
+those visual criteria remain unverified. Never replace native capture with browser evidence.
+No automatic installation, permission change or publication follows from this request.

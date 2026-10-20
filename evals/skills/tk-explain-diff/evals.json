@@ -311,6 +311,21 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "explain-diff-selected-flow-video",
+      "path": "success",
+      "prompt": "`$tk-explain-diff` 이 브랜치의 화면 흐름 변경을 전후 영상과 설명 문서로 보여 주세요.",
+      "expected_output": "비교 기준을 고정하고 실제 전후 캡처는 tk-browser-verify에 맡기며 tk-video가 반환한 영상의 실제 경로를 설명 문서에 링크합니다. 과거 동작을 렌더링으로 위조하지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "비교 기준을 고정하고 실제 전후 캡처는 tk-browser-verify에 맡기며 tk-video가 반환한 영상의 실제 경로를 설명 문서에 링크합니다. 과거 동작을 렌더링으로 위조하지 않습니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "migrations": [

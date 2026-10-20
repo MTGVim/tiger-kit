@@ -577,6 +577,21 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "app-selected-video-native-handoff",
+      "path": "success",
+      "prompt": "`$tk-app-verify` 승인한 데스크톱 앱 흐름을 검증하면서 영상도 만들어 주세요.",
+      "expected_output": "네이티브 창의 실제 캡처와 출처, 입력·자원 수명은 앱 검증 스킬이 소유하고 매니페스트를 tk-video에 넘깁니다. `Screen Recording` 권한이 없으면 선택 영상만 생략하고 필수 스크린샷까지 막혔다면 해당 AC를 Unverifiable로 유지합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "네이티브 창의 실제 캡처와 출처, 입력·자원 수명은 앱 검증 스킬이 소유하고 매니페스트를 tk-video에 넘깁니다. `Screen Recording` 권한이 없으면 선택 영상만 생략하고 필수 스크린샷까지 막혔다면 해당 AC를 Unverifiable로 유지합니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

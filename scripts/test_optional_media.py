@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import math
 from pathlib import Path
 import shutil
 import struct
@@ -9,11 +10,12 @@ import subprocess
 import tempfile
 import unittest
 import zlib
+import wave
 from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "skills/tk-browser-verify/scripts/build_movie.py"
+SOURCE = ROOT / "skills/tk-video/scripts/build_movie.py"
 spec = importlib.util.spec_from_file_location("build_movie", SOURCE)
 movie = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(movie)
@@ -81,6 +83,72 @@ class OptionalMediaTests(unittest.TestCase):
             self.assertEqual(gif_result["media_status"], "blocked")
             self.assertEqual(gif_result["subtitles"], "sidecar")
             self.assertTrue((root / "fallback.gif").is_file())
+
+    @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "media tools unavailable")
+    def test_explainer_stills_use_presentation_holds(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); manifest = self.fixture(root)
+            data = json.loads(manifest.read_text())
+            data["mode"] = "explainer"; data["captions"] = []
+            data.pop("end_ms")
+            for row, hold in zip(data["frames"], [500, 700]):
+                row.pop("timestamp_ms"); row["hold_ms"] = hold
+            manifest.write_text(json.dumps(data))
+            result = movie.build(manifest, root / "explainer.mp4")
+            self.assertEqual(result["timing"], "presentation")
+            self.assertEqual(result["duration_ms"], 1200)
+            self.assertAlmostEqual(float(movie.probe(root / "explainer.mp4")["format"]["duration"]), 1.2, delta=.15)
+            data["frames"][0].pop("hold_ms"); data["frames"][1].pop("hold_ms")
+            manifest.write_text(json.dumps(data))
+            self.assertEqual(movie.load_manifest(manifest)[1], 6000)
+
+    @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "media tools unavailable")
+    def test_finished_media_distinguishes_static_explanation_and_silent_narration(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); manifest = self.fixture(root)
+            (root / "last.png").write_bytes((root / "first.png").read_bytes())
+            result = movie.build(manifest, root / "static.mp4")
+            self.assertTrue(any("repeated" in warning for warning in result["warnings"]))
+            self.assertEqual(result["media_validation"]["status"], "pass")
+            self.assertTrue(Path(result["contact_sheet"]).is_file())
+            data = json.loads(manifest.read_text()); data["mode"] = "explainer"
+            for row in data["frames"]: row.pop("timestamp_ms"); row["hold_ms"] = 500
+            manifest.write_text(json.dumps(data))
+            explained = movie.build(manifest, root / "stills.mp4")
+            self.assertFalse(any("repeated" in warning for warning in explained["warnings"]))
+            audio = root / "silent.wav"
+            with wave.open(str(audio), "wb") as wav:
+                wav.setparams((1, 2, 22050, 0, "NONE", "not compressed")); wav.writeframes(b"\0" * 22050)
+            data["narration_requested"] = True; manifest.write_text(json.dumps(data))
+            narrated = movie.build(manifest, root / "narrated.mp4", audio)
+            self.assertEqual(narrated["media_validation"]["status"], "fail")
+            self.assertIn("narration-silent", narrated["media_validation"]["errors"])
+            self.assertTrue((root / "narrated.mp4").is_file())
+
+    @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "media tools unavailable")
+    def test_scene_audio_sets_measured_holds_and_preserves_scene_offsets(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); manifest = self.fixture(root); audio = root / "speech.wav"
+            with wave.open(str(audio), "wb") as wav:
+                wav.setparams((1, 2, 22050, 0, "NONE", "not compressed"))
+                wav.writeframes(b"".join(struct.pack("<h", int(8000 * math.sin(i * 2 * math.pi * 440 / 22050))) for i in range(70560)))
+            data = json.loads(manifest.read_text()); data["mode"] = "explainer"; data["narration_requested"] = True
+            data.pop("captions"); data.pop("end_ms")
+            for row in data["frames"]: row.pop("timestamp_ms"); row["caption"] = "Scene description"
+            data["frames"][0]["audio_path"] = str(audio)
+            manifest.write_text(json.dumps(data))
+            result = movie.build(manifest, root / "scenes.mp4")
+            self.assertEqual(result["duration_ms"], 6450)
+            self.assertEqual(result["media_validation"]["status"], "pass")
+            self.assertTrue(result["audio"])
+            data["captions"] = [{"start_ms": 0, "end_ms": 500, "text": "Too short"}]
+            manifest.write_text(json.dumps(data))
+            truncated = movie.build(manifest, root / "truncated-captions.mp4")
+            self.assertIn("narration-subtitles-short", truncated["media_validation"]["errors"])
+            data.pop("captions")
+            data["frames"][0]["hold_ms"] = 100
+            manifest.write_text(json.dumps(data))
+            with self.assertRaises(ValueError): movie.build(manifest, root / "too-short.mp4")
 
     @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "media tools unavailable")
     def test_removed_narration_and_missing_audio_preserve_captioned_movie(self):

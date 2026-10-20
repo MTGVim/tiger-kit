@@ -996,6 +996,38 @@
       "focus_skill": "tk-compound",
       "expected_selected_skill": "tk-domain",
       "critical": true
+    },
+    {
+      "id": "video-software-demo",
+      "boundary": "설명용 영상 제작과 판정·편집·게시를 구분합니다.",
+      "prompt": "로그인에서 검색 결과까지 이 앱의 데모 MP4를 만들어 주세요.",
+      "focus_skill": "tk-video",
+      "expected_selected_skill": "tk-video",
+      "critical": true
+    },
+    {
+      "id": "video-concept-explainer",
+      "boundary": "설명용 영상 제작과 판정·편집·게시를 구분합니다.",
+      "prompt": "요청이 큐와 워커를 거치는 순서를 렌더링 카드 GIF로 설명해 줘.",
+      "focus_skill": "tk-video",
+      "expected_selected_skill": "tk-video",
+      "critical": true
+    },
+    {
+      "id": "video-vs-verification",
+      "boundary": "설명용 영상 제작과 판정·편집·게시를 구분합니다.",
+      "prompt": "PR 화면 동작을 검증해 주세요. 영상은 요청하지 않았습니다.",
+      "focus_skill": "tk-video",
+      "expected_selected_skill": "tk-browser-verify",
+      "critical": true
+    },
+    {
+      "id": "video-existing-edit-negative",
+      "boundary": "설명용 영상 제작과 판정·편집·게시를 구분합니다.",
+      "prompt": "이 MP4 파일의 앞 3초를 잘라 줘.",
+      "focus_skill": "tk-video",
+      "expected_selected_skill": null,
+      "critical": true
     }
   ]
 }

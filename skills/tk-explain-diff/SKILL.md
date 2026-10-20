@@ -90,6 +90,13 @@ conversational voice by default. When the user asks for simpler wording, adapt t
 while preserving exact source anchors, verification state, code, numeric facts, uncertainty and
 limitations. Honor an explicit user preference when it fits the section content.
 
+## Selected flow video
+
+For an explicitly selected movie accompaniment to this change explanation, read
+[video output](references/video-output.md). Preserve pinned versions, source anchors and the
+read-only product boundary. The matching verifier captures actual base/head states; `tk-video`
+assembles them and owns media inspection. Keep the explanation document linked to the movie.
+
 ## Deliver
 
 Default to one self-contained offline HTML artifact at `.tigerkit/explanations/<target-slug>.html`.

@@ -180,7 +180,7 @@ An unapproved difference in a preserved region is `Fail`; complete every require
 
 ## Optional motion evidence
 
-When the current request or approved repository opt-in selects GIF/MP4, read [motion evidence](references/motion-evidence.md). Keep screenshot/assertion verdicts independent and report optional-media generation separately. Otherwise skip this branch and its tools.
+When the current request or approved repository opt-in selects GIF/MP4, read [motion evidence](references/motion-evidence.md). Hand approved capture manifests to `tk-video`; keep screenshot/assertion verdicts independent and report optional-media generation separately. Otherwise skip this branch and its tools.
 
 ## Evidence and phase return
 

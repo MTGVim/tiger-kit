@@ -987,6 +987,21 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "explain-selected-video-handoff",
+      "path": "success",
+      "prompt": "`$tk-explain` 이벤트 큐 처리 순서를 MP4로 설명해 주세요.",
+      "expected_output": "이해할 내용과 근거는 설명 스킬이 소유하고 렌더링 장면을 표시한 장면 목록을 tk-video에 넘깁니다. 실제 앱 화면만 필요한 경우 올바른 검증 스킬에 맡기며 명시한 영상을 HTML로 몰래 대체하지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "이해할 내용과 근거는 설명 스킬이 소유하고 렌더링 장면을 표시한 장면 목록을 tk-video에 넘깁니다. 실제 앱 화면만 필요한 경우 올바른 검증 스킬에 맡기며 명시한 영상을 HTML로 몰래 대체하지 않습니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "renamed_from": {

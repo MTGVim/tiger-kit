@@ -1,0 +1,6 @@
+interface:
+  short_description: "[user/auto] 소프트웨어와 개념을 설명하는 선택형 MP4·GIF 영상을 만듭니다."
+  default_prompt: "$tk-video를 사용해 관찰된 화면과 설명 장면으로 짧은 데모 영상을 만들어 주세요."
+
+policy:
+  allow_implicit_invocation: true

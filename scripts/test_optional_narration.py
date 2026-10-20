@@ -9,7 +9,7 @@ import unittest
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "skills/tk-browser-verify/scripts/narration/ppaso.py"
+SOURCE = ROOT / "skills/tk-video/scripts/narration/ppaso.py"
 spec = importlib.util.spec_from_file_location("optional_ppaso", SOURCE)
 ppaso = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(ppaso)

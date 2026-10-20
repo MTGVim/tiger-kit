@@ -83,4 +83,10 @@ what it needs and releases it again.
 
 ## Optional media suggestion
 
-For a flow/time-dependent criterion or an explicit QA/demo audience, add one media suggestion to the existing runtime-plan approval summary: short GIF for a brief flow, MP4 for a longer explanation, or none. Do not generate it or ask another routine question. A direct request or approved repository `evidenceMedia` opt-in enables only the verifier's optional-media branch; it grants no installation or publication authority. Preserve actual timing assertions and required screenshot pairs. Narration is separately optional and absence of its module cannot block prep or verification.
+For a flow/time-dependent criterion or an explicit QA/demo audience, add one media suggestion to
+the existing runtime-plan approval summary: short GIF for a brief flow, MP4 for a longer explanation,
+or none. Do not generate it before approval or add a routine question. Accepting the selected
+media in that summary, a direct request or approved repository `evidenceMedia` opt-in enables a
+`tk-video` handoff. Browser/native capture still belongs to the respective verifier. No media
+selection grants installation or publication authority. Preserve timing assertions and screenshot
+pairs. Narration is optional; its absence cannot block prep or verification.

@@ -3931,6 +3931,37 @@
           "expected": "Pending"
         }
       ]
+    },
+    {
+      "id": "prep-video-single-approval-summary",
+      "path": "success",
+      "prompt": "`$tk-prep` 검색 화면의 로딩에서 결과까지 흐름을 바꿀 계획입니다. 기존 승인 요약을 작성해 주세요.",
+      "expected_output": "흐름이 핵심인 런타임 계획의 기존 승인 요약 안에 형식과 이유를 포함한 영상 제안 한 줄을 넣고 별도 질문 라운드를 추가하지 않습니다. 선택한 제안 승인 후에만 tk-video에 연결하고 캡처 소유자는 유지합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "흐름이 핵심인 런타임 계획의 기존 승인 요약 안에 형식과 이유를 포함한 영상 제안 한 줄을 넣고 별도 질문 라운드를 추가하지 않습니다. 선택한 제안 승인 후에만 tk-video에 연결하고 캡처 소유자는 유지합니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "prep-no-video-for-nonvisual-refactor",
+      "path": "boundary",
+      "prompt": "`$tk-prep` 화면 변경 없이 파서의 중복 함수만 정리합니다. 승인 요약을 작성해 주세요.",
+      "expected_output": "영상 제안 줄이나 tk-video 로드 없이 기존 로컬 구현 준비를 진행합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "영상 제안 줄이나 tk-video 로드 없이 기존 로컬 구현 준비를 진행합니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": true
     }
   ],
   "migrations": [
