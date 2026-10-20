@@ -92,9 +92,12 @@ decoding is not signature verification or proof of access. Never inject expired/
 material. Unknown lifetime requires the application's supported readiness check, not an invented
 expiry. An authentication rejection does not establish that a separate refresh grant is invalid.
 
-Before asking again, inspect the existing application auth client and supported refresh contract:
+Before the first input request and any later request, inspect the existing application auth client and supported refresh contract:
 trusted endpoint, required client authentication/header/cookie/body, response fields and rotation.
 Use the existing authorized renewal route; collect a refresh token only if that route needs one.
+When it requires user-supplied refresh material, include that field as required in the first input
+template, alongside the bootstrap fields; do not defer it until access expires. If no renewal route
+exists or it uses existing browser-managed state, request no extra refresh field.
 Keep refresh material in the protected file/approved secret consumer, never page-visible storage
 or the bootstrap server; inject only the app-required access/session fields. If the app itself
 requires browser-managed refresh, use its documented isolated bootstrap rather than exposing
@@ -120,7 +123,9 @@ whether it comes from a per-directory `.gitignore`, `.git/info/exclude`, or the 
 user-level excludes file. Then create
 `.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json` with directory mode `0700` and
 file mode `0600`. Apply the user-editable input branch in [artifact paths](artifact-paths.md):
-seed a plain JSON object such as `{"token": ""}`, using only the exact required fields.
+seed a plain JSON object using the bootstrap and renewal fields identified above, with empty strings.
+For access-only input use `{"token": ""}`; when the verified route requires both, use the app's exact
+field names, for example `{"accessToken": "", "refreshToken": ""}`.
 Before showing paths or input mechanics, state in one sentence which pending verification step
 needs this user-only input and why the existing evidence or authenticated state cannot satisfy it,
 using the user's terms. For example, say that the earlier run verified a different head or that

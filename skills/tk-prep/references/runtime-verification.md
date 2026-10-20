@@ -73,6 +73,8 @@ server command/cwd/readiness, screenshot/redaction evidence, and the `tk-browser
 Never store usernames, passwords, token, OTP, cookie, or session values in chat/Seed/artifacts.
 When token authentication is required, establish input once during prep before baseline. The verifier may reuse its protected
 worktree-local authentication input and use supported renewal before requesting replacement under its authentication contract.
+Record required authentication field names and the supported renewal route (or its absence) in the
+plan/Seed, following `tk-browser-verify`'s `references/environment.md`; include no secret values.
 The verifier owns server startup, readiness, runtime acceptance evidence, and cleanup.
 Keep the approved order: authorization, authentication readiness and pre-edit baseline,
 then immediately release owned browser/server resources before implementing. Preserve
