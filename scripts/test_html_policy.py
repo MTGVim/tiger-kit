@@ -272,6 +272,8 @@ class HTMLPolicyTest(unittest.TestCase):
     def test_shared_contract_contains_render_safe_authoring_rules(self):
         text = (ROOT / 'skills/tk-explain/references/html-output.md').read_text()
         text += (ROOT / 'skills/tk-explain/references/html-figures.md').read_text()
+        self.assertIn('html-render.md', text)
+        text += (ROOT / 'skills/tk-explain/references/html-render.md').read_text()
         self.assertIn('## Render-safe authoring', text)
         self.assertIn('11 CSS px after scaling', text)
         self.assertIn('emulated mobile CSS viewport width matching `innerWidth`', text)

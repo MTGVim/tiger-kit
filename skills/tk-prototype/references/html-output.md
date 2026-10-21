@@ -71,7 +71,7 @@ For example, adapt the labels/IDs:
 </header>
 <!-- Document content, with meaningful section IDs. -->
 <main class="ht-doc-content">
-  <!-- Sections and footer. -->
+  <!-- Sections. -->
 </main>
 <footer id="document-bottom">...</footer>
 <nav class="ht-doc-nav" aria-label="문서 탐색">
@@ -91,6 +91,9 @@ For example, adapt the labels/IDs:
   <a href="#document-bottom" aria-label="맨 아래로 이동">↓</a>
 </nav>
 ```
+
+Place the footer directly under `.ht-document`, after `main`; shared CSS centers it.
+Separate source/version, date and AI authorship into paragraphs when present.
 
 Inline the existing theme script after the markup for optional current-section marking,
 Escape/outside dismissal, focus return and focus transfer to native anchor targets. Do not
@@ -132,6 +135,22 @@ technique. Consult only a relevant [technique entry](explanation-techniques.md) 
 or unfamiliar format. Avoid duplicate
 versions in modes or hidden tabs. Honor an explicit technique preference when it fits the content.
 
+## Code excerpts
+
+Generate static code markup with [the code helper](../scripts/highlight_code.py):
+`python3 <package>/scripts/highlight_code.py source.kt --language kotlin --line-start 1`.
+Use `.ht-code` with unchanged shared CSS/script.
+Color known Kotlin, JavaScript/TypeScript, Python and JSON tokens; mark `diff` additions/deletions.
+Leave unknown languages plain. This lexical aid does not validate syntax. Line numbers are CSS
+metadata. Compare parsed code `textContent` with the exact source before/after generation and
+interaction. Explicitly normalize CR/CRLF/NUL before establishing that baseline: HTML cannot
+preserve them. Preserve cited line numbers.
+
+Default to horizontal scrolling. The shared script adds a per-block keyboard-operable `줄바꿈`
+button with `aria-pressed` and hanging indentation; keep no page-wide preference. Without JS,
+retain static colors and scrolling with no inert buttons. Check long/blank lines, diff and unknown
+languages, wrap-mode overflow and token contrast >=4.5 against `--code-bg` in both themes.
+
 ## Citations and references
 
 For document prose, place numbered superscript citations immediately beside supported claims,
@@ -140,7 +159,7 @@ bottom `참고문헌` section. Reuse a source number, assigning a unique ID to e
 Use native `<sup id="cite-1-1"><a href="#ref-1" aria-label="참고문헌 1">[1]</a></sup>` and
 `<li id="ref-1">... <a href="#cite-1-1" aria-label="인용 1의 첫 위치로 복귀">↩ 1</a></li>`.
 For another occurrence `cite-1-2`, add a second labeled backlink in the same reference entry.
-Render each reference item slightly smaller than body text, around `.875rem` (14px at a 16px root)
+Render each reference item slightly smaller than body text, at `.875em` relative to the body
 with `line-height: 1.55`; keep the text readable and allow long titles and URLs to wrap. Keep its
 return link visible without letting it dominate the source details. Verify every forward/back target
 and claim-source relationship; a bibliography alone is not attribution. Keep code evidence bound to its base/head SHA and `path:line` in the referenced entry;
@@ -299,7 +318,8 @@ Use `tk-browser-verify` when a document contains a hand-authored SVG whose visua
 an interactive figure, browser-specific behavior that static checks cannot establish, a composed or
 customized shared document shell/theme/navigation, or the user requests screen verification. For the
 shared shell, inspect the rendered topbar and theme control, desktop left rail, narrow-screen TOC
-disclosure, and their spacing against the content in light and dark themes. Keep browser checks for
+disclosure, the document-end footer and its surroundings, and their spacing against the content
+in light and dark themes. Capture the document end and record footer/navigation overlap measurements. Keep browser checks for
 prototype UI and QA-sheet interactions under their owning skill. A document that meets its static
 checks but does not meet a render trigger does not need a browser run solely to repeat those checks.
 
@@ -318,25 +338,4 @@ structure when injecting final results, then inspect the final saved markup for 
 label emphasis and outcome honesty. The research template demonstrates two distinct check items;
 replace its placeholders only with observed outcomes.
 
-When browser verification is required, inspect desktop (at least 1280px) and mobile (390–500px), in light and dark.
-Delegate browser-visible checks to `tk-browser-verify` within its provider, headless and evidence
-boundaries. Do not launch the user's browser or silently install/switch verification providers.
-Check actual keyboard use, hashes, static/no-JS core reading and reduced motion. Required numerical
-checks are the emulated mobile CSS viewport width matching `innerWidth` and
-`document.documentElement.scrollWidth <= innerWidth`; a wider `innerWidth` under mobile
-emulation means content widened the layout viewport and fails the check. Table overflow is confined to a
-`position:relative` scrolling wrapper; body/table/definition-list non-heading sizes at most body
-size (KPI/hero exceptions only); and row headers retaining readable multi-character widths.
-Off-screen absolute helper text and measurement elements must not widen the document. Fix failed
-checks in the generator/template and replay. Completion reports name inspected viewports/themes
-and results, or `Unverifiable` with the unavailable renderer/check. Saving HTML alone is not proof
-of readability; unreadable output is a functional defect and cannot pass the affected acceptance.
-
-For document-like artifacts, verify that the theme control is inside the top bar and visible in
-the initial viewport. On desktop, its `getBoundingClientRect().top` must fall within the top bar's
-vertical bounds. Inspect the title and control together at the affected desktop breakpoint:
-both must have positive rendered width, stay inside the header and not overlap. Page-level overflow
-checks alone cannot establish this. Check text for replacement characters or suspicious runs of
-question marks against its source; warn and inspect rather than banning or replacing normal question
-sentences and code operators. Check that the title still identifies the subject without ticket keys or generic
-labels, and that any required term list follows the opening conclusion, expanded with working links.
+When browser verification is required, read [render checks](html-render.md) before execution.

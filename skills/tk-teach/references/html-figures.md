@@ -82,7 +82,12 @@ Check card text and relationship labels for overlap/clipping as well as page wid
 - Size inline SVG for the narrowest required viewport. The smallest readable label must remain at
   least 11 CSS px after scaling (`font-size * rendered-width / viewBox-width`). If a before/after
   or multi-panel figure cannot meet that threshold, use one SVG per panel and stack panels on narrow
-  screens instead of shrinking the text.
+  screens instead of shrinking the text. For sequence/architecture diagrams whose columns carry
+  meaning, retain a bounded horizontal scroller on narrow screens. Derive its minimum width as
+  `viewBox width * 11 / smallest label font-size` (round up), rather than choosing an arbitrary
+  width. Choose label sizes/viewBox so that this minimum fits the actual 1280px desktop content
+  width; measure the rendered label size and wrapper overflow. Stack only figures whose meaning
+  survives a vertical arrangement.
 - Short identifiers in table cells, such as commit SHAs, IDs, and status tokens, stay on one line.
   Use `.ht-token` or an equivalent local rule for them. Long paths and URLs may wrap or use their
   own bounded horizontal scroller.

@@ -258,3 +258,25 @@
   addEventListener('resize', position);
 })();
 
+(() => {
+  const start = () => {
+    (document.querySelectorAll?.('pre.ht-code') || []).forEach((block, index) => {
+      if (block.previousElementSibling?.classList.contains('ht-code-toolbar')) return;
+      const toolbar = document.createElement('div');
+      toolbar.className = 'ht-code-toolbar';
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = '줄바꿈';
+      button.setAttribute('aria-label', `코드 블록 ${index + 1} 줄바꿈`);
+      button.setAttribute('aria-pressed', 'false');
+      button.addEventListener('click', () => {
+        const wrap = block.toggleAttribute('data-wrap');
+        button.setAttribute('aria-pressed', String(wrap));
+      });
+      toolbar.append(button);
+      block.before(toolbar);
+    });
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once: true});
+  else start();
+})();
