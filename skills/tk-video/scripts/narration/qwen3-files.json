@@ -20,5 +20,37 @@
     "speech_tokenizer/preprocessor_config.json": "fcb3805e597e786d4067706e602f6688524640f8d3396790e2e09b5942fcbdfb",
     "tokenizer_config.json": "dc3c31c3bdaedd5016382bb3cbe07323026775ad51f5a4fb564505992ae4a670",
     "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+  },
+  "dependencies": {
+    "soundfile": {
+      "name": "soundfile",
+      "version": "0.13.1",
+      "wheels": {
+        "soundfile-0.13.1-py2.py3-none-macosx_10_9_x86_64.whl": {
+          "wheel_url": "https://files.pythonhosted.org/packages/ea/ab/73e97a5b3cc46bba7ff8650a1504348fa1863a6f9d57d7001c6b67c5f20e/soundfile-0.13.1-py2.py3-none-macosx_10_9_x86_64.whl",
+          "sha256": "82dc664d19831933fe59adad199bf3945ad06d84bc111a5b4c0d3089a5b9ec33"
+        },
+        "soundfile-0.13.1-py2.py3-none-macosx_11_0_arm64.whl": {
+          "wheel_url": "https://files.pythonhosted.org/packages/a0/e5/58fd1a8d7b26fc113af244f966ee3aecf03cb9293cb935daaddc1e455e18/soundfile-0.13.1-py2.py3-none-macosx_11_0_arm64.whl",
+          "sha256": "743f12c12c4054921e15736c6be09ac26b3b3d603aef6fd69f9dde68748f2593"
+        },
+        "soundfile-0.13.1-py2.py3-none-manylinux_2_28_aarch64.whl": {
+          "wheel_url": "https://files.pythonhosted.org/packages/58/ae/c0e4a53d77cf6e9a04179535766b3321b0b9ced5f70522e4caf9329f0046/soundfile-0.13.1-py2.py3-none-manylinux_2_28_aarch64.whl",
+          "sha256": "9c9e855f5a4d06ce4213f31918653ab7de0c5a8d8107cd2427e44b42df547deb"
+        },
+        "soundfile-0.13.1-py2.py3-none-manylinux_2_28_x86_64.whl": {
+          "wheel_url": "https://files.pythonhosted.org/packages/57/5e/70bdd9579b35003a489fc850b5047beeda26328053ebadc1fb60f320f7db/soundfile-0.13.1-py2.py3-none-manylinux_2_28_x86_64.whl",
+          "sha256": "03267c4e493315294834a0870f31dbb3b28a95561b80b134f0bd3cf2d5f0e618"
+        },
+        "soundfile-0.13.1-py2.py3-none-win32.whl": {
+          "wheel_url": "https://files.pythonhosted.org/packages/fe/df/8c11dc4dfceda14e3003bb81a0d0edcaaf0796dd7b4f826ea3e532146bba/soundfile-0.13.1-py2.py3-none-win32.whl",
+          "sha256": "c734564fab7c5ddf8e9be5bf70bab68042cd17e9c214c06e365e20d64f9a69d5"
+        },
+        "soundfile-0.13.1-py2.py3-none-win_amd64.whl": {
+          "wheel_url": "https://files.pythonhosted.org/packages/14/e9/6b761de83277f2f02ded7e7ea6f07828ec78e4b229b80e4ca55dd205b9dc/soundfile-0.13.1-py2.py3-none-win_amd64.whl",
+          "sha256": "1e70a05a0626524a69e9f0f4dd2ec174b4e9567f4d8b6c11d38b5c289be36ee9"
+        }
+      }
+    }
   }
 }

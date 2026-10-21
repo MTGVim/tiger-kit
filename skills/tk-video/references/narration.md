@@ -12,7 +12,10 @@ Native Apple Silicon defaults to `mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-
 `Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice`. `--engine auto | mlx | pytorch` selects the route explicitly.
 Use the versions, revisions, wheel SHA256 and exact snapshot file hashes in `mlx-files.json` or
 `qwen3-files.json`; inspect that selected manifest rather than substituting a current package/tag.
-The MLX manifest also pins its compatible `mlx` version. The converted model retains Apache-2.0;
+The MLX manifest also pins its compatible `mlx` version. Both manifests pin `soundfile`
+and platform wheel SHA256 values; select the matching wheel containing libsndfile, verify its
+hash and install it with its CFFI/NumPy dependencies in the approved venv.
+The converted model retains Apache-2.0;
 retain the model README and package license/attribution. No fork, clone-voice model, Supertonic,
 ASR or resident server belongs to this path. A mirror must match the same pinned bytes; do not
 publish mirrors or put weights in TigerKit Git history.
@@ -26,9 +29,14 @@ before installing it into that venv. Reuse verified disk snapshots offline on la
 another run's resources and partial/mismatched files rather than deleting the shared cache.
 
 After download approval, use the selected venv Python with `qwen3.py --download --verify`, adding
-`--engine` or `--model-dir` when explicitly selected. Without `--download`, verification and
-synthesis do not download. Verify exact nonsymlink snapshot files before inference and pass the
-absolute snapshot path, never a repository ID, to model/tokenizer loaders. The adapter sets offline
+`--engine` or `--model-dir` when explicitly selected. Before network access, `--download` copies
+matching pinned files from the selected local HF hub cache (including symlink-backed blobs) into regular snapshot files and verifies their hashes.
+Missing or mismatched cache bytes fall back to the pinned download; the source cache is preserved.
+Without `--download`, verification and synthesis do not download. `--verify` also checks
+NumPy, soundfile/CFFI and selected engine module availability plus pinned package versions before
+model hashing/loading. This is dependency discovery, not a native-library or synthesis smoke test;
+synthesis imports soundfile before model loading and reports safe missing-module names.
+Verify exact nonsymlink snapshot files before inference and pass the absolute snapshot path, never a repository ID, to model/tokenizer loaders. The adapter sets offline
 mode and redirects XDG/HF/Torch/Numba runtime caches into the selected engine's `runtime-cache`.
 It compares top-level `~/.cache` and `~/Library/Caches` names before/after and reports new entries
 outside the owned cache on success or CLI failure, plus inaccessible scans. This is a limited
@@ -53,8 +61,8 @@ but load separate model memory. Sentence batching has no verified 7GB upper boun
 Write pronunciation-corrected Korean text to run-owned UTF-8 files, one complete sentence per
 line. Generate sentences sequentially, trim each measured onset and join accepted audio; do not
 send a full long paragraph in one model request or infer a fixed memory ceiling from sentence length. Use
-`qwen3.py --text-file <file> --output <new.wav>`; `--speaker serena` is the default and
-`--speaker sohee` is the only alternative. The 0.6B model ignores `instruct`; do not offer style
+`qwen3.py --text-file <file> --output <new.wav>`; `--speaker sohee` is the Korean default and
+`--speaker serena` remains available explicitly. The 0.6B model ignores `instruct`; do not offer style
 instructions or silently upgrade to 1.7B. The MLX backend uses Metal GPU with `mx.set_cache_limit(0)` before loading/generation and clears
 released allocations between sentences. PyTorch `--device auto` selects an available CUDA/MPS/CPU
 device; use `--engine pytorch --device <device>` for an explicit PyTorch route. Report failures
@@ -62,7 +70,7 @@ without switching engines or silently trying MLX CPU.
 
 Use the parent's resolved `evidenceMedia.voice` when supplied. Otherwise resolve `voice` per field:
 current explicit request > `.tigerkit/repository.json` > user
-`${XDG_CONFIG_HOME:-~/.config}/tigerkit/settings.json` > team `tigerkit.config.json` > `serena`.
+`${XDG_CONFIG_HOME:-~/.config}/tigerkit/settings.json` > team `tigerkit.config.json` > `sohee`.
 Reject a malformed media preference and use safe defaults without rewriting its file. Pass the
 resolved voice explicitly to the adapter; reading a voice default never selects narration itself.
 

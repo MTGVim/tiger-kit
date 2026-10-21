@@ -29,6 +29,23 @@ def png(path, color):
 
 
 class OptionalMediaTests(unittest.TestCase):
+    def test_rendered_provenance_in_picture_avoids_prefix_and_keeps_caption_empty(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); image = root / "card.png"; png(image, (40, 90, 120))
+            row = {"path": str(image), "source_kind": "rendered", "caption": "설명 자막"}
+            data = {"mode": "explainer", "frames": [row]}
+            self.assertEqual(movie.timeline(data, root)[2][0]["text"], "[렌더링 장면] 설명 자막")
+            row["source_label"] = "Rendered scene"
+            self.assertEqual(movie.timeline(data, root)[2][0]["text"], "[Rendered scene] 설명 자막")
+            row["source_in_picture"] = True
+            self.assertEqual(movie.timeline(data, root)[2][0]["text"], "설명 자막")
+            row["caption"] = ""
+            self.assertEqual(movie.timeline(data, root)[2], [])
+            row["source_in_picture"] = "true"
+            with self.assertRaises(ValueError): movie.timeline(data, root)
+            row["source_in_picture"] = False; row["source_label"] = ""
+            with self.assertRaises(ValueError): movie.timeline(data, root)
+
     def fixture(self, root):
         first, last = root / "first.png", root / "last.png"
         png(first, (40, 90, 120)); png(last, (90, 140, 40))
@@ -240,7 +257,9 @@ class OptionalMediaTests(unittest.TestCase):
                 wav.writeframes(b"".join(struct.pack("<h", int(8000 * math.sin(i * 2 * math.pi * 440 / 22050))) for i in range(70560)))
             data = json.loads(manifest.read_text()); data["mode"] = "explainer"; data["narration_requested"] = True
             data.pop("captions"); data.pop("end_ms")
-            for row in data["frames"]: row.pop("timestamp_ms"); row["caption"] = "Scene description"
+            for row in data["frames"]:
+                row.pop("timestamp_ms"); row["caption"] = "Scene description"
+                row.update(source_kind="rendered", source_in_picture=True)
             data["frames"][0]["audio_path"] = str(audio)
             manifest.write_text(json.dumps(data))
             result = movie.build(manifest, root / "scenes.mp4")
@@ -252,6 +271,10 @@ class OptionalMediaTests(unittest.TestCase):
             truncated = movie.build(manifest, root / "truncated-captions.mp4")
             self.assertIn("narration-subtitles-short", truncated["media_validation"]["errors"])
             data.pop("captions")
+            for row in data["frames"]: row["caption"] = ""
+            manifest.write_text(json.dumps(data))
+            empty = movie.build(manifest, root / "empty-captions.mp4")
+            self.assertIn("narration-subtitles-short", empty["media_validation"]["errors"])
             data["frames"][0]["hold_ms"] = 100
             manifest.write_text(json.dumps(data))
             with self.assertRaises(ValueError): movie.build(manifest, root / "too-short.mp4")

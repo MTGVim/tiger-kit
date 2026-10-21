@@ -1,12 +1,18 @@
 from __future__ import annotations
 
 import hashlib
+import contextlib
+import io
 import importlib.util
 import json
+import os
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
 import types
 import unittest
+import venv
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -16,6 +22,91 @@ spec.loader.exec_module(qwen)
 
 
 class Qwen3NarrationTests(unittest.TestCase):
+    def test_verify_in_clean_venv_names_soundfile_before_model_access(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            venv.EnvBuilder(with_pip=False).create(root / "venv")
+            (root / "numpy.py").write_text("# dependency-discovery fixture\n")
+            python = root / "venv" / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+            result = subprocess.run([str(python), str(Path(qwen.__file__)), "--engine", "pytorch",
+                "--verify", "--model-dir", str(root / "missing-model")],
+                env=dict(os.environ, PYTHONPATH=str(root)), capture_output=True, text=True)
+            self.assertEqual(result.returncode, 1, result.stderr)
+            receipt = json.loads(result.stdout)
+            self.assertEqual(receipt["error"], "ModuleNotFoundError")
+            self.assertEqual(receipt["detail"], "missing runtime module: soundfile")
+            self.assertNotIn(str(root), receipt["detail"])
+
+    def test_runtime_checks_selected_engine_and_versions_without_importing_models(self):
+        for engine, data, missing in [("pytorch", qwen.manifest(), "qwen_tts"),
+                                     ("mlx", qwen.mlx_adapter().manifest(), "mlx_audio")]:
+            versions = {data["package"]["name"]: data["package"]["version"],
+                        "mlx": "0.32.4", "soundfile": "0.13.1"}
+            with patch.object(qwen.importlib.util, "find_spec", side_effect=lambda name: None if name == missing else object()):
+                with self.assertRaises(ModuleNotFoundError) as error: qwen.verify_runtime(engine, data)
+                self.assertEqual(error.exception.name, missing)
+            with patch.object(qwen.importlib.util, "find_spec", return_value=object()), \
+                    patch.object(qwen.importlib.metadata, "version", side_effect=versions.__getitem__):
+                qwen.verify_runtime(engine, data)
+                versions["soundfile"] = "0.0.0"
+                with self.assertRaisesRegex(ValueError, "pinned soundfile"): qwen.verify_runtime(engine, data)
+
+    def test_cli_default_voice_and_explicit_serena_are_returned(self):
+        for options, expected in [([], "sohee"), (["--speaker", "serena"], "serena")]:
+            output = io.StringIO()
+            with patch.object(sys, "argv", ["qwen3", "--engine", "pytorch", "--text-file", "script.txt",
+                    "--output", "voice.wav", *options]), patch.object(qwen, "verify_runtime"), \
+                    patch.object(qwen, "synthesize", side_effect=lambda *args: {"speaker": args[3]}) as synth, \
+                    contextlib.redirect_stdout(output):
+                self.assertEqual(qwen.main(), 0)
+                self.assertEqual(json.loads(output.getvalue())["speaker"], expected)
+                synth.assert_called_once()
+
+    def test_local_hf_symlinks_become_verified_regular_snapshot_without_network(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); hub = root / "hub"; repo = hub / "models--owner--model"
+            cache = repo / "snapshots" / "fixed-revision"; cache.mkdir(parents=True)
+            blobs = repo / "blobs"; blobs.mkdir()
+            payload = b"pinned model fixture"; (blobs / "blob").write_bytes(payload)
+            (cache / "config.json").symlink_to(blobs / "blob")
+            data = {"repository": "owner/model", "revision": "fixed-revision",
+                    "files": {"config.json": hashlib.sha256(payload).hexdigest()}}
+            with patch.dict(qwen.os.environ, {"HF_HUB_CACHE": str(hub)}), \
+                    patch.object(qwen.urllib.request, "urlopen") as net:
+                qwen.download(root / "owned", data)
+                self.assertEqual(qwen.verify(root / "owned", data), data)
+                self.assertFalse((root / "owned/config.json").is_symlink())
+                self.assertNotEqual((root / "owned/config.json").stat().st_ino, (blobs / "blob").stat().st_ino)
+                net.assert_not_called()
+            self.assertTrue((cache / "config.json").is_symlink())
+
+    def test_cache_miss_wrong_hash_or_escaping_symlink_uses_pinned_download(self):
+        for variant in ["missing", "wrong-revision", "mismatched", "escape"]:
+            with self.subTest(variant=variant), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory); hub = root / "hub"; repo = hub / "models--owner--model"
+                cache = repo / "snapshots" / ("other" if variant == "wrong-revision" else "fixed")
+                cache.mkdir(parents=True); payload = b"pinned"
+                if variant in {"mismatched", "wrong-revision"}: (cache / "file").write_bytes(b"wrong")
+                if variant == "escape":
+                    (root / "outside").write_bytes(payload); (cache / "file").symlink_to(root / "outside")
+                data = {"repository": "owner/model", "revision": "fixed", "files": {"file": hashlib.sha256(payload).hexdigest()}}
+                with patch.dict(qwen.os.environ, {"HF_HUB_CACHE": str(hub)}), \
+                        patch.object(qwen.urllib.request, "urlopen", return_value=io.BytesIO(payload)) as net:
+                    qwen.download(root / "owned", data)
+                    self.assertEqual((root / "owned/file").read_bytes(), payload)
+                    self.assertEqual(net.call_args.args[0], "https://huggingface.co/owner/model/resolve/fixed/file")
+                if variant == "mismatched": self.assertEqual((cache / "file").read_bytes(), b"wrong")
+
+    def test_cache_location_follows_hf_environment_precedence(self):
+        with patch.dict(qwen.os.environ, {"XDG_CACHE_HOME": "/xdg"}, clear=True):
+            self.assertEqual(qwen.local_hub_cache(), Path("/xdg/huggingface/hub"))
+            qwen.os.environ["HF_HOME"] = "/hf"
+            self.assertEqual(qwen.local_hub_cache(), Path("/hf/hub"))
+            qwen.os.environ["HUGGINGFACE_HUB_CACHE"] = "/legacy"
+            self.assertEqual(qwen.local_hub_cache(), Path("/legacy"))
+            qwen.os.environ["HF_HUB_CACHE"] = "/hub"
+            self.assertEqual(qwen.local_hub_cache(), Path("/hub"))
+
     def test_reviewed_pins_include_weights_tokenizer_and_package(self):
         data = qwen.manifest()
         self.assertEqual(data["package"]["version"], "0.1.1")
@@ -25,6 +116,12 @@ class Qwen3NarrationTests(unittest.TestCase):
         self.assertIn("speech_tokenizer/model.safetensors", data["files"])
         self.assertIn("README.md", data["files"])
         self.assertTrue(all(len(x) == 64 for x in data["files"].values()))
+        soundfile = data["dependencies"]["soundfile"]
+        self.assertEqual(soundfile, qwen.mlx_adapter().manifest()["dependencies"]["soundfile"])
+        self.assertEqual(soundfile["version"], "0.13.1")
+        self.assertTrue(any("macosx_11_0_arm64" in name for name in soundfile["wheels"]))
+        self.assertTrue(all("none-any" not in name and len(row["sha256"]) == 64
+                            for name, row in soundfile["wheels"].items()))
 
     def test_offline_verification_rejects_tamper_extra_files_and_symlinks(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -119,10 +216,11 @@ class Qwen3NarrationTests(unittest.TestCase):
             root = Path(directory); text = root / "script.txt"; text.write_text("Korean script. Second sentence.")
             output = root / "voice.wav"
             with patch.object(qwen, "verify", return_value=qwen.manifest()), \
+                    patch.object(qwen, "verify_runtime"), \
                     patch.object(qwen.importlib.metadata, "version", return_value="0.1.1"), \
                     patch.dict("sys.modules", {"torch": torch, "soundfile": sf, "qwen_tts": types.SimpleNamespace(Qwen3TTSModel=factory)}), \
                     patch.dict(qwen.os.environ, {}, clear=True), patch.object(qwen.urllib.request, "urlopen") as net:
-                result = qwen.synthesize(root, text, output, "sohee", "cpu")
+                result = qwen.synthesize(root, text, output, device="cpu")
                 self.assertEqual(qwen.os.environ["HF_HUB_OFFLINE"], "1")
                 self.assertEqual(qwen.os.environ["TRANSFORMERS_OFFLINE"], "1")
                 self.assertEqual(factory.from_pretrained.call_args.args, (str(root),))
@@ -131,6 +229,7 @@ class Qwen3NarrationTests(unittest.TestCase):
                 self.assertEqual(model.generate_custom_voice.call_count, 2)
                 self.assertEqual(result["sentence_count"], 2)
                 self.assertEqual(result["human_action"], "listen")
+                self.assertEqual(result["speaker"], "sohee")
                 self.assertAlmostEqual(result["trimmed_leading_seconds"], 1.92, places=2)
                 self.assertTrue(output.is_file())
                 net.assert_not_called()
@@ -161,8 +260,8 @@ class Qwen3NarrationTests(unittest.TestCase):
             root = Path(directory); text = root / "script.txt"; text.write_text("첫 문장입니다. 다음 문장입니다.")
             output = root / "voice.wav"
             with patch.object(qwen, "verify", return_value=backend.manifest()), \
+                    patch.object(qwen, "verify_runtime"), \
                     patch.object(qwen.platform, "system", return_value="Darwin"), patch.object(qwen.platform, "machine", return_value="arm64"), \
-                    patch.object(backend.importlib.metadata, "version", side_effect=lambda name: "0.6.1" if name == "mlx-audio" else "0.32.4"), \
                     patch.object(qwen, "memory_metrics", return_value={"peak_footprint_bytes": 9_100_000_000}), \
                     patch.dict("sys.modules", modules), patch.dict(qwen.os.environ, {}, clear=True), \
                     patch.object(qwen.urllib.request, "urlopen") as net:

@@ -94,7 +94,7 @@ pairs. Narration is optional; its absence cannot block prep or verification.
 Resolve optional `evidenceMedia` fields independently: current explicit instruction > ignored
 `.tigerkit/repository.json` > user `${XDG_CONFIG_HOME:-~/.config}/tigerkit/settings.json` > team
 `tigerkit.config.json` > defaults (`enabled: false`, `format: auto`, `narration: false`,
-`voice: serena`). A missing upper field retains a lower value. Validate `enabled`/`narration`
+`voice: sohee`). A missing upper field retains a lower value. Validate `enabled`/`narration`
 as booleans, `format` as `auto | gif | mp4`, and `voice` as `serena | sohee`; reject a malformed
 media object, disclose it and use safe media defaults for that run without overwriting its file.
 Pass the effective format/narration/voice to the capture/movie owners.

@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import contextlib
-import importlib.metadata
 import json
 from pathlib import Path
 import re
@@ -26,14 +25,13 @@ def synthesize(root: Path, text_file: Path, output: Path, speaker: str, common) 
     if speaker not in {"serena", "sohee"}:
         raise ValueError("speaker must be serena or sohee")
     data = common.verify(root, manifest())
-    if (importlib.metadata.version("mlx-audio") != data["package"]["version"]
-            or importlib.metadata.version("mlx") != data["mlx_version"]):
-        raise ValueError("use pinned mlx-audio and mlx packages in the dedicated virtual environment")
+    common.verify_runtime("mlx", data)
     rows, output = common.script_inputs(text_file, output)
     before, scan_limits = common.cache_inventory()
     cache = common.configure_runtime(root)
     # Offline/cache boundaries must precede all third-party imports and nested tokenizer loads.
     import numpy as np
+    import soundfile  # Check libsndfile/CFFI before loading model weights.
     import mlx.core as mx
     from mlx_audio.tts.utils import load_model
 

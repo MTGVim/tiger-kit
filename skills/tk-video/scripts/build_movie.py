@@ -87,7 +87,12 @@ def timeline(data: dict, root: Path, ffprobe: str = "ffprobe") -> tuple[list[tup
             if source not in {"capture", "rendered"}: raise ValueError("source_kind must be capture or rendered")
             caption = row.get("caption", "")
             if not isinstance(caption, str): raise ValueError("scene caption must be text")
-            if source == "rendered": caption = "[Rendered scene] " + caption
+            in_picture = row.get("source_in_picture", False)
+            if not isinstance(in_picture, bool): raise ValueError("source_in_picture must be boolean")
+            if source == "rendered" and not in_picture:
+                label = row.get("source_label", "렌더링 장면")
+                if not isinstance(label, str) or not label.strip(): raise ValueError("source_label must be nonempty text")
+                caption = "[" + label + "] " + caption
             if caption: scene_captions.append({"start_ms": cursor, "end_ms": cursor + hold, "text": caption})
             cursor += hold
     end = number(data["end_ms"]) if mode == "evidence" else cursor

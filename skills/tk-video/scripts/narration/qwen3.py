@@ -12,6 +12,7 @@ import os
 from pathlib import Path
 import platform
 import re
+import shutil
 import sys
 import tempfile
 import urllib.request
@@ -76,6 +77,7 @@ def download(root: Path, data: dict | None = None) -> None:
     root.mkdir(parents=True, exist_ok=True)
     safe_directory(root)
     data = manifest() if data is None else data
+    cache = local_hub_cache() / ("models--" + data["repository"].replace("/", "--"))
     for name, expected in data["files"].items():
         path = root / name
         if path.resolve() != path:
@@ -89,13 +91,39 @@ def download(root: Path, data: dict | None = None) -> None:
         # Stream large weights; interrupted downloads never become accepted snapshot files.
         with tempfile.TemporaryDirectory(prefix="qwen3-download-", dir=root.parent) as directory:
             candidate = Path(directory) / "file"
-            with urllib.request.urlopen(url, timeout=60) as response, candidate.open("xb") as target:
-                while block := response.read(1024 * 1024):
-                    target.write(block)
+            cached = cache / "snapshots" / data["revision"] / name
+            # HF snapshots may link into blobs. Copy only regular bytes inside this repository's cache.
+            resolved = cached.resolve()
+            if resolved.is_relative_to(cache.resolve()) and resolved.is_file():
+                shutil.copyfile(resolved, candidate)
+            if not candidate.is_file() or digest(candidate) != expected:
+                with urllib.request.urlopen(url, timeout=60) as response, candidate.open("wb") as target:
+                    while block := response.read(1024 * 1024):
+                        target.write(block)
             if digest(candidate) != expected:
                 raise ValueError("download does not match pinned bytes: " + name)
             os.link(candidate, path)
     verify(root, data)
+
+
+def local_hub_cache() -> Path:
+    xdg = Path(os.environ.get("XDG_CACHE_HOME", str(Path.home() / ".cache")))
+    home = Path(os.environ.get("HF_HOME", str(xdg / "huggingface")))
+    return Path(os.environ.get("HF_HUB_CACHE", os.environ.get("HUGGINGFACE_HUB_CACHE", str(home / "hub")))).expanduser()
+
+
+def verify_runtime(engine: str, data: dict) -> None:
+    modules = ["numpy", "soundfile", "cffi"] + (["mlx", "mlx_audio"] if engine == "mlx" else ["torch", "qwen_tts"])
+    for name in modules:
+        if importlib.util.find_spec(name) is None:
+            raise ModuleNotFoundError(name=name)
+    packages = {data["package"]["name"]: data["package"]["version"],
+                "soundfile": data["dependencies"]["soundfile"]["version"]}
+    if engine == "mlx":
+        packages["mlx"] = data["mlx_version"]
+    for name, version in packages.items():
+        if importlib.metadata.version(name) != version:
+            raise ValueError("use pinned " + name + " in the dedicated virtual environment")
 
 
 def selected_engine(engine: str) -> str:
@@ -221,18 +249,18 @@ def trim_leading_silence(audio, rate: int):
     return samples[onset:], onset / rate
 
 
-def synthesize(root: Path, text_file: Path, output: Path, speaker: str = "serena", device: str = "auto") -> dict:
+def synthesize(root: Path, text_file: Path, output: Path, speaker: str = "sohee", device: str = "auto") -> dict:
     if speaker not in {"serena", "sohee"}:
         raise ValueError("speaker must be serena or sohee")
     if device not in {"auto", "cpu", "mps", "cuda"}:
         raise ValueError("unsupported device")
     data = verify(root)
-    if importlib.metadata.version("qwen-tts") != data["package"]["version"]:
-        raise ValueError("use the pinned qwen-tts package in the dedicated virtual environment")
+    verify_runtime("pytorch", data)
     rows, output = script_inputs(text_file, output)
     before, scan_limits = cache_inventory()
     cache = configure_runtime(root)
     import numpy as np
+    import soundfile  # Check libsndfile/CFFI before loading model weights.
     import torch
     from qwen_tts import Qwen3TTSModel
 
@@ -267,7 +295,7 @@ def main() -> int:
     parser.add_argument("--model-dir", type=Path)
     parser.add_argument("--download", action="store_true", help="Download pinned files after user approval")
     parser.add_argument("--verify", action="store_true")
-    parser.add_argument("--speaker", choices=["serena", "sohee"], default="serena")
+    parser.add_argument("--speaker", choices=["serena", "sohee"], default="sohee")
     parser.add_argument("--device", choices=["auto", "cpu", "mps", "cuda"], default="auto")
     parser.add_argument("--text-file", type=Path)
     parser.add_argument("--output", type=Path)
@@ -281,6 +309,8 @@ def main() -> int:
         cache = Path(os.environ.get("XDG_CACHE_HOME", str(Path.home() / ".cache"))) / "tigerkit/tts" / ("mlx" if backend else "qwen3")
         model_dir = args.model_dir or cache / "snapshots" / data["revision"]
         owned_cache = runtime_cache(model_dir)
+        if args.verify or args.text_file or args.output:
+            verify_runtime(engine, data)
         if args.download:
             download(model_dir, data)
         if args.verify:
@@ -302,8 +332,11 @@ def main() -> int:
         return 0
     except Exception as exc:
         # Dependency/network diagnostics may contain local paths or request details.
+        detail = str(exc) if isinstance(exc, ValueError) else "narration unavailable; no audio accepted"
+        if isinstance(exc, ModuleNotFoundError) and isinstance(exc.name, str) and re.fullmatch(r"[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*", exc.name, flags=re.ASCII):
+            detail = "missing runtime module: " + exc.name
         print(json.dumps({"narration_status": "unavailable", "error": type(exc).__name__,
-                          "detail": str(exc) if isinstance(exc, ValueError) else "narration unavailable; no audio accepted",
+                          "detail": detail,
                           **cache_report(before, scan_limits, owned_cache), **memory_metrics()}))
         return 1
 

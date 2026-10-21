@@ -32,8 +32,14 @@ cannot discard sub-40ms capture intervals before the selected-rate filter runs.
 A stills explanation uses explicit holds; absent narration/hold defaults to 3000ms:
 
 ```json
-{"mode":"explainer","frames":[{"path":"/absolute/run/diagram.png","source_kind":"rendered","caption":"The request enters the queue","hold_ms":3000},{"path":"/absolute/run/actual-state.png","source_kind":"capture","caption":"Observed result","hold_ms":4000}]}
+{"mode":"explainer","frames":[{"path":"/absolute/run/diagram.png","source_kind":"rendered","source_in_picture":true,"caption":"The request enters the queue","hold_ms":3000},{"path":"/absolute/run/actual-state.png","source_kind":"capture","caption":"Observed result","hold_ms":4000}]}
 ```
+
+For rendered cards, `source_in_picture: true` declares an inspected source tag already present
+in the image and suppresses the caption prefix. The declaration never marks the frame as capture.
+Without it, `source_label` supplies a nonempty label in the audience's language; the Korean default
+is `렌더링 장면`. Empty narration captions still fail the subtitle coverage check even when
+source provenance appears in the image.
 
 For observed per-scene narration, add `scenes: [{"start_ms": 0, "audio_path": "/absolute/run/scene.wav"}]`
 to the `evidence` manifest. Starts must be strictly increasing actual scene boundaries inside

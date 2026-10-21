@@ -23,8 +23,9 @@ motion itself is not the claim. A short flow around ten seconds often fits GIF; 
 fits MP4. Reuse supplied material and approved choices without another routine question.
 
 List each scene's source, caption, optional narration and hold or observed timestamp. Label rendered
-cards in the picture/caption; never reenact unavailable software behavior or present a diagram as a
-capture. Keep claims, source versions and unverified intervals explicit. For real browser states,
+cards with a corner source tag in the audience's language and declare `source_in_picture: true`
+in each tagged frame; otherwise retain a localized caption label. Never reenact unavailable
+software behavior or present a diagram as a capture. Keep claims, source versions and unverified intervals explicit. For real browser states,
 invoke `tk-browser-verify` with `phase: media-capture` for a demo or explanation without acceptance
 criteria; an explicitly requested acceptance check retains its verification contract and optional
 motion-evidence supplement. For native windows invoke `tk-app-verify`. Those owners retain provider,
