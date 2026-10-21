@@ -44,8 +44,8 @@ test('centered shell, footer, status, code and native fallbacks', {skip:!process
         return {width:innerWidth,scroll:document.documentElement.scrollWidth,left:c.left,right:innerWidth-c.right,footerLeft:f.left,footerRight:innerWidth-f.right,overlap:f.left<n.right&&f.right>n.left&&f.top<n.bottom&&f.bottom>n.top,headerRight:h.right-parseFloat(getComputedStyle(document.querySelector('.ht-topbar')).paddingRight),themeRight:t.right,sizes};
       });
       assert.equal(geometry.width,width);assert.ok(geometry.scroll<=width,JSON.stringify(geometry));
-      if(width>960){assert.ok(Math.abs(geometry.left-geometry.right)<=1,JSON.stringify(geometry));assert.equal(geometry.overlap,false);assert.equal(geometry.sizes['.ht-doc-nav'],11);}
-      assert.equal(geometry.sizes['.ht-doc-content'],12);assert.equal(geometry.sizes.h2,17);assert.equal(geometry.sizes.h3,14);assert.equal(geometry.sizes['.ht-lede'],15);assert.equal(geometry.sizes.pre,11.5);assert.ok(geometry.sizes['#ref-1']<=12);assert.equal(geometry.sizes['.ht-topbar-title'],18);
+      if(width>960){assert.ok(Math.abs(geometry.left-geometry.right)<=1,JSON.stringify(geometry));assert.equal(geometry.overlap,false);assert.equal(geometry.sizes['.ht-doc-nav'],13);}
+      assert.equal(geometry.sizes['.ht-doc-content'],14);assert.equal(geometry.sizes.h2,19);assert.equal(geometry.sizes.h3,16);assert.equal(geometry.sizes['.ht-lede'],17);assert.equal(geometry.sizes.pre,13.5);assert.ok(geometry.sizes['#ref-1']<=14);assert.equal(geometry.sizes['.ht-topbar-title'],20);
       assert.ok(Math.abs(geometry.themeRight-geometry.headerRight)<=1,JSON.stringify(geometry));
       await page.locator('[data-ht-export-status]').evaluate(e=>{e.hidden=false;e.textContent='다운로드 자료를 준비하지 못했습니다. 원본 파일을 확인해 주세요. '.repeat(5);});
       const statusLayout=await page.evaluate(()=>{
