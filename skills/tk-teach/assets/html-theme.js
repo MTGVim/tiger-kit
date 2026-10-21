@@ -1,4 +1,100 @@
 (() => {
+  const start = () => {
+    const download = document.querySelector('[data-ht-download]');
+    if (!download) return;
+    const share = document.querySelector('[data-ht-share]');
+    const status = document.querySelector('[data-ht-export-status]');
+    const payload = document.querySelector('template[data-ht-export]');
+    const encoder = new TextEncoder();
+    const decode = value => Uint8Array.from(atob(value), char => char.charCodeAt(0));
+    const message = text => { if (status) { status.textContent = text; status.hidden = !text; } };
+    let blob, filename;
+    try {
+      if (!payload) throw Error('missing export');
+      const encoded = payload.content.textContent.trim();
+      const manifest = JSON.parse(new TextDecoder().decode(decode(encoded)));
+      filename = manifest.name;
+      const entries = manifest.files.map(file => {
+        let bytes = decode(file.base64);
+        if (file.html) {
+          const marker = document.createElement('template');
+          marker.setAttribute('data-ht-export', '');
+          marker.setAttribute('data-entry', file.path);
+          marker.innerHTML = encoded;
+          const text = new TextDecoder().decode(bytes).replace(/<\/body\s*>/i, match => marker.outerHTML + match);
+          bytes = encoder.encode(text);
+        }
+        return {name: encoder.encode(file.path), bytes};
+      });
+      if (entries.length === 1) {
+        blob = new Blob([entries[0].bytes], {type: 'text/html;charset=utf-8'});
+      } else {
+        // ZIP STORE: no compression dependency or runtime network, UTF-8 paths.
+        const parts = [], directory = [];
+        let offset = 0, directorySize = 0;
+        const header = size => new DataView(new ArrayBuffer(size));
+        for (const {name, bytes} of entries) {
+          let crc = 0xffffffff;
+          for (const byte of bytes) {
+            crc ^= byte;
+            for (let bit = 0; bit < 8; bit++) crc = (crc >>> 1) ^ ((crc & 1) ? 0xedb88320 : 0);
+          }
+          crc = (crc ^ 0xffffffff) >>> 0;
+          const local = header(30), central = header(46);
+          local.setUint32(0, 0x04034b50, true); local.setUint16(4, 20, true);
+          local.setUint16(6, 0x800, true); local.setUint16(12, 33, true);
+          local.setUint32(14, crc, true); local.setUint32(18, bytes.length, true);
+          local.setUint32(22, bytes.length, true); local.setUint16(26, name.length, true);
+          central.setUint32(0, 0x02014b50, true); central.setUint16(4, 20, true);
+          central.setUint16(6, 20, true); central.setUint16(8, 0x800, true);
+          central.setUint16(14, 33, true); central.setUint32(16, crc, true);
+          central.setUint32(20, bytes.length, true); central.setUint32(24, bytes.length, true);
+          central.setUint16(28, name.length, true); central.setUint32(42, offset, true);
+          parts.push(local.buffer, name, bytes); directory.push(central.buffer, name);
+          offset += 30 + name.length + bytes.length; directorySize += 46 + name.length;
+        }
+        const end = header(22);
+        end.setUint32(0, 0x06054b50, true); end.setUint16(8, entries.length, true);
+        end.setUint16(10, entries.length, true); end.setUint32(12, directorySize, true);
+        end.setUint32(16, offset, true);
+        blob = new Blob([...parts, ...directory, end.buffer], {type: 'application/zip'});
+      }
+    } catch {
+      message('다운로드 자료를 준비하지 못했습니다. 생성한 원본 파일을 확인해 주세요.');
+      return;
+    }
+    download.title = download.getAttribute('aria-label') === '다운로드' ? filename : download.title;
+    download.hidden = false;
+    download.addEventListener('click', () => {
+      let url;
+      try {
+        url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url; link.download = filename;
+        document.body.append(link); link.click(); link.remove();
+        message('');
+      } catch { message('다운로드하지 못했습니다. 브라우저의 다운로드 설정을 확인해 주세요.'); }
+      finally { if (url) setTimeout(() => URL.revokeObjectURL(url), 30000); }
+    });
+    const nav = globalThis.navigator;
+    if (share && globalThis.isSecureContext && nav?.share && nav?.canShare && typeof File !== 'undefined') {
+      const file = new File([blob], filename, {type: blob.type});
+      let supported = false;
+      try { supported = nav.canShare({files: [file]}); } catch {}
+      if (supported) {
+        share.hidden = false;
+        share.addEventListener('click', async () => {
+          try { await nav.share({files: [file], title: document.title}); message(''); }
+          catch (error) { if (error.name !== 'AbortError') message('공유하지 못했습니다. 다운로드 버튼으로 파일을 저장해 주세요.'); }
+        });
+      }
+    }
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once: true});
+  else start();
+})();
+
+(() => {
   const control = document.querySelector('[data-ht-theme-control]');
   if (!control) return;
   const inputs = [...control.querySelectorAll('input[name="ht-theme"]')];

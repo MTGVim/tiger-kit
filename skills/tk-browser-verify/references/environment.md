@@ -44,11 +44,16 @@ For a new Chrome DevTools MCP configuration, pass this conceptual default to the
   "mcpServers": {
     "chrome-devtools": {
       "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest", "--headless", "--isolated"]
+      "args": ["-y", "chrome-devtools-mcp@latest", "--headless", "--isolated", "--no-usage-statistics"]
     }
   }
 }
 ```
+
+Disable usage statistics in new configurations to avoid the optional telemetry watchdog.
+Existing registrations are unchanged. For clients that launch user-scoped MCP servers per session,
+consider project scope when verification is needed only in selected repositories; derive the actual
+client lifecycle and scope from current evidence rather than assuming one shared server.
 
 The wizard must derive the exact host-supported file, scope, command shape, and restart step
 from current local or official evidence and preserve unrelated configuration. TigerKit skills

@@ -55,14 +55,19 @@ For example, adapt the labels/IDs:
 <body class="ht-document" id="document-top">
 <header class="ht-topbar">
   <p class="ht-topbar-title">문서 주제와 결론</p>
-  <fieldset class="ht-theme-control" data-ht-theme-control hidden>
-    <legend class="ht-theme-label">테마</legend>
-    <div class="ht-theme-buttons">
-      <label class="ht-theme-option"><input type="radio" name="ht-theme" value="system"><span>시스템</span></label>
-      <label class="ht-theme-option"><input type="radio" name="ht-theme" value="light"><span>라이트</span></label>
-      <label class="ht-theme-option"><input type="radio" name="ht-theme" value="dark"><span>다크</span></label>
-    </div>
-  </fieldset>
+  <div class="ht-document-actions">
+    <button type="button" class="ht-icon-button" data-ht-download aria-label="다운로드" title="다운로드" hidden>↓</button>
+    <button type="button" class="ht-icon-button" data-ht-share aria-label="파일 공유" title="파일 공유" hidden>↗</button>
+    <fieldset class="ht-theme-control" data-ht-theme-control hidden>
+      <legend class="ht-theme-label ht-visually-hidden">테마</legend>
+      <div class="ht-theme-buttons">
+        <label class="ht-theme-option" title="시스템"><input type="radio" name="ht-theme" value="system" aria-label="시스템"><span>🖥️</span></label>
+        <label class="ht-theme-option" title="라이트"><input type="radio" name="ht-theme" value="light" aria-label="라이트"><span>☀️</span></label>
+        <label class="ht-theme-option" title="다크"><input type="radio" name="ht-theme" value="dark" aria-label="다크"><span>🌙</span></label>
+      </div>
+    </fieldset>
+    <output class="ht-export-status" data-ht-export-status role="status" hidden></output>
+  </div>
 </header>
 <!-- Document content, with meaningful section IDs. -->
 <main class="ht-doc-content">
@@ -178,22 +183,18 @@ Omit the list when no such term precedes its explanation; do not use a fixed ter
 
 ## Shared theme
 
-Inline [theme CSS](../assets/html-theme.css) and [theme control](../assets/html-theme.js) into the
-single HTML file; these are package assets, not runtime dependencies. Keep their canonical tokens,
-font stack, scale, spacing and card/table styles together. Existing product/design-reference tokens
+Inline package [theme CSS](../assets/html-theme.css) and [theme control](../assets/html-theme.js)
+in the self-contained HTML. Keep canonical tokens, fonts, scale, spacing and component styles together. Existing product/design-reference tokens
 remain authoritative for a prototype comparison; use this neutral default for standalone output
 without such a basis. Add an initially hidden `fieldset[data-ht-theme-control]` with a `legend`
 and three native radio inputs named `ht-theme` whose values are `system`, `light`, `dark` in
-that order. Style the labels as one segmented control with body-size text and at least 40px target
-height. Keep the native radio semantics so Tab enters the group and arrow keys change the selected
-value. The script reveals it only when functional. Do not collapse this control into a small select.
+that order. Use 40px SVG/emoji options with accessible names, hover titles and aria-hidden SVGs.
+Keep native Tab/arrow-key semantics and visually hidden label text. Reveal the group only when functional.
 Each `.ht-theme-option` contains the radio input immediately followed by a non-empty `<span>`
-holding the visible label; the shared CSS styles only that span.
+holding the icon and accessible label; the shared CSS styles only that span.
 
-In document-like artifacts, place the theme control at the right end of a top bar that spans the
-page; keep it sticky on desktop and in normal flow on narrow screens so it does not stack with
-section navigation. The top-bar title is a short content title that stays meaningful while
-scrolling: name the subject and its central change or conclusion in reader terms. Put ticket keys,
+For documents, place actions and theme at the right of a full-width top bar; keep it sticky on desktop and in normal flow on narrow screens so it does not stack with
+section navigation. The top-bar title names the subject and central change/conclusion in reader terms while scrolling. Put ticket keys,
 branch names and other identifiers in secondary metadata; do not use them or generic words such
 as `설명`, `explanation` or `report` as the title. The existing prototype UI exception applies;
 apply this document shell only to document portions of QA sheets, preserving their checklist UI.
@@ -223,13 +224,22 @@ theme or JavaScript; for `system`, omit `data-theme`. A valid browser preference
 under `tigerkit-html-theme` is an explicit reader choice and wins at runtime over the generated
 default. If browser storage is unavailable, keep the generated default and all theme controls usable.
 
-Define colors as root tokens. Give body an explicit background and text color and set `color-scheme`.
-Dark values belong in both `@media (prefers-color-scheme: dark)` under `:root:not([data-theme="light"])`
-and `:root[data-theme="dark"]`, so a manual choice wins. Default to gray surfaces with one accent
-hue; reserve good/warn/bad colors for status with a text/icon cue. Offer system/light/dark as a
-three-segment native radio control with at least 40px control height and a layout that stays within
-the viewport; wrap every localStorage operation in try/catch. Never let storage refusal break
-reading or controls.
+Preserve the shared light/dark tokens and `color-scheme`, including system-preference CSS and
+manual overrides. Wrap every localStorage operation in try/catch; storage refusal must not
+break reading or controls.
+
+## Download and file sharing
+
+Place download left of themes in `.ht-document-actions`. Run after final edits:
+`python3 <package>/scripts/package_html.py --root <artifact-directory> --name document.html document.html`.
+For linked pages use `--name course.zip index.html lessons/one.html`; allowlist all local dependencies. Preserve relative paths; exclude unrelated files and secrets.
+Embed sources after edits: one file downloads as HTML, multiple files as ZIP with working export
+controls after extraction. Source duplication and STORE increase size; deliver large collections
+as archives and disclose the viewer-button limitation.
+
+No filesystem/network access. Without JavaScript hide actions; show failures in the live status. Reveal sharing only when a secure
+context's `navigator.canShare` accepts the actual HTML/ZIP `File`. On click, open `navigator.share`
+with that file, never a local/preview URL. Keep download on unsupported/failed sharing; cancel silently. No automatic hosting/publication. Verify bytes, ZIP integrity/links/reexport and share fallbacks separately from rendering.
 
 ## Section-level explanation techniques
 
@@ -237,22 +247,8 @@ For document-like HTML, create one coherent document from verified content and s
 Choose supporting presentation only where it improves understanding; prose and tables need no
 technique assignment. Keep each section informative without duplicating another view.
 
-Use a clear, conversational voice throughout the document. Short reader-and-author turns and chat
-bubbles can explain a multi-actor exchange when the section benefits from them. Do not write a script
-with visible question/answer prefixes, copy paragraphs into dialogue, or invent speaker names and
-avatars. Keep technical names, code, measurements, citations, verification outcomes and other
-evidence in precise structured forms. Preserve an explicitly stated user preference for role labels
-or emoji.
-
-Default to a capable adult reader. Explain terms at first use. If later sections supply essential
-definitions for terms already used in the opening, add a short searchable glossary titled
-`용어 정리` after the opening conclusion. When the user asks for a simpler explanation, simplify the
-same document and retain its evidence and limitations; do not generate an alternate version.
-
-Start with a one-sentence conclusion, followed by a compact summary when useful. Name sections for
-their subject or decision, not for the technique used. A stored or explicitly stated format preference
-is a tie-breaker only when multiple techniques fit equally well; never use a preferred technique that
-mismatches the section content. Do not infer a learning style or reader level without evidence.
+Start with a one-sentence conclusion and a compact summary when useful. Apply the Reader contract's
+conversation, term-list and heading rules without duplicating prose. Use stated technique preferences only for equally suitable choices; infer no learning style/level.
 
 Separate document sections with 1px token-colored rules rather than nested section cards. Avoid
 decorative thick borders; visible keyboard focus outlines are the exception. Keep the shared document

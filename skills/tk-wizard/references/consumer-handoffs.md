@@ -30,7 +30,7 @@ isolated provider profile. Use the consumer-provided conceptual default:
   "mcpServers": {
     "chrome-devtools": {
       "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest", "--headless", "--isolated"]
+      "args": ["-y", "chrome-devtools-mcp@latest", "--headless", "--isolated", "--no-usage-statistics"]
     }
   }
 }

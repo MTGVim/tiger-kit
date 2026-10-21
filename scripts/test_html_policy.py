@@ -123,7 +123,7 @@ class HTMLPolicyTest(unittest.TestCase):
         report = (ROOT / 'skills/tk-research/assets/report.html').read_text()
         report_custom_css = report.split('/* /tigerkit:html-theme.css */', 1)[1]
         self.assertIn('.ht-topbar { position: sticky;', css)
-        self.assertIn('.ht-topbar .ht-theme-control { margin: 0; width: 100%; }', css)
+        self.assertIn('.ht-topbar .ht-theme-control { margin: 0; width: max-content; }', css)
         self.assertNotIn('.ht-mode-control', css)
         self.assertNotIn('[data-html-mode]', css)
         self.assertIn('.ht-chat-turn[data-speaker="reader"]', css)
@@ -258,7 +258,7 @@ class HTMLPolicyTest(unittest.TestCase):
         report = (ROOT / 'skills/tk-research/assets/report.html').read_text()
         qa = (ROOT / 'skills/tk-qa-sheet/assets/qa-sheet-template.html').read_text()
         self.assertNotIn('nav ul{display:flex;overflow:auto', report)
-        self.assertNotIn('flex-wrap: wrap', qa)
+        self.assertNotIn('flex-wrap: wrap', qa.split('/* /tigerkit:html-theme.css */', 1)[1])
         self.assertIn('class="ht-doc-nav"', report)
         self.assertIn('header > * { min-width: 0; max-width: 100%; }', qa)
         environment = re.search(r'\.environment\s*\{([^}]*)\}', qa)

@@ -78,30 +78,27 @@ pre { max-width: 100%; overflow-x: auto; }
 .ht-table-scroll table { width: 100%; border-collapse: collapse; }
 .ht-table-scroll th, .ht-table-scroll td { text-align: left; vertical-align: top; padding: var(--space); border-bottom: 1px solid var(--line); font-size: var(--font-body); }
 .ht-table-scroll th[scope="row"] { min-width: 8em; overflow-wrap: normal; }
-.ht-theme-control { min-inline-size: 0; width: min(22rem, 100%); max-width: 100%; margin: 0; padding: 0; border: 0; font-size: var(--font-body); }
-.ht-theme-label { padding: 0 0 4px; color: var(--muted); font-size: var(--font-small); }
-.ht-theme-buttons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; min-width: 0; max-width: 100%; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.ht-theme-control { min-inline-size: 0; width: max-content; max-width: 100%; margin: 0; padding: 0; border: 0; font-size: var(--font-body); }
+.ht-theme-label { padding: 0; }
+.ht-theme-buttons { display: grid; grid-template-columns: repeat(3, 40px); width: max-content; min-width: 0; max-width: 100%; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
 .ht-theme-option { position: relative; min-width: 0; cursor: pointer; }
 .ht-theme-option + .ht-theme-option { border-left: 1px solid var(--line); }
 .ht-theme-option input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-.ht-theme-option span { display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 40px; padding: 6px 10px; background: var(--panel); color: var(--text); white-space: nowrap; }
+.ht-theme-option > span { display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 40px; padding: 6px; background: var(--panel); color: var(--text); white-space: nowrap; }
 .ht-theme-option:hover span { background: var(--hover); }
 .ht-theme-option input:checked + span { background: var(--accent); color: var(--panel); font-weight: 700; }
 .ht-theme-option input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: -3px; }
 .ht-token { white-space: nowrap; overflow-wrap: normal; }
-@media (max-width: 480px) {
-  .ht-theme-control { width: 100%; }
-}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
 }
 
 /* Document navigation is opt-in; prototype/checklist interfaces retain their own shell. */
 .ht-document { --ht-nav-width: 15rem; --ht-nav-gap: 2rem; padding: 1.5rem calc(1.5rem + env(safe-area-inset-right, 0px)) calc(6rem + env(safe-area-inset-bottom, 0px)) 1.5rem; }
-.ht-topbar { position: sticky; top: 0; z-index: 3; display: grid; grid-template-columns: minmax(0, 1fr) minmax(18rem, 22rem); align-items: center; gap: 1rem; padding: .75rem 2rem; background: var(--panel); border-bottom: 1px solid var(--line); }
+.ht-topbar { position: sticky; top: 0; z-index: 3; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 1rem; padding: .75rem 2rem; background: var(--panel); border-bottom: 1px solid var(--line); }
 .ht-topbar > * { min-width: 0; max-width: 100%; }
 .ht-topbar-title { margin: 0; font-weight: 700; overflow-wrap: anywhere; }
-.ht-topbar .ht-theme-control { margin: 0; width: 100%; }
+.ht-topbar .ht-theme-control { margin: 0; width: max-content; }
 @media (max-width: 760px) {
   .ht-topbar { position: static; grid-template-columns: minmax(0, 1fr); padding: .75rem 1.2rem; gap: .5rem; }
 }
@@ -178,6 +175,13 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
   .ht-doc-controls { inset-inline-end: calc(.5rem + env(safe-area-inset-right, 0px)); bottom: calc(.5rem + env(safe-area-inset-bottom, 0px)); }
 }
 @media (prefers-reduced-motion: reduce) { html:has(.ht-document) { scroll-behavior: auto; } }
+
+/* Portable document actions; download precedes the compact native theme group. */
+.ht-document-actions { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; min-width: 0; max-width: 100%; }
+.ht-icon-button { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 40px; width: 40px; min-height: 40px; padding: 6px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); color: var(--text); cursor: pointer; }
+.ht-icon-button:hover { background: var(--hover); }
+.ht-icon-button svg { width: 20px; height: 20px; }
+.ht-export-status { flex-basis: 100%; font-size: var(--font-small); color: var(--bad); overflow-wrap: anywhere; }
 /* /tigerkit:html-theme.css */
 *{box-sizing:border-box}.skip{position:absolute;left:1rem;top:-5rem}.skip:focus{top:1rem;z-index:20;background:var(--panel);padding:1rem}main{min-width:0}h1{line-height:1.2;letter-spacing:-.04em}h2{line-height:1.4;margin:0 0 .75rem}section{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;padding:1.75rem 0 .5rem;margin:0}.kicker,.meta{color:var(--muted)}.kicker{letter-spacing:.12em;font-size:.85rem}.lead{font-size:1em}.badge{display:inline-block;border:1px solid var(--accent);border-radius:1rem;padding:0 .7rem;color:var(--accent)}dl{display:grid;grid-template-columns:8rem minmax(0,1fr);gap:.5rem}dt{font-weight:700}dd{margin:0}main details{border-top:1px solid var(--line);margin-top:1rem;padding-top:1rem}summary{cursor:pointer;font-weight:600}footer{color:var(--muted);font-size:.85rem;margin:2rem 0}
 @media(max-width:760px){section{padding:1.25rem 0 .5rem;max-width:100%}dl{grid-template-columns:1fr}dd{margin-bottom:.6rem}}
@@ -186,7 +190,7 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
 <!-- tigerkit:extra-css -->{{REPORT_EXTRA_CSS}}<!-- /tigerkit:extra-css -->
 <body class="ht-document" id="document-top">
 <!-- Replace the top-bar title with the subject and conclusion; put identifiers in secondary metadata. -->
-<header class="ht-topbar"><p class="ht-topbar-title">{{REPORT_TOPBAR_TITLE}}</p><fieldset class="ht-theme-control" data-ht-theme-control hidden><legend class="ht-theme-label">테마</legend><div class="ht-theme-buttons"><label class="ht-theme-option"><input type="radio" name="ht-theme" value="system" data-theme-choice="system"><span>시스템</span></label><label class="ht-theme-option"><input type="radio" name="ht-theme" value="light" data-theme-choice="light"><span>라이트</span></label><label class="ht-theme-option"><input type="radio" name="ht-theme" value="dark" data-theme-choice="dark"><span>다크</span></label></div></fieldset>
+<header class="ht-topbar"><p class="ht-topbar-title">{{REPORT_TOPBAR_TITLE}}</p><div class="ht-document-actions"><button type="button" class="ht-icon-button" data-ht-download aria-label="다운로드" title="다운로드" hidden><svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-5-5 5 5 5-5M5 16v5h14v-5"/></svg></button><button type="button" class="ht-icon-button" data-ht-share aria-label="파일 공유" title="파일 공유" hidden><svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V3m-5 5 5-5 5 5M5 13v8h14v-8"/></svg></button><fieldset class="ht-theme-control" data-ht-theme-control hidden><legend class="ht-theme-label ht-visually-hidden">테마</legend><div class="ht-theme-buttons"><label class="ht-theme-option" title="시스템"><input type="radio" name="ht-theme" value="system" data-theme-choice="system" aria-label="시스템"><span><svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="13" rx="2"/><path d="M8 21h8m-4-5v5"/></svg><span class="ht-visually-hidden">시스템</span></span></label><label class="ht-theme-option" title="라이트"><input type="radio" name="ht-theme" value="light" data-theme-choice="light" aria-label="라이트"><span><svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><span class="ht-visually-hidden">라이트</span></span></label><label class="ht-theme-option" title="다크"><input type="radio" name="ht-theme" value="dark" data-theme-choice="dark" aria-label="다크"><span><svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 15.5A9 9 0 0 1 8.5 4 9 9 0 1 0 20 15.5Z"/></svg><span class="ht-visually-hidden">다크</span></span></label></div></fieldset><output class="ht-export-status" data-ht-export-status role="status" hidden></output></div>
 </header>
 <a class="skip" href="#overview">본문으로 이동</a>
 <main id="main" class="ht-doc-content" tabindex="-1">
@@ -250,6 +254,102 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
 
 <script>
 /* tigerkit:html-theme.js */
+(() => {
+  const start = () => {
+    const download = document.querySelector('[data-ht-download]');
+    if (!download) return;
+    const share = document.querySelector('[data-ht-share]');
+    const status = document.querySelector('[data-ht-export-status]');
+    const payload = document.querySelector('template[data-ht-export]');
+    const encoder = new TextEncoder();
+    const decode = value => Uint8Array.from(atob(value), char => char.charCodeAt(0));
+    const message = text => { if (status) { status.textContent = text; status.hidden = !text; } };
+    let blob, filename;
+    try {
+      if (!payload) throw Error('missing export');
+      const encoded = payload.content.textContent.trim();
+      const manifest = JSON.parse(new TextDecoder().decode(decode(encoded)));
+      filename = manifest.name;
+      const entries = manifest.files.map(file => {
+        let bytes = decode(file.base64);
+        if (file.html) {
+          const marker = document.createElement('template');
+          marker.setAttribute('data-ht-export', '');
+          marker.setAttribute('data-entry', file.path);
+          marker.innerHTML = encoded;
+          const text = new TextDecoder().decode(bytes).replace(/<\/body\s*>/i, match => marker.outerHTML + match);
+          bytes = encoder.encode(text);
+        }
+        return {name: encoder.encode(file.path), bytes};
+      });
+      if (entries.length === 1) {
+        blob = new Blob([entries[0].bytes], {type: 'text/html;charset=utf-8'});
+      } else {
+        // ZIP STORE: no compression dependency or runtime network, UTF-8 paths.
+        const parts = [], directory = [];
+        let offset = 0, directorySize = 0;
+        const header = size => new DataView(new ArrayBuffer(size));
+        for (const {name, bytes} of entries) {
+          let crc = 0xffffffff;
+          for (const byte of bytes) {
+            crc ^= byte;
+            for (let bit = 0; bit < 8; bit++) crc = (crc >>> 1) ^ ((crc & 1) ? 0xedb88320 : 0);
+          }
+          crc = (crc ^ 0xffffffff) >>> 0;
+          const local = header(30), central = header(46);
+          local.setUint32(0, 0x04034b50, true); local.setUint16(4, 20, true);
+          local.setUint16(6, 0x800, true); local.setUint16(12, 33, true);
+          local.setUint32(14, crc, true); local.setUint32(18, bytes.length, true);
+          local.setUint32(22, bytes.length, true); local.setUint16(26, name.length, true);
+          central.setUint32(0, 0x02014b50, true); central.setUint16(4, 20, true);
+          central.setUint16(6, 20, true); central.setUint16(8, 0x800, true);
+          central.setUint16(14, 33, true); central.setUint32(16, crc, true);
+          central.setUint32(20, bytes.length, true); central.setUint32(24, bytes.length, true);
+          central.setUint16(28, name.length, true); central.setUint32(42, offset, true);
+          parts.push(local.buffer, name, bytes); directory.push(central.buffer, name);
+          offset += 30 + name.length + bytes.length; directorySize += 46 + name.length;
+        }
+        const end = header(22);
+        end.setUint32(0, 0x06054b50, true); end.setUint16(8, entries.length, true);
+        end.setUint16(10, entries.length, true); end.setUint32(12, directorySize, true);
+        end.setUint32(16, offset, true);
+        blob = new Blob([...parts, ...directory, end.buffer], {type: 'application/zip'});
+      }
+    } catch {
+      message('다운로드 자료를 준비하지 못했습니다. 생성한 원본 파일을 확인해 주세요.');
+      return;
+    }
+    download.title = download.getAttribute('aria-label') === '다운로드' ? filename : download.title;
+    download.hidden = false;
+    download.addEventListener('click', () => {
+      let url;
+      try {
+        url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url; link.download = filename;
+        document.body.append(link); link.click(); link.remove();
+        message('');
+      } catch { message('다운로드하지 못했습니다. 브라우저의 다운로드 설정을 확인해 주세요.'); }
+      finally { if (url) setTimeout(() => URL.revokeObjectURL(url), 30000); }
+    });
+    const nav = globalThis.navigator;
+    if (share && globalThis.isSecureContext && nav?.share && nav?.canShare && typeof File !== 'undefined') {
+      const file = new File([blob], filename, {type: blob.type});
+      let supported = false;
+      try { supported = nav.canShare({files: [file]}); } catch {}
+      if (supported) {
+        share.hidden = false;
+        share.addEventListener('click', async () => {
+          try { await nav.share({files: [file], title: document.title}); message(''); }
+          catch (error) { if (error.name !== 'AbortError') message('공유하지 못했습니다. 다운로드 버튼으로 파일을 저장해 주세요.'); }
+        });
+      }
+    }
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once: true});
+  else start();
+})();
+
 (() => {
   const control = document.querySelector('[data-ht-theme-control]');
   if (!control) return;

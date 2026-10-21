@@ -11,6 +11,8 @@ import sys
 import tempfile
 from urllib.parse import urlparse
 
+from package_html import package
+
 
 PACKAGE = Path(__file__).resolve().parents[1]
 TEMPLATE = PACKAGE / "assets" / "report.html"
@@ -284,7 +286,9 @@ def main(argv=None):
         source = TEMPLATE.read_text(encoding="utf-8")
         output = render(source, payload, theme)
         atomic_write(output_path, output)
-    except (OSError, UnicodeError, json.JSONDecodeError, InputError) as error:
+        download_name = output_path.name if output_path.name.isascii() else 'document.html'
+        package(output_path.parent, [output_path.name], download_name)
+    except (OSError, UnicodeError, ValueError) as error:
         print(f"FAIL {args.output}: {error}", file=sys.stderr)
         return 1
     for warning in warnings:

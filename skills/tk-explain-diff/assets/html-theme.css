@@ -71,30 +71,27 @@ pre { max-width: 100%; overflow-x: auto; }
 .ht-table-scroll table { width: 100%; border-collapse: collapse; }
 .ht-table-scroll th, .ht-table-scroll td { text-align: left; vertical-align: top; padding: var(--space); border-bottom: 1px solid var(--line); font-size: var(--font-body); }
 .ht-table-scroll th[scope="row"] { min-width: 8em; overflow-wrap: normal; }
-.ht-theme-control { min-inline-size: 0; width: min(22rem, 100%); max-width: 100%; margin: 0; padding: 0; border: 0; font-size: var(--font-body); }
-.ht-theme-label { padding: 0 0 4px; color: var(--muted); font-size: var(--font-small); }
-.ht-theme-buttons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; min-width: 0; max-width: 100%; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.ht-theme-control { min-inline-size: 0; width: max-content; max-width: 100%; margin: 0; padding: 0; border: 0; font-size: var(--font-body); }
+.ht-theme-label { padding: 0; }
+.ht-theme-buttons { display: grid; grid-template-columns: repeat(3, 40px); width: max-content; min-width: 0; max-width: 100%; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
 .ht-theme-option { position: relative; min-width: 0; cursor: pointer; }
 .ht-theme-option + .ht-theme-option { border-left: 1px solid var(--line); }
 .ht-theme-option input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-.ht-theme-option span { display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 40px; padding: 6px 10px; background: var(--panel); color: var(--text); white-space: nowrap; }
+.ht-theme-option > span { display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 40px; padding: 6px; background: var(--panel); color: var(--text); white-space: nowrap; }
 .ht-theme-option:hover span { background: var(--hover); }
 .ht-theme-option input:checked + span { background: var(--accent); color: var(--panel); font-weight: 700; }
 .ht-theme-option input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: -3px; }
 .ht-token { white-space: nowrap; overflow-wrap: normal; }
-@media (max-width: 480px) {
-  .ht-theme-control { width: 100%; }
-}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
 }
 
 /* Document navigation is opt-in; prototype/checklist interfaces retain their own shell. */
 .ht-document { --ht-nav-width: 15rem; --ht-nav-gap: 2rem; padding: 1.5rem calc(1.5rem + env(safe-area-inset-right, 0px)) calc(6rem + env(safe-area-inset-bottom, 0px)) 1.5rem; }
-.ht-topbar { position: sticky; top: 0; z-index: 3; display: grid; grid-template-columns: minmax(0, 1fr) minmax(18rem, 22rem); align-items: center; gap: 1rem; padding: .75rem 2rem; background: var(--panel); border-bottom: 1px solid var(--line); }
+.ht-topbar { position: sticky; top: 0; z-index: 3; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 1rem; padding: .75rem 2rem; background: var(--panel); border-bottom: 1px solid var(--line); }
 .ht-topbar > * { min-width: 0; max-width: 100%; }
 .ht-topbar-title { margin: 0; font-weight: 700; overflow-wrap: anywhere; }
-.ht-topbar .ht-theme-control { margin: 0; width: 100%; }
+.ht-topbar .ht-theme-control { margin: 0; width: max-content; }
 @media (max-width: 760px) {
   .ht-topbar { position: static; grid-template-columns: minmax(0, 1fr); padding: .75rem 1.2rem; gap: .5rem; }
 }
@@ -171,3 +168,10 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
   .ht-doc-controls { inset-inline-end: calc(.5rem + env(safe-area-inset-right, 0px)); bottom: calc(.5rem + env(safe-area-inset-bottom, 0px)); }
 }
 @media (prefers-reduced-motion: reduce) { html:has(.ht-document) { scroll-behavior: auto; } }
+
+/* Portable document actions; download precedes the compact native theme group. */
+.ht-document-actions { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; min-width: 0; max-width: 100%; }
+.ht-icon-button { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 40px; width: 40px; min-height: 40px; padding: 6px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); color: var(--text); cursor: pointer; }
+.ht-icon-button:hover { background: var(--hover); }
+.ht-icon-button svg { width: 20px; height: 20px; }
+.ht-export-status { flex-basis: 100%; font-size: var(--font-small); color: var(--bad); overflow-wrap: anywhere; }
