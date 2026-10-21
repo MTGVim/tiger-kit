@@ -67,6 +67,13 @@ narration limitation. Retain original sources independently of output and screen
 
 ## Quality and recovery
 
+MP4 uses `libx264`, `yuv420p` and explicit CRF 18. `--crf <integer>` selects 0-51 for MP4 only;
+lower values retain more detail at potentially larger size. GIF rejects an explicit `--crf`.
+For equal-sized source frames, retain their dimensions with only even-dimension padding and the
+evidence caption band; avoid resolution changes during authoring or capture. The receipt reports `encoder`, requested `crf`, encoded `width`/`height`
+and `pixel_format`. CRF is an encoder setting, not a measured visual-quality score or lossless claim;
+4:2:0 color conversion can soften fine colored text even at CRF 0. Inspect the actual cut.
+
 The helper checks actual codec, duration and full decode, and reports media quality separately
 from the legacy `verification_status: not-assessed` application field. It cannot judge factual
 content or prove that a person heard the narration. Inspect the contact sheet and actual frames.

@@ -43,7 +43,8 @@ Read [assembly](references/assembly.md) for the scene/capture manifest, owned pa
 Use `explainer` holds for presentation and preserve actual timestamps in `evidence` mode. Keep
 assertion screenshots unchanged and independent from the movie. Use H.264 MP4 at the capture's
 frame rate capped at 30fps, with optional mono 48kbps AAC; GIF and explainer stills default to
-10fps. Use the assembler's rate selection/override contract. Follow prerequisite recovery for unavailable tools.
+10fps. MP4 defaults to CRF 18; use the assembler's quality/rate overrides and preserve source
+resolution. Follow prerequisite recovery for unavailable tools.
 If hard-caption support is missing after installed-tool discovery, present the `tk-wizard`
 installation-guidance question before returning the blocked result. Do not implement a frame-compositing workaround.
 

@@ -215,7 +215,7 @@ def scene_audio(scenes: list, root: Path, stage: Path, env: dict, ffmpeg: str) -
 
 
 def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str | None = None,
-          fps: float | None = None) -> dict:
+          fps: float | None = None, crf: int | None = None) -> dict:
     manifest = regular(manifest)
     data = json.loads(manifest.read_text(encoding="utf-8"))
     ffmpeg, ffprobe, caption_support = media_tools(ffmpeg, True)
@@ -233,6 +233,9 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
     kind = output.suffix.lower()
     if kind not in {".mp4", ".gif"}:
         raise ValueError("output must have an .mp4 or .gif suffix")
+    if crf is not None and (kind != ".mp4" or isinstance(crf, bool) or not isinstance(crf, int) or not 0 <= crf <= 51):
+        raise ValueError("crf must be an integer from 0 to 51 and applies only to MP4")
+    selected_crf = (18 if crf is None else crf) if kind == ".mp4" else None
     selected_fps, fps_source = frame_rate(data, frames, kind, fps)
     rate = Fraction(selected_fps).limit_denominator(100000)
     rate_text = f"{rate.numerator}/{rate.denominator}"
@@ -321,7 +324,8 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
             cmd += ["-map", "0:v:0"]
             if audio is not None: cmd += ["-map", "1:a:0"]
             if soft: cmd += ["-map", f"{2 if audio is not None else 1}:0", "-c:s", "mov_text"]
-            cmd += ["-vf", filters, "-t", str(end / 1000), "-c:v", "libx264", "-threads", "1", "-pix_fmt", "yuv420p", "-movflags", "+faststart"]
+            cmd += ["-vf", filters, "-t", str(end / 1000), "-c:v", "libx264", "-crf", str(selected_crf),
+                    "-threads", "1", "-pix_fmt", "yuv420p", "-movflags", "+faststart"]
             cmd += ["-af", "apad", "-c:a", "aac", "-ac", "1", "-b:a", "48k"] if audio is not None else ["-an"]
         else:
             cmd += ["-filter_complex", filters + ",split[a][b];[a]palettegen[p];[b][p]paletteuse",
@@ -375,6 +379,8 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
     return {"path": str(output), "media_type": "video/mp4" if kind == ".mp4" else "image/gif", "duration_ms": end,
             "mode": mode, "timing": "observed" if mode == "evidence" else "presentation",
             "fps": actual_fps, "selected_fps": float(rate), "fps_source": fps_source,
+            "encoder": "libx264" if kind == ".mp4" else "gif", "crf": selected_crf,
+            "width": int(stream["width"]), "height": int(stream["height"]), "pixel_format": stream["pix_fmt"],
             "encoded_duration_ms": float(info["format"]["duration"]) * 1000,
             "audio": audio is not None, "warnings": warnings,
             "ffmpeg_path": ffmpeg, "ffprobe_path": ffprobe,
@@ -394,9 +400,10 @@ def main() -> int:
     parser.add_argument("--audio", type=Path)
     parser.add_argument("--ffmpeg", help="Use this installed ffmpeg; overrides TIGERKIT_FFMPEG and discovery")
     parser.add_argument("--fps", type=float, help="Override output fps (positive, at most 30); scene times stay unchanged")
+    parser.add_argument("--crf", type=int, help="MP4 H.264 quality, 0-51 (default 18); lower values retain more detail and may increase size")
     args = parser.parse_args()
     try:
-        result = build(args.manifest, args.output, args.audio, args.ffmpeg, args.fps)
+        result = build(args.manifest, args.output, args.audio, args.ffmpeg, args.fps, args.crf)
         print(json.dumps(result, ensure_ascii=False))
         return 2 if result["media_status"] == "blocked" else 1 if result["media_status"] == "failed" else 0
     except (ValueError, KeyError, TypeError, OSError, subprocess.SubprocessError) as exc:

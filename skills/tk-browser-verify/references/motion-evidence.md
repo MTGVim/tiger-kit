@@ -46,7 +46,9 @@ On the already selected CDP-capable provider, use `Page.startScreencast` (PNG/JP
 `Page.screencastFrame`, and acknowledge every event using `Page.screencastFrameAck` with its
 `sessionId`. Stop the screencast on every exit. Verify supported protocol parameters rather than
 installing another recorder or switching providers. Preserve actual monotonic event timestamps;
-normalize the first frame to zero and record the real capture end. A stable screen may send no
+prefer PNG for text-heavy UI at the accepted viewport resolution and avoid extra lossy conversions.
+Use a reduced capture size only when selected; preserve any existing JPEG source as supplied.
+Normalize the first frame to zero and record the real capture end. A stable screen may send no
 new frames: hold its last frame until the next timestamp/end instead of fabricating frame times.
 The API has no crop-region option; apply an approved, consistent post-capture crop if needed and
 retain source provenance. Do not replace this with repeated `Page.captureScreenshot` calls for

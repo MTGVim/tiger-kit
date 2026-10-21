@@ -7,6 +7,7 @@ from pathlib import Path
 import shutil
 import struct
 import subprocess
+import sys
 import tempfile
 import unittest
 import zlib
@@ -29,6 +30,56 @@ def png(path, color):
 
 
 class OptionalMediaTests(unittest.TestCase):
+    @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "media tools unavailable")
+    def test_crf_rejects_invalid_values_and_gif_override_without_creating_output(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); manifest = self.fixture(root)
+            for value in [-1, 52, True, 18.5, "18", float("nan")]:
+                with self.subTest(crf=value), self.assertRaisesRegex(ValueError, "crf must"):
+                    movie.build(manifest, root / "invalid.mp4", crf=value)
+                self.assertFalse((root / "invalid.mp4").exists())
+            with self.assertRaisesRegex(ValueError, "only to MP4"):
+                movie.build(manifest, root / "invalid.gif", crf=18)
+            self.assertFalse((root / "invalid.gif").exists())
+
+    @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "media tools unavailable")
+    def test_mp4_default_retains_more_detail_than_crf23_and_cli_keeps_source_size(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); width, height = 256, 144
+            # Deterministic grayscale fine lines and texture avoid chroma-subsampling bias.
+            pixels = bytes(40 + ((x * 37 + y * 19 + (x * y) % 47) % 180)
+                           if y % 24 < 12 else (235 if (x // 3 + y // 3) % 2 else 30)
+                           for y in range(height) for x in range(width))
+            def chunk(kind, value):
+                return struct.pack(">I", len(value)) + kind + value + struct.pack(">I", zlib.crc32(kind + value))
+            image = root / "detail.png"
+            rows = b"".join(b"\0" + bytes(v for value in pixels[y * width:(y + 1) * width] for v in (value,) * 3)
+                            for y in range(height))
+            image.write_bytes(b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0)) +
+                              chunk(b"IDAT", zlib.compress(rows)) + chunk(b"IEND", b""))
+            manifest = root / "frames.json"
+            manifest.write_text(json.dumps({"mode": "explainer", "frames": [{"path": str(image), "hold_ms": 1000}]}))
+            high = movie.build(manifest, root / "default.mp4")
+            process = subprocess.run([sys.executable, str(SOURCE), "--manifest", str(manifest),
+                "--output", str(root / "smaller.mp4"), "--crf", "23"], capture_output=True, text=True, check=True)
+            low = json.loads(process.stdout)
+            self.assertEqual(high["crf"], 18); self.assertEqual(low["crf"], 23)
+            errors = []
+            for receipt in [high, low]:
+                self.assertEqual((receipt["width"], receipt["height"]), (width, height))
+                self.assertEqual(receipt["encoder"], "libx264")
+                self.assertEqual(receipt["pixel_format"], "yuv420p")
+                self.assertEqual(receipt["media_validation"]["status"], "pass")
+                decoded = subprocess.run([receipt["ffmpeg_path"], "-v", "error", "-i", receipt["path"],
+                    "-frames:v", "1", "-pix_fmt", "rgb24", "-f", "rawvideo", "-"], capture_output=True, check=True).stdout
+                expected = bytes(v for value in pixels for v in (value,) * 3)
+                self.assertEqual(len(decoded), len(expected))
+                errors.append(sum((a - b) ** 2 for a, b in zip(decoded, expected)) / len(expected))
+            self.assertLess(errors[0], errors[1])
+            gif = movie.build(manifest, root / "unchanged.gif")
+            self.assertIsNone(gif["crf"])
+            self.assertEqual(gif["fps"], 10)
+
     def test_rendered_provenance_in_picture_avoids_prefix_and_keeps_caption_empty(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory); image = root / "card.png"; png(image, (40, 90, 120))

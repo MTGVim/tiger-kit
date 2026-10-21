@@ -289,6 +289,23 @@
         }
       ],
       "safety": false
+    },
+    {
+      "id": "video-mp4-quality-and-source-resolution",
+      "path": "success",
+      "prompt": "작은 UI 글자를 읽을 수 있도록 MP4 화질을 개선해 주세요. 별도 압축률이나 해상도 변경은 선택하지 않았습니다.",
+      "expected_output": "기존 캡처 해상도를 보존하고 명시적인 MP4 인코딩 설정과 실제 검사 결과를 반환합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "텍스트 중심 캡처는 승인된 뷰포트의 PNG를 우선하고, MP4에 `libx264`, `yuv420p`, 기본 `CRF 18`을 적용합니다. 필요하면 MP4 전용 `--crf`로 조절하며 설정값을 실측 화질이나 무손실의 증거로 취급하지 않습니다. 출력 해상도·인코더·설정을 반환하고 기존 시간·나레이션·출처·디코드 검사를 보존합니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": false
     }
   ],
   "migrations": [
