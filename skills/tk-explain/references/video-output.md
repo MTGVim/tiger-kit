@@ -1,5 +1,7 @@
 # Video explanation
 
+Before handing off, explicitly resolve TTS, existing audio or no narration if it is still unknown; pass the decision to tk-video. Selecting video or a preferred voice is not narration consent. Reuse an answered choice without asking again.
+
 Keep concept understanding, causality, prerequisites, sources and caveats in this skill. Give
 `tk-video` an ordered scene list with captions, labeled rendered-card sources and any explicitly
 selected narration. Use explainer holds rather than pretending presentation time is observed

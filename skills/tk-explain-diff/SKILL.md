@@ -116,6 +116,16 @@ push, browser launch or publication authority.
 
 For maintenance provenance, see [distillation](references/distillation.md).
 
+<!-- tigerkit:narration-choice -->
+## Narration Choice
+
+Ask the creator to choose TTS, supplied audio or no narration before any video or spoken-slide
+production. Reuse an answered parent/user choice; video or a voice preference is not TTS consent.
+Show current tk-tts model/voice/device/setup options before synthesis/assembly. Preserve no
+narration; offer MP4 for GIF sound. Static HTML/text needs no unrelated voice interview.
+Installation/download/publication require their own authority; playback mute/fallback are separate.
+<!-- /tigerkit:narration-choice -->
+
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 

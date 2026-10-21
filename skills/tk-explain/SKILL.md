@@ -87,6 +87,16 @@ Return `Pass` only when the file exists and its content satisfies the explanatio
 
 Adapted from `anthropics/claude-plugins-community` `eli5` at `a727be1c7bd6064419b6f60d71993a19198adc17`, with shared writing criteria whose sources are recorded in `references/sources.md`. Original notices are in [LICENSE.txt](LICENSE.txt).
 
+<!-- tigerkit:narration-choice -->
+## Narration Choice
+
+Ask the creator to choose TTS, supplied audio or no narration before any video or spoken-slide
+production. Reuse an answered parent/user choice; video or a voice preference is not TTS consent.
+Show current tk-tts model/voice/device/setup options before synthesis/assembly. Preserve no
+narration; offer MP4 for GIF sound. Static HTML/text needs no unrelated voice interview.
+Installation/download/publication require their own authority; playback mute/fallback are separate.
+<!-- /tigerkit:narration-choice -->
+
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 

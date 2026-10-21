@@ -1,0 +1,198 @@
+{
+  "skill": "tk-tts",
+  "kind": "hybrid",
+  "queries": [
+    {
+      "id": "train-positive",
+      "split": "train",
+      "query": "$tk-tts 배포 공지 원고를 청취용 파일로 합성해 주세요. 설치 전에는 물어보세요.",
+      "should_trigger": true
+    },
+    {
+      "id": "train-negative",
+      "split": "train",
+      "query": "이 오디오의 잡음을 제거하고 컷 편집해 주세요.",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-positive-1",
+      "split": "validation",
+      "query": "$tk-tts 이 원고를 로컬 한국어 WAV로 만들어 주세요",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-2",
+      "split": "validation",
+      "query": "사용 가능한 TTS 모델과 목소리 좀 다 알려줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-3",
+      "split": "validation",
+      "query": "$tk-tts 큐웬 나레션 파일 좀 생성해주세용",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-positive-4",
+      "split": "validation",
+      "query": "`ppaso` ONNX 한국어 음원을 생성해 주세요",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-positive-5",
+      "split": "validation",
+      "query": "TTS 음원 생성",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-positive-6",
+      "split": "validation",
+      "query": "$tk-tts tk-video에서 선택한 원고를 합성하고 문장별 WAV 길이를 알려 주세요",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-positive-7",
+      "split": "validation",
+      "query": "이 컴퓨터에 설치된 음성 합성 모델의 캐시와 실행 준비 상태를 확인해 주세요",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-8",
+      "split": "validation",
+      "query": "설치 없이 지금 고를 수 있는 목소리가 뭔지 보고 싶어",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-9",
+      "split": "validation",
+      "query": "$tk-tts `Qwen3 CustomVoice 5bit`로 슬라이드 세 장의 음원을 생성해 주세요",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-positive-10",
+      "split": "validation",
+      "query": "`ppaso` 말고 공식 `PyTorch` TTS가 가능한지 확인해 주세요",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-positive-11",
+      "split": "validation",
+      "query": "로컬 음성 합성 모델 목록",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-positive-12",
+      "split": "validation",
+      "query": "$tk-tts 다른 엔진으로 바꾸지 말고 원고를 합성해 주세요. 필요한 설치부터 확인해 주세요",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-1",
+      "split": "validation",
+      "query": "이 영상을 편집해 주세요",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-2",
+      "split": "validation",
+      "query": "음성을 받아쓰세요",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-negative-3",
+      "split": "validation",
+      "query": "목소리를 복제해 주세용",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-negative-4",
+      "split": "validation",
+      "query": "브라우저에서 문서를 읽어 주세요",
+      "should_trigger": false,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-negative-5",
+      "split": "validation",
+      "query": "영상 조립",
+      "should_trigger": false,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-negative-6",
+      "split": "validation",
+      "query": "텍스트 오탈자만 고치고 음성은 만들지 마세요",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-7",
+      "split": "validation",
+      "query": "이 음성 파일의 자막 타임코드를 인식해 주세요",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-8",
+      "split": "validation",
+      "query": "녹음 장치가 연결되지 않는 원인을 진단해 주세요",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    }
+  ]
+}

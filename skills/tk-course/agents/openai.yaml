@@ -1,0 +1,6 @@
+interface:
+  short_description: "[user] 목표부터 실습·평가까지 완결된 HTML 코스를 제작합니다."
+  default_prompt: "$tk-course를 사용해 자료만으로 학습할 수 있는 완결 HTML 코스를 만들어 주세요."
+
+policy:
+  allow_implicit_invocation: false

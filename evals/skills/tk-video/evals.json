@@ -340,6 +340,23 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "video-always-resolves-tts",
+      "path": "boundary",
+      "prompt": "설명 MP4를 만들어 주세요. 나레이션은 정하지 않았습니다.",
+      "expected_output": "제작 전에 TTS·기존 음원·무음 여부를 반드시 묻고 가용 옵션을 제안합니다. 기존에 답한 경우에는 재질문하지 않습니다. 생성은 tk-tts, 조립은 tk-video가 일반 WAV 경계로 담당합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "제작 전에 TTS·기존 음원·무음 여부를 반드시 묻고 가용 옵션을 제안합니다. 기존에 답한 경우에는 재질문하지 않습니다. 생성은 tk-tts, 조립은 tk-video가 일반 WAV 경계로 담당합니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Unverifiable"
+        }
+      ],
+      "safety": false
     }
   ],
   "migrations": [

@@ -122,8 +122,9 @@ def verify_runtime(engine: str, data: dict) -> None:
     if engine == "mlx":
         packages["mlx"] = data["mlx_version"]
     for name, version in packages.items():
-        if importlib.metadata.version(name) != version:
-            raise ValueError("use pinned " + name + " in the dedicated virtual environment")
+        actual = importlib.metadata.version(name)
+        if actual != version:
+            raise ValueError(f"use pinned {name} in the dedicated virtual environment: actual={actual}, expected={version}; restore with this venv Python -m pip install {name}=={version} after installation approval")
 
 
 def selected_engine(engine: str) -> str:
@@ -292,6 +293,7 @@ def synthesize(root: Path, text_file: Path, output: Path, speaker: str = "sohee"
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--engine", choices=["auto", "pytorch", "mlx"], default="auto")
+    parser.add_argument("--quantization", type=int, choices=[5, 8], default=5)
     parser.add_argument("--model-dir", type=Path)
     parser.add_argument("--download", action="store_true", help="Download pinned files after user approval")
     parser.add_argument("--verify", action="store_true")
@@ -305,7 +307,7 @@ def main() -> int:
     try:
         engine = selected_engine(args.engine)
         backend = mlx_adapter() if engine == "mlx" else None
-        data = backend.manifest() if backend else manifest()
+        data = backend.manifest(args.quantization) if backend else manifest()
         cache = Path(os.environ.get("XDG_CACHE_HOME", str(Path.home() / ".cache"))) / "tigerkit/tts" / ("mlx" if backend else "qwen3")
         model_dir = args.model_dir or cache / "snapshots" / data["revision"]
         owned_cache = runtime_cache(model_dir)
@@ -323,7 +325,7 @@ def main() -> int:
                 if backend:
                     if args.device != "auto":
                         raise ValueError("MLX uses Metal GPU; select --engine pytorch for an explicit PyTorch device")
-                    result = backend.synthesize(model_dir, args.text_file, args.output, args.speaker, sys.modules[__name__])
+                    result = backend.synthesize(model_dir, args.text_file, args.output, args.speaker, sys.modules[__name__], args.quantization)
                 else:
                     result = synthesize(model_dir, args.text_file, args.output, args.speaker, args.device)
             print(json.dumps(result))

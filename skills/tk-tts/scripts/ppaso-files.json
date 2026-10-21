@@ -1,0 +1,445 @@
+{
+  "repository": "akamotaco/ppaso-tts-v1",
+  "revision": "53d09664c4f636a5fb6f2ebe3ec22cd83ee249b9",
+  "license": "Apache-2.0",
+  "files": {
+    "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+    "README.md": "48df20c9dbba351eff8afd8bb85bcf4868847800b66fdd29941d7ed1ead13ed4",
+    "config.json": "d0c098daa12421f36c158455a96e59a9e53830a816e2d82d1e5a536bc129b536",
+    "example/ppaso_tts.py": "d1afdf6ebdb0acd371d5ed923ab9afb5ad572408e3613ddd5fc390d93e5db7dd",
+    "onnx/acoustic.onnx": "127b5d3c58b44fe86ea225bbf5861818c2fa2ec5b7b0e8704feeade8828faa40",
+    "onnx/acoustic.onnx.data": "182248f476f15ed9452da55197d27ce775a09ab1e3218ced803ac0a942ebd6e9",
+    "onnx/text_encoder.onnx": "8d31339f7708377ff1dfbadd4839f4b6c0c91032db73a10fbcc01e2983886432",
+    "onnx/text_encoder.onnx.data": "9d5f9a7c0c000726e7c9c40f395cdeb930fffbc717b86f239cde7a729c9a2d58",
+    "onnx/variance.onnx": "378e1b0af2fa5fd7c3aad169b55efe71a5c3071f17ddcc772cca6127a1665f33",
+    "onnx/variance.onnx.data": "de19a321bfe22aa137f7c0df08f0225f9ad4ee691f05b31b25f3e7661363287b",
+    "onnx/vocoder.onnx": "1caeaa84b389c7aaee2c67f275691501377af1a6e009d19a5029fd1afeeee8f0",
+    "onnx/vocoder.onnx.data": "7b90b7f080357e0f4191e8f12b026ea128aeca4bf8c8760b58a9dee130125810",
+    "runtime/data/__init__.py": "2814c3804d4dd72d3a3310a90c4ec9510cf22be27c3d782c6e2b06d372ddf8b7",
+    "runtime/data/g2p_mfa.py": "35c0342119bca9d9180005329ae1d62afb59558c71e84a2ca1c8075e6ad69d0b",
+    "runtime/data/ko_normalize.py": "3abd7ef6be40daf26bf277aa66ab6d8c1ef7216c60f28214a2d7a0c55347208f",
+    "runtime/data/phone_vocab.json": "1d692c5f51cfa78ecc168d0a481cfb180e4ccff6045f3fdda451b9f9bc553364",
+    "runtime/data/phoneme_mfa.py": "a2bce061f8094a83d0cad5e450122dc519ca08b0796b5a1b5bb63efbd77fb247",
+    "runtime/dict/korean_mfa.dict": "3c4cc3b9fd5b07a6c20d04b0e379ecb0d0d3304024e949967992905800a0d818"
+  },
+  "dependencies": {
+    "numpy": "2.2.6",
+    "soundfile": "0.13.1",
+    "python-mecab-ko": "1.3.7",
+    "onnxruntime": "1.23.2",
+    "python-mecab-ko-dic": "2.1.1.post2"
+  },
+  "runtime_pins": {
+    "numpy": {
+      "version": "2.2.6",
+      "requires_dist": null,
+      "wheels": [
+        {
+          "filename": "numpy-2.2.6-cp310-cp310-macosx_10_9_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/9a/3e/ed6db5be21ce87955c0cbd3009f2803f59fa08df21b5df06862e2d8e2bdd/numpy-2.2.6-cp310-cp310-macosx_10_9_x86_64.whl",
+          "sha256": "b412caa66f72040e6d268491a59f2c43bf03eb6c96dd8f0307829feb7fa2b6fb"
+        },
+        {
+          "filename": "numpy-2.2.6-cp310-cp310-macosx_11_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/22/c2/4b9221495b2a132cc9d2eb862e21d42a009f5a60e45fc44b00118c174bff/numpy-2.2.6-cp310-cp310-macosx_11_0_arm64.whl",
+          "sha256": "8e41fd67c52b86603a91c1a505ebaef50b3314de0213461c7a6e99c9a3beff90"
+        },
+        {
+          "filename": "numpy-2.2.6-cp310-cp310-macosx_14_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/fd/77/dc2fcfc66943c6410e2bf598062f5959372735ffda175b39906d54f02349/numpy-2.2.6-cp310-cp310-macosx_14_0_arm64.whl",
+          "sha256": "37e990a01ae6ec7fe7fa1c26c55ecb672dd98b19c3d0e1d1f326fa13cb38d163"
+        },
+        {
+          "filename": "numpy-2.2.6-cp310-cp310-macosx_14_0_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/7a/4f/1cb5fdc353a5f5cc7feb692db9b8ec2c3d6405453f982435efc52561df58/numpy-2.2.6-cp310-cp310-macosx_14_0_x86_64.whl",
+          "sha256": "5a6429d4be8ca66d889b7cf70f536a397dc45ba6faeb5f8c5427935d9592e9cf"
+        },
+        {
+          "filename": "numpy-2.2.6-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/eb/17/96a3acd228cec142fcb8723bd3cc39c2a474f7dcf0a5d16731980bcafa95/numpy-2.2.6-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "sha256": "efd28d4e9cd7d7a8d39074a4d44c63eda73401580c5c76acda2ce969e0a38e83"
+        },
+        {
+          "filename": "numpy-2.2.6-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/b4/63/3de6a34ad7ad6646ac7d2f55ebc6ad439dbbf9c4370017c50cf403fb19b5/numpy-2.2.6-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "sha256": "fc7b73d02efb0e18c000e9ad8b83480dfcd5dfd11065997ed4c6747470ae8915"
+        },
+        {
+          "filename": "numpy-2.2.6-cp311-cp311-macosx_10_9_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/da/a8/4f83e2aa666a9fbf56d6118faaaf5f1974d456b1823fda0a176eff722839/numpy-2.2.6-cp311-cp311-macosx_10_9_x86_64.whl",
+          "sha256": "f9f1adb22318e121c5c69a09142811a201ef17ab257a1e66ca3025065b7f53ae"
+        },
+        {
+          "filename": "numpy-2.2.6-cp311-cp311-macosx_11_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/b3/2b/64e1affc7972decb74c9e29e5649fac940514910960ba25cd9af4488b66c/numpy-2.2.6-cp311-cp311-macosx_11_0_arm64.whl",
+          "sha256": "c820a93b0255bc360f53eca31a0e676fd1101f673dda8da93454a12e23fc5f7a"
+        },
+        {
+          "filename": "numpy-2.2.6-cp311-cp311-macosx_14_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/4a/9f/0121e375000b5e50ffdd8b25bf78d8e1a5aa4cca3f185d41265198c7b834/numpy-2.2.6-cp311-cp311-macosx_14_0_arm64.whl",
+          "sha256": "3d70692235e759f260c3d837193090014aebdf026dfd167834bcba43e30c2a42"
+        },
+        {
+          "filename": "numpy-2.2.6-cp311-cp311-macosx_14_0_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/31/0d/b48c405c91693635fbe2dcd7bc84a33a602add5f63286e024d3b6741411c/numpy-2.2.6-cp311-cp311-macosx_14_0_x86_64.whl",
+          "sha256": "481b49095335f8eed42e39e8041327c05b0f6f4780488f61286ed3c01368d491"
+        },
+        {
+          "filename": "numpy-2.2.6-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/52/b8/7f0554d49b565d0171eab6e99001846882000883998e7b7d9f0d98b1f934/numpy-2.2.6-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "sha256": "b64d8d4d17135e00c8e346e0a738deb17e754230d7e0810ac5012750bbd85a5a"
+        },
+        {
+          "filename": "numpy-2.2.6-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/b3/dd/2238b898e51bd6d389b7389ffb20d7f4c10066d80351187ec8e303a5a475/numpy-2.2.6-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "sha256": "ba10f8411898fc418a521833e014a77d3ca01c15b0c6cdcce6a0d2897e6dbbdf"
+        },
+        {
+          "filename": "numpy-2.2.6-cp312-cp312-macosx_10_13_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/82/5d/c00588b6cf18e1da539b45d3598d3557084990dcc4331960c15ee776ee41/numpy-2.2.6-cp312-cp312-macosx_10_13_x86_64.whl",
+          "sha256": "41c5a21f4a04fa86436124d388f6ed60a9343a6f767fced1a8a71c3fbca038ff"
+        },
+        {
+          "filename": "numpy-2.2.6-cp312-cp312-macosx_11_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/66/ee/560deadcdde6c2f90200450d5938f63a34b37e27ebff162810f716f6a230/numpy-2.2.6-cp312-cp312-macosx_11_0_arm64.whl",
+          "sha256": "de749064336d37e340f640b05f24e9e3dd678c57318c7289d222a8a2f543e90c"
+        },
+        {
+          "filename": "numpy-2.2.6-cp312-cp312-macosx_14_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/3c/65/4baa99f1c53b30adf0acd9a5519078871ddde8d2339dc5a7fde80d9d87da/numpy-2.2.6-cp312-cp312-macosx_14_0_arm64.whl",
+          "sha256": "894b3a42502226a1cac872f840030665f33326fc3dac8e57c607905773cdcde3"
+        },
+        {
+          "filename": "numpy-2.2.6-cp312-cp312-macosx_14_0_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/cc/89/e5a34c071a0570cc40c9a54eb472d113eea6d002e9ae12bb3a8407fb912e/numpy-2.2.6-cp312-cp312-macosx_14_0_x86_64.whl",
+          "sha256": "71594f7c51a18e728451bb50cc60a3ce4e6538822731b2933209a1f3614e9282"
+        },
+        {
+          "filename": "numpy-2.2.6-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/f8/35/8c80729f1ff76b3921d5c9487c7ac3de9b2a103b1cd05e905b3090513510/numpy-2.2.6-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "sha256": "f2618db89be1b4e05f7a1a847a9c1c0abd63e63a1607d892dd54668dd92faf87"
+        },
+        {
+          "filename": "numpy-2.2.6-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/8c/3d/1e1db36cfd41f895d266b103df00ca5b3cbe965184df824dec5c08c6b803/numpy-2.2.6-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "sha256": "fd83c01228a688733f1ded5201c678f0c53ecc1006ffbc404db9f7a899ac6249"
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313-macosx_10_13_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/f9/5c/6657823f4f594f72b5471f1db1ab12e26e890bb2e41897522d134d2a3e81/numpy-2.2.6-cp313-cp313-macosx_10_13_x86_64.whl",
+          "sha256": "0811bb762109d9708cca4d0b13c4f67146e3c3b7cf8d34018c722adb2d957c84"
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313-macosx_11_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/dc/9e/14520dc3dadf3c803473bd07e9b2bd1b69bc583cb2497b47000fed2fa92f/numpy-2.2.6-cp313-cp313-macosx_11_0_arm64.whl",
+          "sha256": "287cc3162b6f01463ccd86be154f284d0893d2b3ed7292439ea97eafa8170e0b"
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313-macosx_14_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/4f/06/7e96c57d90bebdce9918412087fc22ca9851cceaf5567a45c1f404480e9e/numpy-2.2.6-cp313-cp313-macosx_14_0_arm64.whl",
+          "sha256": "f1372f041402e37e5e633e586f62aa53de2eac8d98cbfb822806ce4bbefcb74d"
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313-macosx_14_0_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/73/ed/63d920c23b4289fdac96ddbdd6132e9427790977d5457cd132f18e76eae0/numpy-2.2.6-cp313-cp313-macosx_14_0_x86_64.whl",
+          "sha256": "55a4d33fa519660d69614a9fad433be87e5252f4b03850642f88993f7b2ca566"
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/85/c5/e19c8f99d83fd377ec8c7e0cf627a8049746da54afc24ef0a0cb73d5dfb5/numpy-2.2.6-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "sha256": "f92729c95468a2f4f15e9bb94c432a9229d0d50de67304399627a943201baa2f"
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/19/49/4df9123aafa7b539317bf6d342cb6d227e49f7a35b99c287a6109b13dd93/numpy-2.2.6-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "sha256": "1bc23a79bfabc5d056d106f9befb8d50c31ced2fbc70eedb8155aec74a45798f"
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313t-macosx_10_13_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/6b/9e/4bf918b818e516322db999ac25d00c75788ddfd2d2ade4fa66f1f38097e1/numpy-2.2.6-cp313-cp313t-macosx_10_13_x86_64.whl",
+          "sha256": "0bca768cd85ae743b2affdc762d617eddf3bcf8724435498a1e80132d04879e6"
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313t-macosx_11_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/61/66/d2de6b291507517ff2e438e13ff7b1e2cdbdb7cb40b3ed475377aece69f9/numpy-2.2.6-cp313-cp313t-macosx_11_0_arm64.whl",
+          "sha256": "fc0c5673685c508a142ca65209b4e79ed6740a4ed6b2267dbba90f34b0b3cfda"
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313t-macosx_14_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/e4/25/480387655407ead912e28ba3a820bc69af9adf13bcbe40b299d454ec011f/numpy-2.2.6-cp313-cp313t-macosx_14_0_arm64.whl",
+          "sha256": "5bd4fc3ac8926b3819797a7c0e2631eb889b4118a9898c84f585a54d475b7e40"
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313t-macosx_14_0_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/aa/4a/6e313b5108f53dcbf3aca0c0f3e9c92f4c10ce57a0a721851f9785872895/numpy-2.2.6-cp313-cp313t-macosx_14_0_x86_64.whl",
+          "sha256": "fee4236c876c4e8369388054d02d0e9bb84821feb1a64dd59e137e6511a551f8"
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313t-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/b7/30/172c2d5c4be71fdf476e9de553443cf8e25feddbe185e0bd88b096915bcc/numpy-2.2.6-cp313-cp313t-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "sha256": "e1dda9c7e08dc141e0247a5b8f49cf05984955246a327d4c48bda16821947b2f"
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313t-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/12/fb/9e743f8d4e4d3c710902cf87af3512082ae3d43b945d5d16563f26ec251d/numpy-2.2.6-cp313-cp313t-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "sha256": "f447e6acb680fd307f40d3da4852208af94afdfab89cf850986c3ca00562f4fa"
+        },
+        {
+          "filename": "numpy-2.2.6-pp310-pypy310_pp73-macosx_10_15_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/9e/3b/d94a75f4dbf1ef5d321523ecac21ef23a3cd2ac8b78ae2aac40873590229/numpy-2.2.6-pp310-pypy310_pp73-macosx_10_15_x86_64.whl",
+          "sha256": "0b605b275d7bd0c640cad4e5d30fa701a8d59302e127e5f79138ad62762c3e3d"
+        },
+        {
+          "filename": "numpy-2.2.6-pp310-pypy310_pp73-macosx_14_0_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/17/f4/09b2fa1b58f0fb4f7c7963a1649c64c4d315752240377ed74d9cd878f7b5/numpy-2.2.6-pp310-pypy310_pp73-macosx_14_0_x86_64.whl",
+          "sha256": "7befc596a7dc9da8a337f79802ee8adb30a552a94f792b9c9d18c840055907db"
+        }
+      ]
+    },
+    "soundfile": {
+      "version": "0.13.1",
+      "requires_dist": [
+        "cffi>=1.0",
+        "numpy"
+      ],
+      "wheels": [
+        {
+          "filename": "soundfile-0.13.1-py2.py3-none-any.whl",
+          "url": "https://files.pythonhosted.org/packages/64/28/e2a36573ccbcf3d57c00626a21fe51989380636e821b341d36ccca0c1c3a/soundfile-0.13.1-py2.py3-none-any.whl",
+          "sha256": "a23c717560da2cf4c7b5ae1142514e0fd82d6bbd9dfc93a50423447142f2c445"
+        },
+        {
+          "filename": "soundfile-0.13.1-py2.py3-none-macosx_10_9_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/ea/ab/73e97a5b3cc46bba7ff8650a1504348fa1863a6f9d57d7001c6b67c5f20e/soundfile-0.13.1-py2.py3-none-macosx_10_9_x86_64.whl",
+          "sha256": "82dc664d19831933fe59adad199bf3945ad06d84bc111a5b4c0d3089a5b9ec33"
+        },
+        {
+          "filename": "soundfile-0.13.1-py2.py3-none-macosx_11_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/a0/e5/58fd1a8d7b26fc113af244f966ee3aecf03cb9293cb935daaddc1e455e18/soundfile-0.13.1-py2.py3-none-macosx_11_0_arm64.whl",
+          "sha256": "743f12c12c4054921e15736c6be09ac26b3b3d603aef6fd69f9dde68748f2593"
+        }
+      ]
+    },
+    "python-mecab-ko": {
+      "version": "1.3.7",
+      "requires_dist": [
+        "python-mecab-ko-dic"
+      ],
+      "wheels": [
+        {
+          "filename": "python_mecab_ko-1.3.7-cp310-cp310-macosx_10_9_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/56/72/7ba507bc941f50bbbfafa96314fc145967b91387f34fd1c4e54af9de98fe/python_mecab_ko-1.3.7-cp310-cp310-macosx_10_9_x86_64.whl",
+          "sha256": "4760efe6327b5707f55db2b4a6f8fb047fe8e068577a9a913304bb0d12e7de44"
+        },
+        {
+          "filename": "python_mecab_ko-1.3.7-cp310-cp310-macosx_11_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/b9/4d/3cf853f6c8abdb901a45b2478f4915c0df387b06b66057196c792f287050/python_mecab_ko-1.3.7-cp310-cp310-macosx_11_0_arm64.whl",
+          "sha256": "27a03ae50aabc7f057c26ad5e4c6c4d431cf696778e45025e208d2f6b7bf115d"
+        },
+        {
+          "filename": "python_mecab_ko-1.3.7-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/da/18/b685841eb245560903732b50f2a45c488452ad4162a01320acedfc622c4a/python_mecab_ko-1.3.7-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "sha256": "d8d2539e7ea91eb0705381f75e64c626be4eba69824a8c82fbdf2c4e48a1d389"
+        },
+        {
+          "filename": "python_mecab_ko-1.3.7-cp310-cp310-manylinux_2_17_i686.manylinux2014_i686.whl",
+          "url": "https://files.pythonhosted.org/packages/c3/a9/b121faaa74c41adc9f5f9c1862e5ba6873886610fcae8328ddd5386f2a39/python_mecab_ko-1.3.7-cp310-cp310-manylinux_2_17_i686.manylinux2014_i686.whl",
+          "sha256": "c2bad59670b280548b9060c1b511f6f088c09b977355de7192e9d0044b8f724b"
+        },
+        {
+          "filename": "python_mecab_ko-1.3.7-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/b9/e0/b0be8e17b4ace180a323bb8ddf6213a6e984c18c403c65c6e71e88c4cb4f/python_mecab_ko-1.3.7-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "sha256": "e8c4347f075b8748cbc5695f6b91120b0e388344eab5d9c26d50ad3c57c35754"
+        },
+        {
+          "filename": "python_mecab_ko-1.3.7-cp311-cp311-macosx_10_9_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/c6/77/6d6bffa6217550d1dde3c421e40f422c924be1ed82effa1012cf7d24d215/python_mecab_ko-1.3.7-cp311-cp311-macosx_10_9_x86_64.whl",
+          "sha256": "da1cc9de07e75beb2d4067c1c072ecabdb293440633fc0e32f2875a14e703829"
+        },
+        {
+          "filename": "python_mecab_ko-1.3.7-cp311-cp311-macosx_11_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/06/a6/ab4405b9228e62ced5d7134e202ec8970296d58ceca5e991c76abbe04701/python_mecab_ko-1.3.7-cp311-cp311-macosx_11_0_arm64.whl",
+          "sha256": "523153de14262c413838852742541d48ad99d41ab8f6c5413a226319ee4c25ef"
+        },
+        {
+          "filename": "python_mecab_ko-1.3.7-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/e5/73/6768de76a1b0b1120b07a58334b89db214d740d62504a3fe691fd8738df4/python_mecab_ko-1.3.7-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "sha256": "010ca2297e63d08a772466dd401d36ed9914502b8794c08948427a4083b3202c"
+        },
+        {
+          "filename": "python_mecab_ko-1.3.7-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl",
+          "url": "https://files.pythonhosted.org/packages/5c/7d/28552e79b7bd4bc9d39b0bf1a037f541c5b2cf07467c1a274715b1afecde/python_mecab_ko-1.3.7-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl",
+          "sha256": "d7b35116e98fb736f7c9550eb1a74cfb6aa35c39b0b43cbe7a8837bfa3cd39d4"
+        },
+        {
+          "filename": "python_mecab_ko-1.3.7-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/c4/5e/2986910cb757eb49f592b33977be05396ebeeb6e18ec6a4643f6c9fdce2e/python_mecab_ko-1.3.7-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "sha256": "0933d3fcb84f6ed36cce49f1939604ac0fcaf4460441e832cb98ca1bdce74a37"
+        },
+        {
+          "filename": "python_mecab_ko-1.3.7-cp312-cp312-macosx_10_9_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/c2/7a/980c48f19367353da0d0ea4ffc5c73be0893987bc4c8bf4522391b4e0b14/python_mecab_ko-1.3.7-cp312-cp312-macosx_10_9_x86_64.whl",
+          "sha256": "7721f69381dac572a1598e5906cc5faba233ed48bc6ff8672082a519d7db0ba1"
+        },
+        {
+          "filename": "python_mecab_ko-1.3.7-cp312-cp312-macosx_11_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/ee/3d/8c13f7d6cbcc9b84b1797552de60fc2ff10012d801598b75aa41ff17db41/python_mecab_ko-1.3.7-cp312-cp312-macosx_11_0_arm64.whl",
+          "sha256": "eae5eb6178b06019e3773e9dde126dd29df5ed417406be5611ebdd0f8839c1e1"
+        },
+        {
+          "filename": "python_mecab_ko-1.3.7-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/e7/01/3a4032f78370375d79b7f6b7eaa1602a4070d28dee8f7f3dfa8c87e73940/python_mecab_ko-1.3.7-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "sha256": "8e90e8c1009f8f6aa0dfc43c916ff481dc79aa5a7e528a41a193add9c61ac6d1"
+        },
+        {
+          "filename": "python_mecab_ko-1.3.7-cp312-cp312-manylinux_2_17_i686.manylinux2014_i686.whl",
+          "url": "https://files.pythonhosted.org/packages/f4/cb/169c68047a569e2e4f2a2243c4576df72255d1a4ab0b5a286ff75bc41a76/python_mecab_ko-1.3.7-cp312-cp312-manylinux_2_17_i686.manylinux2014_i686.whl",
+          "sha256": "a205ca4da908df39d6d70f968426d0e9dc79274a6d34b13a5588ab52f0e12be8"
+        },
+        {
+          "filename": "python_mecab_ko-1.3.7-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/aa/88/dd2e5e7d44351bba0c9fb462273df9dcd43c3e000bfd0a4279e52584e2f7/python_mecab_ko-1.3.7-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "sha256": "3c0e98a7d94278f4f5d93f03e35cc8044460c0076ab4698b764d5c44bd897dbe"
+        },
+        {
+          "filename": "python_mecab_ko-1.3.7-cp37-cp37m-macosx_10_9_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/0c/80/9e830f16339396fcfd0cec7c964bc12bbc135de1128ac5d63ee8ab36c23a/python_mecab_ko-1.3.7-cp37-cp37m-macosx_10_9_x86_64.whl",
+          "sha256": "198c0b9a832966927ceceda599b8d2f38426d11d25defa0d4ed819e3d00bfa91"
+        },
+        {
+          "filename": "python_mecab_ko-1.3.7-cp38-cp38-macosx_10_9_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/fe/09/98c8fabad8c4837083fdb88eecb1ce3597975aa0833229ea28760f215776/python_mecab_ko-1.3.7-cp38-cp38-macosx_10_9_x86_64.whl",
+          "sha256": "5ad754804a5a5b64b62d77a962d33ef6e931765cede89f880e02e3d18971a5bd"
+        },
+        {
+          "filename": "python_mecab_ko-1.3.7-cp38-cp38-macosx_11_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/10/33/67403d00fefc5deed0fd458973af2e578b5525c3bf3d1f5e758c63ddfc0b/python_mecab_ko-1.3.7-cp38-cp38-macosx_11_0_arm64.whl",
+          "sha256": "64346e4a627ad3b56647f2d6909ba52bd25b5b29f8d320944ed9dce602ba0b75"
+        },
+        {
+          "filename": "python_mecab_ko-1.3.7-cp39-cp39-macosx_10_9_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/5b/ba/2ca5a3f17eb9b0077b115f0969ba876760eb0667f5ab1dda0ac1f7a1141f/python_mecab_ko-1.3.7-cp39-cp39-macosx_10_9_x86_64.whl",
+          "sha256": "4fdae16e907470cec155721cc0f849a9d52e01eae316aae53101fa236069505b"
+        },
+        {
+          "filename": "python_mecab_ko-1.3.7-cp39-cp39-macosx_11_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/89/79/86e4b2d19e5d6cd20873ae8537e368d97c2c1f7ec4c76ced07928740d00f/python_mecab_ko-1.3.7-cp39-cp39-macosx_11_0_arm64.whl",
+          "sha256": "691bed2317e4cbbf4f00fc11a59d6d95412b72b9bd6eea037880df95fcd7e6a0"
+        }
+      ]
+    },
+    "onnxruntime": {
+      "version": "1.23.2",
+      "requires_dist": [
+        "coloredlogs",
+        "flatbuffers",
+        "numpy>=1.21.6",
+        "packaging",
+        "protobuf",
+        "sympy"
+      ],
+      "wheels": [
+        {
+          "filename": "onnxruntime-1.23.2-cp310-cp310-macosx_13_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/35/d6/311b1afea060015b56c742f3531168c1644650767f27ef40062569960587/onnxruntime-1.23.2-cp310-cp310-macosx_13_0_arm64.whl",
+          "sha256": "a7730122afe186a784660f6ec5807138bf9d792fa1df76556b27307ea9ebcbe3"
+        },
+        {
+          "filename": "onnxruntime-1.23.2-cp310-cp310-macosx_13_0_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/db/db/81bf3d7cecfbfed9092b6b4052e857a769d62ed90561b410014e0aae18db/onnxruntime-1.23.2-cp310-cp310-macosx_13_0_x86_64.whl",
+          "sha256": "b28740f4ecef1738ea8f807461dd541b8287d5650b5be33bca7b474e3cbd1f36"
+        },
+        {
+          "filename": "onnxruntime-1.23.2-cp310-cp310-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/2e/4d/a382452b17cf70a2313153c520ea4c96ab670c996cb3a95cc5d5ac7bfdac/onnxruntime-1.23.2-cp310-cp310-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "sha256": "8f7d1fe034090a1e371b7f3ca9d3ccae2fabae8c1d8844fb7371d1ea38e8e8d2"
+        },
+        {
+          "filename": "onnxruntime-1.23.2-cp310-cp310-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/fb/56/179bf90679984c85b417664c26aae4f427cba7514bd2d65c43b181b7b08b/onnxruntime-1.23.2-cp310-cp310-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "sha256": "4ca88747e708e5c67337b0f65eed4b7d0dd70d22ac332038c9fc4635760018f7"
+        },
+        {
+          "filename": "onnxruntime-1.23.2-cp311-cp311-macosx_13_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/44/be/467b00f09061572f022ffd17e49e49e5a7a789056bad95b54dfd3bee73ff/onnxruntime-1.23.2-cp311-cp311-macosx_13_0_arm64.whl",
+          "sha256": "6f91d2c9b0965e86827a5ba01531d5b669770b01775b23199565d6c1f136616c"
+        },
+        {
+          "filename": "onnxruntime-1.23.2-cp311-cp311-macosx_13_0_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/9f/a8/3c23a8f75f93122d2b3410bfb74d06d0f8da4ac663185f91866b03f7da1b/onnxruntime-1.23.2-cp311-cp311-macosx_13_0_x86_64.whl",
+          "sha256": "87d8b6eaf0fbeb6835a60a4265fde7a3b60157cf1b2764773ac47237b4d48612"
+        },
+        {
+          "filename": "onnxruntime-1.23.2-cp311-cp311-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/3f/d8/506eed9af03d86f8db4880a4c47cd0dffee973ef7e4f4cff9f1d4bcf7d22/onnxruntime-1.23.2-cp311-cp311-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "sha256": "bbfd2fca76c855317568c1b36a885ddea2272c13cb0e395002c402f2360429a6"
+        },
+        {
+          "filename": "onnxruntime-1.23.2-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/e9/80/113381ba832d5e777accedc6cb41d10f9eca82321ae31ebb6bcede530cea/onnxruntime-1.23.2-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "sha256": "da44b99206e77734c5819aa2142c69e64f3b46edc3bd314f6a45a932defc0b3e"
+        },
+        {
+          "filename": "onnxruntime-1.23.2-cp312-cp312-macosx_13_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/1b/9e/f748cd64161213adeef83d0cb16cb8ace1e62fa501033acdd9f9341fff57/onnxruntime-1.23.2-cp312-cp312-macosx_13_0_arm64.whl",
+          "sha256": "b8f029a6b98d3cf5be564d52802bb50a8489ab73409fa9db0bf583eabb7c2321"
+        },
+        {
+          "filename": "onnxruntime-1.23.2-cp312-cp312-macosx_13_0_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/91/9d/a81aafd899b900101988ead7fb14974c8a58695338ab6a0f3d6b0100f30b/onnxruntime-1.23.2-cp312-cp312-macosx_13_0_x86_64.whl",
+          "sha256": "218295a8acae83905f6f1aed8cacb8e3eb3bd7513a13fe4ba3b2664a19fc4a6b"
+        },
+        {
+          "filename": "onnxruntime-1.23.2-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/3c/35/4e40f2fba272a6698d62be2cd21ddc3675edfc1a4b9ddefcc4648f115315/onnxruntime-1.23.2-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "sha256": "76ff670550dc23e58ea9bc53b5149b99a44e63b34b524f7b8547469aaa0dcb8c"
+        },
+        {
+          "filename": "onnxruntime-1.23.2-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/ef/88/9cc25d2bafe6bc0d4d3c1db3ade98196d5b355c0b273e6a5dc09c5d5d0d5/onnxruntime-1.23.2-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "sha256": "0f9b4ae77f8e3c9bee50c27bc1beede83f786fe1d52e99ac85aa8d65a01e9b77"
+        },
+        {
+          "filename": "onnxruntime-1.23.2-cp313-cp313-macosx_13_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/3d/41/fba0cabccecefe4a1b5fc8020c44febb334637f133acefc7ec492029dd2c/onnxruntime-1.23.2-cp313-cp313-macosx_13_0_arm64.whl",
+          "sha256": "2ff531ad8496281b4297f32b83b01cdd719617e2351ffe0dba5684fb283afa1f"
+        },
+        {
+          "filename": "onnxruntime-1.23.2-cp313-cp313-macosx_13_0_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/fe/f9/2d49ca491c6a986acce9f1d1d5fc2099108958cc1710c28e89a032c9cfe9/onnxruntime-1.23.2-cp313-cp313-macosx_13_0_x86_64.whl",
+          "sha256": "162f4ca894ec3de1a6fd53589e511e06ecdc3ff646849b62a9da7489dee9ce95"
+        },
+        {
+          "filename": "onnxruntime-1.23.2-cp313-cp313-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/1c/a1/428ee29c6eaf09a6f6be56f836213f104618fb35ac6cc586ff0f477263eb/onnxruntime-1.23.2-cp313-cp313-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "sha256": "45d127d6e1e9b99d1ebeae9bcd8f98617a812f53f46699eafeb976275744826b"
+        },
+        {
+          "filename": "onnxruntime-1.23.2-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/f2/2b/b57c8a2466a3126dbe0a792f56ad7290949b02f47b86216cd47d857e4b77/onnxruntime-1.23.2-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "sha256": "8bace4e0d46480fbeeb7bbe1ffe1f080e6663a42d1086ff95c1551f2d39e7872"
+        },
+        {
+          "filename": "onnxruntime-1.23.2-cp313-cp313t-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/7c/3d/6830fa61c69ca8e905f237001dbfc01689a4e4ab06147020a4518318881f/onnxruntime-1.23.2-cp313-cp313t-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "sha256": "9d2385e774f46ac38f02b3a91a91e30263d41b2f1f4f26ae34805b2a9ddef466"
+        },
+        {
+          "filename": "onnxruntime-1.23.2-cp313-cp313t-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/b6/ca/862b1e7a639460f0ca25fd5b6135fb42cf9deea86d398a92e44dfda2279d/onnxruntime-1.23.2-cp313-cp313t-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "sha256": "e2b9233c4947907fd1818d0e581c049c41ccc39b2856cc942ff6d26317cee145"
+        }
+      ]
+    },
+    "python-mecab-ko-dic": {
+      "version": "2.1.1.post2",
+      "wheels": [
+        {
+          "filename": "python_mecab_ko_dic-2.1.1.post2-py3-none-any.whl",
+          "url": "https://files.pythonhosted.org/packages/4e/63/23fb02dd36d96527eb0c93300e8db22ab42805c1a232af621c5a8f175e37/python_mecab_ko_dic-2.1.1.post2-py3-none-any.whl",
+          "sha256": "ef8f4e80c8976f1340a7264abb0c96f384fe059fd897584aeba0151753c6ae9b"
+        }
+      ]
+    }
+  }
+}

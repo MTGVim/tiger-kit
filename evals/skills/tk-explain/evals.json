@@ -1002,6 +1002,23 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "explain-video-resolves-tts",
+      "path": "boundary",
+      "prompt": "이 개념을 영상으로 설명해 주세요. 음성은 정하지 않았습니다.",
+      "expected_output": "영상 제작 전에 TTS·기존 음원·무음 선택을 묻고 결과를 tk-video에 넘깁니다. 영상 선택이나 기본 목소리 설정만으로 TTS 동의를 추정하지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "영상 제작 전에 TTS·기존 음원·무음 선택을 묻고 결과를 tk-video에 넘깁니다. 영상 선택이나 기본 목소리 설정만으로 TTS 동의를 추정하지 않습니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Unverifiable"
+        }
+      ],
+      "safety": false
     }
   ],
   "renamed_from": {

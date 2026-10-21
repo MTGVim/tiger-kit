@@ -1,0 +1,198 @@
+{
+  "skill": "tk-course",
+  "kind": "user-invoked",
+  "queries": [
+    {
+      "id": "train-positive",
+      "split": "train",
+      "query": "$tk-course 사내 보안 온보딩 자료를 수료용 HTML 코스로 설계해 주세요.",
+      "should_trigger": true
+    },
+    {
+      "id": "train-negative",
+      "split": "train",
+      "query": "지금 보고 있는 코드 한 줄만 풀이해 주세요.",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-positive-1",
+      "split": "validation",
+      "query": "$tk-course 완결 HTML 코스를 만들어 주세요",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-2",
+      "split": "validation",
+      "query": "$tk-course 기존 코스에 강의를 추가해 주세요",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-3",
+      "split": "validation",
+      "query": "$tk-course 코스 목차를 증분으루 고쳐주세용. 완료 진도는 남겨줘요",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-positive-4",
+      "split": "validation",
+      "query": "$tk-course 이 자료로 실습과 평가가 있는 코스를 설계해 주세요",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-positive-5",
+      "split": "validation",
+      "query": "$tk-course 과정 좀 만들어줘",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-positive-6",
+      "split": "validation",
+      "query": "$tk-course 슬라이드와 내장 음성 영상을 묶어 주세요",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-positive-7",
+      "split": "validation",
+      "query": "$tk-course 제공한 세 논문의 근거를 표시한 데이터 분석 입문 과정을 제작해 주세요",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-8",
+      "split": "validation",
+      "query": "$tk-course 강의 홈이랑 퀴즈까지 묶어서 혼자 공부하게 해줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-9",
+      "split": "validation",
+      "query": "$tk-course 여러 주제 코스를 여는 상위 랜딩 홈을 추가해 주세요",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-positive-10",
+      "split": "validation",
+      "query": "$tk-course 기존 `curriculum`을 수정하고 `source` 출처를 보존해 주세요",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-positive-11",
+      "split": "validation",
+      "query": "$tk-course 코스 재생성",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-positive-12",
+      "split": "validation",
+      "query": "$tk-course 무음 슬라이드로 시작하고 코스별 진도를 내보내게 해 주세요",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-1",
+      "split": "validation",
+      "query": "이벤트 루프를 짧게 설명해 주세요",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-2",
+      "split": "validation",
+      "query": "지난 답변에서 틀린 부분부터 과외해 주세요",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-negative-3",
+      "split": "validation",
+      "query": "제품 기능을 구현해 주세용",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-negative-4",
+      "split": "validation",
+      "query": "여행 MP4를 편집해 주세요",
+      "should_trigger": false,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-negative-5",
+      "split": "validation",
+      "query": "사이트 만들어줘",
+      "should_trigger": false,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-negative-6",
+      "split": "validation",
+      "query": "학습 알림을 매일 보내고 캘린더에도 등록해 주세요",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-7",
+      "split": "validation",
+      "query": "`course`라는 영어 단어의 뜻만 알려 주세요",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-8",
+      "split": "validation",
+      "query": "기존 HTML 결과에서 띄어쓰기 두 곳만 교정해 주세요",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    }
+  ]
+}

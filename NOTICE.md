@@ -956,3 +956,21 @@ cognitive-debt 장부나 merge/edit 강제는 `tk-explain-diff`의 단일 변경
 `mattpocock/skills@f3fc5632f401156837ee3872f14fe33ccf1024ea`의 `README.md`를 확인했습니다.
 짧은 목적 설명·설치 안내·주제별 스킬 링크와 호출 구분을 참고하되 TigerKit의 실제 28개 스킬과
 승인 경계를 직접 설명합니다. 상류의 필수 초기 설정, 플러그인 설치, 홍보 문구는 가져오지 않습니다.
+
+
+## 완결 코스 플레이어와 로컬 TTS
+
+`tk-course`의 고정 플레이어 레이아웃과 CSS 일부는 MIT 라이선스의
+[`tobyilee/course-builder`](https://github.com/tobyilee/course-builder/tree/1913b09bd1bf947b5ee2d1a75eab4396e669fbd3)를
+참고해 수정했습니다. 원본 고지는 `skills/tk-course/assets/LICENSE-course-builder.txt`에 보존하고
+생성 HTML에도 포함합니다. 코스 셸·교육 원고·큐·미디어 검증을 분리했으며 원본의 실행 파이프라인은
+포함하지 않습니다. 공용 HTML 자산은 기존 TigerKit의 동기화/출처 고지를 따릅니다.
+
+`tk-tts`는 기존 TigerKit `Qwen` 합성 도구를 독립 소유자로 옮겼습니다. 모델 가중치나 외부 런타임
+코드를 저장소에 포함하지 않습니다. `Qwen CustomVoice MLX 5bit`의
+`ea57eb1094e142071162f79568581c9315dfd2e7`, `ppaso-tts-v1`의
+`53d09664c4f636a5fb6f2ebe3ec22cd83ee249b9`에서 작은 파일의 SHA256과 공식 LFS 메타데이터를
+확인했습니다. 별도 승인으로 내려받은 스냅샷의 실제 파일 해시는 사용 전에 다시 검사합니다.
+두 모델 카드는 `Apache-2.0`을 명시하며, `ppaso`의 G2P/사전 및 관련 MIT/BSD 고지를 함께 보존합니다.
+샘플 아바타·VRM·립싱크·선택적 `Vocos/RKNN` 자료는 기본 스냅샷에 포함하지 않습니다.
+각 패키지의 조건부 출처 참조와 매니페스트가 적용 범위와 정확한 핀을 소유합니다.

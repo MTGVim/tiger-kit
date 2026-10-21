@@ -1,0 +1,6 @@
+interface:
+  short_description: "[user/auto] 한국어 원고에서 검수 가능한 로컬 음원을 생성합니다."
+  default_prompt: "$tk-tts를 사용해 이 한국어 원고를 로컬 음원으로 만들어 주세요."
+
+policy:
+  allow_implicit_invocation: true

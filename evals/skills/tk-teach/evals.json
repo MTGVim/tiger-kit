@@ -876,6 +876,23 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "teach-personal-not-course",
+      "path": "success",
+      "prompt": "지난 수업 답변에서 틀린 개념부터 개인 수업을 이어 주세요.",
+      "expected_output": "검증된 학습 기록과 실제 답변에서 다음 작은 수업을 고르고 필요 없는 완결 코스 재생성이나 음성 인터뷰를 강제하지 않습니다. tk-explain의 단일 설명/코스 제작과 구분합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "검증된 학습 기록과 실제 답변에서 다음 작은 수업을 고르고 필요 없는 완결 코스 재생성이나 음성 인터뷰를 강제하지 않습니다. tk-explain의 단일 설명/코스 제작과 구분합니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": false
     }
   ]
 }

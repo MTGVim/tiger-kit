@@ -16,6 +16,10 @@ except ImportError:
     from artifact_policy import sync_artifact_guards, validate_artifact_guards
     from check_runtime_guard import UI_EVIDENCE_CONSUMERS, UI_EVIDENCE_REFERENCE, validate_runtime_guard
 from pathlib import Path
+try:
+    from .narration_policy import errors as narration_errors, sync as sync_narration
+except ImportError:
+    from narration_policy import errors as narration_errors, sync as sync_narration
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "skills/tk-prep/references"
@@ -55,8 +59,8 @@ DOMAIN_CONTEXT_TARGETS = (
     ROOT / "skills/tk-review/references/domain-context.md",
 )
 
-HTML_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research", "tk-qa-sheet", "tk-prototype")
-VISUAL_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research")
+HTML_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research", "tk-qa-sheet", "tk-prototype", "tk-course")
+VISUAL_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research", "tk-course")
 HTML_ASSETS = ("html-theme.css", "html-theme.js")
 CHART_FILES = ("references/chart-design.md", "assets/chart-examples.html", "references/html-figures.md")
 HTML_TEMPLATES = ("skills/tk-research/assets/report.html", "skills/tk-qa-sheet/assets/qa-sheet-template.html")
@@ -361,6 +365,7 @@ def main() -> int:
             path.parent.mkdir(exist_ok=True)
             path.write_text(UI_EVIDENCE_REFERENCE, encoding="utf-8")
     if not args.check:
+        sync_narration(ROOT)
         sync_verification(ROOT)
         sync_artifact_guards(ROOT)
         sync_questions(ROOT)
@@ -376,6 +381,7 @@ def main() -> int:
         notation_errors = output_notation_errors(ROOT / "skills") + result_summary_errors(ROOT / "skills") + validate_artifact_guards(ROOT) + validate_runtime_guard(ROOT) + question_errors(ROOT) + verification_errors(ROOT) + feedback_errors(ROOT)
         notation_errors.extend(summary_body_errors(ROOT / "skills"))
         notation_errors.extend(html_policy_errors(ROOT))
+        notation_errors.extend(narration_errors(ROOT))
         if notation_errors:
             print("\n".join(notation_errors))
         if drift:

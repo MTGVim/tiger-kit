@@ -250,6 +250,16 @@ For local execution, follow the already loaded local-execution reference. SDD ad
 protocol. Only after the final-response gate permits completion or a justified pause, return a compact result with the execution shape, Seed path or `none`, commits or handoff status, focused and
 required verification, runtime evidence, exceptions, review independence, and any blocker. Claim remote publication only after the separately authorized publication owner verifies it.
 
+<!-- tigerkit:narration-choice -->
+## Narration Choice
+
+Ask the creator to choose TTS, supplied audio or no narration before any video or spoken-slide
+production. Reuse an answered parent/user choice; video or a voice preference is not TTS consent.
+Show current tk-tts model/voice/device/setup options before synthesis/assembly. Preserve no
+narration; offer MP4 for GIF sound. Static HTML/text needs no unrelated voice interview.
+Installation/download/publication require their own authority; playback mute/fallback are separate.
+<!-- /tigerkit:narration-choice -->
+
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 

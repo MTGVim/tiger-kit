@@ -14,8 +14,7 @@ npx skills update --global --yes
 
 ## 스킬 구성
 
-`user`는 사용자가 직접 호출하고, `hybrid`는 사용자가 호출하거나 에이전트가 작업에 맞게 선택합니다.
-상세한 동작과 권한은 각 스킬 문서를 확인하세요.
+`user`는 직접 호출하며, `hybrid`는 작업에 맞게 자동 선택할 수도 있습니다. 상세한 동작과 권한은 각 스킬 문서에 있습니다.
 
 ### 개발·기획
 
@@ -49,6 +48,8 @@ npx skills update --global --yes
 
 ### 이해·연구·학습
 
+개념·상황 설명은 `tk-explain`, 답변에 맞춘 개인 과외는 `tk-teach`, 자료만으로 학습할 수 있는 완결 코스 제작은 `tk-course`를 사용합니다.
+
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
 | [tk-ask-repo](skills/tk-ask-repo/SKILL.md) | `user` | 저장소의 동작과 근거를 설명합니다. |
@@ -56,7 +57,9 @@ npx skills update --global --yes
 | [tk-video](skills/tk-video/SKILL.md) | `hybrid` | 소프트웨어와 개념을 설명하는 MP4·GIF 영상을 만듭니다. |
 | [tk-explain-diff](skills/tk-explain-diff/SKILL.md) | `hybrid` | 코드 변경의 배경과 실행 흐름을 설명합니다. |
 | [tk-research](skills/tk-research/SKILL.md) | `hybrid` | 근거를 조사하고 접근법을 비교합니다. |
-| [tk-teach](skills/tk-teach/SKILL.md) | `user` | 학습 기록에 맞춰 수업과 복습을 구성합니다. |
+| [tk-teach](skills/tk-teach/SKILL.md) | `user` | 실제 답변·오개념에 맞춰 개인 수업과 복습을 이어갑니다. |
+| [tk-course](skills/tk-course/SKILL.md) | `user` | 학습 목표부터 실습·평가까지 완결된 HTML 코스를 설계하고 만듭니다. |
+| [tk-tts](skills/tk-tts/SKILL.md) | `hybrid` | 한국어 원고에서 검수 가능한 로컬 음원을 생성합니다. |
 
 ### 대화·글쓰기
 

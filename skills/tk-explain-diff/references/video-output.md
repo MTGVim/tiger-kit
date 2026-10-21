@@ -1,5 +1,7 @@
 # Change-flow video
 
+Before handing off, explicitly resolve TTS, existing audio or no narration if it is still unknown; pass the decision to tk-video. Selecting video or a preferred voice is not narration consent. Reuse an answered choice without asking again.
+
 Pass the pinned comparison, supported claims and ordered scene outline to `tk-video`. Real
 base/head browser states belong to `tk-browser-verify`; native window states belong to
 `tk-app-verify`. Capture requires its owner's approved runtime boundary; an explanation request

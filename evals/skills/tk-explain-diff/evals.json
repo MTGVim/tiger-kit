@@ -326,6 +326,23 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "diff-video-reuses-tts-choice",
+      "path": "success",
+      "prompt": "변경 설명 영상을 만들어 주세요. 나레이션은 이미 무음으로 선택했습니다.",
+      "expected_output": "기존 무음 결정을 재사용하여 TTS를 다시 묻거나 설치하지 않고 tk-video로 연결하며 기존 비교/판정/게시 권한 경계를 보존합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "기존 무음 결정을 재사용하여 TTS를 다시 묻거나 설치하지 않고 tk-video로 연결하며 기존 비교/판정/게시 권한 경계를 보존합니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": false
     }
   ],
   "migrations": [

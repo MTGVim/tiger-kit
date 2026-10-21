@@ -16,7 +16,7 @@ import venv
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
-spec = importlib.util.spec_from_file_location("optional_qwen3", ROOT / "skills/tk-video/scripts/narration/qwen3.py")
+spec = importlib.util.spec_from_file_location("optional_qwen3", ROOT / "skills/tk-tts/scripts/qwen3.py")
 qwen = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(qwen)
 
@@ -193,7 +193,7 @@ class Qwen3NarrationTests(unittest.TestCase):
 
     def test_mlx_snapshot_and_package_pins(self):
         data = qwen.mlx_adapter().manifest()
-        self.assertIn("8bit", data["repository"])
+        self.assertIn("5bit", data["repository"])
         self.assertEqual(data["package"]["version"], "0.6.1")
         self.assertEqual(data["mlx_version"], "0.32.4")
         self.assertEqual(len(data["revision"]), 40)

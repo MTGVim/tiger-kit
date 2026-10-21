@@ -51,9 +51,10 @@ resolution. Follow prerequisite recovery for unavailable tools.
 If hard-caption support is missing after installed-tool discovery, present the `tk-wizard`
 installation-guidance question before returning the blocked result. Do not implement a frame-compositing workaround.
 
-When narration is explicitly selected, read [narration](references/narration.md). Its isolated
-engine is removable: assembly accepts ordinary audio and requires no TTS imports. Use authored
-pronunciation corrections; do not add ASR or another automatic download.
+For selected generated narration, invoke `tk-tts` through supported skill loading/handoff;
+read [narration](references/narration.md) for measured audio-to-scene alignment. Reuse supplied
+audio when selected. Assembly consumes ordinary WAV files and imports no TTS engine. Selecting
+TTS requires actual accepted non-silent audio; missing synthesis is not a voiced silent preview.
 
 Run the finished-media checks and inspect the generated contact sheet plus representative decoded
 frames, including the initial/final state and every material caption or scene transition. Return
@@ -76,9 +77,19 @@ Release capture resources through their owning verifier.
 Generation authorizes no publication. Hand selected attachments to `tk-pr-media` only when upload
 is separately authorized. This skill changes no application source, Git state, global settings,
 credentials. It creates only the requested movie, scene sources and run-owned evidence, plus the
-dedicated narration cache only under the installation approval described in the narration reference.
+selected audio artifacts. `tk-tts` owns its separately approved installation and model cache.
 
 Design sources and deliberate omissions are recorded in [sources](references/sources.md).
+
+<!-- tigerkit:narration-choice -->
+## Narration Choice
+
+Ask the creator to choose TTS, supplied audio or no narration before any video or spoken-slide
+production. Reuse an answered parent/user choice; video or a voice preference is not TTS consent.
+Show current tk-tts model/voice/device/setup options before synthesis/assembly. Preserve no
+narration; offer MP4 for GIF sound. Static HTML/text needs no unrelated voice interview.
+Installation/download/publication require their own authority; playback mute/fallback are separate.
+<!-- /tigerkit:narration-choice -->
 
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
