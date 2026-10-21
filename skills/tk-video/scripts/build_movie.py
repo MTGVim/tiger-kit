@@ -80,9 +80,6 @@ def timeline(data: dict, root: Path, ffprobe: str = "ffprobe") -> tuple[list[tup
                 voice_duration = float(probe(voice, ffprobe)["format"]["duration"]) * 1000
                 if not math.isfinite(voice_duration) or voice_duration <= 0:
                     raise ValueError("scene audio must have a finite positive duration")
-            hold = number(row.get("hold_ms", max(3000, voice_duration + 250)))
-            if hold <= 0: raise ValueError("presentation holds must be positive")
-            if hold < voice_duration: raise ValueError("scene hold is shorter than accepted narration")
             source = row.get("source_kind", "capture")
             if source not in {"capture", "rendered"}: raise ValueError("source_kind must be capture or rendered")
             caption = row.get("caption", "")
@@ -93,6 +90,9 @@ def timeline(data: dict, root: Path, ffprobe: str = "ffprobe") -> tuple[list[tup
                 label = row.get("source_label", "렌더링 장면")
                 if not isinstance(label, str) or not label.strip(): raise ValueError("source_label must be nonempty text")
                 caption = "[" + label + "] " + caption
+            hold = number(row.get("hold_ms", max(3000, len(caption) * 125, voice_duration + 800)))
+            if hold <= 0: raise ValueError("presentation holds must be positive")
+            if hold < voice_duration: raise ValueError("scene hold is shorter than accepted narration")
             if caption: scene_captions.append({"start_ms": cursor, "end_ms": cursor + hold, "text": caption})
             cursor += hold
     end = number(data["end_ms"]) if mode == "evidence" else cursor
@@ -214,8 +214,23 @@ def scene_audio(scenes: list, root: Path, stage: Path, env: dict, ffmpeg: str) -
     return output, speech_end
 
 
+def caption_layout(height: int, evidence: bool, size: float | None) -> dict:
+    """Keep UI pixels intact and convert output-pixel text geometry to libass's 288 units."""
+    height = math.ceil(height / 2) * 2
+    if size is not None and not 0 < number(size) <= height / 2:
+        raise ValueError("caption size must be positive and at most half the source height")
+    # Default text is 5% of the final height; reserve two text heights for its band.
+    desired = max(height + 48, height / .9 if size is None else height + 2 * size)
+    final = math.ceil(desired / 2) * 2 if evidence else height
+    pixels = final * .05 if size is None else size
+    band = final - height
+    margin = (band - pixels) / 2 if evidence else pixels / 2
+    return {"size_px": pixels, "band_px": band, "height": final,
+            "font_size": pixels * 288 / final, "margin_v": margin * 288 / final}
+
+
 def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str | None = None,
-          fps: float | None = None, crf: int | None = None) -> dict:
+          fps: float | None = None, crf: int | None = None, caption_size: float | None = None) -> dict:
     manifest = regular(manifest)
     data = json.loads(manifest.read_text(encoding="utf-8"))
     ffmpeg, ffprobe, caption_support = media_tools(ffmpeg, True)
@@ -249,6 +264,8 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
     if contact.resolve() != contact or contact.exists():
         raise ValueError("contact sheet must be a new run-owned path")
     burn = bool(captions) and caption_support
+    image_stream = next(s for s in probe(frames[0][0], ffprobe)["streams"] if s["codec_type"] == "video")
+    layout = caption_layout(int(image_stream["height"]), mode == "evidence", caption_size)
     sidecar = output.with_suffix(".srt") if captions else None
     if sidecar and (sidecar.resolve() != sidecar or (sidecar.exists() and not sidecar.is_file())):
         raise ValueError("caption sidecar must be a regular run-owned file")
@@ -318,8 +335,10 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
         if burn:
             # Evidence frames preserve the complete UI; captions live in an appended band.
             if mode == "evidence":
-                filters += ",pad=iw:ceil((ih+max(48\\,ih*0.2))/2)*2:0:0:black"
-            filters += ",subtitles=filename=captions.srt:force_style='FontName=Noto Sans CJK KR,FontSize=7,MarginV=5,Alignment=2,Outline=1'"
+                filters += f",pad=iw:ih+{layout['band_px']}:0:0:black"
+            filters += (",subtitles=filename=captions.srt:force_style='FontName=Noto Sans CJK KR,"
+                        f"FontSize={layout['font_size']:.6f},MarginV={layout['margin_v']:.6f},"
+                        f"Alignment=2,Outline={0 if mode == 'evidence' else 1},Bold=1'")
         if kind == ".mp4":
             cmd += ["-map", "0:v:0"]
             if audio is not None: cmd += ["-map", "1:a:0"]
@@ -389,6 +408,8 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
             "contact_sheet": str(contact),
             "prerequisite": "ffmpeg-subtitles-filter" if captions and not burn else None,
             "subtitles": "hard" if burn else "soft" if soft else "sidecar" if captions else "none",
+            "caption_size_px": layout["size_px"] if burn else None,
+            "caption_band_px": layout["band_px"] if burn else 0,
             "captions_path": str(sidecar) if sidecar else None,
             "verification_status": "not-assessed", "source_frames_preserved": True}
 
@@ -401,9 +422,10 @@ def main() -> int:
     parser.add_argument("--ffmpeg", help="Use this installed ffmpeg; overrides TIGERKIT_FFMPEG and discovery")
     parser.add_argument("--fps", type=float, help="Override output fps (positive, at most 30); scene times stay unchanged")
     parser.add_argument("--crf", type=int, help="MP4 H.264 quality, 0-51 (default 18); lower values retain more detail and may increase size")
+    parser.add_argument("--caption-size", type=float, help="Nominal hard-caption size in output pixels (default 5%% of final height)")
     args = parser.parse_args()
     try:
-        result = build(args.manifest, args.output, args.audio, args.ffmpeg, args.fps, args.crf)
+        result = build(args.manifest, args.output, args.audio, args.ffmpeg, args.fps, args.crf, args.caption_size)
         print(json.dumps(result, ensure_ascii=False))
         return 2 if result["media_status"] == "blocked" else 1 if result["media_status"] == "failed" else 0
     except (ValueError, KeyError, TypeError, OSError, subprocess.SubprocessError) as exc:

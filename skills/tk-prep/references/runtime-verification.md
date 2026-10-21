@@ -85,8 +85,11 @@ what it needs and releases it again.
 
 For a flow/time-dependent criterion or an explicit QA/demo audience, add one media suggestion to
 the existing runtime-plan approval summary: short GIF for a brief flow, MP4 for a longer explanation,
-or none. Do not generate it before approval or add a routine question. Accepting the selected
-media in that summary, a direct request or approved `evidenceMedia` opt-in enables a
+or none. Do not generate it before approval or add a routine question. Suggest a usage
+walkthrough from entry for a new feature, or a comparable before/after
+explanation for changed behavior; create it after implementation and verification. Resolve
+narration and cursor/input displays in this same choice only when not already decided.
+Accepting media in that summary, a direct request or approved `evidenceMedia` opt-in enables a
 `tk-video` handoff. Browser/native capture still belongs to the respective verifier. No media
 selection grants installation or publication authority. Preserve timing assertions and screenshot
 pairs. Narration is optional; its absence cannot block prep or verification.

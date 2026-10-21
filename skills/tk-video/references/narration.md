@@ -61,7 +61,9 @@ but load separate model memory. Sentence batching has no verified 7GB upper boun
 Write pronunciation-corrected Korean text to run-owned UTF-8 files, one complete sentence per
 line. Generate sentences sequentially, trim each measured onset and join accepted audio; do not
 send a full long paragraph in one model request or infer a fixed memory ceiling from sentence length. Use
-`qwen3.py --text-file <file> --output <new.wav>`; `--speaker sohee` is the Korean default and
+new output paths; an existing WAV is preserved, so use a new version name after a text edit.
+Keep frame inputs, scene WAVs and movie output inside the eventual manifest directory.
+Use `qwen3.py --text-file <file> --output <new.wav>`; `--speaker sohee` is the Korean default and
 `--speaker serena` remains available explicitly. The 0.6B model ignores `instruct`; do not offer style
 instructions or silently upgrade to 1.7B. The MLX backend uses Metal GPU with `mx.set_cache_limit(0)` before loading/generation and clears
 released allocations between sentences. PyTorch `--device auto` selects an available CUDA/MPS/CPU

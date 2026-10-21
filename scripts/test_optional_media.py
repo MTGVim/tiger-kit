@@ -22,14 +22,56 @@ movie = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(movie)
 
 
-def png(path, color):
+def png(path, color, width=64, height=64):
     def chunk(kind, value):
         return struct.pack(">I", len(value)) + kind + value + struct.pack(">I", zlib.crc32(kind + value))
-    path.write_bytes(b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", 64, 64, 8, 2, 0, 0, 0)) +
-                     chunk(b"IDAT", zlib.compress((b"\0" + bytes(color) * 64) * 64)) + chunk(b"IEND", b""))
+    path.write_bytes(b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0)) +
+                     chunk(b"IDAT", zlib.compress((b"\0" + bytes(color) * width) * height)) + chunk(b"IEND", b""))
 
 
 class OptionalMediaTests(unittest.TestCase):
+    @unittest.skipUnless(shutil.which("node"), "node unavailable")
+    def test_capture_overlay_runtime_contract(self):
+        subprocess.run(["node", "--test", str(ROOT / "evals/skills/tk-browser-verify/capture-overlay.test.cjs")],
+                       capture_output=True, text=True, check=True)
+
+    def test_caption_reading_default_and_explicit_hold(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); image = root / "card.png"; png(image, (40, 90, 120))
+            row = {"path": str(image), "caption": "설명" * 20}
+            data = {"mode": "explainer", "frames": [row]}
+            self.assertEqual(movie.timeline(data, root)[1], 5000)
+            row["hold_ms"] = 2000
+            self.assertEqual(movie.timeline(data, root)[1], 2000)
+
+    @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "media tools unavailable")
+    def test_caption_pixels_and_band_center_at_two_sizes_and_override(self):
+        if not movie.subtitle_filter(): self.skipTest("subtitles filter unavailable")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for source_height, override in [(424, None), (918, None), (424, 32)]:
+                image = root / "frame.png"; png(image, (40, 90, 120), 960, source_height)
+                manifest = root / "manifest.json"
+                manifest.write_text(json.dumps({"frames": [{"path": str(image), "timestamp_ms": 0}],
+                    "end_ms": 1000, "captions": [{"start_ms": 0, "end_ms": 1000, "text": "Caption placement"}]}))
+                output = root / f"caption-{source_height}-{override}.mp4"
+                process = subprocess.run([sys.executable, str(SOURCE), "--manifest", str(manifest), "--output", str(output),
+                    *(["--caption-size", str(override)] if override else [])], capture_output=True, text=True, check=True)
+                receipt = json.loads(process.stdout)
+                self.assertAlmostEqual(receipt["caption_size_px"], override or receipt["height"] * .05)
+                raw = subprocess.run([receipt["ffmpeg_path"], "-v", "error", "-i", str(output), "-frames:v", "1",
+                    "-pix_fmt", "gray", "-f", "rawvideo", "-"], capture_output=True, check=True).stdout
+                rows = [y for y in range(source_height, receipt["height"])
+                        if max(raw[y * 960:(y + 1) * 960]) > 160]
+                self.assertTrue(rows)
+                self.assertAlmostEqual((min(rows) + max(rows)) / 2,
+                    source_height + receipt["caption_band_px"] / 2, delta=4)
+                self.assertGreaterEqual(max(rows) - min(rows) + 1, receipt["caption_size_px"] * .65)
+                self.assertLessEqual(max(rows) - min(rows) + 1, receipt["caption_size_px"] * 1.15)
+                self.assertEqual(len(raw), receipt["width"] * receipt["height"])
+            for size in [0, -1, True, float("nan"), float("inf"), 300]:
+                with self.assertRaises(ValueError): movie.caption_layout(424, True, size)
+
     @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "media tools unavailable")
     def test_crf_rejects_invalid_values_and_gif_override_without_creating_output(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -314,7 +356,7 @@ class OptionalMediaTests(unittest.TestCase):
             data["frames"][0]["audio_path"] = str(audio)
             manifest.write_text(json.dumps(data))
             result = movie.build(manifest, root / "scenes.mp4")
-            self.assertEqual(result["duration_ms"], 6450)
+            self.assertEqual(result["duration_ms"], 7000)
             self.assertEqual(result["media_validation"]["status"], "pass")
             self.assertTrue(result["audio"])
             data["captions"] = [{"start_ms": 0, "end_ms": 500, "text": "Too short"}]

@@ -21,6 +21,9 @@ a flow; it does not establish application correctness, latency, performance or r
 Resolve the audience, claim, selected format and available scene sources. Prefer stills when
 motion itself is not the claim. A short flow around ten seconds often fits GIF; longer explanation
 fits MP4. Reuse supplied material and approved choices without another routine question.
+For a human-facing tutorial, resolve narration and cursor/input overlays with format in the same
+existing choice, only where not already selected. Give captions reading time and measured narration
+at least 800ms of breathing room. Plan each crop and highlight its region before zooming in.
 
 List each scene's source, caption, optional narration and hold or observed timestamp. Label rendered
 cards with a corner source tag in the audience's language and declare `source_in_picture: true`
@@ -66,7 +69,9 @@ Return ready media with its absolute path, mode/timing, sources, caption/audio s
 inspection limits and publication selection. Report blocked or failed quality separately from
 application verification. Missing hard-caption support retains the soft-caption fallback, not a
 claim of completed burned captions. Preserve inputs and failure evidence; clean only known owned
-transients after accepted outputs decode. Release capture resources through their owning verifier.
+transients only after the user confirms the selected result and its decode/inspection completes.
+Until then preserve reusable frames/audio/manifests and report retained frame bytes.
+Release capture resources through their owning verifier.
 
 Generation authorizes no publication. Hand selected attachments to `tk-pr-media` only when upload
 is separately authorized. This skill changes no application source, Git state, global settings,

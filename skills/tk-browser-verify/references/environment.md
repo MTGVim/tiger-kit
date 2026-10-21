@@ -103,11 +103,20 @@ Use the existing authorized renewal route; collect a refresh token only if that 
 When it requires user-supplied refresh material, include that field as required in the first input
 template, alongside the bootstrap fields; do not defer it until access expires. If no renewal route
 exists or it uses existing browser-managed state, request no extra refresh field.
+Prefer a separate login session for headless work rather than a rotating grant shared with the
+user's daily browser. Sharing a grant may create refresh races; a 401 alone does not prove that
+diagnosis. Confirm the app's actual renewal request before changing its transport contract.
 Keep refresh material in the protected file/approved secret consumer, never page-visible storage
 or the bootstrap server; inject only the app-required access/session fields. If the app itself
 requires browser-managed refresh, use its documented isolated bootstrap rather than exposing
 extra fields. Serialize renewal through one task owner, validate and atomically save rotated
 values without overwriting concurrent edits, then re-read and independently verify target auth.
+Before closing an owned browser that performed renewal, privately reconcile only the app's
+approved credential fields with its current cookies/session state and atomically update the
+same bound protected file under that renewal owner. Validate target/cookie scope and file
+permissions again; preserve unrelated fields and concurrent user edits. Do not export the whole
+cookie jar or replace accepted material from an unauthenticated/uncertain state. A failed
+reconciliation preserves the file and reports the reuse limitation while resource cleanup proceeds.
 If a rotating request's result is uncertain, reconcile supported state before retrying. Network
 failure alone does not prove invalidation or justify deleting the file/requesting new credentials.
 If restoration is unavailable, report the concrete limitation and request only necessary input.

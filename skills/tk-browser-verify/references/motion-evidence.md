@@ -27,6 +27,10 @@ acceptance outlines or assertion substitutions. Stop immediately when a required
 cannot be found; retain partial captures and the concrete limitation rather than recording guesses.
 Record scene-boundary times and final DOM/runtime values separately from the movie.
 
+For selected human-facing input displays, read [tutorial overlays](tutorial-overlays.md) and
+inject this package's removable helper only for capture. Treat it as `capture_only_mutation`;
+remove it before any independent acceptance screenshot.
+
 Return only `phase: media-capture`, the capture manifest/provenance, observed final-state facts,
 limitations and actual cleanup/residue facts. An incomplete run retains its missing-capture reason
 and next required input. Do not emit `Status: Pass/Fail`, criterion verdicts, `visual_contract` or
@@ -50,8 +54,10 @@ prefer PNG for text-heavy UI at the accepted viewport resolution and avoid extra
 Use a reduced capture size only when selected; preserve any existing JPEG source as supplied.
 Normalize the first frame to zero and record the real capture end. A stable screen may send no
 new frames: hold its last frame until the next timestamp/end instead of fabricating frame times.
-The API has no crop-region option; apply an approved, consistent post-capture crop if needed and
-retain source provenance. Do not replace this with repeated `Page.captureScreenshot` calls for
+The API has no crop-region option; apply approved post-capture crops, recording each scene's
+region and source provenance. Before a full-view-to-crop transition, highlight the next region
+in the full view. Normalize differing crops to one canvas without distorting aspect ratio.
+Do not replace this with repeated `Page.captureScreenshot` calls for
 movie frames or add Puppeteer just for `page.screencast()`. Other selected providers may use their
 existing supported capture API; unsupported capture remains a media limitation.
 
@@ -72,6 +78,8 @@ Return the explicit movie limitation and keep the manifest for resumption.
 `tk-video` returns optional supplements separately from required screenshot manifests, including
 media type, path, timing, source/criterion IDs, warnings, inspection limits and publication choice.
 A generated movie is not selected for upload by default. `tk-pr-media` owns publication.
-After accepted media decodes and inspection completes, delete only known owned transient frames
-that are not assertion/failure evidence. Encoding failure preserves inputs and prior valid outputs.
+Keep reusable frames, audio and manifests until the user explicitly confirms the selected result;
+report retained frame bytes while selection is pending. Only after that confirmation and successful
+decode/inspection, delete known owned transient frames that are not assertion/failure evidence.
+Encoding failure preserves inputs and prior valid outputs.
 This verifier owns capture/server cleanup on every exit and never deletes unrelated resources.

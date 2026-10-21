@@ -29,7 +29,9 @@ retain duration/decode checks with tolerance of at most the greater of 150ms and
 The private generated concat list uses a microsecond image time base so 25fps image defaults
 cannot discard sub-40ms capture intervals before the selected-rate filter runs.
 
-A stills explanation uses explicit holds; absent narration/hold defaults to 3000ms:
+A stills explanation uses explicit holds. Without a hold, use the greatest of 3000ms,
+125ms per caption character and measured narration plus 800ms. This reading-time heuristic
+needs audience inspection; an explicit selected hold still wins:
 
 ```json
 {"mode":"explainer","frames":[{"path":"/absolute/run/diagram.png","source_kind":"rendered","source_in_picture":true,"caption":"The request enters the queue","hold_ms":3000},{"path":"/absolute/run/actual-state.png","source_kind":"capture","caption":"Observed result","hold_ms":4000}]}
@@ -48,7 +50,7 @@ preserved. Do not assign scene audio to individual evidence frames. Narration-pa
 belongs to the capture owner and is limited to authorized non-mutating scenarios.
 
 For per-scene audio in `explainer`, add `audio_path` to that frame. The helper measures its
-actual duration and defaults the hold to `max(3000ms, audio duration + 250ms)`, pads each scene
+actual duration and defaults the hold using the reading/narration rule above, pads each scene
 to its hold and joins the clips in order. Explicit holds shorter than their audio are rejected.
 `narration_requested: true` retains a failed media result for missing or silent selected narration;
 use false only when narration was not selected or a caption-only fallback was accepted.
@@ -57,6 +59,7 @@ from character count. Bind audio only to accepted current scene text and ensure
 captions cover it. No narration failure authorizes invented observed waiting time. `evidence`
 returns `timing: observed`; `explainer` returns `timing: presentation`. Neither is a timing assertion.
 
+Keep frames, scene WAVs and output inside the manifest directory; output must be a new path.
 Run `python3 <loaded-package>/scripts/build_movie.py --manifest <json> --output <owned.mp4-or.gif>`.
 Optional `--audio <wav>` accepts a separately prepared track. The assembler has no engine import. `--ffmpeg <path>` overrides `TIGERKIT_FFMPEG` and
 automatic discovery. It checks PATH first and, when subtitles are missing and no override was
@@ -87,9 +90,13 @@ Present the `tk-wizard` installation-guidance question with the exact missing ca
 returning a blocked result or considering a workaround. Do not implement frame-composited captions. Inspect existing
 package/PATH conflicts before proposing a platform-specific package such as ffmpeg-full.
 
-For UI recordings (`evidence`), hard captions use an appended black lower band (`pad`) and fixed
-libass `force_style` (Korean-capable font, size, margin and alignment), preserving the original UI
-area. Inspect decoded frames for glyph support, wrapping and band overflow; shorten/split captions
+For UI recordings (`evidence`), hard captions use an appended black lower band (`pad`), preserving
+the complete UI. Default nominal text size is 5% of final output height; `--caption-size <px>`
+overrides it (positive, at most half the source height). The band holds two text heights, with
+a 48px minimum; the helper converts size and centered vertical margin into libass's 288-unit
+SRT coordinate system. Receipts expose nominal `caption_size_px` and `caption_band_px`;
+actual glyph bounds depend on the installed font. Soft captions remain player-styled.
+Inspect decoded frames for glyph support, wrapping and band overflow; shorten/split captions
 if needed. Rendered explainer cards retain their authored layout.
 
 Encoding failure returns exit 1 and bounded redacted diagnostics, preserving inputs and prior
