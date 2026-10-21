@@ -201,6 +201,17 @@ reply or code change, no summary is required. Do not infer code-change targets f
 or repeat the child procedure in Sweep. Missing or irreconstructible evidence is `Unverifiable`; one PR's partial publication does
 not broaden authority or stop independent rows.
 
+<!-- tigerkit:summary-body -->
+### Summary body verification
+
+Prepare summary bodies as literal text in a file or structured tool argument, avoiding shell expansion.
+After every post/update and when checking a child's publication, fresh-read the exact comment body.
+Require exact substrings for the full `<!-- tigerkit:pr-summary:<HEAD_SHA> -->` marker, every intended
+`<!-- tigerkit:pr-rereview:<HEAD_SHA>:<LOGIN> -->` marker and `@<LOGIN>` mention against the approved
+reviewer set, not just markers found in the body. Missing or mismatched evidence is `Unverifiable`;
+the publication owner must repair that same comment and reread it before completion, preserving one summary per head.
+<!-- /tigerkit:summary-body -->
+
 ## Completion response
 
 Do not dump internal categories or receipts.

@@ -16,7 +16,7 @@ except ImportError:
 
 
 MANIFEST = "evals/token-budget.json"
-SYNC_BLOCKS = ("result-summary", "output-notation", "questions", "skill-feedback")
+SYNC_BLOCKS = ("result-summary", "output-notation", "questions", "skill-feedback", "summary-body")
 SENTENCE_SPLIT = re.compile(r"(?<=[.!?。！？])\s+")
 
 

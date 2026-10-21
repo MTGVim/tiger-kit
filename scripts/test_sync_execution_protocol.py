@@ -189,6 +189,18 @@ class SyncExecutionProtocolTest(unittest.TestCase):
             self.assertEqual(self.run_main(), 0)
             self.assertEqual(self.run_main("--check"), 0)
 
+    def test_summary_body_guard_missing_or_drifted_blocks_release_check(self) -> None:
+        self.assertEqual(self.run_main(), 0)
+        for name in sync_execution_protocol.SUMMARY_BODY_ANCHORS:
+            path = self.root / "skills" / name / "SKILL.md"
+            original = path.read_text(encoding="utf-8")
+            for replacement in ("", sync_execution_protocol.SUMMARY_BODY_BLOCK.replace("fresh-read", "trust")):
+                with self.subTest(skill=name, missing=not replacement):
+                    path.write_text(original.replace(sync_execution_protocol.SUMMARY_BODY_BLOCK, replacement), encoding="utf-8")
+                    self.assertEqual(self.run_main("--check"), 1)
+                    self.assertEqual(self.run_main(), 0)
+                    self.assertEqual(self.run_main("--check"), 0)
+
     def test_result_summary_drift_fails_check_and_sync_repairs_it(self) -> None:
         self.assertEqual(self.run_main(), 0)
         path = self.root / "skills/tk-grill/SKILL.md"

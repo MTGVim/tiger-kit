@@ -234,6 +234,42 @@ def result_summary_errors(skills_root: Path) -> list[str]:
     return errors
 
 
+
+SUMMARY_BODY_MARKER = "<!-- tigerkit:summary-body -->"
+SUMMARY_BODY_END = "<!-- /tigerkit:summary-body -->"
+SUMMARY_BODY_BLOCK = SUMMARY_BODY_MARKER + """
+### Summary body verification
+
+Prepare summary bodies as literal text in a file or structured tool argument, avoiding shell expansion.
+After every post/update and when checking a child's publication, fresh-read the exact comment body.
+Require exact substrings for the full `<!-- tigerkit:pr-summary:<HEAD_SHA> -->` marker, every intended
+`<!-- tigerkit:pr-rereview:<HEAD_SHA>:<LOGIN> -->` marker and `@<LOGIN>` mention against the approved
+reviewer set, not just markers found in the body. Missing or mismatched evidence is `Unverifiable`;
+the publication owner must repair that same comment and reread it before completion, preserving one summary per head.
+""" + SUMMARY_BODY_END + "\n"
+SUMMARY_BODY_ANCHORS = {
+    "tk-pr-respond": "Do not claim publication complete unless",
+    "tk-pr-sweep": "## Completion response",
+}
+
+
+def summary_body_errors(skills_root: Path) -> list[str]:
+    errors = []
+    for name in SUMMARY_BODY_ANCHORS:
+        path = skills_root / name / "SKILL.md"
+        text = path.read_text(encoding="utf-8") if path.is_file() else ""
+        if (text.count(SUMMARY_BODY_MARKER) != 1 or text.count(SUMMARY_BODY_END) != 1
+                or SUMMARY_BODY_BLOCK not in text):
+            errors.append(f"{name}: sync the exact summary body block with scripts/sync_execution_protocol.py")
+    return errors
+
+
+def sync_summary_body(skills_root: Path) -> None:
+    for name, anchor in SUMMARY_BODY_ANCHORS.items():
+        sync_marked_block(skills_root / name / "SKILL.md", SUMMARY_BODY_MARKER,
+                          SUMMARY_BODY_END, SUMMARY_BODY_BLOCK, anchor)
+
+
 def sync_marked_block(path: Path, marker: str, end_marker: str, block: str, anchor: str) -> None:
     text = path.read_text(encoding="utf-8")
     if marker in text or end_marker in text:
@@ -330,6 +366,7 @@ def main() -> int:
         sync_questions(ROOT)
         sync_feedback(ROOT)
         sync_result_summary(ROOT / "skills")
+        sync_summary_body(ROOT / "skills")
     drift = [
         (source, target)
         for source, target in pairs
@@ -337,6 +374,7 @@ def main() -> int:
     ]
     if args.check:
         notation_errors = output_notation_errors(ROOT / "skills") + result_summary_errors(ROOT / "skills") + validate_artifact_guards(ROOT) + validate_runtime_guard(ROOT) + question_errors(ROOT) + verification_errors(ROOT) + feedback_errors(ROOT)
+        notation_errors.extend(summary_body_errors(ROOT / "skills"))
         notation_errors.extend(html_policy_errors(ROOT))
         if notation_errors:
             print("\n".join(notation_errors))

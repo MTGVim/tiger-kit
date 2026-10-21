@@ -66,4 +66,4 @@ After all rows finish, run fresh triage across every configured repository.
 A PR is complete only when final triage proves required checks and publication state, closed actionable threads, a
 current re-review request or post-summary review for every required reviewer (active `CHANGES_REQUESTED` reviewers and
 those named by current-head `<!-- tigerkit:pr-rereview:<HEAD_SHA>:<LOGIN> -->` markers), and any required current-head
-summary marker `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`.
+summary marker `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`, with its body verified under the owning SKILL.md Publication contract.
