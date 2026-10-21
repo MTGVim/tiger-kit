@@ -860,6 +860,63 @@
           "paths": []
         }
       ]
+    },
+    {
+      "id": "review-skill-contract-meaning-drift",
+      "path": "success",
+      "prompt": "`$tk-review current worktree`. 스킬 본문이 크게 바뀌었습니다. 이전 문장은 `Push only after every required check passes.`이고 후보는 `Push after running checks.`입니다. 테스트는 모두 통과했습니다.",
+      "expected_output": "기존 독립 리뷰에서 검사 실행과 필수 검사 통과의 차이를 승인 조건 변질로 식별하고 정확한 문구와 영향을 제시한다. 별도 상시 에이전트나 tk-rewrite 호출을 추가하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "기존 독립 리뷰에서 검사 실행과 필수 검사 통과의 차이를 승인 조건 변질로 식별하고 정확한 문구와 영향을 제시한다. 별도 상시 에이전트나 tk-rewrite 호출을 추가하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "review-skill-prose-context-not-style",
+      "path": "success",
+      "prompt": "`$tk-review current worktree`. 스킬 본문을 재구성했습니다. 후보는 `The user approves the exact plan. After that approval, the controller edits only that scope.`입니다. 명시된 주체를 누락했다고 판단해야 하나요?",
+      "expected_output": "문맥에서 승인 주체와 범위를 복원할 수 있으므로 누락을 만들어내지 않는다. 문체 취향만으로 지적 사항을 생성하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "문맥에서 승인 주체와 범위를 복원할 수 있으므로 누락을 만들어내지 않는다. 문체 취향만으로 지적 사항을 생성하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "review-skill-approved-contract-change",
+      "path": "success",
+      "prompt": "`$tk-review current worktree`. 사용자가 `source main`에 검사 통과 후 정상 `fast-forward push`를 허용하도록 승인했습니다. 이전의 게시 금지 문장을 이 범위로 변경했고 그 밖의 금지는 유지했습니다.",
+      "expected_output": "승인된 의도적 계약 변경과 우발적 의미 변질을 구별하고 승인된 푸시 범위 밖의 권한 확대만 검사한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "승인된 의도적 계약 변경과 우발적 의미 변질을 구별하고 승인된 푸시 범위 밖의 권한 확대만 검사한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
     }
   ],
   "migrations": [

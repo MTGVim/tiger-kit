@@ -78,6 +78,17 @@ One seat completes both judgment axes and both procedural walks:
 2. **Change-risk**: inspect removed or `must-not-change` behavior, error/state/lifecycle paths,
    caller/callee and producer/consumer contracts, and change-owned cross-cutting risk.
 
+When the change substantially rewrites or relocates skill instructions, use the existing
+independent seat to read the changed prose in context against the prior text. For a body
+restructure, read the whole always-loaded body and its moved sections; inspect copied text
+once. Quote wording that leaves the actor, condition, exception, approval authority, failure
+state or rule precedence ambiguous, and show any changed behavior. Distinguish intended,
+approved contract changes from accidental meaning drift. Clear wording and explicit unknowns
+are valid; stylistic preference alone is not a finding. Restore the missing meaning plainly
+or fix placement and its read trigger rather than compressing again. Small edits that do
+not affect a behavior contract need no extra reader pass. This is part of fidelity/replay
+and change-risk inspection, not another seat or a `tk-rewrite` invocation.
+
 During change-risk inspection, when the diff derives identity, ownership, provenance,
 or routing from a string's shape (name equality, prefix/suffix, split, path position,
 compound or normalized key), construct two distinct valid entities that the actual

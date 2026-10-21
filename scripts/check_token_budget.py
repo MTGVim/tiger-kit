@@ -76,12 +76,17 @@ def collect_metrics(
         relative = path.relative_to(root).as_posix()
         try:
             size = path.stat().st_size
+            text = path.read_text(encoding="utf-8")
+            chars = len(text)
+            utf16_units = len(text.encode("utf-16-le")) // 2
             description_chars = _description_chars(path)
             block_bytes = _shared_block_bytes(path)
         except (OSError, UnicodeError, ValueError) as error:
             errors.append(f"{relative}: cannot measure skill context ({error})")
             continue
         metrics[f"skill_md:{relative}"] = size
+        metrics[f"skill_md_chars:{relative}"] = chars
+        metrics[f"skill_md_utf16_units:{relative}"] = utf16_units
         descriptions.append(description_chars)
         total_bytes += size
         common_bytes += block_bytes
@@ -140,6 +145,14 @@ def static_errors(root: Path):
             errors.append(f"{MANIFEST}: {limit_name} must be a non-negative integer")
         elif actual > ceiling:
             errors.append(f"token budget exceeded: {metric_name} {actual} > {ceiling} ({limit_name})")
+    # Reinjection is reported in characters; retain the independent byte-load cap.
+    char_ceiling = limits.get("max_skill_md_chars")
+    if type(char_ceiling) is not int or char_ceiling < 0:
+        errors.append(f"{MANIFEST}: max_skill_md_chars must be a non-negative integer")
+    else:
+        for key, value in metrics.items():
+            if key.startswith(("skill_md_chars:", "skill_md_utf16_units:")) and value > char_ceiling:
+                errors.append(f"skill reinjection budget exceeded: {key} {value} > {char_ceiling} (max_skill_md_chars)")
     for key, value in metrics.items():
         if key.startswith("always_read:"):
             group = key.split(":", 1)[1]
@@ -220,6 +233,8 @@ def compare_token_budget(baseline_root: Path, candidate_root: Path) -> list[str]
         errors.append(f"{MANIFEST}: max_growth_ratio must be non-negative")
         ratio = 0.1
     for metric, value in candidate_metrics.items():
+        if metric.startswith(("skill_md_chars:", "skill_md_utf16_units:")):
+            continue  # Character safety is absolute; byte metrics already govern growth.
         before = baseline_metrics.get(metric, 0)
         if value > before * (1 + ratio) and not rationales.get(metric):
             errors.append(

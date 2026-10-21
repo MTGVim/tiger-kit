@@ -39,7 +39,8 @@
         ],
         "max_bytes": 67000
       }
-    }
+    },
+    "max_skill_md_chars": 19999
   },
   "max_growth_ratio": 0.1,
   "rationales": {

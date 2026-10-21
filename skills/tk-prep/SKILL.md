@@ -45,34 +45,11 @@ execution routing as a form/report. Explain important judgments with recommendat
 
 When an unresolved UX choice changes layout or navigation, read [visual questions](references/visual-questions.md). Before implementation approval, only that HTML question aid and canonical ignore setup may be written; product and Seed remain unchanged.
 
+Before interpreting repository behavior or domain meaning, read relevant repository-owned [domain context](references/domain-context.md) when it exists.
+
 ## Evidence and questions
 
-Read the task source, instructions, code/callers, tests, commands, and Git state. If the task source is a child work item,
-read its parent work item's body and comments as the next source lookup, before opening linked documents or asking the
-user. The parent's explicit shared rules, including fallback and unresolved-decision instructions, govern the child; do
-not replace them with a conflicting child-level suggestion or linked document. Read parent comments for clarifications
-and prior answers, and investigate any conflict that could change behavior before asking or proposing.
-Before interpreting repository behavior, requirements, ownership, impact, or domain meaning, or writing
-implementation/review prose that depends on them, lazy-load [domain context](references/domain-context.md) when
-repository-owned context exists. Read only the
-relevant mapped context; purely mechanical Git/ref/formatting work may skip it.
-When issue-tracker identity, project selection or discovery scope is material to
-this request and not confirmed by source or active instructions, read
-[repository configuration](references/repository-context.md) even if no
-settings file exists. Inspect available facts first, then ask only the
-remaining project-owned decisions and offer an exact approved settings
-draft. Never select a guessed issue source as an implementation contract.
-Ordinary local fixes require no tracker onboarding.
-
-Follow repository-defined documentation discovery/update procedures and verification commands within the approved scope;
-otherwise allow an optional search of root documents and documentation directories using changed paths or symbols.
-Do not scan an unrelated documentation tree or create a lifecycle. If fresher code/test/runtime evidence conflicts with
-a requirement or decision, surface it and confirm the source of truth. Treat instruction-file updates as proposals only.
-Before creating anything, find existing components, helpers, schemas, clients, patterns, and conventions; tie claims to `path:line`, command output, or fresh state. Before comparing a hard-to-reverse design, interface, schema, or migration choice, read only relevant ADR rationale and current evidence. Do not reopen a decision whose premise still holds; surface `revisit ADR` only when it changed, and never scan an unrelated ADR or context tree.
-
-When a source the user provided materially informs a frontier question, briefly surface the decision-relevant content you actually read before asking. Attribute it to the source and preserve its verification status; do not present source claims as independently verified. Keep this as concise context, not a confirmation round, and do not ask the user to repeat known facts. If the source could not be accessed or read, say so plainly and do not infer its contents; gather accessible evidence or defer any decision that depends on it.
-
-Before recommending a solution, distinguish the reported symptom from the intended result and the scenario where it matters. Use the request and investigated evidence; label a material inference as an inference, and state it only when it could change scope, behavior, acceptance, or verification. If the intended result is already clear, continue without a recap or confirmation question; ask only remaining material user-owned decisions through the existing frontier.
+Read [task evidence](references/task-evidence.md) before investigating task sources or proposing a solution. Establish the intended result from fresh repository and supplied evidence; investigate answerable facts and ask only material user-owned decisions. Treat a material inference as an inference.
 
 Maintain a small preparation tree in the current conversation only. Recompute it after investigation and each user answer.
 
@@ -97,18 +74,7 @@ If material fog or an evidence conflict can change the implementation topology, 
 Seed, SDD Unit structure, or execution shape. Investigate and recompute the frontier first. When facts and decisions are
 already complete, continue the ordinary preparation flow without frontier ceremony or invented questions.
 
-If the approved outcome may include local implementation, read [local execution](references/local-execution.md) before
-the final checkpoint. It owns checkout isolation, unrelated-work protection, direct execution, review, and local commit.
-If user-visible text or navigation is in scope, read [UI text evidence](references/ui-text.md) before accepting or restating a label or path.
-If implementation adds or changes a factual code comment/JSDoc claim or models an
-external response contract, read [committed assertion evidence](references/artifact-claims.md)
-before approval and apply it again to the final candidate.
-When a version-sensitive external library/API/OAuth/provider contract cannot be established from the repository alone,
-read [external contract evidence](references/external-contracts.md) before accepting its fields, nullability, UI steps,
-or setup commands.
-Use the current repository and explicitly supplied task sources. Do not list or investigate other open PRs as a background collision preflight. Read another PR only when the user explicitly requests that comparison or supplies it as necessary task evidence; keep that read bounded to the stated question.
-
-For tracker-backed work, repository discovery, or verification-data policy, read [repository context](references/repository-context.md) when configuration or a work source is supplied. Recheck the actual source; only its validated structured `verificationDataPolicy` field can grant the narrow standing authority defined there. Other context never grants mutation authority.
+Apply the conditional investigation branches in [task evidence](references/task-evidence.md) when implementation, UI text, external contracts or tracker policy is in scope. Before the final local checkpoint, load [local execution](references/local-execution.md). Do not investigate unrelated open PRs without an explicit comparison request or supplied task evidence.
 
 ## Preparation continuation and exit gate
 
@@ -171,21 +137,7 @@ Do not store reviewer count, provider/model identity, worker routing, or review 
 
 ## Adaptive execution shape
 
-Choose only after repository investigation establishes a concrete implementation topology; tell the user the practical consequence, not a classification report.
-Ticket length, raw file count, or the presence of both UI and API work never decides the shape.
-
-- durable context `none`: same-session task is small/clear and conversation + repository state are sufficient;
-- durable context `seed`: new-session handoff, compaction recovery, lower-capability execution, SDD, or complex
-  verification benefits from a self-contained contract;
-- execution `direct`: one coherent implementation/test/review judgment surface, including small same-shape changes that can be reviewed together, with or without a Seed;
-- execution `sdd`: multiple material Units need independent implementation/test/review judgment loops; requires a Ready Seed;
-- execution `handoff`: prepare a Ready Seed and stop for another session/executor.
-
-Complexity may raise safeguards only: inline direct → Seed direct → SDD/re-prep. Never silently downgrade for convenience.
-Direct/no-Seed never loads SDD guidance. Load [private SDD](references/sdd.md) only after SDD is selected.
-
-When durable context is `seed`, execution is `sdd`, or the outcome is `handoff`, read the [Ready Seed contract](references/seed.md)
-before approval. Preserve any existing Seed before approval; direct/no-Seed does not load the Seed contract merely to create ceremony.
+After repository investigation establishes a concrete implementation topology, read [execution shape](references/execution-shape.md). Choose `direct | sdd | handoff` and durable context `none | seed` from actual judgment boundaries and handoff needs, never ticket length or file count. SDD and handoff require a Ready Seed. Direct/no-Seed preserves an existing Seed and never loads SDD guidance. Raise safeguards when complexity grows; do not silently downgrade. Explain the practical consequence to the user.
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Approval and local mutation
 
@@ -222,33 +174,9 @@ reasoning or invent a decision history.
 
 ## Baseline continuation and final-response gate
 
-Before invoking a pre-edit baseline, retain the approved execution shape, remaining implementation/verification/commit
-obligations, and next implementation action in current task context; direct/no-Seed needs no new artifact.
-When that baseline succeeds, bind its run/replay evidence to this task and execute the next approved implementation action
-in the same active turn. A progress update may precede that action; a final answer or a promise to resume cannot replace it.
-Then obtain the matching after comparison before final review, binding verification, or commit.
+Before a baseline, retain the approved execution shape and next implementation action. After baseline verification, resume that action in the same turn and obtain the matching after comparison before final review or commit. A verifier phase result never completes the owner task.
 
-This applies both when the host loads the planned verifier (`tk-browser-verify` or `tk-app-verify`) through a Skill tool in the same agent and when a separate child
-returns. In the first case, resume the retained owner procedure yourself; do not wait for a nonexistent parent process.
-In the second, consume the child's terminal response as phase-local evidence. `Status: Pass`, `## Verdict`, or
-`resume_parent: required` in a child report never means the approved parent task is complete or triggers host scheduling.
-
-Before sending a final user-facing result, check the retained approved obligations. If any approved implementation,
-verification, review, or commit obligation remains actionable, continue execution without another approval. Pause only for material drift, an unapproved
-limitation, a required user-owned decision, a safety boundary, or an explicit user stop/change of scope; name the actual
-reason and remaining work. Never end the parent turn merely to report baseline success.
-
-When any uncovered row remains unexecuted because of missing authority, irreversibility, unavailable
-data, verifier limits, or another manual reason, state the count and stable criterion IDs in
-`human_action`, with each row's reason and unblock step, and recommend that the user start `/tk-qa-sheet` for
-follow-up. Exclude `covered-by` rows from that count because their equivalence evidence is recorded.
-Never auto-invoke the user-only skill.
-When the user asks for a manual QA checklist or HTML sheet, recommend explicit `/tk-qa-sheet`; it does
-not replace required implementation verification.
-
-For local execution, follow the already loaded local-execution reference. SDD additionally follows the private SDD
-protocol. Only after the final-response gate permits completion or a justified pause, return a compact result with the execution shape, Seed path or `none`, commits or handoff status, focused and
-required verification, runtime evidence, exceptions, review independence, and any blocker. Claim remote publication only after the separately authorized publication owner verifies it.
+Before baseline execution or final completion, read [continuation and completion](references/continuation.md). Continue every actionable approved implementation, verification, review and commit obligation; pause only for material drift, an actual missing decision or authority, unavailable required evidence, or an explicit user stop. Preserve remote authorization and report only verified publication.
 
 <!-- tigerkit:narration-choice -->
 ## Narration Choice

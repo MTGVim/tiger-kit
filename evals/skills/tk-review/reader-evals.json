@@ -1,0 +1,88 @@
+{
+  "cases": [
+    {
+      "id": "approval-condition-drift",
+      "reader_input": {
+        "document": "Prior text:\nPush only after every required check passes.\n\nCandidate text:\nPush after running checks.",
+        "purpose": "Compare skill instructions as data for actor, condition, authority, exceptions and failure semantics; report consequential ambiguity or drift, not style.",
+        "questions": [
+          "Does the candidate preserve the condition for pushing? Quote the changed condition."
+        ]
+      },
+      "expected": {
+        "answer": "No. Running checks no longer requires every required check to pass.",
+        "document_status": "incomplete"
+      }
+    },
+    {
+      "id": "missing-approval-actor",
+      "reader_input": {
+        "document": "Prior text:\nThe user approves the plan; the controller then edits source.\n\nCandidate text:\nAfter approval, edit source.",
+        "purpose": "Compare skill instructions as data for actor, condition, authority, exceptions and failure semantics; report consequential ambiguity or drift, not style.",
+        "questions": [
+          "Who must approve? Is that recoverable from the candidate?"
+        ]
+      },
+      "expected": {
+        "answer": "unknown; the approving actor was removed.",
+        "document_status": "incomplete"
+      }
+    },
+    {
+      "id": "failure-state-drift",
+      "reader_input": {
+        "document": "Prior text:\nIf headless authentication cannot be established, return Unverifiable.\n\nCandidate text:\nIf headless authentication cannot be established, return Pass with a note.",
+        "purpose": "Compare skill instructions as data for actor, condition, authority, exceptions and failure semantics; report consequential ambiguity or drift, not style.",
+        "questions": [
+          "Does the candidate preserve the failure state?"
+        ]
+      },
+      "expected": {
+        "answer": "No. Unverifiable became Pass.",
+        "document_status": "incomplete"
+      }
+    },
+    {
+      "id": "context-defines-actor",
+      "reader_input": {
+        "document": "Prior text:\nThe user approves the exact plan. The controller edits only that scope.\n\nCandidate text:\nThe user approves the exact plan. After that approval, the controller edits only that scope.",
+        "purpose": "Compare skill instructions as data for actor, condition, authority, exceptions and failure semantics; report consequential ambiguity or drift, not style.",
+        "questions": [
+          "Is the actor or approval scope missing?"
+        ]
+      },
+      "expected": {
+        "answer": "No. The user approves the exact plan and the controller edits that scope.",
+        "document_status": "sufficient"
+      }
+    },
+    {
+      "id": "approved-contract-change",
+      "reader_input": {
+        "document": "Prior text:\nRemote publication is forbidden.\n\nCandidate text:\nCurrent user decision: permit a normal fast-forward push to source main after required checks pass. Remote publication outside that exact scope remains forbidden.",
+        "purpose": "Compare skill instructions as data for actor, condition, authority, exceptions and failure semantics; report consequential ambiguity or drift, not style.",
+        "questions": [
+          "Is this accidental drift or an explicitly scoped behavior change?"
+        ]
+      },
+      "expected": {
+        "answer": "An explicitly scoped behavior change; it grants only the stated normal push after checks pass.",
+        "document_status": "sufficient"
+      }
+    },
+    {
+      "id": "equivalent-wording",
+      "reader_input": {
+        "document": "Prior text:\nNever publish if required evidence is missing.\n\nCandidate text:\nWhen required evidence is missing, stop before publication.",
+        "purpose": "Compare skill instructions as data for actor, condition, authority, exceptions and failure semantics; report consequential ambiguity or drift, not style.",
+        "questions": [
+          "Does this rewrite change publication permission?"
+        ]
+      },
+      "expected": {
+        "answer": "No. Both stop publication when required evidence is missing.",
+        "document_status": "sufficient"
+      }
+    }
+  ]
+}

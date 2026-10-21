@@ -81,9 +81,7 @@ Use the disposition to make the outcome auditable, but explain its evidence and 
 If the review text already specifies the required outcome, do not ask the same question again.
 Investigate repository evidence independently, then explain the recommendation and rationale for decisions about reuse, simplification, testing, security, and user experience.
 
-Attribute each finding before proposing a code change. Compare its anchor (`path`, side, current/original line, and outdated state when available) with the fresh PR diff. An unchanged-line anchor is strong evidence for a `follow-up`, not a conclusive rule: the anchor may describe behavior caused elsewhere, and a changed-line anchor may still point to an unrelated concern.
-
-Keep the finding in the current PR when the PR introduced, exposed, or worsened the behavior, when the acceptance criteria require it, or when the evidence may involve runtime breakage, security, payment, data loss, permissions/account access, or public API compatibility. Do not automatically defer these cases because the comment anchor is unchanged. Ask for a user decision when causal ownership remains ambiguous or the consequence is high risk.
+Before proposing a code change or deferring feedback, read [feedback ownership](references/feedback-ownership.md). Establish causal ownership from the exact diff and behavior; an unchanged comment anchor alone never justifies deferral.
 
 When review text explicitly requires a code change, `fixed` is the default. Reclassifying it as `covered`, `rejected`, `accepted-risk`, or `follow-up` needs explicit user reapproval in the current turn or a verifiable prior approval record (conversation log or memory); approval wording in the agent's own earlier reply is not evidence. Independently verified evidence may support the proposed override but does not authorize it.
 
@@ -115,36 +113,7 @@ Before mutation, require fresh state plus one current approval for standalone wo
 
 Before mutation, explain the resolution plan for the current feedback in natural language.
 
-At minimum, cover:
-
-- each finding's disposition, causal evidence, and whether it changes code
-- implementation approach and existing code to reuse
-- how unnecessary complexity will be avoided
-- regression and new-test plan
-- any approved follow-up issue creation; otherwise state that follow-ups will not be ticketed
-- any special security or user-experience concerns
-- the `tk-browser-verify` plan for browser-visible changes
-- bounded publication scope for push/reply/resolve/re-review
-- whether the exact PR needs a base update or rebase, with the evidence and route if included
-- practical execution shape: reply-only, direct, or SDD
-
-For every code-changing route, keep the semantic Review Plan from the code-change reference in the approved current
-interaction even when no Seed is needed. Do not expose reviewer/model/worker routing as part of the user plan.
-
-For a code-changing plan, inspect the actual repository test surface and use [behavior-first testing](references/testing.md)
-to resolve RED feasibility or pre-edit GREEN for behavior-preserving refactoring, the focused command, required suite,
-realistic mutation, and any `N/A` or engineering exception.
-Explain the practical route among reply-only, direct+TDD, and SDD+TDD without exposing an internal classification form.
-Once a code-changing route is selected, read [code-change execution](references/code-change.md) before requesting approval;
-use its workspace and Seed sections for the plan, but perform no mutation until approval.
-
-Send feedback/CI failures with an obvious cause and exact regression seam directly through the existing testing path.
-Lazy-load [shared diagnosis](references/diagnosis.md) only for unknown-cause, intermittent/flaky, performance, or
-difficult-to-reproduce hard CI/regression cases, and establish a red-capable feedback loop before a fix hypothesis.
-Do not lock the first guess into a change without evidence that such a loop cannot be established.
-
-TigerKit decides only `reply-only | direct | SDD`; host/user model selection remains outside durable artifacts.
-Do not mark the task `Blocked` merely because model-control capability is unavailable.
+Before preparing that plan, read [resolution plan details](references/resolution-plan.md). Cover each disposition and evidence, implementation/testing/runtime plan, execution shape, and exact bounded publication actions. Code-changing paths must load the code-change and behavior-first testing contracts before approval.
 
 Obtain one user approval for the current plan. That approval covers the exact listed dispositions, code changes, replies,
 resolutions, issue creations, and any explicitly listed rebase plus bounded publication; it does not authorize adjacent
@@ -159,29 +128,7 @@ use, direct/SDD execution, review, and browser handoff.
 
 ## Comment authorship
 
-Comment authorship is a per-comment property, not an account property. Classify each feedback comment in this order:
-
-1. If its body carries a prefix from `toolAuthoredCommentMarkers` in the repository-scope
-   `$XDG_CONFIG_HOME/tigerkit/pr-triage.json`, classify it as `tool-authored` regardless of account type.
-2. Otherwise, if `user.type == "Bot"` or the login ends with `[bot]`, classify it as `tool-authored`.
-3. Otherwise classify it as `human-authored`.
-
-With no configured marker, apply only steps 2 and 3. Record that the human classification used no marker evidence;
-never invent a tool marker or infer tool authorship from writing style. A marker is comment-local: the same `User`
-account may have both tool-authored and human-authored comments.
-
-Use this classification only for the user-confirmation boundary before publishing a reply. A tool-authored finding needs
-no extra human-communication confirmation after the exact resolution/publication plan is approved. A human-authored
-finding requires current approval of the reply's exact substance, but the existing one-plan approval satisfies that
-requirement when it already covered that substance; never ask twice for the same decision.
-
-Authorship never changes whether a finding must be investigated or addressed. It also never controls re-review targets:
-`CHANGES_REQUESTED`, approval, and review-request capability belong to accounts, so those paths use account identity only.
-
-When a reviewer reply or current-head summary must explain a nontrivial architecture, flow,
-dependency or state change, read [GitHub-native PR visuals](references/github-visuals.md). Use
-Mermaid only when it reduces review effort and every relationship is verified; keep exact values
-and compact comparisons in GFM tables.
+Before preparing replies, read [comment authorship](references/comment-authorship.md). Classify per comment for communication approval; use account identity for re-review. Existing exact-substance approval satisfies the confirmation boundary.
 
 ## Publication
 
@@ -202,7 +149,7 @@ Then perform only the approved actions in this order.
 3. Post an exact reply to each feedback item with its disposition and evidence only when no matching submitted reply is already visible under the recovery identity checks. A `follow-up` reply links its approved issue or states that no ticket was created.
 4. Resolve only still-unresolved threads whose exact reply succeeded or was independently verified remotely and whose disposition was approved and verified. Keep unresolved ambiguity open.
 5. Fresh-read reviews/threads/checks.
-6. After an actionable reply or code change has been successfully published and all actionable threads are closed, fresh-read the exact current head and ensure exactly one current-head summary comment contains `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`, with `<HEAD_SHA>` replaced by the exact observed head SHA. This summary is required even when no re-review request is needed. If the run published no reply or code change, skip the summary. The summary must be posted or updated after thread closure. If the marker already exists exactly once for the current head, verify its timing and re-review markers; update that same comment when it predates closure or is incomplete instead of creating a duplicate. For each request-eligible reviewer in the frozen code-change set, include one hidden `<!-- tigerkit:pr-rereview:<HEAD_SHA>:<LOGIN> -->` marker in that same comment. Do not add this marker for an account bot, author, authenticated user, still-valid approver, mention-only reviewer, or reply-only finding. A summary for an earlier head does not satisfy this requirement. Write the summary as a real message to the reviewer, not an internal processing record. Address every identifiable human reviewer with `@mention`, map each finding to its disposition, evidence, code response, and follow-up ticket status in natural prose or a matching table, and state when a reviewer is mention-only. Do not publish a third-person completion log that only lists checks or totals.
+6. After publishing a reply or code change and closing all actionable threads, read [current-head summary](references/current-head-summary.md). Post or update exactly one summary for the fresh current head after closure, with the full `<!-- tigerkit:pr-summary:<HEAD_SHA> -->` marker, required reviewer markers and human mentions. Address each disposition and evidence to its reviewer; skip the summary only when no reply or code change was published.
 7. For every request-eligible reviewer in the frozen code-change set, and every human reviewer with a still-active `CHANGES_REQUESTED` review, request re-review for the exact current head unless that reviewer is already requested or has submitted a review after the current-head summary. A current request or a later review is completion evidence; the absence of a current request alone is not. Reply-only feedback with no code change does not require re-review.
 
 <!-- tigerkit:summary-body -->
@@ -229,30 +176,7 @@ Do not merge, close, tag, release, plain force push, or resolve unrelated thread
 
 ## Execution under Sweep
 
-For an exact PR handed off by an active `tk-pr-sweep`, do not ask again about material decisions already approved by the parent.
-The child confirms the PR fresh state and parent-approved scope, then proceeds immediately when they match.
-Include the applicable execution/authority contract text, source revision, exact PR/head, approved
-actions, workspace provenance and pending evidence in the handoff. A fresh child must receive
-the actual applicable rules, not an "already read" claim. A fork may reuse rules actually inherited
-and still present at the same revision; otherwise read the missing owning sections. A leaf with
-a complete task-local contract need not reload the whole controller SKILL.md merely for context;
-this never waives required conditional references, fresh-state checks or leaf/authority boundaries.
-If the parent did not approve the rebase route and its bounded history-rewrite publication, return the newly discovered conflict or base-drift decision to the parent instead of adding it to the approved work.
-
-Reply-only handoffs need no workspace solely for isolation. An explicitly approved index-only handoff uses the exact
-PR/head/row identity and run ownership under [code-change execution](references/code-change.md), without a workspace path.
-Other code-changing handoffs must include a newly established
-dedicated workspace path, exact PR head, and enough provenance to prove it belongs to that row. "Newly established" may
-mean a host-native workspace or a safe manual Git fallback; it never requires a nested manual worktree inside an already
-proven host-managed workspace. If the path/HEAD/provenance is missing or not fresh, return `Blocked` before mutation. Run
-the code-changing child from that workspace; never switch the parent `main` or `develop` checkout to the PR branch.
-
-If new feedback or head drift materially changes the approved scope, escalate only that PR back to the parent.
-Do not create `pr-sweep.md`, `pr-respond.md`, or worker receipt Markdown.
-For a code-changing PR that needs durable context, only `seed.md` in the proven dedicated workspace may be used as task context.
-
-The Respond controller may select SDD for its own PR. Normal implementer/reviewer/re-reviewer children remain leaf and may
-not recursively delegate. The parent Sweep decides cross-PR scheduling; this child never starts another PR controller.
+For an exact PR handed off by an active `tk-pr-sweep`, read [Sweep handoff](references/sweep-handoff.md) before mutation. Reuse matching parent approval, verify fresh PR/head and workspace provenance, and return material drift to the parent. Do not start another PR controller.
 
 ## Completion response
 

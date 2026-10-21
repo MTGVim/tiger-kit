@@ -44,29 +44,7 @@ Report mechanical and rendered behavior only within the inspected criteria. Rend
 overflow or interaction checks do not establish explanatory quality or learner understanding;
 the author must also read the explanation for missing premises and causal steps. Use the actual
 reported defect to choose a scenario, without a fixed screenshot count or another quality ledger.
-Nested execution uses the target, scenario, authentication, and evidence plan already
-defined by its parent. For standalone calls with no explicit criteria or only a scope
-phrase, resolve the full criterion set before starting any server or browser: inspect the
-same-task inventory in `.tigerkit/qa/` (including embedded `qa-data`) and the current
-`tk-prep` impact inventory or Seed. Use every row from the matching inventory, including
-`verification-gap` rows; only explicit user scope may narrow it. If more than one unrelated
-inventory matches and task identity cannot resolve it, ask before runtime startup. Never
-substitute a self-selected subset or a previous run's private plan.
-
-Read the QA sheet's top-level `head` and the Prep Seed's checkout/PR head to establish
-lineage. If both current-task sources exist, union their rows by exact stable criterion ID;
-keep IDs unchanged and do not merge merely similar wording. A conflicting duplicate ID or
-unprovable task/head lineage is a pre-runtime blocker to resolve or report, not permission to
-drop one source. A missing inventory head is stale/unknown and must be reconciled against the
-current diff before execution.
-
-If the inventory is bound to an older head or its labels/rows no longer match the current
-diff, disclose that once and reconcile the complete row map to the current head before
-runtime startup: update affected labels, add newly affected rows, and remove rows only with
-a diff-based reason. Preserve stable row IDs. Do not regenerate or overwrite the user-owned
-QA sheet; return the reconciled ID-to-criterion map so `/tk-qa-sheet` can consume it. Reuse
-current evidence only for the exact reconciled row and head; attempt every remaining in-scope
-row. An explicit narrower scope records all excluded inventory rows as `out-of-scope`.
+For nested verification, use the parent's exact target, scenario, authentication and evidence plan. For standalone acceptance calls, read [acceptance scope](references/acceptance-scope.md) before runtime startup; reconcile the full matching inventory and head lineage, preserve stable IDs and disclose every excluded or unexecuted row.
 
 This is a read-only acceptance verifier. Do not modify product/test/configuration source, Git commits, or remote state.
 Do not create a Markdown lifecycle ledger. For nested execution, return only compact evidence to the parent task.
@@ -89,25 +67,7 @@ a missing saved preference alone does not require a question. Continue safe sess
 verification within the active authorization; ask only for unresolved material choices or
 missing authority. A failed provider never authorizes an automatic fallback.
 
-All required scenarios must be executable headlessly. Use this priority order:
-
-1. no authentication required
-2. reuse an existing safe, verifiable, run-owned authenticated session/profile
-3. reuse the same worktree's protected authentication input and restore expired access through the application's supported renewal path under [environment](references/environment.md)
-4. inspect bootstrap and renewal contracts before the first input request under [environment](references/environment.md); request only missing fields, including refresh material required by that route, then inject through the repository/application-supported bootstrap
-5. use username/password only for fully non-interactive login without OTP, MFA, SSO, CAPTCHA, passkey, or device approval
-
-Do not guess the authentication injection method. Tie it to repository/application evidence or a user-specified method and
-verify the resulting authenticated state.
-
-Do not store usernames, passwords, tokens, OTPs, cookies, session values, recovery codes, or sensitive identities in
-the conversation, `.tigerkit/*.md`, prompts, logs, summaries, or child receipts.
-Record only non-sensitive facts such as `auth mode: token-headless` or `authenticated state established`.
-Retain authorized non-production access/session and route-required refresh material only in the protected
-worktree-local input under [environment](references/environment.md); stage cleanup and expiry do not delete it.
-Never retain production credentials or share token files between worktrees. Never print file contents.
-
-If safe headless authentication cannot be established, do not fall back to a visible browser; return `Unverifiable`.
+All scenarios must run headlessly. Before establishing or reusing authentication, read [headless authentication](references/headless-auth.md). Verify supported bootstrap/renewal and authenticated state; protect secrets in worktree-local input. If safe headless authentication cannot be established, return `Unverifiable` without a visible-browser fallback.
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Verification readiness
 
@@ -120,34 +80,9 @@ interaction. Return `Blocked` for a user-owned decision or required host setup a
 `Unverifiable` when safe verification cannot be established. A provider or MCP tool name alone
 never proves these prerequisites.
 
-## Parent Handoff
+## Parent Handoff and UI evidence discovery
 
-Use parent-provided values when available:
-
-- exact criterion, target/environment, and current candidate;
-- headless authentication and secret-free bootstrap method;
-- viewport, initial state, and server command/cwd/readiness;
-- screenshot mapping, replay procedure, nondeterministic exclusions, and allowed capture-only adjustments;
-- any approved test-data mutation scope: exact non-production environment, allowed entity types and create/update/delete
-  operations, and cleanup policy; absent or ambiguous scope means no data-changing interaction;
-- exact UI strings or verified entry paths;
-- exact visual reference or pre-change provenance and comparable viewport/DPR/zoom/font state when a design node,
-  mockup, baseline screenshot, as-is/to-be comparison, or render-affecting candidate exists;
-- redaction rule, `Pass` condition, and automated-regression disposition.
-
-If the Ready Seed already owns this information, do not ask for the same decisions again.
-If required values are missing but can be safely determined from repository evidence, fill them in.
-Return only outcome-changing user-owned decisions to the parent owner.
-
-## Read-only UI evidence discovery
-
-An evidence-discovery request may identify a known target URL, environment, role, and the missing label/path as its
-question; the unknown label is not a prerequisite for this mode. Keep all provider, headless, authentication, readiness,
-and interaction boundaries. Inspect visible text and navigation connections without submitting business mutations.
-After entry and initial rendering, perform the UI Evidence text inventory before selector-level lookup; use the safe scoped fallback when full-body output would expose sensitive data. Capture visible breadcrumbs/headers, then verify actual menu clicks separately when a traversed path is required.
-Return observed literals, displayed hierarchy, and actually traversed connections separately with provenance, plus an itemized list of unresolved labels/connections, limitations, and requested inputs. A successful locator match
-or accessible name alone does not prove visible wording; inspect the actual visible text. This discovery is not a
-Content comparison pass and never invents the parent's missing acceptance basis. Return evidence to the requesting owner.
+For nested execution or a read-only label/path discovery request, read [handoff and discovery](references/handoff-discovery.md). Reuse established parent decisions; determine missing facts safely and return only user-owned decisions. Discovery observes visible wording and traversed connections without business mutations; it does not invent acceptance criteria.
 
 ## Execution
 
@@ -164,8 +99,8 @@ Content comparison pass and never invents the parent's missing acceptance basis.
    - [safety](references/safety.md) when the scenario can create external/data/account effects or sensitive captures;
    - [session lifecycle](references/session-lifecycle.md) when creating, attaching, reusing, or cleaning browser/server/evidence resources.
 3. **Evidence reuse**: Before starting a server/browser or rerunning an expensive scenario, reread supplied run-owned evidence and its current candidate/environment provenance. Reuse it only when it already proves the exact current criterion; stale, mismatched, incomplete, or uninspected evidence requires a justified fresh run. Do not rerun merely because a previous producer already returned evidence.
-4. **Execution setup**: Without installing new dependencies, use the registered provider selected under [provider selection](references/provider-selection.md) and its current official usage guidance. Native/installed browser CLI, repository Playwright/Puppeteer, MCP and verified CDP paths remain eligible through that selection contract; honor explicit choices and do not silently switch by fallback order. Establish launch and runtime readiness under that contract before product interaction. Require effective modern headless behavior, not the exact literal `--headless=new`; accept a managed pipe or equivalent transport without a TCP endpoint. Recommend provider isolation, but accept an effectively headless dedicated persistent provider profile with an explicit isolation limitation and use a scenario-isolated context when supported. Attach paths still require observed headless mode, endpoint, and ownership before any browser call. If no compatible provider exists, make no browser call and hand the bounded setup request in [environment](references/environment.md) to `tk-wizard`; keep the browser criterion `Blocked`. If an attached process is headed, belongs to another run or the user, or cannot be proven, make no browser call and return `Unverifiable`.
-5. **Server**: If the parent requires a development server, this verifier owns starting the background process, readiness checks, and cleanup. For standalone execution, use one canonical safe command without another question when repository scripts, documentation, and tooling identify it unambiguously. Ask the user only when materially different viable commands remain or the environment/product choice is user-owned; never choose among genuine alternatives arbitrarily. Resolve the selected script and environment's host, port, and API target before launch, then prove project identity rather than accepting an open port alone. When the selected server is `react-scripts`/CRA, include `BROWSER=NONE` or the repository-documented equivalent to suppress auto-open. Use an available port and run the exact server command through the host-supported background process API under [environment](references/environment.md), recording the launch-returned owned PID/handle, cwd/port/command basis and bounded logs. Wait for application readiness rather than process exit; stop only recorded, verified owned processes.
+4. **Execution setup**: Before provider launch/attach or server execution, read [execution setup](references/execution-setup.md). Use the selected registered provider without installing dependencies or silently switching. Prove effective headless mode, target and run ownership before browser interaction; unsupported or user-owned/headed attach paths are `Unverifiable`.
+5. **Server**: This verifier owns any required development server, readiness and cleanup. Establish the exact safe command, environment and project identity; record launch-returned ownership and stop only verified run-owned processes. Resolve material command alternatives before launch.
 6. **Verification**: Start from a known state and inspect the required interaction and final state with evidence that directly proves each criterion. Visual or visible-state criteria require a non-empty run-owned screenshot containing the exact criterion and necessary context. Inspect it directly unless [visual](references/visual.md) permits an exact byte-identical bounded-region candidate to inherit its named inspected baseline; a target outside the captured viewport or scroll position cannot support that AC. Interaction, network, accessibility, or runtime-semantic criteria may instead use a trusted trace, accessibility tree, DOM/runtime observation, or request/response evidence when that is more direct. Do not require a ceremonial screenshot that proves nothing about the criterion.
 7. **Decision**: A baseline/after pair without `visual_contract: applied` cannot aggregate to `Pass`. Map each criterion to current evidence and assign `Pass | Fail | Blocked | Unverifiable`. When a visual reference or required baseline pair exists, apply the comparison contract in [visual](references/visual.md). Record `Pass | Fail | Unverifiable` for every required axis that was not discharged by byte-identical region evidence, include reference/candidate/delta measurements for geometry and typography, and report every measured mismatch. An unchecked axis or missing required measurement blocks aggregate `Pass`. For UI `Content` criteria, require exact rendered strings or a verified entry path from the parent basis; if neither exists, do not infer the element from a paraphrase, code identifier, or enum and return `Unverifiable`.
 8. **Cleanup**: After baseline as well as after/acceptance, immediately close all run-owned browser/server/resources, confirm recorded owned-server termination, and check for residue according to [session lifecycle](references/session-lifecycle.md). Preserve baseline screenshots and replay settings, not live processes. After final HEAD the verifier starts a fresh run-owned server/browser only when evidence needs replay.

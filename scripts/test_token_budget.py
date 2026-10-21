@@ -80,6 +80,51 @@ class TokenBudgetTest(unittest.TestCase):
             errors, _, _ = static_errors(candidate)
             self.assertTrue(any('token budget exceeded: skill_md_max_bytes' in e for e in errors), errors)
 
+    def test_reinjection_character_boundary_reports_exact_skill(self):
+        temporary, _, candidate = self.roots()
+        with temporary:
+            path = candidate / 'skills/tk-prep/SKILL.md'
+            header = '---\nname: tk-prep\ndescription: probe\n---\n'
+            path.write_text(header + 'x' * (19999 - len(header)), encoding='utf-8')
+            self.assertEqual(static_errors(candidate)[0], [])
+            path.write_text(path.read_text() + 'x', encoding='utf-8')
+            errors, _, _ = static_errors(candidate)
+            self.assertTrue(any('skills/tk-prep/SKILL.md' in e and '20000 > 19999' in e for e in errors), errors)
+
+    def test_unicode_character_budget_is_distinct_from_byte_budget(self):
+        temporary, _, candidate = self.roots()
+        with temporary:
+            path = candidate / 'skills/tk-prep/SKILL.md'
+            path.write_text('---\nname: tk-prep\ndescription: probe\n---\n' + '한' * 7000, encoding='utf-8')
+            errors, metrics, _ = static_errors(candidate)
+            self.assertEqual(errors, [])
+            self.assertGreater(metrics['skill_md:skills/tk-prep/SKILL.md'], 20000)
+            self.assertLess(metrics['skill_md_chars:skills/tk-prep/SKILL.md'], 20000)
+
+    def test_astral_characters_fit_both_common_reinjection_units(self):
+        temporary, _, candidate = self.roots()
+        with temporary:
+            path = candidate / 'skills/tk-prep/SKILL.md'
+            # Under 20k code points and 36KB, but exactly 20k UTF-16 units.
+            header = '---\nname: tk-prep\ndescription: probe\n---\n'
+            body = header + 'x' * (20000 - len(header) - 2000) + '\U0001f600' * 1000
+            path.write_text(body, encoding='utf-8')
+            self.assertLess(len(body), 20000)
+            self.assertLess(path.stat().st_size, 36000)
+            errors, _, _ = static_errors(candidate)
+            self.assertTrue(any('skill_md_utf16_units:skills/tk-prep/SKILL.md 20000 > 19999' in e for e in errors), errors)
+
+    def test_character_ceiling_requires_valid_manifest_value(self):
+        temporary, _, candidate = self.roots()
+        with temporary:
+            path = candidate / 'evals/token-budget.json'
+            manifest = json.loads(path.read_text())
+            for value in (None, True, -1, '19999'):
+                manifest['limits']['max_skill_md_chars'] = value
+                path.write_text(json.dumps(manifest), encoding='utf-8')
+                errors, _, _ = static_errors(candidate)
+                self.assertTrue(any('max_skill_md_chars must be a non-negative integer' in e for e in errors), errors)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -67,49 +67,11 @@ Retrospective splitting is eligible only for a new publication before a same-`he
 
 One invocation owns one coherent publication story: one PR or one linear stack. If unrelated work would require separate stacks or independent PRs, stop instead of hiding that scope expansion inside one publication.
 
-## `PR template`
+Before interpreting repository behavior or domain meaning, read relevant repository-owned [domain context](references/domain-context.md) when it exists.
 
-Before creating any `PR body`, check supported template locations on the default branch.
+## PR title and body
 
-- Root
-- `docs/`
-- `.github/`
-- `PULL_REQUEST_TEMPLATE/` under each location
-
-If exactly one template applies, preserve its heading order, checklists, HTML comments, and required sections.
-If multiple templates exist and there is no basis for choosing one, explain the candidates with one recommendation and ask the user to choose before publication approval.
-If the template cannot be read, do not invent a body.
-
-Choose title guidance in this order: explicit repository instruction, normative current PR template or maintainer
-documentation, verified recent merged-PR convention, then the existing fallback. History can establish a convention only
-when no higher-authority current guidance applies. Surface a conflict instead of silently overriding the stronger source.
-
-Describe the change by reviewable concern (behavior, module or contract), derived from `base...HEAD`,
-not by commit order. Do not list commit SHAs or one bullet per commit unless the template or repository
-instruction asks for it; the PR's commit list already carries that history. Recent merged-PR bodies
-inform tone and section use, not commit-by-commit structure. When updating an existing PR after new
-commits, re-derive the affected sections from the current `base...HEAD` instead of appending per-commit lines.
-
-Before finalizing a body whose architecture, flow, state transition, dependency or migration
-relationship is materially easier to review visually, read [GitHub-native PR visuals](references/github-visuals.md).
-Use Mermaid selectively and evidence-first; prefer a table for exact numeric comparisons and keep
-material meaning available in prose.
-
-Before finalizing the body, assess material reversibility and blast radius from the verified publication input: affected callers, users, surfaces, data and contracts; the concrete rollback or recovery path; and any destructive migration, irreversible external side effect or compatibility break. Reverting code does not restore deleted data or undo external actions. Preserve unknown recovery evidence instead of describing the change as cheaply reversible. Put useful facts in the template's existing risk, rollback, migration or deployment section; preserve its headings, order, comments and checklists, without adding a duplicate section. If no template or stronger format applies, the fallback body may include a compact risk/recovery section when it adds information. Low-risk changes need no empty risk prose or decorative one-way/two-way labels. This assessment grants no implementation or new investigation authority.
-
-Apply UI Evidence to PR bodies and QA steps. Before publication, reconcile each required UI literal and navigation claim against the supplied evidence. Include a compact UI evidence gap report in the preparation output: item, source/status (observed, render-bound source, user-provided, or `Unverifiable`), limitation, and requested input. State explicitly when no required gaps remain; use N/A only when there are no UI claims. Keep user-provided text distinct from independent observation and retain unresolved items in the PR/QA limitations. Ask for the missing exact label, contextual capture, or connection evidence item by item; incorporate supplied answers only for the claims they support. Do not start a new investigation from this publication-only phase.
-
-Use an entry path only when every step is verified; breadcrumb-only evidence permits a hierarchy description, not click instructions. If a required QA step or publication evidence depends on an unresolved item, stop publication as `Blocked | Unverifiable` and return the concrete input request. Optional gaps may remain only as explicit limitations, without invented labels or executable path guidance.
-
-When a title or body summarizes or interprets repository behavior, requirements, ownership, impact, or domain meaning,
-lazy-load [domain context](references/domain-context.md) when repository-owned context exists. Read only the relevant
-mapped context, preserve canonical vocabulary, and never replace verified UI literals with glossary terms.
-
-For a stack, apply the same title/template rules to every layer. Each layer body must explain only that layer's review surface and, when useful, its dependency on the preceding layer rather than duplicating the full feature summary into every PR.
-
-Source: the reversibility/blast-radius safeguard adapts `mattpocock/skills@d81f3a183412e71a5b1e84ca21bc1a35eea03a60`, `skills/engineering/pr/SKILL.md`. Keep TigerKit's template, evidence and publication contracts; omit the mandatory upstream body and labels. Original MIT notice: [LICENSE.txt](LICENSE.txt).
-
-For a user-owned QA inventory, recommend explicit `/tk-qa-sheet` outside this publication-only phase and consume only its returned Markdown section; never auto-invoke the user-only skill or start its investigation here.
+Before drafting or updating a PR title/body, read [PR body preparation](references/pr-body.md). Preserve the applicable default-branch template and normative title guidance, describe the current reviewable concern, and reconcile verified UI and risk/recovery evidence. Required unresolved evidence blocks publication; this publication-only phase grants no new product investigation or mutation authority.
 
 ## Evidence
 
@@ -150,65 +112,7 @@ For a stack, attach evidence to the layer that owns the browser-visible acceptan
 
 ## Publication approval packet
 
-Record the following exact information in the active approval packet. Keep it in the current interaction when the host can
-faithfully retain and reread a simple single-PR packet. Use the singleton `.tigerkit/pr-open.md` only for a stack, an
-explicit `save`, a multi-turn handoff/recovery need, or when the exact approval state cannot otherwise be retained. Never
-create per-run publication files. When the artifact is used, atomically replace stale completed content for the same owner
-and reread it before approval.
-
-```text
-Repository
-Publication shape: single | stacked
-PR operation: create | update
-PR state: draft | ready
-Base
-Original head ref + SHA + tree
-Template source/compliance
-PR evidence requirement/state
-Evidence manifest entries/paths
-Known exclusions
-
-Single publication:
-Head ref + SHA
-Push refspec
-Title
-Title convention basis: <repository instruction | normative template/docs | merged-title evidence | fallback>
-Body
-
-Stacked publication:
-See the required plan fields in [retrospective stack split](references/split-to-stack.md).
-```
-
-Any artifact owns only the current PR publication plan, not the product work plan or `worker` state.
-Create new PRs as `ready` unless the user explicitly requests `draft`.
-For an existing same-`head` PR, preserve its fresh-read state unless a state change was requested.
-
-Present the following naturally to the user. Content the user must read before approval appears inline
-in the conversation, or in the repository `.tigerkit/` artifact when the packet rules require a file.
-Never cite a session-private scratchpad path as reading material. Keep the exact full title/body in the
-active packet even when the user-facing preview omits boilerplate.
-
-- Summary of included changes
-- Recommended `single | stacked` publication shape and why
-- Preview the title and the sections this publication fills or changes for every PR being created or
-  updated so the user can quickly decide which items to include or omit. Show each section's item
-  arrangement and a one- or two-line summary in rendered Markdown without wrapping the preview
-  in a code fence. Use bold section labels instead of copying body `##` headings into the response.
-  Summarize GFM tables and image grids in one readable line (for example, two images paired
-  before/after); retain any material item-level choice or checklist change outside that summary.
-  Omit template boilerplate (HTML comments, unchanged headings and unchanged checklists) from the
-  preview; preserve it verbatim in the published body and keep the exact full Markdown in the
-  active packet (or `.tigerkit/pr-open.md` only when the packet rules require it). Show the full body
-  only on request. Preview formatting never rewrites the publication body or uploaded image Markdown.
-- Title-convention evidence and any mismatch with template guidance
-- Base/head; for a stack also present the exact bottom-to-top branches and preserved original tree invariant
-- Valid `PR state`
-- Check/evidence state
-- Exclusions/risks
-- One publication recommendation
-
-If `PR evidence requirement/state` remains `undecided`, include its image choices in the final question block at this
-checkpoint, after the concrete publication preview and before any write. Keep the existing packet fields.
+Before the publication checkpoint, read [approval packet](references/approval-packet.md). Bind the exact repository, single/stacked shape, operation, draft/ready state, base/head/tree, refspec, title/body, template, evidence and exclusions. Show a concrete rendered preview and retain the full packet; use `.tigerkit/pr-open.md` only under that reference's persistence conditions. New PRs default to ready; preserve an existing PR state unless a change was requested.
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Publication boundary
 
