@@ -16,7 +16,7 @@ Then classify drift.
 
 | Classification | Action |
 | --- | --- |
-| None | Continue from `Next step` without additional questions |
+| None | Continue from `Next step` without additional questions unless `Next step` or `Open questions` still awaits a user decision. In that case, read [question rounds](questions.md) before asking and end the resume report with that pending decision as its question block |
 | Nonessential `drift` | Record it and continue |
 | Significant progress `drift` | Update the `Handoff` from current evidence and confirm only the necessary decisions |
 | `Seed` contract `drift` | Do not resolve it in the `Handoff`; report that re-entering `tk-prep` is required |
