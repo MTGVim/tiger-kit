@@ -39,6 +39,20 @@ def check_header(page,title):
     parser=Header();parser.feed(page)
     if parser.parts.count(' '.join(title.split()))!=1:raise ValueError('course title must occur once in the page header')
 
+def check_visible_objectives(page,objectives):
+    class SvgText(HTMLParser):
+        def __init__(self):super().__init__();self.inside=False;self.value=''
+        def handle_starttag(self,tag,attrs):
+            if tag=='text':self.inside=True;self.value=''
+        def handle_data(self,data):
+            if self.inside:self.value+=data
+        def handle_endtag(self,tag):
+            if tag=='text':
+                if any(re.search(r'(?<![a-z0-9-])'+re.escape(id)+r'(?![a-z0-9-])',self.value) for id in objectives):
+                    raise ValueError('internal objective ID leaked into visible SVG text')
+                self.inside=False
+    SvgText().feed(page)
+
 def narration_seconds(course,base):
     total=0
     for lesson in course['lessons']:
@@ -255,6 +269,7 @@ def build(source,output,previous=None,collection_home=None):
     pages={l['id']:render({**payload(course,l,source.parent),'collection_home':collection_home}) for l in course['lessons']}
     for key,page in pages.items():
         check_header(page,course['title'])
+        check_visible_objectives(page,[o['id'] for o in course['objectives']])
         if '비동기 검색' in page and '비동기 검색' not in json.dumps(course,ensure_ascii=False):raise ValueError('fixture content leaked into generic course')
     with tempfile.TemporaryDirectory(prefix='.course-build-',dir=output.parent) as tmp:
         stage=Path(tmp)/'course';stage.mkdir()

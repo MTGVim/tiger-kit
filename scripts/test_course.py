@@ -44,6 +44,23 @@ class CourseTests(unittest.TestCase):
                 p=subprocess.run(['node','--check'],input=script,text=True,capture_output=True);self.assertEqual(p.returncode,0,p.stderr)
             if name!='index':
                 self.assertIn('id="caption-opacity"',html);self.assertIn('value="50"',html);self.assertIn('data-course-jump="lesson-2"',html);self.assertIn('id="reading-note"',html);self.assertNotIn('비동기 검색',html);self.assertNotIn('react.dev/reference/react/useEffect',html);self.assertIn('https://example.org/spec',html)
+    def test_internal_objectives_are_metadata_and_not_svg_copy(self):
+        from components import svg
+        slide=self.data['lessons'][0]['slides'][0]
+        self.assertIn('data-objectives="predict"',svg(0,slide))
+        builder.check_visible_objectives(svg(0,slide),['predict'])
+        with self.assertRaisesRegex(ValueError,'objective ID'):
+            builder.check_visible_objectives('<svg><text>목표: predict</text></svg>',['predict'])
+        builder.check_visible_objectives('<svg data-objectives="predict"><text>prediction</text></svg>',['predict'])
+        # A legacy component used to render all objective IDs in its footer.
+        legacy={**slide,'type':'code','code':['const n = 1;'],'visual':{'footnote':'조건이 맞으면 반영합니다.'}}
+        image=svg(0,legacy);builder.check_visible_objectives(image,['predict'])
+        self.assertNotIn('>predict</text>',image)
+        builder.build(self.source,self.root/'notice-free')
+        for file in (self.root/'notice-free').glob('*.html'):
+            self.assertNotIn('🤖',file.read_text());self.assertNotIn('AI가 작성',file.read_text())
+        self.assertIn('Permission is hereby granted',(self.root/'notice-free/lesson-lesson-1.html').read_text())
+
     def test_preflight_rejects_invalid_before_output(self):
         variants=[]
         x=fixture();x['lessons'][1]['id']='lesson-1';variants.append(x)
@@ -83,7 +100,10 @@ class CourseTests(unittest.TestCase):
         result=catalog.build(self.root);page=(self.root/'index.html').read_text()
         self.assertEqual(result['courses'],2);self.assertEqual(page.count('data-catalog-card data-search='),2)
         self.assertIn('topic-0/build/index.html',page);self.assertIn('코스와 강의 검색',page)
-        self.assertEqual(page.count('<svg viewBox="0 0 1600 900"'),2)
+        self.assertIn('aria-live="polite"',page);self.assertIn('id="catalog-clear"',page)
+        self.assertNotIn('🤖',page);self.assertNotIn('AI가 작성',page)
+        self.assertIn('<h1 class="ht-visually-hidden">학습 코스</h1>',page)
+        self.assertEqual(page.count('<svg data-objectives='),2)
         self.assertTrue(all(not x['rebuild_required'] and x['collection_home']=='../../index.html' for x in result['course_links']))
         self.assertEqual(catalog.build(self.root)['courses'],2)
         self.assertEqual(page,(self.root/'index.html').read_text())

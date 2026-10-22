@@ -61,11 +61,7 @@ Use the user-specified output path, or `.tigerkit/explanations/<topic-slug>.html
 
 When structure, flow, state or causality may become clearer in a figure, read
 [visual grammar](references/visual-grammar.md) before choosing its type and layout.
-Read [HTML output](references/html-output.md) for the shared offline and accessible renderer contract. Keep this artifact focused on one concept or system; prerequisite background does not authorize a course or learner-progress workflow. Include the exact footer:
-
-```text
-🤖 본 설명 자료는 AI가 작성했습니다.
-```
+Read [HTML output](references/html-output.md) for the shared offline and accessible renderer contract. Keep this artifact focused on one concept or system; prerequisite background does not authorize a course or learner-progress workflow.
 
 Write one complete document with a clear conversational voice by default; avoid repeating the
 same content in another mode or tab. Read only the relevant [technique entry](references/explanation-techniques.md) when a requested
@@ -76,7 +72,7 @@ mechanism, evidence, technical names and limitations.
 
 ## Verify and Return
 
-Read the final artifact without the conversation or attachment: can a reader state the target claim/question, its premises, conclusion and reason without guessing? Deictic phrases are valid only when their referent exists inside the artifact; do not ban the phrases themselves or repeat an already stated target. Inspect the generated HTML for self-containment, prerequisites before use, factual qualifications, matching diagram/prose terminology and arrows, readable text, accessibility, verified source links near the claims they support, and the visible footer. Preserve the complete explanation, caveats, sources, and attribution when adding interaction. When local rendering is available, inspect the rendered artifact and any interaction without starting a server or automatically opening the user's browser. Report execution evidence separately from the author's reading judgment. A render pass or
+Read the final artifact without the conversation or attachment: can a reader state the target claim/question, its premises, conclusion and reason without guessing? Deictic phrases are valid only when their referent exists inside the artifact; do not ban the phrases themselves or repeat an already stated target. Inspect the generated HTML for self-containment, prerequisites before use, factual qualifications, matching diagram/prose terminology and arrows, readable text, accessibility, verified source links near the claims they support, and the document structure. Preserve the complete explanation, caveats, sources, and attribution when adding interaction. When local rendering is available, inspect the rendered artifact and any interaction without starting a server or automatically opening the user's browser. Report execution evidence separately from the author's reading judgment. A render pass or
 answer reveal does not establish reader understanding. Keep build/static/browser results in the
 delivery receipt or evidence attachment; keep material content limits beside their claims.
 Never claim a render or browser test that did not run. Keep file edits within the artifact; creation grants no commits, publication, or unrelated implementation.

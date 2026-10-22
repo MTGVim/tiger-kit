@@ -77,8 +77,7 @@ file and fix every failure:
 
 The checker verifies that the table of contents links to every section, movement controls link to
 the top and bottom, local fragments resolve, citations link to reference entries with return links,
-URL schemes are safe, runtime HTML/CSS resources and common JavaScript network APIs are absent, and
-the footer has a positive AI-authorship notice. Safe source hyperlinks remain allowed. It does not
+URL schemes are safe, runtime HTML/CSS resources and common JavaScript network APIs are absent. Safe source hyperlinks remain allowed. It does not
 establish screen behavior. Use tk-browser-verify for the
 template's navigation, links, keyboard, no-JavaScript and reduced-motion checks. If the verifier or
 render environment is unavailable, record the screen result as Unverifiable with the reason in the

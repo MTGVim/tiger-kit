@@ -16,13 +16,6 @@ VOID_ELEMENTS = {
     "area", "base", "br", "col", "embed", "hr", "img", "input", "link",
     "meta", "param", "source", "track", "wbr",
 }
-AI_AUTHORSHIP = re.compile(
-    r"본\s*보고서는\s*AI가\s*작성했습니다\.?"
-    r"|This report (?:was (?:written|generated|created) with AI"
-    r"|(?:is|was) AI-generated)\.?"
-    r"|AI assistance was used to (?:write|prepare|create) this report\.?",
-    re.IGNORECASE,
-)
 UNSAFE_SCHEME = re.compile(r"^\s*(?:javascript|vbscript|data|file):", re.IGNORECASE)
 CSS_IMPORT = re.compile(r"@import\b", re.IGNORECASE)
 CSS_URL = re.compile(r"url\(\s*([\"']?)(.*?)\1\s*\)", re.IGNORECASE | re.DOTALL)
@@ -418,12 +411,6 @@ def check_report(source, template_source):
             errors.append(
                 f"reference #{reference_id} backlink mismatch: {'; '.join(details)}"
             )
-
-    if not any(
-        element.tag == "footer" and AI_AUTHORSHIP.search(element.text_content())
-        for element in elements
-    ):
-        errors.append("AI-authorship footer is missing")
 
     return errors, warnings
 

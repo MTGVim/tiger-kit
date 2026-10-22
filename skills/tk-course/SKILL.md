@@ -52,7 +52,7 @@ Default the topic directory to ignored `.tigerkit/courses/<topic>/`; honor expli
 Keep authored files at the topic root and generated files in its `build/` directory; incremental
 versions use a new output directory before reviewed replacement. Keep learning
 content separate from renderer code. Do not copy demo content, brand marks, engine setup or
-implementation notes into learning screens. Retain third-party notices and the AI footer.
+implementation notes into learning screens. Retain third-party notices.
 The output includes a single-file `index.html` and independently readable lesson pages.
 Keep the home copy on a theme-token surface distinct from the page canvas. The header shows
 the course title once; entering a lesson adds its title, and returning home clears that context.

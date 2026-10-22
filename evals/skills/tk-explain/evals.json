@@ -2,7 +2,7 @@
   "skill_name": "tk-explain",
   "evals": [
     {
-      "id": "self-contained-visual-explainer",
+      "id": "self-contained-visual-explainer-user-file",
       "path": "success",
       "prompt": "$tk-explain DNS가 동작하는 흐름을 `dns-eli5.html`에 만들어줘",
       "expected_output": "오프라인에서 열리는 그림 중심 단일 HTML과 정확한 경로",
@@ -21,11 +21,6 @@
           "text": "<svg"
         },
         {
-          "type": "path_text_contains",
-          "path": "dns-eli5.html",
-          "text": "🤖 본 설명 자료는 AI가 작성했습니다."
-        },
-        {
           "type": "output_contains",
           "text": "dns-eli5.html"
         },
@@ -41,6 +36,21 @@
         {
           "type": "terminal_status",
           "expected": "Pass"
+        },
+        {
+          "type": "path_text_absent",
+          "path": "dns-eli5.html",
+          "text": "🤖"
+        },
+        {
+          "type": "path_text_absent",
+          "path": "dns-eli5.html",
+          "text": "AI가 작성"
+        },
+        {
+          "type": "path_text_contains",
+          "path": "dns-eli5.html",
+          "text": "<html"
         }
       ]
     },
@@ -408,23 +418,18 @@
       ]
     },
     {
-      "id": "explain-interaction-preserves-explanation-and-sources",
+      "id": "explain-interaction-preserves-explanation-and-sources-user-file",
       "path": "success",
       "prompt": "$tk-explain 입력 중인 행이 재정렬될 때 `React key`와 상태 보존의 관계를 `key-learning.html`로 설명해줘. 초급 개발자가 직접 값을 바꾸며 배울 수 있어야 해.",
-      "expected_output": "직접 실험을 추가하면서 선수지식, 실제 동작, 주의사항, 공식 근거와 작성 표시를 함께 제공하며, 잘못 연결된 상태가 실험 카드에서 드러납니다.",
+      "expected_output": "직접 실험을 추가하면서 선수지식, 실제 동작, 주의사항, 공식 근거를 함께 제공하며, 잘못 연결된 상태가 실험 카드에서 드러납니다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "`props`, 컴포넌트 정체성, `local state`의 차이를 필요한 순서로 소개하고 같은 부모와 타입 조건, 안정적인 `key` 및 `index key`의 차이를 설명한다. 직접 조작과 시각적 비교가 본문이나 출처를 대신하지 않는다. 공식 근거로 확인한 주장에 연결되는 실제 `react.dev` 링크를 읽을 수 있으며, 작성 표시가 최종 문서에 보인다. 상태가 잘못 붙은 카드에서 현재 데이터와 원래 상태 소유자의 차이를 직접 읽을 수 있고 색상 이외의 단서도 제공한다. 장면 수나 독립된 단계 재생 섹션을 채우기 위해 텍스트를 나누지 않는다."
+          "criterion": "`props`, 컴포넌트 정체성, `local state`의 차이를 필요한 순서로 소개하고 같은 부모와 타입 조건, 안정적인 `key` 및 `index key`의 차이를 설명한다. 직접 조작과 시각적 비교가 본문이나 출처를 대신하지 않는다. 공식 근거로 확인한 주장에 연결되는 실제 `react.dev` 링크를 읽을 수 있다. 상태가 잘못 붙은 카드에서 현재 데이터와 원래 상태 소유자의 차이를 직접 읽을 수 있고 색상 이외의 단서도 제공한다. 장면 수나 독립된 단계 재생 섹션을 채우기 위해 텍스트를 나누지 않는다."
         },
         {
           "type": "path_exists",
           "path": "key-learning.html"
-        },
-        {
-          "type": "path_text_contains",
-          "path": "key-learning.html",
-          "text": "🤖 본 설명 자료는 AI가 작성했습니다."
         },
         {
           "type": "git_head_unchanged"
@@ -438,18 +443,33 @@
         {
           "type": "terminal_status",
           "expected": "Pass"
+        },
+        {
+          "type": "path_text_absent",
+          "path": "key-learning.html",
+          "text": "🤖"
+        },
+        {
+          "type": "path_text_absent",
+          "path": "key-learning.html",
+          "text": "AI가 작성"
+        },
+        {
+          "type": "path_text_contains",
+          "path": "key-learning.html",
+          "text": "<html"
         }
       ]
     },
     {
-      "id": "explain-topic-title-and-plain-copy",
+      "id": "explain-topic-title-and-plain-copy-user-file",
       "path": "success",
       "prompt": "$tk-explain `React reconciliation`에서 `key`가 왜 중요한지 초급~중급 프론트엔드 개발자를 위한 `react-key.html`로 설명해줘. 직접 예시를 조작하며 상태 보존을 확인할 수 있게 해줘.",
       "expected_output": "설명할 개념이나 질문을 제목에서 바로 식별할 수 있고 본문과 조작 문구가 구체적인 HTML을 만듭니다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "문서 제목과 화면의 주 제목만 읽어도 `React`의 `reconciliation`과 `key` 또는 컴포넌트 정체성이라는 설명 대상을 식별할 수 있다. 작은 상단 문구, 부제나 본문을 읽어야 주제를 알 수 있는 슬로건 제목은 통과시키지 않는다. 제목을 평문으로 바꾸면서 본문의 실제 동작, 조건, 출처와 작성 표시를 보존한다. 본문, 소제목, 캡션과 버튼은 실제 항목과 동작을 명시하고 장식적인 구호나 추상적인 말로 관계를 대신하지 않는다. 이미 명확한 기술 용어를 지우거나 단어 금지표로 과도하게 교정하지 않는다. 실제 입력과 조작의 실행 순서를 안내하고 각 조작 뒤 설명이 현재 결과와 일치한다."
+          "criterion": "문서 제목과 화면의 주 제목만 읽어도 `React`의 `reconciliation`과 `key` 또는 컴포넌트 정체성이라는 설명 대상을 식별할 수 있다. 작은 상단 문구, 부제나 본문을 읽어야 주제를 알 수 있는 슬로건 제목은 통과시키지 않는다. 제목을 평문으로 바꾸면서 본문의 실제 동작, 조건, 출처를 보존한다. 본문, 소제목, 캡션과 버튼은 실제 항목과 동작을 명시하고 장식적인 구호나 추상적인 말로 관계를 대신하지 않는다. 이미 명확한 기술 용어를 지우거나 단어 금지표로 과도하게 교정하지 않는다. 실제 입력과 조작의 실행 순서를 안내하고 각 조작 뒤 설명이 현재 결과와 일치한다."
         },
         {
           "type": "path_exists",
@@ -467,6 +487,16 @@
         {
           "type": "terminal_status",
           "expected": "Pass"
+        },
+        {
+          "type": "path_text_absent",
+          "path": "react-key.html",
+          "text": "🤖"
+        },
+        {
+          "type": "path_text_absent",
+          "path": "react-key.html",
+          "text": "AI가 작성"
         }
       ]
     },
@@ -1046,6 +1076,24 @@
       "to": "explain-content-led-optional-techniques",
       "allow_assertion_changes": true,
       "reason": "2026-10-18 회고 F3/F4에 따라 고정 기법·빈 완료 제목 요구를 선택적 표현으로 바꾸며 근거·산출물·권한·기계 반환 검증은 보존합니다."
+    },
+    {
+      "from": "self-contained-visual-explainer",
+      "to": "self-contained-visual-explainer-user-file",
+      "allow_assertion_changes": true,
+      "reason": "사용자 요청으로 직접 전달하는 HTML의 자동 AI 작성 표기를 제거합니다. 설명·출처·상호작용과 다른 검증 조건은 보존합니다."
+    },
+    {
+      "from": "explain-interaction-preserves-explanation-and-sources",
+      "to": "explain-interaction-preserves-explanation-and-sources-user-file",
+      "allow_assertion_changes": true,
+      "reason": "사용자 요청으로 직접 전달하는 HTML의 자동 AI 작성 표기를 제거합니다. 설명·출처·상호작용과 다른 검증 조건은 보존합니다."
+    },
+    {
+      "from": "explain-topic-title-and-plain-copy",
+      "to": "explain-topic-title-and-plain-copy-user-file",
+      "allow_assertion_changes": true,
+      "reason": "사용자 요청으로 직접 전달하는 HTML의 자동 AI 작성 표기를 제거합니다. 설명·출처·상호작용과 다른 검증 조건은 보존합니다."
     }
   ]
 }

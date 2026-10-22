@@ -34,7 +34,7 @@ class ResearchReportTest(unittest.TestCase):
   <section id="verification"><h2>Verification</h2></section>
   <section id="sources"><h2>Sources</h2><ol><li id="ref-1"><a href="https://example.test/source">Source</a> <a href="#cite-1-1">↩ 1</a></li></ol></section>
 </main>
-<footer id="document-bottom">🤖 본 보고서는 AI가 작성했습니다.</footer>
+<footer id="document-bottom">정본은 연구 자료입니다.</footer>
 {nav}
 {script}
 </body></html>'''
@@ -315,19 +315,14 @@ class ResearchReportTest(unittest.TestCase):
             '<a href="#cite-1-2">↩ 2</a>', '')
         self.assert_rejected(missing_second_backlink, 'backlink')
 
-    def test_ai_authorship_notice_must_be_positive_and_appear_in_a_footer(self):
-        for notice in (
-            '본 보고서는 AI가 작성하지 않았습니다.',
-            'This report was NOT written with AI.',
-        ):
-            html = self.report_html().replace(
-                '🤖 본 보고서는 AI가 작성했습니다.', notice)
-            self.assert_rejected(html, 'AI-authorship footer')
-        positive_english = self.report_html().replace(
-            '🤖 본 보고서는 AI가 작성했습니다.',
-            'This report was written with AI.',
-        )
-        self.assertEqual(self.check_report(positive_english).returncode, 0)
+    def test_user_file_has_no_automatic_authorship_notice_and_keeps_references(self):
+        root = Path(__file__).resolve().parents[1]
+        template = (root / 'skills/tk-research/assets/report.html').read_text()
+        self.assertNotIn('🤖', template)
+        self.assertNotIn('AI가 작성', template)
+        self.assertIn('실행 상태의 정본이 아닙니다.', template)
+        self.assertEqual(self.check_report(self.report_html()).returncode, 0)
+        self.assert_rejected(self.report_html().replace('<a href="#cite-1-1">↩ 1</a>', ''), 'backlink')
 
     def test_document_toc_defaults_to_left_rail_or_collapsible_mobile_control(self):
         root = Path(__file__).resolve().parents[1]

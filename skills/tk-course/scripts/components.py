@@ -40,9 +40,11 @@ def _svg(i,s):
             for row,y,key in zip(v['rows'],[376,490],['request-order','response-order']):
                 elements += [text(135,y,row['label'],34,'#61758c'),f(key,[rect(480,y-47,970,72,fill='none'),text(500,y+6,row['sequence'],52,weight='600')])]
             elements += [f('predict',[rect(90,637,1420,88,fill='none'),text(800,692,v['question'],39,'#355d8a',anchor='middle')]),f('practice',[text(800,765,v['hint'],30,'#61758c',anchor='middle')])]
-    elements += [f'<path d="M90 838H1510" stroke="#e0e6ee" stroke-width="2"/>',text(90,875,', '.join(s['objective_ids']),24,'#63768b'),text(1510,875,str(i+1),26,'#63768b',anchor='end')]
+    elements += [f'<path d="M90 838H1510" stroke="#e0e6ee" stroke-width="2"/>',text(1510,875,str(i+1),26,'#63768b',anchor='end')]
     return f'<svg viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="slide-title-{i} slide-desc-{i}" font-family="-apple-system,BlinkMacSystemFont,Apple SD Gothic Neo,Noto Sans KR,sans-serif"><title id="slide-title-{i}">{h(title)}</title><desc id="slide-desc-{i}">{h(s["transcript"])}</desc>'+''.join(elements)+'</svg>'
-def svg(i,s):return theme_svg(_svg(i,s))
+def svg(i,s):
+    objectives=h(' '.join(s.get('objective_ids',[])),quote=True)
+    return theme_svg(_svg(i,s)).replace('<svg ',f'<svg data-objectives="{objectives}" ',1)
 
 def content_svg(i,s):
     parts=[rect(0,0,1600,900,'#ffffff',rx=0),text(90,90,s.get('eyebrow',''),27,'#446991','600'),text(90,196,s['title'],56,weight='700')]

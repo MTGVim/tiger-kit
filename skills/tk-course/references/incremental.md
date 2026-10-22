@@ -31,7 +31,9 @@ paths from a different directory. Reject duplicate IDs and unsafe/missing entrie
 an HTML file carrying `<meta name="tigerkit-course-catalog">`, atomically; preserve unmarked files.
 The offline gallery shows the first slide preview, title, description, level, lesson count and
 recorded audio length (or an explicit unavailable label for older builds). Client-side search
-filters titles, descriptions, goals and lesson titles. Without JavaScript all cards remain readable.
+filters titles, descriptions, goals and lesson titles; an empty result offers a clear-and-refocus
+action. Keep gallery columns and thumbnail proportions stable as results disappear, limit title
+and description lines, and retain a one-row result surface. Without JavaScript all cards remain readable.
 Use the returned per-course `collection_home` value with `build_course.py --collection-home
 <relative-html-path>` when building each course from its authored input to a new output directory.
 For `<collection-dir>/<topic>/build/`, that value is `../../index.html`. The header link exits the

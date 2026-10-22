@@ -45,11 +45,13 @@ test('actual course-jump listener reads the updated resume target on click',()=>
 
 test('catalog search filters title description objectives and lesson names without storage or network',()=>{
  const cards=['React 요청 경합 응답 순서 경쟁 조건','테스트 최적화 번들 빌드 Vitest 실행'].map(text=>({dataset:{search:text},hidden:false}));
- let handler;const nodes={'catalog-search':{value:'',addEventListener:(event,fn)=>{assert.equal(event,'input');handler=fn;}},'catalog-count':{},'catalog-empty':{},'catalog-search-controls':{hidden:true}};
- vm.runInNewContext(fs.readFileSync(path.join(R,'catalog.js'),'utf8'),{document:{getElementById:id=>nodes[id],querySelectorAll:()=>cards}});
+ let handler,clear,focused=false;const nodes={'catalog-search':{value:'',focus:()=>focused=true,addEventListener:(event,fn)=>{assert.equal(event,'input');handler=fn;}},'catalog-count':{},'catalog-empty':{},'catalog-empty-title':{},'catalog-clear':{addEventListener:(_,fn)=>clear=fn},'catalog-search-controls':{hidden:true}},grid={hidden:false};
+ vm.runInNewContext(fs.readFileSync(path.join(R,'catalog.js'),'utf8'),{document:{getElementById:id=>nodes[id],querySelectorAll:()=>cards,querySelector:()=>grid}});
  assert.equal(nodes['catalog-search-controls'].hidden,false);assert.deepEqual(cards.map(x=>x.hidden),[false,false]);
  for(const [query,want] of [['ｒｅａｃｔ',[false,true]],['응답 순서',[false,true]],['Vitest 실행',[true,false]],['없는 강의',[true,true]],['  ',[false,false]]]){nodes['catalog-search'].value=query;handler();assert.deepEqual(cards.map(x=>x.hidden),want);assert.equal(nodes['catalog-empty'].hidden,!want.every(Boolean));}
  assert.equal(nodes['catalog-count'].textContent,'전체 2개 중 2개 코스');
+ nodes['catalog-search'].value='<없는 검색어>';handler();assert.equal(grid.hidden,true);assert.equal(nodes['catalog-empty-title'].textContent,"'<없는 검색어>'와 일치하는 코스가 없습니다.");
+ clear();assert.equal(nodes['catalog-search'].value,'');assert.equal(focused,true);assert.equal(grid.hidden,false);assert.equal(nodes['catalog-empty'].hidden,true);assert.deepEqual(cards.map(x=>x.hidden),[false,false]);
 });
 
 test('actual header context exposes lesson titles and clears them on return home',()=>{

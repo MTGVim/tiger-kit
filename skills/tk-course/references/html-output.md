@@ -93,7 +93,7 @@ For example, adapt the labels/IDs:
 ```
 
 Place the footer directly under `.ht-document`, after `main`; shared CSS centers it.
-Separate source/version, date and AI authorship into paragraphs when present.
+Separate source/version and date into paragraphs when present.
 
 Inline the existing theme script after the markup for optional current-section marking,
 Escape/outside dismissal, focus return and focus transfer to native anchor targets. Do not
@@ -180,6 +180,9 @@ Their offline/accessibility principles still apply. Document portions of QA shee
 navigation rules without changing the behavior of their test/checklist interface.
 
 ## Reader contract
+
+User-delivered files omit automatic AI-authorship notices. Preserve source/license attribution.
+Direct remote posts follow their posting skill.
 
 Rewrite source prose for the reader instead of dumping state, findings or logs. Preserve exact
 code, identifiers and necessary quotations as marked evidence, with context. Before finalizing
@@ -296,7 +299,7 @@ Keep ordinary prose and tables on the shared semantic components without loading
 For document-like HTML, make deterministic static checks the default before delivery:
 
 For research reports, every citation points to a reference entry and each reference entry links back
-to every citation occurrence that cites it. Preserve the explicit AI-authorship notice in the footer.
+to every citation occurrence that cites it.
 
 - Every local fragment `href` resolves to exactly one ID, and IDs are unique.
 - When document navigation is present, the table of contents links to every section and the

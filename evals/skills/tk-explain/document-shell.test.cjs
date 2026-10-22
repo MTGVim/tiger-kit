@@ -20,7 +20,7 @@ function html(css=asset('html-theme.css')) {
   if (process.env.TK_FONT_FILE) css += `@font-face {font-family:FixtureKorean;src:url(data:font/otf;base64,${fs.readFileSync(process.env.TK_FONT_FILE).toString('base64')})} :root {--font-family:FixtureKorean,sans-serif}`;
   let markup = reference.match(/```html\n([\s\S]*?)\n```/)[1];
   markup = markup.replace('<!-- Sections. -->', `<h1>공용 문서 셸 검증</h1><p class="ht-lede">본문과 footer를 가운데 정렬합니다.</p><section id="overview"><h2>목표와 결론</h2><h3>코드 원문을 보존합니다.</h3>${code}<div style="height:1000px" aria-hidden="true"></div></section><section id="conditions"><h2>판단 조건</h2><table class="ht-table-scroll"><tbody><tr><td>본문 크기</td></tr></tbody></table><dl><dt>조건</dt><dd>정렬과 원문 보존</dd></dl></section><section id="sources"><h2>참고문헌</h2><ol><li id="ref-1">현재 셸 소스</li></ol></section>`)
-    .replace('<footer id="document-bottom">...</footer>', '<footer id="document-bottom"><p>기준: TigerKit 공용 문서 셸</p><p>작성일: 2026-10-21</p><p>AI가 작성했습니다.</p></footer>');
+    .replace('<footer id="document-bottom">...</footer>', '<footer id="document-bottom"><p>기준: TigerKit 공용 문서 셸</p><p>작성일: 2026-10-21</p></footer>');
   return `<!doctype html><html lang="ko" data-default-theme="system"><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>공용 셸 검증</title><style>${css}</style></head>${markup}<script>${asset('html-theme.js')}</script></body></html>`;
 }
 test('centered shell, footer, status, code and native fallbacks', {skip:!process.env.TK_PLAYWRIGHT_MODULE || !process.env.TK_CHROMIUM_EXECUTABLE}, async () => {
