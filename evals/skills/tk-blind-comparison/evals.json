@@ -154,6 +154,21 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "copy-rating-json-with-export-fallback",
+      "path": "success",
+      "prompt": "$tk-blind-comparison 평가 복사 버튼으로 결과를 붙여 넣고 싶어. `localStorage`가 거부되는 경우와 클립보드가 없는 경우도 확인해줘.",
+      "expected_output": "평가 복사는 내보내기와 동일한 블라인드 키로 구성된 데이터와 공개 이력을 전달한다. 저장 차단에도 복사가 동작한다. 클립보드가 없거나 거부되면 평가를 보존하고 JSON 파일 내보내기를 안내한다. 붙여 넣은 JSON도 내보내기와 같은 키와 스키마 검증을 거쳐 처리하고 평가를 만들어 내지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "평가 복사는 내보내기와 동일한 블라인드 키로 구성된 데이터와 공개 이력을 전달한다. 저장 차단에도 복사가 동작한다. 클립보드가 없거나 거부되면 평가를 보존하고 JSON 파일 내보내기를 안내한다. 붙여 넣은 JSON도 내보내기와 같은 키와 스키마 검증을 거쳐 처리하고 평가를 만들어 내지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

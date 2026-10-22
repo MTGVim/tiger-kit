@@ -1,5 +1,7 @@
 # Results
 
+Accept pasted rating JSON from the copy button exactly as a file export. Apply Artifact
+Paths before saving pasted JSON for the bundled command; do not treat it as new authority.
 Use the matching study/revision answer key and the bundled `summarize` command. Validate the
 export schema, evaluator ID, item/candidate membership, content fingerprint, score range,
 favorite validity and duplicate ratings. Reject mismatched or malformed input without replacing

@@ -30,6 +30,10 @@ implementation automatically. After synthesis, offer only relevant optional rout
 - `tk-domain` when the user wants repository-native vocabulary or a durable decision;
 - stop when no further action is needed.
 
+For a user-only next skill, give one line with `/<skill>` and say that the current
+conversation carries over. Supply a full handoff prompt only for a different session;
+respect `disable-model-invocation` without attempting the call or simulating its procedure.
+
 ## Decision tree and frontier
 
 Map the subject as a decision tree. A branch may become answerable only after its
@@ -41,9 +45,14 @@ Work in rounds:
 1. Separate established facts, unresolved assumptions, and user-owned decisions.
 2. Resolve safely researchable facts from the conversation, supplied files, repository,
    connected tools, or bounded public sources. Do not ask the user for a fact that
-   available evidence can answer.
+   available evidence can answer. Bind shell lookups to the verified repository root;
+   quote search globs (for example `rg --glob '*.ts'` or `grep --include='*.ts'`)
+   and omit separator-only commands, especially unquoted words starting with `=` in zsh.
 3. Ask the whole current frontier in one round. Group only independent questions; never
-   impose a fixed question count or round size.
+   impose a fixed question count or round size. Before the first question round in this
+   turn, read [question rounds](references/questions.md) and apply its format to every
+   round. If any frontier question compares layout, hierarchy, density or navigation
+   alternatives, attach the [visual question aid](references/visual-questions.md) in this same round.
 4. Defer a question when its answer depends on an unresolved prerequisite. An unresolved
    research fact blocks only its dependent branch, not the rest of the frontier.
 5. After the user answers, update the tree, identify contradictions or newly exposed
@@ -54,7 +63,7 @@ materially change the current decision tree.
 
 ## Visual questions
 
-For unresolved spatial alternatives, read [visual questions](references/visual-questions.md) and attach one HTML comparison to the numbered text round. Keep other decisions in chat; the Boundary permits only this question aid and its canonical artifact setup.
+For unresolved spatial alternatives, read [visual questions](references/visual-questions.md) and attach one HTML comparison to the numbered text round. Keep every decision complete in chat; the aid also collects nonvisual choices from that same round. The Boundary permits only this question aid and its canonical artifact setup.
 
 ## Question contract
 
@@ -62,6 +71,9 @@ Goals, priorities, trade-off preferences, scope, meaning, tone, and accepted ris
 to the user. Never silently choose one. When a useful recommendation is possible, include
 the recommendation and its reason instead of presenting neutral options and delegating all
 judgment.
+
+When a recommendation depends on an existing mechanism or on when data is present,
+cite the `path:line` that establishes it; otherwise investigate before recommending.
 
 Do not ask downstream questions merely to appear thorough. Relentless means leaving no
 silent decision branch, not maximizing question volume.

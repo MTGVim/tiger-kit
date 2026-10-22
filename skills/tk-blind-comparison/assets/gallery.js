@@ -90,11 +90,19 @@
     button.setAttribute('aria-pressed', String(showing)); button.textContent = showing ? '결과 가리기' : '결과 공개';
     renderSummary();
   });
-  document.getElementById('export').addEventListener('click', () => {
-    const payload = {schema: 1, study: data.study, version: data.version, evaluator: state.evaluator, revealed: state.revealed,
+  const ratingPayload = () => ({schema: 1, study: data.study, version: data.version, evaluator: state.evaluator, revealed: state.revealed,
       archive: state.entries,
-      ratings: Array.from(current, ([key, card]) => ({item: card.item, candidate: card.candidate, fingerprint: card.fingerprint, ...cleanEntry(entry(key))}))};
-    const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
+      ratings: Array.from(current, ([key, card]) => ({item: card.item, candidate: card.candidate, fingerprint: card.fingerprint, ...cleanEntry(entry(key))}))});
+  document.getElementById('copy').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(JSON.stringify(ratingPayload(), null, 2));
+      status.textContent = '평가 JSON을 복사했습니다. 대화에 붙여 넣어 주세요.';
+    } catch {
+      status.textContent = '평가를 복사하지 못했습니다. 평가 JSON 내보내기를 사용해 주세요. 기존 평가는 유지됩니다.';
+    }
+  });
+  document.getElementById('export').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(ratingPayload(), null, 2)], {type: 'application/json'});
     const url = URL.createObjectURL(blob); const a = document.createElement('a');
     a.href = url; a.download = 'blind-ratings.json'; document.body.append(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);

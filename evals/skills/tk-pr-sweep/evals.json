@@ -581,6 +581,29 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "multi-repository-briefing-identifies-every-pr",
+      "path": "success",
+      "prompt": "$tk-pr-sweep `game-admin`과 `game-web`을 실행 모드로 훑었어. 각 저장소에 승인 대상 #101이 있고 대기 대상도 있어. 승인 전 브리핑을 작성해줘.",
+      "expected_output": "모든 승인 표 첫 칸과 모든 대기 항목에 저장소 약칭과 PR 번호를 표시한다. 대기 항목이 1-2개인 목록과 3개 이상인 표 모두 식별 가능해야 한다. 저장소 약칭이 충돌하면 `owner/repo`로 구별한다. 승인 표는 PR당 한 행이며 승인 질문 바로 앞에 있고 `--report` 읽기 전용 성격은 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "모든 승인 표 첫 칸과 모든 대기 항목에 저장소 약칭과 PR 번호를 표시한다. 대기 항목이 1-2개인 목록과 3개 이상인 표 모두 식별 가능해야 한다. 저장소 약칭이 충돌하면 `owner/repo`로 구별한다. 승인 표는 PR당 한 행이며 승인 질문 바로 앞에 있고 `--report` 읽기 전용 성격은 유지한다."
+        },
+        {
+          "type": "output_contains",
+          "text": "game-admin #101"
+        },
+        {
+          "type": "output_contains",
+          "text": "game-web #101"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

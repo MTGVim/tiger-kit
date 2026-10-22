@@ -19,7 +19,7 @@ and operating burden; a role perspective grants no organizational decision autho
 
 ## Visual questions
 
-If roadmap choices require comparing screen arrangements, read [visual questions](references/visual-questions.md) for an HTML question aid without a separate save request. Continue nonvisual planning in conversation and preserve the prohibition on implementation or publication.
+If roadmap choices require comparing screen arrangements, read [visual questions](references/visual-questions.md) for an HTML question aid without a separate save request. Keep planning complete in conversation; that aid may also collect the same round's nonvisual choices. Preserve the prohibition on implementation or publication.
 
 ## Adaptive interview
 

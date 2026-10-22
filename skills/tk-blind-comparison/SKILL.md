@@ -42,13 +42,15 @@ to `tk-grill`; candidate creation to `tk-prototype`, `tk-tts` or the relevant pr
    cues, not source inspection. Never claim cryptographic or exam security.
 5. Verify the saved local HTML through `tk-browser-verify`: desktop/mobile and both themes,
    media decode, all failure cards, keyboard controls, 1-5 scores, notes, optional favorite,
-   reload, candidate addition, JSON import/export, reveal-only averages and storage refusal.
+   reload, candidate addition, JSON import/export, rating copy and clipboard refusal,
+   reveal-only averages and storage refusal. Copy uses the same blind-key payload as
+   export; if clipboard access fails, retain ratings and offer file export.
    The builder embeds media; open via `file://` without hosting. Browser `localStorage` on
    local files varies: show save failures and offer JSON backup/import; file relocation or a
    different browser may require importing the previous export. Report unrun checks honestly.
 6. Return the local HTML and answer-key paths, revision/counts, transformations, actual checks
    and remaining human evaluation. Publish only on explicit request. Wait for actual ratings;
-   never fabricate scores. Read [results](references/results.md) when a JSON export arrives,
+   never fabricate scores. Read [results](references/results.md) when copied JSON or a JSON export arrives,
    validate against its matching key, aggregate counts/means and item tables, and state evaluator
    count, missing scores, failures and sample limitations. Compare available objective metrics
    against low-scoring items without treating subjective means as statistical proof.

@@ -22,7 +22,7 @@ select,button{font:inherit;padding:8px;border:1px solid var(--line);border-radiu
 <main><p>각 항목의 후보를 비교하고 1-5점과 메모를 남겨 주세요. 라벨은 항목마다 달라집니다.</p>
 <details><summary>비교용 사본에 적용한 가공</summary><ul>@@TRANSFORMS@@</ul></details>
 <p>원본은 보존했습니다. 이 파일은 화면의 이름을 가립니다. 소스 분석에 대한 비밀 보호를 제공하지 않습니다.</p>
-<div id="toolbar" class="gallery-toolbar" hidden><button id="export" type="button">평가 JSON 내보내기</button><button id="import" type="button">평가 JSON 가져오기</button><input id="import-file" type="file" accept="application/json,.json" hidden><button id="reveal" type="button" aria-pressed="false">결과 공개</button></div>
+<div id="toolbar" class="gallery-toolbar" hidden><button id="copy" type="button">평가 복사</button><button id="export" type="button">평가 JSON 내보내기</button><button id="import" type="button">평가 JSON 가져오기</button><input id="import-file" type="file" accept="application/json,.json" hidden><button id="reveal" type="button" aria-pressed="false">결과 공개</button></div>
 <p id="status" role="status" aria-live="polite"></p><noscript><p>비교 자료는 아래에서 볼 수 있습니다. 점수·메모·저장·결과 공개에는 JavaScript가 필요합니다.</p></noscript>
 <div id="summary" class="summary-scroll" hidden></div>@@SECTIONS@@
 <footer><p>브라우저의 로컬 저장소에 평가를 저장합니다. 파일 이동·브라우저 변경 전에 JSON으로 내보내 주세요. 저장이 차단되면 JSON 백업을 사용해 주세요.</p></footer></main>

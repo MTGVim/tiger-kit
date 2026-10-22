@@ -102,6 +102,10 @@ memory, a learning corpus, or automatic repository scanning.
 Return the changed path, canonical terms or decision, evidence basis, verification, and one actual status:
 `Pass | Blocked | Unverifiable | Fail`.
 
+If the requested next step is a user-only skill, give one line with `/<skill>` and say
+that the current conversation carries over. Provide a full handoff prompt only for
+a different session; respect `disable-model-invocation` without calling or simulating it.
+
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 

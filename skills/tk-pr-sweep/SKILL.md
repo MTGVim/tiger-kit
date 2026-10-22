@@ -140,9 +140,13 @@ Do not mark the entire Sweep as `Blocked` merely because model controls are unav
 For an execution-mode pre-approval briefing, put the approval target immediately before its question block:
 
 1. Start with one line naming the repositories read and any read failures.
-2. If fresh triage found PRs that must wait or are report-only, show them first under an `⏳` heading. Use a narrow table with PR, state and reason when there are at least three; use one line per PR for one or two. Omit this section when empty.
-3. Show PRs that need approval under a `🔴` heading. Use one approval-contract table row per PR, including the exact PR and head, work and publication scope, verification, and risk or user decision. Keep the table even when it has one row. Add at most two short lines per PR below the table for cause or conflict scope.
+2. If fresh triage found PRs that must wait or are report-only, show them first under an `⏳` heading. Use a narrow table with repository/PR, state and reason when there are at least three; use one line per PR for one or two, each starting with the repository short name and PR number. Omit this section when empty.
+3. Show PRs that need approval under a `🔴` heading. Use one approval-contract table row per PR, including the repository, exact PR and head, work and publication scope, verification, and risk or user decision. Put the repository short name and PR number in the first column (for example `game-admin #101`). Keep the table even when it has one row. Add at most two short lines per PR below the table for cause or conflict scope.
 4. Put the approval question block directly after the approval table and any permitted short cause/conflict notes. Make it the final substantive block; do not insert waiting items or unrelated explanation before it.
+
+The short name is the repository name without the owner. Include it in every approval
+row and waiting item whenever the Sweep scope covers more than one repository; use
+`owner/repo` for colliding short names so each PR remains unambiguous.
 
 If no PR needs approval, omit the approval table and question. This layout applies to execution-mode planning; `--report` remains a short, read-only status briefing.
 

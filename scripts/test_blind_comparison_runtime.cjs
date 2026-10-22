@@ -13,7 +13,7 @@ const payload = (ratings, extra = {}) => ({schema: 1, study: 'study', version: '
 const saved = entries => JSON.stringify({schema: 1, study: 'study', evaluator: 'Alice', revealed: false, entries});
 
 // Run the actual application with only its DOM/storage/download boundary replaced.
-function gallery(candidates = ['a', 'b'], raw = null) {
+function gallery(candidates = ['a', 'b'], raw = null, boundary = {}) {
   const handlers = {}, nodes = {};
   const node = name => nodes[name] ||= {
     textContent: '', hidden: true, value: '',
@@ -27,12 +27,19 @@ function gallery(candidates = ['a', 'b'], raw = null) {
     querySelector: selector => node(`${c}:${selector}`),
     addEventListener: (event, callback) => {handlers[`${c}:${event}`] = callback;}
   }));
-  let stored = raw, download, writes = 0;
+  let stored = raw, download, copied, writes = 0;
   vm.runInNewContext(source, {
     document: {getElementById: node, querySelectorAll: () => samples, createElement: () => node('download'), body: {append() {}}},
-    localStorage: {getItem: () => stored, setItem: (_, text) => {stored = text; writes++;}},
+    localStorage: {
+      getItem: () => {if (boundary.storageDenied) throw new Error('denied'); return stored;},
+      setItem: (_, text) => {if (boundary.storageDenied) throw new Error('denied'); stored = text; writes++;}
+    },
     Blob, URL: {createObjectURL: blob => {download = blob; return 'blob:test';}, revokeObjectURL() {}},
-    crypto: {randomUUID: () => 'fresh'}, setTimeout() {}
+    crypto: {randomUUID: () => 'fresh'}, setTimeout() {},
+    navigator: boundary.noClipboard ? {} : {clipboard: {writeText: async text => {
+      if (boundary.clipboardDenied) throw new Error('denied');
+      copied = text;
+    }}}
   });
   return {
     async import(input) {
@@ -40,12 +47,43 @@ function gallery(candidates = ['a', 'b'], raw = null) {
       await handlers['import-file:change']();
     },
     async export() {handlers['export:click'](); return JSON.parse(await download.text());},
+    async copy() {await handlers['copy:click'](); return copied === undefined ? undefined : JSON.parse(copied);},
     rate(c, score) {handlers[`${c}:input`]({target: {value: String(score), matches: selector => selector === '[data-score]'}});},
     get status() {return node('status').textContent;},
     get stored() {return stored;},
     get writes() {return writes;}
   };
 }
+
+test('copy and export share blind ratings, including archived entries and reveal history', async () => {
+  const app = gallery(['a', 'b']);
+  await app.import(payload([row('a', 4, '메모'), row('c', 5)], {revealed: true}));
+  const copied = await app.copy();
+  assert.match(app.status, /복사했습니다/);
+  assert.deepEqual(copied, await app.export());
+  assert.equal(copied.revealed, true);
+  assert.deepEqual(copied.archive[key('c')], value(5));
+  assert.equal(copied.ratings[0].candidate, id('a'));
+  const receiver = gallery();
+  await receiver.import(copied);
+  assert.equal((await receiver.export()).ratings[0].score, 4);
+});
+
+test('copy remains usable with refused storage, and clipboard failures preserve export', async () => {
+  const blockedStorage = gallery(['a', 'b'], null, {storageDenied: true});
+  blockedStorage.rate('a', 4);
+  assert.equal((await blockedStorage.copy()).ratings[0].score, 4);
+  assert.equal(blockedStorage.writes, 0);
+  for (const boundary of [{clipboardDenied: true}, {noClipboard: true}]) {
+    const app = gallery(['a', 'b'], null, boundary);
+    app.rate('b', 3);
+    const before = app.stored;
+    assert.equal(await app.copy(), undefined);
+    assert.match(app.status, /평가 JSON 내보내기/);
+    assert.equal(app.stored, before);
+    assert.equal((await app.export()).ratings[1].score, 3);
+  }
+});
 
 test('different evaluators cannot mix existing scores, but an empty gallery accepts an export', async () => {
   const app = gallery(['a', 'b'], saved({[key('a')]: value(5, 'Alice note')}));

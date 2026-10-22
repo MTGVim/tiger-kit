@@ -87,6 +87,11 @@ source/state retained and the product view restored; it cannot prove unchanged g
 helpers can themselves increase document width: measure first, keep helpers contained, and remove
 them before final overflow checks. Blank or truncated pixels never prove acceptance.
 
+Choose the `--user-data-dir` as a literal absolute run-owned path before launch, outside
+any watched source tree, and delete it with that same literal path under Artifact Paths
+ownership checks. Never create it with `mktemp` or command substitution and delete it
+through a variable. Preserve immediate cleanup and the remaining-process check.
+
 ## BrowserSkill
 
 The `bsk` CLI requires an extension/daemon and a selected Chrome/Edge profile. Current upstream
