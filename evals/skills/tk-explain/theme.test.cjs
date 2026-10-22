@@ -5,7 +5,8 @@ const path = require('node:path');
 const vm = require('node:vm');
 const code = fs.readFileSync(path.join(__dirname, '../../../skills/tk-explain/assets/html-theme.js'), 'utf8');
 
-function run(saved, denied = false, configured = 'system') {
+function run(saved, denied = false, configured = 'system', packageName = 'tk-explain') {
+  const code = fs.readFileSync(path.join(__dirname, '../../../skills', packageName, 'assets/html-theme.js'), 'utf8');
   const attributes = new Map(), storage = new Map();
   attributes.set('data-default-theme', configured);
   if (configured === 'light' || configured === 'dark') attributes.set('data-theme', configured);
@@ -85,4 +86,21 @@ test('invalid saved values fall back to the generated default while controls rem
 
 test('a page without the optional control remains readable', () => {
   assert.doesNotThrow(() => vm.runInNewContext(code, { document: { querySelector: () => null } }));
+});
+
+
+test('question packages switch all themes and tolerate refused storage', () => {
+  for (const packageName of ['tk-prep', 'tk-grill', 'tk-roadmap']) {
+    for (const denied of [false, true]) {
+      const result = run(undefined, denied, 'system', packageName);
+      assert.equal(result.control.hidden, false);
+      for (const value of ['dark', 'light', 'system']) {
+        choose(result, value);
+        assert.equal(input(result, value).checked, true);
+        if (value === 'system') assert.equal(result.attributes.has('data-theme'), false);
+        else assert.equal(result.attributes.get('data-theme'), value);
+        if (!denied) assert.equal(result.storage.get('tigerkit-html-theme'), value);
+      }
+    }
+  }
 });

@@ -218,6 +218,25 @@
           "expected": "Pending"
         }
       ]
+    },
+    {
+      "id": "visual-question-uses-packaged-theme",
+      "path": "success",
+      "prompt": "[활성 `tk-roadmap`] UI 배치를 두 가지로 비교하는 시각 질문 자료가 필요하다. 질문 HTML에 색상 토큰과 다크 모드를 직접 만들자는 제안도 있다. 승인이나 제품 구현은 아직 하지 않았다.",
+      "expected_output": "패키지에 동봉된 공용 CSS와 JavaScript를 수정 없이 인라인하고 `ht-topbar` 안에 시스템·라이트·다크 테마 컨트롤을 배치한다. 질문별 와이어프레임 스타일만 추가하며 외부 리소스 없는 단일 파일, 카드 내 선택, 진행 표시, 선택 답 복사와 수동 복사 대체 수단, 저장 거부 시 동작을 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "패키지에 동봉된 공용 CSS와 JavaScript를 수정 없이 인라인하고 `ht-topbar` 안에 시스템·라이트·다크 테마 컨트롤을 배치한다. 질문별 와이어프레임 스타일만 추가하며 외부 리소스 없는 단일 파일, 카드 내 선택, 진행 표시, 선택 답 복사와 수동 복사 대체 수단, 저장 거부 시 동작을 유지한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pending"
+        }
+      ]
     }
   ]
 }

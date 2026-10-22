@@ -60,6 +60,8 @@ DOMAIN_CONTEXT_TARGETS = (
 )
 
 HTML_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research", "tk-qa-sheet", "tk-prototype", "tk-course", "tk-blind-comparison")
+QUESTION_HTML_CONSUMERS = ("tk-prep", "tk-grill", "tk-roadmap")
+HTML_THEME_CONSUMERS = HTML_CONSUMERS + QUESTION_HTML_CONSUMERS
 VISUAL_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research", "tk-course")
 HTML_ASSETS = ("html-theme.css", "html-theme.js")
 CHART_FILES = ("references/chart-design.md", "assets/chart-examples.html", "references/html-figures.md")
@@ -69,7 +71,8 @@ FEEDBACK_END = "<!-- /tigerkit:skill-feedback -->"
 FEEDBACK_BLOCK = FEEDBACK_MARKER + """
 ## Skill Feedback
 
-For a reusable incident, retain minimal non-secret evidence and suggest `tk-retro`.
+For a reusable incident, retain minimal non-secret evidence in the current conversation
+and suggest `tk-retro`; do not write it to persistent memory unless the user asks.
 Invocation, feedback artifacts, installed-skill edits and publication require separate
 authorization through the owning workflow; this pointer grants none.
 """ + FEEDBACK_END + "\n"
@@ -155,7 +158,7 @@ def html_policy_errors(root: Path) -> list[str]:
         if not canonical.is_file() or not target.is_file() or target.read_bytes() != canonical.read_bytes():
             errors.append(f"{target.relative_to(root)}: shared visual grammar drift")
     for name in HTML_CONSUMERS:
-        for relative in ("references/html-output.md", "scripts/package_html.py", "scripts/highlight_code.py", *CHART_FILES, *(f"assets/{asset}" for asset in HTML_ASSETS)):
+        for relative in ("references/html-output.md", "scripts/package_html.py", "scripts/highlight_code.py", *CHART_FILES):
             canonical = source / relative
             target = root / "skills" / name / relative
             if not canonical.is_file() or not target.is_file() or target.read_bytes() != canonical.read_bytes():
@@ -168,6 +171,12 @@ def html_policy_errors(root: Path) -> list[str]:
         clear_target = root / "skills" / name / "references/clear-writing.md"
         if not CLEAR_WRITING_SOURCE.is_file() or not clear_target.is_file() or clear_target.read_bytes() != CLEAR_WRITING_SOURCE.read_bytes():
             errors.append(f"{clear_target.relative_to(root)}: shared clear-writing drift")
+    for name in HTML_THEME_CONSUMERS:
+        for asset in HTML_ASSETS:
+            canonical = source / "assets" / asset
+            target = root / "skills" / name / "assets" / asset
+            if not canonical.is_file() or not target.is_file() or target.read_bytes() != canonical.read_bytes():
+                errors.append(f"{target.relative_to(root)}: shared HTML theme asset drift")
     for relative in HTML_TEMPLATES:
         target = root / relative
         text = target.read_text(encoding="utf-8") if target.is_file() else ""
@@ -349,7 +358,7 @@ def main() -> int:
                     pairs.append((ROOT / "skills/tk-explain" / relative, ROOT / "skills" / name / relative))
                 for relative in (*CHART_FILES, "scripts/package_html.py", "scripts/highlight_code.py"):
                     pairs.append((ROOT / "skills/tk-explain" / relative, ROOT / "skills" / name / relative))
-    for name in HTML_CONSUMERS:
+    for name in HTML_THEME_CONSUMERS:
         if (ROOT / "skills" / name).is_dir():
             for asset in HTML_ASSETS:
                 source = ROOT / "skills/tk-explain/assets" / asset

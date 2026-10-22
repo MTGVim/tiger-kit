@@ -51,6 +51,8 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         )
         for directory in (self.prep, self.respond, self.review, self.wizard, self.rebase, self.sweep):
             directory.mkdir(parents=True, exist_ok=True)
+        for name in ("tk-prep", "tk-grill", "tk-roadmap"):
+            (self.root / "skills" / name).mkdir(parents=True, exist_ok=True)
         self.rebase_readiness.write_text("Readiness source\n", encoding="utf-8")
         for name in sync_execution_protocol.FILES:
             (self.prep / name).write_text(f"execution {name}\n", encoding="utf-8")
@@ -188,6 +190,33 @@ class SyncExecutionProtocolTest(unittest.TestCase):
             self.assertEqual(self.run_main("--check"), 1)
             self.assertEqual(self.run_main(), 0)
             self.assertEqual(self.run_main("--check"), 0)
+
+    def test_question_theme_assets_are_distributed_and_drift_is_repaired(self) -> None:
+        self.assertEqual(self.run_main(), 0)
+        for name in ("tk-prep", "tk-grill", "tk-roadmap"):
+            for asset in ("html-theme.css", "html-theme.js"):
+                with self.subTest(skill=name, asset=asset):
+                    target = self.root / "skills" / name / "assets" / asset
+                    canonical = self.root / "skills/tk-explain/assets" / asset
+                    self.assertTrue(target.is_file(), str(target))
+                    self.assertEqual(target.read_bytes(), canonical.read_bytes())
+                    target.write_text("drift\n", encoding="utf-8")
+                    self.assertEqual(self.run_main("--check"), 1)
+                    self.assertEqual(self.run_main(), 0)
+                    self.assertEqual(target.read_bytes(), canonical.read_bytes())
+                    target.unlink()
+                    self.assertEqual(self.run_main("--check"), 1)
+                    self.assertEqual(self.run_main(), 0)
+        self.assertEqual(self.run_main("--check"), 0)
+
+    def test_feedback_memory_boundary_drift_blocks_check_and_repairs(self) -> None:
+        self.assertEqual(self.run_main(), 0)
+        path = self.root / "skills/tk-prep/SKILL.md"
+        text = path.read_text(encoding="utf-8")
+        path.write_text(text.replace("in the current conversation", "in persistent memory"), encoding="utf-8")
+        self.assertEqual(self.run_main("--check"), 1)
+        self.assertEqual(self.run_main(), 0)
+        self.assertEqual(self.run_main("--check"), 0)
 
     def test_summary_body_guard_missing_or_drifted_blocks_release_check(self) -> None:
         self.assertEqual(self.run_main(), 0)

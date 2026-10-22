@@ -2,7 +2,14 @@
 
 Read only when spatial alternatives can change an unresolved user-owned choice. Keep the numbered plain-chat question, a short description of every option and the recommendation complete without opening a file. Add the complete absolute HTML link in that question; users can answer by number or paste the copied selections.
 
-After Artifact Paths checks, create one external-resource-free HTML file in `.tigerkit/tmp/<calling-skill>/<run-id>/questions.html`. Show comparable low-fidelity wireframes, option numbers, pros/cons and the recommended option. Offer single-option and side-by-side views when useful, with keyboard-accessible controls and no focus outlines on passive scroll targets. Match the same viewport/content across options; do not add decorative imagery or implementation code. Reuse this file for later visual rounds in the same run; do not generate files for nonvisual questions, a plan recap or a resolved choice.
+After Artifact Paths checks, create one external-resource-free HTML file in `.tigerkit/tmp/<calling-skill>/<run-id>/questions.html`. Inline this package's `assets/html-theme.css` and `assets/html-theme.js` unchanged,
+using their `ht-*` components and tokens; add only question-specific wireframe styles.
+Set `<html data-default-theme="system">`. Put the title in `.ht-topbar-title` and a
+`.ht-theme-control[data-ht-theme-control]` fieldset inside `.ht-topbar`. Initially hide the fieldset;
+the shared script reveals it. Give it labeled `system`, `light`, and `dark` radio choices using
+`.ht-theme-buttons` and `.ht-theme-option`, each `input[name="ht-theme"]` immediately followed by
+a nonempty `span`. Place the script after the markup. Verify all three choices and storage-refusal
+behavior before delivery. Show comparable low-fidelity wireframes, option numbers, pros/cons and the recommended option. Offer single-option and side-by-side views when useful, with keyboard-accessible controls and no focus outlines on passive scroll targets. Match the same viewport/content across options; do not add decorative imagery or implementation code. Reuse this file for later visual rounds in the same run; do not generate files for nonvisual questions, a plan recap or a resolved choice.
 
 Let the user pick an option in place on each option card, plus inline choices for any
 nonvisual question in the same round. Keep a fixed answer bar that shows progress in words

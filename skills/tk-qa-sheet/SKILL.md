@@ -229,7 +229,8 @@ consumption; a prefilled template is not completed input. This grants no write a
 <!-- tigerkit:skill-feedback -->
 ## Skill Feedback
 
-For a reusable incident, retain minimal non-secret evidence and suggest `tk-retro`.
+For a reusable incident, retain minimal non-secret evidence in the current conversation
+and suggest `tk-retro`; do not write it to persistent memory unless the user asks.
 Invocation, feedback artifacts, installed-skill edits and publication require separate
 authorization through the owning workflow; this pointer grants none.
 <!-- /tigerkit:skill-feedback -->
