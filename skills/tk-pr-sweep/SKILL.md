@@ -148,6 +148,10 @@ The short name is the repository name without the owner. Include it in every app
 row and waiting item whenever the Sweep scope covers more than one repository; use
 `owner/repo` for colliding short names so each PR remains unambiguous.
 
+For rows needing a new workspace, include cleanup of workspaces created by this run in
+that row's publication scope by default. State that cleanup follows verified publication
+and preserves dirty, unpublished or ownership-ambiguous workspaces; the user may exclude it.
+
 If no PR needs approval, omit the approval table and question. This layout applies to execution-mode planning; `--report` remains a short, read-only status briefing.
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Batch approval
@@ -156,7 +160,7 @@ Do not create child workspaces, write Seeds, or perform any remote or product mu
 approves the exact PRs, heads, work types, and publication scope in the batch plan. If approval is missing or fresh
 state changes that scope, remain pending and ask again only for the affected decision.
 
-Once the user approves the batch plan, that approval grants authority only for the exact PRs, heads, work types, publication scope, and required child isolation in the plan.
+Once the user approves the batch plan, that approval grants authority only for the exact PRs, heads, work types, publication scope, required child isolation, and explicitly included run-owned workspace cleanup in the plan.
 Do not request the same approval again for each child or for the host-native workspace mechanism used to realize that approved isolation.
 
 After approval, if any row mutates code/Git or dispatches child work, read [approved execution](references/execution.md)

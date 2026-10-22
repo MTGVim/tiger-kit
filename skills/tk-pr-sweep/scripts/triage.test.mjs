@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -203,7 +204,7 @@ test('does not require re-review requests for bot change reviews', () => {
 });
 
 test('detects a missing re-review request for a COMMENTED code-change reviewer', () => {
-  const headSha = 'abc123';
+  const headSha = 'a'.repeat(40);
   const review = computeReviewDecision([
     { id: 1, user: { login: 'reviewer' }, state: 'COMMENTED', submitted_at: '2026-01-01T00:00:00Z' },
   ], 'author');
@@ -219,7 +220,7 @@ test('detects a missing re-review request for a COMMENTED code-change reviewer',
 });
 
 test('a review submitted after the current-head summary satisfies re-review evidence', () => {
-  const headSha = 'abc123';
+  const headSha = 'a'.repeat(40);
   const review = computeReviewDecision([
     { id: 1, user: { login: 'reviewer' }, state: 'COMMENTED', submitted_at: '2026-01-03T00:00:00Z' },
   ], 'author');
@@ -235,7 +236,7 @@ test('a review submitted after the current-head summary satisfies re-review evid
 });
 
 test('re-review evidence excludes the author, bots, and still-valid approvers', () => {
-  const headSha = 'abc123';
+  const headSha = 'a'.repeat(40);
   const review = computeReviewDecision([
     { user: { login: 'approver' }, state: 'APPROVED', submitted_at: '2026-01-01T00:00:00Z' },
   ], 'author');
@@ -255,7 +256,7 @@ test('re-review evidence excludes the author, bots, and still-valid approvers', 
 });
 
 test('requires exactly one current-head Korean summary comment', () => {
-  const headSha = 'abc123';
+  const headSha = 'a'.repeat(40);
   const marker = summaryCommentMarker(headSha);
   const verified = computeSummaryCommentEvidence([
     { id: 1, user: { login: 'author' }, body: `${marker}\n리뷰 대응 요약`, html_url: 'https://example.test/1' },
@@ -271,7 +272,7 @@ test('requires exactly one current-head Korean summary comment', () => {
 });
 
 test('rejects duplicate markers and summaries posted before the latest reply', () => {
-  const headSha = 'abc123';
+  const headSha = 'a'.repeat(40);
   const marker = summaryCommentMarker(headSha);
   const afterReply = latestSummaryPrerequisite({responded:[{responseAt:'2026-01-03T00:00:00Z'}]});
   const early = computeSummaryCommentEvidence([{
@@ -477,7 +478,7 @@ test('informational comment markers use the same strict config validation', asyn
 });
 
 test('a current-head summary remains verified when it is also the only reply', () => {
-  const headSha = 'abc123';
+  const headSha = 'a'.repeat(40);
   const summary = {
     user: { login: 'author' },
     created_at: '2026-01-02T00:00:00Z',
@@ -566,7 +567,7 @@ test('classification priority is checks, conflict, outstanding reply, changes re
 });
 
 test('a summary that is itself the only response is not stale against itself', () => {
-  const headSha = 'abc123';
+  const headSha = 'a'.repeat(40);
   const marker = summaryCommentMarker(headSha);
   const summary = {
     user: { login: 'author' }, created_at: '2026-01-02T00:00:00Z', body: `${marker}\nSummary`, id: 2,
@@ -596,4 +597,121 @@ test('a summary that is itself the only response is not stale against itself', (
   );
   assert.equal(stale.stale, true);
   assert.equal(stale.verified, false);
+});
+
+
+test('an active unresolved thread needs a reply without request-language patterns', () => {
+  const body = '테스트를 추가하거나 설명을 보강하면 두 지적이 함께 해소됩니다.';
+  assert.equal(isActionableText(body), false);
+  const comments = [{ id: 11, user: { login: 'reviewer' }, created_at: '2026-01-01T00:00:00Z', body }];
+  const threads = [{ isResolved: false, isOutdated: false, comments: { nodes: [{ databaseId: 11 }] } }];
+  const evidence = (items, states = threads, markers = []) => computeReplyEvidence(
+    collectRows([], items, []), 'author', '2026-01-02T00:00:00Z', [], markers, states,
+  );
+  assert.deepEqual(evidence(comments).outstanding.map((item) => item.id), [11]);
+  const answer = { id: 12, in_reply_to_id: 11, user: { login: 'author' }, created_at: '2026-01-03T00:00:00Z', body: '반영했습니다.' };
+  const answered = evidence([...comments, answer]);
+  assert.equal(answered.outstanding.length, 0);
+  assert.deepEqual(answered.responded.map((item) => item.id), [11]);
+  const unrelated = { ...answer, in_reply_to_id: 99 };
+  assert.equal(evidence([...comments, unrelated]).outstanding.length, 1);
+  const followup = { id: 13, in_reply_to_id: 11, user: { login: 'reviewer' }, created_at: '2026-01-04T00:00:00Z', body };
+  assert.deepEqual(evidence([...comments, answer, followup]).outstanding.map((item) => item.id), [13]);
+  for (const state of [{ isResolved: true }, { isOutdated: true }]) {
+    assert.equal(evidence(comments, [{ ...threads[0], ...state }]).outstanding.length, 0);
+    assert.equal(evidence([{ ...comments[0], body: 'Please fix this.', created_at: '2026-01-03T00:00:00Z' }], [{ ...threads[0], ...state }]).outstanding.length, 0);
+  }
+  assert.equal(evidence([{ ...comments[0], body: 'LGTM, no action.' }]).outstanding.length, 0);
+  assert.equal(evidence([{ ...comments[0], body: '<!-- status-report:ok -->' + body }], threads, ['<!-- status-report:']).outstanding.length, 0);
+  assert.equal(evidence([{ ...comments[0], body: '<!-- hidden -->' }]).outstanding.length, 0);
+  assert.equal(evidence(comments, []).outstanding.length, 0);
+});
+
+test('closed answered threads retain summary prerequisites without reopening replies', () => {
+  const rows = collectRows([], [
+    { id: 11, user: { login: 'reviewer' }, created_at: '2026-01-01T00:00:00Z', body: '설명을 보강하면 해소됩니다.' },
+    { id: 12, in_reply_to_id: 11, user: { login: 'author' }, created_at: '2026-01-02T00:00:00Z', body: 'Done.' },
+  ], []);
+  const threads = [{ isResolved: true, isOutdated: false, comments: { nodes: [{ databaseId: 11 }] } }];
+  const reply = computeReplyEvidence(rows, 'author', null, [], [], threads);
+  assert.equal(reply.outstanding.length, 0);
+  assert.equal(summaryCommentRequired(false, [], reply), true);
+});
+
+test('malformed re-review markers fail independently of shell-built expected strings', () => {
+  const head = 'a'.repeat(40);
+  const check = (suffix, required = true) => computeSummaryCommentEvidence([{
+    user: { login: 'author' }, body: summaryCommentMarker(head) + '\n' + suffix,
+  }], 'author', head, required);
+  for (const broken of [
+    '<!-- tigerkit:pr-rereview:.eviewer -->',
+    '<!-- tigerkit:pr-rereview:abc123:reviewer -->',
+    '<!-- tigerkit:pr-rereview:' + 'g'.repeat(40) + ':reviewer -->',
+    '<!-- tigerkit:pr-rereview:' + head + ': -->',
+    '<!-- tigerkit:pr-rereview:' + head + ':reviewer',
+  ]) {
+    for (const required of [true, false]) {
+      const result = check(broken, required);
+      assert.equal(result.malformed, true, broken);
+      assert.equal(result.verified, false, broken);
+      assert.deepEqual(result.reviewers, []);
+    }
+  }
+  const valid = check(reReviewReviewerMarker(head, 'reviewer'));
+  assert.equal(valid.malformed, false);
+  assert.equal(valid.verified, true);
+  assert.deepEqual(valid.reviewers, ['reviewer']);
+  assert.equal(check('', false).verified, true);
+  assert.equal(check(reReviewReviewerMarker(head, 'reviewer') + '\n<!-- tigerkit:pr-rereview:.other -->').verified, false);
+});
+
+
+test('CLI joins fresh GraphQL thread state to REST comments and surfaces malformed summaries', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'tk-pr-sweep-thread-state-'));
+  try {
+    writeFileSync(join(root, 'gh'), `#!/usr/bin/env node
+const path = process.argv[3];
+const head = 'a'.repeat(40);
+const pull = { number: 1, user: { login: 'author' }, head: { sha: head }, mergeable: true, mergeable_state: 'clean' };
+let result;
+if (path === 'user') result = { login: 'author' };
+else if (path.startsWith('user/teams')) result = [];
+else if (path === 'graphql') {
+  if (!process.argv.some((arg) => arg.includes('databaseId'))) process.exit(2);
+  result = { data: { repository: { pullRequest: { reviewThreads: { nodes: [{
+    id: 'thread1', isResolved: process.env.CLOSED === '1', isOutdated: false,
+    comments: { nodes: [{ id: 'comment-node-11', databaseId: 11 }] }
+  }], pageInfo: { hasNextPage: false, endCursor: null } } } } } };
+}
+else if (path.includes('/pulls?')) result = [pull];
+else if (path.endsWith('/pulls/1')) result = pull;
+else if (path.includes('/pulls/1/comments')) result = [{
+  id: 11, user: { login: 'reviewer' }, created_at: '2026-01-01T00:00:00Z',
+  body: '테스트를 추가하거나 설명을 보강하면 두 지적이 함께 해소됩니다.',
+}];
+else if (path.includes('/issues/1/comments')) result = [{
+  id: 21, user: { login: 'author' }, created_at: '2026-01-02T00:00:00Z',
+  body: '<!-- tigerkit:pr-summary:' + head + ' -->\\n<!-- tigerkit:pr-rereview:.eviewer -->',
+}];
+else if (path.includes('/check-runs')) result = { check_runs: [] };
+else if (path.endsWith('/status')) result = { state: 'success' };
+else if (path.includes('/reviews')) result = [];
+else process.exit(3);
+console.log(JSON.stringify(result));
+`, { mode: 0o755 });
+    const run = (closed) => JSON.parse(execFileSync(process.execPath, [
+      new URL('./triage.mjs', import.meta.url).pathname, '--repo', 'example/repo', '--no-bootstrap',
+    ], { encoding: 'utf8', env: { ...process.env, PATH: root + ':' + process.env.PATH, XDG_CONFIG_HOME: root, CLOSED: closed ? '1' : '0' } }));
+    const open = run(false);
+    assert.deepEqual(open.failures, []);
+    assert.equal(open.items[0].evidence.replyEvidence.outstanding[0].id, 11);
+    const closed = run(true);
+    assert.deepEqual(closed.failures, []);
+    assert.equal(closed.items[0].category, 'missing_summary_comment');
+    assert.equal(closed.items[0].evidence.summaryComment.malformed, true);
+    assert.equal(closed.items[0].evidence.summaryComment.verified, false);
+    assert.equal(closed.items[0].evidence.replyEvidence.outstanding.length, 0);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
 });

@@ -35,4 +35,6 @@ be established. Do not silently bypass a required hook with a generic install or
 When workspace archive/removal is already authorized, use the owning host's lifecycle and effective archive hook once.
 Inspect its scope; a hook may remove more than dependencies. A failed archive hook blocks that cleanup, not later safe
 rows. Preserve the workspace and report residue; do not force removal, invoke a teardown script separately, or delete
-shared dependencies. Sweep completion alone does not authorize archive/removal or changes to user-owned resources.
+shared dependencies. Apply the run-created provenance, clean-state, remote-head and inventory checks in
+[approved execution](execution.md#authorized-cleanup). Batch approval authorizes cleanup only when explicitly included
+for that row; Sweep completion does not authorize removal of preexisting or out-of-scope workspaces or user-owned resources.

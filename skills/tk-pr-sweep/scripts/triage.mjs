@@ -199,15 +199,20 @@ export function computeSummaryCommentEvidence(issueComments, authorLogin, headSh
   const markerCount = matching.reduce((count, comment) => count + normalizeGitHubText(comment.body).split(marker).length - 1, 0);
   const createdAt = matching.length === 1 ? matching[0].created_at || null : null;
   const afterRequiredPublication = !afterTimestamp || Boolean(createdAt && new Date(createdAt) > new Date(afterTimestamp));
-  const reviewerPattern = /<!--\s*tigerkit:pr-rereview:([^:\s>]+):([A-Za-z0-9-]+)\s*-->/g;
-  const reviewers = matching.flatMap((comment) => [...normalizeGitHubText(comment.body).matchAll(reviewerPattern)]
-    .filter((match) => match[1] === headSha)
-    .map((match) => match[2]));
+  const reviewerPattern = /^<!--\s*tigerkit:pr-rereview:([a-f0-9]{40}):([A-Za-z0-9-]+(?:\[bot\])?)\s*-->$/i;
+  const reviewerMarkers = matching.flatMap((comment) =>
+    [...normalizeGitHubText(comment.body).matchAll(/<!--\s*tigerkit:pr-rereview:[\s\S]*?(?:-->|$)/g)]
+      .map((match) => match[0]));
+  const malformed = reviewerMarkers.some((value) => !reviewerPattern.test(value));
+  const reviewers = reviewerMarkers.map((value) => value.match(reviewerPattern))
+    .filter((match) => match && match[1] === headSha)
+    .map((match) => match[2]);
   return {
     required,
     marker,
     count: matching.length,
-    verified: !required || (matching.length === 1 && markerCount === 1 && afterRequiredPublication),
+    verified: !malformed && (!required || (matching.length === 1 && markerCount === 1 && afterRequiredPublication)),
+    malformed,
     missing: required && markerCount === 0,
     duplicate: required && (matching.length > 1 || markerCount > 1),
     stale: required && markerCount === 1 && !afterRequiredPublication,
@@ -270,15 +275,29 @@ export function computeReplyEvidence(
   afterTimestamp = null,
   toolAuthoredCommentMarkers = [],
   informationalCommentMarkers = [],
+  reviewThreads = [],
 ) {
+  // REST reply scopes use the root comment's numeric ID, not GraphQL node IDs.
+  const threadByScope = new Map(reviewThreads.flatMap((thread) => {
+    const rootId = thread.comments?.nodes?.[0]?.databaseId;
+    return rootId == null ? [] : [[`inline:${rootId}`, thread]];
+  }));
+  const activeThread = (row) => {
+    const thread = threadByScope.get(row.scope);
+    return thread?.isResolved === false && thread?.isOutdated === false;
+  };
   const eligibleRows = rows.filter((row) => !matchCommentMarker(row.body, informationalCommentMarkers));
   const actionable = latestExternalMessagesByScope(eligibleRows, authorLogin)
-    .filter((row) => isActionableText(row.body))
-    .filter((row) => !afterTimestamp || new Date(row.timestamp) > new Date(afterTimestamp));
+    .filter((row) => !NO_ACTION_PATTERN.test(stripNoise(row.body)))
+    .filter((row) => threadByScope.has(row.scope) || isActionableText(row.body))
+    .filter((row) => activeThread(row) || !afterTimestamp || new Date(row.timestamp) > new Date(afterTimestamp));
   const outstanding = [];
   const responded = [];
   for (const row of actionable) {
     const response = latestAuthorResponseAfter(rows, authorLogin, row.timestamp, row.scope);
+    const thread = threadByScope.get(row.scope);
+    // Closed threads cannot create reply work; answered history still proves summary prerequisites.
+    if (!response && thread && !activeThread(row)) continue;
     const target = response ? responded : outstanding;
     const authorship = classifyCommentAuthorship(row, toolAuthoredCommentMarkers);
     target.push({
@@ -419,7 +438,7 @@ function reviewThreads(repo, number) {
     repository(owner:$owner,name:$name) {
       pullRequest(number:$number) {
         reviewThreads(first:100,after:$endCursor) {
-          nodes { id isResolved isOutdated path line comments(first:1) { nodes { id url author { login } } } }
+          nodes { id isResolved isOutdated path line comments(first:1) { nodes { id databaseId url author { login } } } }
           pageInfo { hasNextPage endCursor }
         }
       }
@@ -586,6 +605,7 @@ async function triageRepository(repo, login, teamKeys, toolAuthoredCommentMarker
       review.decision === 'APPROVED' ? review.decisiveAt : null,
       toolAuthoredCommentMarkers,
       informationalCommentMarkers,
+      threads.data,
     );
     const check = checkState(repo, pull.head.sha);
     const changeResponse = review.decisiveAt
@@ -610,7 +630,7 @@ async function triageRepository(repo, login, teamKeys, toolAuthoredCommentMarker
       authorRespondedToLatestExternal: reply.outstanding.length === 0 && reply.responded.length > 0,
       unresolvedThreads,
       missingReReview: reReview.required && !reReview.verified,
-      missingSummaryComment: summaryComment.required && !summaryComment.verified,
+      missingSummaryComment: summaryComment.malformed || (summaryComment.required && !summaryComment.verified),
     });
     failures.push(...check.errors.map((error) => `#${pull.number}: ${error}`));
     if (!['approved', 'pending_review'].includes(category)) {

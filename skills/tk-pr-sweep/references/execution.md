@@ -27,7 +27,7 @@ Artifact Paths setup only when an authorized `.tigerkit/` workspace needs ignore
 
 A workspace child is isolated only when it receives and uses the proven workspace. Never reuse another row's workspace. If
 isolation cannot be proven, hold only that PR as `Held` or `Blocked`; do not mutate in the parent checkout. Preserve
-host-managed workspace lifecycle and do not add general cleanup authority.
+host-managed workspace lifecycle and limit cleanup to the explicitly approved run-owned scope.
 
 ## Child scope and Seed
 
@@ -61,7 +61,26 @@ Do not create a scheduler, global lock, capacity configuration or ledger; use th
 
 A row-local failure does not stop later independent rows. Stop the Sweep only for a systemic failure such as identity or
 permission contamination, ambiguous repository scope, or untrustworthy triage. Triage each PR after its child returns.
-After all rows finish, run fresh triage across every configured repository.
+After verifying a row's required publication, perform its approved run-owned workspace cleanup under
+**Authorized cleanup** below, even while re-review is pending. Retain only that row on failed guards or cleanup.
+After all rows finish, run fresh triage across every configured repository and report actual cleanup or retained paths.
+
+## Authorized cleanup
+
+Remove only workspaces this run created and whose cleanup the batch plan explicitly authorized. Reusing an existing
+workspace does not make it run-created. Immediately before removal, verify exact path/repository/row creation provenance,
+no remaining tracked changes (including staged changes), and local HEAD equal to the fresh remote PR head. Inspect untracked
+and ignored contents too; preserve unexpected user work or recovery material. If any guard fails or cannot be proven,
+preserve that row's workspace and local branch and report why. Pending re-review alone need not retain a safely published
+workspace: it can be recreated from the remote head.
+
+Run cleanup from outside the target, with its literal verified path and no force. Use the owning host's lifecycle and
+archive hook; for Orca follow [repository workspace setup](workspace-setup.md). Snapshot `git worktree list --porcelain`
+and, when host-managed, the host's workspace inventory before removal; reread the same inventories immediately afterward. Verify the exact target is gone
+and all non-target entries remain. An unexpected disappearance is a discrepancy to report and investigate, not proof of
+who removed it; pause further cleanup while ownership or scope is uncertain. Never sweep other runs' workspaces or branches.
+Delete a run-created local branch only through approved host cleanup or a separately proven exact branch with no other
+workspace attached and no unpublished commits; do not expand to remote branch deletion.
 
 A PR is complete only when final triage proves required checks and publication state, closed actionable threads, a
 current re-review request or post-summary review for every required reviewer (active `CHANGES_REQUESTED` reviewers and
