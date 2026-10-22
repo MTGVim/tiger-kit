@@ -37,9 +37,9 @@ button.thumb{background:var(--hover);color:var(--text)}button.thumb.current{back
 :root{--selection-bg:#dce9ff;--selection-text:#102a50;--selection-border:#3559a4}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--selection-bg:#263b5b;--selection-text:#f1f6ff;--selection-border:#a6c8ff}}
 :root[data-theme="dark"]{--selection-bg:#263b5b;--selection-text:#f1f6ff;--selection-border:#a6c8ff}
-#toc .lesson-link.active{background:var(--selection-bg);color:var(--selection-text);border-left:4px solid var(--selection-border);padding-left:5px}
+#toc .lesson-link.active{background:var(--selection-bg);color:var(--selection-text);border-left-color:var(--selection-border)}
 #toc .lesson-link.active b,#toc .lesson-link.active small{color:var(--selection-text)}
-#toc .lesson-link.active b::after{content:'현재';display:inline-block;margin-left:7px;padding:0 4px;border:1px solid var(--selection-border);border-radius:3px;font-size:14px;line-height:1.6;font-weight:500}
+#toc .lesson-link.active small::after{content:'현재';display:inline-block;padding:0 4px;border:1px solid var(--selection-border);border-radius:3px;font-size:var(--font-small);line-height:1.6;font-weight:500}
 #tx-copy .tx-cue.active{background:var(--selection-bg);color:var(--selection-text);border-left:4px solid var(--selection-border);font-weight:650}
 #speed,#end-panel h2{color:var(--text)}
 #live-caption{background:var(--selection-bg);color:var(--selection-text);border-left:4px solid var(--selection-border);border-radius:5px;padding:12px 18px;margin:0}
@@ -58,8 +58,20 @@ button.thumb{background:var(--hover);color:var(--text)}button.thumb.current{back
 body{font-size:var(--font-body)}button,select,input,textarea{font-size:var(--font-body)}
 header .header-title{font-size:20px;color:var(--text)}.site-brand{font-size:16px;letter-spacing:0;font-weight:600}.brand-mark{display:none}
 
-#lesson-heading{font-size:24px}#toc .toc-title{font-size:20px}#toc .lesson-link b{font-size:16px}#toc .lesson-link small,#toc h3,.toc-note{font-size:14px}
-#toc .lesson-link.active b::after{font-size:14px}#voice-state,#player-status,#caption-state,#audio-time,#progress .label{font-size:14px}
+#lesson-heading{font-size:24px}
+/* Reuse the shared document surface/type roles without adding a document rail. */
+:root{--course-nav-width:clamp(17.5rem,22vw,20rem)}
+aside#toc{min-width:0;padding:20px 16px;border-radius:var(--radius);overscroll-behavior:contain}
+#toc .toc-title{font-size:var(--font-h2);margin:0 0 18px}
+aside#toc h3{font-size:var(--font-small);text-transform:none;letter-spacing:normal;margin:22px 0 12px}
+#toc .lesson-link{gap:12px;border-left:4px solid transparent;padding:12px 10px;min-height:44px;color:var(--text)}
+#toc .lesson-link.active{padding-left:10px;border-left-color:var(--selection-border);color:var(--selection-text)}
+#toc .lesson-link>span:last-child{flex:1;min-width:0}
+#toc .lesson-link b,#toc .lesson-link small{white-space:normal;word-break:keep-all;overflow-wrap:anywhere}
+#toc .lesson-link b{font-size:var(--font-body);font-weight:550;line-height:1.6}
+#toc .lesson-link small{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-size:var(--font-small);line-height:1.6}
+.toc-note{font-size:var(--font-small)}
+#voice-state,#player-status,#caption-state,#audio-time,#progress .label{font-size:14px}
 #stage{background:var(--stage-matte);border:2px solid var(--stage-border);padding:18px;gap:12px;box-shadow:0 16px 38px #0002}
 #slide-wrap{background:var(--slide-paper);border:1px solid var(--slide-line);border-radius:5px;overflow:hidden;box-shadow:0 4px 18px #0003}
 #stage-play{position:static;inset:auto;margin:0;width:44px;height:44px;font-size:20px;border-radius:8px;box-shadow:none}
@@ -76,7 +88,7 @@ header .header-title{font-size:20px;color:var(--text)}.site-brand{font-size:16px
 svg[data-follow-cue] .explain-focus[data-focused="true"]>rect{stroke:var(--slide-accent);stroke-width:4}
 svg[data-follow-cue] .explain-focus[data-focused="true"]>.focus-halo{stroke:var(--slide-accent);stroke-width:4;opacity:1}
 .code-focus{opacity:0;transition:opacity 220ms ease}svg[data-follow-cue] .code-focus[data-focused="true"]{opacity:1}
-@media(max-width:980px){main#course-layout{grid-template-columns:225px minmax(0,1fr)}#stage{padding:12px}#lesson-heading{font-size:22px}}
+@media(max-width:980px){:root{--course-nav-width:15.5rem}#stage{padding:12px}#lesson-heading{font-size:22px}}
 @media(max-width:700px){main#course-layout{grid-template-columns:minmax(0,1fr);padding:10px}#stage{padding:8px;gap:8px}header .header-title{display:none}#caption-text{font-size:18px}.playback-settings-grid{grid-template-columns:max-content minmax(100px,1fr)}#materials{padding:0 12px}.tabs button,#controls button{font-size:16px}#pos{font-size:14px}.home-lesson-title strong{font-size:16px}.home-lesson-status{font-size:14px}}
 @media(prefers-reduced-motion:reduce){.explain-focus>rect,.focus-halo,.code-focus{transition:none!important}}
 /* Progressive reveal preserves layout and earlier context; no-JS remains complete. */
@@ -114,7 +126,7 @@ svg[data-follow-cue] .explain-focus[data-focused="true"]>.code-focus{opacity:1}
 #transcript-rail{min-width:0;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:9px;padding:16px;position:sticky;top:18px;max-height:calc(100dvh - 40px);overflow:auto}
 .rail-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}.rail-heading h2{font-size:20px;margin:0}.rail-heading .icon-button{display:grid;place-items:center;width:40px;height:40px;padding:8px;background:transparent;color:var(--text);border:1px solid var(--line);border-radius:5px}
 #rail-title{font-size:16px;line-height:1.7;margin:14px 0}#rail-copy .tx-cue{font-size:16px}#rail-copy .tx-cue.active{background:var(--selection-bg);color:var(--selection-text);border-left:4px solid var(--selection-border);font-weight:650}
-@media(min-width:1440px){main#course-layout.with-transcript{grid-template-columns:220px minmax(0,1fr) 280px;gap:20px;max-width:1800px}}
+@media(min-width:1440px){main#course-layout.with-transcript{grid-template-columns:var(--course-nav-width) minmax(0,1fr) 280px;gap:20px;max-width:1800px}}
 @media(min-width:701px) and (max-width:1439px){#transcript-rail{position:fixed;inset:90px 18px 18px auto;width:340px;max-width:calc(100vw - 36px);max-height:calc(100dvh - 108px);z-index:70;box-shadow:0 14px 60px #0006}}
 @media(max-width:700px){#stage{padding:8px}#controls{gap:4px}.controls-right{gap:2px}#controls .icon-button,#controls #play{width:40px;height:40px;min-width:40px;padding:8px}#controls #speed{min-width:65px;height:40px;padding:8px 4px;font-size:16px}#speed-icon{display:none}#controls #pos{margin-left:5px}#transcript-rail{position:fixed;inset:76px 12px 12px auto;width:min(360px,calc(100vw - 24px));max-height:calc(100dvh - 88px);z-index:70;box-shadow:0 14px 60px #0006}#playback-settings.settings-panel{right:8px;bottom:56px;width:calc(100% - 16px)}#live-caption p#caption-text{font-size:18px}}
 @media(max-width:600px){.controls-right{flex-basis:100%;justify-content:flex-end}#playback-settings.settings-panel{bottom:52px}}
