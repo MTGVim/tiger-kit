@@ -51,10 +51,13 @@ stream before building. Actual decode/non-silence/listening is owned by tk-video
 still required; an audio stream alone is not proof of intelligible narration. Keep questions,
 notes, prerequisites and objective_ids as for slides. No per-scene clip swapping or live TTS.
 
-Build all artifacts to a new output directory with build_course.py. It validates before writing,
+Keep authored files in `<topic>/` and initially build to `<topic>/build/`; for later versions,
+use a new output directory and review it before replacing an approved build. Build with build_course.py. It validates before writing,
 embeds media and the fixed player, and produces course.json, changes.json, index.html and direct
 lesson-<id>.html pages. Built course.json records per-lesson content fingerprints including
-referenced outcomes and media digests; keep it as the previous version for incremental edits.
+referenced outcomes and media digests, plus measured narration seconds for gallery metadata;
+keep it as the previous version for incremental edits. For an existing multi-course home, pass
+`--collection-home <relative-html-path>` to add its return link to all pages and the no-JS fallback.
 The single-file index uses a same-origin local srcdoc frame to isolate each
 lesson's media lifecycle; it has no server/framework/network dependency. Switching lessons
 releases the prior document/media. Required reading has a static no-JavaScript fallback.

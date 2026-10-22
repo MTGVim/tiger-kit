@@ -10,6 +10,11 @@
 - User-validated local course prototypes 1-15: adapt observed fixes for home/theme, readable
   markers, captions, controls, immediate start, explicit missing-audio recovery, native video
   clock and silent scrub preview. Static regression evidence is not browser/listening proof.
+- User-reported course-home incident (2026-10-22), verified against TigerKit source:
+  adapt a single course-brand title, lesson context, a distinct home-copy surface and a searchable
+  sibling-course gallery with safe refresh/build paths. Keep course-local progress and offline
+  boundaries. The gallery/search is a TigerKit extension, not course-builder provenance; no
+  Udemy code, branding or visual skin was inspected or copied.
 - [Plyr v3.7.8 captions](https://github.com/sampotts/plyr/blob/v3.7.8/src/sass/components/captions.scss):
   keep floating opaque white text/rounded translucent background as a pattern only. Adopt the
   user's adjustable 50% default, not a universal OSS value. Add no Plyr dependency.

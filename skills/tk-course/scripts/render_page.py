@@ -4,11 +4,16 @@ import json
 from app_shell import home_page, theme_styles, THEME_CONTROL, BOOTSTRAP
 from components import svg
 R=Path(__file__).resolve().parents[1]/'assets'
+def preview_svg(data):
+    return svg(0,data['slides'][0]).replace('slide-title-0','home-preview-title').replace('slide-desc-0','home-preview-desc')
+
 def render(data):
     slides,questions=data['slides'],data['questions']
     source_items=''.join('<li>'+('<a href="'+h(item['url'],quote=True)+'">'+h(item['title'])+'</a>' if item.get('url') else h(item['title'])+' (제공 자료)')+'</li>' for item in data['sources'])
     published=data['published_lessons']
-    home=home_page(data,svg(0,slides[0]).replace('slide-title-0','home-preview-title').replace('slide-desc-0','home-preview-desc'))
+    home=home_page(data,preview_svg(data))
+    header_title=data['title'] if data['title']!=data['course_label'] else ''
+    collection_link=('<a class="collection-home" href="'+h(data['collection_home'],quote=True)+'" target="_top">← 전체 코스</a>') if data.get('collection_home') else ''
     toc='<h2 class="toc-title">강의 목차</h2>'
     section=None
     for item in data['course_lessons']:
@@ -60,7 +65,7 @@ def render(data):
     html=f'''<!doctype html><html lang="ko" data-course-build="1" data-default-theme="system"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{h(data['title'])}</title><script>{BOOTSTRAP}</script><style>{all_css}</style></head><body>
     <!-- Player shell CSS adapted from tobyilee/course-builder at 1913b09bd1bf947b5ee2d1a75eab4396e669fbd3.\n{license_text} -->
     <a class="skip-link" id="skip-main" href="#home-title">본문으로 이동</a>
-    <header><button id="menu-toggle" type="button" aria-label="강의 목차 열기 또는 닫기" aria-controls="toc" aria-expanded="false" data-js-only hidden>☰</button><a class="site-brand" href="#home" data-home><span>{h(data['course_label'])}</span></a><p class="header-title">{h(data['title'])}</p><a id="back-home" href="#home" data-home hidden>← 코스 홈</a><div class="ht-document-actions course-header-actions">{THEME_CONTROL}</div></header>
+    <header><button id="menu-toggle" type="button" aria-label="강의 목차 열기 또는 닫기" aria-controls="toc" aria-expanded="false" data-js-only hidden>☰</button>{collection_link}<a class="site-brand" href="#home" data-home><span>{h(data['course_label'])}</span></a><p class="header-title"{'' if header_title else ' hidden'}>{h(header_title)}</p><a id="back-home" href="#home" data-home hidden>← 코스 홈</a><div class="ht-document-actions course-header-actions">{THEME_CONTROL}</div></header>
     {home}<section id="player-page" aria-label="강의 플레이어" hidden><span id="lesson-slides"></span><div id="progress"><span class="label">완료로 표시한 강의 <strong id="completion-count">0 / 2</strong></span><div class="bar"><div class="fill" id="course-fill" style="width:0%"></div></div><span class="label position-label" id="slide-num">1 / 5</span><div class="bar" id="slide-progress-bar"><div class="fill" id="slide-fill" style="width:20%"></div></div></div>
     <main id="course-layout"><aside id="toc" aria-label="강의 목차">{toc}</aside>
     <div class="player-column"><h1 id="lesson-heading" tabindex="-1">{h(data['lesson_title'])}</h1><section id="voice-fallback" aria-label="강의 음성 준비 상태" hidden><p role="status"><span aria-hidden="true">⚠️</span> <span id="voice-preflight-message">생성 음성이 준비되지 않았습니다.</span></p><div class="voice-actions"><button id="use-silent" type="button">무음으로 재생</button><button id="use-browser-voice" type="button">브라우저 음성</button></div></section><div id="stage"><div id="media-viewport"><div id="slide-wrap" tabindex="0" role="region" aria-label="현재 슬라이드. 스페이스로 재생하거나 멈추고 좌우 화살표로 이동합니다.">{slide_html}</div><div id="video-wrap" hidden><video id="lesson-video" controls preload="metadata" src="{h(data['video_lesson'].get('src',''),quote=True)}" poster="{h(data['video_lesson'].get('poster',''))}" aria-label="{h(data['lesson_title'])}"></video></div><div id="live-caption" aria-label="강의 자막" hidden><p id="caption-text"></p></div></div>

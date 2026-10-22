@@ -42,3 +42,22 @@ test('actual course-jump listener reads the updated resume target on click',()=>
  vm.runInNewContext(line,{document:{querySelectorAll:()=>[node]},courseJump:id=>jumped=id});
  node.dataset.courseJump='second';handler({preventDefault:()=>prevented=true});assert.equal(jumped,'second');assert.equal(prevented,true);
 });
+
+test('catalog search filters title description objectives and lesson names without storage or network',()=>{
+ const cards=['React 요청 경합 응답 순서 경쟁 조건','테스트 최적화 번들 빌드 Vitest 실행'].map(text=>({dataset:{search:text},hidden:false}));
+ let handler;const nodes={'catalog-search':{value:'',addEventListener:(event,fn)=>{assert.equal(event,'input');handler=fn;}},'catalog-count':{},'catalog-empty':{},'catalog-search-controls':{hidden:true}};
+ vm.runInNewContext(fs.readFileSync(path.join(R,'catalog.js'),'utf8'),{document:{getElementById:id=>nodes[id],querySelectorAll:()=>cards}});
+ assert.equal(nodes['catalog-search-controls'].hidden,false);assert.deepEqual(cards.map(x=>x.hidden),[false,false]);
+ for(const [query,want] of [['ｒｅａｃｔ',[false,true]],['응답 순서',[false,true]],['Vitest 실행',[true,false]],['없는 강의',[true,true]],['  ',[false,false]]]){nodes['catalog-search'].value=query;handler();assert.deepEqual(cards.map(x=>x.hidden),want);assert.equal(nodes['catalog-empty'].hidden,!want.every(Boolean));}
+ assert.equal(nodes['catalog-count'].textContent,'전체 2개 중 2개 코스');
+});
+
+test('actual header context exposes lesson titles and clears them on return home',()=>{
+ const script=fs.readFileSync(path.join(R,'player.js'),'utf8'),start=script.indexOf('  function headerContext('),end=script.indexOf('\n  let captionsEnabled',start);
+ const node={textContent:'',hidden:true},context={document:{querySelector:()=>node},data:{course_label:'코스 제목'}};
+ vm.createContext(context);vm.runInContext(script.slice(start,end),context);
+ context.headerContext('첫 번째 강의');assert.equal(node.textContent,'첫 번째 강의');assert.equal(node.hidden,false);
+ context.headerContext();assert.equal(node.textContent,'');assert.equal(node.hidden,true);
+ context.headerContext('코스 제목');assert.equal(node.textContent,'');assert.equal(node.hidden,true);
+ context.headerContext('<새 강의>');assert.equal(node.textContent,'<새 강의>');assert.equal(node.hidden,false);
+});

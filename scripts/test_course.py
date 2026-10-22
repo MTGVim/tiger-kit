@@ -72,6 +72,69 @@ class CourseTests(unittest.TestCase):
         result=catalog.build(self.root,self.root/'catalog.html');self.assertEqual(result['courses'],2);self.assertIn('first/index.html',(self.root/'catalog.html').read_text())
         duplicate=self.root/'second/course.json';d=json.loads(duplicate.read_text());d['id']='sample-course';duplicate.write_text(json.dumps(d))
         with self.assertRaises(ValueError):catalog.build(self.root,self.root/'duplicate.html')
+    def test_catalog_source_build_layout_refresh_and_backlinks(self):
+        inputs=[]
+        for n in range(2):
+            topic=self.root/f'topic-{n}';topic.mkdir();source=topic/'course.json'
+            data=fixture('course-'+str(n));data['title']='코스 '+str(n);source.write_text(json.dumps(data))
+            inputs.append(source);builder.build(source,topic/'build',collection_home='../../index.html')
+        unrelated=self.root/'notes';unrelated.mkdir();(unrelated/'index.html').write_text('keep')
+        before={str(p):p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
+        result=catalog.build(self.root);page=(self.root/'index.html').read_text()
+        self.assertEqual(result['courses'],2);self.assertEqual(page.count('data-catalog-card data-search='),2)
+        self.assertIn('topic-0/build/index.html',page);self.assertIn('코스와 강의 검색',page)
+        self.assertEqual(page.count('<svg viewBox="0 0 1600 900"'),2)
+        self.assertTrue(all(not x['rebuild_required'] and x['collection_home']=='../../index.html' for x in result['course_links']))
+        self.assertEqual(catalog.build(self.root)['courses'],2)
+        self.assertEqual(page,(self.root/'index.html').read_text())
+        for name,content in before.items():self.assertEqual(Path(name).read_bytes(),content)
+        for source in inputs:
+            html=(source.parent/'build/lesson-lesson-1.html').read_text()
+            self.assertIn('href="../../index.html" target="_top">← 전체 코스',html)
+            builder.check_header(html,json.loads(source.read_text())['title'])
+            self.assertIn('<p class="header-title" hidden></p>',html)
+        # Unmarked, fake-in-script, symlinked and malformed entries must never be replaced.
+        target=self.root/'custom.html';target.write_text('''<script>const x='<meta name="tigerkit-course-catalog">';</script>''')
+        with self.assertRaisesRegex(ValueError,'unmarked'):catalog.build(self.root,target)
+        original=target.read_bytes();link=self.root/'linked.html';link.symlink_to(target)
+        with self.assertRaises(ValueError):catalog.build(self.root,link)
+        self.assertEqual(original,target.read_bytes())
+        manifest=inputs[0].parent/'build/course.json';saved=manifest.read_bytes();manifest.unlink();manifest.symlink_to(inputs[0])
+        with self.assertRaises(ValueError):catalog.build(self.root)
+        self.assertEqual(page,(self.root/'index.html').read_text());manifest.unlink();manifest.write_bytes(saved)
+        self.assertEqual(list(self.root.glob('.course-catalog-*')),[])
+        video={'lessons':[{'kind':'video','title':'영상 예시'}]}
+        self.assertIn('영상 예시',catalog.preview(video,4))
+        self.assertIn('<noscript>',(inputs[0].parent/'build/index.html').read_text())
+        self.assertIn('← 전체 코스',(inputs[0].parent/'build/index.html').read_text())
+        # A build-only export can coexist with an unrelated index at its topic root.
+        inputs[0].unlink();(inputs[0].parent/'index.html').write_text('unrelated')
+        self.assertEqual(catalog.build(self.root)['courses'],2)
+        self.assertIn('topic-0/build/index.html',(self.root/'index.html').read_text())
+
+    def test_header_guard_collection_path_and_audio_duration(self):
+        builder.check_header('<header><span>A &amp; B</span><p hidden></p></header>','A & B')
+        with self.assertRaises(ValueError):builder.check_header('<header><span>Title</span><p>Title</p></header>','Title')
+        for name in ['javascript:alert(1)','https://example.org/index.html','//example.org/index.html','/index.html','..\\index.html','../index.html#home','%2f%2fexample.org/index.html','../index.html\n']:
+            with self.assertRaises(ValueError):builder.build(self.source,self.root/'unsafe',collection_home=name)
+            self.assertFalse((self.root/'unsafe').exists())
+        self.assertEqual(builder.collection_path('../../my%20catalog.html'),'../../my%20catalog.html')
+        # This is a local WAV fixture, not generated/listened-to speech.
+        import wave
+        audio=self.root/'voice.wav'
+        with wave.open(str(audio),'wb') as wav:wav.setnchannels(1);wav.setsampwidth(2);wav.setframerate(8000);wav.writeframes(b'\x01\x00'*10000)
+        for lesson in self.data['lessons']:
+            lesson['narration']='generated';lesson['slides'][0]['narration'][0]['audio']='voice.wav'
+        self.write();builder.build(self.source,self.root/'audio')
+        built=json.loads((self.root/'audio/course.json').read_text());self.assertEqual(built['narration_seconds'],2.5)
+        self.assertEqual(catalog.duration_label(built),'음성 3초');built.pop('narration_seconds')
+        self.assertEqual(catalog.duration_label(built),'음성 길이 미기록')
+        for lesson in built['lessons']:lesson['narration']='none'
+        self.assertEqual(catalog.duration_label(built),'무음')
+        single=self.root/'single';single.mkdir();builder.build(self.source,single/'one')
+        with self.assertRaisesRegex(ValueError,'at least two'):catalog.build(single)
+        self.assertFalse((single/'index.html').exists())
+
     def test_index_lesson_identity_cannot_overwrite_bundle_and_start_is_bound(self):
         self.data['lessons'][0]['id']='index';self.data['lessons'][1]['prerequisites']=['index'];self.write()
         builder.build(self.source,self.root/'reserved')

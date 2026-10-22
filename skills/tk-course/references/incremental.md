@@ -23,10 +23,21 @@ The player blocks saving over unreadable state and exports the original for reco
 valid explicit import resumes saving. Do not combine it with teach's demonstrated mastery.
 Do not silently sync personal educational records or commit them.
 
-For several topics, use `scripts/build_catalog.py --root <collection-dir> --output
-<new-catalog.html>` to inspect immediate child course.json files and produce a static linked
-home. Validate course IDs and local target paths. Preserve each course's own home/content/progress;
-there is no global learner database. Do not add an empty collection layer to one course. The
-catalog includes titles, goals and links, without copying progress values that can become stale.
+For two or more topics, use `scripts/build_catalog.py --root <collection-dir>`; the default output
+is `<collection-dir>/index.html`. An explicit `--output` must stay directly in that root.
+Discover a direct child course.json/index.html pair first, otherwise the child's build/ pair.
+The built manifest owns metadata, including measured narration seconds; do not read source media
+paths from a different directory. Reject duplicate IDs and unsafe/missing entries. Replace only
+an HTML file carrying `<meta name="tigerkit-course-catalog">`, atomically; preserve unmarked files.
+The offline gallery shows the first slide preview, title, description, level, lesson count and
+recorded audio length (or an explicit unavailable label for older builds). Client-side search
+filters titles, descriptions, goals and lesson titles. Without JavaScript all cards remain readable.
+Use the returned per-course `collection_home` value with `build_course.py --collection-home
+<relative-html-path>` when building each course from its authored input to a new output directory.
+For `<collection-dir>/<topic>/build/`, that value is `../../index.html`. The header link exits the
+single-file bundle's frame as well as working from direct lesson pages; review replacement of
+the prior build, then refresh the catalog. Catalog generation itself does not mutate course files.
+Preserve each course's own home/content/progress; there is no global learner database. Do not add
+an empty collection layer to one course. Do not copy progress values into the catalog.
 File-origin storage varies by browser; JSON export/import is the portable path. Cross-device
 accounts/sync are a separate product requirement. Publication remains separately authorized.

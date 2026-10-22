@@ -6,6 +6,10 @@
   let view={lesson:published[0],slide:0}, storageBlocked=false, storedRaw='', state=C.empty(), narration=null, videoNarration=null, homeVisible=true, lastPosition=null,seekController=null,seekVideo=null;
   const key='tigerkit-course:'+C.COURSE, positionKey=key+':position:'+data.lesson_id+':'+data.narration_revision;
   const progressId=()=>data.lesson_id;
+  function headerContext(title='') {
+    const node=document.querySelector('.header-title');
+    node.textContent=title===data.course_label?'':title;node.hidden=!node.textContent;
+  }
   function courseJump(id){if(!C.LESSONS.includes(id))return;if(window.parent!==window)window.parent.postMessage({type:'course-lesson',id},'*');else location.href='lesson-'+id+'.html#lesson-'+data.course_lessons.find(x=>x.id===id).kind;}
   let captionsEnabled=true,transcriptOpen=false,playbackRate=1,scrubbing=false,lastAudibleVolume=1;
   const U=CourseControls;
@@ -44,6 +48,7 @@
   function render() {
     const visible=P.visible(view,count), isSlide=view.lesson==='slides', lesson=data.lessons.find(l=>l.id===view.lesson);
     $('lesson-heading').textContent=lesson.title;
+    headerContext(homeVisible?'':lesson.title);
     $('lesson-kind').textContent=isSlide?`${count}장 / 음성으로 진행`:data.video_lesson.has_audio?'영상 / 내장 음성':'영상 / 무음 영상';
     $('settings-toggle').hidden=false;$('stage').dataset.mediaKind=isSlide?'slides':'video';
     $('slide-num').textContent=isSlide?`${view.slide+1} / ${count}`:'설명 영상';
@@ -107,6 +112,7 @@
     if(seekController)seekController.cancel(false);
     setCaptionMenu(false);setSpeedMenu(false);setSettings(false);showTranscript(false);scrubbing=false;remember();narration.stop();videoNarration.stop();$('lesson-video').pause();
     homeVisible=true;$('home').hidden=false;$('player-page').hidden=true;
+    headerContext();
     $('back-home').hidden=true;$('menu-toggle').hidden=true;$('toc').classList.remove('open');
     $('menu-toggle').setAttribute('aria-expanded','false');$('skip-main').setAttribute('href','#home-title');
     progress();if(push)navigate('#home');if(focus)$('home-title').focus();

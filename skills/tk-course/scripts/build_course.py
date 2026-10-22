@@ -4,6 +4,8 @@ from __future__ import annotations
 import argparse,base64,copy,hashlib,json,math,re,shutil,subprocess,tempfile,wave
 from pathlib import Path
 from html import escape
+from html.parser import HTMLParser
+from urllib.parse import urlsplit,unquote
 from render_page import render
 
 ID=re.compile(r'[a-z0-9][a-z0-9-]{0,79}')
@@ -15,6 +17,38 @@ def identifier(value):
 def text(value,limit=10000):
     if not isinstance(value,str) or not value.strip() or len(value)>limit:raise ValueError('missing or oversized authored text')
     return value
+
+def collection_path(value):
+    if value is None:return None
+    text(value,2000)
+    decoded=unquote(value);url=urlsplit(value)
+    if url.scheme or url.netloc or url.query or url.fragment or decoded.startswith('/') or '\\' in decoded or ':' in decoded or any(ord(c)<32 for c in decoded) or any(ord(c)<33 for c in value):
+        raise ValueError('collection home must be a relative HTML path')
+    if not decoded.endswith('.html'):raise ValueError('collection home must be a relative HTML path')
+    return value
+
+def check_header(page,title):
+    class Header(HTMLParser):
+        def __init__(self):super().__init__();self.inside=False;self.parts=[]
+        def handle_starttag(self,tag,attrs):
+            if tag=='header':self.inside=True
+        def handle_endtag(self,tag):
+            if tag=='header':self.inside=False
+        def handle_data(self,data):
+            if self.inside:self.parts.append(' '.join(data.split()))
+    parser=Header();parser.feed(page)
+    if parser.parts.count(' '.join(title.split()))!=1:raise ValueError('course title must occur once in the page header')
+
+def narration_seconds(course,base):
+    total=0
+    for lesson in course['lessons']:
+        if lesson['kind']=='video':
+            if lesson['video']['has_audio']:total+=lesson['video']['duration']
+        elif lesson['narration']=='generated':
+            for slide in lesson['slides']:
+                for cue in slide['narration']:
+                    with wave.open(str(safe_file(base,cue['audio'])),'rb') as wav:total+=wav.getnframes()/wav.getframerate()
+    return round(total,3)
 
 def safe_file(base,name):
     if not isinstance(name,str) or not name or '\\' in name:raise ValueError('invalid local media path')
@@ -181,7 +215,7 @@ def payload(course,lesson,base):
 def bundle(pages,title,course):
     encoded=json.dumps(pages,ensure_ascii=False).replace('<','\\u003c')
     bootstrap="""const pages=JSON.parse(document.getElementById('course-pages').textContent),ids=Object.keys(pages),frame=document.getElementById('course-frame');let entering=false;function show(id,enter){if(!Object.hasOwn(pages,id))return;entering=enter;frame.srcdoc=pages[id];}frame.addEventListener('load',()=>{if(entering)frame.contentWindow.postMessage({type:'course-enter'},'*');});window.addEventListener('message',e=>{if(e.source!==frame.contentWindow||e.data?.type!=='course-lesson'||!ids.includes(e.data.id))return;show(e.data.id,true);});show(ids[0],false);"""
-    fallback=''
+    fallback=('<a href="'+escape(course['collection_home'],quote=True)+'">← 전체 코스</a>') if course.get('collection_home') else ''
     for lesson in course['lessons']:
         fallback+='<section><h2>'+escape(lesson['title'])+'</h2><p>'+escape(lesson['notes'])+'</p>'
         for slide in lesson.get('slides',[]):fallback+='<h3>'+escape(slide['title'])+'</h3><p>'+escape(slide['transcript'])+'</p>'
@@ -195,10 +229,12 @@ def bundle(pages,title,course):
     fallback+='<section><h2>참고 자료</h2><ul>'+''.join('<li>'+('<a href="'+escape(item['url'],quote=True)+'">'+escape(item['title'])+'</a>' if item.get('url') else escape(item['title'])+' (제공 자료)')+'</li>' for item in course['sources'])+'</ul></section>'
     return '<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+escape(title)+'</title><style>html,body{margin:0;height:100%;overflow:hidden}iframe{display:block;width:100%;height:100dvh;border:0}</style><iframe id="course-frame" title="'+escape(title,quote=True)+'" allow="fullscreen" allowfullscreen></iframe><noscript><style>html,body{overflow:auto}iframe{display:none}</style>'+fallback+'</noscript><script id="course-pages" type="application/json">'+encoded+'</script><script>'+bootstrap+'</script></html>'
 
-def build(source,output,previous=None):
+def build(source,output,previous=None,collection_home=None):
     source=source.absolute();output=output.absolute()
     if source.resolve()!=source or not source.is_file() or output.resolve()!=output or output.exists() or not output.parent.is_dir():raise ValueError('use safe authored input and a new output directory')
+    collection_home=collection_path(collection_home)
     course=validate(json.loads(source.read_text()),source.parent);changes=[]
+    course['collection_home']=collection_home;course['narration_seconds']=narration_seconds(course,source.parent)
     fingerprints={item['id']:fingerprint(item,course,source.parent) for item in course['lessons']}
     if previous:
         old=json.loads(previous.read_text())
@@ -216,8 +252,9 @@ def build(source,output,previous=None):
             changes.append({'id':item['id'],'status':'added' if before is None else 'changed' if old_fingerprint!=fingerprints[item['id']] else 'retained'})
         changes += [{'id':x,'status':'removed; historical progress is retained'} for x in prior if x not in {l['id'] for l in course['lessons']}]
     for item in course['lessons']:item['content_fingerprint']=fingerprints[item['id']]
-    pages={l['id']:render(payload(course,l,source.parent)) for l in course['lessons']}
+    pages={l['id']:render({**payload(course,l,source.parent),'collection_home':collection_home}) for l in course['lessons']}
     for key,page in pages.items():
+        check_header(page,course['title'])
         if '비동기 검색' in page and '비동기 검색' not in json.dumps(course,ensure_ascii=False):raise ValueError('fixture content leaked into generic course')
     with tempfile.TemporaryDirectory(prefix='.course-build-',dir=output.parent) as tmp:
         stage=Path(tmp)/'course';stage.mkdir()
@@ -227,10 +264,10 @@ def build(source,output,previous=None):
         # Individual pages provide direct access as well as the single-file bundle.
         for key,page in pages.items():(stage/('lesson-'+key+'.html')).write_text(page)
         stage.rename(output)
-    return {'path':str(output/'index.html'),'lessons':len(pages),'narration':'selected per lesson; runtime listening remains required','browser_verification':'pending'}
+    return {'path':str(output/'index.html'),'lessons':len(pages),'narration':'selected per lesson; runtime listening remains required','browser_verification':'pending','collection_hint':'코스가 2개 이상이면 build_catalog.py로 전체 홈을 만들 수 있습니다.'}
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--input',required=True,type=Path);p.add_argument('--output',required=True,type=Path);p.add_argument('--previous',type=Path);a=p.parse_args()
-    try:print(json.dumps(build(a.input,a.output,a.previous),ensure_ascii=False));return 0
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--input',required=True,type=Path);p.add_argument('--output',required=True,type=Path);p.add_argument('--previous',type=Path);p.add_argument('--collection-home');a=p.parse_args()
+    try:print(json.dumps(build(a.input,a.output,a.previous,a.collection_home),ensure_ascii=False));return 0
     except (ValueError,KeyError,TypeError,OSError,subprocess.SubprocessError) as e:print(json.dumps({'status':'failed','detail':str(e)},ensure_ascii=False));return 1
 if __name__=='__main__':raise SystemExit(main())

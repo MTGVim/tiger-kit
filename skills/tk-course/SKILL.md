@@ -47,11 +47,15 @@ rules apply only to document-like notes, not a second rail around the player.
 ## Build and verify
 
 Read [authoring and build](references/authoring.md), use the packaged components and fixed player,
-and run `scripts/build_course.py --input <course.json> --output <new-course-dir>`.
-Default to ignored `.tigerkit/courses/<topic>/`; honor explicit destinations. Keep learning
+and run `scripts/build_course.py --input <topic>/course.json --output <topic>/build`.
+Default the topic directory to ignored `.tigerkit/courses/<topic>/`; honor explicit destinations.
+Keep authored files at the topic root and generated files in its `build/` directory; incremental
+versions use a new output directory before reviewed replacement. Keep learning
 content separate from renderer code. Do not copy demo content, brand marks, engine setup or
 implementation notes into learning screens. Retain third-party notices and the AI footer.
 The output includes a single-file `index.html` and independently readable lesson pages.
+Keep the home copy on a theme-token surface distinct from the page canvas. The header shows
+the course title once; entering a lesson adds its title, and returning home clears that context.
 
 Inspect the actual reading/listening order, objective/prerequisite coverage, source support,
 component overflow, captions, notes, question/answer separation and retry feedback. Verify audio
@@ -62,6 +66,7 @@ never overlay live TTS. Manual progress belongs to the course and is not tutorin
 Use `tk-browser-verify` for actual runtime checks; static/media doubles are not browser or listening
 proof. Report unexecuted checks and pending human listening, never fabricate generated audio.
 Return a concise link and actual verification limits. Do not launch the user's browser.
+For a single course, mention that `build_catalog.py` can create a shared home once two courses exist.
 
 For existing artifacts or several topics, read [incremental editing and collections](references/incremental.md)
 before changing anything. Preserve unrelated courses, learner notes and unknown progress formats.
