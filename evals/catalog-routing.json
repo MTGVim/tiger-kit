@@ -1092,6 +1092,46 @@
       "focus_skill": "tk-teach",
       "expected_selected_skill": "tk-teach",
       "critical": true
+    },
+    {
+      "id": "blind-gallery-explicit",
+      "boundary": "후보 생성과 사람이 수행하는 블라인드 비교를 구분합니다.",
+      "prompt": "다섯 TTS 후보를 이름 가린 로컬 갤러리로 비교하게 해 주세요.",
+      "focus_skill": "tk-blind-comparison",
+      "expected_selected_skill": "tk-blind-comparison",
+      "critical": true
+    },
+    {
+      "id": "blind-subjective-proposal",
+      "boundary": "사람의 취향 판정에서는 갤러리를 제안만 하고 실행은 수락 뒤에 합니다.",
+      "prompt": "세 디자인 중 취향으로 골라야 합니다. 비교 방식을 제안해 주세요.",
+      "focus_skill": "tk-blind-comparison",
+      "expected_selected_skill": "tk-blind-comparison",
+      "critical": true
+    },
+    {
+      "id": "blind-vs-qa-sheet",
+      "boundary": "후보 비교와 단일 변경 QA를 구분합니다.",
+      "prompt": "이 PR 화면 점검표 만들어 줘.",
+      "focus_skill": "tk-blind-comparison",
+      "expected_selected_skill": "tk-qa-sheet",
+      "critical": true
+    },
+    {
+      "id": "blind-vs-grill",
+      "boundary": "정체를 가리는 판정과 공개 설계 질문을 구분합니다.",
+      "prompt": "세 설계안의 장단점과 추천안을 공개해서 제가 결정하게 해 주세요.",
+      "focus_skill": "tk-blind-comparison",
+      "expected_selected_skill": "tk-grill",
+      "critical": true
+    },
+    {
+      "id": "blind-single-candidate",
+      "boundary": "후보가 하나이거나 정답이 정해진 경우에는 블라인드 갤러리를 자동 선택하지 않습니다.",
+      "prompt": "출력이 한 개뿐입니다. 정답도 이미 정해져 있습니다.",
+      "focus_skill": "tk-blind-comparison",
+      "expected_selected_skill": null,
+      "critical": true
     }
   ]
 }

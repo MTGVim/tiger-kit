@@ -1,0 +1,3 @@
+interface:
+  short_description: "[user/auto] 후보 정체를 가린 로컬 갤러리에서 점수와 메모를 기록하고 집계합니다."
+  default_prompt: "$tk-blind-comparison으로 후보 이름을 가린 로컬 비교 갤러리를 만들어 주세요."

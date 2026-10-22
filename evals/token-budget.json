@@ -3,7 +3,7 @@
   "limits": {
     "max_skill_md_bytes": 36000,
     "max_total_skill_md_bytes": 500000,
-    "max_total_description_chars": 4000,
+    "max_total_description_chars": 4143,
     "max_single_description_chars": 210,
     "max_shared_block_bytes": 165000,
     "max_shared_block_ratio_ppm": 360000,
@@ -49,6 +49,8 @@
     "skill_md:skills/tk-pr-media/SKILL.md": "tk-pr-image 이름 변경으로 기존 본문을 이전하며 선택형 GIF와 MP4의 분기 포인터를 추가합니다. 새 검증 절차는 해당 조건부 참조에서만 읽습니다.",
     "skill_md:skills/tk-video/SKILL.md": "선택한 영상의 독립 호출과 캡처·앱 판정·게시 담당자 사이 경계, 조립·완성본 확인만 추가합니다. 상세 매니페스트·복구·음성은 조건부 참조로 두며 기존 스킬의 조립·내레이션 코드는 이동합니다.",
     "skill_md:skills/tk-course/SKILL.md": "완결 코스의 독립 호출, 매체·음성 선택, 안정적 식별자와 내용 버전, 손상 진도 보존, 생성·검증·권한 경계를 소유하는 새 스킬입니다. 상세 저작 형식·미디어·증분 절차는 조건부 참조로 둡니다.",
-    "skill_md:skills/tk-tts/SKILL.md": "기존 영상 음성 구현을 독립 합성 소유자로 이동하며 엔진 선택·설치 승인·고정 해시·합성 전후 검증과 중단 조건을 둡니다. 모델별 설치와 합성 절차는 조건부 참조로 읽습니다."
+    "skill_md:skills/tk-tts/SKILL.md": "기존 영상 음성 구현을 독립 합성 소유자로 이동하며 엔진 선택·설치 승인·고정 해시·합성 전후 검증과 중단 조건을 둡니다. 모델별 설치와 합성 절차는 조건부 참조로 읽습니다.",
+    "budget_increase:max_total_description_chars": "기존 32개 스킬 설명은 바꾸지 않고 독립 비교 담당 tk-blind-comparison의 143자 트리거만 추가합니다. 명시 블라인드 실행과 취향 비교 제안, QA·공개 설계·자동 지표 제외를 구분하는 데 필요하며 총 한도는 실제 증가량만큼만 올립니다.",
+    "skill_md:skills/tk-blind-comparison/SKILL.md": "독립적인 사람 평가 담당자로 제안/실행·원본 불변·안정적 식별자/내용 버전·실패/공개·저장/집계 경계만 본문에 둡니다. 매체별 가공과 manifest·결과 상세는 조건부 참조로 읽습니다."
   }
 }

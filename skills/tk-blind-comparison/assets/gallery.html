@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ko" @@THEME_ATTR@@>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>@@TITLE@@</title>
+<style>@@CSS@@</style>
+<style>
+main {max-width:1500px;margin:auto;padding:24px} .gallery-header{padding:20px 24px;border-bottom:1px solid var(--line)}
+.gallery-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-block:16px}.sample-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:20px}
+section{padding-block:24px;border-top:1px solid var(--line)}.sample{min-width:0;padding:20px;border:1px solid var(--line);border-radius:12px}
+.sample h3{margin:0 0 16px}.identity{display:block;font-size:.875em;color:var(--muted)}.sample img,.sample video{width:100%;height:260px;object-fit:contain}.sample audio{width:100%}
+.sample-text{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere;margin-block:12px}.rating-controls{display:grid;gap:12px;margin-top:16px}.rating-controls[hidden],[hidden]{display:none!important}
+label{display:block}textarea{display:block;width:100%;box-sizing:border-box;font:inherit;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:8px}
+select,button{font:inherit;padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--text)}button{cursor:pointer}button:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+#status{min-height:1.5em;overflow-wrap:anywhere}.failure{font-weight:bold}.summary-scroll{overflow:auto}table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:10px;border-bottom:1px solid var(--line)}
+@media(max-width:600px){main{padding:16px}.gallery-header{padding:16px}.sample{padding:16px}.sample img,.sample video{height:220px}}
+</style></head>
+<body><header class="gallery-header"><h1>@@TITLE@@</h1><p>버전 @@VERSION@@ · 후보 @@COUNT@@개</p>
+<fieldset class="ht-theme-control" data-ht-theme-control hidden><legend class="ht-visually-hidden">테마</legend><div class="ht-theme-buttons">
+<label class="ht-theme-option" title="시스템"><input type="radio" name="ht-theme" value="system" aria-label="시스템"><span>◐<span class="ht-visually-hidden">시스템</span></span></label>
+<label class="ht-theme-option" title="밝게"><input type="radio" name="ht-theme" value="light" aria-label="밝게"><span>☀<span class="ht-visually-hidden">밝게</span></span></label>
+<label class="ht-theme-option" title="어둡게"><input type="radio" name="ht-theme" value="dark" aria-label="어둡게"><span>☾<span class="ht-visually-hidden">어둡게</span></span></label>
+</div></fieldset></header>
+<main><p>각 항목의 후보를 비교하고 1-5점과 메모를 남겨 주세요. 라벨은 항목마다 달라집니다.</p>
+<details><summary>비교용 사본에 적용한 가공</summary><ul>@@TRANSFORMS@@</ul></details>
+<p>원본은 보존했습니다. 이 파일은 화면의 이름을 가립니다. 소스 분석에 대한 비밀 보호를 제공하지 않습니다.</p>
+<div id="toolbar" class="gallery-toolbar" hidden><button id="export" type="button">평가 JSON 내보내기</button><button id="import" type="button">평가 JSON 가져오기</button><input id="import-file" type="file" accept="application/json,.json" hidden><button id="reveal" type="button" aria-pressed="false">결과 공개</button></div>
+<p id="status" role="status" aria-live="polite"></p><noscript><p>비교 자료는 아래에서 볼 수 있습니다. 점수·메모·저장·결과 공개에는 JavaScript가 필요합니다.</p></noscript>
+<div id="summary" class="summary-scroll" hidden></div>@@SECTIONS@@
+<footer><p>브라우저의 로컬 저장소에 평가를 저장합니다. 파일 이동·브라우저 변경 전에 JSON으로 내보내 주세요. 저장이 차단되면 JSON 백업을 사용해 주세요.</p></footer></main>
+<script id="comparison-data" type="application/json">@@DATA@@</script>
+<script>const answerCode = "@@ANSWER@@";</script><script>@@THEME_JS@@</script><script>@@APP_JS@@</script></body></html>

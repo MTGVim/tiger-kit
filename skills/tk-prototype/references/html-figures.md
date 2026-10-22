@@ -96,4 +96,3 @@ Check card text and relationship labels for overlap/clipping as well as page wid
   force a longer environment label or title to stay on one line.
 - Programmatic scrolling performed only to position a verification capture uses instant behavior.
   Smooth scrolling must not leave the intended target outside the captured viewport.
-

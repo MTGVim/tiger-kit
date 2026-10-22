@@ -34,6 +34,7 @@ npx skills update --global --yes
 | [tk-review](skills/tk-review/SKILL.md) | `user` | 지정한 변경을 명세와 품질 기준으로 검토합니다. |
 | [tk-browser-verify](skills/tk-browser-verify/SKILL.md) | `hybrid` | 브라우저 화면과 동작을 검증하거나 데모 영상을 위해 판정 없이 캡처합니다. |
 | [tk-app-verify](skills/tk-app-verify/SKILL.md) | `hybrid` | 데스크톱 앱의 동작·화면·접근성을 검증합니다. |
+| [tk-blind-comparison](skills/tk-blind-comparison/SKILL.md) | `hybrid` | 정체를 가린 후보의 점수와 메모를 로컬 갤러리에서 비교합니다. |
 | [tk-qa-sheet](skills/tk-qa-sheet/SKILL.md) | `user` | 수동 점검을 기록하는 HTML 시트를 만듭니다. |
 
 ### PR 관리
