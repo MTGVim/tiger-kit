@@ -13,6 +13,7 @@
   function courseJump(id){if(!C.LESSONS.includes(id))return;if(window.parent!==window)window.parent.postMessage({type:'course-lesson',id},'*');else location.href='lesson-'+id+'.html#lesson-'+data.course_lessons.find(x=>x.id===id).kind;}
   let captionsEnabled=true,transcriptOpen=false,playbackRate=1,scrubbing=false,lastAudibleVolume=1;
   const U=CourseControls;
+  const volumePopover=U.volumePopover({container:document.querySelector('.volume-control'),panel:$('volume-panel'),trigger:$('mute-toggle'),slider:$('volume'),document,window});
   function setControl(id,icon,label){U.icon($(id),icon,label);}
   const pacing=data.production_choices.pacing;
   try{lastPosition=S.position(localStorage.getItem(positionKey),data.slides);if(lastPosition && !published.includes(lastPosition.lesson))lastPosition=null;}catch(_){}
@@ -95,7 +96,7 @@
     if(!published.includes(id)){home();return;}
     if(seekController)seekController.cancel(false);
     const resume=options.resume && lastPosition && lastPosition.lesson===id?{...lastPosition}:null;
-    setCaptionMenu(false);setSpeedMenu(false);setSettings(false);showTranscript(false);scrubbing=false;remember();narration.stop();videoNarration.stop();$('lesson-video').pause();
+    volumePopover.close();setCaptionMenu(false);setSpeedMenu(false);setSettings(false);showTranscript(false);scrubbing=false;remember();narration.stop();videoNarration.stop();$('lesson-video').pause();
     homeVisible=false;$('home').hidden=true;$('player-page').hidden=false;
     $('back-home').hidden=false;$('menu-toggle').hidden=false;$('skip-main').setAttribute('href','#lesson-heading');
     view={lesson:id,slide:resume?resume.slide:0};
@@ -110,7 +111,7 @@
   }
   function home(push=true,focus=true) {
     if(seekController)seekController.cancel(false);
-    setCaptionMenu(false);setSpeedMenu(false);setSettings(false);showTranscript(false);scrubbing=false;remember();narration.stop();videoNarration.stop();$('lesson-video').pause();
+    volumePopover.close();setCaptionMenu(false);setSpeedMenu(false);setSettings(false);showTranscript(false);scrubbing=false;remember();narration.stop();videoNarration.stop();$('lesson-video').pause();
     homeVisible=true;$('home').hidden=false;$('player-page').hidden=true;
     headerContext();
     $('back-home').hidden=true;$('menu-toggle').hidden=true;$('toc').classList.remove('open');
@@ -145,7 +146,7 @@
     setControl('mute-toggle',quiet?'volume-off':'volume',s.mode==='silent'?'음성 설정 열기':'음소거');
     if(s.mode==='silent')$('mute-toggle').removeAttribute('aria-pressed');else $('mute-toggle').setAttribute('aria-pressed',String(quiet));
     $('mute-toggle').title=s.mode==='silent'?'무음 재생, 음성 설정 열기':quiet?'음소거 해제':'음소거';
-    document.querySelector('.volume-control').dataset.silent=String(s.mode==='silent');$('volume').disabled=s.mode==='silent';
+    document.querySelector('.volume-control').dataset.silent=String(s.mode==='silent');$('volume').disabled=s.mode==='silent';if(s.mode==='silent')volumePopover.close();
     $('volume').value=Math.round(s.volume*100);$('volume').setAttribute('aria-valuetext',Math.round(s.volume*100)+'%'+(quiet?', 음소거':''));
     $('volume-note').textContent=s.mode==='silent'?'':s.mode==='video'?(s.hasAudio?'영상에 포함된 음성을 재생합니다.':'⚠️ 현재 영상에는 음성이 없습니다.'):s.mode==='device'?'':'생성 음원의 볼륨과 음소거는 재생 위치를 유지하며 바로 적용됩니다.';
     $('play').disabled=!s.available;$('stage-play').disabled=!s.available;
@@ -205,7 +206,7 @@
   function setMasterVolume(value){if(value>0)lastAudibleVolume=value;narration.setVolume(value);videoNarration.setVolume(value);}
   $('use-browser-voice').addEventListener('click',()=>{setVoiceMode('device');$('mute-toggle').focus();});
   $('use-silent').addEventListener('click',()=>{setVoiceMode('silent');activeTransport().play();$('play').focus();});
-  $('mute-toggle').addEventListener('click',()=>{const s=activeTransport().snapshot();if(s.mode==='silent'){setSettings(true);$('voice-mode').focus();return;}document.querySelector('.volume-control').classList.add('open');if(s.muted||s.volume===0){if(s.volume===0)setMasterVolume(lastAudibleVolume);setMasterMuted(false);}else setMasterMuted(true);});
+  $('mute-toggle').addEventListener('click',()=>{const s=activeTransport().snapshot();if(s.mode==='silent'){setSettings(true);$('voice-mode').focus();return;}if(s.muted||s.volume===0){if(s.volume===0)setMasterVolume(lastAudibleVolume);setMasterMuted(false);}else setMasterMuted(true);});
   $('volume').addEventListener('input',()=>{const value=Number($('volume').value)/100;setMasterVolume(value);setMasterMuted(value===0);});
   function pacingChanged(){
     const values=[$('slide-pause'),$('sentence-pause')];
@@ -319,9 +320,8 @@
   $('transcript-toggle').addEventListener('click',()=>showTranscript(!transcriptOpen));
   $('transcript-close').addEventListener('click',()=>{showTranscript(false);$('transcript-toggle').focus();});
   document.addEventListener('click',e=>U.dismissOutside(e,[{panel:$('playback-settings'),trigger:$('settings-toggle'),close:()=>setSettings(false)},{panel:$('speed-panel'),trigger:$('speed'),close:()=>setSpeedMenu(false)},{panel:$('caption-size-panel'),trigger:$('caption-size-toggle'),close:()=>setCaptionMenu(false)}]));
-  document.addEventListener('click',e=>{if(!U.eventInside(e,document.querySelector('.volume-control')))document.querySelector('.volume-control').classList.remove('open');});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('caption-size-panel').hidden){setCaptionMenu(false);$('caption-size-toggle').focus();}else if(!$('speed-panel').hidden){setSpeedMenu(false);$('speed').focus();}else if(!$('playback-settings').hidden){setSettings(false);$('settings-toggle').focus();}else if(transcriptOpen){showTranscript(false);$('transcript-toggle').focus();}}});
-  $('fullscreen').addEventListener('click',async()=>{try{setCaptionMenu(false);setSpeedMenu(false);setSettings(false);if(document.fullscreenElement)await document.exitFullscreen();else await $('stage').requestFullscreen();}catch(_){$('player-status').textContent='이 브라우저에서는 전체 화면을 사용할 수 없습니다.';}});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(volumePopover.isOpen()){volumePopover.close();}else if(!$('caption-size-panel').hidden){setCaptionMenu(false);$('caption-size-toggle').focus();}else if(!$('speed-panel').hidden){setSpeedMenu(false);$('speed').focus();}else if(!$('playback-settings').hidden){setSettings(false);$('settings-toggle').focus();}else if(transcriptOpen){showTranscript(false);$('transcript-toggle').focus();}}});
+  $('fullscreen').addEventListener('click',async()=>{try{setCaptionMenu(false);setSpeedMenu(false);setSettings(false);volumePopover.close();if(document.fullscreenElement)await document.exitFullscreen();else await $('stage').requestFullscreen();}catch(_){$('player-status').textContent='이 브라우저에서는 전체 화면을 사용할 수 없습니다.';}});
   document.addEventListener('fullscreenchange',()=>setControl('fullscreen',document.fullscreenElement?'restore':'fullscreen',document.fullscreenElement?'전체 화면 나가기':'전체 화면'));
   function paintVoiceOptions(s){
     const select=$('browser-voice'),signature=JSON.stringify([s.voices,s.voiceSelection]);

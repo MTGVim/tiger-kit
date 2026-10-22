@@ -162,10 +162,11 @@ svg[data-follow-cue] .explain-focus[data-focused="true"]>.code-focus{opacity:1}
 @media(max-width:600px){.playback-progress-meta{font-size:14px}.speed-panel{right:8px;bottom:56px}#speed-pending{font-size:14px}}
 
 .controls-left{flex-wrap:wrap}
-.volume-control{display:flex;align-items:center;gap:2px;min-width:0}
-.volume-slider{display:flex;align-items:center;overflow:hidden;width:0;visibility:hidden;transition:width 120ms ease}
-.volume-control:hover .volume-slider,.volume-control:focus-within .volume-slider,.volume-control.open .volume-slider{width:86px;visibility:visible}
-#volume{width:80px;min-width:0;height:32px;min-height:32px;margin:0;accent-color:#a8c9ff;background:transparent}
+.volume-control{position:relative;display:flex;align-items:center;gap:2px;min-width:0}
+.volume-slider{position:absolute;left:50%;bottom:calc(100% + 8px);transform:translate(calc(-50% + var(--volume-shift-x,0px)),var(--volume-shift-y,0px));z-index:10;display:flex;align-items:center;width:120px;max-width:calc(100vw - 16px);padding:8px;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px #0005;visibility:hidden;opacity:0;transition:opacity 120ms ease;overflow:auto;overscroll-behavior:contain}
+.volume-control.open .volume-slider{visibility:visible;opacity:1}
+.volume-control.open::before{content:'';position:absolute;left:0;bottom:100%;width:100%;height:8px}.volume-control.open[data-volume-side="below"]::before{bottom:auto;top:100%}
+#volume{width:100%;min-width:0;height:32px;min-height:32px;margin:0;accent-color:#a8c9ff;background:transparent}
 .caption-size-panel{position:absolute;right:100px;bottom:66px;z-index:9;display:grid;gap:2px;min-width:112px;margin:0;padding:6px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--text);box-shadow:0 12px 40px #0006}
 #stage[data-caption-size="small"] #live-caption #caption-text{font-size:clamp(16px,1.1vw,20px)}
 #stage[data-caption-size="default"] #live-caption #caption-text{font-size:clamp(18px,1.4vw,24px)}

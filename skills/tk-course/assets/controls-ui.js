@@ -23,6 +23,47 @@
  function icon(button,name,label){if(renderedIcons.get(button)!==name||!button.firstElementChild){button.innerHTML=svg(name);renderedIcons.set(button,name);}if(label){button.setAttribute('aria-label',label);button.title=label;}}
  function eventInside(event,node){const path=typeof event.composedPath==='function'?event.composedPath():[];return path.includes(node)||node===event.target||node.contains(event.target);}
  function dismissOutside(event,popovers){for(const {panel,trigger,close} of popovers)if(!panel.hidden&&!eventInside(event,panel)&&!eventInside(event,trigger))close();}
+ function popoverOffset(rect,trigger,viewport,padding=8){
+  const left=viewport.left+padding,top=viewport.top+padding,right=viewport.left+viewport.width-padding,bottom=viewport.top+viewport.height-padding;
+  let y=rect.top;
+  if(y<top && trigger.bottom+padding+rect.height<=bottom)y=trigger.bottom+padding;
+  return {x:Math.max(left,Math.min(rect.left,right-rect.width))-rect.left,y:Math.max(top,Math.min(y,bottom-rect.height))-rect.top};
+ }
+ function volumePopover({container,panel,trigger,slider,document:doc,window:win}){
+  let opened=false,dismissed=false,returningFocus=false;const cleanup=[];
+  const contains=node=>!!node && (container===node || container.contains(node));
+  function listen(node,event,handler,options){node.addEventListener(event,handler,options);cleanup.push(()=>node.removeEventListener(event,handler,options));}
+  function position(){
+   if(!opened)return;
+   const view=win.visualViewport,viewport={left:view?.offsetLeft||0,top:view?.offsetTop||0,width:view?.width||win.innerWidth,height:view?.height||win.innerHeight};
+   panel.style.maxWidth=Math.max(0,viewport.width-16)+'px';panel.style.maxHeight=Math.max(0,viewport.height-16)+'px';
+   panel.style.setProperty('--volume-shift-x','0px');panel.style.setProperty('--volume-shift-y','0px');
+   const rect=panel.getBoundingClientRect(),target=trigger.getBoundingClientRect(),offset=popoverOffset(rect,target,viewport);
+   container.dataset.volumeSide=rect.top+offset.y>=target.bottom?'below':'above';
+   panel.style.setProperty('--volume-shift-x',offset.x+'px');panel.style.setProperty('--volume-shift-y',offset.y+'px');
+  }
+  function close({restoreFocus=false}={}){
+   const hadFocus=contains(doc.activeElement);opened=false;dismissed=true;
+   container.classList.remove('open');panel.hidden=true;trigger.setAttribute('aria-expanded','false');
+   if(restoreFocus && hadFocus){returningFocus=true;try{trigger.focus();}finally{returningFocus=false;}}
+   dismissed=true;
+  }
+  function open(){
+   if(slider.disabled){close();return;}
+   dismissed=false;opened=true;panel.hidden=false;container.classList.add('open');trigger.setAttribute('aria-expanded','true');position();
+  }
+  listen(container,'pointerenter',e=>{if(e.pointerType!=='touch')open();});
+  listen(container,'pointerleave',()=>{if(!contains(doc.activeElement))close();});
+  listen(container,'focusin',e=>{if(returningFocus)return;if(!contains(e.relatedTarget))dismissed=false;if(!dismissed)open();});
+  listen(container,'focusout',e=>{if(!contains(e.relatedTarget)){close();dismissed=false;}});
+  listen(container,'keydown',e=>{if(e.key==='Escape'&&opened){e.preventDefault();e.stopPropagation();close({restoreFocus:true});}});
+  listen(trigger,'click',open);
+  listen(doc,'pointerdown',e=>{if(opened&&!eventInside(e,container))close();});
+  listen(win,'resize',position);listen(win,'scroll',position,true);listen(doc,'fullscreenchange',position);
+  if(win.visualViewport){listen(win.visualViewport,'resize',position);listen(win.visualViewport,'scroll',position);}
+  close();dismissed=false;
+  return {open,close,position,isOpen:()=>opened,destroy(){close();cleanup.forEach(remove=>remove());}};
+ }
  function caption({enabled,status,cue,gap=false,previous=''}){
   // A breathing gap keeps the sentence just heard, never the upcoming one.
   const text=(status==='waiting'||gap)?previous:cue;
@@ -37,5 +78,5 @@
    if(rest<cues)return {label:`슬라이드 ${slide+1} / ${data.slides.length} · 설명 ${rest+1} / ${cues}`,slide,cue:rest};rest-=cues;
   }
  }
- const api={svg,icon,eventInside,dismissOutside,caption,timeLabel,progressLabel};if(typeof module==='object'&&module.exports)module.exports=api;else root.CourseControls=api;
+ const api={svg,icon,eventInside,dismissOutside,popoverOffset,volumePopover,caption,timeLabel,progressLabel};if(typeof module==='object'&&module.exports)module.exports=api;else root.CourseControls=api;
 })(globalThis);

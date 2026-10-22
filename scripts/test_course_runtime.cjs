@@ -63,3 +63,51 @@ test('actual header context exposes lesson titles and clears them on return home
  context.headerContext('코스 제목');assert.equal(node.textContent,'');assert.equal(node.hidden,true);
  context.headerContext('<새 강의>');assert.equal(node.textContent,'<새 강의>');assert.equal(node.hidden,false);
 });
+
+test('volume popover offsets keep corner panels inside every requested viewport',()=>{
+ const {popoverOffset}=require(path.join(R,'controls-ui.js'));
+ for(const width of [390,600,800,1024,1440])for(const side of ['left','right','top']){
+  const viewport={left:0,top:0,width,height:900},trigger={bottom:side==='top'?50:810};
+  const rect={left:side==='left'?-20:side==='right'?width-60:100,top:side==='top'?-40:700,width:120,height:50};
+  const offset=popoverOffset(rect,trigger,viewport),x=rect.left+offset.x,y=rect.top+offset.y;
+  assert(x>=8 && x+rect.width<=width-8);assert(y>=8 && y+rect.height<=892);
+  if(side==='top')assert.equal(y,58);
+ }
+ const rect={left:10,top:0,width:120,height:50},viewport={left:40,top:20,width:300,height:200};
+ const {x,y}=popoverOffset(rect,{bottom:50},viewport);assert.equal(rect.left+x,48);assert.equal(rect.top+y,58);
+});
+
+test('actual volume popover handles hover keyboard escape touch outside dismissal and disabled audio',()=>{
+ const {volumePopover}=require(path.join(R,'controls-ui.js'));
+ function node(){
+  const events=new Map(),classes=new Set();return {events,dataset:{},hidden:true,disabled:false,attrs:{},style:{setProperty(name,value){this[name]=value;}},
+   classList:{add:value=>classes.add(value),remove:value=>classes.delete(value),contains:value=>classes.has(value)},
+   addEventListener(type,fn){if(!events.has(type))events.set(type,[]);events.get(type).push(fn);},
+   removeEventListener(type,fn){events.set(type,events.get(type).filter(x=>x!==fn));},
+   setAttribute(name,value){this.attrs[name]=value;},contains(other){return [this,trigger,panel,slider].includes(other);},
+   getBoundingClientRect:()=>({left:-20,top:700,width:120,height:50,bottom:750}),
+   fire(type,event={}){for(const fn of [...events.get(type)||[]])fn({target:this,...event});}};
+ }
+ const container=node(),panel=node(),trigger=node(),slider=node(),doc=node(),win=node();win.innerWidth=390;win.innerHeight=900;doc.activeElement=null;
+ trigger.focus=()=>{const previous=doc.activeElement;doc.activeElement=trigger;container.fire('focusin',{target:trigger,relatedTarget:previous});};
+ const popup=volumePopover({container,panel,trigger,slider,document:doc,window:win});
+ assert.equal(panel.hidden,true);assert.equal(trigger.attrs['aria-expanded'],'false');
+ // Browsers can blur a focused range when its panel becomes hidden before focus is returned.
+ let hidden=panel.hidden;Object.defineProperty(panel,'hidden',{get:()=>hidden,set(value){const previous=hidden;hidden=value;if(value&&!previous&&doc.activeElement===slider){doc.activeElement=null;container.fire('focusout',{relatedTarget:null});}}});
+ container.fire('pointerenter',{pointerType:'mouse'});assert.equal(panel.hidden,false);assert.equal(container.classList.contains('open'),true);
+ assert.equal(panel.style['--volume-shift-x'],'28px');container.fire('pointerleave');assert.equal(panel.hidden,true);
+ // Tab entering from outside exposes the native range; its arrows are not intercepted.
+ trigger.focus();assert.equal(popup.isOpen(),true);doc.activeElement=slider;
+ let prevented=false,stopped=false;container.fire('keydown',{key:'ArrowRight',preventDefault:()=>prevented=true});assert.equal(prevented,false);
+ container.fire('keydown',{key:'Escape',preventDefault:()=>prevented=true,stopPropagation:()=>stopped=true});
+ assert.equal(prevented,true);assert.equal(stopped,true);assert.equal(panel.hidden,true);assert.equal(doc.activeElement,trigger);
+ assert.equal(trigger.attrs['aria-expanded'],'false');assert.equal(popup.isOpen(),false);
+ // Repeated touch activation opens without changing the range value or muting transport.
+ slider.value='60';trigger.fire('click');assert.equal(panel.hidden,false);assert.equal(slider.value,'60');
+ doc.fire('pointerdown',{target:{},composedPath:()=>[{}]});assert.equal(panel.hidden,true);
+ trigger.fire('click');doc.fire('pointerdown',{target:slider,composedPath:()=>[slider,panel,container]});assert.equal(panel.hidden,false);
+ container.fire('focusout',{relatedTarget:{}});assert.equal(panel.hidden,true);
+ slider.disabled=true;trigger.fire('click');assert.equal(panel.hidden,true);assert.equal(trigger.attrs['aria-expanded'],'false');
+ slider.disabled=false;trigger.fire('click');win.fire('resize');win.fire('scroll');doc.fire('fullscreenchange');assert.equal(panel.hidden,false);
+ popup.destroy();assert.equal(panel.hidden,true);for(const item of [container,trigger,doc,win])for(const handlers of item.events.values())assert.equal(handlers.length,0);
+});

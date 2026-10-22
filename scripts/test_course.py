@@ -1,5 +1,5 @@
 from __future__ import annotations
-import copy,importlib.util,json,shutil,subprocess,sys,tempfile,unittest
+import copy,importlib.util,json,os,shutil,subprocess,sys,tempfile,unittest
 from pathlib import Path
 from html.parser import HTMLParser
 ROOT=Path(__file__).resolve().parents[1];SCRIPTS=ROOT/'skills/tk-course/scripts'
@@ -20,6 +20,19 @@ class CourseTests(unittest.TestCase):
     def test_runtime_progress_opacity_and_grading(self):
         p=subprocess.run(['node','--test',str(ROOT/'scripts/test_course_runtime.cjs')],capture_output=True,text=True)
         self.assertEqual(p.returncode,0,p.stdout+p.stderr)
+
+    @unittest.skipUnless(os.environ.get('TK_PLAYWRIGHT_MODULE') and os.environ.get('TK_CHROMIUM_EXECUTABLE'),
+                         'Course volume render regression requires an explicitly configured local browser')
+    def test_volume_popover_browser_geometry_keyboard_and_touch(self):
+        import wave
+        with wave.open(str(self.root/'voice.wav'),'wb') as wav:
+            wav.setnchannels(1);wav.setsampwidth(2);wav.setframerate(8000);wav.writeframes(b'\x01\x00'*8000)
+        for lesson in self.data['lessons']:
+            lesson['narration']='generated';lesson['slides'][0]['narration'][0]['audio']='voice.wav'
+        self.write();builder.build(self.source,self.root/'volume-browser')
+        env={**os.environ,'TK_COURSE_PAGE':str(self.root/'volume-browser/index.html')}
+        result=subprocess.run(['node','--test',str(ROOT/'evals/skills/tk-course/volume-popover.test.cjs')],env=env,capture_output=True,text=True,timeout=120)
+        self.assertEqual(result.returncode,0,result.stdout+result.stderr)
 
     def test_build_multiple_lessons_and_actual_script_syntax(self):
         self.data['title']='새 주제 <script>alert(1)</script>';self.write()

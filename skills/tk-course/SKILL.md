@@ -61,7 +61,8 @@ Inspect the actual reading/listening order, objective/prerequisite coverage, sou
 component overflow, captions, notes, question/answer separation and retry feedback. Verify audio
 readiness, missing-file recovery, immediate first play, breathing gaps, reveal/seek state,
 caption size/opacity (default 50%), light/dark/system themes, settings hit areas, default mute,
-volume/rate and progress import/export. A finished video owns its audio, pauses and time axis;
+volume/rate, progress import/export and a viewport-bounded volume popup that preserves toolbar
+height and supports hover, keyboard and touch dismissal. A finished video owns its audio, pauses and time axis;
 never overlay live TTS. Manual progress belongs to the course and is not tutoring evidence.
 Use `tk-browser-verify` for actual runtime checks; static/media doubles are not browser or listening
 proof. Report unexecuted checks and pending human listening, never fabricate generated audio.
