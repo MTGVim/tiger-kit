@@ -120,9 +120,10 @@ Before mutation, explain the resolution plan for the current feedback in natural
 
 Before preparing that plan, read [resolution plan details](references/resolution-plan.md). Cover each disposition and evidence, implementation/testing/runtime plan, execution shape, and exact bounded publication actions. Code-changing paths must load the code-change and behavior-first testing contracts before approval.
 
-Obtain one user approval for the current plan. That approval covers the exact listed dispositions, code changes, replies,
-resolutions, issue creations, and any explicitly listed rebase plus bounded publication; it does not authorize adjacent
-cleanup or unlisted tickets. Do not split publication for the same plan into a separate second question.
+Obtain one user approval for the current plan. Put optional additions inside that question as choices:
+`A. plan plus addition`, `B. plan only`. If an answer covers only the optional item, confirm plan approval before any remote write.
+Approval covers only listed dispositions, changes, replies, resolutions, issues, rebase and bounded publication;
+it excludes adjacent cleanup and unlisted tickets. Keep publication in that same approval question.
 However, if the PR head/thread/check/identity changes materially after approval, invalidate the approval and explain only what changed. A `tk-pr-rebase` child may change the head only when that exact transition was approved; after the child returns, verify the PR head equals its `new_head` and reread all feedback, threads, checks, and review state before continuing.
 A verified normal fast-forward during publication recovery may retain approval only under the recovery reference's
 ancestry, unchanged response validity, and exact action-scope checks; it does not authorize new fixes or feedback.

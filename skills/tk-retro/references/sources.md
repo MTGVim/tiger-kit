@@ -1,7 +1,8 @@
 # Sources and distillation
 
 - Matt Pocock, `mattpocock/skills`, `skills/engineering/retro/SKILL.md`,
-  source blob `12149acf2dd23b4514dec57b04a6293eaa1352fa` (inspected 2026-10-08):
+  source revision `5beb35b040e3de97e54fa9e386d7e42d15c295c2`,
+  blob `12149acf2dd23b4514dec57b04a6293eaa1352fa` (rechecked 2026-10-23):
   **keep** session evidence, severity ordering, navigation/checks/tool economy,
   reviewer-vs-implementer context pressure, no-op pruning and information access;
   **adapt** deterministic prevention to existing TigerKit checks and evidence gate;
@@ -12,10 +13,13 @@
   handoff; **omit** `learn-ready` states and semantic writer delegation machinery.
 - Former TigerKit `tk-learn`: **keep** skill-candidate fit, prior/no-skill comparison,
   positive/negative routing and secrets/anonymization boundaries;
-  **adapt** to proposals only, with a sanitized report saved by default and a
-  post-write private-identifier scan; **omit** canonical skill write, approval/apply
+  **adapt** to proposals only, with conversational findings and sanitized upstream
+  issue drafts checked for private identifiers after writing; **omit** canonical skill write, approval/apply
   gates, promotion state machine and auto-publication. The 2026-10-08 user-supplied
-  retrospective grounds this local output-policy change; it adds no upstream runtime.
+  retrospective grounded the former default-report policy. The 2026-10-23 user workflow
+  supersedes it: conversation carries the summary and local proposals; only upstream
+  issue drafts persist. The upstream retro itself presents candidates conversationally;
+  it does not require a report file. No upstream runtime is added.
 
 The MIT source notice is in `LICENSE.txt`. The previous skill packages and
 their historical changes remain traceable through Git.

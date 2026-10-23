@@ -105,8 +105,7 @@ For skill-level incidents, propose the owning skill/document change rather than 
 agent-memory writes or current-repository-only workarounds. Do not mutate those layers.
 Keep a reasoned `no-change` when no safe useful intervention is supported.
 
-Write the sanitized report by default to `.tigerkit/retro/<YYYY-MM-DD>-<topic-slug>.md`
-under the owning SKILL.md Artifact Paths rules, then return a concise summary and its
-path. Skip the file only for explicit conversation-only output or blocked Artifact
-Paths checks. Apply the owning SKILL.md anonymization and post-write identifier scan;
-diagnostic evidence does not authorize retaining raw logs or private identifiers.
+Return the diagnosis in conversation under the owning SKILL.md Disposition rules.
+Only upstream-owned findings may produce an issue draft, subject to Artifact Paths,
+anonymization and the post-write identifier scan. Diagnostic evidence does not authorize
+retaining raw logs or private identifiers.

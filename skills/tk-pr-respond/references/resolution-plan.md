@@ -13,6 +13,11 @@ At minimum, cover:
 - whether the exact PR needs a base update or rebase, with the evidence and route if included
 - practical execution shape: reply-only, direct, or SDD
 
+When the plan covers two or more findings, present them as one narrow GFM table with
+columns for location, finding, kind (`종류` in Korean output), disposition and approach. For kind, reuse the
+reviewer's own category when present; otherwise use one of comment, refactor, test,
+logic, type or conflict. Keep long evidence below the table instead of inside cells.
+
 For every code-changing route, keep the semantic Review Plan from the code-change reference in the approved current
 interaction even when no Seed is needed. Do not expose reviewer/model/worker routing as part of the user plan.
 
