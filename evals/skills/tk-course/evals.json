@@ -135,6 +135,54 @@
         }
       ],
       "safety": false
+    },
+    {
+      "id": "course-program-first-part-preserves-original",
+      "path": "success",
+      "prompt": "8개 코스로 나눈 전체 계획과 우선순위·트랙·코스별 실습·졸업 과제·자료 목록을 제공합니다. 첫 코스만 만드세요. 음성·실습·공유 경로는 확정했습니다.",
+      "expected_output": "제작 전에 컬렉션 루트의 `<program>.plan.md`에 계획 원문 전체와 받은 시각, 코스별 안정적인 ID·상태·권장 순서·선수 관계·공유 실습 및 확정 결정을 저장합니다. 원문을 요약으로 대체하지 않습니다. 첫 코스의 빌드와 필수 검증을 마치면 첫 코스만 `built`이고 나머지 7개는 `planned`입니다. `sources.md`는 넘긴 범위를 계획 파일의 해당 항목으로 연결합니다. 계획과 내부 링크는 학습 화면·공개 `manifest`·`dist`·ZIP에 넣지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "제작 전에 컬렉션 루트의 `<program>.plan.md`에 계획 원문 전체와 받은 시각, 코스별 안정적인 ID·상태·권장 순서·선수 관계·공유 실습 및 확정 결정을 저장합니다. 원문을 요약으로 대체하지 않습니다. 첫 코스의 빌드와 필수 검증을 마치면 첫 코스만 `built`이고 나머지 7개는 `planned`입니다. `sources.md`는 넘긴 범위를 계획 파일의 해당 항목으로 연결합니다. 계획과 내부 링크는 학습 화면·공개 `manifest`·`dist`·ZIP에 넣지 않습니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": false
+    },
+    {
+      "id": "course-program-resume-without-chat",
+      "path": "success",
+      "prompt": "새 세션입니다. 이 컬렉션에서 다음 코스를 만들어 주세요. 대화 기록은 없습니다. 루트 계획 파일에는 8개 코스 중 첫 코스 `built`, 7개 `planned`, 권장 순서와 선수 관계, 확정한 TTS 모델·목소리·공유 루트·실습 방식이 있습니다.",
+      "expected_output": "질문이나 범위 결정 전에 같은 컬렉션의 계획 파일과 관련 `sources.md` 링크를 읽어 대상 과정을 확인합니다. 남은 `planned` 코스를 권장 순서와 선수 관계에 따라 제시합니다. 확정한 공통 제작 선택은 다시 묻지 않고 재사용하되 현재 미디어 준비 상태는 확인합니다. 선택된 항목만 `in_progress`로 바꾸고 성공한 빌드와 필수 검증 뒤 `built`로 갱신하며 다른 행과 원문을 보존합니다. 대화 기록 복원을 요구하지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "질문이나 범위 결정 전에 같은 컬렉션의 계획 파일과 관련 `sources.md` 링크를 읽어 대상 과정을 확인합니다. 남은 `planned` 코스를 권장 순서와 선수 관계에 따라 제시합니다. 확정한 공통 제작 선택은 다시 묻지 않고 재사용하되 현재 미디어 준비 상태는 확인합니다. 선택된 항목만 `in_progress`로 바꾸고 성공한 빌드와 필수 검증 뒤 `built`로 갱신하며 다른 행과 원문을 보존합니다. 대화 기록 복원을 요구하지 않습니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": false
+    },
+    {
+      "id": "course-program-interrupted-chapter-and-identity",
+      "path": "boundary",
+      "prompt": "컬렉션에 독립된 계획 파일 두 개가 있습니다. 이번 대상은 `reliability`의 두 번째 코스 중 첫 챕터입니다. 이 챕터 제작은 시작했으나 검증이 실패했습니다. 남은 챕터는 아직 만들지 않았습니다. 원문 제안의 TTS는 미확정입니다.",
+      "expected_output": "명시한 `reliability`와 코스·챕터 ID에 맞는 계획만 읽고 수정합니다. 실패한 챕터는 `in_progress`로 유지하고 미완성 부모 코스를 `built`로 표시하지 않습니다. 다른 과정과 나머지 항목 및 원문을 보존합니다. 미확정 TTS 제안은 동의로 해석하지 않으며 필요한 선택만 묻습니다. `dropped`는 사용자가 제거를 확정한 경우에만 사유와 함께 사용합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "명시한 `reliability`와 코스·챕터 ID에 맞는 계획만 읽고 수정합니다. 실패한 챕터는 `in_progress`로 유지하고 미완성 부모 코스를 `built`로 표시하지 않습니다. 다른 과정과 나머지 항목 및 원문을 보존합니다. 미확정 TTS 제안은 동의로 해석하지 않으며 필요한 선택만 묻습니다. `dropped`는 사용자가 제거를 확정한 경우에만 사유와 함께 사용합니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": false
     }
   ]
 }

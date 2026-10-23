@@ -22,6 +22,12 @@ beside the topic folders). Reuse a supplied path or existing collection root wit
 
 ## Design, then author
 
+For a supplied multi-course/chapter plan built only in part, preserve the verbatim plan and
+confirmed common choices at `<courses>/<program>.plan.md` before authoring. On collection entry,
+read a matching plan before scoping or asking questions; present remaining work in recommended
+order and reuse settled choices. Read [program plans](references/incremental.md#program-plans)
+for identity, source links and status updates. Keep this authoring file outside learning UI/dist.
+
 Research current primary sources and retain claim-level provenance. Account for every supplied
 corpus member as used, partial, unavailable or omitted with reason; unavailable essential material
 prevents a complete-corpus claim. Work backward from what a learner should explain, judge or do.

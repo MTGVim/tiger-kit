@@ -34,3 +34,9 @@ measured. Omit Marp, a hosted LMS, automatic mastery scoring, accounts and a sha
   [ffprobe](https://www.ffmpeg.org/ffprobe.html), read 2026-10-23: use local Opus voice encoding
   and metadata plus full PCM decoding. Successful encoding is not a browser compatibility or
   pronunciation verdict.
+- Creator-supplied multi-course workflow and observed proposal-loss incident (2026-10-23),
+  checked against the current per-course authoring and distribution contracts: adapt verbatim
+  collection-level plans, stable deferred-scope links, build status and confirmed-choice reuse.
+  Keep course-local progress and HTML-only distribution. Omit a program runtime, automatic
+  sequencing, transcript recovery and inferred consent; this contract comes from the explicit
+  reusable creator workflow, not course-builder upstream behavior.

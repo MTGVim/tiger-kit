@@ -250,6 +250,27 @@ class CourseTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'unmarked'):builder.build(source,topic/'blocked',dist=target)
         self.assertFalse((topic/'blocked').exists());self.assertFalse((target/'topic').exists())
 
+    def test_program_authoring_context_stays_out_of_distribution_and_zip(self):
+        import zipfile
+        plan=self.root/'reliability.plan.md'
+        original='# Supplied plan\nPRIVATE-PROGRAM-PLAN\n'+''.join(f'{n}. Course {n}\n' for n in range(1,9))
+        plan.write_text(original)
+        topic=self.root/'course-01';topic.mkdir()
+        source=topic/'course.json';source.write_bytes(self.source.read_bytes())
+        sources=topic/'sources.md'
+        deferred='Deferred: [course-02](../reliability.plan.md#course-02)'
+        sources.write_text(deferred)
+        dist=self.root/'dist';builder.build(source,topic/'build',dist=dist)
+        result=catalog.build(dist,zip_output=True)
+        expected=['course-01/index.html','index.html']
+        self.assertEqual(sorted(str(p.relative_to(dist)) for p in dist.rglob('*') if p.is_file()),expected)
+        for page in dist.rglob('*.html'):
+            self.assertNotIn('PRIVATE-PROGRAM-PLAN',page.read_text())
+            self.assertNotIn('reliability.plan.md',page.read_text())
+        with zipfile.ZipFile(result['zip']['path']) as archive:
+            self.assertEqual(sorted(archive.namelist()),expected)
+        self.assertEqual(plan.read_text(),original);self.assertEqual(sources.read_text(),deferred)
+
     def test_index_lesson_identity_cannot_overwrite_bundle_and_start_is_bound(self):
         self.data['lessons'][0]['id']='index';self.data['lessons'][1]['prerequisites']=['index'];self.write()
         builder.build(self.source,self.root/'reserved')
