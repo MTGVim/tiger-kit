@@ -1,8 +1,30 @@
 # Synthesis and Inspection
 
-Write complete pronunciation-corrected sentences to a run-owned UTF-8 text file; avoid splitting
-short interjections into independent requests without testing. Keep canonical caption spelling
-and technical UI literals separate. Qwen provides sohee (Korean default) and explicit serena;
+Preserve source/caption/UI literals and prepare a separate run-owned UTF-8 spoken script.
+Before synthesis, resolve numeric spans by meaning: quantities, currency, decimals and counters
+versus identifiers, telephone digits and version components. Preserve values, signs, precision,
+leading zeros and intended grouping. Expand units or abbreviations only with their context and
+case; resolve meaning-changing ambiguity in the affected passage while continuing unambiguous
+preparation. Review these spans source-to-spoken and pass the spoken script to the adapter.
+Raw-input benchmarks keep the approved text unchanged; a pronunciation-corrected comparison is
+a separate declared condition shared by every candidate. Use complete sentences; avoid splitting
+short interjections into independent requests without testing.
+
+These are script examples, not verified acoustic outputs or a fixed replacement dictionary.
+
+| Source context | Spoken-script example | Meaning to preserve |
+|---|---|---|
+| `가격 2,048원` | `가격 이천사십팔 원` | Quantity and currency |
+| `인증코드 002048` | `인증코드 공 공 이 공 사 팔` | Leading zeros and individual digits |
+| `응답 시간 250ms` | `응답 시간 이백오십 밀리초` | Duration and time unit |
+| `MS 계정` | `엠에스 계정` | Abbreviation, not a time unit |
+| `0.5GB` | `영 점 오 기가바이트` | Decimal value and byte unit |
+| `버전 2.4.0` | `버전 이 점 사 점 영` | Version components and final zero |
+
+Verify claimed pronunciation improvements separately by listening to fresh before/after files
+with the same engine, voice and settings; script review alone is not acoustic evidence.
+
+Qwen provides sohee (Korean default) and explicit serena;
 the 0.6B model ignores instruct. Do not offer unsupported styles or silently upgrade models.
 ppaso uses its model voice, not Qwen speaker IDs. Browser speech is never an exported WAV route.
 
