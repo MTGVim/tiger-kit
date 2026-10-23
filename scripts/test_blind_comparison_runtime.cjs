@@ -15,12 +15,19 @@ const saved = entries => JSON.stringify({schema: 1, study: 'study', evaluator: '
 // Run the actual application with only its DOM/storage/download boundary replaced.
 function gallery(candidates = ['a', 'b'], raw = null, boundary = {}) {
   const handlers = {}, nodes = {};
+  let serial = 0;
   const node = name => nodes[name] ||= {
     textContent: '', hidden: true, value: '',
+    append() {},
+    createCaption() {return node(`caption:${serial++}`);},
+    createTHead() {return node(`thead:${serial++}`);},
+    createTBody() {return node(`tbody:${serial++}`);},
+    insertRow() {return node(`row:${serial++}`);},
+    insertCell() {return node(`cell:${serial++}`);},
     addEventListener(event, callback) {handlers[`${name}:${event}`] = callback;},
     replaceChildren() {}, setAttribute() {}, click() {}, remove() {}
   };
-  const cards = candidates.map(c => ({candidate: id(c), fingerprint: fingerprint(c), failed: false}));
+  const cards = candidates.map(c => ({candidate: id(c), fingerprint: fingerprint(c), failed: boundary.failed?.includes(c) || false}));
   node('comparison-data').textContent = JSON.stringify({study: 'study', version: '2', items: [{id: item, cards}]});
   const samples = candidates.map(c => ({
     dataset: {item, candidate: id(c), fingerprint: fingerprint(c)},
@@ -28,6 +35,7 @@ function gallery(candidates = ['a', 'b'], raw = null, boundary = {}) {
     addEventListener: (event, callback) => {handlers[`${c}:${event}`] = callback;}
   }));
   let stored = raw, download, copied, writes = 0;
+  const confirmations = [];
   vm.runInNewContext(source, {
     document: {getElementById: node, querySelectorAll: () => samples, createElement: () => node('download'), body: {append() {}}},
     localStorage: {
@@ -36,6 +44,9 @@ function gallery(candidates = ['a', 'b'], raw = null, boundary = {}) {
     },
     Blob, URL: {createObjectURL: blob => {download = blob; return 'blob:test';}, revokeObjectURL() {}},
     crypto: {randomUUID: () => 'fresh'}, setTimeout() {},
+    confirm: message => {confirmations.push(message); return boundary.confirm !== false;},
+    answerCode: Buffer.from(JSON.stringify({candidates:Object.fromEntries(candidates.map(c => [id(c), {name:`Model ${c}`}]))})).toString('base64'),
+    atob: text => Buffer.from(text,'base64').toString('binary'), TextDecoder, Uint8Array,
     navigator: boundary.noClipboard ? {} : {clipboard: {writeText: async text => {
       if (boundary.clipboardDenied) throw new Error('denied');
       copied = text;
@@ -49,11 +60,47 @@ function gallery(candidates = ['a', 'b'], raw = null, boundary = {}) {
     async export() {handlers['export:click'](); return JSON.parse(await download.text());},
     async copy() {await handlers['copy:click'](); return copied === undefined ? undefined : JSON.parse(copied);},
     rate(c, score) {handlers[`${c}:input`]({target: {value: String(score), matches: selector => selector === '[data-score]'}});},
+    reveal() {handlers['reveal:click']();},
+    get confirmations() {return confirmations;},
+    get showing() {return !node('summary').hidden;},
     get status() {return node('status').textContent;},
     get stored() {return stored;},
     get writes() {return writes;}
   };
 }
+
+test('partial reveal can be cancelled without exposing identities or changing ratings', async () => {
+  const raw = saved({[key('a')]: value(4)});
+  const app = gallery(['a', 'b'], raw, {confirm: false});
+  app.reveal();
+  assert.match(app.confirmations[0], /2개 중 1개가 미평가/);
+  assert.equal(app.showing, false);
+  assert.equal(app.writes, 0);
+  assert.equal(app.stored, raw);
+  assert.equal((await app.export()).revealed, false);
+});
+
+test('partial reveal counts only current successful outputs, preserves nulls and records exposure', async () => {
+  const app = gallery(['a', 'b', 'c'], saved({[key('a')]: value(4), [key('e')]: value(5)}), {failed:['c']});
+  app.reveal();
+  assert.match(app.confirmations[0], /2개 중 1개가 미평가/);
+  assert.equal(app.showing, true);
+  const exported = await app.export();
+  assert.equal(exported.revealed, true);
+  assert.deepEqual(exported.ratings.map(r => r.score), [4, null]);
+  app.reveal(); app.reveal();
+  assert.equal(app.confirmations.length, 1);
+});
+
+test('all empty scores allow explicit reveal, complete scores need no partial warning', () => {
+  const empty = gallery(); empty.reveal();
+  assert.match(empty.confirmations[0], /2개 중 2개가 미평가/);
+  assert.equal(empty.showing, true);
+  const complete = gallery(['a', 'b'], saved({[key('a')]: value(4), [key('b')]: value(5)}));
+  complete.reveal();
+  assert.equal(complete.showing, true);
+  assert.equal(complete.confirmations.length, 0);
+});
 
 test('copy and export share blind ratings, including archived entries and reveal history', async () => {
   const app = gallery(['a', 'b']);

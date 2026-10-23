@@ -82,6 +82,10 @@
   restoreControls();
   document.getElementById('toolbar').hidden = false;
   document.getElementById('reveal').addEventListener('click', () => {
+    if (!showing && !state.revealed) {
+      const missing = Array.from(current.keys()).filter(key => entry(key).score === null).length;
+      if (missing && !confirm(`평가 가능한 ${current.size}개 중 ${missing}개가 미평가입니다. 미평가는 평균에서 제외합니다. 지금 결과를 공개하면 후보 이름과 평균 점수가 표시됩니다. 계속할까요?`)) return;
+    }
     showing = !showing;
     if (showing) {state.revealed = true; save();}
     const names = showing ? candidateNames() : null;

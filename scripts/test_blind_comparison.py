@@ -102,6 +102,18 @@ class BlindComparisonTests(unittest.TestCase):
         self.assertFalse((self.root/'identity').exists())
         self.data=fixture(3,1,'text');self.data['candidates'][0]['name']='표본'
         public,key=self.build('labels');self.assertTrue(all('표본' not in c['label'] for c in public['items'][0]['cards']))
+    def test_sticky_context_keeps_shared_script_and_rejects_identity_cues(self):
+        self.data=fixture(3,2,'text')
+        self.data['items'][0].update(title='발음 평가',script='공통 대본 <script>bad()</script>\n두 번째 줄입니다.')
+        public,key=self.build();page=(self.root/'built/gallery.html').read_text()
+        self.assertEqual(public['items'][0]['script'],self.data['items'][0]['script'])
+        self.assertIn('공통 대본 &lt;script&gt;bad()&lt;/script&gt;',page)
+        self.assertEqual(page.count('class="item-context"'),2)
+        self.assertIn('aria-labelledby="context-0001" tabindex="0"',page)
+        self.assertIn('<h2 id="context-0002">항목 2</h2>',page)
+        for field in ('title','script'):
+            self.data=fixture(3,1,'text');self.data['items'][0][field]='Model 1'
+            with self.assertRaises(ValueError):self.build('bad-'+field)
     def test_missing_duplicate_failed_or_invalid_kind_and_unsafe_paths(self):
         for mutate in [lambda d:d['outputs'].pop(),lambda d:d['outputs'].append(d['outputs'][0]),lambda d:d['outputs'][1].update(kind='html'),lambda d:d.update(candidates=d['candidates'][:1])]:
             self.data=fixture();mutate(self.data)
@@ -133,6 +145,31 @@ class BlindComparisonTests(unittest.TestCase):
         x=copy.deepcopy(export);failed=next(r for r in key['outputs'] if r['failed']);x['ratings'].append({**{k:failed[k] for k in ('item','candidate','fingerprint')},'score':None,'note':'','favorite':False});variants.append(x)
         for x in variants:
             with self.assertRaises(ValueError):builder.summarize(x,key)
+    def test_partial_blind_stdin_summary_without_writing_or_revealing_key(self):
+        _,key=self.build()
+        valid=[r for r in key['outputs'] if not r['failed']]
+        ratings=[{**{k:r[k] for k in ('item','candidate','fingerprint')},'score':score,'note':'','favorite':False}
+                 for r,score in zip(valid,[4,None,2])]
+        export={'schema':1,'study':key['study'],'version':key['version'],'evaluator':'test','revealed':False,'ratings':ratings}
+        before=set(self.root.rglob('*'))
+        result=subprocess.run(['python3',str(PACKAGE/'scripts/build_gallery.py'),'summarize','-',
+                               '--key',str(self.root/'built/answer-key.json'),'--blind'],
+                              input=json.dumps(export),text=True,capture_output=True,cwd=self.root)
+        self.assertEqual(result.returncode,0,result.stderr)
+        summary=json.loads(result.stdout)
+        self.assertEqual(summary['totals'],{'rated':2,'missing':42,'failures':1,'total':45})
+        self.assertEqual(set(self.root.rglob('*')),before)
+        self.assertTrue(summary['blind']);self.assertFalse(summary['revealed'])
+        for c in self.data['candidates']:
+            self.assertNotIn(c['name'],result.stdout);self.assertNotIn(c['id'],result.stdout)
+        self.assertNotIn(self.data['study_id'],result.stdout)
+        self.assertTrue(all(row['candidate_id'] in key['candidates'] for row in summary['items']))
+        self.assertEqual(sorted(row['mean'] for row in summary['candidates'] if row['mean'] is not None),[2,4])
+        duplicate=json.dumps(export).replace('"schema": 1','"schema": 1, "schema": 1')
+        invalid=subprocess.run(['python3',str(PACKAGE/'scripts/build_gallery.py'),'summarize','-',
+                                '--key',str(self.root/'built/answer-key.json'),'--blind'],
+                               input=duplicate,text=True,capture_output=True)
+        self.assertNotEqual(invalid.returncode,0);self.assertEqual(invalid.stdout,'')
     def test_normalized_image_canvas_and_metadata_stay_anonymous(self):
         from PIL import Image, PngImagePlugin
         raw=self.root/'raw.png';info=PngImagePlugin.PngInfo();info.add_text('producer','Model 0');Image.new('RGB',(120,80),'blue').save(raw,pnginfo=info)

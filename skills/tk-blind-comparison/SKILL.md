@@ -40,10 +40,13 @@ to `tk-grill`; candidate creation to `tk-prototype`, `tk-tts` or the relevant pr
    must not appear in filenames, DOM IDs, accessibility names, default text or sorting.
    Keep a separate answer key and an explicit reveal toggle; offline blinding prevents casual
    cues, not source inspection. Never claim cryptographic or exam security.
+   Keep the comparison topic, item title, shared script and evaluation guide visible within
+   the active item's sticky context; bound long context height so scoring stays reachable.
 5. Verify the saved local HTML through `tk-browser-verify`: desktop/mobile and both themes,
-   media decode, all failure cards, keyboard controls, 1-5 scores, notes, optional favorite,
+   media decode, all failure cards, keyboard controls, native 1-5 score selection, notes, optional favorite,
    reload, candidate addition, JSON import/export, rating copy and clipboard refusal,
-   reveal-only averages and storage refusal. Copy uses the same blind-key payload as
+   partial-reveal confirmation/cancellation, reveal-only averages and storage refusal.
+   Copy uses the same blind-key payload as
    export; if clipboard access fails, retain ratings and offer file export.
    The builder embeds media; open via `file://` without hosting. Browser `localStorage` on
    local files varies: show save failures and offer JSON backup/import; file relocation or a

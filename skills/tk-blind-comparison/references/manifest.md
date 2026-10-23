@@ -13,7 +13,7 @@ represent missing/failed generation explicitly. Keep study/item/candidate IDs st
   "transformations": ["동일한 음량 기준으로 조정했습니다."],
   "favorite": true,
   "candidates": [{"id": "engine-one", "name": "Engine One"}, {"id": "engine-two", "name": "Engine Two"}],
-  "items": [{"id": "sentence-01", "description": "같은 문장을 듣고 발음과 자연스러움을 평가해 주세요."}],
+  "items": [{"id": "sentence-01", "title": "발음과 자연스러움", "script": "오늘은 맑고 따뜻합니다.", "description": "같은 문장을 듣고 발음과 자연스러움을 평가해 주세요."}],
   "outputs": [
     {"item_id": "sentence-01", "candidate_id": "engine-one", "kind": "audio", "path": "prepared/one.wav"},
     {"item_id": "sentence-01", "candidate_id": "engine-two", "kind": "audio", "error": "생성 실패", "diagnostic": "private producer error"}
@@ -25,6 +25,9 @@ Kinds: `audio` (WAV/MP3), `image` (PNG/JPEG/WebP), `video` (MP4/WebM), `text`
 (inline `text`). Use a neutral shared title/item descriptions/transformations;
 put private producer errors only in `diagnostic`. All failed cards show the same neutral
 failure message; source reasons remain in the separate key. Text is escaped, never executed.
+Use optional item `title` for the evaluation topic and `script` for the exact shared source
+text; `description` supplies the evaluation guide. These neutral fields stay in the active
+item's sticky context. Long contexts scroll internally and remain keyboard accessible.
 The helper checks literal names/IDs in shared labels and text; inspect logos, spoken names,
 watermarks and other semantic cues manually. It cannot establish semantic anonymity.
 
@@ -34,6 +37,7 @@ After the package-local Artifact Paths checks, run:
 python3 <package>/scripts/build_gallery.py build manifest.json --output <new-run-directory> --theme system
 python3 <package>/scripts/build_gallery.py build manifest-v2.json --output <new-run-directory> --previous-key <old-run-directory>/answer-key.json --theme system
 python3 <package>/scripts/build_gallery.py summarize ratings.json --key <matching-run-directory>/answer-key.json --output <new-evidence-directory>
+python3 <package>/scripts/build_gallery.py summarize - --key <matching-run-directory>/answer-key.json --blind
 ```
 
 Resolve `--theme` using HTML Output preferences before building. Output directories must be
@@ -43,6 +47,10 @@ It relies on the preceding package-local Git exclusion checks, not a sibling imp
 It embeds prepared files as data URLs in one offline HTML and also keeps neutral ASCII
 `item-0001-slot-0001.ext` display copies. The answer key maps opaque tokens to original IDs,
 names, item content fingerprints, private failures and seeded label order.
+For chat-only aggregation, pass pasted JSON through stdin (`ratings: -`) and omit `--output`:
+the command prints the validated summary without saving inputs or results. `--blind` replaces
+key-derived identities with opaque IDs and anonymous candidate aliases; these aliases are not
+the per-item shuffled display labels. Omit it only for an authorized identity disclosure.
 
 For incremental builds, reuse `--previous-key`; IDs map to random opaque tokens, not hashes
 of easily guessed model names. Adding/removing candidates reshuffles each item using the new

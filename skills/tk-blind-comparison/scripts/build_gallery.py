@@ -10,6 +10,7 @@ import json
 import random
 import re
 import secrets
+import sys
 from pathlib import Path
 
 PACKAGE = Path(__file__).resolve().parents[1]
@@ -26,7 +27,8 @@ def read_json(path):
                 raise ValueError("duplicate JSON key")
             result[key] = value
         return result
-    return json.loads(Path(path).read_text(encoding="utf-8"), object_pairs_hook=pairs,
+    content = sys.stdin.read() if str(path) == "-" else Path(path).read_text(encoding="utf-8")
+    return json.loads(content, object_pairs_hook=pairs,
                       parse_constant=lambda _: (_ for _ in ()).throw(ValueError("nonfinite JSON")))
 
 
@@ -118,6 +120,8 @@ def prepare(manifest, source, previous=None):
     # Sorting IDs here makes dictionary insertion order irrelevant. Display order is seeded.
     for i, item_id in enumerate(sorted(items), 1):
         description = neutral(items[item_id].get("description"), candidates)
+        context = {field: neutral(items[item_id][field], candidates)
+                   for field in ("title", "script") if field in items[item_id]}
         order = sorted(candidates)
         salt = json.dumps([seed, item_id, sorted(candidates)], ensure_ascii=False)
         random.Random(hashlib.sha256(salt.encode()).digest()).shuffle(order)
@@ -161,7 +165,7 @@ def prepare(manifest, source, previous=None):
                       "diagnostic": raw.get("diagnostic", diagnostic)}
             key["outputs"].append(record)
             cards.append(card)
-        public["items"].append({"id": item_registry[item_id], "description": description, "cards": cards})
+        public["items"].append({"id": item_registry[item_id], "description": description, **context, "cards": cards})
         key["order"][item_registry[item_id]] = [{"candidate": c["candidate"], "label": c["label"]} for c in cards]
     return public, key, files, used_inputs
 
@@ -190,7 +194,12 @@ def render(public, key, theme):
                 favorite = '<label><input type="checkbox" data-favorite> 가장 나은 후보</label>' if public["favorite"] else ''
                 controls = f'<div class="rating-controls" hidden><label>점수 <select data-score>{options}</select></label><label>메모 <textarea data-note rows="2"></textarea></label>{favorite}</div>'
             cards.append(f'<article class="sample" data-item="{item["id"]}" data-candidate="{card["candidate"]}" data-fingerprint="{card["fingerprint"]}"><h3>{card["label"]}<span class="identity"></span></h3>{content}{controls}</article>')
-        sections.append(f'<section id="item-{number:04d}"><h2>항목 {number}</h2><p>{html.escape(item["description"])}</p><div class="sample-grid">' + ''.join(cards) + '</div></section>')
+        title = html.escape(item.get("title", f"항목 {number}"))
+        script = '<p class="shared-script">' + html.escape(item["script"]) + '</p>' if "script" in item else ''
+        context = (f'<div class="item-context" role="region" aria-labelledby="context-{number:04d}" tabindex="0">'
+                   f'<p class="comparison-topic">{html.escape(public["title"])}</p><h2 id="context-{number:04d}">{title}</h2>'
+                   f'{script}<p>{html.escape(item["description"])}</p></div>')
+        sections.append(f'<section id="item-{number:04d}">{context}<div class="sample-grid">' + ''.join(cards) + '</div></section>')
     template = (PACKAGE / 'assets/gallery.html').read_text(encoding="utf-8")
     theme_attr = f'data-default-theme="{theme}"' + (f' data-theme="{theme}"' if theme != 'system' else '')
     values = {"THEME_ATTR": theme_attr, "TITLE": html.escape(public["title"]),
@@ -219,7 +228,7 @@ def build(manifest_path, output, previous_key=None, theme="system"):
     return public, key
 
 
-def summarize(ratings, key):
+def summarize(ratings, key, blind=False):
     require(isinstance(ratings, dict) and ratings.get("schema") == 1, "invalid rating schema")
     require(ratings.get("study") == key["study"] and ratings.get("version") == key["version"], "rating study/revision mismatch")
     text(ratings.get("evaluator"))
@@ -245,7 +254,9 @@ def summarize(ratings, key):
         data[token] = row
     candidates = []
     item_rows = []
-    for token, identity in key['candidates'].items():
+    identities = ({token: {'id': token, 'name': f'후보 {i:03d}'}
+                   for i, token in enumerate(sorted(key['candidates']), 1)} if blind else key['candidates'])
+    for token, identity in identities.items():
         values = []
         failures = missing = wins = 0
         for lookup_token, output in lookup.items():
@@ -257,12 +268,16 @@ def summarize(ratings, key):
             wins += rating['favorite']
             if rating['score'] is not None:
                 values.append(rating['score'])
-            item_rows.append({'item_id': output['item_id'], 'candidate_id': identity['id'],
+            item_rows.append({'item_id': output['item'] if blind else output['item_id'], 'candidate_id': identity['id'],
                               'candidate_name': identity['name'], 'failed': output['failed'],
                               **{k: rating[k] for k in ('score', 'note', 'favorite')}})
         candidates.append({'id': identity['id'], 'name': identity['name'], 'mean': sum(values) / len(values) if values else None,
                            'rated': len(values), 'missing': missing, 'failures': failures, 'favorites': wins})
-    return {'schema': 1, 'study_id': key['study_id'], 'version': key['version'], 'evaluators': 1,
+    totals = {field: sum(row[field] for row in candidates) for field in ('rated', 'missing', 'failures')}
+    totals['total'] = len(lookup)
+    require(totals['rated'] + totals['missing'] + totals['failures'] == totals['total'], 'rating coverage mismatch')
+    return {'schema': 1, 'study_id': key['study'] if blind else key['study_id'], 'version': key['version'], 'evaluators': 1,
+            'blind': blind, 'totals': totals,
             'revealed': ratings['revealed'], 'candidates': candidates, 'items': item_rows,
             'limitations': '평가자는 1명입니다. 미평가와 생성 실패는 평균에서 제외하며 항목별 표본 수와 평가 범위가 다를 수 있습니다.'}
 
@@ -271,7 +286,7 @@ def markdown(summary):
     def cell(value):
         return html.escape(str(value)).replace('|', '\\|').replace('\n', '<br>').replace('\r', '')
     lines = ['# 블라인드 비교 결과', '', '평가자는 1명입니다. 미평가와 생성 실패는 평균에서 제외했습니다. 통계적 우열을 입증하지 않습니다.',
-             f'정답 공개 이력: {summary["revealed"]}', '', '| 후보 | 평균 | 평가 수 | 미평가 | 생성 실패 | 최선 선택 |', '|---|---:|---:|---:|---:|---:|']
+             f'결과 공개 이력: {summary["revealed"]}', '', '| 후보 | 평균 | 평가 수 | 미평가 | 생성 실패 | 최선 선택 |', '|---|---:|---:|---:|---:|---:|']
     for row in summary['candidates']:
         lines.append('| ' + ' | '.join(cell(row[k]) for k in ('name', 'mean', 'rated', 'missing', 'failures', 'favorites')) + ' |')
     lines += ['', '| 항목 | 후보 | 점수 | 실패 | 메모 |', '|---|---|---:|---|---|']
@@ -287,16 +302,21 @@ def main():
     b.add_argument('manifest'); b.add_argument('--output', required=True); b.add_argument('--previous-key')
     b.add_argument('--theme', choices=('system', 'light', 'dark'), default='system')
     s = commands.add_parser('summarize')
-    s.add_argument('ratings'); s.add_argument('--key', required=True); s.add_argument('--output', required=True)
+    s.add_argument('ratings', help='rating JSON path, or - for stdin'); s.add_argument('--key', required=True)
+    s.add_argument('--output', help='new directory for summary files; omit to print JSON without saving')
+    s.add_argument('--blind', action='store_true', help='keep study, item and candidate identities hidden')
     args = parser.parse_args()
     try:
         if args.command == 'build':
             build(args.manifest, args.output, args.previous_key, args.theme)
         else:
-            summary = summarize(read_json(args.ratings), read_json(args.key))
-            dest = destination(args.output, [args.ratings, args.key])
-            (dest / 'summary.json').write_text(json.dumps(summary, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-            (dest / 'summary.md').write_text(markdown(summary), encoding='utf-8')
+            summary = summarize(read_json(args.ratings), read_json(args.key), blind=args.blind)
+            if args.output:
+                dest = destination(args.output, [args.key] + ([] if args.ratings == '-' else [args.ratings]))
+                (dest / 'summary.json').write_text(json.dumps(summary, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+                (dest / 'summary.md').write_text(markdown(summary), encoding='utf-8')
+            else:
+                print(json.dumps(summary, ensure_ascii=False, indent=2))
     except (ValueError, KeyError, TypeError, OSError):
         parser.exit(2, 'Invalid comparison input or unsafe output; preserve inputs and check the manifest contract.\n')
 
