@@ -10,7 +10,7 @@ Minimal authored shape (expand the taught explanation and transfer practice for 
 ```json
 {
   "schema": 1, "id": "example-course", "revision": "1", "title": "A complete course",
-  "description": "Target capability and audience", "level": "Introduction",
+  "description": "What the learner will be able to do, distinct from sibling courses", "level": "Introduction; intended audience",
   "objectives": [{"id": "outcome-1", "description": "Predict an outcome and explain why"}],
   "sources": [{"title": "Primary source", "url": "https://example.org/spec"}],
   "lessons": [{
@@ -31,13 +31,37 @@ Minimal authored shape (expand the taught explanation and transfer practice for 
 }
 ```
 
+Write `description` as a learner capability distinct from sibling course cards; put the intended audience in `level`.
+
 The content component allows 1-4 items (label <=36, text <=60 characters); slide title <=45.
 These are template slot limits, not universal instructional rules. `item-1` etc link cues to
 revealed items; an opening cue may use an empty focus. Every visible target must be covered.
-Caption concatenation must equal transcript. The packaged hook/timeline/code/comparison/prediction
-components retain bounded slots in build_course.py; inspect a selected component rather than
-inventing fields. Keep templates fixed; use more slides rather than overflowing a slot. Never
+Caption concatenation must equal transcript. Read [slide components](slide-components.md) for
+data, output, plot and generalized component fields, bounded slots and legacy focus aliases.
+Use more slides rather than overflowing a slot. Never
 use character counts alone as a visual-quality or teaching check.
+
+Set optional course-level `preview_slide` to `{"lesson_id":"stable-lesson-id","slide_id":"stable-slide-id"}`
+to select an existing slide for the catalog. IDs are scoped to that lesson; invalid references fail.
+Absent this field, the first slide of the first lesson is used (video uses a textual cover).
+The built public metadata contains only the chosen visual and no narration/audio. Choose a preview
+that distinguishes sibling courses, and review their opening forms and description first sentences
+together. Preview selection does not alter the playback order.
+
+For newly authored lessons follow [lesson plot](lesson-plot.md), including the brief greeting with
+lesson number, connection, goal, practice, summary and next-lesson preview. Set the final slide's
+`role` to `summary` or `closing`. Older courses without it or with repeated opening forms still
+build, with review warnings. Existing cue/objective validation remains mandatory.
+
+Author each narration cue and matching caption as one sentence; split a long sentence at meaningful
+phrase boundaries if it would obscure the slide or exceed about two readable caption lines at
+the smallest target viewport. Generate a separate clip for each such cue through `tk-tts`, then
+normalize the batch under its postprocessing contract. Keep the transcript's wording and order
+complete, with stable semantic IDs and matching visual focus. A single long clip must be
+resynthesized or aligned with inspected timestamps before splitting its captions; never invent
+sentence times from character counts or divide spoken text by guessed duration. Existing authored
+long cues remain loadable, but flag them for authoring correction rather than claiming they meet
+the sentence-caption contract. Apply the same short-segment rule to timestamped video captions.
 
 For local generated narration set narration to generated and add a relative audio path to
 every cue; partial/missing selected audio fails. Explicit none enables silent reading, with
@@ -70,3 +94,11 @@ For an incremental version pass --previous <prior/course.json>. New directory co
 atomic; existing targets/input files are preserved. Substantive same-revision edits, unsafe
 media paths, duplicate IDs, prerequisite inversions, uncovered outcomes and caption/cue mismatch
 fail before output. There is no automatic source discovery, merge, commit or publication.
+
+Built manifests and embedded metadata own `created_at`/`updated_at` as local build dates
+(`YYYY-MM-DD`), not filesystem times or creator-supplied overrides. The first build sets both;
+`--previous` preserves creation and preserves update when all lessons are retained. Content or
+lesson-revision changes and added/removed lessons update the date. Cosmetic renames/reordering
+with unchanged revisions retain it. A legacy previous build's missing dates remain unknown until
+a real update supplies `updated_at`; never guess the original creation date. See collections for
+date display and sorting. Keep dates out of fingerprints and learner progress.

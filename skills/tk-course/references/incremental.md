@@ -95,7 +95,49 @@ Keep source files under `<courses>/<topic>/`, working manifests/changes under `<
 and only shareable single-file HTML under `<courses>/dist/<topic>/index.html`. Both builders accept
 `--dist <root>`; reuse the agreed root. `build_course.py` creates/refreshes the root's catalog after
 each successful build, including one course. `--lesson-pages` creates optional direct pages only
-in the working output. Never put source audio, dependencies or separate manifest JSON in `dist/`.
+in the working output. Never put source audio, dependencies or separate manifest JSON in `dist/`;
+the public collection settings below are the only optional JSON distribution file.
+
+## Collection order and dates
+
+Before authoring siblings, compare their opening forms and card copy: sibling courses must not
+share the same opening form or the same first sentence of description. Choose each opening from
+its own question and use `preview_slide` when another authored slide makes the catalog clearer.
+
+Order belongs to a collection, not `course.json`; do not rename stable IDs or rebuild course HTML
+just to change it. Optional `<dist>/catalog.json` uses this public shape:
+
+```json
+{"schema":1,"title":"Frontend Reliability Engineering","order":["frontend-test-speed","flaky-test-hunting"],"requires":{"flaky-test-hunting":["frontend-test-speed"]}}
+```
+
+`schema` is required; `title`, `order` and `requires` are optional. Without the file, retain folder
+order. With it, list named IDs first and unlisted courses by title then ID, number the recommended
+positions and show actual prerequisite titles separately. Reject duplicate/unknown IDs, malformed
+settings, self/cyclic dependencies or a final order that places a prerequisite after its dependent.
+Multiple entry points are allowed; numbers do not imply additional dependencies. Keep tracks/groups
+out of schema 1. Removing a course requires removing its settings references before refresh.
+
+Before adding a new course to such a root, reuse a predeclared position or the program plan;
+ask only if the position is unresolved. The noninteractive builder refuses unresolved placement
+before writing and accepts `--catalog-position <1-based position>` as the resolved decision,
+updating the collection settings atomically. A course ID already present in `order` needs no
+second confirmation. Staged revisions copy the agreed settings and build all referenced courses
+before final catalog validation. Standalone refresh rejects IDs missing from the shared tree.
+
+Run `build_catalog.py --dist <dist>` after editing settings. It changes only its marked catalog,
+never existing course HTML or dates. `--zip` includes the validated optional `catalog.json` plus
+the existing HTML allowlist, so an extracted collection can regenerate its recommended path.
+Keep private plans, sources, learner data and raw audio out of that public file.
+
+Cards and course homes show registration and update dates, omitting a duplicate update date and
+unknown legacy dates. The catalog offers recommended order, recent update and recent registration;
+ties follow recommended order and missing dates stay last in either direction. Date direction
+defaults to newest first and is disabled for recommended order. Persist sort/direction locally
+without blocking on denied/corrupt storage; search and no-JavaScript reading remain available.
+Keep all card text readable with wrapping and content-driven height. Use shared fluid grid columns
+inside a centered group, retaining tracks during filtering instead of recentering every row or
+stretching the last search result; reserve scrollbar space to avoid extra horizontal shifts.
 
 The course's first 64KB contains `tigerkit-course-manifest` JSON (public metadata, lesson titles,
 preview, revision and measured audio length). `build_catalog.py --dist <root>` discovers only
@@ -109,7 +151,7 @@ Build revisions with `--previous <old-build/course.json>` to new work and distri
 Review `changes.json`, HTML and media before explicitly replacing the prior shared course; retain
 originals, then refresh the destination catalog. Existing shared course targets are refused rather
 than silently overwritten. Catalog generation changes only its own marked output, never courses.
-Use `--zip` to produce a sibling `<root-name>.zip` containing just the catalog/course HTML paths;
+Use `--zip` to produce a sibling `<root-name>.zip` with the catalog/course HTML and optional public settings;
 replace only archives bearing the TigerKit ZIP comment marker. Report path, size and course list.
 A copied/extracted tree retains relative links. Each course verifies a local catalog by frame
 handshake and hides that breadcrumb when shared alone; no fetch/server or external request is needed.

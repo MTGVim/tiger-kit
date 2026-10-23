@@ -8,7 +8,7 @@ choice, not a stored voice preference as implicit narration consent. Request ins
 approval only when missing; generation does not approve global installation or paid services.
 
 For selected local narration, invoke `tk-tts` through supported skill loading/handoff and retain
-actual WAV paths, measured durations and pending pronunciation review. Keep authored caption
+actual normalized WAV paths, measured durations and pending pronunciation review. Keep authored caption
 spelling separate from pronunciation-corrected speech. Each slide/cue has a stable semantic ID.
 An opening cue previews the point; later cues refer to visible entities and explain why they
 change. Every progressively revealed element must have a cue. Future elements are hidden,
@@ -31,8 +31,9 @@ restart a first poster between sentences. FFmpeg is also required when compresse
 
 The player keeps a main slide/video and visible curriculum, optional notes/transcript/practice,
 floating white captions over rounded black, CC toggle, subtitle size and background opacity
-(default 50%), volume, speed and fullscreen controls. Default sound on after a user gesture with
-an entry toast; retry muted with guidance when audible playback is blocked. Reuse versioned
+(default 50%), volume, speed and fullscreen controls. First-visit sound is off and captions are on;
+a combined entry toast shows both states and offers relevant actions. Stored preferences win.
+Retry muted with guidance when audible playback is blocked. Reuse versioned
 learner preferences across lessons/reloads independently of progress; unavailable storage must
 not block playback. Preserve explicit silent mode. Dragging previews silently
 and commits once on release; cancel restores prior transport state. Keep caption/marker/selection
@@ -49,3 +50,18 @@ WAV-only builds use the standard `wave` path without external tools. The working
 format, bitrate, source/encoded sizes and cue durations. Check Chrome, Firefox and Safari playback
 and listen to representative cues before claiming compatibility/quality; encoding success and
 synthetic test tones do not establish either. Report actual output size, not an estimated promise.
+
+## Player navigation
+
+For slides, Left/Right moves to the previous/next narration cue, and Shift+Left/Right moves to
+the previous/next slide. For videos, Left/Right seeks five seconds on the native clock. Space/K
+toggles playback, M sound, C captions and F fullscreen/expansion; `?` and the playback settings
+open a modal help list. Do not intercept typing, composition, native range/select keys or browser
+modifier shortcuts. Respect paused playback, cue boundaries and lesson bounds.
+
+Delegate fullscreen to the generated trusted `srcdoc` frame with `allow="fullscreen *"` and
+`allowfullscreen`: file origins may be opaque, so the default `src` allowlist can reject them.
+This cannot override an enclosing host policy. Attempt native fullscreen from the learner's
+gesture; on disabled/rejected APIs use a labeled in-window stage expansion with controls and
+captions intact, keyboard focus containment, Escape exit and restored scrolling/focus. Do not
+describe host policy rejection as universal Chrome incompatibility or bypass the embedding host.

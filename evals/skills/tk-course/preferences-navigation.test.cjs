@@ -3,7 +3,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict');
 const {pathToFileURL}=require('node:url');
 const ready=!!(process.env.TK_PLAYWRIGHT_MODULE&&process.env.TK_CHROMIUM_EXECUTABLE&&process.env.TK_COURSE_PAGE);
 test('shared course preferences, breadcrumb, curriculum and standalone catalog discovery', {skip:!ready},async()=>{
- const {chromium}=require(process.env.TK_PLAYWRIGHT_MODULE),browser=await chromium.launch({headless:true,executablePath:process.env.TK_CHROMIUM_EXECUTABLE,args:['--no-sandbox','--disable-dev-shm-usage']});
+ const {chromium}=require(process.env.TK_PLAYWRIGHT_MODULE),browser=await chromium.launch({env:{...process.env,...(process.env.TK_BROWSER_FONTCONFIG?{FONTCONFIG_FILE:process.env.TK_BROWSER_FONTCONFIG}:{})},headless:true,executablePath:process.env.TK_CHROMIUM_EXECUTABLE,args:['--no-sandbox','--disable-dev-shm-usage']});
  const url=pathToFileURL(process.env.TK_COURSE_PAGE).href;
  async function enter(page){await page.goto(url);const f=page.frameLocator('#course-frame');await f.locator('#home-start').click();await f.locator('#player-page').waitFor({state:'visible'});return f;}
  try{
@@ -11,7 +11,7 @@ test('shared course preferences, breadcrumb, curriculum and standalone catalog d
    const context=await browser.newContext({viewport:{width,height:900},colorScheme});
    try{
     const page=await context.newPage(),f=await enter(page);
-    assert.equal(await f.locator('#mute-toggle').getAttribute('aria-pressed'),'false');
+    assert.equal(await f.locator('#mute-toggle').getAttribute('aria-pressed'),'true');
     assert(await f.locator('#menu-toggle').isVisible());
     const bar=await f.locator('header').boundingBox();assert(bar.height<=72,`${width}: ${bar.height}`);
     assert.equal(await f.locator('#collection-link').getAttribute('target'),'_top');
@@ -20,12 +20,15 @@ test('shared course preferences, breadcrumb, curriculum and standalone catalog d
     const widthBefore=(await f.locator('#stage').boundingBox()).width;
     await f.locator('#menu-toggle').click();
     if(width>700){assert((await f.locator('#stage').boundingBox()).width>widthBefore);assert.equal(await f.locator('#menu-toggle').getAttribute('aria-expanded'),'false');}
+    else{assert.equal(await f.locator('#menu-toggle').getAttribute('aria-expanded'),'true');await f.locator('#toc-close').click();}
     await f.locator('#volume').evaluate(el=>{el.value='60';el.dispatchEvent(new Event('input',{bubbles:true}));});
     await f.locator('#caption-opacity').evaluate(el=>{el.value='80';el.dispatchEvent(new Event('input',{bubbles:true}));});
     await f.locator('#next-lesson').click();
     await f.locator('#lesson-heading').filter({hasText:'조건과 결과 2'}).waitFor();
     assert.equal(await f.locator('#volume').inputValue(),'60');assert.equal(await f.locator('#caption-opacity').inputValue(),'80');
     await page.reload();await f.locator('#home-start').click();
+    // Resume can replace the initial srcdoc with lesson 2; wait for that document's preferences.
+    await page.waitForFunction(()=>{const d=document.getElementById('course-frame')?.contentDocument;return d?.getElementById('lesson-heading')?.textContent.includes('조건과 결과 2')&&d?.getElementById('volume')?.value==='60'&&d?.getElementById('caption-opacity')?.value==='80';});
     assert.equal(await f.locator('#volume').inputValue(),'60');assert.equal(await f.locator('#caption-opacity').inputValue(),'80');
     if(width>700)assert.equal(await f.locator('#menu-toggle').getAttribute('aria-expanded'),'false');
     assert(await f.locator('body').evaluate(el=>el.scrollWidth<=el.ownerDocument.defaultView.innerWidth));
@@ -38,12 +41,13 @@ test('shared course preferences, breadcrumb, curriculum and standalone catalog d
      if(mode==='corrupt'){try{localStorage.setItem('tigerkit-course-player:prefs','{broken');}catch(_){}}
      if(mode==='denied')Object.defineProperty(window,'localStorage',{get(){throw new Error('blocked');}});
      if(mode==='policy'){
+      localStorage.setItem('tigerkit-course-player:prefs',JSON.stringify({version:1,muted:false,volume:1,speed:1,captions:false,captionSize:'default',captionOpacity:.5,tocCollapsed:false}));
       const play=HTMLMediaElement.prototype.play;let failed=false;
       HTMLMediaElement.prototype.play=function(){if(!failed&&!this.muted){failed=true;return Promise.reject(new DOMException('blocked','NotAllowedError'));}return play.call(this);};
      }
     },mode);
     const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));const f=await enter(page);
-    if(mode==='policy')await f.locator('#sound-toast-message').filter({hasText:'소리를 켜려면'}).waitFor();
+    if(mode==='policy')await f.locator('#sound-toast-message').filter({hasText:'브라우저가 소리'}).waitFor();
     else{assert.equal(await f.locator('#volume').inputValue(),'100');assert.equal(await f.locator('#caption-opacity').inputValue(),'50');}
     assert.deepEqual(errors,[]);
    }finally{await context.close();}

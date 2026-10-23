@@ -45,8 +45,8 @@ test('actual course-jump listener reads the updated resume target on click',()=>
 
 test('catalog search filters title description objectives and lesson names without storage or network',()=>{
  const cards=['React 요청 경합 응답 순서 경쟁 조건','테스트 최적화 번들 빌드 Vitest 실행'].map(text=>({dataset:{search:text},hidden:false}));
- let handler,clear,focused=false;const nodes={'catalog-search':{value:'',focus:()=>focused=true,addEventListener:(event,fn)=>{assert.equal(event,'input');handler=fn;}},'catalog-count':{},'catalog-empty':{},'catalog-empty-title':{},'catalog-clear':{addEventListener:(_,fn)=>clear=fn},'catalog-search-controls':{hidden:true}},grid={hidden:false};
- vm.runInNewContext(fs.readFileSync(path.join(R,'catalog.js'),'utf8'),{document:{getElementById:id=>nodes[id],querySelectorAll:()=>cards,querySelector:()=>grid}});
+ let handler,clear,focused=false;const nodes={'catalog-search':{value:'',focus:()=>focused=true,addEventListener:(event,fn)=>{assert.equal(event,'input');handler=fn;}},'catalog-sort':{value:'recommended',addEventListener(){}},'catalog-direction':{addEventListener(){},setAttribute(){}},'catalog-count':{},'catalog-empty':{},'catalog-empty-title':{},'catalog-clear':{addEventListener:(_,fn)=>clear=fn},'catalog-search-controls':{hidden:true}},grid={hidden:false,append(){}};
+ vm.runInNewContext(fs.readFileSync(path.join(R,'catalog.js'),'utf8'),{document:{getElementById:id=>nodes[id],querySelectorAll:()=>cards,querySelector:()=>grid,createDocumentFragment:()=>({append(){}})}});
  assert.equal(nodes['catalog-search-controls'].hidden,false);assert.deepEqual(cards.map(x=>x.hidden),[false,false]);
  for(const [query,want] of [['ｒｅａｃｔ',[false,true]],['응답 순서',[false,true]],['Vitest 실행',[true,false]],['없는 강의',[true,true]],['  ',[false,false]]]){nodes['catalog-search'].value=query;handler();assert.deepEqual(cards.map(x=>x.hidden),want);assert.equal(nodes['catalog-empty'].hidden,!want.every(Boolean));}
  assert.equal(nodes['catalog-count'].textContent,'전체 2개 중 2개 코스');
@@ -114,8 +114,8 @@ test('actual volume popover handles hover keyboard escape touch outside dismissa
 
 test('versioned preferences survive fresh instances independently of progress, and reject invalid storage',()=>{
  const Prefs=require(path.join(R,'player-preferences.js')),values=new Map(),storage=()=>({getItem:k=>values.get(k),setItem:(k,v)=>values.set(k,v)});
- const initial=Prefs.load(storage);assert.equal(initial.muted,false);assert.equal(initial.captionOpacity,.5);assert.equal(initial.tocCollapsed,false);
- const chosen={...initial,muted:true,volume:.6,speed:1.5,captions:false,captionSize:'large',captionOpacity:.8,tocCollapsed:true};
+ const initial=Prefs.load(storage);assert.equal(initial.muted,true);assert.equal(initial.captions,true);assert.equal(initial.captionOpacity,.5);assert.equal(initial.tocCollapsed,false);
+ const chosen={...initial,muted:false,volume:.6,speed:1.5,captions:false,captionSize:'large',captionOpacity:.8,tocCollapsed:true};
  assert.equal(Prefs.save(storage,chosen),true);assert.deepEqual(Prefs.load(storage),chosen);assert.deepEqual([...values.keys()],[Prefs.KEY]);
  for(const bad of ['oops',JSON.stringify({...chosen,version:2}),JSON.stringify({...chosen,volume:101}),JSON.stringify({...chosen,muted:'false'}),JSON.stringify({...chosen,captionOpacity:-1}),JSON.stringify({...chosen,speed:NaN}),JSON.stringify({...chosen,tocCollapsed:1})])assert.deepEqual(Prefs.parse(bad),Prefs.defaults());
  const denied=()=>{throw Error('denied');};assert.deepEqual(Prefs.load(denied),Prefs.defaults());assert.equal(Prefs.save(denied,chosen),false);

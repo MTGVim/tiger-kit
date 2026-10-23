@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 """Validate authored course data and build a local self-contained HTML course."""
 from __future__ import annotations
-import argparse,base64,copy,hashlib,json,math,re,shutil,subprocess,tempfile,wave
+import argparse,base64,copy,hashlib,json,math,re,shutil,subprocess,tempfile,warnings,wave
 from pathlib import Path
 from html import escape
 from html.parser import HTMLParser
 from urllib.parse import urlsplit,unquote
+from datetime import datetime
 from render_page import render
 from audio_media import MIME,inspect_audio,AudioBuild
-from distribution import embedded_manifest,safe_path,read_manifest,atomic_text
+from distribution import embedded_manifest,safe_path,read_manifest,atomic_text,course_dates
+from slide_components import TYPES,contract as figure_contract,table as figure_table
 
 ID=re.compile(r'[a-z0-9][a-z0-9-]{0,79}')
 ASSETS=Path(__file__).resolve().parents[1]/'assets'
@@ -138,6 +140,8 @@ def validate(course,base):
                     if not 1<=len(items)<=4:raise ValueError('content component allows 1-4 items')
                     for item in items:text(item['label'],36);text(item['text'],60)
                     targets={'item-'+str(i+1) for i in range(len(items))}
+                elif slide['type'] in TYPES:
+                    targets,coverage=figure_contract(slide)
                 else:
                     targets={'hook':{'first-search','latest-search'},'timeline':{'request-a','request-b','response-b','response-a','overwrite'},'code':{'request-id','await','compare','render','takeaway'},'comparison':{'cancel','guard','caveats'},'prediction':{'request-order','response-order','predict','practice'}}.get(slide['type'])
                     if targets is None:raise ValueError('unsupported component')
@@ -152,11 +156,15 @@ def validate(course,base):
                     if not isinstance(focus,list) or len(set(focus))!=len(focus) or not set(focus)<=targets:raise ValueError('invalid cue visual reference')
                     focused.update(focus);attached.append(bool(cue.get('audio')))
                     if cue.get('audio'):inspect_audio(safe_file(base,cue['audio']))
-                if focused!=targets:raise ValueError('visual elements lack a narration cue')
+                if slide['type'] in TYPES:
+                    if any(not focused&alternatives for alternatives in coverage):raise ValueError('visual elements lack a narration cue')
+                elif focused!=targets:raise ValueError('visual elements lack a narration cue')
                 if any(attached) and not all(attached):raise ValueError('partial generated narration')
             voice=lesson.get('narration')
             if voice not in {'generated','none'}:raise ValueError('explicit narration choice required')
             if voice=='generated' and not all(c.get('audio') for s in slides for c in s['narration']):raise ValueError('selected generated narration is missing; synthesize or explicitly choose none')
+            if slides[-1].get('role') not in {'summary','closing'}:
+                warnings.warn('lesson '+lesson['id']+' lacks a final summary/closing role; review its greeting, connection, goal and ending',UserWarning,stacklevel=2)
         elif lesson['kind']=='video':
             video=lesson['video'];path=safe_file(base,video['src'])
             if path.suffix not in {'.mp4','.webm'}:raise ValueError('finished MP4/WebM required')
@@ -184,24 +192,20 @@ def validate(course,base):
         if url is None:
             safe_file(base,source['local'])
         elif not isinstance(url,str) or not re.match(r'https://[^\s<>"\x00-\x20]+$',url):raise ValueError('invalid source link')
+    preview=course.get('preview_slide')
+    if preview is not None:
+        if not isinstance(preview,dict) or set(preview)!={'lesson_id','slide_id'}:raise ValueError('preview_slide requires lesson_id and slide_id')
+        if not any(l['id']==preview['lesson_id'] and l['kind']=='slides' and any(s['id']==preview['slide_id'] for s in l['slides']) for l in lessons):raise ValueError('unknown preview_slide reference')
+    slide_lessons=[l for l in lessons if l['kind']=='slides']
+    for previous,current in zip(slide_lessons,slide_lessons[1:]):
+        if previous['slides'][0]['type']==current['slides'][0]['type']:
+            warnings.warn('consecutive lesson openings repeat '+current['slides'][0]['type']+'; choose a question-led opening',UserWarning,stacklevel=2)
     return course
 
 def legacy_slots(slide):
     kind=slide['type'];v=slide['visual']
     def short(x,n):text(x,n)
-    if kind=='hook':
-        if len(v['title_lines'])!=2 or len(v['cards'])!=2:raise ValueError('hook slots')
-        for row in v['title_lines']:short(row,24)
-        for c in v['cards']:short(c['label'],18);short(c['value'],3)
-        short(v['question'],55)
-    elif kind=='timeline':
-        if len(v['lanes'])!=2 or len(v['events'])!=4:raise ValueError('timeline slots')
-        for x in v['lanes']+v['events']:short(x,10)
-        short(v['callout'],60)
-    elif kind=='code':
-        if len(slide['code'])>6 or any(len(x)>70 for x in slide['code']):raise ValueError('code slots')
-        short(v['footnote'],60)
-    elif kind=='comparison':
+    if kind=='comparison':
         if len(v['cards'])!=2:raise ValueError('comparison slots')
         for c in v['cards']:short(c['title'],18);short(c['tag'],25);short(c['copy'],30)
         short(v['footnote'],60)
@@ -218,13 +222,15 @@ def payload(course,lesson,base,audio_build=None):
     slides=data['slides'] if mode=='slides' else [copy.deepcopy(dummy) for _ in lesson['video']['captions']]
     for slide in slides:
         for cue in slide['narration']:
-            if cue.get('audio'):cue['audio']=media_uri(base,cue['audio'],'audio',audio_build)
+            if cue.get('audio'):
+                if audio_build:cue['seconds']=next(row['seconds'] for row in audio_build.records if row['source']==cue['audio'])
+                cue['audio']=media_uri(base,cue['audio'],'audio',audio_build)
     video={'src':'','duration':1,'has_audio':False};scenes=[{'id':'unused','caption':'','start':0,'end':1}]
     if mode=='video':
         video={**lesson['video'],'src':media_uri(base,lesson['video']['src'],'video')}
         if video.get('poster'):video['poster']=media_uri(base,video['poster'],'image')
         scenes=copy.deepcopy(video['captions'])
-    data.update(sources=copy.deepcopy(course['sources']),title=course['title'],course_label=course['title'],lesson_id=lesson['id'],lesson_title=lesson['title'],course_meta=meta,course_lessons=listing,overview={'description':course['description'],'level':course['level'],'outcomes':[o['description'] for o in course['objectives']]},slides=slides,lessons=[{'id':mode,'title':lesson['title'],'note':lesson['notes']}],published_lessons=[mode],video_lesson=video,video_scenes=scenes,video_transcript=' '.join(x['caption'] for x in scenes),production_choices={'voice':'none' if lesson.get('narration')=='none' else 'generated-local','pacing':{'slidePauseMs':1200,'sentencePauseMs':600}},narration_revision=lesson['revision'])
+    data.update(sources=copy.deepcopy(course['sources']),title=course['title'],course_label=course['title'],lesson_id=lesson['id'],lesson_title=lesson['title'],course_meta=meta,course_lessons=listing,overview={'description':course['description'],'level':course['level'],'outcomes':[o['description'] for o in course['objectives']],**{k:course[k] for k in ('created_at','updated_at') if k in course}},slides=slides,lessons=[{'id':mode,'title':lesson['title'],'note':lesson['notes']}],published_lessons=[mode],video_lesson=video,video_scenes=scenes,video_transcript=' '.join(x['caption'] for x in scenes),production_choices={'voice':'none' if lesson.get('narration')=='none' else 'generated-local','pacing':{'slidePauseMs':1200,'sentencePauseMs':600}},narration_revision=lesson['revision'])
     return data
 
 def bundle(pages,title,course):
@@ -233,7 +239,7 @@ def bundle(pages,title,course):
     fallback=('<a href="'+escape(course['collection_home'],quote=True)+'">전체 코스</a>') if course.get('collection_home') else ''
     for lesson in course['lessons']:
         fallback+='<section><h2>'+escape(lesson['title'])+'</h2><p>'+escape(lesson['notes'])+'</p>'
-        for slide in lesson.get('slides',[]):fallback+='<h3>'+escape(slide['title'])+'</h3><p>'+escape(slide['transcript'])+'</p>'
+        for slide in lesson.get('slides',[]):fallback+='<h3>'+escape(slide['title'])+'</h3><p>'+escape(slide['transcript'])+'</p>'+figure_table(slide)
         if lesson['kind']=='video':
             match=re.search(r'<video id="lesson-video"[^>]*>',pages[lesson['id']])
             if match:fallback+=match[0]+'</video>'
@@ -242,9 +248,12 @@ def bundle(pages,title,course):
             fallback+='<article><h3>'+escape(q['prompt'])+'</h3><ul>'+''.join('<li>'+escape(choice[1])+'</li>' for choice in q['choices'])+'</ul><details><summary>해설 보기</summary><p>'+escape(q['explanation'])+'</p></details></article>'
         fallback+='</section>'
     fallback+='<section><h2>참고 자료</h2><ul>'+''.join('<li>'+('<a href="'+escape(item['url'],quote=True)+'">'+escape(item['title'])+'</a>' if item.get('url') else escape(item['title'])+' (제공 자료)')+'</li>' for item in course['sources'])+'</ul></section>'
-    return '<!doctype html><html lang="ko"><head><meta charset="utf-8">'+embedded_manifest(course)+'<meta name="viewport" content="width=device-width,initial-scale=1"><title>'+escape(title)+'</title><style>html,body{margin:0;height:100%;overflow:hidden}iframe{display:block;width:100%;height:100dvh;border:0}</style></head><body><iframe id="course-frame" title="'+escape(title,quote=True)+'" allow="fullscreen" allowfullscreen></iframe><noscript><style>html,body{overflow:auto}iframe{display:none}</style>'+fallback+'</noscript><script id="course-pages" type="application/json">'+encoded+'</script><script>'+bootstrap+'</script></html>'
+    return '<!doctype html><html lang="ko"><head><meta charset="utf-8">'+embedded_manifest(course)+'<meta name="viewport" content="width=device-width,initial-scale=1"><title>'+escape(title)+'</title><style>html,body{margin:0;height:100%;overflow:hidden}iframe{display:block;width:100%;height:100dvh;border:0}</style></head><body><iframe id="course-frame" title="'+escape(title,quote=True)+'" allow="fullscreen *" allowfullscreen></iframe><noscript><style>html,body{overflow:auto}iframe{display:none}</style>'+fallback+'</noscript><script id="course-pages" type="application/json">'+encoded+'</script><script>'+bootstrap+'</script></html>'
 
-def build(source,output,previous=None,collection_home=None,*,dist=None,audio_format='opus',lesson_pages=None):
+def build_day():
+    return datetime.now().astimezone().date().isoformat()
+
+def build(source,output,previous=None,collection_home=None,*,dist=None,audio_format='opus',lesson_pages=None,catalog_position=None):
     source=source.absolute();output=output.absolute()
     if source.resolve()!=source or not source.is_file() or output.resolve()!=output or output.exists() or not output.parent.is_dir():raise ValueError('use safe authored input and a new output directory')
     # The CLI always passes a distribution root. None preserves the in-process legacy builder API.
@@ -266,8 +275,11 @@ def build(source,output,previous=None,collection_home=None,*,dist=None,audio_for
     course=validate(json.loads(source.read_text()),source.parent);changes=[]
     course['collection_home']=collection_home;course['narration_seconds']=narration_seconds(course,source.parent)
     fingerprints={item['id']:fingerprint(item,course,source.parent) for item in course['lessons']}
+    old=None
     if previous:
+        safe_path(previous)
         old=json.loads(previous.read_text())
+        course_dates(old)
         if old['id']!=course['id']:raise ValueError('course identity changed; do not merge progress implicitly')
         prior={x['id']:x for x in old['lessons']}
         for item in course['lessons']:
@@ -279,8 +291,26 @@ def build(source,output,previous=None,collection_home=None,*,dist=None,audio_for
                     if media_paths(before):raise ValueError('previous media identity is unavailable; use the prior built course.json with recorded digests')
                     old_fingerprint=fingerprint(before,old,previous.parent)
                 if old_fingerprint!=fingerprints[item['id']] and before['revision']==item['revision']:raise ValueError('substantive lesson change requires a new content revision')
-            changes.append({'id':item['id'],'status':'added' if before is None else 'changed' if old_fingerprint!=fingerprints[item['id']] else 'retained'})
+            changes.append({'id':item['id'],'status':'added' if before is None else 'changed' if old_fingerprint!=fingerprints[item['id']] or before['revision']!=item['revision'] else 'retained'})
         changes += [{'id':x,'status':'removed; historical progress is retained'} for x in prior if x not in {l['id'] for l in course['lessons']}]
+    for key in ('created_at','updated_at'):course.pop(key,None)
+    if old is None:
+        today=build_day();course.update(created_at=today,updated_at=today)
+    else:
+        for key in ('created_at','updated_at'):
+            if key in old:course[key]=old[key]
+        if any(change['status']!='retained' for change in changes):course['updated_at']=build_day()
+    course_dates(course)
+    settings=None;original_settings=None
+    if not legacy:
+        from build_catalog import discover,load_settings,place_course
+        items=discover(dist) if dist.exists() else []
+        if course['id'] in {c['id'] for _,c in items}:raise ValueError('duplicate course identity; no implicit merge')
+        settings=load_settings(dist)
+        if settings is not None:
+            original_settings=(dist/'catalog.json').read_bytes()
+            settings=place_course(settings,items,(shared.parent,course),catalog_position)
+        elif catalog_position is not None:raise ValueError('--catalog-position requires catalog.json')
     for item in course['lessons']:item['content_fingerprint']=fingerprints[item['id']]
     with tempfile.TemporaryDirectory(prefix='.course-build-',dir=output.parent) as tmp:
         audio=AudioBuild(source.parent,[c['audio'] for l in course['lessons'] if l['kind']=='slides' for slide in l['slides'] for c in slide['narration'] if c.get('audio')],audio_format,tmp)
@@ -313,15 +343,17 @@ def build(source,output,previous=None,collection_home=None,*,dist=None,audio_for
             shared.parent.mkdir(parents=True,exist_ok=False)
             try:
                 atomic_text(shared,bundled);validate_metadata(read_manifest(shared))
+                if settings is not None and settings!=json.loads(original_settings):atomic_text(dist/'catalog.json',json.dumps(settings,ensure_ascii=False,indent=2)+'\n')
                 catalog_build(dist)
             except Exception:
+                if original_settings is not None:atomic_text(dist/'catalog.json',original_settings.decode('utf-8'))
                 shared.unlink(missing_ok=True);shared.parent.rmdir();raise
         stage.rename(output)
     path=output/'index.html' if legacy else shared
     return {'path':str(path),'catalog':str(dist/'index.html') if not legacy else None,'lessons':len(pages),'audio':course['audio_build'],'narration':'selected per lesson; runtime listening remains required','browser_verification':'pending','share_hint':str(path)+' (one course); '+str(dist if not legacy else output)+' folder or build_catalog.py --zip (multiple courses)'}
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--input',required=True,type=Path);p.add_argument('--output',required=True,type=Path);p.add_argument('--previous',type=Path);p.add_argument('--collection-home');p.add_argument('--dist',type=Path);p.add_argument('--audio-format',choices=['opus','mp3','wav'],default='opus');p.add_argument('--lesson-pages',action='store_true');a=p.parse_args()
-    try:print(json.dumps(build(a.input,a.output,a.previous,a.collection_home,dist=a.dist or a.input.absolute().parent.parent/'dist',audio_format=a.audio_format,lesson_pages=a.lesson_pages),ensure_ascii=False));return 0
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--input',required=True,type=Path);p.add_argument('--output',required=True,type=Path);p.add_argument('--previous',type=Path);p.add_argument('--collection-home');p.add_argument('--dist',type=Path);p.add_argument('--audio-format',choices=['opus','mp3','wav'],default='opus');p.add_argument('--lesson-pages',action='store_true');p.add_argument('--catalog-position',type=int);a=p.parse_args()
+    try:print(json.dumps(build(a.input,a.output,a.previous,a.collection_home,dist=a.dist or a.input.absolute().parent.parent/'dist',audio_format=a.audio_format,lesson_pages=a.lesson_pages,catalog_position=a.catalog_position),ensure_ascii=False));return 0
     except (ValueError,KeyError,TypeError,OSError,subprocess.SubprocessError) as e:print(json.dumps({'status':'failed','detail':str(e)},ensure_ascii=False));return 1
 if __name__=='__main__':raise SystemExit(main())

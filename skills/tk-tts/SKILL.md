@@ -33,6 +33,9 @@ return measured duration, engine/model revision, sentence/cache/memory facts and
 remain pending until heard. Non-silence is not intelligibility. Do not add ASR, voice cloning,
 paid/cloud synthesis, a resident server or an automatic engine fallback.
 
+For multi-clip narration, read [audio postprocessing](references/postprocessing.md) before delivery.
+Normalize the batch into new files, preserve raw WAVs and return the measured treatment/limits.
+
 Report unavailable prerequisites with safe module or actual/expected version details and the
 approved recovery route. Preserve original audio/cache bytes and clean only proven run-owned
 transients. Return concise paths and actual validation/remaining listening limits. Existing

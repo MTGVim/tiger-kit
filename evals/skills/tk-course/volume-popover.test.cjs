@@ -4,7 +4,7 @@ const {pathToFileURL}=require('node:url');
 const configured=!!(process.env.TK_PLAYWRIGHT_MODULE&&process.env.TK_CHROMIUM_EXECUTABLE&&process.env.TK_COURSE_PAGE);
 test('volume popup preserves toolbar height and native keyboard/touch access', {skip:!configured},async()=>{
  const {chromium}=require(process.env.TK_PLAYWRIGHT_MODULE);
- const browser=await chromium.launch({headless:true,executablePath:process.env.TK_CHROMIUM_EXECUTABLE,args:['--no-sandbox','--disable-dev-shm-usage']});
+ const browser=await chromium.launch({env:{...process.env,...(process.env.TK_BROWSER_FONTCONFIG?{FONTCONFIG_FILE:process.env.TK_BROWSER_FONTCONFIG}:{})},headless:true,executablePath:process.env.TK_CHROMIUM_EXECUTABLE,args:['--no-sandbox','--disable-dev-shm-usage']});
  const url=pathToFileURL(process.env.TK_COURSE_PAGE).href,evidence=process.env.TK_VOLUME_EVIDENCE_DIR;
  if(evidence)fs.mkdirSync(evidence,{recursive:true});
  async function lesson(page){

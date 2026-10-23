@@ -85,6 +85,22 @@
         }
       ],
       "safety": false
+    },
+    {
+      "id": "tts-batch-loudness-postprocess-preserves-raw",
+      "path": "success",
+      "prompt": "문장별 TTS 음량이 다릅니다. 원본을 보존하면서 같은 음량 목표로 후처리하세요.",
+      "expected_output": "원본을 보존하고 새 경로에 같은 목표로 음량을 정규화합니다. `FFmpeg`의 두 단계 실측과 재생 길이를 확인하며, 짧은 구간의 유한하지 않은 측정은 RMS·피크 보정으로 구분하여 한계를 반환합니다. 비밀 설치·합성 엔진 변경·실청 성공을 추론하지 않고 `human_action: listen`을 유지합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "원본을 보존하고 새 경로에 같은 목표로 음량을 정규화합니다. `FFmpeg`의 두 단계 실측과 재생 길이를 확인하며, 짧은 구간의 유한하지 않은 측정은 RMS·피크 보정으로 구분하여 한계를 반환합니다. 비밀 설치·합성 엔진 변경·실청 성공을 추론하지 않고 `human_action: listen`을 유지합니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": false
     }
   ]
 }

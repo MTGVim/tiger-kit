@@ -2,7 +2,7 @@
 (function(root){
  'use strict';
  const KEY='tigerkit-course-player:prefs';
- const defaults=()=>({version:1,muted:false,volume:1,speed:1,captions:true,captionSize:'default',captionOpacity:.5,tocCollapsed:false});
+ const defaults=()=>({version:1,muted:true,volume:1,speed:1,captions:true,captionSize:'default',captionOpacity:.5,tocCollapsed:false});
  function parse(raw){
   try{
    const v=JSON.parse(raw),d=defaults();

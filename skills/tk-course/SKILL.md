@@ -45,12 +45,29 @@ narration or video. Keep synthesis in `tk-tts` and assembly in `tk-video`; consu
 never sibling Python imports or a shared dispatcher. Browser speech is an explicit final playback
 fallback, not an exported-audio engine. Preserve an explicit no-narration choice.
 
-Read [clear writing](references/clear-writing.md) for new narration/prose. Introduce what each
-slide will explain, connect the visible entities to a worked case, then explain the result and
-transition. A script must make sense with its slide; do not read disconnected labels. Read
-[visual grammar](references/visual-grammar.md) when choosing a figure and [HTML output](references/html-output.md)
+Read [lesson plot](references/lesson-plot.md) when authoring lessons. Delegate bounded independent
+source audits, lesson drafts or verification when total context/work falls without weakening
+quality or review. Reuse course-level source, plan and TTS decisions. Give each worker the approved
+scope, relevant references including inline Artifact Paths, and a nonoverlapping
+new-file boundary. The parent integrates and reviews pedagogical continuity, shared metadata and
+media, then owns final browser and audio checks. Choose only currently available supported models
+for task difficulty; skip delegation when dependencies or coordination cost outweigh the gain.
+Do not encode a model or provider in course artifacts. Read [clear writing](references/clear-writing.md)
+for new narration/prose. Introduce what each slide will explain, connect the visible entities to a
+worked case, then explain the result and transition. A script must make sense with its slide; do
+not read disconnected labels. Read [visual grammar](references/visual-grammar.md) when choosing a
+figure, [chart design](references/chart-design.md) for numeric charts, and [HTML output](references/html-output.md)
 for the offline/theme/escaping contract. The course player is a media layout; document-navigation
 rules apply only to document-like notes, not a second rail around the player.
+
+Choose each slide representation from its question: numeric comparison, trend or composition uses
+a bar, line or stacked chart with finite numeric `visual.data` values and explicit units; a narrated
+output, log or stack uses `output`; nonnumeric lists use `content`. Components
+support one to four hook cards and generalized code and timeline forms while retaining legacy
+aliases. For progressive reveal, cue focus dims unrevealed targets while keeping semantic labels,
+values and boxes readable; an empty first-cue focus shows everything. Every cue target must render
+on that slide. For cover, current course-map and summary components, focus the actual rendered
+semantic targets; map badges describe the authored itinerary, not learner mastery.
 
 ## Build and verify
 
@@ -62,19 +79,26 @@ Keep source at `<courses>/<topic>/`, working manifests in `<topic>/build/`, and 
 review before replacing an approved target and refresh its catalog. Keep learning
 content separate from renderer code. Do not copy demo content, brand marks, engine setup or
 implementation notes into learning screens. Retain third-party notices.
-Shared output contains only a catalog and single-file courses; `--lesson-pages` optionally writes
+Shared output contains a catalog, single-file courses and optional public `catalog.json`; `--lesson-pages` writes
 direct lesson pages to the working output. Build audio defaults to Opus 32kbps; see media guidance
 for compressed input, FFmpeg readiness and `--audio-format mp3|wav`. Keep original media intact.
 Keep the home copy on a theme-token surface distinct from the page canvas. The header shows
 the course title once; entering a lesson adds its title, and returning home clears that context.
 
 Inspect the actual reading/listening order, objective/prerequisite coverage, source support,
-component overflow, captions, notes, question/answer separation and retry feedback. Verify audio
+component overflow, captions, notes, question/answer separation and retry feedback. Every line,
+point, bar, axis, table or output named by a cue must be rendered on that slide. A first-cue
+screenshot of every slide must read as a complete statement, without empty or label-only boxes.
+In collections, each catalog card must differ from its siblings in both preview and first
+description sentence; the description names what the learner can do, and `level` names the audience.
+Every lesson greets the learner, connects to the previous lesson, states its goal, and closes with
+a summary and preview. Vary opening forms across consecutive lessons. Verify audio
 readiness, missing-file recovery, immediate first play, breathing gaps, reveal/seek state,
-caption size/opacity (default 50%), light/dark/system themes, settings hit areas, default sound on after a user gesture with an entry toast,
+caption size/opacity (default 50%), light/dark/system themes, settings hit areas, first-visit sound off and captions on with a combined entry toast,
 muted retry plus toast when audible playback is blocked, playback preferences persisting across
 lessons and reloads, collapsible curriculum and a single-line breadcrumb,
-volume/rate, progress import/export and a viewport-bounded volume popup that preserves toolbar
+volume/rate, progress import/export, contextual shortcuts/help, native fullscreen or a labeled
+in-window expansion fallback, and a viewport-bounded volume popup that preserves toolbar
 height and supports hover, keyboard and touch dismissal. A finished video owns its audio, pauses and time axis;
 never overlay live TTS. Manual progress belongs to the course and is not tutoring evidence.
 Use `tk-browser-verify` for actual runtime checks; static/media doubles are not browser or listening
@@ -86,6 +110,9 @@ result for several. Keep sharing/download controls out of learning screens.
 
 For existing artifacts or several topics, read [incremental editing and collections](references/incremental.md)
 before changing anything. Preserve unrelated courses, learner notes and unknown progress formats.
+When a collection has `catalog.json`, settle a new course's position once before building; reuse
+an already agreed plan/order. Verify date provenance, ordering/dependencies, saved date sorting,
+centered fluid columns and complete card text at the requested viewport/column boundaries.
 
 For attribution and deliberate omissions, see [sources](references/sources.md).
 
