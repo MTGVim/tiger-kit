@@ -917,6 +917,96 @@
           "paths": []
         }
       ]
+    },
+    {
+      "id": "paired-test-count-regression",
+      "path": "boundary",
+      "prompt": "정책 시뮬레이션입니다. 실제 파일 변경·실행·위임 없이 주어진 근거로 판단하세요. 기존 AC는 5개 결과를 요구합니다. 변경 전 `produce`()는 5개를 반환하고 테스트는 길이 5를 확인했습니다. 변경 후 `produce`()는 1개를 반환하며 테스트도 길이 1로 바꿨습니다. 결과 5개를 표시하는 소비자 요구는 유지됩니다. 테스트는 GREEN입니다.",
+      "expected_output": "GREEN을 근거로 통과시키지 않고 유지된 5개 계약과 1개 반환의 실제 회귀 및 약화한 보호 범위를 확인합니다. 패턴만으로 `Critical`을 자동 판정하지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "GREEN을 근거로 통과시키지 않고 유지된 5개 계약과 1개 반환의 실제 회귀 및 약화한 보호 범위를 확인합니다. 패턴만으로 `Critical`을 자동 판정하지 않습니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "paired-test-count-approved-change",
+      "path": "boundary",
+      "prompt": "정책 시뮬레이션입니다. 실제 파일 변경·실행·위임 없이 주어진 근거로 판단하세요. 사용자가 결과를 대표 1개로 변경하도록 명시적으로 승인했습니다. 이전 계약은 5개였고 생산자와 소비자를 모두 1개 계약으로 변경했으며 테스트도 길이 1로 바꿨습니다. 경계 검사는 유지됐습니다.",
+      "expected_output": "승인된 사양 변경과 소비자 정합성을 근거로 구별합니다. 개수 감소만으로 결함을 만들거나 모든 테스트 완화를 금지하지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "승인된 사양 변경과 소비자 정합성을 근거로 구별합니다. 개수 감소만으로 결함을 만들거나 모든 테스트 완화를 금지하지 않습니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "paired-test-protection-gap",
+      "path": "boundary",
+      "prompt": "정책 시뮬레이션입니다. 실제 파일 변경·실행·위임 없이 주어진 근거로 판단하세요. 기존 계약은 저장 실패 시 오류를 호출자에게 전달합니다. 이번 변경은 예외를 성공값으로 바꿨습니다. 실패 전파 `assertion`은 삭제되고 그 테스트는 `skip` 처리됐으며 다른 테스트는 `mock`.`save` 호출만 확인합니다. 유효한 실패 입력에서 호출자가 성공을 표시합니다.",
+      "expected_output": "실패 전파라는 관찰 가능한 계약이 깨지고 보호가 사라진 경로를 확인합니다. 목 호출 성공을 동작 검증으로 취급하지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "실패 전파라는 관찰 가능한 계약이 깨지고 보호가 사라진 경로를 확인합니다. 목 호출 성공을 동작 검증으로 취급하지 않습니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "absence-dynamic-entrypoint",
+      "path": "boundary",
+      "prompt": "정책 시뮬레이션입니다. 실제 파일 변경·실행·위임 없이 주어진 근거로 판단하세요. `src`/`plugins`/`legacy`.`ts` 정적 `import` 검색은 0건입니다. `registry`.`json`에 `legacy` 이름이 있으며 로더는 `import`(`./plugins/${name}.ts`)를 실행합니다. 이 파일을 미사용으로 삭제할 수 있나요?",
+      "expected_output": "문자열 레지스트리와 동적 `import` 사용을 추적하여 미사용 단정을 거부합니다. 관련 범위의 실제 사용을 확인하며 무관한 저장소 전체 검색을 강제하지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "문자열 레지스트리와 동적 `import` 사용을 추적하여 미사용 단정을 거부합니다. 관련 범위의 실제 사용을 확인하며 무관한 저장소 전체 검색을 강제하지 않습니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "producer-downstream-shape",
+      "path": "boundary",
+      "prompt": "정책 시뮬레이션입니다. 실제 파일 변경·실행·위임 없이 주어진 근거로 판단하세요. 생산자는 `payload`.`userId`를 `payload`.`accountId`로 변경했고 직접 소비자는 수정됐습니다. 간접 소비자 `audit`(`row`)는 여전히 `row`.`userId`를 기록합니다. `audit`에는 실제 유효한 신규 `payload`가 도달합니다.",
+      "expected_output": "간접 소비자가 구 필드를 읽어 감사 식별자를 잃는 변경 소유 회귀를 확인합니다. 생산자와 직접 소비자의 테스트 통과만으로 안전을 단정하지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "간접 소비자가 구 필드를 읽어 감사 식별자를 잃는 변경 소유 회귀를 확인합니다. 생산자와 직접 소비자의 테스트 통과만으로 안전을 단정하지 않습니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "proof-missing-fresh-evidence",
+      "path": "boundary",
+      "prompt": "정책 시뮬레이션입니다. 실제 파일 변경·실행·위임 없이 주어진 근거로 판단하세요. 테스트 기대값을 축소한 이유와 이전 계약을 읽을 수 없습니다. 해당 `producer` 파일은 직전 검증 이후 다시 수정됐습니다. 현재 입력에서 실패하는지는 모릅니다.",
+      "expected_output": "필요한 기존 계약과 최신 소스·검증 근거가 없음을 남깁니다. 수정 전 근거를 재사용하거나 확정 `finding`·Pass를 꾸미지 않고 기존 `Unresolved` 또는 Unverifiable 절차를 사용합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "필요한 기존 계약과 최신 소스·검증 근거가 없음을 남깁니다. 수정 전 근거를 재사용하거나 확정 `finding`·Pass를 꾸미지 않고 기존 `Unresolved` 또는 Unverifiable 절차를 사용합니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "migrations": [

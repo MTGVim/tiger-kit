@@ -38,6 +38,8 @@ link its supersession rather than silently overwriting history.
 2. Read mission, existing learner profile, relevant latest learning
    records, recent lesson content, actual attempts and noted gaps.
    Unknown or unsubmitted answers stay unknown.
+   Reuse demonstrated prerequisite answers and resolved misconceptions; an untaught dependency
+   may justify a targeted check under [readiness](readiness.md), not a repeated intake interview.
 3. Choose a lesson at the learner's **zone of proximal development**:
    enough challenge to stretch demonstrated knowledge, not a wholesale
    restart. Use spaced recall and interleaving only where actual prior

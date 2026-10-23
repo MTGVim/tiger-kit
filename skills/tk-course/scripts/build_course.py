@@ -11,6 +11,7 @@ from render_page import render
 from audio_media import MIME,inspect_audio,AudioBuild
 from distribution import embedded_manifest,safe_path,read_manifest,atomic_text,course_dates
 from slide_components import TYPES,contract as figure_contract,table as figure_table
+from readiness import validate_readiness,readiness_html
 
 ID=re.compile(r'[a-z0-9][a-z0-9-]{0,79}')
 ASSETS=Path(__file__).resolve().parents[1]/'assets'
@@ -106,6 +107,7 @@ def validate(course,base):
     objectives=course['objectives'];known={identifier(o['id']) for o in objectives}
     if not known or len(known)!=len(objectives):raise ValueError('duplicate or missing objective')
     for o in objectives:text(o['description'])
+    validate_readiness(course,identifier,text)
     lessons=course['lessons']
     if not isinstance(lessons,list) or not 1<=len(lessons)<=200:raise ValueError('course requires 1-200 lessons')
     ids=[identifier(l['id']) for l in lessons]
@@ -231,12 +233,14 @@ def payload(course,lesson,base,audio_build=None):
         if video.get('poster'):video['poster']=media_uri(base,video['poster'],'image')
         scenes=copy.deepcopy(video['captions'])
     data.update(sources=copy.deepcopy(course['sources']),title=course['title'],course_label=course['title'],lesson_id=lesson['id'],lesson_title=lesson['title'],course_meta=meta,course_lessons=listing,overview={'description':course['description'],'level':course['level'],'outcomes':[o['description'] for o in course['objectives']],**{k:course[k] for k in ('created_at','updated_at') if k in course}},slides=slides,lessons=[{'id':mode,'title':lesson['title'],'note':lesson['notes']}],published_lessons=[mode],video_lesson=video,video_scenes=scenes,video_transcript=' '.join(x['caption'] for x in scenes),production_choices={'voice':'none' if lesson.get('narration')=='none' else 'generated-local','pacing':{'slidePauseMs':1200,'sentencePauseMs':600}},narration_revision=lesson['revision'])
+    data['readiness']=copy.deepcopy(course.get('readiness',[]))
     return data
 
 def bundle(pages,title,course):
     encoded=json.dumps(pages,ensure_ascii=False).replace('<','\\u003c')
     bootstrap="""const pages=JSON.parse(document.getElementById('course-pages').textContent),ids=Object.keys(pages),frame=document.getElementById('course-frame');let entering=false;function show(id,enter){if(!Object.hasOwn(pages,id))return;entering=enter;frame.srcdoc=pages[id];}frame.addEventListener('load',()=>{if(entering)frame.contentWindow.postMessage({type:'course-enter'},'*');});window.addEventListener('message',e=>{if(e.source!==frame.contentWindow||e.data?.type!=='course-lesson'||!ids.includes(e.data.id))return;show(e.data.id,true);});show(ids[0],false);"""
     fallback=('<a href="'+escape(course['collection_home'],quote=True)+'">전체 코스</a>') if course.get('collection_home') else ''
+    fallback+=readiness_html(course.get('readiness',[]))
     for lesson in course['lessons']:
         fallback+='<section><h2>'+escape(lesson['title'])+'</h2><p>'+escape(lesson['notes'])+'</p>'
         for slide in lesson.get('slides',[]):fallback+='<h3>'+escape(slide['title'])+'</h3><p>'+escape(slide['transcript'])+'</p>'+figure_table(slide)
@@ -275,12 +279,14 @@ def build(source,output,previous=None,collection_home=None,*,dist=None,audio_for
     course=validate(json.loads(source.read_text()),source.parent);changes=[]
     course['collection_home']=collection_home;course['narration_seconds']=narration_seconds(course,source.parent)
     fingerprints={item['id']:fingerprint(item,course,source.parent) for item in course['lessons']}
-    old=None
+    old=None;readiness_changed=False
     if previous:
         safe_path(previous)
         old=json.loads(previous.read_text())
         course_dates(old)
         if old['id']!=course['id']:raise ValueError('course identity changed; do not merge progress implicitly')
+        readiness_changed=old.get('readiness',[])!=course.get('readiness',[])
+        if readiness_changed and old['revision']==course['revision']:raise ValueError('readiness change requires a new course revision')
         prior={x['id']:x for x in old['lessons']}
         for item in course['lessons']:
             before=prior.get(item['id'])
@@ -299,7 +305,7 @@ def build(source,output,previous=None,collection_home=None,*,dist=None,audio_for
     else:
         for key in ('created_at','updated_at'):
             if key in old:course[key]=old[key]
-        if any(change['status']!='retained' for change in changes):course['updated_at']=build_day()
+        if readiness_changed or any(change['status']!='retained' for change in changes):course['updated_at']=build_day()
     course_dates(course)
     settings=None;original_settings=None
     if not legacy:

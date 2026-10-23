@@ -122,6 +122,10 @@ reasoned feedback and a retry. Use actual attempts to choose what comes next; po
 about an artifact is not evidence of learning. Choose format and extent after this design,
 without a fixed chapter length, panel count, character, comic or dialogue requirement.
 
+Distinguish prerequisites required but untaught from what this curriculum teaches or assesses.
+For a material untaught gap, read [readiness](references/readiness.md); reuse observed answers and
+resolved misconceptions on resume instead of repeating a diagnostic or mission interview.
+
 For a course, work backward from what the learner should explain, judge or do. In `curriculum.md`, map these
 outcomes to prerequisite-ordered chapters and checks, with scope and exclusions. Use multiple
 coherent dependent chapters for a course, not an arbitrary split of one long lesson or a fixed

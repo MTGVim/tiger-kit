@@ -1,5 +1,6 @@
 from html import escape as h
 from distribution import date_label
+from readiness import readiness_html
 import re
 from pathlib import Path
 
@@ -45,4 +46,5 @@ def home_page(data,preview):
             section=item['section'];curriculum+='<details open><summary>'+h(section)+'</summary>'
         curriculum+='<a class="home-lesson" href="#" data-course-jump="'+item['id']+'"><span class="home-lesson-num">'+str(n).zfill(2)+'</span><span class="home-lesson-title"><strong>'+h(item['title'])+'</strong><small>'+h(item['kind_label'])+'</small></span><span class="home-lesson-status" data-home-status="'+item['id']+'">시작 전</span><span class="home-chevron" aria-hidden="true">›</span></a>'
     curriculum+='</details>'
+    curriculum=readiness_html(data.get('readiness',[]))+curriculum
     return f"""<main id="home" aria-labelledby="home-title"><div class="home-hero"><div class="home-copy"><h1 id="home-title" tabindex="-1">{h(data['title'])}</h1><p class="home-description">{h(overview['description'])}</p><div class="course-chips"><span>{h(overview['level'])}</span><span>{len(items)}개 강의</span></div>{date_html}<section class="home-learn"><h2>이 코스에서 배우는 내용</h2><ul>{outcomes}</ul></section></div><aside class="start-card" aria-label="학습 시작과 진도"><div class="home-preview">{preview}</div><div class="start-card-body"><a href="#" id="home-start" data-course-jump="{items[0]['id']}" class="primary-cta"><span id="home-start-label">강의 시작하기</span><span aria-hidden="true">→</span></a><div class="home-progress"><div class="home-progress-line"><span>완료로 표시한 강의</span><strong id="home-progress-label">0 / {len(items)}</strong></div><div class="home-track"><span id="home-fill"></span></div></div></div></aside></div><section class="curriculum" aria-labelledby="curriculum-title"><div class="curriculum-heading"><h2 id="curriculum-title">커리큘럼</h2></div>{curriculum}</section></main>"""

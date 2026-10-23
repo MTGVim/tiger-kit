@@ -36,6 +36,10 @@ Map prerequisites, ordered lessons, worked examples, transfer practice and reaso
 must teach and assess its outcomes without relying on hidden chat context or a tutor's memory.
 Never infer mastery from reading, playback, scores or a manually checked completion box.
 
+Separate taught content, assessed outcomes and prerequisites required but untaught. When a material
+untaught dependency could block the goals, read [readiness](references/readiness.md) before authoring
+optional preparation checks; omit them for self-contained introductory or short material.
+
 Choose each lesson's medium from its learning goal. Prefer HTML/SVG slides plus local generated
 narration for a staged explanation. Choose video when continuous movement, actual software input
 or a physical procedure is itself needed. Do not duplicate every slide deck as a video. Resolve

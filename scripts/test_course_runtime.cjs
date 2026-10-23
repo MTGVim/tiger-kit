@@ -10,6 +10,18 @@ test('actual regrade handler replaces icons and does not update course progress'
 
 test('valid constructor ID never uses an inherited revision',()=>{const c=Core.create({id:'constructor-course',lessons:[{id:'constructor',revision:'1'}]});assert.throws(()=>c.parse(JSON.stringify({...c.empty(),completed:['constructor']})));const state=c.complete(c.empty(),'constructor',true);assert.deepEqual(state.completed,['constructor']);assert.equal(state.revisions.constructor,'1');});
 
+test('actual readiness handler distinguishes unknown, misconception and retry without progress writes',()=>{
+ const script=fs.readFileSync(path.join(R,'player.js'),'utf8'),start=script.indexOf("  $('readiness-check')?.addEventListener"),end=script.indexOf("  $('memo').addEventListener",start);
+ assert(start>=0&&end>start);
+ const c=Core.create(meta),original=JSON.stringify(c.empty()),feedback={dataset:{}},nodes={'readiness-check':{addEventListener:(_,fn)=>handler=fn}};
+ const q={id:'order',answer:'b',explanation:'완료 순서는 시작 순서와 다릅니다.',choice_explanations:{a:'시작 순서와 혼동했습니다.',b:'실제 완료 순서를 확인했습니다.'},preparation:'완료 시점을 비교하세요.'};
+ let handler,selected=[];
+ vm.runInNewContext(script.slice(start,end),{$:id=>nodes[id],C:c,data:{readiness:[q]},document:{querySelectorAll:()=>selected,querySelector:selector=>{assert.equal(selector,'[data-readiness-feedback="order"]');return feedback;}},save:()=>assert.fail('readiness must not save progress'),localStorage:{setItem:()=>assert.fail('readiness must not persist answers')},fetch:()=>assert.fail('readiness must stay offline')});
+ handler();assert.equal(feedback.dataset.result,'unanswered');assert.match(feedback.textContent,/미응답/);
+ selected=[{name:'readiness-order',value:'a'}];handler();assert.equal(feedback.dataset.result,'incorrect');assert.match(feedback.textContent,/시작 순서와 혼동/);assert.match(feedback.textContent,/사전 복습: 완료 시점/);
+ selected=[{name:'readiness-order',value:'b'}];handler();assert.equal(feedback.dataset.result,'correct');assert.match(feedback.textContent,/실제 완료 순서/);assert(!feedback.textContent.includes('혼동'));assert.equal(JSON.stringify(c.empty()),original);
+});
+
 test('actual slide volume mute and speed handlers honor the optional-video boundary',()=>{
  const script=fs.readFileSync(path.join(R,'player.js'),'utf8'),nodes={},handlers={};
  const node=id=>nodes[id]??=( {value:'50',hidden:true,setAttribute(){},focus(){},addEventListener:(event,fn)=>{handlers[id+':'+event]=fn;}} );

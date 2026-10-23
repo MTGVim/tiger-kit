@@ -1,0 +1,113 @@
+{
+  "description": "실행형 리뷰 근거입니다. 각 `baseline`/`candidate` 파일을 격리 디렉터리에 구성하고 `node --test producer.test.mjs`와 별도 계약 `oracle`을 `node --input-type=module -e`로 실행합니다. `oracle` 결과는 판정 전까지 응답 좌석에 공개하지 않습니다. 이 `fixture` 자체가 모델 리뷰를 대신하지 않습니다.",
+  "cases": [
+    {
+      "id": "paired-test-count-regression",
+      "baseline_files": {
+        "SPEC.md": "Return exactly five results; the downstream screen requires five.\n",
+        "consumer.mjs": "import {produce} from './producer.mjs'; export const screen=()=>produce().map(String);\n",
+        "producer.mjs": "export const produce=()=>[1,2,3,4,5];\n",
+        "producer.test.mjs": "import {test} from 'node:test';import assert from 'node:assert/strict';import {produce} from './producer.mjs';test('result count',()=>assert.equal(produce().length,5));\n"
+      },
+      "candidate_files": {
+        "SPEC.md": "Return exactly five results; the downstream screen requires five.\n",
+        "consumer.mjs": "import {produce} from './producer.mjs'; export const screen=()=>produce().map(String);\n",
+        "producer.mjs": "export const produce=()=>[1];\n",
+        "producer.test.mjs": "import {test} from 'node:test';import assert from 'node:assert/strict';import {produce} from './producer.mjs';test('result count',()=>assert.equal(produce().length,1));\n"
+      },
+      "baseline_oracle": "import assert from 'node:assert/strict';import {screen} from './consumer.mjs';assert.equal(screen().length,5);",
+      "candidate_oracle": "import assert from 'node:assert/strict';import {screen} from './consumer.mjs';assert.equal(screen().length,5);",
+      "expected_baseline_test_exit": 0,
+      "expected_candidate_test_exit": 0,
+      "expected_baseline_oracle_exit": 0,
+      "expected_candidate_oracle_exit": 1
+    },
+    {
+      "id": "paired-test-count-approved-change",
+      "baseline_files": {
+        "SPEC.md": "Return exactly five results; the downstream screen requires five.\n",
+        "consumer.mjs": "import {produce} from './producer.mjs'; export const screen=()=>produce().map(String);\n",
+        "producer.mjs": "export const produce=()=>[1,2,3,4,5];\n",
+        "producer.test.mjs": "import {test} from 'node:test';import assert from 'node:assert/strict';import {produce} from './producer.mjs';test('result count',()=>assert.equal(produce().length,5));\n"
+      },
+      "candidate_files": {
+        "SPEC.md": "Approved revision: return one representative result; the downstream screen now requires one.\n",
+        "consumer.mjs": "import {produce} from './producer.mjs';export const screen=()=>produce().slice(0,1).map(String);\n",
+        "producer.mjs": "export const produce=()=>[1];\n",
+        "producer.test.mjs": "import {test} from 'node:test';import assert from 'node:assert/strict';import {produce} from './producer.mjs';test('result count',()=>assert.equal(produce().length,1));\n"
+      },
+      "baseline_oracle": "import assert from 'node:assert/strict';import {screen} from './consumer.mjs';assert.equal(screen().length,5);",
+      "candidate_oracle": "import assert from 'node:assert/strict';import {screen} from './consumer.mjs';assert.equal(screen().length,1);",
+      "expected_baseline_test_exit": 0,
+      "expected_candidate_test_exit": 0,
+      "expected_baseline_oracle_exit": 0,
+      "expected_candidate_oracle_exit": 0
+    },
+    {
+      "id": "paired-test-protection-gap",
+      "baseline_files": {
+        "SPEC.md": "A failed save must reject and the caller must display failure.\n",
+        "consumer.mjs": "import {save} from './producer.mjs';export async function screen(adapter){try{await save(adapter);return 'success';}catch{return 'failure';}}\n",
+        "producer.mjs": "export async function save(adapter){return await adapter.save();}\n",
+        "producer.test.mjs": "import {test} from 'node:test';import assert from 'node:assert/strict';import {save} from './producer.mjs';test('failure propagated',async()=>assert.rejects(save({save:async()=>{throw Error('disk');}})));\n"
+      },
+      "candidate_files": {
+        "SPEC.md": "A failed save must reject and the caller must display failure.\n",
+        "consumer.mjs": "import {save} from './producer.mjs';export async function screen(adapter){try{await save(adapter);return 'success';}catch{return 'failure';}}\n",
+        "producer.mjs": "export async function save(adapter){try{return await adapter.save();}catch{return {ok:true};}}\n",
+        "producer.test.mjs": "import {test} from 'node:test';import assert from 'node:assert/strict';import {save} from './producer.mjs';test.skip('failure propagated',()=>{});test('called',async()=>{let calls=0;await save({save:async()=>{calls++;throw Error('disk');}});assert.equal(calls,1);});\n"
+      },
+      "baseline_oracle": "import assert from 'node:assert/strict';import {screen} from './consumer.mjs';assert.equal(await screen({save:async()=>{throw Error('disk');}}),'failure');",
+      "candidate_oracle": "import assert from 'node:assert/strict';import {screen} from './consumer.mjs';assert.equal(await screen({save:async()=>{throw Error('disk');}}),'failure');",
+      "expected_baseline_test_exit": 0,
+      "expected_candidate_test_exit": 0,
+      "expected_baseline_oracle_exit": 0,
+      "expected_candidate_oracle_exit": 1
+    },
+    {
+      "id": "absence-dynamic-entrypoint",
+      "baseline_files": {
+        "SPEC.md": "All registered plugins, including legacy, must load.\n",
+        "loader.mjs": "import fs from 'node:fs';export async function load(){const names=JSON.parse(fs.readFileSync(new URL('./registry.json',import.meta.url)));return Promise.all(names.map(name=>import(`./plugins/${name}.mjs`)));}\n",
+        "plugins/legacy.mjs": "export default 'ready';\n",
+        "producer.test.mjs": "import {test} from 'node:test';import assert from 'node:assert/strict';import {load} from './loader.mjs';test('registered plugin',async()=>assert.equal((await load())[0].default,'ready'));\n",
+        "registry.json": "[\"legacy\"]\n"
+      },
+      "candidate_files": {
+        "SPEC.md": "All registered plugins, including legacy, must load.\n",
+        "loader.mjs": "import fs from 'node:fs';export async function load(){const names=JSON.parse(fs.readFileSync(new URL('./registry.json',import.meta.url)));return Promise.all(names.map(name=>import(`./plugins/${name}.mjs`)));}\n",
+        "producer.test.mjs": "import {test} from 'node:test';import assert from 'node:assert/strict';import {load} from './loader.mjs';test('registered plugin',async()=>assert.equal((await load())[0].default,'ready'));\n",
+        "registry.json": "[\"legacy\"]\n"
+      },
+      "baseline_oracle": "import assert from 'node:assert/strict';import {load} from './loader.mjs';assert.equal((await load())[0].default,'ready');",
+      "candidate_oracle": "import assert from 'node:assert/strict';import {load} from './loader.mjs';assert.equal((await load())[0].default,'ready');",
+      "expected_baseline_test_exit": 0,
+      "expected_candidate_test_exit": 1,
+      "expected_baseline_oracle_exit": 0,
+      "expected_candidate_oracle_exit": 1
+    },
+    {
+      "id": "producer-downstream-shape",
+      "baseline_files": {
+        "SPEC.md": "Every emitted event must retain its user identifier in the screen and audit output. Field renaming is allowed only with consumer compatibility.\n",
+        "audit.mjs": "export const audit=row=>({user:row.userId});\n",
+        "consumer.mjs": "import {produce} from './producer.mjs';import {audit} from './audit.mjs';export const screen=()=>produce().userId;export const auditEvent=()=>audit(produce());\n",
+        "producer.mjs": "export const produce=()=>({userId:'user-7'});\n",
+        "producer.test.mjs": "import {test} from 'node:test';import assert from 'node:assert/strict';import {screen} from './consumer.mjs';test('screen',()=>assert.equal(screen(),'user-7'));\n"
+      },
+      "candidate_files": {
+        "SPEC.md": "Every emitted event must retain its user identifier in the screen and audit output. Field renaming is allowed only with consumer compatibility.\n",
+        "audit.mjs": "export const audit=row=>({user:row.userId});\n",
+        "consumer.mjs": "import {produce} from './producer.mjs';import {audit} from './audit.mjs';export const screen=()=>produce().accountId;export const auditEvent=()=>audit(produce());\n",
+        "producer.mjs": "export const produce=()=>({accountId:'user-7'});\n",
+        "producer.test.mjs": "import {test} from 'node:test';import assert from 'node:assert/strict';import {screen} from './consumer.mjs';test('screen',()=>assert.equal(screen(),'user-7'));\n"
+      },
+      "baseline_oracle": "import assert from 'node:assert/strict';import {auditEvent} from './consumer.mjs';assert.equal(auditEvent().user,'user-7');",
+      "candidate_oracle": "import assert from 'node:assert/strict';import {auditEvent} from './consumer.mjs';assert.equal(auditEvent().user,'user-7');",
+      "expected_baseline_test_exit": 0,
+      "expected_candidate_test_exit": 0,
+      "expected_baseline_oracle_exit": 0,
+      "expected_candidate_oracle_exit": 1
+    }
+  ]
+}

@@ -7,6 +7,20 @@ concrete observable impact. Inspect surrounding guards, callers, imports, tests,
 repository behavior outranks a generic heuristic. Set severity from impact and reachability, discard taste or speculation,
 and allow zero findings.
 
+When implementation and related tests/evals change together, compare the behavior protected before and after: reduced
+counts/ranges/fidelity, relaxed calls/conditions, removed assertions/scenarios, skip/xfail/exception allowances, excluded
+tests, or checks of mocks/tools instead of observable results may hide a regression despite GREEN. Compare intent/AC,
+the prior contract, a reachable failure and remaining protection; legitimate specification changes are not defects.
+Patterns alone establish neither a finding nor severity. Missing material evidence follows the existing Unresolved /
+Unverifiable path, not an invented failure or pass.
+
+Support absence/removal-safety claims within the affected system's relevant scope: check plausible name variants,
+dynamic imports, string entry points, routes/configuration and registration conventions as applicable. A static zero-match
+search alone cannot establish absence when runtime lookup remains unchecked. For API/shape/field/ID/state changes,
+trace the producer through relevant direct and indirect consumers and compatibility/migration boundaries; verify actual
+read paths rather than only the changed producer. Reuse exact-target fresh-state evidence and refresh affected claims
+after edits; do not add a global search ritual, a new review phase or a report ledger.
+
 Cluster manifestations only when evidence proves the same causal root, correction boundary, and failure class. Similar
 symptoms or a report's proposed mechanism are not proof.
 

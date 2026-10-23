@@ -447,6 +447,16 @@
     const correct=result.filter(x=>x.correct).length, unanswered=result.filter(x=>!x.answered).length;
     $('quiz-result').textContent=`✅ 정답 ${correct} · ❌ 오답 ${result.length-correct-unanswered} · ⚠️ 미응답 ${unanswered}`;
   });
+  $('readiness-check')?.addEventListener('click',()=>{
+    const answers={};
+    document.querySelectorAll('#readiness input:checked').forEach(el=>{answers[el.name.slice('readiness-'.length)]=el.value;});
+    for(const r of C.grade(answers,data.readiness||[])){
+      const q=data.readiness.find(q=>q.id===r.id), feedback=document.querySelector('[data-readiness-feedback="'+r.id+'"]');
+      feedback.dataset.result=!r.answered?'unanswered':r.correct?'correct':'incorrect';
+      feedback.textContent=!r.answered?'미응답입니다. 아직 확인하지 않은 항목입니다.':
+        (r.correct?'정답입니다. ':'이 항목을 복습해 보세요. ')+q.choice_explanations[answers[r.id]]+' '+r.explanation+(!r.correct?' 사전 복습: '+q.preparation:'');
+    }
+  });
   $('memo').addEventListener('input',()=>{state.memos[data.lesson_id]=$('memo').value.slice(0,10000);save();});
   $('export').addEventListener('click',()=>{$('state-json').value=storageBlocked?storedRaw:JSON.stringify(state,null,2);$('save-status').textContent='아래 JSON을 복사해 보관하세요.';});
   $('import').addEventListener('click',()=>{try{state=C.parse($('state-json').value);storageBlocked=false;progress();save();}catch(_){$('save-status').textContent='가져오지 못했습니다. 이 코스의 진도 JSON인지 확인하세요.';}});

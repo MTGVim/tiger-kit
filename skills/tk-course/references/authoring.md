@@ -33,6 +33,11 @@ Minimal authored shape (expand the taught explanation and transfer practice for 
 
 Write `description` as a learner capability distinct from sibling course cards; put the intended audience in `level`.
 
+For a material prerequisite this course will not teach, the optional course-level `readiness`
+list uses the existing home and question component; see [readiness](readiness.md) for evidence,
+per-choice reasoning and offline preparation fields. Omit it when unnecessary. It does not
+alter assessed objectives, manual progress or learner records. Changes require a new course revision.
+
 The content component allows 1-4 items (label <=36, text <=60 characters); slide title <=45.
 These are template slot limits, not universal instructional rules. `item-1` etc link cues to
 revealed items; an opening cue may use an empty focus. Every visible target must be covered.

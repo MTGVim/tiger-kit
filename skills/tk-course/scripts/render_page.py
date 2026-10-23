@@ -1,5 +1,6 @@
 from pathlib import Path
 from html import escape as h
+from readiness import question_html
 import json
 from app_shell import home_page, theme_styles, THEME_CONTROL, BOOTSTRAP
 from components import svg
@@ -26,7 +27,7 @@ def render(data):
     thumbs=''.join(f'<button type="button" class="thumb'+(' current' if i==0 else '')+f'" data-thumb="{i}" aria-label="{i+1}장: {h(s["title"])}"><small>{i+1:02d}</small><b>{h(s["title"])}</b></button>' for i,s in enumerate(slides))
     quiz=''
     for q in questions:
-        quiz += f'<fieldset><legend>{h(q["prompt"])}</legend>'+''.join(f'<label class="choice"><input type="radio" name="{q["id"]}" value="{v}"> {h(t)}</label>' for v,t in q['choices'])+f'<p id="feedback-{q["id"]}" role="status"></p><details><summary>해설 보기</summary><p>{h(q["explanation"])}</p></details></fieldset>'
+        quiz += question_html(q)
     overrides='''
     [hidden]{display:none!important}.icon-button svg,.icon-button svg *{pointer-events:none}button,input,textarea{font:inherit}button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid #92c4ff;outline-offset:3px}
     body{font-size:17px}button{font-size:16px}header{align-items:center;padding:14px 24px}header h1{font-size:18px;flex:1}header .course-brand{font-size:14px;color:#9fb0c6;letter-spacing:.07em}
