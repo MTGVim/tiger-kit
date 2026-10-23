@@ -107,3 +107,18 @@ lesson-revision changes and added/removed lessons update the date. Cosmetic rena
 with unchanged revisions retain it. A legacy previous build's missing dates remain unknown until
 a real update supplies `updated_at`; never guess the original creation date. See collections for
 date display and sorting. Keep dates out of fingerprints and learner progress.
+
+For a visual observation outcome, inspect supplied screenshots/layouts before writing slides.
+Identify the visible deciding feature and use a faithful schematic, annotated local raster or
+worked visual example. Research missing evidence from primary/public sources or authorized
+capture; retain version/context, claim source and redistribution scope. If source pixels cannot
+be redistributed, draw an independently supported schematic. Never invent unseen layout.
+Review representative figures before mass narration: the learner must answer the visual question
+from the figure plus caption, not from narration supplying an invisible relationship.
+
+Optional course-level `pacing` accepts `initialLeadInMs`, `postSlideHoldMs`, `slidePauseMs`
+(next-slide lead-in) and `sentencePauseMs`, each a finite JSON number from 0 to 5000 milliseconds.
+Absent pacing defaults to 5000/1800/1200/600: hold plus next lead-in totals 3000ms. Explicit zero
+is meaningful. An explicit legacy pacing object keeps initial/hold at zero unless supplied;
+its slide/sentence fields retain their previous meaning. These presentation-only settings do
+not change lesson fingerprints, revisions or progress. See [media](media.md) for timer semantics.

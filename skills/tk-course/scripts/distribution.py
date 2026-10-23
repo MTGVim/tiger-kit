@@ -57,6 +57,8 @@ def embedded_manifest(course):
         lesson=next(l for l in course['lessons'] if l['id']==ref['lesson_id'])
         preview={k:v for k,v in next(s for s in lesson['slides'] if s['id']==ref['slide_id']).items() if k!='narration'}
         preview['narration']=[]
+    if preview and preview['type']=='image':
+        preview={**preview,'type':'content','visual':{'items':[{'label':'학습 화면','text':preview['visual']['description'][:60]}]}}
     value={k:course[k] for k in ('id','title','description','level','revision','objectives','narration_seconds')}
     value.update({k:course[k] for k in ('created_at','updated_at') if k in course})
     value.update(schema=1,lessons=[{'id':l['id'],'title':l['title'],'kind':l['kind'],'narration':l.get('narration','none')} for l in course['lessons']],preview_slide=preview)

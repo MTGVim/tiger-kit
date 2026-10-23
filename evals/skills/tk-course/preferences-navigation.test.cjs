@@ -57,3 +57,42 @@ test('shared course preferences, breadcrumb, curriculum and standalone catalog d
   }
  }finally{await browser.close();}
 });
+
+test('bounded lesson panels retain curriculum position, transcript and real default pacing',{skip:!ready||!process.env.TK_COURSE_LONG_PAGE,timeout:120000},async()=>{
+ const {chromium}=require(process.env.TK_PLAYWRIGHT_MODULE),browser=await chromium.launch({env:{...process.env,...(process.env.TK_BROWSER_FONTCONFIG?{FONTCONFIG_FILE:process.env.TK_BROWSER_FONTCONFIG}:{})},headless:true,executablePath:process.env.TK_CHROMIUM_EXECUTABLE,args:['--no-sandbox','--disable-dev-shm-usage']});
+ try{
+  for(const width of [390,1024,1440]){
+   const context=await browser.newContext({viewport:{width,height:600}});try{
+    const page=await context.newPage();await page.goto(pathToFileURL(process.env.TK_COURSE_LONG_PAGE).href);const f=page.frameLocator('#course-frame');await f.locator('#home-start').click();
+    assert(await f.locator('#transcript-rail').isVisible());assert.equal(await f.locator('#rail-title').evaluate(e=>e===document.activeElement),false);
+    if(width<=700)await f.locator('#menu-toggle').click();
+    await f.locator('#toc-list').hover();await page.mouse.wheel(0,10000);await page.waitForTimeout(120);
+    const tail=await f.locator('#toc-list').evaluate(e=>({top:e.scrollTop,last:e.lastElementChild.getBoundingClientRect().bottom,bottom:e.getBoundingClientRect().bottom,root:scrollY}));assert(tail.top>0);assert(tail.last<=tail.bottom+1);assert.equal(tail.root,0);assert(await f.locator('#toc-close').isVisible());
+    // Navigation through a visible tail item exercises the real frame replacement.
+    await f.locator('#toc-list [data-course-jump="lesson-20"]').click();await f.locator('#lesson-heading').filter({hasText:'조건과 결과 20'}).waitFor();
+    if(width<=700)await f.locator('#menu-toggle').click();
+    assert.equal(await f.locator('#toc-list').evaluate(e=>e.scrollTop),tail.top);
+    await f.locator('#toc-close').click();assert.equal(await f.locator('#menu-toggle').getAttribute('aria-expanded'),'false');
+    const geometry=await f.locator('#transcript-rail').evaluate(e=>({rail:e.getBoundingClientRect().toJSON(),media:document.getElementById('media-viewport').getBoundingClientRect().toJSON(),root:scrollY}));
+    if(width<=1100)assert(geometry.rail.y>=geometry.media.bottom,'transcript must sit below media without overlap');
+    // Both native and explicitly denied fullscreen use the same single transcript subtree.
+    await f.locator('#fullscreen').click();await f.locator('#stage').evaluate(e=>{if(!document.fullscreenElement&&!e.classList.contains('stage-expanded'))throw Error('missing expansion');});
+    assert.equal(await f.locator('#stage #transcript-rail').count(),1);assert(await f.locator('#transcript-toggle').isVisible());assert(await f.locator('#transcript-rail').isVisible());
+    await f.locator('#transcript-close').click();assert(await f.locator('#transcript-rail').isHidden());assert(await f.locator('#transcript-toggle').evaluate(e=>e===document.activeElement));await f.locator('#transcript-toggle').click();assert(await f.locator('#transcript-rail').isVisible());
+    await page.keyboard.press('Escape');
+    if(await f.locator('#stage').evaluate(e=>!!document.fullscreenElement))await f.locator('#fullscreen').click();
+    await f.locator('#stage').evaluate(e=>{e.requestFullscreen=()=>Promise.reject(new DOMException('test policy','NotAllowedError'));});
+    await f.locator('#fullscreen').click();assert(await f.locator('#stage.stage-expanded').isVisible());
+    await f.locator('#transcript-close').click();await page.keyboard.press('Tab');assert(await f.locator('#stage').evaluate(e=>e.contains(document.activeElement)));
+    await page.keyboard.press('Escape');assert.equal(await f.locator('#stage.stage-expanded').count(),0);assert.equal(await f.locator('body').evaluate(e=>e.style.overflow),'');
+   }finally{await context.close();}
+  }
+  const context=await browser.newContext({viewport:{width:1440,height:900}});try{
+   // Observe actual embedded media events; the defaults are deliberately not zeroed.
+   await context.addInitScript(()=>{window.__pacing=[];const play=HTMLMediaElement.prototype.play,seen=new WeakSet();HTMLMediaElement.prototype.play=function(){if(this instanceof HTMLAudioElement&&!seen.has(this)){seen.add(this);for(const type of ['playing','ended'])this.addEventListener(type,()=>window.__pacing.push({type:type==='playing'?'play':type,at:performance.now(),slide:document.querySelector('.lesson-slide:not([hidden])')?.dataset.slide}));}return play.apply(this,arguments);};new MutationObserver(records=>{for(const r of records)if(r.target.matches?.('.lesson-slide')&&!r.target.hidden)window.__pacing.push({type:'slide',at:performance.now(),slide:r.target.dataset.slide});}).observe(document,{subtree:true,attributes:true,attributeFilter:['hidden']});});
+   const page=await context.newPage();await page.goto(pathToFileURL(process.env.TK_COURSE_LONG_PAGE).href);const f=page.frameLocator('#course-frame');await f.locator('#home-start').click();await f.locator('#player-status').filter({hasText:'첫 화면'}).waitFor();
+   await page.waitForFunction(()=>{const w=document.getElementById('course-frame')?.contentWindow;return w?.__pacing?.filter(e=>e.type==='play').length>=2;},{timeout:15000});
+   const events=await f.locator('body').evaluate(()=>window.__pacing),end=events.find(e=>e.type==='ended'),next=events.find(e=>e.type==='slide'&&e.slide==='1'),play=events.find(e=>e.type==='play'&&e.slide==='1');assert(end&&next&&play,JSON.stringify(events));assert(next.at-end.at>=1750);assert(play.at-next.at>=1150);assert(play.at-end.at>=2950);assert(play.at-end.at<5000);
+  }finally{await context.close();}
+ }finally{await browser.close();}
+});

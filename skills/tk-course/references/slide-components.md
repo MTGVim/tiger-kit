@@ -98,3 +98,29 @@ and reject oversized data before output. Inspect both wide and purpose-built por
 light/dark themes, captions on, first cue and each focus state. Captions for these figures sit
 below the figure so they cannot cover axes or output lines. The 390px check includes label
 bounding boxes, exact value reconciliation, complete original output and document width.
+
+## Observed screens and spatial examples
+
+Use `type:"image"` for a verified local PNG/JPEG/WebP teaching figure. `visual` requires
+`src` (source-relative nonsymlink file), `alt`, `description`, `source` and `rights` (the verified
+redistribution scope). Image authoring requires Pillow; detect readiness and report a missing
+dependency before production rather than installing implicitly. The builder checks actual encoding and embeds pixels offline. It derives
+aspect ratio from the image, preserving annotations in wide and portrait layouts. Catalog cards
+use the description as a text preview to retain the small public-manifest budget; choose another
+preview slide when its diagram better distinguishes the course.
+
+Optional `regions` contains up to six `{id,label,x,y,width,height}` boxes, with stable ASCII IDs
+and normalized coordinates inside the actual image (0-1, positive width/height). Crop/annotate
+only inspected evidence; coordinates are author-verified, never inferred from uninspected pixels.
+Cue key `image` covers the whole figure, and `region-<id>` covers each numbered box and its
+legend. Every target needs a cue. Description, source and rights remain visible; focus follows
+the existing cue/theme/reduced-motion behavior. Keep the decisive relation legible at the target
+viewport; an image's mere presence does not establish teaching sufficiency.
+
+For spatial alternatives use the same coordinates and initial conditions, or label the changed
+condition. Distinguish visibility, occlusion, traversable boundaries and consumed resources; do
+not give the learner an observer's hidden information. Connect before/after through stable
+entities and show intermediate steps only when they expose a cause. Compare the actual rendered
+figure and caption; preserve backward/reset and static explanation. Do not invent measured
+travel time, distance or success rates, and do not require animation or MP4 when staged SVG or
+static comparison already teaches the judgment.

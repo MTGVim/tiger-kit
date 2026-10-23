@@ -15,12 +15,23 @@ change. Every progressively revealed element must have a cue. Future elements ar
 prior context remains, backwards seeking reconstructs state, and reduced motion keeps manual
 access and readable content. Do not claim pedagogical improvement from animation alone.
 
-Slides use actual audio ended events, not guessed speech duration. First play starts immediately;
-later slide/sentence gaps default to 1200/600ms, configurable independently of speed. File audio
-uses the media clock and immediate rate/volume; browser fallback may defer speed until a natural
-cue and labels it as reserved. Browser boundaries are approximate and can repeat text on output
-changes. Muting controls output, never whether the course can progress. Explicit silent reading
-uses labeled reading intervals without pretending they are generated audio duration.
+Slides use actual audio ended events, not guessed speech duration. A fresh lesson shows its first
+slide and acknowledges Play immediately with a visible waiting message, then starts narration
+after a 5000ms lead-in. At a slide boundary keep the completed slide/index/cue for 1800ms, show
+the new slide for 1200ms, then narrate: 3000ms total between slides. These are adjustable product
+defaults, not measured universal optima. Same-slide cues wait 600ms; the final cue ends without
+an extra transition. Manual selection shows its requested slide immediately and uses only the
+next-slide lead-in; seek/resume never repeats a fresh-entry wait. Pausing a wait saves only its
+unconsumed time; selection/stop invalidate pending callbacks. Pacing/rate changes do not restart
+an active wait. Waits are independent of speech speed. Explicit legacy/zero values keep their
+authored meaning; see [authoring](authoring.md). Holds retain the prior visual/caption, while
+lead-ins expose the new figure without an upcoming active cue. Do not pad WAVs or resynthesize
+narration merely to change pacing; finished-video audio/time axes remain native.
+
+File audio uses its media clock and immediate rate/volume; browser fallback may defer speed
+until a natural cue and labels it as reserved. Browser boundaries are approximate and can repeat
+text on output changes. Muting controls output, never whether the course can progress. Explicit
+silent reading uses labeled reading intervals without pretending they are generated duration.
 
 Use `tk-video` for an authorized finished video. Reuse sufficient original audio instead of
 overlaying TTS. Selected narration is embedded with pauses, Korean captions where appropriate,
@@ -29,7 +40,7 @@ and human pronunciation; a silent preview is not a voiced delivery. Accept MP4/W
 captions; video controls follow currentTime/ended/playbackRate. Do not swap per-scene clips or
 restart a first poster between sentences. FFmpeg is also required when compressed narration is selected.
 
-The player keeps a main slide/video and visible curriculum, optional notes/transcript/practice,
+The player keeps a main slide/video and visible curriculum, notes/practice and a default-open transcript without focus theft,
 floating white captions over rounded black, CC toggle, subtitle size and background opacity
 (default 50%), volume, speed and fullscreen controls. First-visit sound is off and captions are on;
 a combined entry toast shows both states and offers relevant actions. Stored preferences win.
@@ -65,3 +76,11 @@ This cannot override an enclosing host policy. Attempt native fullscreen from th
 gesture; on disabled/rejected APIs use a labeled in-window stage expansion with controls and
 captions intact, keyboard focus containment, Escape exit and restored scrolling/focus. Do not
 describe host policy rejection as universal Chrome incompatibility or bypass the embedding host.
+
+The lesson shell uses the viewport height remaining after header/progress. Curriculum list,
+content and transcript have independent scroll areas; the curriculum header/collapse stays
+reachable. Lesson switches carry only in-memory curriculum scroll state inside the course frame,
+restoring after layout with clamp; changed viewports additionally expose the selected item with
+minimal movement. No new global preference is stored. Transcript shares the stage's fullscreen
+subtree and clock, remains toggleable in native/fallback expansion and sits below media on small
+screens rather than covering it. Home and no-JavaScript reading retain document scrolling.

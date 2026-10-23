@@ -14,10 +14,16 @@
     node.closest('li').hidden=!node.textContent;
     document.querySelector('.course-breadcrumb').classList.toggle('in-lesson',!!node.textContent);
   }
+  let pendingTocUi=null,tocTop=0;
+  function restoreToc(){
+    const list=$('toc-list');if(!pendingTocUi||!list.clientHeight)return;
+    const ui=pendingTocUi;pendingTocUi=null;list.scrollTop=Math.max(0,Math.min(ui.tocTop,list.scrollHeight-list.clientHeight));tocTop=list.scrollTop;
+    if(ui.width!==innerWidth||ui.height!==innerHeight){const item=list.querySelector('[aria-current="page"]'),r=item?.getBoundingClientRect(),b=list.getBoundingClientRect();if(r&&(r.top<b.top||r.bottom>b.bottom))item.scrollIntoView({block:'nearest'});}
+  }
   function courseJump(id){
     if(!C.LESSONS.includes(id))return;
     if(id===data.lesson_id){lesson(published[0],{resume:true});activeTransport().play();}
-    else if(window.parent!==window)window.parent.postMessage({type:'course-lesson',id},'*');
+    else if(window.parent!==window)window.parent.postMessage({type:'course-lesson',id,ui:pendingTocUi||{tocTop:$('toc-list').clientHeight?$('toc-list').scrollTop:tocTop,width:innerWidth,height:innerHeight}},'*');
     else location.href='lesson-'+id+'.html#lesson-'+data.course_lessons.find(x=>x.id===id).kind;
   }
   let captionsEnabled=prefs.captions,transcriptOpen=false,playbackRate=prefs.speed,scrubbing=false,lastAudibleVolume=prefs.volume||1;
@@ -39,10 +45,12 @@
     $('menu-toggle').setAttribute('aria-expanded',String(open));
     $('menu-toggle').setAttribute('aria-label',open?'강의 목차 접기':'강의 목차 펼치기');
     $('menu-toggle').title=open?'강의 목차 접기':'강의 목차 펼치기';
+    requestAnimationFrame(restoreToc);
   }
   function toggleToc(){
     const mobile=window.matchMedia('(max-width:700px)').matches;
     const closing=mobile?$('toc').classList.contains('open'):!prefs.tocCollapsed;
+    if(closing&&$('toc-list').clientHeight)tocTop=$('toc-list').scrollTop;
     if(closing&&$('toc').contains(document.activeElement))$('menu-toggle').focus();
     if(mobile)$('toc').classList.toggle('open');else{prefs.tocCollapsed=!prefs.tocCollapsed;savePrefs();}
     syncToc();
@@ -136,10 +144,11 @@
     $('menu-toggle').hidden=false;$('skip-main').setAttribute('href','#lesson-heading');
     view={lesson:id,slide:resume?resume.slide:0};
     P.visible(view,count);
-    if(id==='slides')narration.select(view.slide,resume?resume.cue:0,false);
+    if(id==='slides')narration.select(view.slide,resume?resume.cue:0,false,0,!resume);
     else{videoNarration.select(view.slide,0,false);if(resume)videoNarration.seekProgress(resume.videoTime);}
     activeTransport().setRate(playbackRate);
-    render();remember();
+    render();showTranscript(true);remember();
+    document.body.classList.add('lesson-view');
     $('toc').classList.remove('open');syncToc();
     if(options.push!==false)navigate('#lesson-'+id);
     if(options.focus!==false)$('lesson-heading').focus();
@@ -149,6 +158,7 @@
     if(expanded)expandStage(false);
     if(seekController)seekController.cancel(false);
     volumePopover.close();setCaptionMenu(false);setSpeedMenu(false);setSettings(false);showTranscript(false);scrubbing=false;remember();narration.stop();videoNarration.stop();$('lesson-video').pause();
+    document.body.classList.remove('lesson-view');
     homeVisible=true;$('home').hidden=false;$('player-page').hidden=true;
     headerContext();
     $('menu-toggle').hidden=true;$('toc').classList.remove('open');
@@ -194,14 +204,14 @@
     $('voice-fallback').hidden=!isSlide||s.mode==='silent'||s.available;
     $('voice-preflight-message').textContent=s.mode==='device'?'이 기기에서 한국어 음성을 찾지 못했습니다.':'생성 음성이 준비되지 않았습니다.';
     $('use-browser-voice').disabled=!s.voices.length;$('use-browser-voice').title=s.voices.length?'브라우저 음성':'이 기기에서 사용할 한국어 음성이 없습니다.';
-    const messages={idle:'재생을 누르면 도식이 설명 순서대로 나타납니다. 재생 설정에서 모두 볼 수도 있습니다.',playing:isSlide?'강의를 재생하고 있습니다.':'한국어 영상과 음성을 함께 재생하고 있습니다.',waiting:s.waitKind==='slide'?'화면을 살펴볼 수 있도록 잠시 기다립니다.':'다음 문장 전에 잠시 쉽니다.',loading:'음성을 불러오고 있습니다.',paused:'일시정지했습니다.',ended:'강의가 끝났습니다. 이해 확인을 풀거나 코스 홈으로 돌아가세요.',blocked:'⚠️ 강의 음성을 사용할 수 없습니다.',error:'⚠️ 음성을 재생하지 못했습니다. 현재 음성 모드를 확인한 뒤 다시 시도하세요.'};
-    $('player-status').textContent=s.available?(['error','blocked','ended'].includes(s.status)?messages[s.status]:''):s.mode==='assets'?'':s.voiceSelection?'⚠️ 선택한 음성을 찾지 못했습니다. 재생 설정에서 다른 로컬 한국어 음성을 선택하세요.':'⚠️ 이 브라우저에서 사용할 수 있는 로컬 한국어 음성이 없습니다.';
-    const cc=U.caption({enabled:captionsEnabled,status:s.status,cue:!isSlide&&!s.captionActive?'':cues[index].caption,gap:s.status==='paused'&&s.waitMs!==null,previous:isSlide&&index>0?cues[index-1].caption:''});
+    const messages={idle:'재생을 누르면 도식이 설명 순서대로 나타납니다. 재생 설정에서 모두 볼 수도 있습니다.',playing:isSlide?'강의를 재생하고 있습니다.':'한국어 영상과 음성을 함께 재생하고 있습니다.',waiting:s.waitKind==='hold'?'이전 장을 정리할 수 있도록 잠시 유지합니다.':s.waitKind==='start'?'첫 화면을 살펴본 뒤 해설을 시작합니다.':s.waitKind==='slide'?'새 화면을 살펴본 뒤 해설을 시작합니다.':'다음 문장 전에 잠시 쉽니다.',loading:'음성을 불러오고 있습니다.',paused:'일시정지했습니다.',ended:'강의가 끝났습니다. 이해 확인을 풀거나 코스 홈으로 돌아가세요.',blocked:'⚠️ 강의 음성을 사용할 수 없습니다.',error:'⚠️ 음성을 재생하지 못했습니다. 현재 음성 모드를 확인한 뒤 다시 시도하세요.'};
+    $('player-status').textContent=s.available?(['error','blocked','ended','waiting'].includes(s.status)?messages[s.status]:''):s.mode==='assets'?'':s.voiceSelection?'⚠️ 선택한 음성을 찾지 못했습니다. 재생 설정에서 다른 로컬 한국어 음성을 선택하세요.':'⚠️ 이 브라우저에서 사용할 수 있는 로컬 한국어 음성이 없습니다.';
+    const cc=U.caption({enabled:captionsEnabled,status:s.status,cue:!isSlide&&!s.captionActive?'':cues[index].caption,gap:(s.status==='waiting'||s.status==='paused'&&s.waitMs!==null)&&s.waitKind!=='hold',previous:isSlide&&s.waitKind==='hold'?cues[index].caption:isSlide&&index>0&&s.waitKind==='sentence'?cues[index-1].caption:''});
     $('live-caption').hidden=cc.hidden;$('caption-text').textContent=cc.text;
     $('captions-toggle').setAttribute('aria-pressed',String(captionsEnabled));
     setControl('captions-toggle','captions',captionsEnabled?'자막 숨기기':'자막 보이기');
     paintVoiceOptions(s);
-    document.querySelectorAll('.tx-cue').forEach(line=>{const current=Number(line.dataset.cue)===index&&(isSlide||s.captionActive);line.classList.toggle('active',current);if(current)line.setAttribute('aria-current','true');else line.removeAttribute('aria-current');});
+    document.querySelectorAll('.tx-cue').forEach(line=>{const current=Number(line.dataset.cue)===index&&(isSlide?(!['waiting','idle'].includes(s.status)&&!(s.status==='paused'&&s.waitMs!==null)||s.waitKind==='hold'&&s.status==='waiting'):s.captionActive);line.classList.toggle('active',current);if(current)line.setAttribute('aria-current','true');else line.removeAttribute('aria-current');});
     $('end-panel').classList.toggle('active',isSlide && s.status==='ended');
     $('audio-progress').hidden=false;$('audio-seek').hidden=false;
     if(!scrubbing){
@@ -218,7 +228,7 @@
   }
   function paintEmphasis(s){
     const mode=$('motion-mode').value;
-    const activeSlide=data.slides[s.slide],dense=['bar','line','stacked','output','code','timeline','hook','cover','course-map','summary'].includes(activeSlide?.type)&&view.lesson==='slides';
+    const activeSlide=data.slides[s.slide],dense=['bar','line','stacked','output','code','timeline','hook','cover','course-map','summary','image'].includes(activeSlide?.type)&&view.lesson==='slides';
     $('media-viewport').dataset.figure=String(dense);
     const caption=$('live-caption'),viewport=$('media-viewport');
     if(dense&&caption.parentElement===viewport)viewport.after(caption);
@@ -258,12 +268,12 @@
   $('mute-toggle').addEventListener('click',()=>{const s=activeTransport().snapshot();if(s.mode==='silent'){setSettings(true);$('voice-mode').focus();return;}if(s.muted||s.volume===0){if(s.volume===0)setMasterVolume(lastAudibleVolume);setMasterMuted(false);}else setMasterMuted(true);});
   $('volume').addEventListener('input',()=>{const value=Number($('volume').value)/100;setMasterVolume(value);setMasterMuted(value===0);});
   function pacingChanged(){
-    const values=[$('slide-pause'),$('sentence-pause')];
+    const keys=['initialLeadInMs','postSlideHoldMs','slidePauseMs','sentencePauseMs'],values=[$('initial-lead-in'),$('post-slide-hold'),$('slide-pause'),$('sentence-pause')];
     if(values.some(el=>!el.validity.valid || el.value===''))return;
-    const next={slidePauseMs:Number(values[0].value)*1000,sentencePauseMs:Number(values[1].value)*1000};
+    const next=Object.fromEntries(keys.map((key,i)=>[key,Number(values[i].value)*1000]));
     narration.setPacing(next);
   }
-  $('slide-pause').addEventListener('change',pacingChanged);$('sentence-pause').addEventListener('change',pacingChanged);
+  for(const [id,key] of [['initial-lead-in','initialLeadInMs'],['post-slide-hold','postSlideHoldMs'],['slide-pause','slidePauseMs'],['sentence-pause','sentencePauseMs']]){$(id).value=(pacing[key]??0)/1000;$(id).addEventListener('change',pacingChanged);}
   $('silent-hold').addEventListener('change',()=>{const el=$('silent-hold');if(!el.validity.valid||el.value==='')return;const ms=Number(el.value)*1000;narration.setSilentHold(ms);});
   $('motion-mode').addEventListener('change',()=>{if(view.lesson==='slides')paintEmphasis(narration.snapshot());});
   function setSpeedMenu(open){$('speed-panel').hidden=!open;$('speed').setAttribute('aria-expanded',String(open));if(open){setCaptionMenu(false);setSettings(false);$('speed-panel').querySelector('input:checked').focus();}}
@@ -355,6 +365,7 @@
   $('next-lesson').addEventListener('click',()=>courseJump(C.LESSONS[C.LESSONS.indexOf(data.lesson_id)+1]));
   $('end-next').addEventListener('click',()=>{state=C.complete(state,progressId(),true);save();home();});
   $('mark-complete').addEventListener('change',()=>{state=C.complete(state,progressId(),$('mark-complete').checked);progress();save();});
+  $('toc-list').addEventListener('scroll',()=>{if($('toc-list').clientHeight)tocTop=$('toc-list').scrollTop;});
   $('menu-toggle').addEventListener('click',toggleToc);
   $('toc-close')?.addEventListener('click',toggleToc);
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('toc').classList.contains('open')){e.preventDefault();toggleToc();$('menu-toggle').focus();}});
@@ -367,29 +378,31 @@
   document.querySelectorAll('[name="caption-size"]').forEach(el=>el.addEventListener('change',()=>{if(!el.checked)return;$('stage').dataset.captionSize=el.value;prefs.captionSize=el.value;savePrefs();setCaptionMenu(false);$('caption-size-toggle').focus();}));
   function setSettings(open){if(open){setSpeedMenu(false);setCaptionMenu(false);}$('playback-settings').hidden=!open;$('settings-toggle').setAttribute('aria-expanded',String(open));setControl('settings-toggle','settings',open?'재생 설정 닫기':'재생 설정 열기');}
   $('settings-toggle').addEventListener('click',e=>{e.stopPropagation();setSettings($('playback-settings').hidden);});
-  function showTranscript(open){transcriptOpen=open;$('transcript-rail').hidden=!open;$('course-layout').classList.toggle('with-transcript',open);$('transcript-toggle').setAttribute('aria-expanded',String(open));setControl('transcript-toggle','transcript',open?'전체 대본 닫기':'전체 대본 열기');if(open)$('rail-title').focus();}
+  function showTranscript(open){transcriptOpen=open;$('transcript-rail').hidden=!open;$('stage').classList.toggle('with-transcript',open);$('transcript-toggle').setAttribute('aria-expanded',String(open));setControl('transcript-toggle','transcript',open?'전체 대본 닫기':'전체 대본 열기');}
   $('transcript-toggle').addEventListener('click',()=>showTranscript(!transcriptOpen));
   $('transcript-close').addEventListener('click',()=>{showTranscript(false);$('transcript-toggle').focus();});
   document.addEventListener('click',e=>U.dismissOutside(e,[{panel:$('playback-settings'),trigger:$('settings-toggle'),close:()=>setSettings(false)},{panel:$('speed-panel'),trigger:$('speed'),close:()=>setSpeedMenu(false)},{panel:$('caption-size-panel'),trigger:$('caption-size-toggle'),close:()=>setCaptionMenu(false)}]));
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(volumePopover.isOpen()){volumePopover.close();}else if(!$('caption-size-panel').hidden){setCaptionMenu(false);$('caption-size-toggle').focus();}else if(!$('speed-panel').hidden){setSpeedMenu(false);$('speed').focus();}else if(!$('playback-settings').hidden){setSettings(false);$('settings-toggle').focus();}else if(transcriptOpen){showTranscript(false);$('transcript-toggle').focus();}}});
-  let expanded=false,priorOverflow='',expandedFocus=null;
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(volumePopover.isOpen()){volumePopover.close();}else if(!$('caption-size-panel').hidden){setCaptionMenu(false);$('caption-size-toggle').focus();}else if(!$('speed-panel').hidden){setSpeedMenu(false);$('speed').focus();}else if(!$('playback-settings').hidden){setSettings(false);$('settings-toggle').focus();}else if(transcriptOpen&&!expanded&&!document.fullscreenElement){showTranscript(false);$('transcript-toggle').focus();}}});
+  let expanded=false,priorOverflow='',expandedFocus=null,expandedScroll=null,nativeReturn=null;
+  function scrollPosition(){return {x:scrollX,y:scrollY,content:document.querySelector('.player-column').scrollTop};}
+  function restorePosition(position,focus){if(focus?.isConnected)focus.focus({preventScroll:true});if(position){document.querySelector('.player-column').scrollTop=position.content;window.scrollTo(position.x,position.y);}}
   function paintFullscreen(){const active=expanded||!!document.fullscreenElement;setControl('fullscreen',active?'restore':'fullscreen',expanded?'창 안 확대 나가기':active?'전체 화면 나가기':'전체 화면');$('fullscreen').setAttribute('aria-pressed',String(active));}
   function expandStage(open){
     if(open===expanded)return;expanded=open;$('stage').classList.toggle('stage-expanded',open);
-    if(open){priorOverflow=document.body.style.overflow;expandedFocus=document.activeElement;document.body.style.overflow='hidden';$('fullscreen-status').hidden=false;$('fullscreen-status').textContent='전체 화면 요청이 제한되어 창 안에서 확대했습니다. Esc로 돌아갑니다.';$('fullscreen').focus();}
-    else{document.body.style.overflow=priorOverflow;$('fullscreen-status').hidden=true;if(expandedFocus?.isConnected)expandedFocus.focus();}
+    if(open){priorOverflow=document.body.style.overflow;expandedFocus=document.activeElement;expandedScroll=scrollPosition();document.body.style.overflow='hidden';$('fullscreen-status').hidden=false;$('fullscreen-status').textContent='전체 화면 요청이 제한되어 창 안에서 확대했습니다. Esc로 돌아갑니다.';$('fullscreen').focus();}
+    else{document.body.style.overflow=priorOverflow;$('fullscreen-status').hidden=true;restorePosition(expandedScroll,expandedFocus);}
     paintFullscreen();
   }
   $('fullscreen').addEventListener('click',async()=>{
     setCaptionMenu(false);setSpeedMenu(false);setSettings(false);volumePopover.close();
     if(expanded){expandStage(false);return;}
-    try{if(document.fullscreenElement)await document.exitFullscreen();else if(document.fullscreenEnabled&&$('stage').requestFullscreen)await $('stage').requestFullscreen();else expandStage(true);}
-    catch(_){expandStage(true);}
+    try{if(document.fullscreenElement)await document.exitFullscreen();else if(document.fullscreenEnabled&&$('stage').requestFullscreen){nativeReturn={position:scrollPosition(),focus:document.activeElement};await $('stage').requestFullscreen();}else expandStage(true);}
+    catch(_){nativeReturn=null;expandStage(true);}
   });
-  document.addEventListener('fullscreenchange',paintFullscreen);
+  document.addEventListener('fullscreenchange',()=>{paintFullscreen();if(!document.fullscreenElement&&nativeReturn){const saved=nativeReturn;nativeReturn=null;restorePosition(saved.position,saved.focus);}});
   document.addEventListener('keydown',e=>{
-    if(!expanded||$('shortcut-help').open)return;
-    if(e.key==='Escape'){e.preventDefault();expandStage(false);return;}
+    if((!expanded&&!document.fullscreenElement)||$('shortcut-help').open)return;
+    if(e.key==='Escape'&&expanded){e.preventDefault();expandStage(false);return;}
     if(e.key==='Tab'){
       const nodes=[...$('stage').querySelectorAll('button,input,select,[tabindex="0"]')].filter(el=>!el.disabled&&el.getClientRects().length);
       const first=nodes[0],last=nodes[nodes.length-1];
@@ -467,7 +480,7 @@
   $('speed-icon').innerHTML=U.svg('speed');
   document.querySelectorAll('[data-course-jump]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();courseJump(el.dataset.courseJump);}));
   $('caption-opacity').addEventListener('input',()=>{const v=Math.max(0,Math.min(100,Number($('caption-opacity').value)||0));$('stage').style.setProperty('--caption-opacity',String(v/100));$('caption-opacity-value').value=v+'%';$('caption-opacity-value').textContent=v+'%';prefs.captionOpacity=v/100;savePrefs();});
-  window.addEventListener('message',e=>{if(e.source===window.parent&&e.data?.type==='course-enter'){lesson(published[0],{resume:true,push:false});activeTransport().play();}});
+  window.addEventListener('message',e=>{if(e.source===window.parent&&e.data?.type==='course-enter'){lesson(published[0],{resume:true,push:false});const ui=e.data.ui;if(ui&&Number.isFinite(ui.tocTop)&&ui.tocTop>=0){pendingTocUi=ui;requestAnimationFrame(restoreToc);}activeTransport().play();}});
   $('toast-captions').addEventListener('click',()=>{captionsEnabled=true;prefs.captions=true;savePrefs();refreshCaption();$('captions-toggle').focus();$('sound-toast').hidden=true;});
   $('toast-mute').addEventListener('click',()=>{const enable=$('toast-mute').textContent==='소리 켜기';if(enable&&prefs.volume===0)setMasterVolume(1);setMasterMuted(!enable);if(enable)activeTransport().play();$('mute-toggle').focus();$('sound-toast').hidden=true;});
   $('sound-toast').addEventListener('focusout',()=>{setTimeout(()=>{if(!$('sound-toast').contains(document.activeElement))$('sound-toast').hidden=true;},0);});

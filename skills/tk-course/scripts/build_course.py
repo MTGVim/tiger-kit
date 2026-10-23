@@ -79,7 +79,7 @@ def safe_file(base,name):
 
 def media_uri(base,name,kind,audio_build=None):
     path=safe_file(base,name)
-    mime=(MIME if kind=='audio' else {'.mp4':'video/mp4','.webm':'video/webm','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp'}).get(path.suffix.lower())
+    mime=(MIME if kind=='audio' else {'.mp4':'video/mp4','.webm':'video/webm','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp'}).get(path.suffix.lower())
     if not mime or not mime.startswith(kind+'/'):raise ValueError('unsupported media file type')
     if path.stat().st_size>500_000_000:raise ValueError('media exceeds the single-file build budget; split the course')
     if kind=='audio':
@@ -99,10 +99,20 @@ def fingerprint(lesson,course,base):
 
 def media_paths(lesson):
     if lesson['kind']=='video':return [lesson['video'][k] for k in ('src','poster') if lesson['video'].get(k)]
-    return sorted({c['audio'] for s in lesson['slides'] for c in s['narration'] if c.get('audio')})
+    return sorted({c['audio'] for s in lesson['slides'] for c in s['narration'] if c.get('audio')}|{s['visual']['src'] for s in lesson['slides'] if s['type']=='image'})
+
+def course_pacing(course):
+    value=course.get('pacing')
+    defaults={'initialLeadInMs':5000,'postSlideHoldMs':1800,'slidePauseMs':1200,'sentencePauseMs':600}
+    if 'pacing' not in course:return defaults
+    if not isinstance(value,dict) or set(value)-set(defaults):raise ValueError('invalid pacing fields')
+    if any(type(v) not in (int,float) or not math.isfinite(v) or not 0<=v<=5000 for v in value.values()):raise ValueError('invalid pacing range')
+    # An authored legacy slide/sentence pause keeps its original, immediate-first-play meaning.
+    return {**defaults,'initialLeadInMs':0,'postSlideHoldMs':0,**value}
 
 def validate(course,base):
     if not isinstance(course,dict) or course.get('schema')!=1:raise ValueError('unsupported course schema')
+    course_pacing(course)
     identifier(course['id']);text(course['title'],120);text(course['revision'],120);text(course['description']);text(course['level'],100)
     objectives=course['objectives'];known={identifier(o['id']) for o in objectives}
     if not known or len(known)!=len(objectives):raise ValueError('duplicate or missing objective')
@@ -144,6 +154,7 @@ def validate(course,base):
                     targets={'item-'+str(i+1) for i in range(len(items))}
                 elif slide['type'] in TYPES:
                     targets,coverage=figure_contract(slide)
+                    if slide['type']=='image':image_info(base,slide['visual']['src'])
                 else:
                     targets={'hook':{'first-search','latest-search'},'timeline':{'request-a','request-b','response-b','response-a','overwrite'},'code':{'request-id','await','compare','render','takeaway'},'comparison':{'cancel','guard','caveats'},'prediction':{'request-order','response-order','predict','practice'}}.get(slide['type'])
                     if targets is None:raise ValueError('unsupported component')
@@ -216,12 +227,31 @@ def legacy_slots(slide):
         for row in v['rows']:short(row['label'],10);short(row['sequence'],24)
         short(v['question'],55);short(v['hint'],55)
 
+def image_info(base,name):
+    try:from PIL import Image
+    except ImportError as error:raise ValueError('Pillow is required for local teaching images') from error
+    path=safe_file(base,name)
+    expected={'.png':'PNG','.jpg':'JPEG','.jpeg':'JPEG','.webp':'WEBP'}.get(path.suffix.lower())
+    if not expected:raise ValueError('unsupported image file type')
+    with Image.open(path) as picture:
+        if picture.format!=expected:raise ValueError('image encoding does not match file type')
+        ratio=picture.width/picture.height;picture.verify()
+    return ratio
+
+def embed_visual(slide,base):
+    if slide['type']!='image':return slide
+    slide=copy.deepcopy(slide)
+    slide['visual']['aspect_ratio']=image_info(base,slide['visual']['src'])
+    slide['visual']['src']=media_uri(base,slide['visual']['src'],'image')
+    return slide
+
 def payload(course,lesson,base,audio_build=None):
     data=copy.deepcopy(lesson)
     meta={'id':course['id'],'revision':course['revision'],'lessons':[{'id':x['id'],'revision':x['revision']} for x in course['lessons']]}
     listing=[{'id':x['id'],'title':x['title'],'section':x['section'],'kind':x['kind'],'kind_label':('슬라이드 '+str(len(x['slides']))+'장') if x['kind']=='slides' else '영상'} for x in course['lessons']]
     mode=lesson['kind'];dummy={'id':'video-cover','title':lesson['title'][:45],'eyebrow':'강의','type':'content','objective_ids':lesson['objective_ids'],'visual':{'items':[{'label':'학습 목표','text':lesson['title'][:60]}]},'narration':[{'id':'cover','speech':lesson['title'],'caption':lesson['title'],'focus':['item-1']}],'transcript':lesson['title']}
     slides=data['slides'] if mode=='slides' else [copy.deepcopy(dummy) for _ in lesson['video']['captions']]
+    slides=[embed_visual(slide,base) for slide in slides]
     for slide in slides:
         for cue in slide['narration']:
             if cue.get('audio'):
@@ -232,18 +262,22 @@ def payload(course,lesson,base,audio_build=None):
         video={**lesson['video'],'src':media_uri(base,lesson['video']['src'],'video')}
         if video.get('poster'):video['poster']=media_uri(base,video['poster'],'image')
         scenes=copy.deepcopy(video['captions'])
-    data.update(sources=copy.deepcopy(course['sources']),title=course['title'],course_label=course['title'],lesson_id=lesson['id'],lesson_title=lesson['title'],course_meta=meta,course_lessons=listing,overview={'description':course['description'],'level':course['level'],'outcomes':[o['description'] for o in course['objectives']],**{k:course[k] for k in ('created_at','updated_at') if k in course}},slides=slides,lessons=[{'id':mode,'title':lesson['title'],'note':lesson['notes']}],published_lessons=[mode],video_lesson=video,video_scenes=scenes,video_transcript=' '.join(x['caption'] for x in scenes),production_choices={'voice':'none' if lesson.get('narration')=='none' else 'generated-local','pacing':{'slidePauseMs':1200,'sentencePauseMs':600}},narration_revision=lesson['revision'])
+    data.update(sources=copy.deepcopy(course['sources']),title=course['title'],course_label=course['title'],lesson_id=lesson['id'],lesson_title=lesson['title'],course_meta=meta,course_lessons=listing,overview={'description':course['description'],'level':course['level'],'outcomes':[o['description'] for o in course['objectives']],**{k:course[k] for k in ('created_at','updated_at') if k in course}},slides=slides,lessons=[{'id':mode,'title':lesson['title'],'note':lesson['notes']}],published_lessons=[mode],video_lesson=video,video_scenes=scenes,video_transcript=' '.join(x['caption'] for x in scenes),production_choices={'voice':'none' if lesson.get('narration')=='none' else 'generated-local','pacing':course_pacing(course)},narration_revision=lesson['revision'])
     data['readiness']=copy.deepcopy(course.get('readiness',[]))
     return data
 
-def bundle(pages,title,course):
+def bundle(pages,title,course,base=None):
     encoded=json.dumps(pages,ensure_ascii=False).replace('<','\\u003c')
-    bootstrap="""const pages=JSON.parse(document.getElementById('course-pages').textContent),ids=Object.keys(pages),frame=document.getElementById('course-frame');let entering=false;function show(id,enter){if(!Object.hasOwn(pages,id))return;entering=enter;frame.srcdoc=pages[id];}frame.addEventListener('load',()=>{if(entering)frame.contentWindow.postMessage({type:'course-enter'},'*');});window.addEventListener('message',e=>{if(e.source!==frame.contentWindow||e.data?.type!=='course-lesson'||!ids.includes(e.data.id))return;show(e.data.id,true);});show(ids[0],false);"""
+    bootstrap="""const pages=JSON.parse(document.getElementById('course-pages').textContent),ids=Object.keys(pages),frame=document.getElementById('course-frame');let entering=false,ui=null;function show(id,enter){if(!Object.hasOwn(pages,id))return;entering=enter;frame.srcdoc=pages[id];}frame.addEventListener('load',()=>{if(entering)frame.contentWindow.postMessage({type:'course-enter',ui},'*');});window.addEventListener('message',e=>{if(e.source!==frame.contentWindow||e.data?.type!=='course-lesson'||!ids.includes(e.data.id))return;ui=e.data.ui;show(e.data.id,true);});show(ids[0],false);"""
     fallback=('<a href="'+escape(course['collection_home'],quote=True)+'">전체 코스</a>') if course.get('collection_home') else ''
     fallback+=readiness_html(course.get('readiness',[]))
     for lesson in course['lessons']:
         fallback+='<section><h2>'+escape(lesson['title'])+'</h2><p>'+escape(lesson['notes'])+'</p>'
-        for slide in lesson.get('slides',[]):fallback+='<h3>'+escape(slide['title'])+'</h3><p>'+escape(slide['transcript'])+'</p>'+figure_table(slide)
+        for i,slide in enumerate(lesson.get('slides',[])):
+            fallback+='<h3>'+escape(slide['title'])+'</h3><p>'+escape(slide['transcript'])+'</p>'+figure_table(slide)
+            if slide['type']=='image' and base is not None:
+                from components import svg
+                fallback+=svg(i,embed_visual(slide,base)).replace('slide-title-',lesson['id']+'-fallback-title-').replace('slide-desc-',lesson['id']+'-fallback-desc-').replace('slide-'+str(i)+'-',lesson['id']+'-fallback-'+str(i)+'-')
         if lesson['kind']=='video':
             match=re.search(r'<video id="lesson-video"[^>]*>',pages[lesson['id']])
             if match:fallback+=match[0]+'</video>'
@@ -326,7 +360,7 @@ def build(source,output,previous=None,collection_home=None,*,dist=None,audio_for
         for page in pages.values():
             check_header(page,course['title']);check_visible_objectives(page,[o['id'] for o in course['objectives']])
             if '비동기 검색' in page and '비동기 검색' not in json.dumps(course,ensure_ascii=False):raise ValueError('fixture content leaked into generic course')
-        bundled=bundle(pages,course['title'],course)
+        bundled=bundle(pages,course['title'],course,source.parent)
         stage=Path(tmp)/'course';stage.mkdir()
         if legacy:(stage/'index.html').write_text(bundled)
         (stage/'course.json').write_text(json.dumps(course,ensure_ascii=False,indent=2)+'\n')

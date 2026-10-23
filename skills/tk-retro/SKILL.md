@@ -80,7 +80,9 @@ necessary; or `no change`. State what current behavior must be preserved.
 For a skill-level incident, target the owning skill or document. Personal agent-memory
 writes and fixes confined to the current repository are not dispositions for that
 shared failure; do not offer or perform them as its remedy. Distinguish an independently
-proven local consumer override from a shared skill defect.
+proven local consumer override from a shared skill defect. Classify by the owner of the reusable
+behavior, not whether its source is checked out locally: local-only disposition requires that
+proven consumer override; a shared package defect still belongs in its upstream draft.
 
 Separate findings by owning layer: external upstream package, user-owned global guidance/personal
 skill/repository-local settings, or `no change`. When file output is permitted, for upstream-owned findings write a standalone,

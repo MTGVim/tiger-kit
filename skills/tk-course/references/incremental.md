@@ -159,3 +159,25 @@ handshake and hides that breadcrumb when shared alone; no fetch/server or extern
 Progress remains course-local; preferences are learner-wide and never included in progress JSON.
 File-origin storage varies by browser; JSON export/import is the portable path for progress.
 Cross-device accounts/sync are separate requirements. Publication remains separately authorized.
+
+
+## Backfill teaching visuals and pacing
+
+Inspect authored `course.json`, curriculum/sources, prior built manifest and original media before
+backfilling an existing course. Name the outcomes missing observed screen/spatial/state evidence;
+add meaningful supported figures only there, updating descriptions, provenance, rights and cues.
+If authored input or prior media identity is missing, report the required input rather than
+claiming automatic recovery. Image-byte changes at the same path enter the persisted fingerprint.
+
+Reuse raw/normalized cue audio when the explanation still matches the new figure. Synthesize only
+changed speech at new paths and update its caption/transcript/targets together; never split audio
+by character-count timing. Pacing alone requires no synthesis or learning-content revision.
+Preserve course/lesson/cue IDs, manual completions, notes, unknown progress and date provenance;
+raise lesson revisions only for substantive teaching changes. Keep explicit legacy/zero pacing.
+
+Preserve original authored files and approved HTML; build a fresh work/dist staging tree with
+`--previous <prior-built-course.json>`. Review changes.json, media digests, the actual visual
+question/figure correspondence, initial/hold/lead-in boundaries, pause/seek and progress import.
+Replace only the authorized target after review and refresh the catalog; preserve sibling courses
+and third-party notices. Report unavailable real course inputs or pending human visual/listening
+review. Fixture rebuilds prove the migration path, not completion of a user's unseen course.

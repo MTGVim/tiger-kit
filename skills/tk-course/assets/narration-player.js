@@ -13,18 +13,19 @@
     if(!['auto','assets','device','silent'].includes(initialMode))throw new Error('invalid-mode');
     let mode=initialMode==='auto'?(hasAssets?'assets':'device'):initialMode;
     let index=0,status='idle',rate=1,epoch=0,active=null,voice=null,finishedWhilePaused=false;
-    let timer=null,deadline=0,remaining=null,waitKind='slide';
+    let timer=null,deadline=0,remaining=null,waitKind='slide',freshEntry=true;
     let speechChar=0,boundarySeen=false,pendingSeekFraction=0;
     let silentHold=Number(silentHoldMs);
     if(!Number.isFinite(silentHold)||silentHold<1000||silentHold>15000)throw new Error('invalid-silent-hold');
     if(typeof initialMuted!=='boolean'||!Number.isFinite(initialVolume)||initialVolume<0||initialVolume>1)throw new Error('invalid-volume');
     let muted=initialMuted,volume=initialVolume,deviceQueued=false,mutedBlocked=false,playRequest=0;
     audio.muted=muted;audio.volume=volume;
-    let slidePauseMs=0,sentencePauseMs=0,preferredVoice='',voiceOrigin='unavailable',voiceOptions=[];
+    let initialLeadInMs=0,postSlideHoldMs=0,slidePauseMs=0,sentencePauseMs=0,preferredVoice='',voiceOrigin='unavailable',voiceOptions=[];
     function available(){return mode==='silent'||(mode==='assets'?hasAssets:!!voice);}
     function silentElapsed(){return active&&active.kind==='silent'?Math.min(silentHold,active.elapsed+(status==='playing'?(clock.now()-active.started)*active.rate:0)):0;}
     function snapshot() {
-      const fraction=status==='ended'?1:status==='idle'||status==='blocked'||status==='waiting'||(status==='paused'&&remaining!==null)?0:
+      const held=(status==='waiting'||status==='paused'&&remaining!==null)&&waitKind==='hold';
+      const fraction=status==='ended'||held?1:status==='idle'||status==='blocked'||status==='waiting'||(status==='paused'&&remaining!==null)?0:
         mode==='silent'?(active&&active.kind==='silent'?silentElapsed()/silentHold:pendingSeekFraction):mode==='assets'?(active===audio&&Number.isFinite(audio.duration)&&audio.duration>0?Math.max(0,Math.min(1,(Number(audio.currentTime)||0)/audio.duration)):pendingSeekFraction):
         speechChar/clips[index].speech.length;
       const appliedRate=mode==='device'&&active?active.rate:rate;
@@ -35,7 +36,7 @@
           kind:mode==='silent'?'silent':mode==='assets'?'audio':boundarySeen?'boundary':'cue'},
         voice:voice?voice.name:'',voiceSelection:preferredVoice,voiceOrigin,voices:voiceOptions,available:available(),hasAssets,
         waitKind,waitMs:status==='waiting'?Math.max(0,deadline-clock.now()):remaining,
-        pacing:{slidePauseMs,sentencePauseMs},
+        pacing:{initialLeadInMs,postSlideHoldMs,slidePauseMs,sentencePauseMs},
         time:mode==='assets'&&active===audio?Number(audio.currentTime)||0:null,
         duration:mode==='assets'&&active===audio&&Number.isFinite(audio.duration)?audio.duration:null};
     }
@@ -67,8 +68,9 @@
       invalidate();
       speechChar=0;boundarySeen=false;pendingSeekFraction=0;
       if(index===clips.length-1){status='ended';emit();return;}
-      index++;status='idle';
-      queue(clips[index].slide!==previousSlide?slidePauseMs:sentencePauseMs,clips[index].slide!==previousSlide?'slide':'sentence');
+      status='idle';
+      if(clips[index+1].slide!==previousSlide)queue(postSlideHoldMs,'hold');
+      else{index++;queue(sentencePauseMs,'sentence');}
     }
     function scheduleSilent(token){
       if(token!==epoch||status!=='playing'||!active||active.kind!=='silent')return;
@@ -128,13 +130,19 @@
       const token=++epoch;deviceQueued=false;active=null;synth.cancel();
       beginDevice(token,offset,appliedRate,defer);
     }
+    function finishWait(token){
+      if(token!==epoch)return;
+      timer=null;remaining=null;
+      if(waitKind==='hold'){index++;speechChar=0;boundarySeen=false;pendingSeekFraction=0;queue(slidePauseMs,'slide');}
+      else begin(token);
+    }
     function queue(ms,kind) {
       if(!available()){status='blocked';emit();return;}
       waitKind=kind;
       const token=epoch;
-      if(ms===0){begin(token);return;}
+      if(ms===0){finishWait(token);return;}
       status='waiting';deadline=clock.now()+ms;remaining=null;
-      timer=clock.setTimeout(()=>begin(token),ms);emit();
+      timer=clock.setTimeout(()=>finishWait(token),ms);emit();
     }
     function play() {
       if(['playing','loading','waiting'].includes(status))return;
@@ -149,8 +157,9 @@
         else synth.resume();
         return;
       }
-      if(status==='ended')index=0;
-      invalidate();queue(0,'start');
+      if(status==='ended'){index=0;freshEntry=true;}
+      const delay=freshEntry?initialLeadInMs:0;freshEntry=false;
+      invalidate();queue(delay,'start');
     }
     function pause() {
       if(!['playing','loading','waiting'].includes(status))return;
@@ -160,11 +169,11 @@
       else if(mode==='assets'){playRequest++;audio.pause();}else synth.pause();
       status='paused';emit();
     }
-    function stop() {invalidate();speechChar=0;boundarySeen=false;pendingSeekFraction=0;status='idle';emit();}
-    function select(slide,cue=0,autoplay=['playing','loading','waiting'].includes(status),fraction=0) {
+    function stop() {freshEntry=true;invalidate();speechChar=0;boundarySeen=false;pendingSeekFraction=0;status='idle';emit();}
+    function select(slide,cue=0,autoplay=['playing','loading','waiting'].includes(status),fraction=0,initial=false) {
       const found=clips.findIndex(c=>c.slide===slide && c.cue===cue);
       if(found<0)throw new Error('unknown-cue');
-      const changed=clips[found].slide!==clips[index].slide;
+      const changed=clips[found].slide!==clips[index].slide;freshEntry=initial;
       invalidate();index=found;speechChar=0;boundarySeen=false;pendingSeekFraction=mode!=='device'?Math.max(0,Math.min(.999,Number(fraction)||0)):0;status='idle';emit();
       if(autoplay)queue(changed?slidePauseMs:sentencePauseMs,changed?'slide':'sentence');
     }
@@ -212,10 +221,10 @@
       invalidate();speechChar=0;boundarySeen=false;pendingSeekFraction=0;mode=value;status='idle';emit();
     }
     function setPacing(value){
-      const slide=value.slidePauseMs??slidePauseMs,sentence=value.sentencePauseMs??sentencePauseMs;
-      if(![slide,sentence].every(n=>Number.isFinite(n)&&n>=0&&n<=5000))throw new Error('invalid-pacing');
-      slidePauseMs=slide;sentencePauseMs=sentence;
-      if(status==='waiting'){invalidate();queue(waitKind==='slide'?slidePauseMs:sentencePauseMs,waitKind);return;}
+      if(!value||typeof value!=='object'||Array.isArray(value))throw new Error('invalid-pacing');
+      const next={initialLeadInMs,postSlideHoldMs,slidePauseMs,sentencePauseMs,...value};
+      if(Object.keys(next).some(k=>!['initialLeadInMs','postSlideHoldMs','slidePauseMs','sentencePauseMs'].includes(k))||!Object.values(next).every(n=>Number.isFinite(n)&&n>=0&&n<=5000))throw new Error('invalid-pacing');
+      ({initialLeadInMs,postSlideHoldMs,slidePauseMs,sentencePauseMs}=next);
       emit();
     }
     function seek(seconds) {

@@ -157,3 +157,25 @@ test('pausing a pending audible attempt cancels its muted retry even if playback
  reject(Object.assign(Error('blocked'),{name:'NotAllowedError'}));await flush();assert.equal(plays,2);assert.equal(player.snapshot().muted,false);assert.equal(player.snapshot().status,'playing');
  let no;const pausedAudio={...audio,play:()=>new Promise((_,reject)=>no=reject)};const paused=create({slides,audio:pausedAudio,initialMode:'assets'});paused.play();paused.pause();no(Object.assign(Error('blocked'),{name:'NotAllowedError'}));await flush();assert.equal(paused.snapshot().status,'paused');assert.equal(paused.snapshot().muted,false);
 });
+
+function testClock(){let now=0,id=0;const timers=new Map();return {now:()=>now,setTimeout:(fn,ms)=>{timers.set(++id,{at:now+ms,fn});return id;},clearTimeout:id=>timers.delete(id),advance(ms){const end=now+ms;while(true){const next=[...timers].sort((a,b)=>a[1].at-b[1].at)[0];if(!next||next[1].at>end)break;now=next[1].at;timers.delete(next[0]);next[1].fn();}now=end;}};}
+function pacedPlayer(pacing={initialLeadInMs:5000,postSlideHoldMs:1800,slidePauseMs:1200,sentencePauseMs:600}){
+ const clock=testClock(),audio={duration:1,currentTime:0,plays:0,pause(){},play(){this.plays++;return Promise.resolve();}},slides=[{narration:[{speech:'첫 설명',audio:'one'},{speech:'다음 문장',audio:'two'}]},{narration:[{speech:'다음 장',audio:'three'}]}];
+ return {clock,audio,p:require(path.join(R,'narration-player.js')).create({slides,audio,pacing,clock})};
+}
+test('fresh lead-in, sentence control, post-slide hold, and next lead-in have distinct clock boundaries',async()=>{
+ const {clock,audio,p}=pacedPlayer();p.play();assert.equal(p.snapshot().waitKind,'start');clock.advance(4999);assert.equal(audio.plays,0);clock.advance(1);await flush();assert.equal(audio.plays,1);
+ audio.onended();assert.equal(p.snapshot().cue,1);assert.equal(p.snapshot().waitKind,'sentence');clock.advance(599);assert.equal(audio.plays,1);clock.advance(1);await flush();assert.equal(audio.plays,2);
+ audio.onended();assert.equal(p.snapshot().slide,0);assert.equal(p.snapshot().cue,1);assert.equal(p.snapshot().waitKind,'hold');clock.advance(1799);assert.equal(p.snapshot().slide,0);clock.advance(1);assert.equal(p.snapshot().slide,1);assert.equal(p.snapshot().waitKind,'slide');clock.advance(1199);assert.equal(audio.plays,2);clock.advance(1);await flush();assert.equal(audio.plays,3);audio.onended();assert.equal(p.snapshot().status,'ended');clock.advance(10000);assert.equal(audio.plays,3);
+});
+test('pause/resume consumes only remaining waits, rate and pacing edits do not restart an active wait',async()=>{
+ const {clock,audio,p}=pacedPlayer();p.play();clock.advance(2000);p.pause();clock.advance(9999);assert.equal(audio.plays,0);p.setRate(2);p.play();clock.advance(2999);assert.equal(audio.plays,0);clock.advance(1);await flush();audio.onended();clock.advance(600);await flush();audio.onended();clock.advance(800);p.pause();p.setPacing({postSlideHoldMs:5000});clock.advance(9999);p.play();clock.advance(999);assert.equal(p.snapshot().slide,0);clock.advance(1);assert.equal(p.snapshot().slide,1);clock.advance(1200);await flush();assert.equal(audio.plays,3);
+});
+test('manual selection and seek cancel hold advancement and never replay fresh-entry lead-in',async()=>{
+ const {clock,audio,p}=pacedPlayer();p.play();clock.advance(5000);await flush();audio.onended();clock.advance(600);await flush();audio.onended();const stale=audio.onended;p.select(1,0,true);assert.equal(p.snapshot().waitKind,'slide');clock.advance(1200);await flush();assert.equal(audio.plays,3);clock.advance(5000);assert.equal(p.snapshot().slide,1);p.pause();p.seekProgress(0);const beforeSeek=audio.plays;p.play();assert.equal(audio.plays,beforeSeek+1);assert.notEqual(p.snapshot().status,'waiting');clock.advance(5000);await flush();assert.equal(p.snapshot().slide,0);if(stale)stale();assert.equal(p.snapshot().slide,0);
+});
+test('explicit zero and legacy pacing keep immediate-first behavior, silent progression still advances safely',()=>{
+ const {p,audio}=pacedPlayer({slidePauseMs:0,sentencePauseMs:0});p.play();assert.equal(audio.plays,1);
+ const {p:s,clock}=pacedPlayer();s.setMode('silent');s.play();clock.advance(5000);assert.equal(s.snapshot().status,'playing');clock.advance(4000);assert.equal(s.snapshot().waitKind,'sentence');s.stop();clock.advance(100000);assert.equal(s.snapshot().status,'idle');
+ for(const bad of [{initialLeadInMs:-1},{postSlideHoldMs:5001},{slidePauseMs:'0'},{sentencePauseMs:NaN},{extra:1},null])assert.throws(()=>p.setPacing(bad));
+});

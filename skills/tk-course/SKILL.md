@@ -66,7 +66,11 @@ rules apply only to document-like notes, not a second rail around the player.
 
 Choose each slide representation from its question: numeric comparison, trend or composition uses
 a bar, line or stacked chart with finite numeric `visual.data` values and explicit units; a narrated
-output, log or stack uses `output`; nonnumeric lists use `content`. Components
+output, log or stack uses `output`; genuine nonnumeric lists use `content`. When outcomes depend
+on locating UI, comparing spatial layouts or judging visible state, inspect the supplied visuals
+before authoring. Use an annotated screenshot, faithful schematic or worked visual example
+showing the deciding feature; text cards cannot substitute for that observable relationship.
+The `image` component embeds a verified local raster with description, provenance and cue regions. Components
 support one to four hook cards and generalized code and timeline forms while retaining legacy
 aliases. For progressive reveal, cue focus dims unrevealed targets while keeping semantic labels,
 values and boxes readable; an empty first-cue focus shows everything. Every cue target must render
@@ -89,6 +93,10 @@ for compressed input, FFmpeg readiness and `--audio-format mp3|wav`. Keep origin
 Keep the home copy on a theme-token surface distinct from the page canvas. The header shows
 the course title once; entering a lesson adds its title, and returning home clears that context.
 
+Before scaling narration, read representative teaching visuals against their actual learning
+question: can a learner locate the control/state, trace the spatial relationship or compare
+the changed condition from the figure and caption? If essential evidence or renderer support
+is missing, report that outcome incomplete. No image count or decoration quota applies.
 Inspect the actual reading/listening order, objective/prerequisite coverage, source support,
 component overflow, captions, notes, question/answer separation and retry feedback. Every line,
 point, bar, axis, table or output named by a cue must be rendered on that slide. A first-cue
@@ -97,10 +105,13 @@ In collections, each catalog card must differ from its siblings in both preview 
 description sentence; the description names what the learner can do, and `level` names the audience.
 Every lesson greets the learner, connects to the previous lesson, states its goal, and closes with
 a summary and preview. Vary opening forms across consecutive lessons. Verify audio
-readiness, missing-file recovery, immediate first play, breathing gaps, reveal/seek state,
+readiness, missing-file recovery, immediate play feedback with a visible initial lead-in,
+previous-slide hold and next-slide lead-in (3 seconds total by default), breathing gaps, reveal/seek state,
 caption size/opacity (default 50%), light/dark/system themes, settings hit areas, first-visit sound off and captions on with a combined entry toast,
 muted retry plus toast when audible playback is blocked, playback preferences persisting across
-lessons and reloads, collapsible curriculum and a single-line breadcrumb,
+lessons and reloads, viewport-bounded independent content/curriculum/transcript scrolling,
+reachable curriculum tail and retained curriculum position across lessons, default-open transcript
+without focus theft or mobile overlay, collapsible curriculum and a single-line breadcrumb,
 volume/rate, progress import/export, contextual shortcuts/help, native fullscreen or a labeled
 in-window expansion fallback, and a viewport-bounded volume popup that preserves toolbar
 height and supports hover, keyboard and touch dismissal. A finished video owns its audio, pauses and time axis;

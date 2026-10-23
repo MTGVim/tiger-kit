@@ -119,6 +119,15 @@ class FigureTests(unittest.TestCase):
 
     @unittest.skipUnless(os.environ.get('TK_PLAYWRIGHT_MODULE') and os.environ.get('TK_CHROMIUM_EXECUTABLE'),'Configured local browser required')
     def test_figures_in_actual_browser(self):
+        from PIL import Image,ImageDraw
+        im=Image.new('RGB',(800,450),'#eceff3');draw=ImageDraw.Draw(im)
+        draw.rectangle((80,90,320,270),fill='#4c8c62');draw.rectangle((480,90,720,270),fill='#a35b58')
+        draw.text((90,110),'OPEN LEFT',fill='white');draw.text((490,110),'BLOCKED RIGHT',fill='white');im.save(self.root/'layout.png')
+        self.data['lessons'][0]['slides'].insert(-1,_slide('observed-layout','image','Compare the open and blocked routes',{
+            'src':'layout.png','alt':'An open left route and a blocked right route',
+            'description':'The left route is open. The right route is blocked.',
+            'source':'Original synthetic layout for this regression test','rights':'Original test figure; redistribution permitted',
+            'regions':[{'id':'open','label':'Open left route','x':.1,'y':.2,'width':.3,'height':.4}]},['image','region-open']))
         self.build('browser')
         env={**os.environ,'TK_FIGURE_PAGE':str(self.root/'browser/index.html')}
         result=subprocess.run(['node','--test',str(Path(__file__).resolve().parents[1]/'evals/skills/tk-course/figures.test.cjs')],env=env,capture_output=True,text=True,timeout=270)
@@ -263,3 +272,58 @@ class FigureTests(unittest.TestCase):
 
 
 if __name__=='__main__':unittest.main()
+
+class TeachingImageTests(unittest.TestCase):
+    def setUp(self):
+        from PIL import Image,ImageDraw
+        self.tmp=tempfile.TemporaryDirectory();self.root=Path(self.tmp.name)
+        im=Image.new('RGB',(800,450),'#eeeeee');d=ImageDraw.Draw(im);d.rectangle((80,90,320,270),fill='#5da969');d.rectangle((480,90,720,270),fill='#a25c5c');im.save(self.root/'layout.png')
+        self.data=fixture('image-course');s=self.data['lessons'][0]['slides'][0]
+        s.update(type='image',visual={'src':'layout.png','alt':'Two routes with a visible boundary','description':'Compare the open left route with the blocked right route.','source':'Synthetic layout, authored for this test','rights':'Original test illustration; redistribution permitted','regions':[{'id':'open','label':'Open route','x':.1,'y':.2,'width':.3,'height':.4}]})
+        s['narration'][0]['focus']=['image','region-open'];self.slide=s
+    def tearDown(self):self.tmp.cleanup()
+    def test_safe_offline_image_and_actual_aspect_ratio_with_no_source_mutation(self):
+        from PIL import Image
+        Image.new('RGB',(600,600),'white').save(self.root/'layout.png')
+        builder.validate(copy.deepcopy(self.data),self.root)
+        runtime=builder.payload(self.data,self.data['lessons'][0],self.root)
+        image=runtime['slides'][0]
+        self.assertTrue(image['visual']['src'].startswith('data:image/png;base64,'));self.assertEqual(image['visual']['aspect_ratio'],1)
+        markup=svg(0,image,responsive=True);self.assertIn('data-focus-key="region-open"',markup);self.assertIn('Open route',markup);self.assertIn('redistribution permitted',markup)
+        self.assertEqual(self.slide['visual']['src'],'layout.png')
+        source=self.root/'course.json';source.write_text(json.dumps(self.data));builder.build(source,self.root/'built')
+        page=(self.root/'built/index.html').read_text();self.assertIn('data:image/png;base64,',page)
+        fallback=page.split('<noscript>')[1].split('</noscript>')[0];self.assertIn('<image ',fallback)
+        from distribution import read_manifest
+        manifest=read_manifest(self.root/'built/index.html');self.assertNotIn('layout.png',json.dumps(manifest))
+    def test_missing_unsafe_symlink_corrupt_and_unsupported_images_fail_before_build(self):
+        (self.root/'bad.svg').write_text('<svg/>');(self.root/'corrupt.png').write_text('not an image');(self.root/'link.png').symlink_to(self.root/'layout.png')
+        for name in ['missing.png','../layout.png','/etc/passwd','link.png','bad.svg','corrupt.png']:
+            with self.subTest(name=name):
+                data=copy.deepcopy(self.data);data['lessons'][0]['slides'][0]['visual']['src']=name
+                with self.assertRaises((ValueError,OSError)):builder.validate(data,self.root)
+    def test_description_source_rights_and_cue_region_coverage_are_required(self):
+        for field in ['alt','description','source','rights']:
+            data=copy.deepcopy(self.data);del data['lessons'][0]['slides'][0]['visual'][field]
+            with self.subTest(field=field),self.assertRaises(ValueError):builder.validate(data,self.root)
+        for mutation in ['missing-focus','outside','duplicate']:
+            data=copy.deepcopy(self.data);s=data['lessons'][0]['slides'][0]
+            if mutation=='missing-focus':s['narration'][0]['focus']=['image']
+            if mutation=='outside':s['visual']['regions'][0]['width']=1
+            if mutation=='duplicate':s['visual']['regions']*=2
+            with self.subTest(mutation=mutation),self.assertRaises(ValueError):builder.validate(data,self.root)
+    def test_same_path_image_bytes_require_revision_and_pacing_only_rebuild_retains_content(self):
+        from PIL import Image
+        source=self.root/'course.json';source.write_text(json.dumps(self.data));builder.build(source,self.root/'first')
+        self.data['pacing']={'initialLeadInMs':5000,'postSlideHoldMs':1800,'slidePauseMs':1200,'sentencePauseMs':600};source.write_text(json.dumps(self.data))
+        builder.build(source,self.root/'paced',self.root/'first/course.json')
+        changes=json.loads((self.root/'paced/changes.json').read_text());self.assertTrue(all(c['status']=='retained' for c in changes))
+        Image.new('RGB',(800,450),'yellow').save(self.root/'layout.png')
+        with self.assertRaisesRegex(ValueError,'revision'):builder.build(source,self.root/'rejected',self.root/'first/course.json')
+        self.data['lessons'][0]['revision']='2';source.write_text(json.dumps(self.data));builder.build(source,self.root/'updated',self.root/'first/course.json')
+        changes=json.loads((self.root/'updated/changes.json').read_text());self.assertEqual([c['status'] for c in changes],['changed','retained'])
+    def test_pacing_defaults_legacy_zero_and_bad_types(self):
+        self.assertEqual(builder.course_pacing(self.data),{'initialLeadInMs':5000,'postSlideHoldMs':1800,'slidePauseMs':1200,'sentencePauseMs':600})
+        legacy=builder.course_pacing({'pacing':{'slidePauseMs':0,'sentencePauseMs':0}});self.assertEqual(legacy,dict.fromkeys(legacy,0))
+        for bad in [{'initialLeadInMs':True},{'postSlideHoldMs':-1},{'slidePauseMs':'0'},{'sentencePauseMs':float('nan')},{'typo':1},[]]:
+            with self.subTest(bad=bad),self.assertRaises(ValueError):builder.course_pacing({'pacing':bad})

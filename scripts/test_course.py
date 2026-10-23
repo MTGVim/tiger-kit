@@ -28,7 +28,9 @@ class CourseTests(unittest.TestCase):
         with wave.open(str(self.root/'voice.wav'),'wb') as wav:
             wav.setnchannels(1);wav.setsampwidth(2);wav.setframerate(8000);wav.writeframes(b'\x01\x00'*8000)
         for lesson in self.data['lessons']:
-            lesson['narration']='generated';lesson['slides'][0]['narration'][0]['audio']='voice.wav'
+            lesson['narration']='generated'
+            for slide in lesson['slides']:
+                for cue in slide['narration']:cue['audio']='voice.wav'
         self.write();builder.build(self.source,self.root/'volume-browser')
         env={**os.environ,'TK_COURSE_PAGE':str(self.root/'volume-browser/index.html')}
         result=subprocess.run(['node','--test',str(ROOT/'evals/skills/tk-course/volume-popover.test.cjs')],env=env,capture_output=True,text=True,timeout=120)
@@ -38,15 +40,24 @@ class CourseTests(unittest.TestCase):
                          'Course preferences/navigation render regression needs an explicitly configured browser')
     def test_preferences_navigation_browser_matrix(self):
         import wave
+        original=copy.deepcopy(self.data['lessons'][0])
+        self.data['lessons']=[]
+        for n in range(1,21):
+            item=copy.deepcopy(original);item.update(id='lesson-'+str(n),title='조건과 결과 '+str(n),prerequisites=[])
+            second=copy.deepcopy(item['slides'][0]);second['id']='next-slide';second['narration'][0]['id']='next-cue';item['slides'].append(second)
+            item['notes']='조건과 결과를 비교합니다.\n'*120
+            self.data['lessons'].append(item)
         topic=self.root/'browser-topic';topic.mkdir()
         with wave.open(str(topic/'voice.wav'),'wb') as wav:
             wav.setnchannels(1);wav.setsampwidth(2);wav.setframerate(8000);wav.writeframes(b'\x01\x00'*8000)
         for lesson in self.data['lessons']:
-            lesson['narration']='generated';lesson['slides'][0]['narration'][0]['audio']='voice.wav'
+            lesson['narration']='generated'
+            for slide in lesson['slides']:
+                for cue in slide['narration']:cue['audio']='voice.wav'
         source=topic/'course.json';source.write_text(json.dumps(self.data));dist=self.root/'dist'
         builder.build(source,topic/'build',dist=dist)
         alone=self.root/'standalone';alone.mkdir();shutil.copyfile(dist/'browser-topic/index.html',alone/'index.html')
-        env={**os.environ,'TK_COURSE_PAGE':str(dist/'browser-topic/index.html'),'TK_COURSE_STANDALONE':str(alone/'index.html')}
+        env={**os.environ,'TK_COURSE_PAGE':str(dist/'browser-topic/index.html'),'TK_COURSE_STANDALONE':str(alone/'index.html'),'TK_COURSE_LONG_PAGE':str(dist/'browser-topic/index.html')}
         result=subprocess.run(['node','--test',str(ROOT/'evals/skills/tk-course/preferences-navigation.test.cjs')],env=env,capture_output=True,text=True,timeout=180)
         self.assertEqual(result.returncode,0,result.stdout+result.stderr)
 
@@ -179,7 +190,9 @@ class CourseTests(unittest.TestCase):
         audio=self.root/'voice.wav'
         with wave.open(str(audio),'wb') as wav:wav.setnchannels(1);wav.setsampwidth(2);wav.setframerate(8000);wav.writeframes(b'\x01\x00'*10000)
         for lesson in self.data['lessons']:
-            lesson['narration']='generated';lesson['slides'][0]['narration'][0]['audio']='voice.wav'
+            lesson['narration']='generated'
+            for slide in lesson['slides']:
+                for cue in slide['narration']:cue['audio']='voice.wav'
         self.write();builder.build(self.source,self.root/'audio')
         built=json.loads((self.root/'audio/course.json').read_text());self.assertEqual(built['narration_seconds'],2.5)
         self.assertEqual(catalog.duration_label(built),'음성 3초');built.pop('narration_seconds')
@@ -203,7 +216,9 @@ class CourseTests(unittest.TestCase):
             f.writeframes(b''.join(struct.pack('<h',int(8000*math.sin(i*2*math.pi*440/24000))) for i in range(24000)))
         original=audio.read_bytes()
         for lesson in self.data['lessons']:
-            lesson['narration']='generated';lesson['slides'][0]['narration'][0]['audio']='voice.wav'
+            lesson['narration']='generated'
+            for slide in lesson['slides']:
+                for cue in slide['narration']:cue['audio']='voice.wav'
         self.write()
         for format,mime in [('opus','audio/webm;codecs=opus'),('mp3','audio/mpeg'),('wav','audio/wav')]:
             out=self.root/format;builder.build(self.source,out,audio_format=format)

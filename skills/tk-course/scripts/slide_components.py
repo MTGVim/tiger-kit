@@ -3,7 +3,7 @@ from html import escape
 import math
 import unicodedata
 
-TYPES={'bar','line','stacked','output','code','timeline','hook','cover','course-map','summary'}
+TYPES={'image','bar','line','stacked','output','code','timeline','hook','cover','course-map','summary'}
 
 def width(value):
     return sum(4 if c=='\t' else 2 if unicodedata.east_asian_width(c) in 'WF' or c in 'MWmw' else 1 for c in value)
@@ -45,7 +45,20 @@ def contract(slide):
     """Return allowed cue keys and coverage alternatives for each semantic element."""
     kind=slide['type'];v=slide['visual'];groups=[]
     def add(key,*aliases):groups.append({key,*aliases})
-    if kind in {'bar','line','stacked'}:
+    if kind=='image':
+        label(v.get('alt'),180);label(v.get('description'),240);label(v.get('source'),110);label(v.get('rights'),110)
+        if not isinstance(v.get('src'),str) or not v['src']:raise ValueError('image requires local src')
+        regions=v.get('regions',[])
+        if not isinstance(regions,list) or len(regions)>6:raise ValueError('image region budget exceeded')
+        add('image');ids=set()
+        for region in regions:
+            key=region.get('id')
+            if not isinstance(key,str) or not key.isascii() or not key.replace('-','').isalnum() or key in ids:raise ValueError('invalid image region ID')
+            ids.add(key);label(region.get('label'),40)
+            x,y,w,h=[number(region[k]) for k in ('x','y','width','height')]
+            if not (0<=x<1 and 0<=y<1 and 0<w<=1-x and 0<h<=1-y):raise ValueError('image region outside image')
+            add('region-'+key)
+    elif kind in {'bar','line','stacked'}:
         label(v.get('unit'),16);label(v.get('x_label'),44);label(v.get('y_label'),44);label(v.get('source'),110)
         data=rows(v.get('data'),1,6)
         if kind=='line':
@@ -137,7 +150,20 @@ def render(slide,index,compact=False):
     title_rows=len(wrap(slide['title'],26 if compact else 90))
     top=max(260,144+(title_rows-1)*title_step+100) if kind!='cover' else 260;bottom=900
     def g(key,*items,aliases=()):return group(slide,key,list(items),aliases)
-    if kind in {'bar','line','stacked'}:
+    if kind=='image':
+        iw=right-m
+        ih=iw/v.get('aspect_ratio',16/9)
+        parts.append(g('image',f'<image x="{m}" y="{top}" width="{iw}" height="{ih}" href="{escape(v["src"],quote=True)}" preserveAspectRatio="xMidYMid meet" aria-label="{escape(v["alt"],quote=True)}"/>'))
+        for i,r in enumerate(v.get('regions',[]),1):
+            x=m+r['x']*iw;y=top+r['y']*ih
+            parts.append(g('region-'+r['id'],f'<rect class="focus-halo" x="{x}" y="{y}" width="{r["width"]*iw}" height="{r["height"]*ih}" fill="none" stroke="var(--slide-accent)" stroke-width="4"/>',t(x+6,y+32,str(i),28,fill='var(--slide-accent)',weight='700')))
+        y=top+ih+64;limit=36 if compact else 110
+        parts.append(multi(m,y,v['description'],limit,32,48));y+=len(wrap(v['description'],limit))*48+16
+        for i,r in enumerate(v.get('regions',[]),1):
+            parts.append(multi(m,y,str(i)+'. '+r['label'],limit,30,46));y+=len(wrap(str(i)+'. '+r['label'],limit))*46+8
+        parts.append(multi(m,y,'이용 범위: '+v['rights'],limit,28,42));y+=len(wrap('이용 범위: '+v['rights'],limit))*42
+        bottom=max(bottom,y+130);source=v['source']
+    elif kind in {'bar','line','stacked'}:
         data=v['data'];unit=v['unit'];bottom=1100 if compact else 940
         ylabel=v['y_label']+' · '+unit;xlabel=v['x_label']+(' · '+v['x_unit'] if kind=='line' else '')
         if compact:
