@@ -21,3 +21,16 @@
 
 Keep source research and learning claims distinct from pedagogical effectiveness, which was not
 measured. Omit Marp, a hosted LMS, automatic mastery scoring, accounts and a shared runtime.
+
+- Creator feedback (2026-10-23): reconsider prior default mute and minimum-two-course catalog
+  decisions. Adapt sound-on intent with observed-playback feedback, learner preferences,
+  collapsible navigation, compressed audio and HTML-only distribution metadata. Keep offline
+  progress and reviewed incremental replacement. Report browser/listening coverage separately.
+- [MDN play()](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/play) and
+  [postMessage()](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage), read 2026-10-23:
+  adapt rejected-play promise handling and source-bound local-file frame messaging; a gesture
+  is not proof of successful audible playback. Add no server or external runtime.
+- [FFmpeg codec options](https://www.ffmpeg.org/ffmpeg-codecs.html) and
+  [ffprobe](https://www.ffmpeg.org/ffprobe.html), read 2026-10-23: use local Opus voice encoding
+  and metadata plus full PCM decoding. Successful encoding is not a browser compatibility or
+  pronunciation verdict.

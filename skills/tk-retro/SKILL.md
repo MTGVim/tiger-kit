@@ -84,11 +84,41 @@ writes and fixes confined to the current repository are not dispositions for tha
 shared failure; do not offer or perform them as its remedy. Distinguish an independently
 proven local consumer override from a shared skill defect.
 
-Return the main finding, report link and material limitations concisely. Include cleanup,
-residue or remaining user action only when there is something concrete to report. Put per-finding
-disposition, patch wording and owning layers in the report only. Do not end with an
-implementation offer or follow-up question. No ceremonial empty table, forced finding
-count or automatic improvement list. When a cause remains unconfirmed, do not invent it.
+Separate findings by owning layer: external upstream package, user-owned global guidance/personal
+skill/repository-local settings, or `no change`. When file output is permitted, for upstream-owned findings write a standalone,
+paste-ready `.tigerkit/retro/<YYYY-MM-DD>-<topic-slug>-issue.md` alongside the report. Include only
+that package's background, symptoms, exact patch locations, acceptance checks and preserved behavior;
+omit report-internal finding IDs, local absolute paths and private identifiers. If several packages
+need distinct recipients, use package-specific slugs. Reuse a matching draft from this session for
+the same upstream package and append new items; inspect it first and preserve prior content.
+Without upstream findings, create no issue draft. Never post it or offer publication.
+
+Use this conversation layout, omitting empty groups and repeating the upstream group per package.
+Give exact user-owned before/after wording; link the report section when long.
+
+```markdown
+<one-line conclusion>
+
+**upstream에 넘길 것** (<package>)
+- <one-line item>
+이슈 초안: <absolute link>
+
+**직접 반영할 수 있는 것**
+- <file:line> — <before> → <after>
+
+**바꾸지 않는 것**
+- <item> — <reason>
+
+**한계**
+- <unperformed check or unavailable evidence>
+
+회고 보고서: <absolute link>
+```
+
+For an existing artifact, say exactly which file and section received additions; avoid ambiguous
+update labels. These remain proposals for their owning workflows. Do not end with an implementation
+offer or follow-up question. No empty groups or forced finding counts. When a cause remains
+unconfirmed, do not invent it.
 Name the decisive evidence and attempt to obtain it first when reachable within this
 session and authorized scope. Still propose a prevention that holds under every remaining
 supported hypothesis, with its owning layer and deciding check. For a skill-level incident,
@@ -110,7 +140,7 @@ private identifiers and unnecessary user details out of reusable proposals.
 Anonymize by default, including the topic slug: replace ticket keys, private organization,
 product and domain terms, private repository names and paths, people's names, local home
 paths and verbatim user requests with neutral descriptions. Public upstream names,
-revisions and skill-internal file names may stay. After writing, scan the saved report
+revisions and skill-internal file names may stay. Apply the same path checks and sanitization to the issue draft. After writing, scan every saved artifact
 for identifiers seen in the session with fixed-string search (for example `rg -n -F`),
 remove any that remain, and repeat until no private identifiers match. Do not include
 secrets in search arguments or output. Apply the same sanitization to conversational output.
@@ -157,10 +187,12 @@ consumption; a prefilled template is not completed input. This grants no write a
 <!-- tigerkit:questions -->
 ## User Questions
 
-Resolve researchable facts and reuse matching authorization before asking.
-For an unmet prerequisite or material user-owned decision, read [question rounds and recovery](references/questions.md)
-(reuse it if still in context). Ask only answerable decisions in its plain-chat format,
-with approval separate. Otherwise continue without confirmation.
+Investigate facts; reuse authorization. For user-owned decisions read
+[question rounds](references/questions.md); otherwise proceed.
+Plain chat, even one approval: standalone `---`, then
+`❓ **Q<n> · <title>**: <question>` and `➡️ <recommendation>` per item.
+Ask only settled-prerequisite questions; separate approval.
+Questions come last; put status, risks and plans before them.
 <!-- /tigerkit:questions -->
 <!-- tigerkit:skill-feedback -->
 ## Skill Feedback

@@ -81,23 +81,22 @@ instruction duplication/conflict, suggest `tk-grooming`; for a single diff verdi
 
 ## Report
 
-Report inspected repository/HEAD, time window, completed-PR coverage and missing evidence first.
-Show only populated diagnostic areas: `Testing & Regression`, `Review & Quality`,
-`Troubleshooting`, `Architecture & Contracts`, `Domain & Decisions`, `Workflow & Tooling`.
-Use security/performance/accessibility as secondary tags when relevant. Check documentation
-and discoverability across areas; areas are diagnostic categories, not storage destinations.
+Default to one coverage line (repository/HEAD, window, inspected PR count, missing evidence),
+then actionable candidates only, each with numbered source PR/revision references, status,
+impact, smallest action and owner. Keep unresolved investigation distinct from confirmed prevention.
+End with the questions-reference frontier when candidates exist: ask which to pursue and only
+currently independent handoff choices, with a recommendation for each. With none, say `No change`
+and why, without questions. An answer selects a handoff recommendation; it grants this diagnostic
+skill no mutation, ticket creation or automatic invocation authority.
 
-Each finding needs problem and actual impact; independent incident identities and source
-URLs/revisions/times; verification status and uncertainty; common cause or explicit unknown;
-current safeguards and whether it is already solved; smallest recommended action and owner;
-and a relevant discovery path only when proposing reusable knowledge. Separate unresolved
-investigation from confirmed prevention and rejected opinions. Never fill categories to a quota.
-
-If reporting counts, define units: unique PRs actually inspected, deduplicated candidates and
-candidates demonstrably solved at current HEAD. Do not sum overlapping categories as independent
-failures or count inaccessible PRs as analyzed. Severity/status needs evidence and a definition.
-With zero actionable candidates, say `No change` and explain coverage; partial coverage is not
-proof that no problem exists. Do not invent KPI values, findings, HTML output or status badges.
+Retain collected detail in the active session for follow-up without unnecessary recollection;
+do not create hidden persistent state. Show per-area detail, rejected/subjective opinions and
+full finding fields only on request: problem/impact, independent incident URLs/revisions/times,
+status/uncertainty, common cause or unknown, current safeguards, action/owner, and a discovery path
+when proposing reusable knowledge. Use only populated areas; never fill a quota. Preserve rejected
+and `No change` reasoning in that detail even when omitted from the compact candidate list.
+Count unique inspected PRs and deduplicated incidents, not overlapping areas or inaccessible PRs.
+Partial coverage cannot establish absence of problems; do not invent KPIs, HTML or status badges.
 
 A file is optional and requires an explicit artifact request and purpose. Honor the requested
 format/path; apply Artifact Paths only for that branch. `.tigerkit/` is disposable scratch,
@@ -115,10 +114,12 @@ Create artifacts only when this skill's task authorizes them. Before any artifac
 <!-- tigerkit:questions -->
 ## User Questions
 
-Resolve researchable facts and reuse matching authorization before asking.
-For an unmet prerequisite or material user-owned decision, read [question rounds and recovery](references/questions.md)
-(reuse it if still in context). Ask only answerable decisions in its plain-chat format,
-with approval separate. Otherwise continue without confirmation.
+Investigate facts; reuse authorization. For user-owned decisions read
+[question rounds](references/questions.md); otherwise proceed.
+Plain chat, even one approval: standalone `---`, then
+`❓ **Q<n> · <title>**: <question>` and `➡️ <recommendation>` per item.
+Ask only settled-prerequisite questions; separate approval.
+Questions come last; put status, risks and plans before them.
 <!-- /tigerkit:questions -->
 <!-- tigerkit:skill-feedback -->
 ## Skill Feedback

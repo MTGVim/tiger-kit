@@ -5,7 +5,7 @@ test('manual completion survives rename/reorder and preserves notes',()=>{const 
 test('changed and deleted lessons archive completions while preserving notes',()=>{const c=Core.create(meta);let s=c.complete(c.empty(),'first',true);s=c.complete(s,'second',true);s.memos.second='삭제 전 메모';const changed=Core.create({id:'sample',lessons:[{id:'first',revision:'2'}]});const next=changed.parse(JSON.stringify(s));assert.deepEqual(next.completed,[]);assert.deepEqual(next.archived,[{lesson:'first',revision:'1'},{lesson:'second',revision:'1'}]);assert.equal(next.memos.second,'삭제 전 메모');const done=changed.complete(next,'first',true);assert.deepEqual(done.completed,['first']);assert.equal(done.revisions.first,'2');assert.equal(done.archived.length,2);});
 test('unknown or corrupt progress is rejected rather than converted to empty state',()=>{const c=Core.create(meta);for(const value of ['broken','{}',JSON.stringify({...c.empty(),version:99}),JSON.stringify({...c.empty(),course:'someone-else'}),JSON.stringify({...c.empty(),completed:['first','first']})])assert.throws(()=>c.parse(value));});
 test('grading separates correct incorrect and unanswered, independent of completion',()=>{const c=Core.create(meta),questions=[{id:'a',answer:'yes',explanation:'理由'},{id:'b',answer:'yes',explanation:'理由'},{id:'c',answer:'yes',explanation:'理由'}];const s=c.empty(),r=c.grade({a:'yes',b:'no'},questions);assert.deepEqual(r.map(x=>[x.answered,x.correct]),[[true,true],[true,false],[false,false]]);assert.deepEqual(s.completed,[]);});
-test('actual opacity handler updates CSS and output without touching playback',()=>{const script=fs.readFileSync(path.join(R,'player.js'),'utf8');const line=script.split('\n').find(x=>x.includes("$('caption-opacity').addEventListener('input'"));let callback,opacity;const nodes={'caption-opacity':{value:'50',addEventListener:(name,fn)=>callback=fn},stage:{style:{setProperty:(name,value)=>{assert.equal(name,'--caption-opacity');opacity=value;}}},'caption-opacity-value':{}};vm.runInNewContext(line,{$:id=>nodes[id]});for(const [value,want] of [['50','0.5'],['0','0'],['100','1']]){nodes['caption-opacity'].value=value;callback();assert.equal(opacity,want);assert.equal(nodes['caption-opacity-value'].textContent,value+'%');}assert(fs.readFileSync(path.join(R,'app-shell.css'),'utf8').includes('var(--caption-opacity,.5)'));});
+test('actual opacity handler updates CSS and output without touching playback',()=>{const script=fs.readFileSync(path.join(R,'player.js'),'utf8');const line=script.split('\n').find(x=>x.includes("$('caption-opacity').addEventListener('input'"));let callback,opacity;const nodes={'caption-opacity':{value:'50',addEventListener:(name,fn)=>callback=fn},stage:{style:{setProperty:(name,value)=>{assert.equal(name,'--caption-opacity');opacity=value;}}},'caption-opacity-value':{}};vm.runInNewContext(line,{$:id=>nodes[id],prefs:{},savePrefs(){}});for(const [value,want] of [['50','0.5'],['0','0'],['100','1']]){nodes['caption-opacity'].value=value;callback();assert.equal(opacity,want);assert.equal(nodes['caption-opacity-value'].textContent,value+'%');}assert(fs.readFileSync(path.join(R,'app-shell.css'),'utf8').includes('var(--caption-opacity,.5)'));});
 test('actual regrade handler replaces icons and does not update course progress',()=>{const script=fs.readFileSync(path.join(R,'player.js'),'utf8'),part=script.slice(script.indexOf("  $('grade').addEventListener"),script.indexOf("  $('memo').addEventListener"));const c=Core.create(meta),data={questions:[{id:'a',answer:'yes',explanation:'이유입니다.'}]};let handler,selected=[];const nodes={grade:{addEventListener:(_,fn)=>handler=fn},'feedback-a':{dataset:{}},'quiz-result':{}};vm.runInNewContext(part,{$:id=>nodes[id],C:c,data,document:{querySelectorAll:()=>selected}});handler();assert(nodes['feedback-a'].textContent.startsWith('⚠️'));selected=[{name:'a',value:'no'}];handler();assert(nodes['feedback-a'].textContent.startsWith('❌'));selected=[{name:'a',value:'yes'}];handler();assert(nodes['feedback-a'].textContent.startsWith('✅'));assert.equal(nodes['feedback-a'].dataset.result,'correct');assert(!nodes['feedback-a'].textContent.includes('❌'));});
 
 test('valid constructor ID never uses an inherited revision',()=>{const c=Core.create({id:'constructor-course',lessons:[{id:'constructor',revision:'1'}]});assert.throws(()=>c.parse(JSON.stringify({...c.empty(),completed:['constructor']})));const state=c.complete(c.empty(),'constructor',true);assert.deepEqual(state.completed,['constructor']);assert.equal(state.revisions.constructor,'1');});
@@ -15,7 +15,7 @@ test('actual slide volume mute and speed handlers honor the optional-video bound
  const node=id=>nodes[id]??=( {value:'50',hidden:true,setAttribute(){},focus(){},addEventListener:(event,fn)=>{handlers[id+':'+event]=fn;}} );
  const rate={value:'0.75',checked:true,addEventListener:(_,fn)=>handlers.rate=fn};
  const state={muted:true,volume:1,rate:1},narration={setMuted:v=>state.muted=v,setVolume:v=>state.volume=v,setRate:v=>state.rate=v,snapshot:()=>state};
- const context={$:node,narration,videoNarration:null,lastAudibleVolume:1,playbackRate:1,published:['slides'],NativeVideoPlayer:{},document:{querySelector:()=>({classList:{add(){}}}),querySelectorAll:()=>[rate]},activeTransport:()=>narration,setSettings(){},setSpeedMenu:()=>nodes['speed-panel'].hidden=true,paintVideoPlayback(){}};
+ const context={prefs:{muted:false,volume:1},savePrefs(){},$:node,narration,videoNarration:null,lastAudibleVolume:1,playbackRate:1,published:['slides'],NativeVideoPlayer:{},document:{querySelector:()=>({classList:{add(){}}}),querySelectorAll:()=>[rate]},activeTransport:()=>narration,setSettings(){},setSpeedMenu:()=>nodes['speed-panel'].hidden=true,paintVideoPlayback(){}};
  vm.createContext(context);
  const init=script.split('\n').find(x=>x.trim().startsWith('videoNarration=published.includes'));
  const setters=script.split('\n').filter(x=>x.includes('function setMasterMuted')||x.includes('function setMasterVolume')||x.includes("$('volume').addEventListener('input'")||x.includes("$('mute-toggle').addEventListener('click'")).join('\n');
@@ -56,12 +56,12 @@ test('catalog search filters title description objectives and lesson names witho
 
 test('actual header context exposes lesson titles and clears them on return home',()=>{
  const script=fs.readFileSync(path.join(R,'player.js'),'utf8'),start=script.indexOf('  function headerContext('),end=script.indexOf('\n  let captionsEnabled',start);
- const node={textContent:'',hidden:true},context={document:{querySelector:()=>node},data:{course_label:'코스 제목'}};
+ const item={hidden:true},node={textContent:'',closest:()=>item},context={document:{querySelector:selector=>selector==='.header-title'?node:{classList:{toggle(){}}}},data:{course_label:'코스 제목'}};
  vm.createContext(context);vm.runInContext(script.slice(start,end),context);
- context.headerContext('첫 번째 강의');assert.equal(node.textContent,'첫 번째 강의');assert.equal(node.hidden,false);
- context.headerContext();assert.equal(node.textContent,'');assert.equal(node.hidden,true);
- context.headerContext('코스 제목');assert.equal(node.textContent,'');assert.equal(node.hidden,true);
- context.headerContext('<새 강의>');assert.equal(node.textContent,'<새 강의>');assert.equal(node.hidden,false);
+ context.headerContext('첫 번째 강의');assert.equal(node.textContent,'첫 번째 강의');assert.equal(item.hidden,false);
+ context.headerContext();assert.equal(node.textContent,'');assert.equal(item.hidden,true);
+ context.headerContext('코스 제목');assert.equal(node.textContent,'');assert.equal(item.hidden,true);
+ context.headerContext('<새 강의>');assert.equal(node.textContent,'<새 강의>');assert.equal(item.hidden,false);
 });
 
 test('volume popover offsets keep corner panels inside every requested viewport',()=>{
@@ -110,4 +110,38 @@ test('actual volume popover handles hover keyboard escape touch outside dismissa
  slider.disabled=true;trigger.fire('click');assert.equal(panel.hidden,true);assert.equal(trigger.attrs['aria-expanded'],'false');
  slider.disabled=false;trigger.fire('click');win.fire('resize');win.fire('scroll');doc.fire('fullscreenchange');assert.equal(panel.hidden,false);
  popup.destroy();assert.equal(panel.hidden,true);for(const item of [container,trigger,doc,win])for(const handlers of item.events.values())assert.equal(handlers.length,0);
+});
+
+test('versioned preferences survive fresh instances independently of progress, and reject invalid storage',()=>{
+ const Prefs=require(path.join(R,'player-preferences.js')),values=new Map(),storage=()=>({getItem:k=>values.get(k),setItem:(k,v)=>values.set(k,v)});
+ const initial=Prefs.load(storage);assert.equal(initial.muted,false);assert.equal(initial.captionOpacity,.5);assert.equal(initial.tocCollapsed,false);
+ const chosen={...initial,muted:true,volume:.6,speed:1.5,captions:false,captionSize:'large',captionOpacity:.8,tocCollapsed:true};
+ assert.equal(Prefs.save(storage,chosen),true);assert.deepEqual(Prefs.load(storage),chosen);assert.deepEqual([...values.keys()],[Prefs.KEY]);
+ for(const bad of ['oops',JSON.stringify({...chosen,version:2}),JSON.stringify({...chosen,volume:101}),JSON.stringify({...chosen,muted:'false'}),JSON.stringify({...chosen,captionOpacity:-1}),JSON.stringify({...chosen,speed:NaN}),JSON.stringify({...chosen,tocCollapsed:1})])assert.deepEqual(Prefs.parse(bad),Prefs.defaults());
+ const denied=()=>{throw Error('denied');};assert.deepEqual(Prefs.load(denied),Prefs.defaults());assert.equal(Prefs.save(denied,chosen),false);
+ const old={...chosen};delete old.tocCollapsed;assert.equal(Prefs.parse(JSON.stringify(old)).tocCollapsed,false);
+});
+
+function narrationAudio(){return {duration:1,currentTime:0,plays:0,pause(){},play(){this.plays++;return this.plays===1?Promise.reject(Object.assign(new Error('gesture required'),{name:'NotAllowedError'})):Promise.resolve();}};}
+const flush=async()=>{for(let i=0;i<8;i++)await Promise.resolve();};
+test('audible narration retries muted only on policy rejection without blocking progress',async()=>{
+ const create=require(path.join(R,'narration-player.js')).create,audio=narrationAudio(),slides=[{narration:[{speech:'설명',caption:'설명',audio:'data:audio/wav;base64,fixture'}]}];
+ const player=create({slides,audio,initialMode:'assets',initialMuted:false});player.play();assert.equal(audio.muted,false);await flush();
+ assert.equal(audio.plays,2);assert.equal(audio.muted,true);assert.equal(player.snapshot().mutedBlocked,true);assert.equal(player.snapshot().status,'playing');
+ audio.onended();assert.equal(player.snapshot().status,'ended');player.setMuted(false);assert.equal(player.snapshot().mutedBlocked,false);
+ const broken=narrationAudio();broken.play=()=>Promise.reject(new Error('decode'));const failed=create({slides,audio:broken,initialMode:'assets'});failed.play();await flush();assert.equal(failed.snapshot().status,'error');assert.equal(failed.snapshot().muted,false);
+ const slow=narrationAudio(),stopped=create({slides,audio:slow,initialMode:'assets'});stopped.play();stopped.stop();await flush();assert.equal(slow.plays,1);assert.equal(stopped.snapshot().status,'idle');
+});
+test('finished-video audible rejection falls back muted and retains its native clock',async()=>{
+ const video={...nativeVideo(),...narrationAudio(),duration:10,readyState:1};
+ const player=require(path.join(R,'native-video-player.js')).create({lesson:{duration:10,has_audio:true},scenes:[{start:0,end:10}],video,initialMuted:false});
+ player.play();await flush();assert.equal(video.plays,2);assert.equal(player.snapshot().status,'playing');assert.equal(player.snapshot().mutedBlocked,true);assert.equal(video.muted,true);
+ video.currentTime=6;assert.equal(player.snapshot().time,6);player.setMuted(false);assert.equal(player.snapshot().mutedBlocked,false);
+});
+test('pausing a pending audible attempt cancels its muted retry even if playback resumes',async()=>{
+ const create=require(path.join(R,'narration-player.js')).create,slides=[{narration:[{speech:'설명',caption:'설명',audio:'fixture'}]}];
+ let reject,plays=0;const audio={duration:1,currentTime:0,pause(){},play(){plays++;return plays===1?new Promise((_,no)=>reject=no):Promise.resolve();}};
+ const player=create({slides,audio,initialMode:'assets'});player.play();player.pause();player.play();
+ reject(Object.assign(Error('blocked'),{name:'NotAllowedError'}));await flush();assert.equal(plays,2);assert.equal(player.snapshot().muted,false);assert.equal(player.snapshot().status,'playing');
+ let no;const pausedAudio={...audio,play:()=>new Promise((_,reject)=>no=reject)};const paused=create({slides,audio:pausedAudio,initialMode:'assets'});paused.play();paused.pause();no(Object.assign(Error('blocked'),{name:'NotAllowedError'}));await flush();assert.equal(paused.snapshot().status,'paused');assert.equal(paused.snapshot().muted,false);
 });

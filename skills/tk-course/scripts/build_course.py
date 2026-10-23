@@ -7,6 +7,8 @@ from html import escape
 from html.parser import HTMLParser
 from urllib.parse import urlsplit,unquote
 from render_page import render
+from audio_media import MIME,inspect_audio,AudioBuild
+from distribution import embedded_manifest,safe_path,read_manifest,atomic_text
 
 ID=re.compile(r'[a-z0-9][a-z0-9-]{0,79}')
 ASSETS=Path(__file__).resolve().parents[1]/'assets'
@@ -61,7 +63,7 @@ def narration_seconds(course,base):
         elif lesson['narration']=='generated':
             for slide in lesson['slides']:
                 for cue in slide['narration']:
-                    with wave.open(str(safe_file(base,cue['audio'])),'rb') as wav:total+=wav.getnframes()/wav.getframerate()
+                    total+=inspect_audio(safe_file(base,cue['audio']))
     return round(total,3)
 
 def safe_file(base,name):
@@ -72,15 +74,14 @@ def safe_file(base,name):
     if p.resolve()!=p.absolute() or not p.is_file():raise ValueError('media must be a regular nonsymlink file')
     return p
 
-def media_uri(base,name,kind):
+def media_uri(base,name,kind,audio_build=None):
     path=safe_file(base,name)
-    mime={'.wav':'audio/wav','.mp4':'video/mp4','.webm':'video/webm','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp'}.get(path.suffix.lower())
+    mime=(MIME if kind=='audio' else {'.mp4':'video/mp4','.webm':'video/webm','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp'}).get(path.suffix.lower())
     if not mime or not mime.startswith(kind+'/'):raise ValueError('unsupported media file type')
     if path.stat().st_size>500_000_000:raise ValueError('media exceeds the single-file build budget; split the course')
     if kind=='audio':
-        with wave.open(str(path),'rb') as wav:
-            if wav.getnchannels()!=1 or wav.getnframes()<1 or wav.getsampwidth()!=2:raise ValueError('expected nonempty mono PCM16 narration WAV')
-            if not any(wav.readframes(wav.getnframes())):raise ValueError('silent narration WAV')
+        if audio_build:return audio_build.uris[name]
+        inspect_audio(path)
     return 'data:'+mime+';base64,'+base64.b64encode(path.read_bytes()).decode()
 
 def fingerprint(lesson,course,base):
@@ -150,7 +151,7 @@ def validate(course,base):
                     focus=cue.get('focus',[])
                     if not isinstance(focus,list) or len(set(focus))!=len(focus) or not set(focus)<=targets:raise ValueError('invalid cue visual reference')
                     focused.update(focus);attached.append(bool(cue.get('audio')))
-                    if cue.get('audio'):media_uri(base,cue['audio'],'audio')
+                    if cue.get('audio'):inspect_audio(safe_file(base,cue['audio']))
                 if focused!=targets:raise ValueError('visual elements lack a narration cue')
                 if any(attached) and not all(attached):raise ValueError('partial generated narration')
             voice=lesson.get('narration')
@@ -209,7 +210,7 @@ def legacy_slots(slide):
         for row in v['rows']:short(row['label'],10);short(row['sequence'],24)
         short(v['question'],55);short(v['hint'],55)
 
-def payload(course,lesson,base):
+def payload(course,lesson,base,audio_build=None):
     data=copy.deepcopy(lesson)
     meta={'id':course['id'],'revision':course['revision'],'lessons':[{'id':x['id'],'revision':x['revision']} for x in course['lessons']]}
     listing=[{'id':x['id'],'title':x['title'],'section':x['section'],'kind':x['kind'],'kind_label':('슬라이드 '+str(len(x['slides']))+'장') if x['kind']=='slides' else '영상'} for x in course['lessons']]
@@ -217,7 +218,7 @@ def payload(course,lesson,base):
     slides=data['slides'] if mode=='slides' else [copy.deepcopy(dummy) for _ in lesson['video']['captions']]
     for slide in slides:
         for cue in slide['narration']:
-            if cue.get('audio'):cue['audio']=media_uri(base,cue['audio'],'audio')
+            if cue.get('audio'):cue['audio']=media_uri(base,cue['audio'],'audio',audio_build)
     video={'src':'','duration':1,'has_audio':False};scenes=[{'id':'unused','caption':'','start':0,'end':1}]
     if mode=='video':
         video={**lesson['video'],'src':media_uri(base,lesson['video']['src'],'video')}
@@ -229,7 +230,7 @@ def payload(course,lesson,base):
 def bundle(pages,title,course):
     encoded=json.dumps(pages,ensure_ascii=False).replace('<','\\u003c')
     bootstrap="""const pages=JSON.parse(document.getElementById('course-pages').textContent),ids=Object.keys(pages),frame=document.getElementById('course-frame');let entering=false;function show(id,enter){if(!Object.hasOwn(pages,id))return;entering=enter;frame.srcdoc=pages[id];}frame.addEventListener('load',()=>{if(entering)frame.contentWindow.postMessage({type:'course-enter'},'*');});window.addEventListener('message',e=>{if(e.source!==frame.contentWindow||e.data?.type!=='course-lesson'||!ids.includes(e.data.id))return;show(e.data.id,true);});show(ids[0],false);"""
-    fallback=('<a href="'+escape(course['collection_home'],quote=True)+'">← 전체 코스</a>') if course.get('collection_home') else ''
+    fallback=('<a href="'+escape(course['collection_home'],quote=True)+'">전체 코스</a>') if course.get('collection_home') else ''
     for lesson in course['lessons']:
         fallback+='<section><h2>'+escape(lesson['title'])+'</h2><p>'+escape(lesson['notes'])+'</p>'
         for slide in lesson.get('slides',[]):fallback+='<h3>'+escape(slide['title'])+'</h3><p>'+escape(slide['transcript'])+'</p>'
@@ -241,11 +242,26 @@ def bundle(pages,title,course):
             fallback+='<article><h3>'+escape(q['prompt'])+'</h3><ul>'+''.join('<li>'+escape(choice[1])+'</li>' for choice in q['choices'])+'</ul><details><summary>해설 보기</summary><p>'+escape(q['explanation'])+'</p></details></article>'
         fallback+='</section>'
     fallback+='<section><h2>참고 자료</h2><ul>'+''.join('<li>'+('<a href="'+escape(item['url'],quote=True)+'">'+escape(item['title'])+'</a>' if item.get('url') else escape(item['title'])+' (제공 자료)')+'</li>' for item in course['sources'])+'</ul></section>'
-    return '<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+escape(title)+'</title><style>html,body{margin:0;height:100%;overflow:hidden}iframe{display:block;width:100%;height:100dvh;border:0}</style><iframe id="course-frame" title="'+escape(title,quote=True)+'" allow="fullscreen" allowfullscreen></iframe><noscript><style>html,body{overflow:auto}iframe{display:none}</style>'+fallback+'</noscript><script id="course-pages" type="application/json">'+encoded+'</script><script>'+bootstrap+'</script></html>'
+    return '<!doctype html><html lang="ko"><head><meta charset="utf-8">'+embedded_manifest(course)+'<meta name="viewport" content="width=device-width,initial-scale=1"><title>'+escape(title)+'</title><style>html,body{margin:0;height:100%;overflow:hidden}iframe{display:block;width:100%;height:100dvh;border:0}</style></head><body><iframe id="course-frame" title="'+escape(title,quote=True)+'" allow="fullscreen" allowfullscreen></iframe><noscript><style>html,body{overflow:auto}iframe{display:none}</style>'+fallback+'</noscript><script id="course-pages" type="application/json">'+encoded+'</script><script>'+bootstrap+'</script></html>'
 
-def build(source,output,previous=None,collection_home=None):
+def build(source,output,previous=None,collection_home=None,*,dist=None,audio_format='opus',lesson_pages=None):
     source=source.absolute();output=output.absolute()
     if source.resolve()!=source or not source.is_file() or output.resolve()!=output or output.exists() or not output.parent.is_dir():raise ValueError('use safe authored input and a new output directory')
+    # The CLI always passes a distribution root. None preserves the in-process legacy builder API.
+    legacy=dist is None
+    if lesson_pages is None:lesson_pages=legacy
+    shared=None
+    if not legacy:
+        dist=safe_path(dist)
+        if output.is_relative_to(dist) or dist.is_relative_to(output) or source.is_relative_to(dist):raise ValueError('working/source paths must not overlap the distribution tree')
+        shared=dist/source.parent.name/'index.html'
+        safe_path(shared)
+        if shared.exists():raise ValueError('review a new --dist staging tree before replacing an existing shared course')
+        if dist.exists() and not dist.is_dir():raise ValueError('distribution root must be a directory')
+        if (dist/'index.html').exists():
+            from build_catalog import owned_output
+            owned_output(dist/'index.html')
+        collection_home=collection_home or '../index.html'
     collection_home=collection_path(collection_home)
     course=validate(json.loads(source.read_text()),source.parent);changes=[]
     course['collection_home']=collection_home;course['narration_seconds']=narration_seconds(course,source.parent)
@@ -266,23 +282,46 @@ def build(source,output,previous=None,collection_home=None):
             changes.append({'id':item['id'],'status':'added' if before is None else 'changed' if old_fingerprint!=fingerprints[item['id']] else 'retained'})
         changes += [{'id':x,'status':'removed; historical progress is retained'} for x in prior if x not in {l['id'] for l in course['lessons']}]
     for item in course['lessons']:item['content_fingerprint']=fingerprints[item['id']]
-    pages={l['id']:render({**payload(course,l,source.parent),'collection_home':collection_home}) for l in course['lessons']}
-    for key,page in pages.items():
-        check_header(page,course['title'])
-        check_visible_objectives(page,[o['id'] for o in course['objectives']])
-        if '비동기 검색' in page and '비동기 검색' not in json.dumps(course,ensure_ascii=False):raise ValueError('fixture content leaked into generic course')
     with tempfile.TemporaryDirectory(prefix='.course-build-',dir=output.parent) as tmp:
+        audio=AudioBuild(source.parent,[c['audio'] for l in course['lessons'] if l['kind']=='slides' for slide in l['slides'] for c in slide['narration'] if c.get('audio')],audio_format,tmp)
+        course['audio_build']=audio.manifest()
+        if not legacy:course['distribution']={'root':str(dist),'topic':source.parent.name}
+        pages={l['id']:render({**payload(course,l,source.parent,audio),'collection_home':collection_home}) for l in course['lessons']}
+        for page in pages.values():
+            check_header(page,course['title']);check_visible_objectives(page,[o['id'] for o in course['objectives']])
+            if '비동기 검색' in page and '비동기 검색' not in json.dumps(course,ensure_ascii=False):raise ValueError('fixture content leaked into generic course')
+        bundled=bundle(pages,course['title'],course)
         stage=Path(tmp)/'course';stage.mkdir()
-        (stage/'index.html').write_text(bundle(pages,course['title'],course))
+        if legacy:(stage/'index.html').write_text(bundled)
         (stage/'course.json').write_text(json.dumps(course,ensure_ascii=False,indent=2)+'\n')
         (stage/'changes.json').write_text(json.dumps(changes,ensure_ascii=False,indent=2)+'\n')
-        # Individual pages provide direct access as well as the single-file bundle.
-        for key,page in pages.items():(stage/('lesson-'+key+'.html')).write_text(page)
+        if lesson_pages:
+            direct_home=collection_home
+            if not legacy:
+                import os
+                from urllib.parse import quote
+                direct_home=quote(os.path.relpath(dist/'index.html',output),safe='/')
+            for l in course['lessons']:
+                page=pages[l['id']] if legacy else render({**payload(course,l,source.parent,audio),'collection_home':direct_home})
+                (stage/('lesson-'+l['id']+'.html')).write_text(page)
+        if not legacy:
+            # Validate the complete proposed gallery before creating either deliverable.
+            from build_catalog import discover,validate_metadata,build as catalog_build
+            items=discover(dist) if dist.exists() else []
+            ids=[c['id'] for _,c in items]
+            if course['id'] in ids:raise ValueError('duplicate course identity; no implicit merge')
+            shared.parent.mkdir(parents=True,exist_ok=False)
+            try:
+                atomic_text(shared,bundled);validate_metadata(read_manifest(shared))
+                catalog_build(dist)
+            except Exception:
+                shared.unlink(missing_ok=True);shared.parent.rmdir();raise
         stage.rename(output)
-    return {'path':str(output/'index.html'),'lessons':len(pages),'narration':'selected per lesson; runtime listening remains required','browser_verification':'pending','collection_hint':'코스가 2개 이상이면 build_catalog.py로 전체 홈을 만들 수 있습니다.'}
+    path=output/'index.html' if legacy else shared
+    return {'path':str(path),'catalog':str(dist/'index.html') if not legacy else None,'lessons':len(pages),'audio':course['audio_build'],'narration':'selected per lesson; runtime listening remains required','browser_verification':'pending','share_hint':str(path)+' (one course); '+str(dist if not legacy else output)+' folder or build_catalog.py --zip (multiple courses)'}
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--input',required=True,type=Path);p.add_argument('--output',required=True,type=Path);p.add_argument('--previous',type=Path);p.add_argument('--collection-home');a=p.parse_args()
-    try:print(json.dumps(build(a.input,a.output,a.previous,a.collection_home),ensure_ascii=False));return 0
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--input',required=True,type=Path);p.add_argument('--output',required=True,type=Path);p.add_argument('--previous',type=Path);p.add_argument('--collection-home');p.add_argument('--dist',type=Path);p.add_argument('--audio-format',choices=['opus','mp3','wav'],default='opus');p.add_argument('--lesson-pages',action='store_true');a=p.parse_args()
+    try:print(json.dumps(build(a.input,a.output,a.previous,a.collection_home,dist=a.dist or a.input.absolute().parent.parent/'dist',audio_format=a.audio_format,lesson_pages=a.lesson_pages),ensure_ascii=False));return 0
     except (ValueError,KeyError,TypeError,OSError,subprocess.SubprocessError) as e:print(json.dumps({'status':'failed','detail':str(e)},ensure_ascii=False));return 1
 if __name__=='__main__':raise SystemExit(main())

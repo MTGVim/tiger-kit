@@ -18,7 +18,7 @@
     let silentHold=Number(silentHoldMs);
     if(!Number.isFinite(silentHold)||silentHold<1000||silentHold>15000)throw new Error('invalid-silent-hold');
     if(typeof initialMuted!=='boolean'||!Number.isFinite(initialVolume)||initialVolume<0||initialVolume>1)throw new Error('invalid-volume');
-    let muted=initialMuted,volume=initialVolume,deviceQueued=false;
+    let muted=initialMuted,volume=initialVolume,deviceQueued=false,mutedBlocked=false,playRequest=0;
     audio.muted=muted;audio.volume=volume;
     let slidePauseMs=0,sentencePauseMs=0,preferredVoice='',voiceOrigin='unavailable',voiceOptions=[];
     function available(){return mode==='silent'||(mode==='assets'?hasAssets:!!voice);}
@@ -30,7 +30,7 @@
       const appliedRate=mode==='device'&&active?active.rate:rate;
       return {index,slide:clips[index].slide,cue:clips[index].cue,status,rate,mode,
         appliedRate,ratePending:rate!==appliedRate,
-        muted,volume,mutedBlocked:false,volumePending:false,
+        muted,volume,mutedBlocked,volumePending:false,
         silentHoldMs:silentHold,progress:{value:status==='ended'?clips.length:index+fraction,total:clips.length,fraction,
           kind:mode==='silent'?'silent':mode==='assets'?'audio':boundarySeen?'boundary':'cue'},
         voice:voice?voice.name:'',voiceSelection:preferredVoice,voiceOrigin,voices:voiceOptions,available:available(),hasAssets,
@@ -93,10 +93,20 @@
           emit();
         };
         audio.ontimeupdate=()=>{if(token===epoch)emit();};
-        Promise.resolve(audio.play()).then(()=>{
-          if(token===epoch && status==='loading'){status='playing';emit();}
-        }).catch(()=>fail(token));
+        playAudio(token);
       } else {speechChar=0;boundarySeen=false;beginDevice(token);}
+    }
+    function attemptPlay(){try{return Promise.resolve(audio.play());}catch(error){return Promise.reject(error);}}
+    function playAudio(token){
+      const request=++playRequest,startedMuted=muted;
+      const success=()=>{if(token===epoch&&request===playRequest&&status==='loading'){status='playing';emit();}};
+      attemptPlay().then(success).catch(error=>{
+        if(token!==epoch||request!==playRequest||!['playing','loading'].includes(status))return;
+        if(error?.name==='NotAllowedError'&&!startedMuted){
+          mutedBlocked=true;muted=true;audio.muted=true;emit();
+          attemptPlay().then(success).catch(()=>{if(request===playRequest&&['playing','loading'].includes(status))fail(token);});
+        }else fail(token);
+      });
     }
     function beginDevice(token,offset=0,appliedRate=rate,defer=false){
       const clip=clips[index],utterance=new Utterance(clip.speech.slice(offset));
@@ -134,7 +144,7 @@
         if(finishedWhilePaused){status='playing';next(epoch);return;}
         const token=epoch;if(mode==='silent')active.started=clock.now();status='playing';emit();
         if(mode==='silent'){scheduleSilent(token);}
-        else if(mode==='assets')Promise.resolve(audio.play()).catch(()=>fail(token));
+        else if(mode==='assets')playAudio(token);
         else if(deviceQueued){deviceQueued=false;try{synth.resume();synth.speak(active);}catch(_){fail(token);}}
         else synth.resume();
         return;
@@ -147,7 +157,7 @@
       if(status==='waiting'){
         remaining=Math.max(0,deadline-clock.now());clock.clearTimeout(timer);timer=null;epoch++;
       }else if(mode==='silent'){active.elapsed=silentElapsed();clock.clearTimeout(timer);timer=null;}
-      else if(mode==='assets')audio.pause();else synth.pause();
+      else if(mode==='assets'){playRequest++;audio.pause();}else synth.pause();
       status='paused';emit();
     }
     function stop() {invalidate();speechChar=0;boundarySeen=false;pendingSeekFraction=0;status='idle';emit();}
@@ -174,7 +184,7 @@
     }
     function setMuted(value){
       if(typeof value!=='boolean')throw new Error('invalid-muted');
-      const previous=muted?0:volume;muted=value;audio.muted=value;
+      const previous=muted?0:volume;muted=value;audio.muted=value;if(!value)mutedBlocked=false;
       applyDeviceOutput(previous);
       emit();
     }

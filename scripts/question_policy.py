@@ -29,10 +29,12 @@ SOFTWARE.
 BLOCK = MARKER + """
 ## User Questions
 
-Resolve researchable facts and reuse matching authorization before asking.
-For an unmet prerequisite or material user-owned decision, read [question rounds and recovery](references/questions.md)
-(reuse it if still in context). Ask only answerable decisions in its plain-chat format,
-with approval separate. Otherwise continue without confirmation.
+Investigate facts; reuse authorization. For user-owned decisions read
+[question rounds](references/questions.md); otherwise proceed.
+Plain chat, even one approval: standalone `---`, then
+`❓ **Q<n> · <title>**: <question>` and `➡️ <recommendation>` per item.
+Ask only settled-prerequisite questions; separate approval.
+Questions come last; put status, risks and plans before them.
 """ + END + "\n"
 
 

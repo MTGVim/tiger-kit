@@ -79,6 +79,11 @@ Assign every current finding exactly one response disposition and preserve it th
 Use the disposition to make the outcome auditable, but explain its evidence and practical meaning in natural language.
 
 If the review text already specifies the required outcome, do not ask the same question again.
+Before recommending a design choice, read the PR body, linked task/parent discussion and relevant
+cross-team contract. For a choice dependent on another API, inspect open counterpart changes by
+changed path as well as keywords; disclose missing evidence. Keep the agreed requirement as the
+premise when unmerged counterpart code conflicts, and record the conflict for verification rather
+than replacing the requirement without user direction.
 Investigate repository evidence independently, then explain the recommendation and rationale for decisions about reuse, simplification, testing, security, and user experience.
 
 Before proposing a code change or deferring feedback, read [feedback ownership](references/feedback-ownership.md). Establish causal ownership from the exact diff and behavior; an unchanged comment anchor alone never justifies deferral.
@@ -226,10 +231,12 @@ consumption; a prefilled template is not completed input. This grants no write a
 <!-- tigerkit:questions -->
 ## User Questions
 
-Resolve researchable facts and reuse matching authorization before asking.
-For an unmet prerequisite or material user-owned decision, read [question rounds and recovery](references/questions.md)
-(reuse it if still in context). Ask only answerable decisions in its plain-chat format,
-with approval separate. Otherwise continue without confirmation.
+Investigate facts; reuse authorization. For user-owned decisions read
+[question rounds](references/questions.md); otherwise proceed.
+Plain chat, even one approval: standalone `---`, then
+`❓ **Q<n> · <title>**: <question>` and `➡️ <recommendation>` per item.
+Ask only settled-prerequisite questions; separate approval.
+Questions come last; put status, risks and plans before them.
 <!-- /tigerkit:questions -->
 <!-- tigerkit:skill-feedback -->
 ## Skill Feedback

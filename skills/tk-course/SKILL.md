@@ -17,6 +17,8 @@ Own a reusable curriculum and an offline course that a learner can finish withou
 conversation. `tk-teach` owns personal tutoring based on observed answers and misconceptions;
 `tk-explain` owns one concept/system explanation. Creation grants no commit, push, PR or deployment.
 Reuse the user's goal, corpus, audience and prior media decisions; ask only material unknowns.
+At the first build's decision round, also settle the distribution root (recommend `courses/dist/`
+beside the topic folders). Reuse a supplied path or existing collection root without asking again.
 
 ## Design, then author
 
@@ -47,27 +49,34 @@ rules apply only to document-like notes, not a second rail around the player.
 ## Build and verify
 
 Read [authoring and build](references/authoring.md), use the packaged components and fixed player,
-and run `scripts/build_course.py --input <topic>/course.json --output <topic>/build`.
-Default the topic directory to ignored `.tigerkit/courses/<topic>/`; honor explicit destinations.
-Keep authored files at the topic root and generated files in its `build/` directory; incremental
-versions use a new output directory before reviewed replacement. Keep learning
+and run `scripts/build_course.py --input <topic>/course.json --output <topic>/build --dist <courses>/dist`.
+Default the course collection to ignored `.tigerkit/courses/`; honor explicit destinations.
+Keep source at `<courses>/<topic>/`, working manifests in `<topic>/build/`, and shared HTML at
+`<dist>/<topic>/index.html`. Use a new work/output and distribution staging tree for revisions;
+review before replacing an approved target and refresh its catalog. Keep learning
 content separate from renderer code. Do not copy demo content, brand marks, engine setup or
 implementation notes into learning screens. Retain third-party notices.
-The output includes a single-file `index.html` and independently readable lesson pages.
+Shared output contains only a catalog and single-file courses; `--lesson-pages` optionally writes
+direct lesson pages to the working output. Build audio defaults to Opus 32kbps; see media guidance
+for compressed input, FFmpeg readiness and `--audio-format mp3|wav`. Keep original media intact.
 Keep the home copy on a theme-token surface distinct from the page canvas. The header shows
 the course title once; entering a lesson adds its title, and returning home clears that context.
 
 Inspect the actual reading/listening order, objective/prerequisite coverage, source support,
 component overflow, captions, notes, question/answer separation and retry feedback. Verify audio
 readiness, missing-file recovery, immediate first play, breathing gaps, reveal/seek state,
-caption size/opacity (default 50%), light/dark/system themes, settings hit areas, default mute,
+caption size/opacity (default 50%), light/dark/system themes, settings hit areas, default sound on after a user gesture with an entry toast,
+muted retry plus toast when audible playback is blocked, playback preferences persisting across
+lessons and reloads, collapsible curriculum and a single-line breadcrumb,
 volume/rate, progress import/export and a viewport-bounded volume popup that preserves toolbar
 height and supports hover, keyboard and touch dismissal. A finished video owns its audio, pauses and time axis;
 never overlay live TTS. Manual progress belongs to the course and is not tutoring evidence.
 Use `tk-browser-verify` for actual runtime checks; static/media doubles are not browser or listening
 proof. Report unexecuted checks and pending human listening, never fabricate generated audio.
 Return a concise link and actual verification limits. Do not launch the user's browser.
-For a single course, mention that `build_catalog.py` can create a shared home once two courses exist.
+Return the automatically refreshed catalog path even for one course. Explain sharing: one course
+is `<dist>/<topic>/index.html`; send the `<dist>/` folder or `build_catalog.py --dist <dist> --zip`
+result for several. Keep sharing/download controls out of learning screens.
 
 For existing artifacts or several topics, read [incremental editing and collections](references/incremental.md)
 before changing anything. Preserve unrelated courses, learner notes and unknown progress formats.
@@ -92,10 +101,12 @@ Create artifacts only when this skill's task authorizes them. Before any artifac
 <!-- tigerkit:questions -->
 ## User Questions
 
-Resolve researchable facts and reuse matching authorization before asking.
-For an unmet prerequisite or material user-owned decision, read [question rounds and recovery](references/questions.md)
-(reuse it if still in context). Ask only answerable decisions in its plain-chat format,
-with approval separate. Otherwise continue without confirmation.
+Investigate facts; reuse authorization. For user-owned decisions read
+[question rounds](references/questions.md); otherwise proceed.
+Plain chat, even one approval: standalone `---`, then
+`❓ **Q<n> · <title>**: <question>` and `➡️ <recommendation>` per item.
+Ask only settled-prerequisite questions; separate approval.
+Questions come last; put status, risks and plans before them.
 <!-- /tigerkit:questions -->
 <!-- tigerkit:skill-feedback -->
 ## Skill Feedback

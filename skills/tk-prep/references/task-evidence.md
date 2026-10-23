@@ -32,6 +32,12 @@ Before recommending a solution, distinguish the reported symptom from the intend
 
 If the approved outcome may include local implementation, read [local execution](local-execution.md) before
 the final checkpoint. It owns checkout isolation, unrelated-work protection, direct execution, review, and local commit.
+When changing accepted values or validation rules, list paths creating those values and loading
+stored values into the same form, schema or parser: edit, partial edit, copy/duplicate, import and
+legacy records where relevant. Record each path's accept, reject, migrate or preserve policy.
+Bring policies unstated by the task source to the frontier before approval; include a behavior
+test for each relevant path in the testing plan. Skip this inventory for unrelated changes.
+
 If user-visible text or navigation is in scope, read [UI text evidence](ui-text.md) before accepting or restating a label or path.
 If implementation adds or changes a factual code comment/JSDoc claim or models an
 external response contract, read [committed assertion evidence](artifact-claims.md)

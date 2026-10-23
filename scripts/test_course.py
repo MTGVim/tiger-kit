@@ -34,6 +34,22 @@ class CourseTests(unittest.TestCase):
         result=subprocess.run(['node','--test',str(ROOT/'evals/skills/tk-course/volume-popover.test.cjs')],env=env,capture_output=True,text=True,timeout=120)
         self.assertEqual(result.returncode,0,result.stdout+result.stderr)
 
+    @unittest.skipUnless(os.environ.get('TK_PLAYWRIGHT_MODULE') and os.environ.get('TK_CHROMIUM_EXECUTABLE'),
+                         'Course preferences/navigation render regression needs an explicitly configured browser')
+    def test_preferences_navigation_browser_matrix(self):
+        import wave
+        topic=self.root/'browser-topic';topic.mkdir()
+        with wave.open(str(topic/'voice.wav'),'wb') as wav:
+            wav.setnchannels(1);wav.setsampwidth(2);wav.setframerate(8000);wav.writeframes(b'\x01\x00'*8000)
+        for lesson in self.data['lessons']:
+            lesson['narration']='generated';lesson['slides'][0]['narration'][0]['audio']='voice.wav'
+        source=topic/'course.json';source.write_text(json.dumps(self.data));dist=self.root/'dist'
+        builder.build(source,topic/'build',dist=dist)
+        alone=self.root/'standalone';alone.mkdir();shutil.copyfile(dist/'browser-topic/index.html',alone/'index.html')
+        env={**os.environ,'TK_COURSE_PAGE':str(dist/'browser-topic/index.html'),'TK_COURSE_STANDALONE':str(alone/'index.html')}
+        result=subprocess.run(['node','--test',str(ROOT/'evals/skills/tk-course/preferences-navigation.test.cjs')],env=env,capture_output=True,text=True,timeout=180)
+        self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+
     def test_build_multiple_lessons_and_actual_script_syntax(self):
         self.data['title']='새 주제 <script>alert(1)</script>';self.write()
         result=builder.build(self.source,self.root/'built');self.assertEqual(result['lessons'],2)
@@ -100,50 +116,56 @@ class CourseTests(unittest.TestCase):
     def test_collection_links_preserve_courses_and_reject_duplicate_identity(self):
         builder.build(self.source,self.root/'first');self.data=fixture('other-course');self.write();builder.build(self.source,self.root/'second')
         result=catalog.build(self.root,self.root/'catalog.html');self.assertEqual(result['courses'],2);self.assertIn('first/index.html',(self.root/'catalog.html').read_text())
-        duplicate=self.root/'second/course.json';d=json.loads(duplicate.read_text());d['id']='sample-course';duplicate.write_text(json.dumps(d))
+        duplicate=self.root/'second/index.html';duplicate.write_text(duplicate.read_text().replace('other-course','sample-course'))
         with self.assertRaises(ValueError):catalog.build(self.root,self.root/'duplicate.html')
-    def test_catalog_source_build_layout_refresh_and_backlinks(self):
-        inputs=[]
+    def test_catalog_embedded_manifest_refresh_backlinks_and_zip(self):
+        dist=self.root/'dist';inputs=[]
         for n in range(2):
             topic=self.root/f'topic-{n}';topic.mkdir();source=topic/'course.json'
             data=fixture('course-'+str(n));data['title']='코스 '+str(n);source.write_text(json.dumps(data))
-            inputs.append(source);builder.build(source,topic/'build',collection_home='../../index.html')
+            inputs.append(source);result=builder.build(source,topic/'build',dist=dist)
+            self.assertEqual(result['catalog'],str(dist/'index.html'))
+            self.assertFalse((topic/'build/index.html').exists())
+            self.assertEqual(sorted(x.name for x in (topic/'build').iterdir()),['changes.json','course.json'])
         unrelated=self.root/'notes';unrelated.mkdir();(unrelated/'index.html').write_text('keep')
         before={str(p):p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
-        result=catalog.build(self.root);page=(self.root/'index.html').read_text()
+        result=catalog.build(dist,zip_output=True);page=(dist/'index.html').read_text()
         self.assertEqual(result['courses'],2);self.assertEqual(page.count('data-catalog-card data-search='),2)
-        self.assertIn('topic-0/build/index.html',page);self.assertIn('코스와 강의 검색',page)
+        self.assertIn('topic-0/index.html',page);self.assertIn('코스와 강의 검색',page)
         self.assertIn('aria-live="polite"',page);self.assertIn('id="catalog-clear"',page)
         self.assertNotIn('🤖',page);self.assertNotIn('AI가 작성',page)
         self.assertIn('<h1 class="ht-visually-hidden">학습 코스</h1>',page)
         self.assertEqual(page.count('<svg data-objectives='),2)
-        self.assertTrue(all(not x['rebuild_required'] and x['collection_home']=='../../index.html' for x in result['course_links']))
-        self.assertEqual(catalog.build(self.root)['courses'],2)
-        self.assertEqual(page,(self.root/'index.html').read_text())
+        self.assertEqual(catalog.build(dist)['courses'],2)
+        self.assertEqual(page,(dist/'index.html').read_text())
         for name,content in before.items():self.assertEqual(Path(name).read_bytes(),content)
+        import zipfile
+        with zipfile.ZipFile(result['zip']['path']) as archive:
+            self.assertEqual(set(archive.namelist()),{'index.html','topic-0/index.html','topic-1/index.html'})
+            moved=self.root/'moved';archive.extractall(moved)
+        self.assertEqual(catalog.build(moved)['courses'],2)
         for source in inputs:
-            html=(source.parent/'build/lesson-lesson-1.html').read_text()
-            self.assertIn('href="../../index.html" target="_top">← 전체 코스',html)
-            builder.check_header(html,json.loads(source.read_text())['title'])
-            self.assertIn('<p class="header-title" hidden></p>',html)
-        # Unmarked, fake-in-script, symlinked and malformed entries must never be replaced.
-        target=self.root/'custom.html';target.write_text('''<script>const x='<meta name="tigerkit-course-catalog">';</script>''')
-        with self.assertRaisesRegex(ValueError,'unmarked'):catalog.build(self.root,target)
-        original=target.read_bytes();link=self.root/'linked.html';link.symlink_to(target)
-        with self.assertRaises(ValueError):catalog.build(self.root,link)
-        self.assertEqual(original,target.read_bytes())
-        manifest=inputs[0].parent/'build/course.json';saved=manifest.read_bytes();manifest.unlink();manifest.symlink_to(inputs[0])
-        with self.assertRaises(ValueError):catalog.build(self.root)
-        self.assertEqual(page,(self.root/'index.html').read_text());manifest.unlink();manifest.write_bytes(saved)
-        self.assertEqual(list(self.root.glob('.course-catalog-*')),[])
-        video={'lessons':[{'kind':'video','title':'영상 예시'}]}
-        self.assertIn('영상 예시',catalog.preview(video,4))
-        self.assertIn('<noscript>',(inputs[0].parent/'build/index.html').read_text())
-        self.assertIn('← 전체 코스',(inputs[0].parent/'build/index.html').read_text())
-        # A build-only export can coexist with an unrelated index at its topic root.
-        inputs[0].unlink();(inputs[0].parent/'index.html').write_text('unrelated')
-        self.assertEqual(catalog.build(self.root)['courses'],2)
-        self.assertIn('topic-0/build/index.html',(self.root/'index.html').read_text())
+            html=(dist/source.parent.name/'index.html').read_text()
+            self.assertIn('href=\"../index.html\"',html.replace('\\"','"'))
+            self.assertIn('tigerkit-course-manifest',html[:65536])
+        target=dist/'custom.html';target.write_text("<script>const x='<meta name=\"tigerkit-course-catalog\">';</script>")
+        with self.assertRaisesRegex(ValueError,'unmarked'):catalog.build(dist,target)
+        original=target.read_bytes();link=dist/'linked.html';link.symlink_to(target)
+        with self.assertRaises(ValueError):catalog.build(dist,link)
+        self.assertEqual(original,target.read_bytes());link.unlink()
+        manifest=dist/'topic-0/index.html';saved=manifest.read_bytes();manifest.unlink();manifest.symlink_to(inputs[0])
+        with self.assertRaisesRegex(ValueError,'symlink'):catalog.build(dist)
+        self.assertEqual(page,(dist/'index.html').read_text());manifest.unlink();manifest.write_bytes(saved)
+        # Discovery is independent of source/build JSON and never reads the large media tail.
+        for source in inputs:source.unlink()
+        self.assertEqual(catalog.build(dist)['courses'],2)
+        with manifest.open('ab') as stream:stream.write(b'X'*1000000)
+        self.assertEqual(catalog.build(dist)['courses'],2)
+        manifest.write_text('<html>unmarked</html>')
+        with self.assertRaisesRegex(ValueError,'manifest'):catalog.build(dist)
+        self.assertEqual(page,(dist/'index.html').read_text())
+        archive=Path(result['zip']['path']);archive.write_text('user archive')
+        with self.assertRaisesRegex(ValueError,'unmarked'):catalog.check_archive(archive)
 
     def test_header_guard_collection_path_and_audio_duration(self):
         builder.check_header('<header><span>A &amp; B</span><p hidden></p></header>','A & B')
@@ -165,8 +187,68 @@ class CourseTests(unittest.TestCase):
         for lesson in built['lessons']:lesson['narration']='none'
         self.assertEqual(catalog.duration_label(built),'무음')
         single=self.root/'single';single.mkdir();builder.build(self.source,single/'one')
-        with self.assertRaisesRegex(ValueError,'at least two'):catalog.build(single)
-        self.assertFalse((single/'index.html').exists())
+        self.assertEqual(catalog.build(single)['courses'],1)
+        self.assertTrue((single/'index.html').exists())
+        empty=self.root/'empty';empty.mkdir()
+        with self.assertRaisesRegex(ValueError,'at least one'):catalog.build(empty)
+
+    @unittest.skipUnless(shutil.which('ffmpeg') and shutil.which('ffprobe'),'FFmpeg unavailable')
+    def test_compressed_narration_preserves_originals_and_rejects_silence_corruption(self):
+        import math,struct,wave
+        from audio_media import inspect_audio
+        from unittest.mock import patch
+        audio=self.root/'voice.wav'
+        with wave.open(str(audio),'wb') as f:
+            f.setnchannels(1);f.setsampwidth(2);f.setframerate(24000)
+            f.writeframes(b''.join(struct.pack('<h',int(8000*math.sin(i*2*math.pi*440/24000))) for i in range(24000)))
+        original=audio.read_bytes()
+        for lesson in self.data['lessons']:
+            lesson['narration']='generated';lesson['slides'][0]['narration'][0]['audio']='voice.wav'
+        self.write()
+        for format,mime in [('opus','audio/webm;codecs=opus'),('mp3','audio/mpeg'),('wav','audio/wav')]:
+            out=self.root/format;builder.build(self.source,out,audio_format=format)
+            manifest=json.loads((out/'course.json').read_text())['audio_build']
+            self.assertEqual(manifest['format'],format);self.assertEqual(manifest['source_bytes'],len(original))
+            if format!='wav':self.assertLess(manifest['encoded_bytes'],len(original)/3)
+            self.assertLessEqual(abs(manifest['files'][0]['seconds']-1),.1)
+            self.assertIn('data:'+mime+';base64,',(out/'lesson-lesson-1.html').read_text())
+            self.assertEqual(audio.read_bytes(),original)
+        for ext,codec in [('webm','libopus'),('ogg','libopus'),('mp3','libmp3lame'),('m4a','aac')]:
+            dest=self.root/('compressed.'+ext)
+            subprocess.run(['ffmpeg','-v','error','-i',str(audio),'-c:a',codec,str(dest)],check=True)
+            self.assertAlmostEqual(inspect_audio(dest),1,delta=.1)
+        with patch('audio_media.shutil.which',return_value=None):
+            with self.assertRaisesRegex(ValueError,'ffmpeg is required'):builder.build(self.source,self.root/'no-tool')
+            builder.build(self.source,self.root/'wav-without-tools',audio_format='wav')
+            with self.assertRaisesRegex(ValueError,'ffprobe is required'):inspect_audio(self.root/'compressed.webm')
+        broken=self.root/'broken.mp3';broken.write_bytes(b'broken')
+        with self.assertRaises((ValueError,subprocess.SubprocessError)):inspect_audio(broken)
+        silent=self.root/'silent.wav'
+        with wave.open(str(silent),'wb') as f:f.setnchannels(1);f.setsampwidth(2);f.setframerate(24000);f.writeframes(b'\x00\x00'*24000)
+        with self.assertRaisesRegex(ValueError,'silent'):inspect_audio(silent)
+        compressed=self.root/'silent.webm';subprocess.run(['ffmpeg','-v','error','-i',str(silent),'-c:a','libopus',str(compressed)],check=True)
+        with self.assertRaisesRegex(ValueError,'silent'):inspect_audio(compressed)
+
+    def test_distribution_cli_defaults_and_existing_output_safety(self):
+        topic=self.root/'topic';topic.mkdir();source=topic/'course.json';source.write_bytes(self.source.read_bytes())
+        result=subprocess.run([sys.executable,str(SCRIPTS/'build_course.py'),'--input',str(source),'--output',str(topic/'build')],capture_output=True,text=True)
+        self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+        shared=self.root/'dist/topic/index.html';self.assertTrue(shared.is_file());self.assertTrue((self.root/'dist/index.html').is_file())
+        self.assertFalse(list((topic/'build').glob('*.html')))
+        self.assertEqual(sorted(str(p.relative_to(self.root/'dist')) for p in (self.root/'dist').rglob('*') if p.is_file()),['index.html','topic/index.html'])
+        before=shared.read_bytes()
+        with self.assertRaisesRegex(ValueError,'review'):builder.build(source,topic/'next',dist=self.root/'dist')
+        self.assertEqual(shared.read_bytes(),before);self.assertFalse((topic/'next').exists())
+        for work,shared_root in [(self.root/'overlap',self.root/'overlap'),(self.root/'outer',self.root/'outer/dist'),(self.root/'shared/work',self.root/'shared')]:
+            work.parent.mkdir(parents=True,exist_ok=True)
+            with self.assertRaisesRegex(ValueError,'overlap'):builder.build(source,work,dist=shared_root)
+            self.assertFalse(work.exists());self.assertFalse((shared_root/'index.html').exists())
+        custom=self.root/'custom';builder.build(source,topic/'optional',dist=custom,lesson_pages=True)
+        self.assertEqual(len(list((topic/'optional').glob('lesson-*.html'))),2)
+        self.assertFalse((custom/'topic/lesson-lesson-1.html').exists())
+        target=self.root/'user-dist';target.mkdir();(target/'index.html').write_text('my page')
+        with self.assertRaisesRegex(ValueError,'unmarked'):builder.build(source,topic/'blocked',dist=target)
+        self.assertFalse((topic/'blocked').exists());self.assertFalse((target/'topic').exists())
 
     def test_index_lesson_identity_cannot_overwrite_bundle_and_start_is_bound(self):
         self.data['lessons'][0]['id']='index';self.data['lessons'][1]['prerequisites']=['index'];self.write()

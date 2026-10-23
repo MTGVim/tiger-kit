@@ -2,16 +2,51 @@
   'use strict';
   const $=id=>document.getElementById(id), P=PlayerModel, S=CourseShellModel;
   const data=JSON.parse($('lesson-data').textContent), C=CourseCore.create(data.course_meta), count=data.slides.length, published=data.published_lessons || data.lessons.map(l=>l.id);
+  const prefs=CoursePreferences.load(()=>localStorage);
+  const savePrefs=()=>CoursePreferences.save(()=>localStorage,prefs);
   const publishedCompleted=()=>state.completed.filter(id=>C.LESSONS.includes(id));
   let view={lesson:published[0],slide:0}, storageBlocked=false, storedRaw='', state=C.empty(), narration=null, videoNarration=null, homeVisible=true, lastPosition=null,seekController=null,seekVideo=null;
   const key='tigerkit-course:'+C.COURSE, positionKey=key+':position:'+data.lesson_id+':'+data.narration_revision;
   const progressId=()=>data.lesson_id;
   function headerContext(title='') {
     const node=document.querySelector('.header-title');
-    node.textContent=title===data.course_label?'':title;node.hidden=!node.textContent;
+    node.textContent=title===data.course_label?'':title;node.title=node.textContent;
+    node.closest('li').hidden=!node.textContent;
+    document.querySelector('.course-breadcrumb').classList.toggle('in-lesson',!!node.textContent);
   }
-  function courseJump(id){if(!C.LESSONS.includes(id))return;if(window.parent!==window)window.parent.postMessage({type:'course-lesson',id},'*');else location.href='lesson-'+id+'.html#lesson-'+data.course_lessons.find(x=>x.id===id).kind;}
-  let captionsEnabled=true,transcriptOpen=false,playbackRate=1,scrubbing=false,lastAudibleVolume=1;
+  function courseJump(id){
+    if(!C.LESSONS.includes(id))return;
+    if(id===data.lesson_id){lesson(published[0],{resume:true});activeTransport().play();}
+    else if(window.parent!==window)window.parent.postMessage({type:'course-lesson',id},'*');
+    else location.href='lesson-'+id+'.html#lesson-'+data.course_lessons.find(x=>x.id===id).kind;
+  }
+  let captionsEnabled=prefs.captions,transcriptOpen=false,playbackRate=prefs.speed,scrubbing=false,lastAudibleVolume=prefs.volume||1;
+  let soundToastShown=false,blockedToastShown=false,soundToastTimer=null;
+  function soundToast(blocked){
+    if(blocked?blockedToastShown:soundToastShown||blockedToastShown)return;
+    if(blocked)blockedToastShown=true;else soundToastShown=true;
+    $('sound-toast-message').textContent=blocked?'소리를 켜려면 음소거 해제를 누르세요':'소리가 켜져 있습니다';
+    $('toast-mute').hidden=blocked;$('sound-toast').hidden=false;
+    clearTimeout(soundToastTimer);soundToastTimer=setTimeout(()=>{
+      // Keep an actionable control visible while it owns keyboard focus.
+      if($('sound-toast').contains(document.activeElement))return;
+      $('sound-toast').hidden=true;
+    },4000);
+  }
+  function syncToc(){
+    const mobile=window.matchMedia('(max-width:700px)').matches,open=mobile?$('toc').classList.contains('open'):!prefs.tocCollapsed;
+    $('course-layout').classList.toggle('toc-collapsed',!mobile&&prefs.tocCollapsed);
+    $('menu-toggle').setAttribute('aria-expanded',String(open));
+    $('menu-toggle').setAttribute('aria-label',open?'강의 목차 접기':'강의 목차 펼치기');
+    $('menu-toggle').title=open?'강의 목차 접기':'강의 목차 펼치기';
+  }
+  function toggleToc(){
+    const mobile=window.matchMedia('(max-width:700px)').matches;
+    const closing=mobile?$('toc').classList.contains('open'):!prefs.tocCollapsed;
+    if(closing&&$('toc').contains(document.activeElement))$('menu-toggle').focus();
+    if(mobile)$('toc').classList.toggle('open');else{prefs.tocCollapsed=!prefs.tocCollapsed;savePrefs();}
+    syncToc();
+  }
   const U=CourseControls;
   const volumePopover=U.volumePopover({container:document.querySelector('.volume-control'),panel:$('volume-panel'),trigger:$('mute-toggle'),slider:$('volume'),document,window});
   function setControl(id,icon,label){U.icon($(id),icon,label);}
@@ -98,14 +133,14 @@
     const resume=options.resume && lastPosition && lastPosition.lesson===id?{...lastPosition}:null;
     volumePopover.close();setCaptionMenu(false);setSpeedMenu(false);setSettings(false);showTranscript(false);scrubbing=false;remember();narration.stop();videoNarration.stop();$('lesson-video').pause();
     homeVisible=false;$('home').hidden=true;$('player-page').hidden=false;
-    $('back-home').hidden=false;$('menu-toggle').hidden=false;$('skip-main').setAttribute('href','#lesson-heading');
+    $('menu-toggle').hidden=false;$('skip-main').setAttribute('href','#lesson-heading');
     view={lesson:id,slide:resume?resume.slide:0};
     P.visible(view,count);
     if(id==='slides')narration.select(view.slide,resume?resume.cue:0,false);
     else{videoNarration.select(view.slide,0,false);if(resume)videoNarration.seekProgress(resume.videoTime);}
     activeTransport().setRate(playbackRate);
     render();remember();
-    $('toc').classList.remove('open');$('menu-toggle').setAttribute('aria-expanded','false');
+    $('toc').classList.remove('open');syncToc();
     if(options.push!==false)navigate('#lesson-'+id);
     if(options.focus!==false)$('lesson-heading').focus();
   }
@@ -114,7 +149,7 @@
     volumePopover.close();setCaptionMenu(false);setSpeedMenu(false);setSettings(false);showTranscript(false);scrubbing=false;remember();narration.stop();videoNarration.stop();$('lesson-video').pause();
     homeVisible=true;$('home').hidden=false;$('player-page').hidden=true;
     headerContext();
-    $('back-home').hidden=true;$('menu-toggle').hidden=true;$('toc').classList.remove('open');
+    $('menu-toggle').hidden=true;$('toc').classList.remove('open');
     $('menu-toggle').setAttribute('aria-expanded','false');$('skip-main').setAttribute('href','#home-title');
     progress();if(push)navigate('#home');if(focus)$('home-title').focus();
   }
@@ -136,6 +171,8 @@
     paintTransport(s,data.video_scenes,s.slide);
   }
   function paintTransport(s,cues,index) {
+    if(s.mutedBlocked)soundToast(true);
+    else if(s.status==='playing'&&!s.muted&&s.volume>0&&s.mode!=='silent'&&(s.mode!=='video'||s.hasAudio))soundToast(false);
     const isSlide=view.lesson==='slides',running=['playing','loading','waiting'].includes(s.status);
     setControl('play',running?'pause':s.status==='ended'?'replay':'play',running?'일시정지':s.status==='ended'?'다시 듣기':'재생');
     $('speed-label').textContent=s.rate+'×';$('speed-pending').hidden=!s.ratePending;
@@ -202,8 +239,8 @@
     render();
   }
   $('voice-mode').addEventListener('change',()=>setVoiceMode($('voice-mode').value));
-  function setMasterMuted(value){narration.setMuted(value);videoNarration.setMuted(value);}
-  function setMasterVolume(value){if(value>0)lastAudibleVolume=value;narration.setVolume(value);videoNarration.setVolume(value);}
+  function setMasterMuted(value){prefs.muted=value;savePrefs();narration.setMuted(value);videoNarration.setMuted(value);}
+  function setMasterVolume(value){prefs.volume=value;savePrefs();if(value>0)lastAudibleVolume=value;narration.setVolume(value);videoNarration.setVolume(value);}
   $('use-browser-voice').addEventListener('click',()=>{setVoiceMode('device');$('mute-toggle').focus();});
   $('use-silent').addEventListener('click',()=>{setVoiceMode('silent');activeTransport().play();$('play').focus();});
   $('mute-toggle').addEventListener('click',()=>{const s=activeTransport().snapshot();if(s.mode==='silent'){setSettings(true);$('voice-mode').focus();return;}if(s.muted||s.volume===0){if(s.volume===0)setMasterVolume(lastAudibleVolume);setMasterMuted(false);}else setMasterMuted(true);});
@@ -221,7 +258,7 @@
   $('speed').addEventListener('click',()=>setSpeedMenu($('speed-panel').hidden));
   document.querySelectorAll('[name="playback-speed"]').forEach(el=>el.addEventListener('change',()=>{
     if(!el.checked)return;playbackRate=Number(el.value);$('speed').value=el.value;
-    narration.setRate(playbackRate);videoNarration.setRate(playbackRate);setSpeedMenu(false);$('speed').focus();
+    prefs.speed=playbackRate;savePrefs();narration.setRate(playbackRate);videoNarration.setRate(playbackRate);setSpeedMenu(false);$('speed').focus();
   }));
   function previewPoint(request){
     if(request.owner!==activeTransport())return;
@@ -306,14 +343,15 @@
   $('next-lesson').addEventListener('click',()=>courseJump(C.LESSONS[C.LESSONS.indexOf(data.lesson_id)+1]));
   $('end-next').addEventListener('click',()=>{state=C.complete(state,progressId(),true);save();home();});
   $('mark-complete').addEventListener('change',()=>{state=C.complete(state,progressId(),$('mark-complete').checked);progress();save();});
-  $('menu-toggle').addEventListener('click',()=>{const open=$('toc').classList.toggle('open');$('menu-toggle').setAttribute('aria-expanded',String(open));});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('toc').classList.remove('open');$('menu-toggle').setAttribute('aria-expanded','false');}});
+  $('menu-toggle').addEventListener('click',toggleToc);
+  window.addEventListener('resize',syncToc);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('toc').classList.remove('open');syncToc();}});
   $('slide-wrap').addEventListener('keydown',e=>{if(e.target!==$('slide-wrap') || e.altKey || e.ctrlKey || e.metaKey)return;if(e.code==='Space'){e.preventDefault();narration.toggle();}else if(['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();jump(view.slide+(e.key==='ArrowRight'?1:-1));}});
   function refreshCaption(){if(view.lesson==='slides')paintPlayback(narration.snapshot());else paintVideoPlayback(videoNarration.snapshot());}
-  $('captions-toggle').addEventListener('click',()=>{captionsEnabled=!captionsEnabled;refreshCaption();});
+  $('captions-toggle').addEventListener('click',()=>{captionsEnabled=!captionsEnabled;prefs.captions=captionsEnabled;savePrefs();refreshCaption();});
   function setCaptionMenu(open){$('caption-size-panel').hidden=!open;$('caption-size-toggle').setAttribute('aria-expanded',String(open));if(open){setSpeedMenu(false);setSettings(false);$('caption-size-panel').querySelector('input:checked').focus();}}
   $('caption-size-toggle').addEventListener('click',()=>setCaptionMenu($('caption-size-panel').hidden));
-  document.querySelectorAll('[name="caption-size"]').forEach(el=>el.addEventListener('change',()=>{if(!el.checked)return;$('stage').dataset.captionSize=el.value;setCaptionMenu(false);$('caption-size-toggle').focus();}));
+  document.querySelectorAll('[name="caption-size"]').forEach(el=>el.addEventListener('change',()=>{if(!el.checked)return;$('stage').dataset.captionSize=el.value;prefs.captionSize=el.value;savePrefs();setCaptionMenu(false);$('caption-size-toggle').focus();}));
   function setSettings(open){if(open){setSpeedMenu(false);setCaptionMenu(false);}$('playback-settings').hidden=!open;$('settings-toggle').setAttribute('aria-expanded',String(open));setControl('settings-toggle','settings',open?'재생 설정 닫기':'재생 설정 열기');}
   $('settings-toggle').addEventListener('click',e=>{e.stopPropagation();setSettings($('playback-settings').hidden);});
   function showTranscript(open){transcriptOpen=open;$('transcript-rail').hidden=!open;$('course-layout').classList.toggle('with-transcript',open);$('transcript-toggle').setAttribute('aria-expanded',String(open));setControl('transcript-toggle','transcript',open?'전체 대본 닫기':'전체 대본 열기');if(open)$('rail-title').focus();}
@@ -357,13 +395,32 @@
   $('memo').addEventListener('input',()=>{state.memos[data.lesson_id]=$('memo').value.slice(0,10000);save();});
   $('export').addEventListener('click',()=>{$('state-json').value=storageBlocked?storedRaw:JSON.stringify(state,null,2);$('save-status').textContent='아래 JSON을 복사해 보관하세요.';});
   $('import').addEventListener('click',()=>{try{state=C.parse($('state-json').value);storageBlocked=false;progress();save();}catch(_){$('save-status').textContent='가져오지 못했습니다. 이 코스의 진도 JSON인지 확인하세요.';}});
-  videoNarration=published.includes('video')?NativeVideoPlayer.create({lesson:data.video_lesson,scenes:data.video_scenes,video:$('lesson-video'),initialMuted:true,onChange:paintVideoPlayback,onError:message=>{$('player-status').textContent=message;}}):{stop(){},setMuted(){},setVolume(){},setRate(){},snapshot(){return {time:0};}};
-  narration=CourseNarration.create({slides:data.slides,audio:new Audio(),initialMode:data.production_choices.voice==='none'?'silent':'assets',initialMuted:true,pacing,synth:window.speechSynthesis,Utterance:window.SpeechSynthesisUtterance,onChange:paintPlayback});
+  videoNarration=published.includes('video')?NativeVideoPlayer.create({lesson:data.video_lesson,scenes:data.video_scenes,video:$('lesson-video'),initialMuted:prefs.muted,initialVolume:prefs.volume,onChange:paintVideoPlayback,onError:message=>{$('player-status').textContent=message;}}):{stop(){},setMuted(){},setVolume(){},setRate(){},snapshot(){return {time:0};}};
+  narration=CourseNarration.create({slides:data.slides,audio:new Audio(),initialMode:data.production_choices.voice==='none'?'silent':'assets',initialMuted:prefs.muted,initialVolume:prefs.volume,pacing,synth:window.speechSynthesis,Utterance:window.SpeechSynthesisUtterance,onChange:paintPlayback});
   if(window.speechSynthesis)window.speechSynthesis.addEventListener('voiceschanged',()=>{narration.refreshVoices();});
   for(const [id,icon,label] of [['prev','prev','이전 장'],['next','next','다음 장'],['play','play','재생'],['captions-toggle','captions','자막 숨기기'],['caption-size-toggle','caption-size','자막 크기 선택'],['mute-toggle','volume-off','음소거 해제'],['transcript-toggle','transcript','전체 대본 열기'],['transcript-close','close','전체 대본 닫기'],['settings-toggle','settings','재생 설정 열기'],['fullscreen','fullscreen','전체 화면']])setControl(id,icon,label);
   $('speed-icon').innerHTML=U.svg('speed');
   document.querySelectorAll('[data-course-jump]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();courseJump(el.dataset.courseJump);}));
-  $('caption-opacity').addEventListener('input',()=>{const v=Math.max(0,Math.min(100,Number($('caption-opacity').value)||0));$('stage').style.setProperty('--caption-opacity',String(v/100));$('caption-opacity-value').value=v+'%';$('caption-opacity-value').textContent=v+'%';});
-  window.addEventListener('message',e=>{if(e.source===window.parent&&e.data?.type==='course-enter')lesson(published[0],{resume:true,push:false});});
-  render();tab('notes');applyRoute();
+  $('caption-opacity').addEventListener('input',()=>{const v=Math.max(0,Math.min(100,Number($('caption-opacity').value)||0));$('stage').style.setProperty('--caption-opacity',String(v/100));$('caption-opacity-value').value=v+'%';$('caption-opacity-value').textContent=v+'%';prefs.captionOpacity=v/100;savePrefs();});
+  window.addEventListener('message',e=>{if(e.source===window.parent&&e.data?.type==='course-enter'){lesson(published[0],{resume:true,push:false});activeTransport().play();}});
+  $('toast-mute').addEventListener('click',()=>{setMasterMuted(true);$('mute-toggle').focus();$('sound-toast').hidden=true;});
+  $('sound-toast').addEventListener('focusout',()=>{setTimeout(()=>{if(!$('sound-toast').contains(document.activeElement))$('sound-toast').hidden=true;},0);});
+  $('caption-opacity').value=prefs.captionOpacity*100;
+  $('stage').style.setProperty('--caption-opacity',String(prefs.captionOpacity));
+  $('caption-opacity-value').textContent=Math.round(prefs.captionOpacity*100)+'%';
+  $('stage').dataset.captionSize=prefs.captionSize;
+  document.querySelectorAll('[name="caption-size"]').forEach(el=>{el.checked=el.value===prefs.captionSize;});
+  narration.setRate(playbackRate);videoNarration.setRate(playbackRate);
+  syncToc();render();tab('notes');applyRoute();
+  // file:// cannot reliably fetch siblings. Verify a local catalog via a bounded frame handshake.
+  const collection=$('collection-link');
+  if(collection){
+    const probe=document.createElement('iframe'),token=String(Math.random());
+    probe.hidden=true;probe.tabIndex=-1;probe.title='전체 코스 연결 확인';
+    const finish=()=>{window.removeEventListener('message',ready);probe.remove();};
+    const ready=e=>{if(e.source!==probe.contentWindow||e.data?.type!=='tigerkit-catalog-ready'||e.data.token!==token||!e.data.ids?.includes(C.COURSE))return;collection.closest('li').hidden=false;finish();};
+    window.addEventListener('message',ready);
+    probe.addEventListener('load',()=>probe.contentWindow?.postMessage({type:'tigerkit-catalog-probe',token},'*'));
+    probe.src=collection.href;document.body.append(probe);setTimeout(finish,4000);
+  }
 })();

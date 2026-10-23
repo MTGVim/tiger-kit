@@ -132,6 +132,14 @@ Explain each PR at the level the user needs to understand:
 - whether it is independent of the other work
 - whether the PR owner is likely to use direct execution or its shared SDD protocol
 
+Before presenting a design choice, read the PR body, linked ticket and relevant parent/discussion,
+and the cross-team contracts it depends on. Inspect open counterpart PRs changing that same API:
+use changed file paths as well as keywords, and inspect the bounded open list before claiming none
+exist. State unavailable evidence in one or two lines. Resolve existing edit/copy behavior and a
+proposed document's repository convention, tracking and ignore status before asking about them.
+An unmerged counterpart change cannot supersede an agreed task requirement: retain that premise,
+disclose the conflict as a verification item, and change the requirement only with user direction.
+
 TigerKit decides only the execution shape. Model selection remains the host/user's responsibility and is never persisted.
 Do not mark the entire Sweep as `Blocked` merely because model controls are unavailable.
 
@@ -142,7 +150,7 @@ For an execution-mode pre-approval briefing, put the approval target immediately
 1. Start with one line naming the repositories read and any read failures.
 2. If fresh triage found PRs that must wait or are report-only, show them first under an `⏳` heading. Use a narrow table with repository/PR, state and reason when there are at least three; use one line per PR for one or two, each starting with the repository short name and PR number. Omit this section when empty.
 3. Show PRs that need approval under a `🔴` heading. Use one approval-contract table row per PR, including the repository, exact PR and head, work and publication scope, verification, and risk or user decision. Put the repository short name and PR number in the first column (for example `game-admin #101`). Keep the table even when it has one row. Add at most two short lines per PR below the table for cause or conflict scope.
-4. Put the approval question block directly after the approval table and any permitted short cause/conflict notes. Make it the final substantive block; do not insert waiting items or unrelated explanation before it.
+4. Put the approval question block directly after the approval table and any permitted short cause/conflict notes. Make it the final substantive block; do not insert waiting items or unrelated explanation before it. A pre-approval briefing ending in questions has no `Status:` line; the single final status belongs to the completion response.
 
 The short name is the repository name without the owner. Include it in every approval
 row and waiting item whenever the Sweep scope covers more than one repository; use
@@ -270,10 +278,12 @@ consumption; a prefilled template is not completed input. This grants no write a
 <!-- tigerkit:questions -->
 ## User Questions
 
-Resolve researchable facts and reuse matching authorization before asking.
-For an unmet prerequisite or material user-owned decision, read [question rounds and recovery](references/questions.md)
-(reuse it if still in context). Ask only answerable decisions in its plain-chat format,
-with approval separate. Otherwise continue without confirmation.
+Investigate facts; reuse authorization. For user-owned decisions read
+[question rounds](references/questions.md); otherwise proceed.
+Plain chat, even one approval: standalone `---`, then
+`❓ **Q<n> · <title>**: <question>` and `➡️ <recommendation>` per item.
+Ask only settled-prerequisite questions; separate approval.
+Questions come last; put status, risks and plans before them.
 <!-- /tigerkit:questions -->
 <!-- tigerkit:skill-feedback -->
 ## Skill Feedback

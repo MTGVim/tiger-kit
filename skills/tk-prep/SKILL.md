@@ -141,7 +141,7 @@ After repository investigation establishes a concrete implementation topology, r
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Approval and local mutation
 
-Before presenting any frontier question or missing approval, read [question rounds](references/questions.md) in this turn and apply its format. Make the approval request itself a separate numbered `Q` in the final question block; preserve existing approval and defer a dependent approval until its scope is actionable.
+Before any frontier or missing approval, read [question rounds](references/questions.md) in this turn. Make the approval request itself a separate numbered `Q` in the final question block; preserve existing approval and defer a dependent approval until its scope is actionable.
 
 First check whether the active request or an earlier decision already authorizes the concrete scope. If not, perform no source/test/config/Seed/Git mutation and present one natural summary covering goal, scope,
 decisions, approach, testing/TDD, runtime verification plan (verifier, baseline, evidence location), semantic review obligations, execution shape, workspace setup, and local
@@ -227,10 +227,12 @@ consumption; a prefilled template is not completed input. This grants no write a
 <!-- tigerkit:questions -->
 ## User Questions
 
-Resolve researchable facts and reuse matching authorization before asking.
-For an unmet prerequisite or material user-owned decision, read [question rounds and recovery](references/questions.md)
-(reuse it if still in context). Ask only answerable decisions in its plain-chat format,
-with approval separate. Otherwise continue without confirmation.
+Investigate facts; reuse authorization. For user-owned decisions read
+[question rounds](references/questions.md); otherwise proceed.
+Plain chat, even one approval: standalone `---`, then
+`❓ **Q<n> · <title>**: <question>` and `➡️ <recommendation>` per item.
+Ask only settled-prerequisite questions; separate approval.
+Questions come last; put status, risks and plans before them.
 <!-- /tigerkit:questions -->
 <!-- tigerkit:skill-feedback -->
 ## Skill Feedback

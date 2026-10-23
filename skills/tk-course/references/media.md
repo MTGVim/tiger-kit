@@ -27,11 +27,25 @@ overlaying TTS. Selected narration is embedded with pauses, Korean captions wher
 and scene timestamps on one timeline. Check actual audio streams/non-silence, decoded transitions
 and human pronunciation; a silent preview is not a voiced delivery. Accept MP4/WebM files with
 captions; video controls follow currentTime/ended/playbackRate. Do not swap per-scene clips or
-restart a first poster between sentences. Omit FFmpeg when no video is selected.
+restart a first poster between sentences. FFmpeg is also required when compressed narration is selected.
 
 The player keeps a main slide/video and visible curriculum, optional notes/transcript/practice,
 floating white captions over rounded black, CC toggle, subtitle size and background opacity
-(default 50%), default mute, volume, speed and fullscreen controls. Dragging previews silently
+(default 50%), volume, speed and fullscreen controls. Default sound on after a user gesture with
+an entry toast; retry muted with guidance when audible playback is blocked. Reuse versioned
+learner preferences across lessons/reloads independently of progress; unavailable storage must
+not block playback. Preserve explicit silent mode. Dragging previews silently
 and commits once on release; cancel restores prior transport state. Keep caption/marker/selection
 contrast usable in both themes, and do not insert generic usage instructions or recurring
 illustrative-data disclaimers into the instructor's script. Preserve material technical limits.
+
+## Build audio
+
+Accept mono PCM16 WAV and Opus WebM/Ogg, MP3 or AAC M4A narration. Build with `--audio-format
+opus` (default: 32kbps mono, voice application), `mp3` (48kbps for targets with uncertain Opus
+support), or `wav`. Originals stay untouched. Compressed inputs/outputs require both `ffprobe`
+and `ffmpeg`: decode fully, reject corrupt/silent audio and duration drift over 0.1 seconds.
+WAV-only builds use the standard `wave` path without external tools. The working manifest records
+format, bitrate, source/encoded sizes and cue durations. Check Chrome, Firefox and Safari playback
+and listen to representative cues before claiming compatibility/quality; encoding success and
+synthetic test tones do not establish either. Report actual output size, not an estimated promise.

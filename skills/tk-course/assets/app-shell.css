@@ -213,3 +213,22 @@ svg[data-follow-cue] .explain-focus[data-focused="true"]>.code-focus{opacity:1}
 #stage[data-media-kind="video"] .playback-settings-grid>:not([for="caption-opacity"]):not(.caption-opacity-control),#stage[data-media-kind="video"] #playback-settings>p,#stage[data-media-kind="video"] .browser-voice-setting{display:none}
 
 #reading-note{white-space:pre-line}
+
+/* Breadcrumb and curriculum collapse share one compact header at every width. */
+header{flex-wrap:nowrap;gap:12px;min-height:64px;box-sizing:border-box}
+#menu-toggle{flex:none;display:grid;place-items:center;padding:8px;line-height:1}
+.course-header-actions{flex:none;margin-inline-start:0}
+.course-breadcrumb{flex:1;min-width:0;overflow:hidden}
+.course-breadcrumb ol{display:flex;align-items:center;gap:8px;list-style:none;padding:0;margin:0;min-width:0}
+.course-breadcrumb li{display:flex;align-items:center;gap:8px;min-width:0;flex:0 1 auto}
+.course-breadcrumb li:not([hidden])~li:not([hidden])::before{content:'›';flex:none;color:var(--muted)}
+.course-breadcrumb li.breadcrumb-collection{flex-shrink:0}
+.course-breadcrumb li.breadcrumb-course{flex:0 4 auto}
+.course-breadcrumb li.breadcrumb-lesson{flex:0 1 auto}
+.course-breadcrumb a,.course-breadcrumb .site-brand span,header .header-title{display:block;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;overflow-wrap:normal;font-size:16px;line-height:24px;margin:0}
+main#course-layout.toc-collapsed{grid-template-columns:minmax(0,1fr)}
+main#course-layout.toc-collapsed #toc{display:none}
+@media(min-width:1440px){main#course-layout.toc-collapsed.with-transcript{grid-template-columns:minmax(0,1fr) 280px}}
+@media(max-width:700px){.course-breadcrumb.in-lesson .breadcrumb-course a{font-size:0}.course-breadcrumb.in-lesson .breadcrumb-course a::after{content:'…';font-size:16px}}
+.sound-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:200;display:flex;align-items:center;gap:12px;max-width:calc(100vw - 32px);padding:12px 16px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text);box-shadow:0 6px 24px #0003;font-size:15px}
+.sound-toast button{flex:none}

@@ -23,23 +23,31 @@ The player blocks saving over unreadable state and exports the original for reco
 valid explicit import resumes saving. Do not combine it with teach's demonstrated mastery.
 Do not silently sync personal educational records or commit them.
 
-For two or more topics, use `scripts/build_catalog.py --root <collection-dir>`; the default output
-is `<collection-dir>/index.html`. An explicit `--output` must stay directly in that root.
-Discover a direct child course.json/index.html pair first, otherwise the child's build/ pair.
-The built manifest owns metadata, including measured narration seconds; do not read source media
-paths from a different directory. Reject duplicate IDs and unsafe/missing entries. Replace only
-an HTML file carrying `<meta name="tigerkit-course-catalog">`, atomically; preserve unmarked files.
-The offline gallery shows the first slide preview, title, description, level, lesson count and
-recorded audio length (or an explicit unavailable label for older builds). Client-side search
-filters titles, descriptions, goals and lesson titles; an empty result offers a clear-and-refocus
-action. Keep gallery columns and thumbnail proportions stable as results disappear, limit title
-and description lines, and retain a one-row result surface. Without JavaScript all cards remain readable.
-Use the returned per-course `collection_home` value with `build_course.py --collection-home
-<relative-html-path>` when building each course from its authored input to a new output directory.
-For `<collection-dir>/<topic>/build/`, that value is `../../index.html`. The header link exits the
-single-file bundle's frame as well as working from direct lesson pages; review replacement of
-the prior build, then refresh the catalog. Catalog generation itself does not mutate course files.
-Preserve each course's own home/content/progress; there is no global learner database. Do not add
-an empty collection layer to one course. Do not copy progress values into the catalog.
-File-origin storage varies by browser; JSON export/import is the portable path. Cross-device
-accounts/sync are a separate product requirement. Publication remains separately authorized.
+## Shared distribution
+
+Keep source files under `<courses>/<topic>/`, working manifests/changes under `<topic>/build/`,
+and only shareable single-file HTML under `<courses>/dist/<topic>/index.html`. Both builders accept
+`--dist <root>`; reuse the agreed root. `build_course.py` creates/refreshes the root's catalog after
+each successful build, including one course. `--lesson-pages` creates optional direct pages only
+in the working output. Never put source audio, dependencies or separate manifest JSON in `dist/`.
+
+The course's first 64KB contains `tigerkit-course-manifest` JSON (public metadata, lesson titles,
+preview, revision and measured audio length). `build_catalog.py --dist <root>` discovers only
+`<root>/*/index.html` and reads that bounded prefix; it needs neither source nor working manifests.
+Reject missing/corrupt manifests, duplicate IDs and symlinks; zero courses fails. Adding/removing
+course folders and rebuilding updates the list. The root's marked catalog is replaced atomically;
+unmarked HTML is preserved. Client search covers titles, descriptions, goals and lesson titles;
+without JavaScript all cards remain readable. Preserve compact thumbnails and a one-row empty state.
+
+Build revisions with `--previous <old-build/course.json>` to new work and distribution roots.
+Review `changes.json`, HTML and media before explicitly replacing the prior shared course; retain
+originals, then refresh the destination catalog. Existing shared course targets are refused rather
+than silently overwritten. Catalog generation changes only its own marked output, never courses.
+Use `--zip` to produce a sibling `<root-name>.zip` containing just the catalog/course HTML paths;
+replace only archives bearing the TigerKit ZIP comment marker. Report path, size and course list.
+A copied/extracted tree retains relative links. Each course verifies a local catalog by frame
+handshake and hides that breadcrumb when shared alone; no fetch/server or external request is needed.
+
+Progress remains course-local; preferences are learner-wide and never included in progress JSON.
+File-origin storage varies by browser; JSON export/import is the portable path for progress.
+Cross-device accounts/sync are separate requirements. Publication remains separately authorized.
