@@ -153,7 +153,7 @@ anything unverified as unverified.
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-This skill creates no artifacts. Do not create temporary files, write reports, or edit ignore rules for this invocation; return the result in the conversation.
+This skill creates no artifacts. Do not create temporary files, write reports, or edit ignore rules for this invocation; return the result in the conversation. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
 
 <!-- tigerkit:result-summary -->
 ## Reader-facing Result Summary
