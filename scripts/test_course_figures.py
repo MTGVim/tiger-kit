@@ -122,16 +122,42 @@ class FigureTests(unittest.TestCase):
         from PIL import Image,ImageDraw
         im=Image.new('RGB',(800,450),'#eceff3');draw=ImageDraw.Draw(im)
         draw.rectangle((80,90,320,270),fill='#4c8c62');draw.rectangle((480,90,720,270),fill='#a35b58')
-        draw.text((90,110),'OPEN LEFT',fill='white');draw.text((490,110),'BLOCKED RIGHT',fill='white');im.save(self.root/'layout.png')
+        from PIL import ImageFont
+        font=ImageFont.truetype('DejaVuSans.ttf',54)
+        draw.text((90,110),'OPEN',font=font,fill='white');draw.text((490,110),'STOP',font=font,fill='white');im.save(self.root/'layout.png')
         self.data['lessons'][0]['slides'].insert(-1,_slide('observed-layout','image','Compare the open and blocked routes',{
             'src':'layout.png','alt':'An open left route and a blocked right route',
-            'description':'The left route is open. The right route is blocked.',
+            'description':'Open vs blocked',
             'source':'Original synthetic layout for this regression test','rights':'Original test figure; redistribution permitted',
-            'regions':[{'id':'open','label':'Open left route','x':.1,'y':.2,'width':.3,'height':.4}]},['image','region-open']))
+            'regions':[{'id':'open','label':'Open left','x':.1,'y':.2,'width':.3,'height':.4}]},['image','region-open']))
+        self.data['lessons'][0]['notes']+='\nLong document notes remain independently scrollable.'*120
         self.build('browser')
         env={**os.environ,'TK_FIGURE_PAGE':str(self.root/'browser/index.html')}
         result=subprocess.run(['node','--test',str(Path(__file__).resolve().parents[1]/'evals/skills/tk-course/figures.test.cjs')],env=env,capture_output=True,text=True,timeout=270)
         self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+
+    def test_fixed_canvas_for_all_components_and_regions(self):
+        for lesson in self.data['lessons']:
+            for slide in lesson['slides']:
+                for compact in (False,True):
+                    with self.subTest(slide=slide['id'],compact=compact):
+                        root=parsed(slide,compact)
+                        self.assertEqual(list(map(float,root.get('viewBox').split())),[0,0,1600,900])
+                        for e in root.iter():
+                            if e.tag.rsplit('}',1)[-1] in {'rect','image'}:
+                                x,y,w,h=[float(e.get(k,'0')) for k in ('x','y','width','height')]
+                                self.assertGreaterEqual(x,0);self.assertGreaterEqual(y,0)
+                                self.assertLessEqual(x+w,1600.01);self.assertLessEqual(y+h,900.01)
+
+    def test_overfull_rows_require_meaningful_splitting_before_output(self):
+        slide=self.slide('timeline');slide['visual']['events']*=2
+        # Even still within the public maximum, a dense physical layout may fail.
+        slide['visual']['events']=slide['visual']['events'][:8]
+        slide['narration'][0]['focus']+=['event-7','event-8']
+        self.source.write_text(json.dumps(self.data))
+        with self.assertRaisesRegex(ValueError,'slide timeline: timeline events/callout.*split'):
+            builder.build(self.source,self.root/'overfull')
+        self.assertFalse((self.root/'overfull').exists())
 
     def test_invalid_numbers_and_missing_units_fail_before_writing(self):
         for bad in [float('nan'),float('inf'),float('-inf'),True,'34',10**13]:
@@ -144,7 +170,7 @@ class FigureTests(unittest.TestCase):
         self.reject(lambda c:c['lessons'][0]['slides'][1]['narration'][-1].update(focus=['series-1']))
         self.reject(lambda c:c['lessons'][0]['slides'][1]['narration'][0].update(focus=['point-99']))
         for id in ['output','code']:
-            for lines in [['x']*13,['x'*101],['x'*100]*6]:
+            for lines in [['x']*13,['x'*101],['x'*100]*12]:
                 with self.subTest(component=id,lines=len(lines)):
                     self.data=figure_course();slide=self.slide(id)
                     if id=='code':slide['code']=lines
@@ -279,7 +305,7 @@ class TeachingImageTests(unittest.TestCase):
         self.tmp=tempfile.TemporaryDirectory();self.root=Path(self.tmp.name)
         im=Image.new('RGB',(800,450),'#eeeeee');d=ImageDraw.Draw(im);d.rectangle((80,90,320,270),fill='#5da969');d.rectangle((480,90,720,270),fill='#a25c5c');im.save(self.root/'layout.png')
         self.data=fixture('image-course');s=self.data['lessons'][0]['slides'][0]
-        s.update(type='image',visual={'src':'layout.png','alt':'Two routes with a visible boundary','description':'Compare the open left route with the blocked right route.','source':'Synthetic layout, authored for this test','rights':'Original test illustration; redistribution permitted','regions':[{'id':'open','label':'Open route','x':.1,'y':.2,'width':.3,'height':.4}]})
+        s.update(type='image',visual={'src':'layout.png','alt':'Two routes with a visible boundary','description':'Open vs blocked','source':'Synthetic layout, authored for this test','rights':'Original test illustration; redistribution permitted','regions':[{'id':'open','label':'Open route','x':.1,'y':.2,'width':.3,'height':.4}]})
         s['narration'][0]['focus']=['image','region-open'];self.slide=s
     def tearDown(self):self.tmp.cleanup()
     def test_safe_offline_image_and_actual_aspect_ratio_with_no_source_mutation(self):
@@ -289,13 +315,42 @@ class TeachingImageTests(unittest.TestCase):
         runtime=builder.payload(self.data,self.data['lessons'][0],self.root)
         image=runtime['slides'][0]
         self.assertTrue(image['visual']['src'].startswith('data:image/png;base64,'));self.assertEqual(image['visual']['aspect_ratio'],1)
-        markup=svg(0,image,responsive=True);self.assertIn('data-focus-key="region-open"',markup);self.assertIn('Open route',markup);self.assertIn('redistribution permitted',markup)
+        markup=svg(0,image,responsive=True);self.assertIn('data-focus-key="region-open"',markup);self.assertIn('Open route',markup);self.assertIn('redistribution permitted',table(image))
         self.assertEqual(self.slide['visual']['src'],'layout.png')
         source=self.root/'course.json';source.write_text(json.dumps(self.data));builder.build(source,self.root/'built')
         page=(self.root/'built/index.html').read_text();self.assertIn('data:image/png;base64,',page)
         fallback=page.split('<noscript>')[1].split('</noscript>')[0];self.assertIn('<image ',fallback)
         from distribution import read_manifest
         manifest=read_manifest(self.root/'built/index.html');self.assertNotIn('layout.png',json.dumps(manifest))
+    def test_tall_two_panel_composite_rejected_and_separate_scene_assets_pass(self):
+        from PIL import Image,ImageDraw
+        im=Image.new('RGB',(1600,2704),'white');draw=ImageDraw.Draw(im)
+        draw.rectangle((50,50,1550,1250),outline='black',width=10)
+        draw.rectangle((50,1350,1550,2550),outline='black',width=10)
+        draw.text((80,2600),'Long provenance / detailed legend',fill='black')
+        im.save(self.root/'layout.png')
+        self.data['lessons'][0]['notes']='Full source and rights.\n'*150
+        source=self.root/'course.json';source.write_text(json.dumps(self.data))
+        with self.assertRaisesRegex(ValueError,'slide slide-1: image region.*split'):
+            builder.build(source,self.root/'rejected')
+        self.assertFalse((self.root/'rejected').exists())
+        # Explicit source reauthoring keeps both states and remaps semantic cues.
+        for name,color in [('before.png','#5da969'),('after.png','#a25c5c')]:
+            panel=Image.new('RGB',(800,450),'white');ImageDraw.Draw(panel).rectangle((80,90,320,270),fill=color);panel.save(self.root/name)
+        before=copy.deepcopy(self.slide);after=copy.deepcopy(self.slide)
+        before['visual']['src']='before.png';after['id']='after-state';after['visual']['src']='after.png'
+        before['visual']['description']='Route open';after['visual']['description']='Route blocked'
+        after['narration'][0]['id']='after-cue'
+        self.data['lessons'][0]['slides']=[before,after];source.write_text(json.dumps(self.data))
+        builder.build(source,self.root/'split')
+        for slide in [before,after]:
+            runtime=copy.deepcopy(slide);runtime['visual']['aspect_ratio']=16/9
+            root=parsed(runtime);self.assertEqual(root.get('viewBox'),'0 0 1600 900')
+            image=root.find('.//s:image',NS)
+            self.assertAlmostEqual(float(image.get('width'))/float(image.get('height')),16/9,places=5)
+        self.assertEqual(before['visual']['regions'],after['visual']['regions'])
+        self.assertIn(self.slide['visual']['rights'],(self.root/'split/index.html').read_text())
+
     def test_missing_unsafe_symlink_corrupt_and_unsupported_images_fail_before_build(self):
         (self.root/'bad.svg').write_text('<svg/>');(self.root/'corrupt.png').write_text('not an image');(self.root/'link.png').symlink_to(self.root/'layout.png')
         for name in ['missing.png','../layout.png','/etc/passwd','link.png','bad.svg','corrupt.png']:

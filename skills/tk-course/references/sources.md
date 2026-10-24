@@ -40,3 +40,16 @@ measured. Omit Marp, a hosted LMS, automatic mastery scoring, accounts and a sha
   Keep course-local progress and HTML-only distribution. Omit a program runtime, automatic
   sequencing, transcript recovery and inferred consent; this contract comes from the explicit
   reusable creator workflow, not course-builder upstream behavior.
+
+- Creator incident (2026-10-24): the supplied evidence distinguishes a course-local auto-height
+  override from shared canvas/evaluation gaps. Adapt fixed 16:9 media, intrinsic image containment,
+  semantic splitting and whole-frame acceptance; keep independently scrolling documents. This
+  deliberately changes the former content-grown/portrait renderer policy. The original course
+  and its prior receipts were not modified or independently recovered by this maintenance.
+- Rechecked primary upstream HEAD on 2026-10-24:
+  [course-builder slide-authoring@1913b09](https://github.com/tobyilee/course-builder/blob/1913b09bd1bf947b5ee2d1a75eab4396e669fbd3/.claude/skills/slide-authoring/SKILL.md).
+  Keep single-beat/type focus and cue remapping after slide changes; adapt semantic splitting and
+  source-only editing. Omit Marp, fixed slide counts and character-count-only acceptance. This
+  source does not explicitly mandate 16:9; upstream runtime/evals were not executed.
+  The fixed canvas is the creator's requested course-media policy, not a universal pedagogical
+  optimum or a measured learning-effect claim.

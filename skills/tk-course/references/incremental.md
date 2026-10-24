@@ -169,6 +169,13 @@ add meaningful supported figures only there, updating descriptions, provenance, 
 If authored input or prior media identity is missing, report the required input rather than
 claiming automatic recovery. Image-byte changes at the same path enter the persisted fingerprint.
 
+For legacy growing/portrait slide media, inspect the source and split overfull content into
+meaningful questions/states on the fixed 16:9 canvas. Preserve layout/entity IDs across A/B scenes;
+remap each cue's order, caption and emphasis target to its scene and verify the actual clips.
+Removing a height override while containing the same unreadably dense composite is insufficient;
+opening a scroller is also insufficient. Validate the complete media frame in fresh staging at
+each supported viewport before replacement, with independent notes/transcript scrolling intact.
+
 Reuse raw/normalized cue audio when the explanation still matches the new figure. Synthesize only
 changed speech at new paths and update its caption/transcript/targets together; never split audio
 by character-count timing. Pacing alone requires no synthesis or learning-content revision.

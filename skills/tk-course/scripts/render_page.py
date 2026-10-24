@@ -85,7 +85,7 @@ def render(data):
     <noscript><section class="material-panel"><h2>JavaScript 없이 읽는 강의 원문</h2>{''.join('<h3>'+h(s['title'])+'</h3><p>'+h(s['transcript'])+'</p>' for s in slides)}<p>{h(data['video_transcript'])}</p><video controls preload="none" aria-label="강의 영상"></video></section></noscript>
     </div></main></section><noscript><style>#player-page[hidden],#panel-quiz[hidden],#panel-sources[hidden]{{display:block!important}}#grade,#quiz-result{{display:none}}</style></noscript><script type="application/json" id="lesson-data">{json.dumps(data,ensure_ascii=False).replace('<','\\u003c')}</script><script>{core}</script><script>{model}</script><script>{narration_script}</script><script>{video_script}</script><script>{presentation_script}</script><script>{controls_script}</script><script>{seek_script}</script><script>{shell_model}</script><script>{theme_script}</script><script>{preferences_script}</script><script>{script}</script></body></html>'''
     import re
-    figures=''.join('<details class="figure-values"><summary>'+h(s['title'])+' · 원본 데이터</summary>'+figure_table(s)+'</details>' for s in slides if figure_table(s))
+    figures=''.join('<details class="figure-values" data-figure-id="'+h(s['id'],quote=True)+'"><summary>'+h(s['title'])+' · 원본 데이터</summary>'+figure_table(s)+'</details>' for s in slides if figure_table(s))
     notes='<h2>학습 노트</h2><p id="reading-note">'+h(data['notes'])+'</p>'+figures
     html=re.sub(r'(<div class="material-panel" id="panel-notes"[^>]*>).*?(</div>)',lambda m:m[1]+notes+m[2],html,flags=re.S)
     html=html.replace('이제 다른 응답 순서에서도 예측해 보세요.','배운 내용을 적용해 보세요.').replace('이해 확인에서 새로운 응답 순서를 예측하고, 코스 홈에서 학습 진도를 확인하세요.','이해 확인을 마친 뒤 완료 여부를 직접 표시하세요.')

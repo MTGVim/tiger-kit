@@ -110,10 +110,9 @@ svg[data-follow-cue] .explain-focus[data-focused="true"]>.code-focus{opacity:1}
 #media-viewport .lesson-slide svg{width:100%;height:100%;display:block}
 #stage{container-type:inline-size}
 #media-viewport .lesson-slide svg.course-visual-narrow{display:none}
-#media-viewport[data-figure="true"]{aspect-ratio:1600/1100}
 #stage>#live-caption{position:static;transform:none;max-width:100%;width:100%;padding:12px 4px 0}
 .figure-values{margin:14px 0}.figure-values table{width:100%;border-collapse:collapse}.figure-values th,.figure-values td{padding:8px;border:1px solid var(--line);text-align:left;overflow-wrap:anywhere}.figure-values pre{white-space:pre-wrap;overflow-wrap:anywhere}
-@container(max-width:600px){#media-viewport[data-figure="true"]{aspect-ratio:var(--figure-ratio,760/1100)}#media-viewport .lesson-slide svg.course-visual-wide{display:none}#media-viewport .lesson-slide svg.course-visual-narrow{display:block}}
+@container(max-width:600px){#media-viewport .lesson-slide svg.course-visual-wide{display:none}#media-viewport .lesson-slide svg.course-visual-narrow{display:block}}
 #live-caption{position:absolute;left:50%;bottom:4.8%;transform:translateX(-50%);z-index:3;max-width:92%;width:max-content;margin:0;padding:0;border:0;border-radius:0;background:transparent;color:#fff;text-align:center;pointer-events:none}
 #live-caption p#caption-text{display:inline-block;margin:0;padding:.24em .55em;background:rgba(0,0,0,var(--caption-opacity,.5));color:#fff;font-size:clamp(18px,1.3vw,24px);font-weight:500;line-height:1.5;border-radius:6px;text-shadow:0 1px 2px #000;word-break:keep-all;overflow-wrap:anywhere}
 #controls{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 2px 0;background:transparent;color:#f4f7fc;border-radius:0;flex-wrap:wrap}
@@ -140,7 +139,7 @@ svg[data-follow-cue] .explain-focus[data-focused="true"]>.code-focus{opacity:1}
 @media(max-width:700px){#stage{padding:8px}#controls{gap:4px}.controls-right{gap:2px}#controls .icon-button,#controls #play{width:40px;height:40px;min-width:40px;padding:8px}#controls #speed{min-width:65px;height:40px;padding:8px 4px;font-size:16px}#speed-icon{display:none}#controls #pos{margin-left:5px}#playback-settings.settings-panel{right:8px;bottom:56px;width:calc(100% - 16px)}#live-caption p#caption-text{font-size:18px}}
 @media(max-width:600px){.controls-right{flex-basis:100%;justify-content:flex-end}#playback-settings.settings-panel{bottom:52px}}
 #stage:is(:fullscreen,.stage-expanded){display:flex;flex-direction:column;width:100vw;height:100dvh;padding:12px;gap:0;background:#020409;overflow:hidden;border:0;border-radius:0}
-#stage:is(:fullscreen,.stage-expanded) #media-viewport{flex:1;min-height:0;aspect-ratio:auto;width:100%;background:#020409}
+#stage:is(:fullscreen,.stage-expanded) #media-viewport{flex:none;min-height:0;aspect-ratio:16/9;width:var(--fullscreen-media-width,100%);height:auto;align-self:center;background:#020409}
 #stage:is(:fullscreen,.stage-expanded) #slide-wrap,#stage:is(:fullscreen,.stage-expanded) #video-wrap{aspect-ratio:auto;min-height:0;flex:none;background:transparent}
 #stage:is(:fullscreen,.stage-expanded) .lesson-slide svg{object-fit:contain;max-height:100%;width:100%;height:100%}
 #stage:is(:fullscreen,.stage-expanded) #controls{flex:none;padding-top:10px}#stage:is(:fullscreen,.stage-expanded) #end-panel{display:none}
@@ -272,7 +271,7 @@ body.lesson-view aside#toc{position:relative;top:auto;min-height:0;height:100%;m
 #stage:is(:fullscreen,.stage-expanded){display:grid;grid-template-columns:minmax(0,1fr);align-items:stretch;box-sizing:border-box}
 #stage:is(:fullscreen,.stage-expanded).with-transcript{grid-template-columns:minmax(0,1fr) minmax(220px,28%);gap:12px}
 #stage:is(:fullscreen,.stage-expanded) #stage-main{min-height:0;display:flex;flex-direction:column;overflow:auto}
-#stage:is(:fullscreen,.stage-expanded) #media-viewport{min-height:120px;flex:1}
+#stage:is(:fullscreen,.stage-expanded) #media-viewport{min-height:0;flex:none}
 #stage:is(:fullscreen,.stage-expanded) #transcript-rail{max-height:100%;height:100%;min-height:0}
 #stage:is(:fullscreen,.stage-expanded) #transcript-toggle{display:inline-flex}
 @media(max-width:1100px){

@@ -83,8 +83,8 @@ def contract(slide):
         legacy=kind=='code' and len(lines)<=6 and all(isinstance(line,str) and len(line)<=70 for line in lines) and all(set(c.get('focus',[]))<={'request-id','await','compare','render','takeaway'} for c in slide['narration'])
         if any(not isinstance(line,str) or '\n' in line or '\r' in line or width(line)>(140 if legacy else 100) or any(ord(c)<32 and c!='\t' for c in line) for line in lines):
             raise ValueError('code/output line budget exceeded; split the slide')
-        if not any(line.strip() for line in lines) or sum(len(wrap(line,28)) for line in lines)>(30 if legacy else 20):
-            raise ValueError('code/output exceeds the narrow-screen row budget; split the slide')
+        if not any(line.strip() for line in lines):
+            raise ValueError('code/output has no visible text; split the slide')
         aliases={0:'request-id',1:'await',2:'compare',3:'compare',4:'render',5:'compare'}
         for i,line in enumerate(lines):
             if line.strip():add('line-'+str(i+1),*([aliases[i]] if kind=='code' and i in aliases else []))
@@ -141,41 +141,48 @@ def group(slide,key,parts,aliases=()):
     return '<g class="explain-focus" data-focus-key="'+key+'" data-emphasis="'+' '.join(indices)+'">'+''.join(parts)+'</g>'
 
 def render(slide,index,compact=False):
-    """A second, purpose-built portrait layout keeps mobile labels readable."""
-    v=slide['visual'];kind=slide['type'];w=760 if compact else 1600;m=52 if compact else 90;right=w-m
-    size=36 if compact else 34;title_size=50 if compact else 56
-    parts=[box(0,0,w,2500,'var(--slide-paper)'),t(m,66,slide.get('eyebrow',''),28,fill='var(--slide-muted)')]
-    title_step=line_step(title_size,64)
-    if kind!='cover':parts.append(multi(m,144,slide['title'],26 if compact else 90,title_size,title_step,weight='700'))
-    title_rows=len(wrap(slide['title'],26 if compact else 90))
-    top=max(260,144+(title_rows-1)*title_step+100) if kind!='cover' else 260;bottom=900
+    """Ordinary media has one 1600x900 canvas; density never changes its bounds."""
+    v=slide['visual'];kind=slide['type'];parts=[];m=90;right=1510;top=260;end=805
+    def fail(region):
+        raise ValueError(f"slide {slide['id']}: {region} exceeds fixed 1600x900 canvas; split meaningful questions or states")
+    def text_at(x,y,value,size=34,limit=None,step=None,**kw):
+        # Stable type sizes: exceeding a region is an authoring error, never auto-fit.
+        step=step or line_step(size,0)
+        limit=limit or max(1,int((right-x)/(size*.56)))
+        lines=wrap(value,limit)
+        if y-size<0 or y+(len(lines)-1)*step+size*.4>end:fail('text '+str(value)[:48])
+        return multi(x,y,value,limit,size,step,**kw)
     def g(key,*items,aliases=()):return group(slide,key,list(items),aliases)
+    parts=[box(0,0,1600,900,'var(--slide-paper)'),'<g data-slide-metadata="true">'+t(m,66,slide.get('eyebrow',''),28,fill='var(--slide-muted)')+'</g>']
+    if kind!='cover':
+        title=wrap(slide['title'],80)
+        if len(title)>2:fail('title')
+        parts.append(text_at(m,144,slide['title'],56,80,84,weight='700'))
+        top=max(260,144+(len(title)-1)*84+100)
+    source=v.get('source','')
     if kind=='image':
-        iw=right-m
-        ih=iw/v.get('aspect_ratio',16/9)
-        parts.append(g('image',f'<image x="{m}" y="{top}" width="{iw}" height="{ih}" href="{escape(v["src"],quote=True)}" preserveAspectRatio="xMidYMid meet" aria-label="{escape(v["alt"],quote=True)}"/>'))
+        # Image pixels keep their intrinsic ratio in a fixed region. The adjacent rail
+        # carries short teaching labels; full provenance lives in accessible notes.
+        ratio=number(v.get('aspect_ratio',16/9))
+        if ratio<=0:fail('image aspect ratio')
+        aw=920;ah=end-top-10;iw=min(aw,ah*ratio);ih=iw/ratio
+        if iw<aw*.5:fail('image region (portrait composite needs reauthoring)')
+        x=m+(aw-iw)/2;y=top+(ah-ih)/2
+        parts.append(g('image',f'<image x="{x:g}" y="{y:g}" width="{iw:g}" height="{ih:g}" href="{escape(v["src"],quote=True)}" preserveAspectRatio="xMidYMid meet" aria-label="{escape(v["alt"],quote=True)}"/>'))
         for i,r in enumerate(v.get('regions',[]),1):
-            x=m+r['x']*iw;y=top+r['y']*ih
-            parts.append(g('region-'+r['id'],f'<rect class="focus-halo" x="{x}" y="{y}" width="{r["width"]*iw}" height="{r["height"]*ih}" fill="none" stroke="var(--slide-accent)" stroke-width="4"/>',t(x+6,y+32,str(i),28,fill='var(--slide-accent)',weight='700')))
-        y=top+ih+64;limit=36 if compact else 110
-        parts.append(multi(m,y,v['description'],limit,32,48));y+=len(wrap(v['description'],limit))*48+16
-        for i,r in enumerate(v.get('regions',[]),1):
-            parts.append(multi(m,y,str(i)+'. '+r['label'],limit,30,46));y+=len(wrap(str(i)+'. '+r['label'],limit))*46+8
-        parts.append(multi(m,y,'이용 범위: '+v['rights'],limit,28,42));y+=len(wrap('이용 범위: '+v['rights'],limit))*42
-        bottom=max(bottom,y+130);source=v['source']
+            rx=x+r['x']*iw;ry=y+r['y']*ih
+            parts.append(g('region-'+r['id'],f'<rect class="focus-halo" x="{rx:g}" y="{ry:g}" width="{r["width"]*iw:g}" height="{r["height"]*ih:g}" fill="none" stroke="var(--slide-accent)" stroke-width="4"/>',t(rx+6,ry+56,str(i),56,fill='var(--slide-accent)',weight='700')))
+        y=top+56
+        for value in [v['description']]+[str(i)+'. '+r['label'] for i,r in enumerate(v.get('regions',[]),1)]:
+            parts.append(text_at(1060,y,value,56,14,84));y+=len(wrap(value,14))*84+20
+        source='강의 노트에 권리 및 원본 출처 수록'
     elif kind in {'bar','line','stacked'}:
-        data=v['data'];unit=v['unit'];bottom=1100 if compact else 940
-        ylabel=v['y_label']+' · '+unit;xlabel=v['x_label']+(' · '+v['x_unit'] if kind=='line' else '')
-        if compact:
-            yr=len(wrap(ylabel,38));xr=len(wrap(xlabel,38))
-            axis_step=line_step(32,42)
-            parts += [multi(m,top,ylabel,38,32,axis_step),multi(m,top+yr*axis_step+16,xlabel,38,32,axis_step)]
-            top+=max(0,(yr+xr)*axis_step+32-80)
-        else:parts += [t(m,top,ylabel,32),t(right,top+40,xlabel,32,'end')]
+        data=v['data'];unit=v['unit']
+        parts += [text_at(m,top,v['y_label']+' · '+unit,32,70),text_at(right,top+40,v['x_label']+(' · '+v['x_unit'] if kind=='line' else ''),32,70,anchor='end')]
         if kind=='line':
             points=[p for series in data for p in series['points']];xs=[p['x'] for p in points];ys=[p['y'] for p in points]
             low=min(0,min(ys));high=max(0,max(ys));span=high-low or 1
-            left=m+72;xr=right-24;yt=top+104;yb=top+(370 if compact else 410)
+            left=m+72;xr=850;yt=top+104;yb=top+440
             px=lambda x:left+(x-min(xs))/(max(xs)-min(xs))*(xr-left)
             py=lambda y:yb-(y-low)/span*(yb-yt)
             for j in range(4):
@@ -183,142 +190,124 @@ def render(slide,index,compact=False):
                 parts += [path(f'M{left:g} {y:g}H{xr:g}'),t(left-12,y+10,format(value,'.3g'),28,'end')]
             ticks=data[0]['points'];last_right=-math.inf
             for pi,p in enumerate(ticks):
-                value=str(p['x']);x=px(p['x']);size_estimate=width(value)*23
+                value=str(p['x']);x=px(p['x']);estimate=width(value)*23
                 anchor='start' if pi==0 else 'end' if pi==len(ticks)-1 else 'middle'
-                start=x if anchor=='start' else x-size_estimate if anchor=='end' else x-size_estimate/2
-                end=start+size_estimate
-                if pi in (0,len(ticks)-1) or start>last_right+12 and end<xr-width(str(ticks[-1]['x']))*23-12:
-                    parts.append(t(x,yb+45,value,32,anchor));last_right=end
-            legend_limit=18 if compact else 40
-            legend_step=line_step(32 if compact else size,42);value_step=line_step(32 if compact else 34,42)
-            for si,series in enumerate(data):parts.append(multi(m if si==0 else w/2+10,yb+110,series['label'],legend_limit,32 if compact else size,legend_step,weight='600'))
-            rowtop=yb+110+max(len(wrap(series['label'],legend_limit)) for series in data)*legend_step+24
-            rowstep=max(60,max(len(wrap(str(p['x'])+': '+fmt(p['y'])+' '+unit,legend_limit)) for p in points)*value_step+16)
+                start=x if anchor=='start' else x-estimate if anchor=='end' else x-estimate/2
+                if pi in (0,len(ticks)-1) or start>last_right+12 and start+estimate<xr-width(str(ticks[-1]['x']))*23-12:
+                    parts.append(t(x,yb+48,value,32,anchor));last_right=start+estimate
             for si,series in enumerate(data,1):
-                color='var(--slide-accent)' if si==1 else 'var(--slide-muted)'
+                color='var(--slide-accent)' if si==1 else 'var(--slide-muted)';label_x=930+(si-1)*300
+                parts.append(text_at(label_x,top+110,series['label'],34,16,51,weight='600'))
+                rowtop=top+110+max(len(wrap(s['label'],16)) for s in data)*51+28
                 d='M'+' L'.join(f'{px(p["x"]):g} {py(p["y"]):g}' for p in series['points'])
-                # A focused point also brings its trajectory into context; series focus covers every point.
                 indices=[str(i) for i,c in enumerate(slide['narration']) if 'series-'+str(si) in c.get('focus',[]) or any('point-'+str((si-1)*len(series['points'])+pi+1) in c.get('focus',[]) for pi in range(len(series['points'])))]
                 parts.append('<g class="explain-focus" data-focus-key="series-'+str(si)+'" data-emphasis="'+' '.join(indices)+'">'+path(d,color,'10 8' if si>1 else '')+'</g>')
+                rowstep=max(62,max(len(wrap(str(p['x'])+': '+fmt(p['y'])+' '+unit,16)) for p in points)*51+12)
                 for pi,p in enumerate(series['points']):
-                    key='point-'+str((si-1)*len(series['points'])+pi+1);x=px(p['x']);y=py(p['y']);value=fmt(p['y'])+' '+unit
-                    mark=f'<circle class="chart-mark" cx="{x:g}" cy="{y:g}" r="10" fill="{color}"/>' if si==1 else box(x-9,y-9,18,18,color)
-                    label_x=m if si==1 else w/2+10
-                    row=str(p['x'])+': '+value
-                    parts.append(g(key,'<title>'+escape(series['label']+' · '+str(p['x'])+' '+v['x_unit']+' · '+str(p['y'])+' '+unit)+'</title>',mark,multi(label_x,rowtop+pi*rowstep,row,legend_limit,32 if compact else 34,value_step),aliases=('series-'+str(si),)))
-            bottom=max(bottom,rowtop+len(data[0]['points'])*rowstep+110)
+                    x=px(p['x']);y=py(p['y']);key='point-'+str((si-1)*len(series['points'])+pi+1)
+                    mark=f'<circle class="chart-mark" cx="{x:.8f}" cy="{y:.8f}" r="10" fill="{color}"/>' if si==1 else box(x-9,y-9,18,18,color)
+                    parts.append(g(key,'<title>'+escape(series['label']+' · '+str(p['x'])+' '+v['x_unit']+' · '+str(p['y'])+' '+unit)+'</title>',mark,text_at(label_x,rowtop+pi*rowstep,str(p['x'])+': '+fmt(p['y'])+' '+unit,34,16,51),aliases=('series-'+str(si),)))
         elif kind=='bar':
             vals=[d['value'] for d in data];low=min(0,min(vals));high=max(0,max(vals));span=high-low or 1
             horizontal=v.get('orientation','vertical')=='horizontal'
             if horizontal:
-                left=m;xr=right;scale=lambda n:left+(n-low)/span*(xr-left);zero=scale(0);rowtop=top+115;text_step=line_step(32,42)
+                left=620;xr=right;scale=lambda n:left+(n-low)/span*(xr-left);zero=scale(0);y=top+115
                 for i,item in enumerate(data):
-                    end=scale(item['value']);value=fmt(item['value'])+' '+unit;limit=36 if compact else 100
-                    value_y=rowtop+len(wrap(item['label'],limit))*text_step+14;bar_y=value_y+len(wrap(value,limit))*text_step+8
-                    parts.append(g('bar-'+str(i+1),'<title>'+escape(item['label']+' · '+str(item['value'])+' '+unit)+'</title>',box(min(zero,end),bar_y,abs(end-zero),38,'var(--slide-accent)'),multi(m,rowtop,item['label'],limit,32,text_step),multi(m,value_y,value,limit,32,text_step),path(f'M{zero:g} {bar_y-10:g}V{bar_y+48:g}','var(--slide-text)'),t(zero,bar_y+84,'0',28,'middle')))
-                    rowtop=bar_y+145
-                bottom=max(bottom,rowtop+100)
+                    labelrows=len(wrap(item['label'],26));rowheight=max(130,labelrows*48+40)
+                    if y+rowheight-20>end:fail('horizontal bar rows')
+                    value=fmt(item['value'])+' '+unit;target=scale(item['value'])
+                    parts.append(g('bar-'+str(i+1),'<title>'+escape(item['label']+' · '+str(item['value'])+' '+unit)+'</title>',box(min(zero,target),y+15,abs(target-zero),38,'var(--slide-accent)'),text_at(m,y,item['label'],32,26,48),text_at(m,y+labelrows*48,value,32,26,48),path(f'M{zero:g} {y+5:g}V{y+65:g}','var(--slide-text)'),t(zero,y+100,'0',28,'middle')))
+                    y+=rowheight
             else:
-                left=m+70;xr=right;yt=top+110;yb=top+480;scale=lambda n:yb-(n-low)/span*(yb-yt);zero=scale(0);step=(xr-left)/len(data)
+                left=m+70;xr=right;yt=top+110;yb=top+375;scale=lambda n:yb-(n-low)/span*(yb-yt);zero=scale(0);step=(xr-left)/len(data)
                 for j in range(4):
                     val=low+span*j/3;y=scale(val)
                     parts.extend([path(f'M{left:g} {y:g}H{xr:g}'),t(left-12,y+10,format(val,'.3g'),28,'end')])
-                labelrows=max(len(wrap(item['label'],max(4,int(step/19)))) for item in data)
-                label_step=line_step(30,38);value_step=line_step(32,40);legend_top=yb+95+labelrows*label_step
                 for i,item in enumerate(data):
-                    x=left+step*(i+.5);end=scale(item['value']);bw=step*.55
-                    value=item['label']+' · '+fmt(item['value'])+' '+unit;limit=38 if compact else 100
-                    parts.append(g('bar-'+str(i+1),'<title>'+escape(item['label']+' · '+str(item['value'])+' '+unit)+'</title>',box(x-bw/2,min(zero,end),bw,abs(end-zero),'var(--slide-accent)'),multi(x,yb+55,item['label'],max(4,int(step/19)),30,label_step,anchor='middle'),multi(m,legend_top,value,limit,32,value_step)))
-                    legend_top+=len(wrap(value,limit))*value_step+24
+                    x=left+step*(i+.5);target=scale(item['value']);bw=step*.55;limit=max(4,int(step/19))
+                    y=yb+55+len(wrap(item['label'],limit))*48
+                    parts.append(g('bar-'+str(i+1),'<title>'+escape(item['label']+' · '+str(item['value'])+' '+unit)+'</title>',box(x-bw/2,min(zero,target),bw,abs(target-zero),'var(--slide-accent)'),text_at(x,yb+55,item['label'],30,limit,48,anchor='middle'),text_at(x,y,fmt(item['value'])+' '+unit,32,limit,48,anchor='middle')))
                 parts.append(path(f'M{left:g} {zero:g}H{xr:g}','var(--slide-text)'))
-                bottom=max(bottom,legend_top+100)
         else:
             total=sum(item['value'] for item in data);x=m;scale=(right-m)/total
             parts.append(t(m,top+80,'합계 '+fmt(total)+' '+unit,36,weight='600'))
-            legend_y=top+285;value_step=line_step(size,46)
             for i,item in enumerate(data):
-                span=item['value']*scale;value=str(i+1)+'. '+item['label']+' · '+fmt(item['value'])+' '+unit+' ('+fmt(round(item['value']/total*100,1))+'%)';limit=36 if compact else 100
-                # The legend carries exact values even when a segment is too small to label inside.
-                parts.append(g('segment-'+str(i+1),'<title>'+escape(item['label']+' · '+str(item['value'])+' '+unit)+'</title>',box(x,top+150,span,72,'var(--slide-accent)' if i==0 else 'var(--slide-muted)'),t(x+span/2,top+198,str(i+1) if span>40 else '',30,'middle',fill='var(--slide-paper)'),multi(m,legend_y,value,limit,size,value_step)))
+                span=item['value']*scale;lx=m+(i%2)*730;ly=top+310+(i//2)*100
+                value=str(i+1)+'. '+item['label']+' · '+fmt(item['value'])+' '+unit+' ('+fmt(round(item['value']/total*100,1))+'%)'
+                parts.append(g('segment-'+str(i+1),'<title>'+escape(item['label']+' · '+str(item['value'])+' '+unit)+'</title>',box(x,top+150,span,72,'var(--slide-accent)' if i==0 else 'var(--slide-muted)'),t(x+span/2,top+198,str(i+1) if span>40 else '',30,'middle',fill='var(--slide-paper)'),text_at(lx,ly,value,34,36,51)))
                 x+=span
-                legend_y+=len(wrap(value,limit))*value_step+32
-            parts += [t(m,top+140,'0',28),t(right,top+140,fmt(total),28,'end')];bottom=max(bottom,legend_y+100)
-        source=v['source']
+            parts += [t(m,top+140,'0',28),t(right,top+140,fmt(total),28,'end')]
     elif kind in {'code','output'}:
-        lines=slide['code'] if kind=='code' else v['data'];rowtop=top+20;step=line_step(34 if compact else 22,48 if compact else 45)
-        displayrows=sum(len(wrap(line,28 if compact else 100)) for line in lines);height=displayrows*step+42
-        parts.append(box(m,top-20,right-m,height,'var(--slide-soft)'))
+        lines=slide['code'] if kind=='code' else v['data'];rowtop=top+10;step=40
+        displayrows=sum(len(wrap(line,100)) for line in lines)
+        if rowtop+(displayrows-1)*step+40+(100 if kind=='code' else 0)>end:fail('code/output rows')
+        parts.append(box(m,top-30,right-m,displayrows*step+40,'var(--slide-soft)'))
         aliases={0:'request-id',1:'await',2:'compare',3:'compare',4:'render',5:'compare'}
         for i,line in enumerate(lines):
-            wraps=wrap(line,28 if compact else 100);fragments=[t(m+16,rowtop,str(i+1),28,fill='var(--slide-muted)')]
+            wraps=wrap(line,100);fragments=[t(m+16,rowtop,str(i+1),28,fill='var(--slide-muted)')]
             for j,row in enumerate(wraps):
-                fragments.append(f'<text x="{m+70}" y="{rowtop+j*step:g}" font-size="{34 if compact else 22}" font-family="monospace" fill="var(--slide-text)" xml:space="preserve" style="white-space:pre">'+escape(row)+'</text>')
-            parts.append(g('line-'+str(i+1),box(m+4,rowtop-32,right-m-8,len(wraps)*step,'none'),*fragments,aliases=([aliases[i]] if kind=='code' and i in aliases else [])))
+                fragments.append(f'<text x="{m+70}" y="{rowtop+j*step:g}" font-size="22" font-family="monospace" fill="var(--slide-text)" xml:space="preserve" style="white-space:pre">'+escape(row)+'</text>')
+            parts.append(g('line-'+str(i+1),box(m+4,rowtop-28,right-m-8,len(wraps)*step,'none'),*fragments,aliases=([aliases[i]] if kind=='code' and i in aliases else [])))
             rowtop+=len(wraps)*step
-        bottom=max(1000,rowtop+210)
-        if kind=='code':
-            footnote_step=line_step(32,42)
-            parts.append(g('takeaway',multi(m,rowtop+80,v['footnote'],36 if compact else 110,32,footnote_step)))
-            bottom=max(bottom,rowtop+80+len(wrap(v['footnote'],36 if compact else 110))*footnote_step+80);source=''
-        else:source=v['source']
+        if kind=='code':parts.append(g('takeaway',text_at(m,rowtop+50,v['footnote'],32,78,48)))
     elif kind=='timeline':
-        events,legacy=timeline(slide);lanes=v['lanes'];col=(right-m)/len(lanes);limit=max(8,int(col/19));text_step=line_step(30,38);rowheight=max(70,max(len(wrap(e['label'],limit)) for e in events)*text_step+24)
-        headerheight=max(len(wrap(lane,limit)) for lane in lanes)*text_step;eventtop=top+headerheight+55
+        events,legacy=timeline(slide);lanes=v['lanes'];col=(right-m)/len(lanes);limit=max(8,int(col/19));step=45
+        headerheight=max(len(wrap(lane,limit)) for lane in lanes)*step;eventtop=top+headerheight+45
+        rowheight=max(62,max(len(wrap(e['label'],limit)) for e in events)*step+18)
+        tail=eventtop+(len(events)-1)*rowheight+rowheight-15
+        if tail+(83 if v.get('callout') else 0)>end:fail('timeline events/callout')
         for i,lane in enumerate(lanes):
-            x=m+col*(i+.5);parts.extend([multi(x,top,lane,limit,30,text_step,anchor='middle'),path(f'M{x:g} {top+headerheight:g}V{eventtop+len(events)*rowheight:g}')])
+            x=m+col*(i+.5);parts.extend([text_at(x,top,lane,30,limit,step,anchor='middle'),path(f'M{x:g} {top+headerheight:g}V{tail:g}')])
         for i,event in enumerate(events):
             x=m+col*(event['lane']+.5);y=eventtop+i*rowheight
-            parts.append(g('event-'+str(i+1),box(x-col*.45,y-38,col*.9,rowheight-15),multi(x,y,event['label'],max(8,int(col/19)),30,text_step,anchor='middle'),aliases=([['request-a','request-b','response-b','response-a'][i]] if legacy else [])))
-        bottom=max(1000,eventtop+len(events)*rowheight+200)
-        if v.get('callout'):
-            callout_top=bottom-140;callout_step=line_step(32,42)
-            parts.append(g('callout',multi(m,callout_top,v['callout'],36 if compact else 110,32,callout_step),aliases=(['overwrite'] if legacy else [])))
-            bottom=max(bottom,callout_top+len(wrap(v['callout'],36 if compact else 110))*callout_step+50)
-        source=''
+            parts.append(g('event-'+str(i+1),box(x-col*.45,y-35,col*.9,rowheight-12),text_at(x,y,event['label'],30,limit,step,anchor='middle'),aliases=([['request-a','request-b','response-b','response-a'][i]] if legacy else [])))
+        if v.get('callout'):parts.append(g('callout',text_at(m,tail+70,v['callout'],32,78,48),aliases=(['overwrite'] if legacy else [])))
     elif kind=='hook':
-        # Every card is one focus group, including its background and label.
-        cardtop=top;value_step=line_step(48,58);question_step=line_step(36,46)
-        for line in v['title_lines']:
-            parts.append(multi(m,cardtop,line,26 if compact else 72,48,value_step,weight='600'));cardtop+=len(wrap(line,26 if compact else 72))*value_step
-        cardtop+=30;cards=v['cards'];cols=1 if compact else min(2,len(cards));cw=(right-m-28*(cols-1))/cols;value_limit=int((cw-48)/34)
-        cardheight=110+max(len(wrap(c['value'],value_limit)) for c in cards)*value_step;cardstep=cardheight+24
+        y=top
+        for value in v['title_lines']:
+            parts.append(text_at(m,y,value,48,72,72,weight='600'));y+=len(wrap(value,72))*72
+        cards=v['cards'];cols=3 if len(cards)==3 else min(2,len(cards));cw=(right-m-28*(cols-1))/cols;limit=int((cw-48)/27)
+        cardheight=95+max(len(wrap(c['value'],limit)) for c in cards)*72
+        cardtop=y+10;cardstep=cardheight+24
         for i,card in enumerate(cards):
-            x=m+(i%cols)*(cw+28);y=cardtop+(i//cols)*cardstep
-            parts.append(g('card-'+str(i+1),box(x,y,cw,cardheight),t(x+24,y+48,card['label'],32,fill='var(--slide-muted)'),multi(x+24,y+116,card['value'],value_limit,48,value_step,weight='700'),aliases=([['first-search','latest-search'][i]] if i<2 else [])))
-        question_top=cardtop+math.ceil(len(cards)/cols)*cardstep+70;question_limit=36 if compact else 110
-        bottom=max(1000,question_top+len(wrap(v['question'],question_limit))*question_step+80)
-        parts.append(multi(m,question_top,v['question'],question_limit,36,question_step));source=''
+            x=m+(i%cols)*(cw+28);cy=cardtop+(i//cols)*cardstep
+            if cy+cardheight>end:fail('hook cards')
+            parts.append(g('card-'+str(i+1),box(x,cy,cw,cardheight),text_at(x+24,cy+45,card['label'],32,34),text_at(x+24,cy+108,card['value'],48,limit,72,weight='700'),aliases=([['first-search','latest-search'][i]] if i<2 else [])))
+        parts.append(text_at(m,cardtop+math.ceil(len(cards)/cols)*cardstep+45,v['question'],36,76,54))
     elif kind=='cover':
-        cover_step=line_step(58,74);question_step=line_step(42,58)
-        parts.append(g('title',t(m,top+80,'제 '+str(v['number'])+'강',42,fill='var(--slide-accent)'),multi(m,top+180,slide['title'],24 if compact else 80,58,cover_step,weight='700')))
-        question_top=top+180+len(wrap(slide['title'],24 if compact else 80))*cover_step+90
-        parts.append(g('question',multi(m,question_top,v['question'],30 if compact else 90,42,question_step)));bottom=max(1100 if compact else 1000,question_top+len(wrap(v['question'],30 if compact else 90))*question_step+100);source=''
+        parts.append(g('title',t(m,top+40,'제 '+str(v['number'])+'강',42,fill='var(--slide-accent)'),text_at(m,top+150,slide['title'],58,76,87,weight='700')))
+        y=top+150+len(wrap(slide['title'],76))*87+70
+        parts.append(g('question',text_at(m,y,v['question'],42,64,63)))
     elif kind=='course-map':
-        y=top;item_step=line_step(30,36)
+        y=top;step=45
         for i,item in enumerate(v['lessons'],1):
-            current=i==v['current'];badge='현재' if current else '✓ 앞서 다룸' if i<v['current'] else '다음';height=(76 if compact else 24)+len(wrap(item,34 if compact else 70))*item_step
-            parts.append(g('lesson-'+str(i),box(m,y,right-m,height,'var(--slide-soft)','var(--slide-accent)' if current else 'none'),t(m+16,y+35,str(i)+'. '+badge,27,fill='var(--slide-accent)' if current else 'var(--slide-muted)'),multi(m+(16 if compact else 230),y+(84 if compact else 42),item,34 if compact else 70,30,item_step)))
+            current=i==v['current'];badge='현재' if current else '✓ 앞서 다룸' if i<v['current'] else '다음'
+            height=20+len(wrap(item,62))*step
+            if y+height>end:fail('course-map rows')
+            parts.append(g('lesson-'+str(i),box(m,y,right-m,height,'var(--slide-soft)','var(--slide-accent)' if current else 'none'),t(m+16,y+40,str(i)+'. '+badge,27,fill='var(--slide-accent)' if current else 'var(--slide-muted)'),text_at(m+250,y+42,item,30,62,step)))
             y+=height+14
-        bottom=max(1100,y+130);source=''
     else:
-        y=top;question_step=line_step(36,46);answer_step=line_step(34,44)
+        y=top
         for i,item in enumerate(v['items'],1):
-            limit=32 if compact else 100;answer_top=52+len(wrap(item['question'],limit))*question_step+18;height=answer_top+len(wrap(item['answer'],limit))*answer_step+12
-            parts.append(g('answer-'+str(i),box(m,y,right-m,height),multi(m+24,y+52,item['question'],limit,36,question_step,weight='600'),multi(m+24,y+answer_top,item['answer'],limit,34,answer_step)))
+            answer_top=52+len(wrap(item['question'],74))*54+10;height=answer_top+len(wrap(item['answer'],78))*51+10
+            if y+height>end:fail('summary cards')
+            parts.append(g('answer-'+str(i),box(m,y,right-m,height),text_at(m+24,y+52,item['question'],36,74,54,weight='600'),text_at(m+24,y+answer_top,item['answer'],34,78,51)))
             y+=height+24
-        bottom=max(1100 if compact else 1000,y+90);source=''
     if source:
-        source_top=bottom-86;source_step=line_step(28,36);source_limit=40 if compact else 120
-        parts.append(multi(m,source_top,'출처: '+source,source_limit,28,source_step,fill='var(--slide-muted)'))
-        bottom=max(bottom,source_top+len(wrap('출처: '+source,source_limit))*source_step+44)
-    parts.append(t(right,bottom-22,str(index+1),24,'end',fill='var(--slide-muted)'))
-    parts[0]=box(0,0,w,bottom,'var(--slide-paper)')
+        source_rows=wrap('출처: '+source,100)
+        if len(source_rows)>2:fail('source footer')
+        footer=multi(m,844,('' if kind=='image' else '출처: ')+source,100,28,42,fill='var(--slide-muted)')
+        if kind=='image':footer='<a href="#panel-notes" data-figure-note="'+escape(slide['id'],quote=True)+'">'+footer+'</a>'
+        parts.append('<g data-slide-metadata="true">'+footer+'</g>')
+    parts.append('<g data-slide-metadata="true">'+t(right,878,str(index+1),24,'end',fill='var(--slide-muted)')+'</g>')
     variant='narrow' if compact else 'wide';prefix=f'slide-{index}-{variant}'
-    return f'<svg class="course-visual-{variant}" viewBox="0 0 {w} {bottom}" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="{prefix}-title {prefix}-desc" font-family="-apple-system,BlinkMacSystemFont,Apple SD Gothic Neo,Noto Sans KR,sans-serif"><title id="{prefix}-title">{escape(slide["title"])}</title><desc id="{prefix}-desc">{escape(slide["transcript"])}</desc>'+''.join(parts)+'</svg>'
+    return f'<svg class="course-visual-{variant}" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="{prefix}-title {prefix}-desc" font-family="-apple-system,BlinkMacSystemFont,Apple SD Gothic Neo,Noto Sans KR,sans-serif"><title id="{prefix}-title">{escape(slide["title"])}</title><desc id="{prefix}-desc">{escape(slide["transcript"])}</desc>'+''.join(parts)+'</svg>'
 
 def table(slide):
     """Static, keyboard-readable original values, also used by the no-JS fallback."""
     kind=slide['type'];v=slide['visual']
+    if kind=='image':
+        return '<p>'+escape(v['description'])+'</p><ol>'+''.join('<li>'+escape(r['label'])+'</li>' for r in v.get('regions',[]))+'</ol><p>이용 범위: '+escape(v['rights'])+'</p><p>출처: '+escape(v['source'])+'</p>'
     if kind not in {'bar','line','stacked','output','code'}:return ''
     if kind in {'code','output'}:
         values=slide['code'] if kind=='code' else v['data']

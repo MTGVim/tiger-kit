@@ -233,8 +233,7 @@
     const caption=$('live-caption'),viewport=$('media-viewport');
     if(dense&&caption.parentElement===viewport)viewport.after(caption);
     else if(!dense&&caption.parentElement!==viewport)viewport.append(caption);
-    const narrow=document.querySelector('.lesson-slide[data-slide="'+s.slide+'"] svg.course-visual-narrow');
-    if(narrow){const box=narrow.getAttribute('viewBox').split(' ').map(Number);viewport.style.setProperty('--figure-ratio',box[2]+'/'+box[3]);}
+    fitFullscreenMedia();
     document.querySelectorAll('.lesson-slide').forEach(el=>{
       const current=Number(el.dataset.slide)===s.slide,slide=data.slides[Number(el.dataset.slide)];
       el.querySelectorAll('svg').forEach(svg=>{
@@ -386,7 +385,19 @@
   let expanded=false,priorOverflow='',expandedFocus=null,expandedScroll=null,nativeReturn=null;
   function scrollPosition(){return {x:scrollX,y:scrollY,content:document.querySelector('.player-column').scrollTop};}
   function restorePosition(position,focus){if(focus?.isConnected)focus.focus({preventScroll:true});if(position){document.querySelector('.player-column').scrollTop=position.content;window.scrollTo(position.x,position.y);}}
-  function paintFullscreen(){const active=expanded||!!document.fullscreenElement;setControl('fullscreen',active?'restore':'fullscreen',expanded?'창 안 확대 나가기':active?'전체 화면 나가기':'전체 화면');$('fullscreen').setAttribute('aria-pressed',String(active));}
+  function fitFullscreenMedia(){
+    const stage=$('stage'),main=$('stage-main');
+    if(!expanded&&!document.fullscreenElement){stage.style.removeProperty('--fullscreen-media-width');return;}
+    // Reserve actual captions/controls/status height; the media box itself stays 16:9.
+    const viewport=$('media-viewport'),style=getComputedStyle(main);
+    const rest=[...main.children].filter(e=>e!==viewport&&getComputedStyle(e).position!=='absolute'&&getComputedStyle(e).position!=='fixed').reduce((n,e)=>{const s=getComputedStyle(e);return n+e.getBoundingClientRect().height+(parseFloat(s.marginTop)||0)+(parseFloat(s.marginBottom)||0);},0);
+    const available=Math.max(0,main.clientHeight-rest-(parseFloat(style.paddingTop)||0)-(parseFloat(style.paddingBottom)||0));
+    stage.style.setProperty('--fullscreen-media-width',Math.min(main.clientWidth,available*16/9)+'px');
+  }
+  const mediaFitObserver=new ResizeObserver(()=>requestAnimationFrame(fitFullscreenMedia));
+  mediaFitObserver.observe($('stage-main'));
+  for(const id of ['live-caption','controls','audio-progress','fullscreen-status'])mediaFitObserver.observe($(id));
+  function paintFullscreen(){requestAnimationFrame(fitFullscreenMedia);const active=expanded||!!document.fullscreenElement;setControl('fullscreen',active?'restore':'fullscreen',expanded?'창 안 확대 나가기':active?'전체 화면 나가기':'전체 화면');$('fullscreen').setAttribute('aria-pressed',String(active));}
   function expandStage(open){
     if(open===expanded)return;expanded=open;$('stage').classList.toggle('stage-expanded',open);
     if(open){priorOverflow=document.body.style.overflow;expandedFocus=document.activeElement;expandedScroll=scrollPosition();document.body.style.overflow='hidden';$('fullscreen-status').hidden=false;$('fullscreen-status').textContent='전체 화면 요청이 제한되어 창 안에서 확대했습니다. Esc로 돌아갑니다.';$('fullscreen').focus();}
@@ -446,6 +457,11 @@
     document.querySelectorAll('[data-panel]').forEach(el=>{el.hidden=el.dataset.panel!==name;});
     document.querySelectorAll('[data-tab]').forEach(el=>{const active=el.dataset.tab===name;el.setAttribute('aria-selected',String(active));el.tabIndex=active?0:-1;});
   }
+  document.querySelectorAll('[data-figure-note]').forEach(link=>link.addEventListener('click',e=>{
+    e.preventDefault();tab('notes');
+    const note=[...document.querySelectorAll('.figure-values')].find(n=>n.dataset.figureId===link.dataset.figureNote);
+    if(note){note.open=true;note.querySelector('summary').focus();note.scrollIntoView({block:'nearest',behavior:'instant'});}
+  }));
   document.querySelectorAll('[data-tab]').forEach(el=>el.addEventListener('click',()=>tab(el.dataset.tab)));
   $('tabs').addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;const all=[...$('tabs').querySelectorAll('[data-tab]')];const i=all.indexOf(document.activeElement);if(i<0)return;e.preventDefault();const next=e.key==='Home'?0:e.key==='End'?all.length-1:(i+(e.key==='ArrowRight'?1:-1)+all.length)%all.length;tab(all[next].dataset.tab);all[next].focus();});
   $('grade').addEventListener('click',()=>{

@@ -173,6 +173,11 @@ def validate(course,base):
                     if any(not focused&alternatives for alternatives in coverage):raise ValueError('visual elements lack a narration cue')
                 elif focused!=targets:raise ValueError('visual elements lack a narration cue')
                 if any(attached) and not all(attached):raise ValueError('partial generated narration')
+                # Preflight geometry before creating output or transcoding media.
+                from components import svg
+                layout=copy.deepcopy(slide)
+                if slide['type']=='image':layout['visual']['aspect_ratio']=image_info(base,slide['visual']['src'])
+                svg(0,layout)
             voice=lesson.get('narration')
             if voice not in {'generated','none'}:raise ValueError('explicit narration choice required')
             if voice=='generated' and not all(c.get('audio') for s in slides for c in s['narration']):raise ValueError('selected generated narration is missing; synthesize or explicitly choose none')

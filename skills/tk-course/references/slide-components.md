@@ -10,6 +10,19 @@ least one cue. An empty opening focus shows the entire slide; later cues can iso
 Unrevealed groups stay dim, including their labels, values and containing boxes. All/show and
 highlight-only settings preserve the complete figure. Focus does not invent data or playback times.
 
+## Canvas and region budgets
+
+The slide is always 1600×900, including the narrow variant; image source ratio and widget height
+never change this boundary. Title, content (to y=805) and source/footer have separate regions.
+Image pixels contain within a 920-wide region; an adjacent short description/region rail must fit.
+The renderer rejects a portrait composite that would occupy less than half that region's width,
+and rejects rail/row overflow with its slide ID. This is an authoring guard, not a readability
+certificate: inspect actual raster pixels, font sizes and deciding relationships at every supported
+viewport. A simple square image may pass while a tall two-panel composite requires reauthoring.
+Split by question/state with stable entities and cue/audio mapping, never by hiding or shrinking
+content. Use notes for detailed metadata; retain complete notices. Former growing viewBoxes and
+portrait media frames are deliberately retired. Document figures/notes retain document scrolling.
+
 ## Numeric figures
 
 All three types require `visual.unit`, `x_label`, `y_label`, `source` and numeric `visual.data`.
@@ -38,7 +51,7 @@ Example worker timings and an explicitly modeled reference (not additional measu
 
 Focus `point-1` through `point-4` for the measured cases, then `series-2` for the whole reference;
 alternatively cover all eight individual points. Reference assumptions belong in the source line.
-Values below a line chart are aligned by x row, with series labels above their columns; direct
+Values beside a line chart are aligned by x row, with series labels above their columns; direct
 point labels are not crowded onto neighboring marks. The complete table retains source precision.
 
 ```json
@@ -52,10 +65,9 @@ point labels are not crowded onto neighboring marks. The complete table retains 
 `output` uses `visual.data` as an array of original strings and requires `visual.source`.
 This text component has no artificial numeric axis or unit requirement. `code` retains top-level
 `code` (array of strings) and `visual.footnote`. Both show line numbers and accept 1-12 original
-lines, each at most 100 weighted columns, with at most 20 soft-wrapped portrait rows. Blank lines,
+lines, each at most 100 weighted columns, subject to fixed canvas row/region budgets. Blank lines,
 indentation and escaped markup are preserved; no ellipses, hidden overflow or internal scroller.
-Split at meaningful boundaries when either layout exceeds the budget. Narrow SVG soft wraps are
-visual only; the original text remains available verbatim in lesson notes.
+Split at meaningful boundaries when either layout exceeds the budget. Soft wraps are visual only; the original text remains available verbatim in lesson notes.
 
 ```json
 {"type":"output","visual":{"source":"Vitest run, supplied terminal capture",
@@ -63,7 +75,7 @@ visual only; the original text remains available verbatim in lesson notes.
 ```
 
 Use `line-1` onward for each nonblank original line, plus `takeaway` for a code footnote.
-Legacy six-line code retains its original character allowance (up to 30 portrait rows for wide text). Legacy code aliases remain: line 1 `request-id`, 2 `await`, 3/4/6 `compare`, 5 `render`;
+Legacy six-line code retains its original character allowance, subject to the same fixed canvas bounds. Legacy code aliases remain: line 1 `request-id`, 2 `await`, 3/4/6 `compare`, 5 `render`;
 covering an alias covers the actual lines to which it maps. Lines 7-12 use their numbered keys.
 
 `timeline` accepts `visual.lanes` (1-4 label strings) and `visual.events` (1-8
@@ -94,7 +106,7 @@ the same cover. A final map may use `role:"closing"` with next-lesson preview na
 
 Text budgets are weighted columns (wide CJK and MWmw characters count two, tabs four); title, narration
 and common metadata retain the existing course limits. Components validate their specific slots
-and reject oversized data before output. Inspect both wide and purpose-built portrait layouts,
+and reject oversized data before output. Inspect the fixed canvas at desktop and narrow widths,
 light/dark themes, captions on, first cue and each focus state. Captions for these figures sit
 below the figure so they cannot cover axes or output lines. The 390px check includes label
 bounding boxes, exact value reconciliation, complete original output and document width.
@@ -105,7 +117,7 @@ Use `type:"image"` for a verified local PNG/JPEG/WebP teaching figure. `visual` 
 `src` (source-relative nonsymlink file), `alt`, `description`, `source` and `rights` (the verified
 redistribution scope). Image authoring requires Pillow; detect readiness and report a missing
 dependency before production rather than installing implicitly. The builder checks actual encoding and embeds pixels offline. It derives
-aspect ratio from the image, preserving annotations in wide and portrait layouts. Catalog cards
+aspect ratio from the image, preserving annotations inside the fixed 16:9 canvas. Catalog cards
 use the description as a text preview to retain the small public-manifest budget; choose another
 preview slide when its diagram better distinguishes the course.
 
@@ -113,7 +125,8 @@ Optional `regions` contains up to six `{id,label,x,y,width,height}` boxes, with 
 and normalized coordinates inside the actual image (0-1, positive width/height). Crop/annotate
 only inspected evidence; coordinates are author-verified, never inferred from uninspected pixels.
 Cue key `image` covers the whole figure, and `region-<id>` covers each numbered box and its
-legend. Every target needs a cue. Description, source and rights remain visible; focus follows
+legend. Every target needs a cue. Description and numbered region labels occupy a bounded adjacent rail. Full source/rights remain
+in accessible lesson notes and the no-JS fallback; a short canvas notice links those notes. Focus follows
 the existing cue/theme/reduced-motion behavior. Keep the decisive relation legible at the target
 viewport; an image's mere presence does not establish teaching sufficiency.
 

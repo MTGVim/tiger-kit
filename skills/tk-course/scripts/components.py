@@ -27,9 +27,9 @@ def svg(i,s,responsive=False):
     objectives=h(' '.join(s.get('objective_ids',[])),quote=True)
     if s['type'] in TYPES:
         figure_contract(s)
-        result=figure_svg(s,i)+(figure_svg(s,i,compact=True) if responsive else '')
+        result=check_bounds(figure_svg(s,i),s.get('id','preview'))+(check_bounds(figure_svg(s,i,compact=True),s.get('id','preview')) if responsive else '')
         return result.replace('<svg ',f'<svg data-objectives="{objectives}" ')
-    return theme_svg(_svg(i,s)).replace('<svg ',f'<svg data-objectives="{objectives}" ',1)
+    return check_bounds(theme_svg(_svg(i,s)),s.get('id','preview')).replace('<svg ',f'<svg data-objectives="{objectives}" ',1)
 
 def content_svg(i,s):
     parts=[rect(0,0,1600,900,'#ffffff',rx=0),text(90,90,s.get('eyebrow',''),27,'#446991','600'),text(90,196,s['title'],56,weight='700')]
@@ -38,3 +38,27 @@ def content_svg(i,s):
         cues=[j for j,c in enumerate(s['narration']) if key in c.get('focus',[])]
         parts.append(focus([rect(90,y,1420,112),text(125,y+43,item['label'],32,weight='600'),text(125,y+86,item['text'],30,'#596d83')],cues,key))
     return theme_svg(f'<svg viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="slide-title-{i} slide-desc-{i}" font-family="-apple-system,BlinkMacSystemFont,Apple SD Gothic Neo,Noto Sans KR,sans-serif"><title id="slide-title-{i}">{h(s['title'])}</title><desc id="slide-desc-{i}">{h(s['transcript'])}</desc>'+''.join(parts)+'</svg>')
+
+
+def check_bounds(markup,slide_id):
+    """Conservative preflight; actual font/path/raster geometry still needs a browser."""
+    from xml.etree import ElementTree as ET
+    from slide_components import width
+    root=ET.fromstring(markup)
+    bounds=list(map(float,root.get('viewBox').split()))
+    if bounds!=[0,0,1600,900]:raise ValueError(f'slide {slide_id}: expected fixed 1600x900 canvas')
+    for e in root.iter():
+        kind=e.tag.rsplit('}',1)[-1]
+        if kind in {'rect','image'}:
+            x,y,w,hh=[float(e.get(k,'0')) for k in ('x','y','width','height')]
+        elif kind=='text':
+            x=float(e.get('x','0'));size=float(e.get('font-size','34'))
+            y=float(e.get('y','0'))-size;hh=size*1.4
+            w=width(e.text or '')*size*.5
+            anchor=e.get('text-anchor')
+            x-=w/2 if anchor=='middle' else w if anchor=='end' else 0
+        else:continue
+        if min(x,y,w,hh)<-.5 or x+w>1600.5 or y+hh>900.5:
+            region=(e.text or kind)[:48]
+            raise ValueError(f'slide {slide_id}: {region} outside fixed canvas; split meaningful questions or states')
+    return markup

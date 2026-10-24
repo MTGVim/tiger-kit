@@ -77,6 +77,12 @@ values and boxes readable; an empty first-cue focus shows everything. Every cue 
 on that slide. For cover, current course-map and summary components, focus the actual rendered
 semantic targets; map badges describe the authored itinerary, not learner mastery.
 
+Keep ordinary course slide media on a fixed 16:9 canvas, including on narrow screens. Preserve
+an embedded asset's intrinsic ratio inside its allocated region. Fit content by splitting meaningful
+questions or states into additional slides or scenes; never grow the canvas, require intra-slide
+scrolling or shrink essential labels to hide overflow. Scrolling notes and transcripts are separate
+document regions. Verify the complete slide in one media frame at each supported viewport.
+
 ## Build and verify
 
 Read [authoring and build](references/authoring.md), use the packaged components and fixed player,

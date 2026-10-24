@@ -46,6 +46,35 @@ data, output, plot and generalized component fields, bounded slots and legacy fo
 Use more slides rather than overflowing a slot. Never
 use character counts alone as a visual-quality or teaching check.
 
+Ordinary slide media uses a fixed logical 1600×900 (16:9) canvas on desktop, narrow screens and
+fullscreen. Logical SVG coordinates differ from export pixels; recommend 1920×1080 for raster/video
+exports, not for every source image. The canvas, an embedded asset's intrinsic ratio and the whole
+widget/document height are separate contracts. Keep each image contained in its allocated region;
+never stretch/crop it silently or resize the canvas to its source height. One slide teaches one
+question, state or judgment. Keep A/B together only when both remain readable; otherwise preserve
+layout/entity IDs across successive slides or staged states. Never restack the split scenes into a
+long image. Full rights/source notices remain in linked lesson notes with a short canvas notice.
+
+Renderer region budgets reject overflow with the slide ID and region, requiring semantic splitting.
+This intentionally replaces the former content-grown and mobile portrait figure layouts. Numeric
+slot/count limits are only preflight bounds: inspect complete-frame pixels for essential raster
+labels and relationships at the actual minimum supported viewport. Reject unreadable, clipped,
+overlapping or distorted content even when all bounding boxes pass. Split/rewrite content rather
+than shrinking type, hiding essential detail or enabling intra-slide scrolling. Document-like notes,
+transcript and outer content keep their independent scroll. Explicit portrait deliverables need a
+separate stated scope, not an automatic slide exception.
+
+Measure the SVG logical ratio and media content box ratio (16:9, at most 1 CSS px rounding) at
+desktop/narrow, curriculum/transcript open and closed, native fullscreen and labeled fallback.
+Check text/image/connector/region bounds, intrinsic image ratio and stable media/control boundaries.
+Evaluate the packaged `scripts/slide_geometry.js` function on the active SVG in the browser; its
+`ok` result requires geometry and essential vector labels of at least 11 CSS px. An unreadable
+result requires reauthoring even when geometry passes; metadata marked `data-slide-metadata` is
+secondary only when its full notice remains accessible in notes. Raster labels still need pixel
+inspection. Do not exempt teaching labels with metadata markers. Capture the whole frame once; zoomed details and top/bottom scroll captures supplement it and never
+replace frame-fit evidence. Full-page captures alone cannot accept slides. Verify cue order,
+speech/caption/focus targets and original audio after splitting; see [backfill](incremental.md#backfill-teaching-visuals-and-pacing).
+
 Set optional course-level `preview_slide` to `{"lesson_id":"stable-lesson-id","slide_id":"stable-slide-id"}`
 to select an existing slide for the catalog. IDs are scoped to that lesson; invalid references fail.
 Absent this field, the first slide of the first lesson is used (video uses a textual cover).
