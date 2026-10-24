@@ -56,7 +56,7 @@ measured. Omit Marp, a hosted LMS, automatic mastery scoring, accounts and a sha
 
 - Creator follow-up incident (2026-10-24), checked against the current source and existing
   figure/navigation evaluations: adapt explicitly requested real-screen imagery and separate
-  teaching scenes; one contained caption overlay, transcript-open media sizing, layout-free
+  teaching scenes; one contained caption overlay, layout-free
   waits, paused lesson entry and capability-scoped image validation. These revise the former
   below-figure caption oracle, responsive closed-rail expansion and entry-autoplay behavior.
   Keep the existing cue clock, offline/preservation and incremental staging contracts.
@@ -65,3 +65,9 @@ measured. Omit Marp, a hosted LMS, automatic mastery scoring, accounts and a sha
   correspondence and cross-asset checking. Adapt them to inspected real pixels and current
   media geometry; omit Marp, fixed counts, proportional caption timing, its runtime and review
   orchestration. Upstream runtime/evals and actual user-course backfill were not executed.
+- Creator correction (2026-10-25), reproduced in the packaged player: adapt reclaimed transcript
+  columns/rows and centered maximum-fit 16:9 media in native fullscreen and in-window expansion.
+  This supersedes the 2026-10-24 transcript-open size reservation; keep caption containment,
+  ordinary-wait geometry and the playback clock. Rechecked course-builder at the same pinned
+  HEAD and read its player, slide-authoring and coherence-review contracts: keep aspect containment;
+  omit its fixed three-column layout. The maximize/toggle correction is TigerKit-specific.

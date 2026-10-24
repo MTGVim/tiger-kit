@@ -375,7 +375,7 @@
   document.querySelectorAll('[name="caption-size"]').forEach(el=>el.addEventListener('change',()=>{if(!el.checked)return;$('stage').dataset.captionSize=el.value;prefs.captionSize=el.value;savePrefs();setCaptionMenu(false);$('caption-size-toggle').focus();}));
   function setSettings(open){if(open){setSpeedMenu(false);setCaptionMenu(false);}$('playback-settings').hidden=!open;$('settings-toggle').setAttribute('aria-expanded',String(open));setControl('settings-toggle','settings',open?'재생 설정 닫기':'재생 설정 열기');}
   $('settings-toggle').addEventListener('click',e=>{e.stopPropagation();setSettings($('playback-settings').hidden);});
-  function showTranscript(open){transcriptOpen=open;$('transcript-rail').hidden=!open;$('stage').classList.toggle('with-transcript',open);$('transcript-toggle').setAttribute('aria-expanded',String(open));setControl('transcript-toggle','transcript',open?'전체 대본 닫기':'전체 대본 열기');}
+  function showTranscript(open){transcriptOpen=open;$('transcript-rail').hidden=!open;$('stage').classList.toggle('with-transcript',open);$('transcript-toggle').setAttribute('aria-expanded',String(open));setControl('transcript-toggle','transcript',open?'전체 대본 닫기':'전체 대본 열기');requestAnimationFrame(fitFullscreenMedia);}
   $('transcript-toggle').addEventListener('click',()=>showTranscript(!transcriptOpen));
   $('transcript-close').addEventListener('click',()=>{showTranscript(false);$('transcript-toggle').focus();});
   document.addEventListener('click',e=>U.dismissOutside(e,[{panel:$('playback-settings'),trigger:$('settings-toggle'),close:()=>setSettings(false)},{panel:$('speed-panel'),trigger:$('speed'),close:()=>setSpeedMenu(false)},{panel:$('caption-size-panel'),trigger:$('caption-size-toggle'),close:()=>setCaptionMenu(false)}]));
@@ -386,9 +386,9 @@
   function fitFullscreenMedia(){
     const stage=$('stage'),main=$('stage-main');
     if(!expanded&&!document.fullscreenElement){stage.style.removeProperty('--fullscreen-media-width');fitCaption();return;}
-    // The grid reserves the transcript-open columns/rows even while that rail is hidden.
+    // Fit the current grid cell after transcript columns/rows have been reclaimed.
     const viewport=$('media-viewport'),style=getComputedStyle(main);
-    const rest=[...main.children].filter(e=>e!==viewport&&getComputedStyle(e).position!=='absolute'&&getComputedStyle(e).position!=='fixed').reduce((n,e)=>{const s=getComputedStyle(e);return n+e.getBoundingClientRect().height+(parseFloat(s.marginTop)||0)+(parseFloat(s.marginBottom)||0);},0);
+    const rest=[...main.children].filter(e=>e!==viewport&&e.getClientRects().length&&getComputedStyle(e).position!=='absolute'&&getComputedStyle(e).position!=='fixed').reduce((n,e)=>{const s=getComputedStyle(e);return n+e.getBoundingClientRect().height+(parseFloat(s.marginTop)||0)+(parseFloat(s.marginBottom)||0);},0);
     const available=Math.max(0,main.clientHeight-rest-(parseFloat(style.paddingTop)||0)-(parseFloat(style.paddingBottom)||0));
     stage.style.setProperty('--fullscreen-media-width',Math.min(main.clientWidth,available*16/9)+'px');
     fitCaption();

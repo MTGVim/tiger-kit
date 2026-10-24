@@ -66,7 +66,10 @@ separate stated scope, not an automatic slide exception.
 
 Measure the SVG logical ratio and media content box ratio (16:9, at most 1 CSS px rounding) at
 desktop/narrow, curriculum/transcript open and closed, native fullscreen and labeled fallback.
-Check text/image/connector/region bounds, intrinsic image ratio and stable media/control boundaries.
+Check text/image/connector/region bounds and intrinsic image ratio. Closing the transcript reclaims
+its grid column/row; fullscreen and in-window expansion center the largest 16:9 frame that fits
+beside the open rail and above the controls. Repeat toggles and resize both media kinds without
+clipping captions/controls, resetting playback or reserving a hidden rail. Ordinary waits keep geometry stable.
 Evaluate the packaged `scripts/slide_geometry.js` function on the active SVG in the browser; its
 `ok` result requires geometry and essential vector labels of at least 11 CSS px. An unreadable
 result requires reauthoring even when geometry passes; metadata marked `data-slide-metadata` is

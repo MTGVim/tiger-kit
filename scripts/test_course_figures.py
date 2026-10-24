@@ -140,7 +140,8 @@ class FigureTests(unittest.TestCase):
             course=fixture('video-'+label);lesson=course['lessons'][0];lesson.pop('slides');lesson['kind']='video';lesson['video']={'src':movie.name,'narration':'none','captions':[{'id':'video-cue','start':0,'end':4,'caption':'화면을 확인합니다.'}]}
             source=self.root/(label+'.json');source.write_text(json.dumps(course));builder.build(source,self.root/('video-'+label));video_pages.append(str(self.root/('video-'+label)/'index.html'))
         env['TK_VIDEO_PAGES']=json.dumps(video_pages)
-        result=subprocess.run(['node','--test',str(Path(__file__).resolve().parents[1]/'evals/skills/tk-course/figures.test.cjs')],env=env,capture_output=True,text=True,timeout=270)
+        tests=Path(__file__).resolve().parents[1]/'evals/skills/tk-course'
+        result=subprocess.run(['node','--test','--test-concurrency=1',str(tests/'figures.test.cjs'),str(tests/'media-layout.test.cjs')],env=env,capture_output=True,text=True,timeout=330)
         self.assertEqual(result.returncode,0,result.stdout+result.stderr)
 
     def test_fixed_canvas_for_all_components_and_regions(self):

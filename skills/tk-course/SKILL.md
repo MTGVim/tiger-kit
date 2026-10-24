@@ -118,7 +118,8 @@ Every lesson greets the learner, connects to the previous lesson, states its goa
 a summary and preview. Vary opening forms across consecutive lessons. Verify audio
 readiness, missing-file recovery, paused lesson entry, explicit Play with immediate button feedback and an initial lead-in,
 previous-slide hold and next-slide lead-in (3 seconds total by default), breathing gaps, reveal/seek state,
-captions inside the visible media frame, stable media/control geometry across transcript toggles and ordinary waits,
+captions inside the visible media frame, reclaimed transcript space with centered maximum-fit media in fullscreen/expansion,
+stable media/control geometry during ordinary waits,
 caption size/opacity (default 50%), light/dark/system themes, settings hit areas, first-visit sound off and captions on with a combined entry toast,
 muted retry plus toast when audible playback is blocked, playback preferences persisting across
 lessons and reloads, viewport-bounded independent content/curriculum/transcript scrolling,

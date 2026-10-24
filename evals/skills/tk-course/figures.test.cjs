@@ -67,10 +67,10 @@ test('fixed slide frames reject geometry overrides and unreadable density, prese
      assert.equal((await inspect(active)).frameOK,false);
      await f.locator('#media-viewport').evaluate(e=>{e.style.removeProperty('aspect-ratio');e.style.removeProperty('height');});
      assert((await inspect(active)).frameOK);
-     // Same-mode transcript toggles keep the actual frame, SVG/image and controls stable.
-     const stable=async()=>({frame:await f.locator('#media-viewport').boundingBox(),svg:await active.boundingBox(),controls:await f.locator('#controls').boundingBox()});
-     const checkStable=async()=>{const before=await stable();for(let toggle=0;toggle<4;toggle++){await f.locator('#transcript-toggle').click();await page.waitForTimeout(80);const after=await stable();for(const key of ['frame','svg','controls'])for(const axis of ['y','height'])assert(Math.abs(before[key][axis]-after[key][axis])<1,JSON.stringify({width,key,axis,before,after}));}};
-     await checkStable();
+     // Closing the rail reclaims space; media stays contained instead of retaining its old size.
+     const geometryBoxes=async()=>({frame:await f.locator('#media-viewport').boundingBox(),svg:await active.boundingBox(),controls:await f.locator('#controls').boundingBox()});
+     const checkResize=async()=>{for(let toggle=0;toggle<4;toggle++){const before=await geometryBoxes(),wasOpen=await f.locator('#transcript-toggle').getAttribute('aria-expanded')==='true';await f.locator('#transcript-toggle').click();await page.waitForTimeout(80);const after=await geometryBoxes();assert(Math.abs(after.frame.width/after.frame.height-16/9)<.01);assert(Math.abs(after.frame.width-after.svg.width)<1);assert(after.controls.y>=after.frame.y+after.frame.height-1);if(wasOpen)assert(after.frame.width>=before.frame.width-1,JSON.stringify({width,before,after}));else assert(after.frame.width<=before.frame.width+1,JSON.stringify({width,before,after}));}};
+     await checkResize();
      // Navigation/transcript and fullscreen never change media aspect.
      for(const transcript of [false,true]){
       if((await f.locator('#transcript-toggle').getAttribute('aria-expanded')==='true')!==transcript)await f.locator('#transcript-toggle').click();
@@ -82,7 +82,7 @@ test('fixed slide frames reject geometry overrides and unreadable density, prese
       await f.locator('#fullscreen').click();
       await page.waitForTimeout(80);
       assert(await f.locator('body').evaluate(()=>!!document.fullscreenElement),'native fullscreen was not exercised');
-      await checkStable();
+      await checkResize();
       let report=await inspect(active);assert(report.frameOK&&report.contained,JSON.stringify(report));
       const toolbar=await f.locator('#controls').boundingBox();assert(toolbar.y>=0&&toolbar.y+toolbar.height<=1001);
       await f.locator('#fullscreen').click();
@@ -90,7 +90,7 @@ test('fixed slide frames reject geometry overrides and unreadable density, prese
       await f.locator('#stage').evaluate(e=>{e.requestFullscreen=()=>Promise.reject(new Error('test fullscreen rejection'));});
       await f.locator('#fullscreen').click();await page.waitForTimeout(80);
       assert(await f.locator('#stage').evaluate(e=>e.classList.contains('stage-expanded')));
-      await checkStable();
+      await checkResize();
       report=await inspect(active);assert(report.frameOK&&report.contained,JSON.stringify(report));
       await f.locator('#fullscreen').click();
       await f.locator('#stage').evaluate(e=>{delete e.requestFullscreen;});
