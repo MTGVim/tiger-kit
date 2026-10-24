@@ -1,21 +1,32 @@
-# Course Media
+# Course media and player acceptance
 
-Resolve the creator's choice before generating: local TTS, supplied audio or no narration.
-Obtain current `tk-tts` options/readiness, including missing dependencies, device, model download,
-cache, language/voice, cost and whether text leaves the machine. List supported uninstalled
-options as requiring setup; module discovery alone is not readiness. Reuse an explicit parent
-choice, not a stored voice preference as implicit narration consent. Request installation/download
-approval only when missing; generation does not approve global installation or paid services.
+## Select the production route once
+
+Recommend browser Web Speech API for quickest HTML course creation: browser speech, local file
+synthesis, supplied file audio or no narration. Reuse confirmed choices. Browser selection needs
+no model/voice/device/setup interview with tk-tts and no pre-generated audio. The player uses
+available local Korean voices, preferring a browser-designated default, and refreshes after
+voiceschanged. If no usable voice exists, show the unavailable state and offer explicit silent
+reading or file audio; do not silently switch production routes or claim successful speech.
+Voice availability, pronunciation and boundary events depend on the learner's browser/device.
+The HTML is self-contained, but installed voices are not embedded assets or guaranteed available.
+
+Only selected local synthesis loads tk-tts options/readiness: engine/model/voice, dependencies,
+device, model cache/download, cost and whether text leaves the machine. Installation/download
+requires its existing authority. Supplied audio needs inspected file/caption correspondence,
+not an engine interview. Correct the full explanation before synthesizing or aligning files.
+A narrated MP4/WebM needs actual audio files through tk-tts or supplied audio; browser playback
+speech is not an exportable audio track. Resolve this changed choice before movie production.
 
 For selected local narration, invoke `tk-tts` through supported skill loading/handoff and retain
 actual normalized WAV paths, measured durations and pending pronunciation review. Keep authored caption
 spelling separate from pronunciation-corrected speech. Each slide/cue has a stable semantic ID.
 An opening cue previews the point; later cues refer to visible entities and explain why they
-change. Every progressively revealed element must have a cue. Future elements are hidden,
+change. Every progressively revealed element must have a cue. Future emphasis targets remain dim and readable;
 prior context remains, backwards seeking reconstructs state, and reduced motion keeps manual
 access and readable content. Do not claim pedagogical improvement from animation alone.
 
-Slides use actual audio ended events, not guessed speech duration. A fresh lesson shows its first
+File slides use audio ended; browser slides use utterance end, never guessed speech duration. A fresh lesson shows its first
 slide paused. Only explicit Play starts the initial wait; opening from home, curriculum, next
 lesson, resume or deep-link never calls the transport to play, even muted or when the previous
 lesson was playing. Acknowledge Play immediately in its button/icon and a layout-free live region,
@@ -31,7 +42,7 @@ authored meaning; see [authoring](authoring.md). Holds retain the prior visual/c
 lead-ins expose the new figure without an upcoming active cue. Do not pad WAVs or resynthesize
 narration merely to change pacing; finished-video audio/time axes remain native.
 
-File audio uses its media clock and immediate rate/volume; browser fallback may defer speed
+File audio uses its media clock and immediate rate/volume; browser speech may defer speed
 until a natural cue and labels it as reserved. Browser boundaries are approximate and can repeat
 text on output changes. Muting controls output, never whether the course can progress. Explicit
 silent reading uses labeled reading intervals without pretending they are generated duration.
@@ -93,9 +104,9 @@ screens rather than covering it. Home and no-JavaScript reading retain document 
 All slide types share one caption overlay within the media viewport. For contained video, keep
 it within the actual image rather than the letterbox. Preserve two-line Korean captions, size,
 CC and 50% opacity with the existing clock. Captions never create a normal-flow paragraph.
-Size media from the transcript-open grid, reserving those columns/rows while it is closed;
-same-mode transcript toggles keep both media and controls stable, including the image inside.
-Recalculate only for actual viewport/orientation/fullscreen layout changes. Normal start,
+Closing the transcript reclaims its grid column/row. Resize and center the largest 16:9 media
+frame that fits the available area with its controls; preserve the clock, current cue and captions.
+Recalculate on explicit transcript/navigation toggles and viewport/orientation/fullscreen changes. Normal start,
 sentence, hold and lead-in waits add no visible layout row; the button and off-flow live region
 communicate them. Keep errors, unavailable/blocked media and completion announcements accessible
 without shifting controls. No padded audio or extra scheduler is needed.

@@ -179,3 +179,25 @@ test('explicit zero and legacy pacing keep immediate-first behavior, silent prog
  const {p:s,clock}=pacedPlayer();s.setMode('silent');s.play();clock.advance(5000);assert.equal(s.snapshot().status,'playing');clock.advance(4000);assert.equal(s.snapshot().waitKind,'sentence');s.stop();clock.advance(100000);assert.equal(s.snapshot().status,'idle');
  for(const bad of [{initialLeadInMs:-1},{postSlideHoldMs:5001},{slidePauseMs:'0'},{sentencePauseMs:NaN},{extra:1},null])assert.throws(()=>p.setPacing(bad));
 });
+
+test('authored browser/file/silent modes reach the actual player initialization',()=>{
+ const source=fs.readFileSync(path.join(R,'player.js'),'utf8');
+ const expression=source.match(/initialMode:(.*?),initialMuted:/)[1];
+ for(const [voice,want] of [['browser','device'],['generated-local','assets'],['supplied','assets'],['none','silent']]){
+  assert.equal(vm.runInNewContext(expression,{data:{production_choices:{voice}}}),want);
+ }
+});
+test('browser narration discovers late local voices and advances on actual utterance end',()=>{
+ const create=require(path.join(R,'narration-player.js')).create,queue=[];
+ let voices=[];
+ const synth={getVoices:()=>voices,cancel(){},resume(){},pause(){},speak:u=>queue.push(u)};
+ const audio={pause(){},play(){throw new Error('browser route must not play file audio');}};
+ const slides=[{narration:[{speech:'첫 설명',caption:'첫 설명'},{speech:'이어지는 이유',caption:'이어지는 이유'}]}];
+ const player=create({slides,audio,synth,Utterance:function(text){this.text=text;},initialMode:'device'});
+ assert.equal(player.snapshot().available,false);player.play();assert.equal(player.snapshot().status,'blocked');assert.equal(queue.length,0);
+ voices=[{voiceURI:'ko-local',name:'Korean device',lang:'ko-KR',localService:true,default:true}];
+ player.refreshVoices();assert.equal(player.snapshot().available,true);assert.equal(player.snapshot().status,'idle');
+ player.play();assert.equal(queue.length,1);assert.equal(queue[0].text,'첫 설명');assert.equal(player.snapshot().cue,0);
+ queue[0].onend();assert.equal(queue.length,2);assert.equal(player.snapshot().cue,1);
+ queue[1].onend();assert.equal(player.snapshot().status,'ended');
+});

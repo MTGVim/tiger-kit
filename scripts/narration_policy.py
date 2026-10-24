@@ -13,12 +13,27 @@ narration; offer MP4 for GIF sound. Static HTML/text needs no unrelated voice in
 Installation/download/publication require their own authority; playback mute/fallback are separate.
 '''+END+'\n'
 
+
+COURSE_BLOCK=START+'''
+## Narration Choice
+
+Before spoken-slide production, offer Web Speech API (recommended for quickest HTML creation),
+local generated file audio, supplied audio or no narration. Reuse an answered parent/user choice;
+a recommendation is not consent. Browser speech needs no tk-tts setup or file synthesis interview.
+Only selected file generation loads tk-tts options/readiness. A narrated movie needs supplied or
+synthesized audio files; explain that requirement and resolve only the changed choice. A browser
+voice preference does not grant file synthesis, installation, downloads or publication. Playback
+mute, unavailable voices and learner fallback remain separate from the creator's production choice.
+'''+END+'\n'
+
+def block(name):return COURSE_BLOCK if name=='tk-course' else BLOCK
+
 def errors(root:Path):
     result=[]
     for name in OWNERS:
         p=root/'skills'/name/'SKILL.md'
         if not p.is_file():continue
-        if p.read_text().count(BLOCK)!=1:result.append(f'{name}: explicit narration choice must match its canonical block exactly once')
+        if p.read_text().count(block(name))!=1:result.append(f'{name}: explicit narration choice must match its canonical block exactly once')
     return result
 
 def sync(root:Path):
@@ -27,8 +42,8 @@ def sync(root:Path):
         if not p.is_file():continue
         s=p.read_text()
         if START in s:
-            a,rest=s.split(START,1);_,b=rest.split(END,1);s=a+BLOCK.rstrip()+b
+            a,rest=s.split(START,1);_,b=rest.split(END,1);s=a+block(name).rstrip()+b
         else:
             marker='<!-- tigerkit:artifact-paths -->'
-            s=s.replace(marker,BLOCK+'\n'+marker,1) if marker in s else s.rstrip()+'\n\n'+BLOCK
+            s=s.replace(marker,block(name)+'\n'+marker,1) if marker in s else s.rstrip()+'\n\n'+block(name)
         p.write_text(s)

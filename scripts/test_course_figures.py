@@ -293,7 +293,7 @@ class FigureTests(unittest.TestCase):
         for ref in [{'lesson_id':'missing','slide_id':'line'},{'lesson_id':'lesson-1','slide_id':'missing'},{'slide_id':'line'}]:
             with self.subTest(ref=ref):self.reject(lambda c:c.update(preview_slide=ref))
 
-    def test_plot_review_warnings_do_not_block_build(self):
+    def test_optional_lesson_forms_do_not_generate_formula_warnings(self):
         self.data['lessons'][0]['slides'][-1].pop('role')
         opening=copy.deepcopy(self.slide('cover'));opening['id']='second-cover'
         for cue in opening['narration']:cue['id']='second-'+cue['id']
@@ -301,7 +301,7 @@ class FigureTests(unittest.TestCase):
         with warnings.catch_warnings(record=True) as captured:
             warnings.simplefilter('always');self.build()
         messages=' '.join(str(w.message) for w in captured)
-        self.assertIn('final summary/closing role',messages);self.assertIn('openings repeat',messages)
+        self.assertEqual(messages,'')
         self.assertTrue((self.root/'built/index.html').is_file())
 
 

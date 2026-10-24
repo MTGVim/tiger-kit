@@ -100,9 +100,9 @@ the public collection settings below are the only optional JSON distribution fil
 
 ## Collection order and dates
 
-Before authoring siblings, compare their opening forms and card copy: sibling courses must not
-share the same opening form or the same first sentence of description. Choose each opening from
-its own question and use `preview_slide` when another authored slide makes the catalog clearer.
+Before authoring siblings, distinguish each card by its learner capability and an actual teaching
+preview. Choose the opening from its explanation; a useful form can recur without copying the
+same generic description. Use preview_slide when another authored scene better distinguishes it.
 
 Order belongs to a collection, not `course.json`; do not rename stable IDs or rebuild course HTML
 just to change it. Optional `<dist>/catalog.json` uses this public shape:

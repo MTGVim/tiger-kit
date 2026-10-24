@@ -2,8 +2,9 @@
 from html import escape
 import math
 import unicodedata
+import diagram_components as diagrams
 
-TYPES={'image','bar','line','stacked','output','code','timeline','hook','cover','course-map','summary'}
+TYPES={'diagram','image','bar','line','stacked','output','code','timeline','hook','cover','course-map','summary'}
 
 def width(value):
     return sum(4 if c=='\t' else 2 if unicodedata.east_asian_width(c) in 'WF' or c in 'MWmw' else 1 for c in value)
@@ -45,7 +46,9 @@ def contract(slide):
     """Return allowed cue keys and coverage alternatives for each semantic element."""
     kind=slide['type'];v=slide['visual'];groups=[]
     def add(key,*aliases):groups.append({key,*aliases})
-    if kind=='image':
+    if kind=='diagram':
+        groups.extend(diagrams.contract(v,label))
+    elif kind=='image':
         label(v.get('alt'),180);label(v.get('description'),240);label(v.get('source'),110);label(v.get('rights'),110)
         if not isinstance(v.get('src'),str) or not v['src']:raise ValueError('image requires local src')
         regions=v.get('regions',[])
@@ -160,7 +163,9 @@ def render(slide,index,compact=False):
         parts.append(text_at(m,144,slide['title'],56,80,84,weight='700'))
         top=max(260,144+(len(title)-1)*84+100)
     source=v.get('source','')
-    if kind=='image':
+    if kind=='diagram':
+        parts.append(diagrams.render({**v,'_marker':'diagram-arrow-'+str(index)+'-'+('compact' if compact else 'wide')},top,end,wrap,box,t,g))
+    elif kind=='image':
         # Image pixels keep their intrinsic ratio in a fixed region. The adjacent rail
         # carries short teaching labels; full provenance lives in accessible notes.
         ratio=number(v.get('aspect_ratio',16/9))
@@ -308,6 +313,7 @@ def render(slide,index,compact=False):
 def table(slide):
     """Static, keyboard-readable original values, also used by the no-JS fallback."""
     kind=slide['type'];v=slide['visual']
+    if kind=='diagram':return diagrams.notes(v)
     if kind=='image':
         return '<p>'+escape(v['description'])+'</p><ol>'+''.join('<li>'+escape(r['label'])+'</li>' for r in v.get('regions',[]))+'</ol><p>이용 범위: '+escape(v['rights'])+'</p><p>출처: '+escape(v['source'])+'</p>'
     if kind not in {'bar','line','stacked','output','code'}:return ''

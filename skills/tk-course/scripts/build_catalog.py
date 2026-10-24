@@ -103,10 +103,11 @@ def preview(course,n):
 
 def duration_label(course):
     seconds=course.get('narration_seconds')
+    if seconds is not None and (type(seconds) not in (int,float) or not math.isfinite(seconds) or seconds<0):raise ValueError('invalid built narration duration')
+    if any(l.get('kind')=='slides' and l.get('narration')=='browser' for l in course['lessons']):return '브라우저 음성 · 길이 미정'
     if seconds is None:
         silent=all(l.get('narration')=='none' if l.get('kind')=='slides' else l.get('video',{}).get('narration')=='none' and not l.get('video',{}).get('has_audio') for l in course['lessons'])
         return '무음' if silent else '음성 길이 미기록'
-    if type(seconds) not in (int,float) or not math.isfinite(seconds) or seconds<0:raise ValueError('invalid built narration duration')
     if not seconds:return '무음'
     total=math.ceil(seconds);hours,rem=divmod(total,3600);minutes,secs=divmod(rem,60)
     return '음성 '+(f'{hours}시간 ' if hours else '')+(f'{minutes}분 ' if minutes else '')+f'{secs}초'

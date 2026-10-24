@@ -23,6 +23,23 @@ Split by question/state with stable entities and cue/audio mapping, never by hid
 content. Use notes for detailed metadata; retain complete notices. Former growing viewBoxes and
 portrait media frames are deliberately retired. Document figures/notes retain document scrolling.
 
+## Relationship diagrams
+
+Use diagram for a directed relationship or mechanism instead of flattening it into text cards.
+visual.nodes contains 2-6 {id,label,row,column} objects on a 2-row by 3-column grid (zero-based).
+visual.edges contains 1-7 {id,from,to} relationships. IDs are stable lowercase ASCII identifiers;
+node cells and undirected edge pairs are unique, every node participates, and each edge joins
+adjacent horizontal/vertical cells. Opposing/diagonal/long routes need separate scenes so lines
+cannot silently cross another entity. Put a conditional relation in the visible node wording or
+use a separate state; an unlabeled arrow must not imply an unstated condition.
+
+The renderer derives geometry, keeps labels/arrows above the lower caption region, wraps at a
+stable type size and rejects excessive density. Two-row diagrams require concise single-line
+labels; split longer explanations into states instead of shrinking type.
+Cue keys node-<id> and edge-<id> cover every entity and arrow. Notes contain the same directed
+relationships as accessible text. Preserve IDs/positions while changing one condition across
+scenes. A diagram is explanatory evidence, not a replacement for requested real screenshots.
+
 ## Numeric figures
 
 All three types require `visual.unit`, `x_label`, `y_label`, `source` and numeric `visual.data`.

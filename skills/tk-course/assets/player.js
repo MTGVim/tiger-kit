@@ -200,12 +200,14 @@
     $('volume-note').textContent=s.mode==='silent'?'':s.mode==='video'?(s.hasAudio?'영상에 포함된 음성을 재생합니다.':'⚠️ 현재 영상에는 음성이 없습니다.'):s.mode==='device'?'':'생성 음원의 볼륨과 음소거는 재생 위치를 유지하며 바로 적용됩니다.';
     $('play').disabled=!s.available;$('stage-play').disabled=!s.available;
     $('stage-play').hidden=!isSlide || running;$('stage-play').setAttribute('aria-label',s.status==='ended'?'강의 다시 듣기':'강의 재생');
-    $('voice-state').textContent=s.mode==='video'?(s.hasAudio?'영상 내장 음성':'무음 영상'):s.mode==='silent'?'무음':s.mode==='assets'?(s.hasAssets?'생성한 강의 음성':'⚠️ 생성 음성 파일 준비 전'):s.available?'브라우저 음성: '+s.voice:s.voiceSelection?'⚠️ 선택한 한국어 음성을 사용할 수 없습니다.':'⚠️ 이 브라우저에 설치된 한국어 음성을 찾지 못했습니다.';
+    $('voice-state').textContent=s.mode==='video'?(s.hasAudio?'영상 내장 음성':'무음 영상'):s.mode==='silent'?'무음':s.mode==='assets'?(s.hasAssets?'강의 음성 파일':'⚠️ 생성 음성 파일 준비 전'):s.available?'브라우저 음성: '+s.voice:s.voiceSelection?'⚠️ 선택한 한국어 음성을 사용할 수 없습니다.':'⚠️ 이 브라우저에 설치된 한국어 음성을 찾지 못했습니다.';
     $('voice-fallback').hidden=!isSlide||s.mode==='silent'||s.available;
-    $('voice-preflight-message').textContent=s.mode==='device'?'이 기기에서 한국어 음성을 찾지 못했습니다.':'생성 음성이 준비되지 않았습니다.';
+    $('voice-preflight-message').textContent=s.mode==='device'?(s.voiceSelection?'선택한 로컬 한국어 음성을 사용할 수 없습니다. 다른 음성을 선택하거나 무음으로 읽어 주세요.':'이 기기에서 한국어 음성을 찾지 못했습니다.'):'생성 음성이 준비되지 않았습니다.';
     $('use-browser-voice').disabled=!s.voices.length;$('use-browser-voice').title=s.voices.length?'브라우저 음성':'이 기기에서 사용할 한국어 음성이 없습니다.';
     const messages={idle:'재생을 누르면 도식이 설명 순서대로 나타납니다. 재생 설정에서 모두 볼 수도 있습니다.',playing:isSlide?'강의를 재생하고 있습니다.':'한국어 영상과 음성을 함께 재생하고 있습니다.',waiting:s.waitKind==='hold'?'이전 장을 정리할 수 있도록 잠시 유지합니다.':s.waitKind==='start'?'첫 화면을 살펴본 뒤 해설을 시작합니다.':s.waitKind==='slide'?'새 화면을 살펴본 뒤 해설을 시작합니다.':'다음 문장 전에 잠시 쉽니다.',loading:'음성을 불러오고 있습니다.',paused:'일시정지했습니다.',ended:'강의가 끝났습니다. 이해 확인을 풀거나 코스 홈으로 돌아가세요.',blocked:'⚠️ 강의 음성을 사용할 수 없습니다.',error:'⚠️ 음성을 재생하지 못했습니다. 현재 음성 모드를 확인한 뒤 다시 시도하세요.'};
-    $('player-status').textContent=s.available?(['error','blocked','ended'].includes(s.status)?messages[s.status]:''):s.mode==='assets'?'':s.voiceSelection?'⚠️ 선택한 음성을 찾지 못했습니다. 재생 설정에서 다른 로컬 한국어 음성을 선택하세요.':'⚠️ 이 브라우저에서 사용할 수 있는 로컬 한국어 음성이 없습니다.';
+    // Unavailable narration already has an actionable status banner above the stage.
+    // Repeating it over the toolbar would cover the settings needed for recovery.
+    $('player-status').textContent=s.available&&['error','blocked','ended'].includes(s.status)?messages[s.status]:'';
     $('playback-announcement').textContent=['waiting','loading','paused'].includes(s.status)?messages[s.status]:'';
     const cc=U.caption({enabled:captionsEnabled,status:s.status,cue:!isSlide&&!s.captionActive?'':cues[index].caption,gap:(s.status==='waiting'||s.status==='paused'&&s.waitMs!==null)&&s.waitKind!=='hold',previous:isSlide&&s.waitKind==='hold'?cues[index].caption:isSlide&&index>0&&s.waitKind==='sentence'?cues[index-1].caption:''});
     $('live-caption').hidden=cc.hidden;$('caption-text').textContent=cc.text;
@@ -229,7 +231,7 @@
   }
   function paintEmphasis(s){
     const mode=$('motion-mode').value;
-    const activeSlide=data.slides[s.slide],dense=['bar','line','stacked','output','code','timeline','hook','cover','course-map','summary','image'].includes(activeSlide?.type)&&view.lesson==='slides';
+    const activeSlide=data.slides[s.slide],dense=['diagram','bar','line','stacked','output','code','timeline','hook','cover','course-map','summary','image'].includes(activeSlide?.type)&&view.lesson==='slides';
     $('media-viewport').dataset.figure=String(dense);
     fitFullscreenMedia();
     document.querySelectorAll('.lesson-slide').forEach(el=>{
@@ -496,7 +498,7 @@
   $('export').addEventListener('click',()=>{$('state-json').value=storageBlocked?storedRaw:JSON.stringify(state,null,2);$('save-status').textContent='아래 JSON을 복사해 보관하세요.';});
   $('import').addEventListener('click',()=>{try{state=C.parse($('state-json').value);storageBlocked=false;progress();save();}catch(_){$('save-status').textContent='가져오지 못했습니다. 이 코스의 진도 JSON인지 확인하세요.';}});
   videoNarration=published.includes('video')?NativeVideoPlayer.create({lesson:data.video_lesson,scenes:data.video_scenes,video:$('lesson-video'),initialMuted:prefs.muted,initialVolume:prefs.volume,onChange:paintVideoPlayback,onError:message=>{$('player-status').textContent=message;}}):{stop(){},setMuted(){},setVolume(){},setRate(){},snapshot(){return {time:0};}};
-  narration=CourseNarration.create({slides:data.slides,audio:new Audio(),initialMode:data.production_choices.voice==='none'?'silent':'assets',initialMuted:prefs.muted,initialVolume:prefs.volume,pacing,synth:window.speechSynthesis,Utterance:window.SpeechSynthesisUtterance,onChange:paintPlayback});
+  narration=CourseNarration.create({slides:data.slides,audio:new Audio(),initialMode:data.production_choices.voice==='browser'?'device':data.production_choices.voice==='none'?'silent':'assets',initialMuted:prefs.muted,initialVolume:prefs.volume,pacing,synth:window.speechSynthesis,Utterance:window.SpeechSynthesisUtterance,onChange:paintPlayback});
   if(window.speechSynthesis)window.speechSynthesis.addEventListener('voiceschanged',()=>{narration.refreshVoices();});
   for(const [id,icon,label] of [['prev','prev','이전 장'],['next','next','다음 장'],['play','play','재생'],['captions-toggle','captions','자막 숨기기'],['caption-size-toggle','caption-size','자막 크기 선택'],['mute-toggle','volume-off','음소거 해제'],['transcript-toggle','transcript','전체 대본 열기'],['transcript-close','close','전체 대본 닫기'],['settings-toggle','settings','재생 설정 열기'],['fullscreen','fullscreen','전체 화면']])setControl(id,icon,label);
   $('speed-icon').innerHTML=U.svg('speed');

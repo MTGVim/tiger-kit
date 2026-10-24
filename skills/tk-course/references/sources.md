@@ -71,3 +71,32 @@ measured. Omit Marp, a hosted LMS, automatic mastery scoring, accounts and a sha
   ordinary-wait geometry and the playback clock. Rechecked course-builder at the same pinned
   HEAD and read its player, slide-authoring and coherence-review contracts: keep aspect containment;
   omit its fixed three-column layout. The maximize/toggle correction is TigerKit-specific.
+
+## Explanation-first rebuild (2026-10-25)
+
+- Rechecked course-builder HEAD at 1913b09bd1bf947b5ee2d1a75eab4396e669fbd3:
+  [orchestrator](https://github.com/tobyilee/course-builder/blob/1913b09bd1bf947b5ee2d1a75eab4396e669fbd3/.claude/skills/course-builder/SKILL.md)
+  and coherence-review. Adapt the first coherent lesson pilot and slide/script/answer review;
+  omit its runtime, fixed slide counts, provider routing, duration guesses and automatic
+  approval rounds. Its presence/heuristic checks are not semantic quality evidence.
+- [OpenMAIC lecture-style](https://github.com/THU-MAIC/OpenMAIC/blob/dff201b49857918885cc5ebadb4a8af254b6ae9d/skills/agent-runtime/lecture-style/SKILL.md)
+  and stage-design, MIT, rechecked HEAD dff201b49857918885cc5ebadb4a8af254b6ae9d:
+  adapt continuous explanation across scenes, recurring cases and explicit transmission of
+  style/content into generation inputs. Omit its classroom runtime, roster, density quotas
+  and tool protocol. No OpenMAIC implementation or instruction prose is copied.
+- Creator-approved redesign: replace mandatory greeting/map/summary structure with outcome,
+  explanation, scene plan, visuals, refined script and pilot/review. Keep the renderer/player
+  boundary, fixed canvas, reviewed incremental replacement and prior progress preservation.
+  Relationship diagrams are a TigerKit implementation, not an upstream renderer transplant.
+- Creator selects Web Speech API as the recommended quickest HTML narration route, retaining
+  optional generated/supplied file audio and explicit silence. Recommendation is not consent;
+  file-synthesis setup is conditional and voiced movies still need actual file audio.
+- [MDN getVoices](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices),
+  [utterance end](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisUtterance/end_event)
+  and [localService](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/localService),
+  read 2026-10-25: retain local Korean voice discovery/voiceschanged and event-driven progression.
+  Browser/device availability and human pronunciation remain separate from build success.
+
+Earlier source entries describe historical policies. This section supersedes mandatory lesson
+beats and generated-file-first/browser-fallback authoring; current SKILL.md and references own
+behavior. Upstream runtime/learning-effect evaluations were not executed for this adaptation.

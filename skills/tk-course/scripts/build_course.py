@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Validate authored course data and build a local self-contained HTML course."""
 from __future__ import annotations
-import argparse,base64,copy,hashlib,json,math,re,shutil,subprocess,tempfile,warnings,wave,zlib
+import argparse,base64,copy,hashlib,json,math,re,shutil,subprocess,tempfile,wave,zlib
 from pathlib import Path
 from html import escape
 from html.parser import HTMLParser
@@ -63,7 +63,7 @@ def narration_seconds(course,base):
     for lesson in course['lessons']:
         if lesson['kind']=='video':
             if lesson['video']['has_audio']:total+=lesson['video']['duration']
-        elif lesson['narration']=='generated':
+        elif lesson['narration'] in {'generated','supplied'}:
             for slide in lesson['slides']:
                 for cue in slide['narration']:
                     total+=inspect_audio(safe_file(base,cue['audio']))
@@ -142,7 +142,8 @@ def validate(course,base):
             slides=lesson['slides'];sids=set();cids=set()
             if not isinstance(slides,list) or not 1<=len(slides)<=200:raise ValueError('missing slides')
             for slide in slides:
-                identifier(slide['id']);text(slide['title'],45);text(slide.get('eyebrow',' '),100)
+                identifier(slide['id']);text(slide['title'],45)
+                if 'eyebrow' in slide:text(slide['eyebrow'],100)
                 if slide['id'] in sids:raise ValueError('duplicate slide ID')
                 sids.add(slide['id']);cues=slide['narration']
                 if not cues or not set(slide['objective_ids'])<=set(lesson['objective_ids']):raise ValueError('missing cues or invalid slide objectives')
@@ -179,10 +180,10 @@ def validate(course,base):
                 if slide['type']=='image':layout['visual']['aspect_ratio']=image_info(base,slide['visual']['src'])
                 svg(0,layout)
             voice=lesson.get('narration')
-            if voice not in {'generated','none'}:raise ValueError('explicit narration choice required')
-            if voice=='generated' and not all(c.get('audio') for s in slides for c in s['narration']):raise ValueError('selected generated narration is missing; synthesize or explicitly choose none')
-            if slides[-1].get('role') not in {'summary','closing'}:
-                warnings.warn('lesson '+lesson['id']+' lacks a final summary/closing role; review its greeting, connection, goal and ending',UserWarning,stacklevel=2)
+            if voice not in {'browser','generated','supplied','none'}:raise ValueError('explicit narration choice required')
+            if voice in {'generated','supplied'} and not all(c.get('audio') for s in slides for c in s['narration']):raise ValueError('selected generated narration is missing; synthesize or explicitly choose none')
+            if voice=='browser' and any(c.get('audio') for slide in slides for c in slide['narration']):
+                raise ValueError('browser narration cannot contain file audio; choose generated or supplied explicitly')
         elif lesson['kind']=='video':
             video=lesson['video'];path=safe_file(base,video['src'])
             if path.suffix not in {'.mp4','.webm'}:raise ValueError('finished MP4/WebM required')
@@ -214,10 +215,6 @@ def validate(course,base):
     if preview is not None:
         if not isinstance(preview,dict) or set(preview)!={'lesson_id','slide_id'}:raise ValueError('preview_slide requires lesson_id and slide_id')
         if not any(l['id']==preview['lesson_id'] and l['kind']=='slides' and any(s['id']==preview['slide_id'] for s in l['slides']) for l in lessons):raise ValueError('unknown preview_slide reference')
-    slide_lessons=[l for l in lessons if l['kind']=='slides']
-    for previous,current in zip(slide_lessons,slide_lessons[1:]):
-        if previous['slides'][0]['type']==current['slides'][0]['type']:
-            warnings.warn('consecutive lesson openings repeat '+current['slides'][0]['type']+'; choose a question-led opening',UserWarning,stacklevel=2)
     return course
 
 def legacy_slots(slide):
@@ -306,7 +303,7 @@ def payload(course,lesson,base,audio_build=None):
         video={**lesson['video'],'src':media_uri(base,lesson['video']['src'],'video')}
         if video.get('poster'):video['poster']=media_uri(base,video['poster'],'image')
         scenes=copy.deepcopy(video['captions'])
-    data.update(sources=copy.deepcopy(course['sources']),title=course['title'],course_label=course['title'],lesson_id=lesson['id'],lesson_title=lesson['title'],course_meta=meta,course_lessons=listing,overview={'description':course['description'],'level':course['level'],'outcomes':[o['description'] for o in course['objectives']],**{k:course[k] for k in ('created_at','updated_at') if k in course}},slides=slides,lessons=[{'id':mode,'title':lesson['title'],'note':lesson['notes']}],published_lessons=[mode],video_lesson=video,video_scenes=scenes,video_transcript=' '.join(x['caption'] for x in scenes),production_choices={'voice':'none' if lesson.get('narration')=='none' else 'generated-local','pacing':course_pacing(course)},narration_revision=lesson['revision'])
+    data.update(sources=copy.deepcopy(course['sources']),title=course['title'],course_label=course['title'],lesson_id=lesson['id'],lesson_title=lesson['title'],course_meta=meta,course_lessons=listing,overview={'description':course['description'],'level':course['level'],'outcomes':[o['description'] for o in course['objectives']],**{k:course[k] for k in ('created_at','updated_at') if k in course}},slides=slides,lessons=[{'id':mode,'title':lesson['title'],'note':lesson['notes']}],published_lessons=[mode],video_lesson=video,video_scenes=scenes,video_transcript=' '.join(x['caption'] for x in scenes),production_choices={'voice':{'none':'none','browser':'browser','supplied':'supplied'}.get(lesson.get('narration'),'generated-local'),'pacing':course_pacing(course)},narration_revision=lesson['revision'])
     data['readiness']=copy.deepcopy(course.get('readiness',[]))
     return data
 

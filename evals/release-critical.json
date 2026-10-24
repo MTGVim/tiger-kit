@@ -750,7 +750,7 @@
     "tk-video:behavior:video-silent-selected-narration",
     "tk-video:behavior:video-upload-not-selected",
     "tk-course:behavior:course-complete-objective-player-quiet-default",
-    "tk-course:behavior:course-ask-narration-before-build",
+    "tk-course:behavior:course-recommend-browser-before-build",
     "tk-course:behavior:course-missing-selected-audio",
     "tk-course:behavior:course-incremental-revision-preserves-state",
     "tk-course:behavior:course-multi-topic-catalog",

@@ -1,43 +1,63 @@
-# Lesson plot
+# Design the explanation
 
-Read when authoring a new lesson or revising its teaching sequence. Use this plot as a compact
-checklist, not a fixed script. Each lesson starts from its own learning question and outcome;
-vary both the opening form and first description sentence across sibling lessons and course cards.
-The description states what the learner can do, while `level` identifies the audience.
+Read before drafting a lesson or changing its teaching sequence. Keep the plan in the existing
+curriculum.md, not another status file. Start with the learner's question and a supported worked
+case, then follow that case from observed behavior through mechanism to consequence. Reuse its
+entities, starting conditions and vocabulary across scenes; identify each changed condition.
+Introduce a prerequisite before relying on it. A useful arc may span several slides or states.
 
-| Beat | Placement and size | Teaching work |
-| --- | --- | --- |
-| Greet | First cue; one sentence | Welcome the learner directly and name the lesson number. |
-| Connect | 1-2 cues; first lesson uses course setup | Recall the previous lesson's idea and show how it leads here; for the first lesson, introduce the course and prerequisites or materials. |
-| Question | One slide | Pose a specific question in a varied form that the lesson will answer. |
-| Goal | One cue; 1-2 actions | State what the learner will explain, judge or do. |
-| Teach | Body slides | Demonstrate a worked case, then apply the idea to a new or changed case. |
-| Practice | At least one slide | Ask the learner to predict, choose, explain or perform before showing the answer and reason. |
-| Summary | One slide; 2-3 answers to the opening question | Answer the question directly and connect the answers to the goal. |
-| Close | Last lesson cue(s); 1-2 cues | Preview what follows; at the course end, wrap up the course. End with a brief, natural greeting. |
+For each scene record the point to establish, evidence to show, viewing order and connection to
+its neighbors. These are authoring notes, not extra required JSON fields or learner-facing labels.
+Choose the representation after this reasoning: observed UI for a visible state, a diagram for
+relationships, a timeline for order, code/output for an execution, numeric charts for quantities.
+Use cards for genuine lists. When the renderer cannot show the deciding relationship, choose
+another supported representation or report that outcome incomplete instead of substituting labels.
+For requested real screens, inspect actual supplied/primary-source pixels and retain provenance
+and reuse scope; a generated imitation or schematic does not fulfill that request.
 
-Keep narration conversational and cooperative. Use first and second person where it helps the learner
-think through a choice, and offer suggestions without turning every lesson into dialogue. Avoid
-repetitive padding and a fixed greeting, question, or transition template. A cue is one complete
-sentence with a single meaningful visual focus. Cover, current course-map and summary components
-must focus their actual rendered semantic targets. Course-map badges represent the authored
-itinerary; they are not evidence that the learner has mastered prior material.
+## Example arc
 
-Before accepting a slide, inspect its first-cue state and full cue sequence. A progressive cue may
-dim unrevealed content, but each unrevealed semantic label, value and containing box remains readable.
-An empty first-cue focus leaves all content visible. Every line, point, bar, axis, table cell or output
-named by a cue must actually render on that slide. The first-cue screenshot of every slide must read
-as a complete statement, with no empty or label-only boxes.
+A search result unexpectedly returns to an older query. Show that observed result; trace the same
+two requests and their reversed responses; show the commit guard; replay that same order with the
+guard; ask for a prediction when one condition changes. Each view contributes evidence to one
+explanation. Slide count follows readability and reasoning, not a prescribed template sequence.
+Do not manufacture measurements or present a hypothetical worked case as an observed incident.
 
-The sequence adapts Gagné's instructional events as a planning aid, not a mandatory script or a
-claim that a particular sequence guarantees learning. Conversational questions and direct address
-are useful authoring choices, not a measured promise of engagement or learning. Guo et al. analyzed
-6.9 million viewing sessions across four edX courses and reported associations with engagement;
-that observational result does not establish learning gains or causality. The personalization
-principle source is secondary background, not direct experimental proof for this lesson pattern.
+## Write speech from meaning
 
-Sources:
+Draft the connected explanation before splitting captions or synthesizing audio. Name what the
+learner sees, explain the cause or criterion, and carry the conclusion into the next scene. A
+spoken title or a list of labels is insufficient. A greeting, cover, map, recap or question earns
+its place by helping this lesson; none is a required opening/closing ritual. Preserve a creator's
+explicit presentation choices without applying them to every future course.
 
-- Gagné's Nine Events of Instruction, Northern Illinois University Center for Innovative Teaching and Learning: <https://www.niu.edu/citl/resources/guides/instructional-guide/gagnes-nine-events-of-instruction.shtml>
-- Guo, Kim and Rubin, “How video production affects student engagement: An empirical study of MOOC videos” (2014): <https://up.csail.mit.edu/other-pubs/las2014-pguo-engagement.pdf>
-- “The Personalization Principle,” secondary background: <https://pressbooks.pub/elearning2020/chapter/the-personalization-principle>
+Read clear-writing.md. First reconstruct meaning: restore missing premises, actors, conditions
+and causal steps from supported material. Then refine expression: replace vague abstractions,
+translationese, ceremonial transitions and repeated slogans while preserving facts and certainty.
+Read the complete narration in order after editing, including captions and slide labels. For
+Korean, retain the particles and sentence endings needed to express the relationship. This is
+an internal authoring pass; invoking a separate rewrite skill or adding a word blacklist is unnecessary.
+
+Only then split into speakable sentence/phrase cues, retaining the full explanation and stable
+IDs. A cue is a playback unit, not a limit on explanatory depth. Separate pronunciation-corrected
+speech from display spelling. Focus keys identify visible evidence. Existing cue emphasis dims
+future targets but keeps them readable; it does not conceal answers. Use a separate scene or
+the question component when an answer must remain unavailable until the learner responds.
+
+## Pilot and content review
+
+Before scaling, finish one representative connected explanation with its actual visuals and
+whole script. Review as an unfamiliar learner: can the shown evidence support the conclusion,
+does each sentence explain its referenced entity, and can the changed case be reasoned through?
+Correct the source and replay the sequence. Carry the accepted case, terminology and concrete
+style examples into later author/worker inputs; merely naming a skill does not transmit them.
+Reuse settled scope and consent; this pilot adds no automatic user approval checkpoint.
+
+Content review checks missing premises, unsupported claims, slide/script/answer contradictions,
+repetitive empty language and prerequisite/outcome coverage. Technical checks cover schema,
+geometry, media and playback separately. Passing one is not evidence for the other. An ID attached
+to a slide or question proves a reference, not that the outcome was taught or the answer is sound.
+Return specific defects to their source, revise and reread the affected arc before completion.
+For independent work, delegate only bounded source audits, drafts or review with exact inputs,
+references and nonoverlapping files; the parent owns continuity and final integration. Skip it
+when coordination costs more than it saves, and keep provider/model choices out of course files.

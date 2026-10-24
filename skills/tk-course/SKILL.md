@@ -13,145 +13,81 @@ metadata:
 
 # Build a Complete Learning Course
 
-Own a reusable curriculum and an offline course that a learner can finish without a continuing
-conversation. `tk-teach` owns personal tutoring based on observed answers and misconceptions;
-`tk-explain` owns one concept/system explanation. Creation grants no commit, push, PR or deployment.
-Reuse the user's goal, corpus, audience and prior media decisions; ask only material unknowns.
-At the first build's decision round, also settle the distribution root (recommend `courses/dist/`
-beside the topic folders). Reuse a supplied path or existing collection root without asking again.
+Own a reusable curriculum and self-contained HTML learning course. Reuse the audience, sources,
+learning goal and settled choices; ask only material unknowns. tk-teach owns adaptive tutoring,
+tk-explain a single explanation, tk-tts file synthesis and tk-video movie assembly. Creation
+alone grants no commit, push or publication.
 
-## Design, then author
+## Six production steps
 
-For a supplied multi-course/chapter plan built only in part, preserve the verbatim plan and
-confirmed common choices at `<courses>/<program>.plan.md` before authoring. On collection entry,
-read a matching plan before scoping or asking questions; present remaining work in recommended
-order and reuse settled choices. Read [program plans](references/incremental.md#program-plans)
-for identity, source links and status updates. Keep this authoring file outside learning UI/dist.
+1. **Set the outcome.** State what the learner will explain, judge or do and what they must already
+   know. Research current primary sources, account for supplied materials in sources.md and map
+   taught outcomes, prerequisites, worked cases and reasoned transfer checks in curriculum.md.
+   Read [readiness](references/readiness.md) only for a material untaught dependency. Never infer
+   mastery from playback, quiz scores or manual completion.
+2. **Design the explanation.** Read [explanation design](references/lesson-plot.md). Follow a
+   supported case through observation, mechanism and consequence, reusing its entities across
+   scenes. Choose slides for staged explanation and video for motion or actual input that matters.
+   Keep a supplied multi-course plan verbatim at the collection root before authoring its first
+   part; read [plans and revisions](references/incremental.md) for a program or existing artifacts.
+3. **Plan the scenes.** Record each scene's point, visible evidence, viewing order and connection
+   to its neighbors in curriculum.md. Choose representations from that need, before choosing
+   components. Read [visual grammar](references/visual-grammar.md) for figures, [chart design](references/chart-design.md)
+   for numeric evidence and [slide components](references/slide-components.md) for the selected
+   renderer. Inspect requested real screenshots and their reuse scope; text cards or generated
+   imitation screens cannot replace them. Missing essential evidence leaves that outcome incomplete.
+4. **Build the visuals.** Render a complete fixed 16:9 frame using supported components. Show
+   relationships with diagrams, order with timelines, execution with code/output, quantities with
+   charts and genuine lists with cards. Preserve image ratios and stable entities between states.
+   Split by reasoning/state when needed; never grow a slide into a scrolling document or shrink
+   essential detail to fit. Renderer limits are layout constraints, not the teaching outline.
+5. **Write and refine the narration.** Read [clear writing](references/clear-writing.md). Reconstruct
+   meaning first, then refine expression; reread the full explanation against the visible evidence.
+   Explain why the case behaves as shown, rather than reading labels. Then derive sentence/phrase
+   captions and cues without losing explanatory steps. Recommend Web Speech API for quickest HTML
+   production; preserve selected file audio or no narration. Read [media](references/media.md)
+   for the chosen route. File synthesis starts only after the script is corrected. For video,
+   hand tk-video the accepted script and observed start state, action/change, deciding visual and
+   explanation per scene; tk-video assembles this plan rather than inventing the teaching sequence.
+6. **Pilot, review and expand.** Finish one representative explanation with actual visuals and its
+   entire script before scaling. Review missing premises, factual support, language and agreement
+   between slides, narration and answers; revise its source and carry the accepted case/style into
+   later scenes. Greetings, covers, maps and summaries are optional teaching choices, not quotas.
+   Delegate bounded independent work only when it lowers total cost without weakening this review;
+   pass the real references and decisions, and integrate continuity yourself. Add no routine approval
+   checkpoint when the creator already authorized production.
 
-Research current primary sources and retain claim-level provenance. Account for every supplied
-corpus member as used, partial, unavailable or omitted with reason; unavailable essential material
-prevents a complete-corpus claim. Work backward from what a learner should explain, judge or do.
-Map prerequisites, ordered lessons, worked examples, transfer practice and reasoned answers in
-`curriculum.md`; keep `sources.md` and authored `course.json` beside the output. A completed course
-must teach and assess its outcomes without relying on hidden chat context or a tutor's memory.
-Never infer mastery from reading, playback, scores or a manually checked completion box.
+## Build and delivery
 
-Separate taught content, assessed outcomes and prerequisites required but untaught. When a material
-untaught dependency could block the goals, read [readiness](references/readiness.md) before authoring
-optional preparation checks; omit them for self-contained introductory or short material.
+Read [authoring](references/authoring.md) before writing course.json and building. Keep authored
+content separate from the renderer. Preserve stable IDs, revisions, source accounting and unknown
+learner records. Default to ignored .tigerkit/courses/ and settle the shared dist root once, reusing
+existing paths. Build with scripts/build_course.py --input <topic>/course.json --output <topic>/build
+--dist <courses>/dist. Existing targets use reviewed staging and --previous under incremental editing.
+Retain third-party notices and keep setup text, private plans and sharing controls out of learning UI.
 
-Choose each lesson's medium from its learning goal. Prefer HTML/SVG slides plus local generated
-narration for a staged explanation. Choose video when continuous movement, actual software input
-or a physical procedure is itself needed. Do not duplicate every slide deck as a video. Resolve
-TTS before production, including available engine/model/voice and readiness from `tk-tts`;
-reuse answers rather than asking again. Read [media production](references/media.md) for selected
-narration or video. Keep synthesis in `tk-tts` and assembly in `tk-video`; consume ordinary files,
-never sibling Python imports or a shared dispatcher. Browser speech is an explicit final playback
-fallback, not an exported-audio engine. Preserve an explicit no-narration choice.
+Run content review and technical verification separately. A successful build or matching objective
+ID is not proof of a comprehensible explanation. Use tk-browser-verify for actual full-frame
+readability, caption coverage, cue/seek states, controls, themes, transcript/navigation scrolling,
+reclaimed media space on transcript closure and native/fallback fullscreen. Read media for player
+acceptance and applicable file/audio checks. Browser voice simulation is not listening evidence;
+report unavailable voices and pending pronunciation review. A finished movie retains its own clock
+and audio, with no live TTS layered over it.
 
-Read [lesson plot](references/lesson-plot.md) when authoring lessons. Delegate bounded independent
-source audits, lesson drafts or verification when total context/work falls without weakening
-quality or review. Reuse course-level source, plan and TTS decisions. Give each worker the approved
-scope, relevant references including inline Artifact Paths, and a nonoverlapping
-new-file boundary. The parent integrates and reviews pedagogical continuity, shared metadata and
-media, then owns final browser and audio checks. Choose only currently available supported models
-for task difficulty; skip delegation when dependencies or coordination cost outweigh the gain.
-Do not encode a model or provider in course artifacts. Read [clear writing](references/clear-writing.md)
-for new narration/prose. Introduce what each slide will explain, connect the visible entities to a
-worked case, then explain the result and transition. A script must make sense with its slide; do
-not read disconnected labels. Read [visual grammar](references/visual-grammar.md) when choosing a
-figure, [chart design](references/chart-design.md) for numeric charts, and [HTML output](references/html-output.md)
-for the offline/theme/escaping contract. The course player is a media layout; document-navigation
-rules apply only to document-like notes, not a second rail around the player.
-
-Choose each slide representation from its question: numeric comparison, trend or composition uses
-a bar, line or stacked chart with finite numeric `visual.data` values and explicit units; a narrated
-output, log or stack uses `output`; genuine nonnumeric lists use `content`. When outcomes depend
-on locating UI, comparing spatial layouts or judging visible state, inspect the supplied visuals
-before authoring. Use an annotated screenshot, faithful schematic or worked visual example
-showing the deciding feature; text cards cannot substitute for that observable relationship.
-When the creator requests real screen imagery, inspect screenshots from the supplied corpus or
-primary online sources and preserve that choice. Schematics support observed screens; they cannot
-replace requested real pixels. Give independently taught topics separate visually supported scenes;
-a same-condition A/B comparison may remain together. If essential real screens cannot be obtained,
-report the affected outcome incomplete.
-The `image` component embeds a verified local raster with description, provenance and cue regions. Components
-support one to four hook cards and generalized code and timeline forms while retaining legacy
-aliases. For progressive reveal, cue focus dims unrevealed targets while keeping semantic labels,
-values and boxes readable; an empty first-cue focus shows everything. Every cue target must render
-on that slide. For cover, current course-map and summary components, focus the actual rendered
-semantic targets; map badges describe the authored itinerary, not learner mastery.
-
-Keep ordinary course slide media on a fixed 16:9 canvas, including on narrow screens. Preserve
-an embedded asset's intrinsic ratio inside its allocated region. Fit content by splitting meaningful
-questions or states into additional slides or scenes; never grow the canvas, require intra-slide
-scrolling or shrink essential labels to hide overflow. Scrolling notes and transcripts are separate
-document regions. Verify the complete slide in one media frame at each supported viewport.
-
-## Build and verify
-
-Read [authoring and build](references/authoring.md), use the packaged components and fixed player,
-and run `scripts/build_course.py --input <topic>/course.json --output <topic>/build --dist <courses>/dist`.
-Default the course collection to ignored `.tigerkit/courses/`; honor explicit destinations.
-Keep source at `<courses>/<topic>/`, working manifests in `<topic>/build/`, and shared HTML at
-`<dist>/<topic>/index.html`. Use a new work/output and distribution staging tree for revisions;
-review before replacing an approved target and refresh its catalog. Keep learning
-content separate from renderer code. Do not copy demo content, brand marks, engine setup or
-implementation notes into learning screens. Retain third-party notices.
-Shared output contains a catalog, single-file courses and optional public `catalog.json`; `--lesson-pages` writes
-direct lesson pages to the working output. Build audio defaults to Opus 32kbps; see media guidance
-for compressed input, FFmpeg readiness and `--audio-format mp3|wav`. Keep original media intact.
-Keep the home copy on a theme-token surface distinct from the page canvas. The header shows
-the course title once; entering a lesson adds its title, and returning home clears that context.
-
-Before scaling narration, read representative teaching visuals against their actual learning
-question: can a learner locate the control/state, trace the spatial relationship or compare
-the changed condition from the figure and caption? If essential evidence or renderer support
-is missing, report that outcome incomplete. No image count or decoration quota applies.
-Inspect the actual reading/listening order, objective/prerequisite coverage, source support,
-component overflow, captions, notes, question/answer separation and retry feedback. Every line,
-point, bar, axis, table or output named by a cue must be rendered on that slide. A first-cue
-screenshot of every slide must read as a complete statement, without empty or label-only boxes.
-In collections, each catalog card must differ from its siblings in both preview and first
-description sentence; the description names what the learner can do, and `level` names the audience.
-Every lesson greets the learner, connects to the previous lesson, states its goal, and closes with
-a summary and preview. Vary opening forms across consecutive lessons. Verify audio
-readiness, missing-file recovery, paused lesson entry, explicit Play with immediate button feedback and an initial lead-in,
-previous-slide hold and next-slide lead-in (3 seconds total by default), breathing gaps, reveal/seek state,
-captions inside the visible media frame, reclaimed transcript space with centered maximum-fit media in fullscreen/expansion,
-stable media/control geometry during ordinary waits,
-caption size/opacity (default 50%), light/dark/system themes, settings hit areas, first-visit sound off and captions on with a combined entry toast,
-muted retry plus toast when audible playback is blocked, playback preferences persisting across
-lessons and reloads, viewport-bounded independent content/curriculum/transcript scrolling,
-reachable curriculum tail and retained curriculum position across lessons, default-open transcript
-without focus theft or mobile overlay, collapsible curriculum and a single-line breadcrumb,
-volume/rate, progress import/export, contextual shortcuts/help, native fullscreen or a labeled
-in-window expansion fallback, and a viewport-bounded volume popup that preserves toolbar
-height and supports hover, keyboard and touch dismissal. A finished video owns its audio, pauses and time axis;
-never overlay live TTS. Manual progress belongs to the course and is not tutoring evidence.
-Use `tk-browser-verify` for actual runtime checks; static/media doubles are not browser or listening
-proof. Report unexecuted checks and pending human listening, never fabricate generated audio.
-Return a concise link and actual verification limits. Do not launch the user's browser.
-Return the automatically refreshed catalog path even for one course. Explain sharing: one course
-is `<dist>/<topic>/index.html`; send the `<dist>/` folder or `build_catalog.py --dist <dist> --zip`
-result for several. Keep sharing/download controls out of learning screens.
-
-For existing artifacts or several topics, read [incremental editing and collections](references/incremental.md)
-before changing anything. Preserve unrelated courses, learner notes and unknown progress formats.
-When a collection has `catalog.json`, settle a new course's position once before building; reuse
-an already agreed plan/order. Verify date provenance, ordering/dependencies, saved date sorting,
-centered fluid columns and complete card text at the requested viewport/column boundaries.
-
-For attribution and deliberate omissions, see [sources](references/sources.md).
+Return the course and automatically refreshed catalog links, actual verification and material
+limits. One course is <dist>/<topic>/index.html; several share the dist folder or build_catalog.py
+--dist <dist> --zip output. Do not launch the user's browser. For provenance see [sources](references/sources.md).
 
 <!-- tigerkit:narration-choice -->
 ## Narration Choice
 
-Ask the creator to choose TTS, supplied audio or no narration before any video or spoken-slide
-production. Reuse an answered parent/user choice; video or a voice preference is not TTS consent.
-Show current tk-tts model/voice/device/setup options before synthesis/assembly. Preserve no
-narration; offer MP4 for GIF sound. Static HTML/text needs no unrelated voice interview.
-Installation/download/publication require their own authority; playback mute/fallback are separate.
+Before spoken-slide production, offer Web Speech API (recommended for quickest HTML creation),
+local generated file audio, supplied audio or no narration. Reuse an answered parent/user choice;
+a recommendation is not consent. Browser speech needs no tk-tts setup or file synthesis interview.
+Only selected file generation loads tk-tts options/readiness. A narrated movie needs supplied or
+synthesized audio files; explain that requirement and resolve only the changed choice. A browser
+voice preference does not grant file synthesis, installation, downloads or publication. Playback
+mute, unavailable voices and learner fallback remain separate from the creator's production choice.
 <!-- /tigerkit:narration-choice -->
 
 <!-- tigerkit:artifact-paths -->
