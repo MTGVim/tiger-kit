@@ -70,6 +70,11 @@ output, log or stack uses `output`; genuine nonnumeric lists use `content`. When
 on locating UI, comparing spatial layouts or judging visible state, inspect the supplied visuals
 before authoring. Use an annotated screenshot, faithful schematic or worked visual example
 showing the deciding feature; text cards cannot substitute for that observable relationship.
+When the creator requests real screen imagery, inspect screenshots from the supplied corpus or
+primary online sources and preserve that choice. Schematics support observed screens; they cannot
+replace requested real pixels. Give independently taught topics separate visually supported scenes;
+a same-condition A/B comparison may remain together. If essential real screens cannot be obtained,
+report the affected outcome incomplete.
 The `image` component embeds a verified local raster with description, provenance and cue regions. Components
 support one to four hook cards and generalized code and timeline forms while retaining legacy
 aliases. For progressive reveal, cue focus dims unrevealed targets while keeping semantic labels,
@@ -111,8 +116,9 @@ In collections, each catalog card must differ from its siblings in both preview 
 description sentence; the description names what the learner can do, and `level` names the audience.
 Every lesson greets the learner, connects to the previous lesson, states its goal, and closes with
 a summary and preview. Vary opening forms across consecutive lessons. Verify audio
-readiness, missing-file recovery, immediate play feedback with a visible initial lead-in,
+readiness, missing-file recovery, paused lesson entry, explicit Play with immediate button feedback and an initial lead-in,
 previous-slide hold and next-slide lead-in (3 seconds total by default), breathing gaps, reveal/seek state,
+captions inside the visible media frame, stable media/control geometry across transcript toggles and ordinary waits,
 caption size/opacity (default 50%), light/dark/system themes, settings hit areas, first-visit sound off and captions on with a combined entry toast,
 muted retry plus toast when audible playback is blocked, playback preferences persisting across
 lessons and reloads, viewport-bounded independent content/curriculum/transcript scrolling,

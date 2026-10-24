@@ -107,16 +107,20 @@ the same cover. A final map may use `role:"closing"` with next-lesson preview na
 Text budgets are weighted columns (wide CJK and MWmw characters count two, tabs four); title, narration
 and common metadata retain the existing course limits. Components validate their specific slots
 and reject oversized data before output. Inspect the fixed canvas at desktop and narrow widths,
-light/dark themes, captions on, first cue and each focus state. Captions for these figures sit
-below the figure so they cannot cover axes or output lines. The 390px check includes label
+light/dark themes, captions on, first cue and each focus state. Captions float inside the visible media frame for every component, never in a document row.
+Reserve their lower safe area when designing decisive labels/regions; divide or reposition
+content when necessary rather than moving captions outside the frame. The 390px check includes label
 bounding boxes, exact value reconciliation, complete original output and document width.
 
 ## Observed screens and spatial examples
 
 Use `type:"image"` for a verified local PNG/JPEG/WebP teaching figure. `visual` requires
 `src` (source-relative nonsymlink file), `alt`, `description`, `source` and `rights` (the verified
-redistribution scope). Image authoring requires Pillow; detect readiness and report a missing
-dependency before production rather than installing implicitly. The builder checks actual encoding and embeds pixels offline. It derives
+redistribution scope). Only image inputs require existing ffprobe/ffmpeg capabilities for codec/container metadata and
+complete strict decoding; Pillow is not required. Detect missing capability before production
+without installing implicitly. Image-free WAV/silent builds keep their existing requirements.
+The builder limits file bytes (64 MB), dimensions (16384 per side, 40 million pixels), allocations
+and processing time (15 seconds per probe/decode), checks actual encoding and embeds pixels offline. It derives
 aspect ratio from the image, preserving annotations inside the fixed 16:9 canvas. Catalog cards
 use the description as a text preview to retain the small public-manifest budget; choose another
 preview slide when its diagram better distinguishes the course.
@@ -137,3 +141,8 @@ entities and show intermediate steps only when they expose a cause. Compare the 
 figure and caption; preserve backward/reset and static explanation. Do not invent measured
 travel time, distance or success rates, and do not require animation or MP4 when staged SVG or
 static comparison already teaches the judgment.
+
+For requested real-screen lessons, gather/inspect supplied or primary-source screenshots and
+retain URL, version/language, scene and reuse scope. Schematics only supplement those screens.
+Do not count assets as proof of this representation choice or leave independent card topics
+unreviewed. Identical slide and hook title text renders once; distinct emphasis stays.

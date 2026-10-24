@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Validate authored course data and build a local self-contained HTML course."""
 from __future__ import annotations
-import argparse,base64,copy,hashlib,json,math,re,shutil,subprocess,tempfile,warnings,wave
+import argparse,base64,copy,hashlib,json,math,re,shutil,subprocess,tempfile,warnings,wave,zlib
 from pathlib import Path
 from html import escape
 from html.parser import HTMLParser
@@ -233,15 +233,54 @@ def legacy_slots(slide):
         short(v['question'],55);short(v['hint'],55)
 
 def image_info(base,name):
-    try:from PIL import Image
-    except ImportError as error:raise ValueError('Pillow is required for local teaching images') from error
     path=safe_file(base,name)
-    expected={'.png':'PNG','.jpg':'JPEG','.jpeg':'JPEG','.webp':'WEBP'}.get(path.suffix.lower())
+    expected={'.png':('png','png_pipe'),'.jpg':('mjpeg',('jpeg_pipe','image2')),'.jpeg':('mjpeg',('jpeg_pipe','image2')),'.webp':('webp','webp_pipe')}.get(path.suffix.lower())
     if not expected:raise ValueError('unsupported image file type')
-    with Image.open(path) as picture:
-        if picture.format!=expected:raise ValueError('image encoding does not match file type')
-        ratio=picture.width/picture.height;picture.verify()
-    return ratio
+    if path.stat().st_size>64_000_000:raise ValueError('image exceeds 64 MB budget; split or crop the inspected evidence')
+    raw=path.read_bytes()
+    if expected[0]=='png':
+        # FFmpeg tolerates missing PNG IEND/CRC; retain container integrity as well as decoding.
+        if raw[:8]!=b'\x89PNG\r\n\x1a\n':raise ValueError('invalid PNG signature')
+        offset=8;ended=False
+        while offset+12<=len(raw):
+            size=int.from_bytes(raw[offset:offset+4],'big');kind=raw[offset+4:offset+8];end=offset+12+size
+            if end>len(raw) or zlib.crc32(raw[offset+4:end-4])!=int.from_bytes(raw[end-4:end],'big'):raise ValueError('truncated or corrupt PNG chunk')
+            if offset==8 and (kind!=b'IHDR' or size!=13):raise ValueError('invalid PNG header')
+            offset=end
+            if kind==b'IEND':
+                ended=size==0 and offset==len(raw);break
+        if not ended:raise ValueError('truncated or corrupt PNG ending')
+    elif expected[0]=='mjpeg':
+        # Walk segment lengths and entropy markers so an EOI inside EXIF is not an ending.
+        if raw[:2]!=b'\xff\xd8':raise ValueError('invalid JPEG signature')
+        offset=2;entropy=False;ended=False
+        while offset<len(raw):
+            if entropy:offset=raw.find(b'\xff',offset)
+            if offset<0 or raw[offset]!=255:break
+            while offset<len(raw) and raw[offset]==255:offset+=1
+            if offset>=len(raw):break
+            marker=raw[offset];offset+=1
+            if entropy and (marker==0 or 208<=marker<=215):continue
+            if marker==217:ended=True;break
+            if marker in (0,216) or offset+2>len(raw):break
+            size=int.from_bytes(raw[offset:offset+2],'big')
+            if size<2 or offset+size>len(raw):break
+            offset+=size;entropy=marker==218
+        if not ended:raise ValueError('truncated or corrupt JPEG ending')
+    elif expected[0]=='webp' and (raw[:4]!=b'RIFF' or raw[8:12]!=b'WEBP' or int.from_bytes(raw[4:8],'little')+8!=len(raw)):raise ValueError('truncated or corrupt WebP container')
+    tools={name:shutil.which(name) for name in ('ffprobe','ffmpeg')}
+    if not all(tools.values()):raise ValueError('local teaching images require ffprobe and ffmpeg for metadata and full decode; image-free WAV/silent builds do not')
+    limits=['-max_alloc','268435456','-max_pixels','40000000','-threads','1']
+    try:
+        probe=json.loads(subprocess.run([tools['ffprobe'],'-v','error',*limits,'-show_streams','-show_format','-of','json',str(path)],check=True,capture_output=True,text=True,timeout=15).stdout)
+        streams=probe.get('streams',[])
+        if len(streams)!=1 or streams[0].get('codec_type')!='video' or streams[0].get('codec_name')!=expected[0] or probe.get('format',{}).get('format_name') not in (expected[1] if isinstance(expected[1],tuple) else (expected[1],)):raise ValueError('image encoding does not match file type')
+        w,h=streams[0].get('width',0),streams[0].get('height',0)
+        if not isinstance(w,int) or not isinstance(h,int) or min(w,h)<=0 or max(w,h)>16384 or w*h>40_000_000:raise ValueError('invalid or oversized image dimensions')
+        # Decode all image data with strict errors; probing a header alone is insufficient.
+        subprocess.run([tools['ffmpeg'],'-v','error','-xerror','-nostdin',*limits,'-err_detect','crccheck+explode','-i',str(path),'-map','0:v:0','-f','null','-'],check=True,capture_output=True,timeout=15)
+    except (subprocess.SubprocessError,json.JSONDecodeError) as error:raise ValueError('invalid, truncated or timed-out teaching image: '+name) from error
+    return w/h
 
 def embed_visual(slide,base):
     if slide['type']!='image':return slide

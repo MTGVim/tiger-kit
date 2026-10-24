@@ -264,7 +264,9 @@ def render(slide,index,compact=False):
         if v.get('callout'):parts.append(g('callout',text_at(m,tail+70,v['callout'],32,78,48),aliases=(['overwrite'] if legacy else [])))
     elif kind=='hook':
         y=top
-        for value in v['title_lines']:
+        title_lines=[] if ' '.join(' '.join(v['title_lines']).split())==' '.join(slide['title'].split()) else v['title_lines']
+        for value in title_lines:
+            if ' '.join(value.split())==' '.join(slide['title'].split()):continue
             parts.append(text_at(m,y,value,48,72,72,weight='600'));y+=len(wrap(value,72))*72
         cards=v['cards'];cols=3 if len(cards)==3 else min(2,len(cards));cw=(right-m-28*(cols-1))/cols;limit=int((cw-48)/27)
         cardheight=95+max(len(wrap(c['value'],limit)) for c in cards)*72

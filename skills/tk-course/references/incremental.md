@@ -166,6 +166,9 @@ Cross-device accounts/sync are separate requirements. Publication remains separa
 Inspect authored `course.json`, curriculum/sources, prior built manifest and original media before
 backfilling an existing course. Name the outcomes missing observed screen/spatial/state evidence;
 add meaningful supported figures only there, updating descriptions, provenance, rights and cues.
+For requested real-screen lessons, replace affected card topics with distinct inspected screen
+scenes; an original schematic or asset count cannot satisfy that request. Keep outcomes with
+unavailable essential real screens incomplete. Inspect remaining reported card scenes as well.
 If authored input or prior media identity is missing, report the required input rather than
 claiming automatic recovery. Image-byte changes at the same path enter the persisted fingerprint.
 
@@ -180,7 +183,10 @@ Reuse raw/normalized cue audio when the explanation still matches the new figure
 changed speech at new paths and update its caption/transcript/targets together; never split audio
 by character-count timing. Pacing alone requires no synthesis or learning-content revision.
 Preserve course/lesson/cue IDs, manual completions, notes, unknown progress and date provenance;
-raise lesson revisions only for substantive teaching changes. Keep explicit legacy/zero pacing.
+raise lesson revisions only for substantive teaching changes. Numeric saved slide/cue indices
+can change meaning after splitting: bind saved positions to the content revision, preserve
+legacy records and use a labeled recheck starting point rather than pretending an old index
+restores the same scene. Keep explicit legacy/zero pacing.
 
 Preserve original authored files and approved HTML; build a fresh work/dist staging tree with
 `--previous <prior-built-course.json>`. Review changes.json, media digests, the actual visual

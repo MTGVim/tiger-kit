@@ -53,3 +53,15 @@ measured. Omit Marp, a hosted LMS, automatic mastery scoring, accounts and a sha
   source does not explicitly mandate 16:9; upstream runtime/evals were not executed.
   The fixed canvas is the creator's requested course-media policy, not a universal pedagogical
   optimum or a measured learning-effect claim.
+
+- Creator follow-up incident (2026-10-24), checked against the current source and existing
+  figure/navigation evaluations: adapt explicitly requested real-screen imagery and separate
+  teaching scenes; one contained caption overlay, transcript-open media sizing, layout-free
+  waits, paused lesson entry and capability-scoped image validation. These revise the former
+  below-figure caption oracle, responsive closed-rail expansion and entry-autoplay behavior.
+  Keep the existing cue clock, offline/preservation and incremental staging contracts.
+- Rechecked course-builder HEAD at `1913b09bd1bf947b5ee2d1a75eab4396e669fbd3`; read the pinned
+  slide-authoring, coherence-review and `scripts/generate-player.py`. Keep semantic scene/cue
+  correspondence and cross-asset checking. Adapt them to inspected real pixels and current
+  media geometry; omit Marp, fixed counts, proportional caption timing, its runtime and review
+  orchestration. Upstream runtime/evals and actual user-course backfill were not executed.

@@ -16,7 +16,10 @@ prior context remains, backwards seeking reconstructs state, and reduced motion 
 access and readable content. Do not claim pedagogical improvement from animation alone.
 
 Slides use actual audio ended events, not guessed speech duration. A fresh lesson shows its first
-slide and acknowledges Play immediately with a visible waiting message, then starts narration
+slide paused. Only explicit Play starts the initial wait; opening from home, curriculum, next
+lesson, resume or deep-link never calls the transport to play, even muted or when the previous
+lesson was playing. Acknowledge Play immediately in its button/icon and a layout-free live region,
+then start narration
 after a 5000ms lead-in. At a slide boundary keep the completed slide/index/cue for 1800ms, show
 the new slide for 1200ms, then narrate: 3000ms total between slides. These are adjustable product
 defaults, not measured universal optima. Same-slide cues wait 600ms; the final cue ends without
@@ -41,7 +44,7 @@ captions; video controls follow currentTime/ended/playbackRate. Do not swap per-
 restart a first poster between sentences. FFmpeg is also required when compressed narration is selected.
 
 The player keeps a main slide/video and visible curriculum, notes/practice and a default-open transcript without focus theft,
-floating white captions over rounded black, CC toggle, subtitle size and background opacity
+floating white captions over rounded black inside the actual displayed slide/video frame, CC toggle, subtitle size and background opacity
 (default 50%), volume, speed and fullscreen controls. First-visit sound is off and captions are on;
 a combined entry toast shows both states and offers relevant actions. Stored preferences win.
 Retry muted with guidance when audible playback is blocked. Reuse versioned
@@ -84,3 +87,15 @@ restoring after layout with clamp; changed viewports additionally expose the sel
 minimal movement. No new global preference is stored. Transcript shares the stage's fullscreen
 subtree and clock, remains toggleable in native/fallback expansion and sits below media on small
 screens rather than covering it. Home and no-JavaScript reading retain document scrolling.
+
+## Stable media geometry
+
+All slide types share one caption overlay within the media viewport. For contained video, keep
+it within the actual image rather than the letterbox. Preserve two-line Korean captions, size,
+CC and 50% opacity with the existing clock. Captions never create a normal-flow paragraph.
+Size media from the transcript-open grid, reserving those columns/rows while it is closed;
+same-mode transcript toggles keep both media and controls stable, including the image inside.
+Recalculate only for actual viewport/orientation/fullscreen layout changes. Normal start,
+sentence, hold and lead-in waits add no visible layout row; the button and off-flow live region
+communicate them. Keep errors, unavailable/blocked media and completion announcements accessible
+without shifting controls. No padded audio or extra scheduler is needed.

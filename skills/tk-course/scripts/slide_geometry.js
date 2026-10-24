@@ -12,9 +12,12 @@
   for(let i=0;i<texts.length;i++)for(let j=i+1;j<texts.length;j++){const a=logicalBounds(texts[i]),b=logicalBounds(texts[j]);if(Math.min(a.x+a.width,b.x+b.width)-Math.max(a.x,b.x)>1&&Math.min(a.y+a.height,b.y+b.height)-Math.max(a.y,b.y)>3)overlaps.push([texts[i].textContent,texts[j].textContent]);}
   const concealed=texts.filter(e=>!e.closest('[data-slide-metadata]')).filter(e=>{for(let p=e;p&&p!==svg.parentElement;p=p.parentElement){const s=getComputedStyle(p);if(s.display==='none'||s.visibility==='hidden'||Number(s.opacity)===0)return true;}return false;}).map(e=>e.textContent);
   const imageOK=[...svg.querySelectorAll('image')].every(e=>{const m=e.getScreenCTM();return e.preserveAspectRatio.baseVal.align!==1&&Math.abs(Math.hypot(m.a,m.b)-Math.hypot(m.c,m.d))<.001;});
+  // Overlay containment alone cannot prove that the caption leaves teaching labels readable.
+  const caption=frame.querySelector('#live-caption'),captionBox=caption&&!caption.hidden?caption.getBoundingClientRect():null;
+  const captionOverlaps=captionBox?[...svg.querySelectorAll('text,[data-focus-key^="region-"] rect')].filter(e=>!e.closest('[data-slide-metadata]')&&e.getBoundingClientRect().width>0).filter(e=>{const r=e.getBoundingClientRect();return Math.min(r.right,captionBox.right)-Math.max(r.left,captionBox.left)>1&&Math.min(r.bottom,captionBox.bottom)-Math.max(r.top,captionBox.top)>1;}).map(e=>e.textContent||e.closest('[data-focus-key]')?.dataset.focusKey):[];
   const ratioOK=Math.abs(vb.width/vb.height-16/9)<1e-6;
   const frameOK=Math.abs(box.height-box.width*9/16)<=1;
   const scrollOK=frame.scrollHeight<=frame.clientHeight+1&&frame.scrollWidth<=frame.clientWidth+1;
   const contained=bounds.left>=box.left-1&&bounds.top>=box.top-1&&bounds.right<=box.right+1&&bounds.bottom<=box.bottom+1;
-  return {ok:imageOK&&ratioOK&&frameOK&&scrollOK&&contained&&!outside.length&&!unreadable.length&&!overlaps.length&&!concealed.length,imageOK,ratioOK,frameOK,scrollOK,contained,outside,unreadable,overlaps,concealed,frame:{width:box.width,height:box.height},logical:{width:vb.width,height:vb.height}};
+  return {ok:imageOK&&ratioOK&&frameOK&&scrollOK&&contained&&!outside.length&&!unreadable.length&&!overlaps.length&&!concealed.length&&!captionOverlaps.length,captionOverlaps,imageOK,ratioOK,frameOK,scrollOK,contained,outside,unreadable,overlaps,concealed,frame:{width:box.width,height:box.height},logical:{width:vb.width,height:vb.height}};
 }

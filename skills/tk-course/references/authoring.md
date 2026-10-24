@@ -138,10 +138,17 @@ a real update supplies `updated_at`; never guess the original creation date. See
 date display and sorting. Keep dates out of fingerprints and learner progress.
 
 For a visual observation outcome, inspect supplied screenshots/layouts before writing slides.
-Identify the visible deciding feature and use a faithful schematic, annotated local raster or
+Read caption coverage of essential labels/regions in the full frame as well as its bounds.
+A caption-covered teaching feature requires repositioning or semantic splitting, even when
+overlay containment and 16:9 both pass. Identify the visible deciding feature and use a faithful schematic, annotated local raster or
 worked visual example. Research missing evidence from primary/public sources or authorized
-capture; retain version/context, claim source and redistribution scope. If source pixels cannot
-be redistributed, draw an independently supported schematic. Never invent unseen layout.
+capture; retain version/context, claim source and redistribution scope. If the creator requested real screens, retain source URL, version/language, scene, selected
+region, reuse conditions and the visual judgment. Try other real candidates when one cannot be
+used. Keep that outcome incomplete when essential pixels remain unavailable; a schematic or
+generated imitation UI cannot silently replace them. Otherwise an independently supported
+schematic is allowed. Never invent unseen layout. Split independently taught card topics into
+separate screen-supported scenes; preserve same-condition A/B comparisons when they teach one
+judgment. Use nondestructive regions/annotations rather than recreating inspected pixels.
 Review representative figures before mass narration: the learner must answer the visual question
 from the figure plus caption, not from narration supplying an invisible relationship.
 

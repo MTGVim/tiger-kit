@@ -121,7 +121,7 @@ class FigureTests(unittest.TestCase):
     def test_figures_in_actual_browser(self):
         from PIL import Image,ImageDraw
         im=Image.new('RGB',(800,450),'#eceff3');draw=ImageDraw.Draw(im)
-        draw.rectangle((80,90,320,270),fill='#4c8c62');draw.rectangle((480,90,720,270),fill='#a35b58')
+        draw.rectangle((80,90,320,225),fill='#4c8c62');draw.rectangle((480,90,720,225),fill='#a35b58')
         from PIL import ImageFont
         font=ImageFont.truetype('DejaVuSans.ttf',54)
         draw.text((90,110),'OPEN',font=font,fill='white');draw.text((490,110),'STOP',font=font,fill='white');im.save(self.root/'layout.png')
@@ -129,10 +129,17 @@ class FigureTests(unittest.TestCase):
             'src':'layout.png','alt':'An open left route and a blocked right route',
             'description':'Open vs blocked',
             'source':'Original synthetic layout for this regression test','rights':'Original test figure; redistribution permitted',
-            'regions':[{'id':'open','label':'Open left','x':.1,'y':.2,'width':.3,'height':.4}]},['image','region-open']))
+            'regions':[{'id':'open','label':'Open left','x':.1,'y':.2,'width':.3,'height':.3}]},['image','region-open']))
         self.data['lessons'][0]['notes']+='\nLong document notes remain independently scrollable.'*120
         self.build('browser')
         env={**os.environ,'TK_FIGURE_PAGE':str(self.root/'browser/index.html')}
+        video_pages=[]
+        for label,dimensions in [('wide','640x180'),('standard','320x240'),('portrait','180x320')]:
+            movie=self.root/(label+'.mp4')
+            subprocess.run(['ffmpeg','-v','error','-f','lavfi','-i','color=c=steelblue:s='+dimensions+':d=4','-an','-c:v','libx264',str(movie)],check=True)
+            course=fixture('video-'+label);lesson=course['lessons'][0];lesson.pop('slides');lesson['kind']='video';lesson['video']={'src':movie.name,'narration':'none','captions':[{'id':'video-cue','start':0,'end':4,'caption':'화면을 확인합니다.'}]}
+            source=self.root/(label+'.json');source.write_text(json.dumps(course));builder.build(source,self.root/('video-'+label));video_pages.append(str(self.root/('video-'+label)/'index.html'))
+        env['TK_VIDEO_PAGES']=json.dumps(video_pages)
         result=subprocess.run(['node','--test',str(Path(__file__).resolve().parents[1]/'evals/skills/tk-course/figures.test.cjs')],env=env,capture_output=True,text=True,timeout=270)
         self.assertEqual(result.returncode,0,result.stdout+result.stderr)
 
@@ -322,6 +329,46 @@ class TeachingImageTests(unittest.TestCase):
         fallback=page.split('<noscript>')[1].split('</noscript>')[0];self.assertIn('<image ',fallback)
         from distribution import read_manifest
         manifest=read_manifest(self.root/'built/index.html');self.assertNotIn('layout.png',json.dumps(manifest))
+    def test_png_jpeg_webp_build_without_pillow_and_reject_truncated_or_mismatched_bytes(self):
+        import sys
+        from PIL import Image
+        for suffix,codec in [('png','PNG'),('jpg','JPEG'),('webp','WEBP')]:
+            path=self.root/('screen.'+suffix)
+            Image.new('RGB',(800,450),'#5b8aaa').save(path,format=codec)
+            self.slide['visual']['src']=path.name
+            source=self.root/'course.json';source.write_text(json.dumps(self.data))
+            # -S excludes site packages (including Pillow) from the actual builder process.
+            result=subprocess.run([sys.executable,'-S',str(builder.__file__),'--input',str(source),'--output',str(self.root/('built-'+suffix)),'--audio-format','wav','--dist',str(self.root/('dist-'+suffix))],capture_output=True,text=True)
+            self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+            self.assertIn('data:image/',Path(json.loads(result.stdout)['path']).read_text())
+            (self.root/'wrong.png').write_bytes(path.read_bytes() if suffix!='png' else b'not an image')
+            with self.assertRaises(ValueError):builder.image_info(self.root,'wrong.png')
+            (self.root/('cut.'+suffix)).write_bytes(path.read_bytes()[:len(path.read_bytes())//2])
+            with self.assertRaises(ValueError):builder.image_info(self.root,'cut.'+suffix)
+        for cut in (1,2,4):
+            (self.root/'no-eoi.jpg').write_bytes((self.root/'screen.jpg').read_bytes()[:-cut])
+            with self.assertRaisesRegex(ValueError,'JPEG ending'):builder.image_info(self.root,'no-eoi.jpg')
+        (self.root/'padded.jpg').write_bytes((self.root/'screen.jpg').read_bytes()+b'padding')
+        self.assertAlmostEqual(builder.image_info(self.root,'padded.jpg'),800/450)
+        (self.root/'no-iend.png').write_bytes((self.root/'screen.png').read_bytes()[:-12])
+        with self.assertRaisesRegex(ValueError,'PNG ending'):builder.image_info(self.root,'no-iend.png')
+        Image.new('RGB',(17000,1)).save(self.root/'large.png')
+        with self.assertRaisesRegex(ValueError,'oversized'):builder.image_info(self.root,'large.png')
+        from unittest.mock import patch
+        with patch.object(builder.shutil,'which',return_value=None):
+            with self.assertRaisesRegex(ValueError,'ffprobe and ffmpeg'):builder.image_info(self.root,'screen.png')
+            builder.validate(fixture(),self.root)
+        with patch.object(builder.subprocess,'run',side_effect=subprocess.TimeoutExpired('ffprobe',15)):
+            with self.assertRaisesRegex(ValueError,'timed-out'):builder.image_info(self.root,'screen.png')
+
+    def test_hook_repeated_title_is_rendered_once_and_distinct_emphasis_remains(self):
+        slide=figure_course()['lessons'][0]['slides'][8]
+        slide['visual']['title_lines']=[slide['title'],'Distinct teaching point']
+        root=parsed(slide);texts=[e.text for e in root.findall('.//s:text',NS)]
+        self.assertEqual(texts.count(slide['title']),1);self.assertIn('Distinct teaching point',texts)
+        slide['title']='Where should we look?';slide['visual']['title_lines']=['Where should','we look?']
+        self.assertEqual(sum((e.text or '').count('Where should') for e in parsed(slide).findall('.//s:text',NS)),1)
+
     def test_tall_two_panel_composite_rejected_and_separate_scene_assets_pass(self):
         from PIL import Image,ImageDraw
         im=Image.new('RGB',(1600,2704),'white');draw=ImageDraw.Draw(im)

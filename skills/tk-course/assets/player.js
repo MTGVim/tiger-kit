@@ -22,7 +22,7 @@
   }
   function courseJump(id){
     if(!C.LESSONS.includes(id))return;
-    if(id===data.lesson_id){lesson(published[0],{resume:true});activeTransport().play();}
+    if(id===data.lesson_id){lesson(published[0],{resume:true});}
     else if(window.parent!==window)window.parent.postMessage({type:'course-lesson',id,ui:pendingTocUi||{tocTop:$('toc-list').clientHeight?$('toc-list').scrollTop:tocTop,width:innerWidth,height:innerHeight}},'*');
     else location.href='lesson-'+id+'.html#lesson-'+data.course_lessons.find(x=>x.id===id).kind;
   }
@@ -205,7 +205,8 @@
     $('voice-preflight-message').textContent=s.mode==='device'?'이 기기에서 한국어 음성을 찾지 못했습니다.':'생성 음성이 준비되지 않았습니다.';
     $('use-browser-voice').disabled=!s.voices.length;$('use-browser-voice').title=s.voices.length?'브라우저 음성':'이 기기에서 사용할 한국어 음성이 없습니다.';
     const messages={idle:'재생을 누르면 도식이 설명 순서대로 나타납니다. 재생 설정에서 모두 볼 수도 있습니다.',playing:isSlide?'강의를 재생하고 있습니다.':'한국어 영상과 음성을 함께 재생하고 있습니다.',waiting:s.waitKind==='hold'?'이전 장을 정리할 수 있도록 잠시 유지합니다.':s.waitKind==='start'?'첫 화면을 살펴본 뒤 해설을 시작합니다.':s.waitKind==='slide'?'새 화면을 살펴본 뒤 해설을 시작합니다.':'다음 문장 전에 잠시 쉽니다.',loading:'음성을 불러오고 있습니다.',paused:'일시정지했습니다.',ended:'강의가 끝났습니다. 이해 확인을 풀거나 코스 홈으로 돌아가세요.',blocked:'⚠️ 강의 음성을 사용할 수 없습니다.',error:'⚠️ 음성을 재생하지 못했습니다. 현재 음성 모드를 확인한 뒤 다시 시도하세요.'};
-    $('player-status').textContent=s.available?(['error','blocked','ended','waiting'].includes(s.status)?messages[s.status]:''):s.mode==='assets'?'':s.voiceSelection?'⚠️ 선택한 음성을 찾지 못했습니다. 재생 설정에서 다른 로컬 한국어 음성을 선택하세요.':'⚠️ 이 브라우저에서 사용할 수 있는 로컬 한국어 음성이 없습니다.';
+    $('player-status').textContent=s.available?(['error','blocked','ended'].includes(s.status)?messages[s.status]:''):s.mode==='assets'?'':s.voiceSelection?'⚠️ 선택한 음성을 찾지 못했습니다. 재생 설정에서 다른 로컬 한국어 음성을 선택하세요.':'⚠️ 이 브라우저에서 사용할 수 있는 로컬 한국어 음성이 없습니다.';
+    $('playback-announcement').textContent=['waiting','loading','paused'].includes(s.status)?messages[s.status]:'';
     const cc=U.caption({enabled:captionsEnabled,status:s.status,cue:!isSlide&&!s.captionActive?'':cues[index].caption,gap:(s.status==='waiting'||s.status==='paused'&&s.waitMs!==null)&&s.waitKind!=='hold',previous:isSlide&&s.waitKind==='hold'?cues[index].caption:isSlide&&index>0&&s.waitKind==='sentence'?cues[index-1].caption:''});
     $('live-caption').hidden=cc.hidden;$('caption-text').textContent=cc.text;
     $('captions-toggle').setAttribute('aria-pressed',String(captionsEnabled));
@@ -230,9 +231,6 @@
     const mode=$('motion-mode').value;
     const activeSlide=data.slides[s.slide],dense=['bar','line','stacked','output','code','timeline','hook','cover','course-map','summary','image'].includes(activeSlide?.type)&&view.lesson==='slides';
     $('media-viewport').dataset.figure=String(dense);
-    const caption=$('live-caption'),viewport=$('media-viewport');
-    if(dense&&caption.parentElement===viewport)viewport.after(caption);
-    else if(!dense&&caption.parentElement!==viewport)viewport.append(caption);
     fitFullscreenMedia();
     document.querySelectorAll('.lesson-slide').forEach(el=>{
       const current=Number(el.dataset.slide)===s.slide,slide=data.slides[Number(el.dataset.slide)];
@@ -387,15 +385,23 @@
   function restorePosition(position,focus){if(focus?.isConnected)focus.focus({preventScroll:true});if(position){document.querySelector('.player-column').scrollTop=position.content;window.scrollTo(position.x,position.y);}}
   function fitFullscreenMedia(){
     const stage=$('stage'),main=$('stage-main');
-    if(!expanded&&!document.fullscreenElement){stage.style.removeProperty('--fullscreen-media-width');return;}
-    // Reserve actual captions/controls/status height; the media box itself stays 16:9.
+    if(!expanded&&!document.fullscreenElement){stage.style.removeProperty('--fullscreen-media-width');fitCaption();return;}
+    // The grid reserves the transcript-open columns/rows even while that rail is hidden.
     const viewport=$('media-viewport'),style=getComputedStyle(main);
     const rest=[...main.children].filter(e=>e!==viewport&&getComputedStyle(e).position!=='absolute'&&getComputedStyle(e).position!=='fixed').reduce((n,e)=>{const s=getComputedStyle(e);return n+e.getBoundingClientRect().height+(parseFloat(s.marginTop)||0)+(parseFloat(s.marginBottom)||0);},0);
     const available=Math.max(0,main.clientHeight-rest-(parseFloat(style.paddingTop)||0)-(parseFloat(style.paddingBottom)||0));
     stage.style.setProperty('--fullscreen-media-width',Math.min(main.clientWidth,available*16/9)+'px');
+    fitCaption();
   }
+  function fitCaption(){
+    const viewport=$('media-viewport'),caption=$('live-caption'),video=$('lesson-video');
+    const w=viewport.clientWidth,h=viewport.clientHeight;let fw=w,fh=h;
+    if(view.lesson==='video'&&video.videoWidth&&video.videoHeight){const scale=Math.min(w/video.videoWidth,h/video.videoHeight);fw=video.videoWidth*scale;fh=video.videoHeight*scale;}
+    caption.style.maxWidth=fw*.92+'px';caption.style.bottom=((h-fh)/2+fh*.048)+'px';
+  }
+  $('lesson-video').addEventListener('loadedmetadata',fitCaption);
   const mediaFitObserver=new ResizeObserver(()=>requestAnimationFrame(fitFullscreenMedia));
-  mediaFitObserver.observe($('stage-main'));
+  mediaFitObserver.observe($('stage-main'));mediaFitObserver.observe($('media-viewport'));
   for(const id of ['live-caption','controls','audio-progress','fullscreen-status'])mediaFitObserver.observe($(id));
   function paintFullscreen(){requestAnimationFrame(fitFullscreenMedia);const active=expanded||!!document.fullscreenElement;setControl('fullscreen',active?'restore':'fullscreen',expanded?'창 안 확대 나가기':active?'전체 화면 나가기':'전체 화면');$('fullscreen').setAttribute('aria-pressed',String(active));}
   function expandStage(open){
@@ -496,9 +502,9 @@
   $('speed-icon').innerHTML=U.svg('speed');
   document.querySelectorAll('[data-course-jump]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();courseJump(el.dataset.courseJump);}));
   $('caption-opacity').addEventListener('input',()=>{const v=Math.max(0,Math.min(100,Number($('caption-opacity').value)||0));$('stage').style.setProperty('--caption-opacity',String(v/100));$('caption-opacity-value').value=v+'%';$('caption-opacity-value').textContent=v+'%';prefs.captionOpacity=v/100;savePrefs();});
-  window.addEventListener('message',e=>{if(e.source===window.parent&&e.data?.type==='course-enter'){lesson(published[0],{resume:true,push:false});const ui=e.data.ui;if(ui&&Number.isFinite(ui.tocTop)&&ui.tocTop>=0){pendingTocUi=ui;requestAnimationFrame(restoreToc);}activeTransport().play();}});
+  window.addEventListener('message',e=>{if(e.source===window.parent&&e.data?.type==='course-enter'){lesson(published[0],{resume:true,push:false});const ui=e.data.ui;if(ui&&Number.isFinite(ui.tocTop)&&ui.tocTop>=0){pendingTocUi=ui;requestAnimationFrame(restoreToc);}}});
   $('toast-captions').addEventListener('click',()=>{captionsEnabled=true;prefs.captions=true;savePrefs();refreshCaption();$('captions-toggle').focus();$('sound-toast').hidden=true;});
-  $('toast-mute').addEventListener('click',()=>{const enable=$('toast-mute').textContent==='소리 켜기';if(enable&&prefs.volume===0)setMasterVolume(1);setMasterMuted(!enable);if(enable)activeTransport().play();$('mute-toggle').focus();$('sound-toast').hidden=true;});
+  $('toast-mute').addEventListener('click',()=>{const enable=$('toast-mute').textContent==='소리 켜기';if(enable&&prefs.volume===0)setMasterVolume(1);setMasterMuted(!enable);$('mute-toggle').focus();$('sound-toast').hidden=true;});
   $('sound-toast').addEventListener('focusout',()=>{setTimeout(()=>{if(!$('sound-toast').contains(document.activeElement))$('sound-toast').hidden=true;},0);});
   $('caption-opacity').value=prefs.captionOpacity*100;
   $('stage').style.setProperty('--caption-opacity',String(prefs.captionOpacity));

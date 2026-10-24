@@ -47,7 +47,7 @@ test('shared course preferences, breadcrumb, curriculum and standalone catalog d
      }
     },mode);
     const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));const f=await enter(page);
-    if(mode==='policy')await f.locator('#sound-toast-message').filter({hasText:'브라우저가 소리'}).waitFor();
+    if(mode==='policy'){await f.locator('#play').click();await f.locator('#sound-toast-message').filter({hasText:'브라우저가 소리'}).waitFor();}
     else{assert.equal(await f.locator('#volume').inputValue(),'100');assert.equal(await f.locator('#caption-opacity').inputValue(),'50');}
     assert.deepEqual(errors,[]);
    }finally{await context.close();}
@@ -89,10 +89,28 @@ test('bounded lesson panels retain curriculum position, transcript and real defa
   }
   const context=await browser.newContext({viewport:{width:1440,height:900}});try{
    // Observe actual embedded media events; the defaults are deliberately not zeroed.
-   await context.addInitScript(()=>{window.__pacing=[];const play=HTMLMediaElement.prototype.play,seen=new WeakSet();HTMLMediaElement.prototype.play=function(){if(this instanceof HTMLAudioElement&&!seen.has(this)){seen.add(this);for(const type of ['playing','ended'])this.addEventListener(type,()=>window.__pacing.push({type:type==='playing'?'play':type,at:performance.now(),slide:document.querySelector('.lesson-slide:not([hidden])')?.dataset.slide}));}return play.apply(this,arguments);};new MutationObserver(records=>{for(const r of records)if(r.target.matches?.('.lesson-slide')&&!r.target.hidden)window.__pacing.push({type:'slide',at:performance.now(),slide:r.target.dataset.slide});}).observe(document,{subtree:true,attributes:true,attributeFilter:['hidden']});});
-   const page=await context.newPage();await page.goto(pathToFileURL(process.env.TK_COURSE_LONG_PAGE).href);const f=page.frameLocator('#course-frame');await f.locator('#home-start').click();await f.locator('#player-status').filter({hasText:'첫 화면'}).waitFor();
+   await context.addInitScript(()=>{window.__pacing=[];window.__layout=[];const sample=()=>{const d=document,media=d.getElementById('media-viewport'),controls=d.getElementById('controls'),thumbs=d.getElementById('thumbs'),status=d.getElementById('playback-announcement');if(media&&controls&&thumbs)window.__layout.push({status:status?.textContent,media:media.getBoundingClientRect().toJSON(),controls:controls.getBoundingClientRect().toJSON(),thumbs:thumbs.getBoundingClientRect().toJSON()});};new MutationObserver(sample).observe(document,{subtree:true,childList:true,characterData:true});const play=HTMLMediaElement.prototype.play,seen=new WeakSet();HTMLMediaElement.prototype.play=function(){if(this instanceof HTMLAudioElement&&!seen.has(this)){seen.add(this);for(const type of ['playing','ended'])this.addEventListener(type,()=>window.__pacing.push({type:type==='playing'?'play':type,at:performance.now(),slide:document.querySelector('.lesson-slide:not([hidden])')?.dataset.slide}));}return play.apply(this,arguments);};new MutationObserver(records=>{for(const r of records)if(r.target.matches?.('.lesson-slide')&&!r.target.hidden)window.__pacing.push({type:'slide',at:performance.now(),slide:r.target.dataset.slide});}).observe(document,{subtree:true,attributes:true,attributeFilter:['hidden']});});
+   const page=await context.newPage();await page.goto(pathToFileURL(process.env.TK_COURSE_LONG_PAGE).href);const f=page.frameLocator('#course-frame');await f.locator('#home-start').click();await f.locator('#play').click();await f.locator('#playback-announcement').filter({hasText:'첫 화면'}).waitFor();
    await page.waitForFunction(()=>{const w=document.getElementById('course-frame')?.contentWindow;return w?.__pacing?.filter(e=>e.type==='play').length>=2;},{timeout:15000});
+   const layout=await f.locator('body').evaluate(()=>window.__layout).then(rows=>rows.filter(r=>r.media.height>0&&r.controls.height>0));assert(layout.some(r=>r.status.includes('첫 화면')));assert(layout.some(r=>r.status.includes('이전 장')));assert(layout.some(r=>r.status.includes('새 화면')));const initial=layout.find(r=>r.status.includes('첫 화면'));for(const row of layout.slice(layout.indexOf(initial)))for(const key of ['media','controls','thumbs'])for(const axis of ['y','height'])assert(Math.abs(row[key][axis]-initial[key][axis])<1,JSON.stringify({key,axis,initial,row}));
    const events=await f.locator('body').evaluate(()=>window.__pacing),end=events.find(e=>e.type==='ended'),next=events.find(e=>e.type==='slide'&&e.slide==='1'),play=events.find(e=>e.type==='play'&&e.slide==='1');assert(end&&next&&play,JSON.stringify(events));assert(next.at-end.at>=1750);assert(play.at-next.at>=1150);assert(play.at-end.at>=2950);assert(play.at-end.at<5000);
   }finally{await context.close();}
  }finally{await browser.close();}
+});
+
+
+test('home, same-lesson, playing/paused transitions and stored resume prepare paused until Play',{skip:!ready,timeout:90000},async()=>{
+ const {chromium}=require(process.env.TK_PLAYWRIGHT_MODULE),browser=await chromium.launch({env:{...process.env,...(process.env.TK_BROWSER_FONTCONFIG?{FONTCONFIG_FILE:process.env.TK_BROWSER_FONTCONFIG}:{})},headless:true,executablePath:process.env.TK_CHROMIUM_EXECUTABLE,args:['--no-sandbox','--disable-dev-shm-usage']});
+ const context=await browser.newContext({viewport:{width:1440,height:1000}});
+ try{
+  await context.addInitScript(()=>{window.__mediaPlayCalls=0;const play=HTMLMediaElement.prototype.play;HTMLMediaElement.prototype.play=function(){window.__mediaPlayCalls++;return play.apply(this,arguments);};});
+  const page=await context.newPage();await page.goto(pathToFileURL(process.env.TK_COURSE_PAGE).href);const f=page.frameLocator('#course-frame');
+  const paused=async()=>{await page.waitForTimeout(5300);assert.equal(await f.locator('body').evaluate(()=>window.__mediaPlayCalls),0);assert.equal(await f.locator('#play').getAttribute('aria-label'),'재생');assert(await f.locator('#live-caption').isHidden());};
+  await f.locator('#home-start').click();await paused();
+  // Current-lesson links must not be a hidden Play action.
+  await f.locator('#toc [data-course-jump]').first().click();await paused();
+  await f.locator('#play').click();await page.waitForFunction(()=>document.getElementById('course-frame')?.contentWindow?.__mediaPlayCalls>0);await f.locator('#next-lesson').click();await f.locator('#lesson-heading').filter({hasText:'조건과 결과 2'}).waitFor();await paused();
+  await f.locator('#play').click();await f.locator('#play').click();await f.locator('#toc [data-course-jump]').first().click();await f.locator('#lesson-heading').filter({hasText:'조건과 결과 1'}).waitFor();await paused();
+  await page.reload();await f.locator('#home-start').click();await f.locator('#player-page').waitFor({state:'visible'});await paused();
+ }finally{await context.close();await browser.close();}
 });
