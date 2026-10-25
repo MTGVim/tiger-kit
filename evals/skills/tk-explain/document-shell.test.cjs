@@ -15,14 +15,71 @@ const code = sources.map((source, i) => {
   const result = spawnSync('python3', ['-c', 'import sys; sys.path.insert(0, "skills/tk-explain/scripts"); from highlight_code import highlight; print(highlight(sys.stdin.read(), sys.argv[1], 20), end="")', ['kt','diff','unknown'][i]], {cwd:root,input:source,encoding:'utf8'});
   assert.equal(result.status, 0, result.stderr); return result.stdout;
 }).join('');
-const reference = fs.readFileSync(path.join(root,'skills/tk-explain/references/html-output.md'),'utf8');
 function html(css=asset('html-theme.css')) {
-  if (process.env.TK_FONT_FILE) css += `@font-face {font-family:FixtureKorean;src:url(data:font/otf;base64,${fs.readFileSync(process.env.TK_FONT_FILE).toString('base64')})} :root {--font-family:FixtureKorean,sans-serif}`;
-  let markup = reference.match(/```html\n([\s\S]*?)\n```/)[1];
-  markup = markup.replace('<!-- Sections. -->', `<h1>공용 문서 셸 검증</h1><p class="ht-lede">본문과 footer를 가운데 정렬합니다.</p><section id="overview"><h2>목표와 결론</h2><h3>코드 원문을 보존합니다.</h3>${code}<div style="height:1000px" aria-hidden="true"></div></section><section id="conditions"><h2>판단 조건</h2><table class="ht-table-scroll"><tbody><tr><td>본문 크기</td></tr></tbody></table><dl><dt>조건</dt><dd>정렬과 원문 보존</dd></dl></section><section id="sources"><h2>참고문헌</h2><ol><li id="ref-1">현재 셸 소스</li></ol></section>`)
-    .replace('<footer id="document-bottom">...</footer>', '<footer id="document-bottom"><p>기준: TigerKit 공용 문서 셸</p><p>작성일: 2026-10-21</p></footer>');
-  return `<!doctype html><html lang="ko" data-default-theme="system"><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>공용 셸 검증</title><style>${css}</style></head>${markup}<script>${asset('html-theme.js')}</script></body></html>`;
+  const body = `<p class="ht-lede">본문과 footer를 가운데 정렬합니다.</p><section id="overview"><h2>창틀을 넘으면 두 경로가 갈립니다</h2><h3>코드 원문을 보존합니다.</h3>${code}<div style="height:1000px" aria-hidden="true"></div></section><section id="conditions"><h2>작은집에서 살인마의 길이 바뀌면?</h2><div class="ht-table-scroll"><table><tbody><tr><td>본문 크기</td></tr></tbody></table></div><dl><dt>조건</dt><dd>정렬과 원문 보존</dd></dl></section><section id="sources"><h2>참고문헌</h2><ol><li id="ref-1">현재 셸 소스</li></ol></section>`;
+  const result = spawnSync('python3', ['-c', 'import json, sys; sys.path.insert(0, "skills/tk-explain/scripts"); from build_html import assemble; print(assemble(**json.load(sys.stdin)), end="")'], {cwd:root,input:JSON.stringify({body,title:'공용 문서 셸 검증',footer:'<p>기준: TigerKit 공용 문서 셸</p><p>작성일: 2026-10-21</p>'}),encoding:'utf8'});
+  assert.equal(result.status, 0, result.stderr);
+  if (process.env.TK_FONT_FILE) css += `@font-face {font-family:FixtureKorean;src:url(data:font/otf;base64,${fs.readFileSync(process.env.TK_FONT_FILE).toString('base64')})} :root {--font-family:FixtureKorean,sans-serif} pre,code{font-family:FixtureKorean,monospace}`;
+  return result.stdout.replace(`<style>${asset('html-theme.css')}</style>`, `<style>${css}</style>`);
 }
+test('wide TOC uses the left gutter without shrinking or moving centered content', {
+  skip: !process.env.TK_PLAYWRIGHT_MODULE || !process.env.TK_CHROMIUM_EXECUTABLE || !process.env.TK_TOC_BASELINE,
+}, async () => {
+  const old = spawnSync('git', ['show', `${process.env.TK_TOC_BASELINE}:skills/tk-explain/assets/html-theme.css`], {cwd:root,encoding:'utf8'});
+  assert.equal(old.status, 0, old.stderr);
+  const {chromium} = require(process.env.TK_PLAYWRIGHT_MODULE);
+  const browser = await chromium.launch({headless:true,executablePath:process.env.TK_CHROMIUM_EXECUTABLE,ignoreDefaultArgs:['--hide-scrollbars'],args:['--no-sandbox','--disable-dev-shm-usage']});
+  const evidence = process.env.TK_SHELL_EVIDENCE_DIR;
+  if(evidence) fs.mkdirSync(evidence,{recursive:true});
+  const records = [];
+  try {
+    for(const width of [961,1280,1600,1920,2560,390]) for(const theme of ['light','dark']) {
+      const pair = [];
+      for(const [phase,css] of [['baseline',old.stdout],['after',asset('html-theme.css')]]) {
+        const context=await browser.newContext({viewport:{width,height:900},isMobile:width<600,colorScheme:theme,reducedMotion:'reduce'});
+        const page=await context.newPage();const errors=[];
+        page.on('pageerror',error=>errors.push(String(error)));
+        await page.setContent(html(css));await page.evaluate(()=>document.fonts.ready);
+        if(width<=960) await page.locator('.ht-doc-toc > summary').press('Enter');
+        const measured=await page.evaluate(()=>{
+          const box=s=>{const r=document.querySelector(s).getBoundingClientRect();return {left:r.left,right:r.right,width:r.width,height:r.height};};
+          const content=box('.ht-doc-content'),nav=box('.ht-doc-nav'),footer=box('footer');
+          const link=document.querySelector('.ht-doc-toc-panel a');const range=document.createRange();range.selectNodeContents(link);
+          const style=getComputedStyle(document.querySelector('.ht-doc-content'));
+          return {content,nav,footer,gap:content.left-nav.right,lines:range.getClientRects().length,viewport:innerWidth,clientWidth:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth,typography:[style.fontFamily,style.fontSize,style.lineHeight,style.color,style.backgroundColor]};
+        });
+        assert.equal(measured.viewport,width);assert.ok(measured.scroll<=width,JSON.stringify(measured));
+        if(width>960){assert.ok(measured.nav.left>=0);if(phase==='after')assert.ok(measured.gap>=24 && measured.gap<=32,JSON.stringify(measured));}
+        pair.push({phase,...measured});
+        if(evidence && (width===1920 || width===390 && theme==='light')) {
+          if(width>960) await page.locator('.ht-doc-nav').evaluate(el=>el.style.outline='2px solid #b32636');
+          await page.screenshot({path:path.join(evidence,`${phase}-${width}-${theme}-top.png`)});
+          if(width>960){await page.locator('footer').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(evidence,`${phase}-${width}-${theme}-end.png`)});}
+        }
+        if(phase==='after') {
+          await page.locator('.ht-doc-toc-panel a').first().press('Enter');
+          assert.equal(await page.evaluate(()=>location.hash),'#overview');
+          if(width<=960) assert.equal(await page.locator('.ht-doc-toc').getAttribute('open'),null);
+          await page.locator('a[href="#document-bottom"]').press('Enter');
+          const overlap=await page.evaluate(()=>{const a=document.querySelector('footer').getBoundingClientRect(),b=document.querySelector('.ht-doc-nav').getBoundingClientRect();return a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top;});
+          if(width>960)assert.equal(overlap,false);
+          if(width===1920){
+            const font=page.locator('.ht-font-control select');await font.focus();await font.press('End');await font.press('Enter');
+            assert.equal(await font.inputValue(),'200');
+            assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+          }
+        }
+        assert.deepEqual(errors,[]);await context.close();
+      }
+      assert.deepEqual(pair[1].content,pair[0].content);
+      assert.deepEqual(pair[1].footer,pair[0].footer);
+      assert.deepEqual(pair[1].typography,pair[0].typography);
+      if(width>=1920){assert.ok(pair[1].nav.width>pair[0].nav.width);assert.ok(pair[1].lines<pair[0].lines);}
+      records.push({width,theme,pair});
+    }
+    if(evidence)fs.writeFileSync(path.join(evidence,'toc-width-results.json'),JSON.stringify({baseline:process.env.TK_TOC_BASELINE,headless:true,browser:browser.version(),capture_only_mutation:'existing fixture font accommodation; desktop TOC outline in both phases',records},null,2));
+  } finally {await browser.close();}
+});
 test('centered shell, footer, status, code and native fallbacks', {skip:!process.env.TK_PLAYWRIGHT_MODULE || !process.env.TK_CHROMIUM_EXECUTABLE}, async () => {
   const {chromium} = require(process.env.TK_PLAYWRIGHT_MODULE);
   const browser = await chromium.launch({headless:true, executablePath:process.env.TK_CHROMIUM_EXECUTABLE,args:['--no-sandbox','--disable-dev-shm-usage']});
