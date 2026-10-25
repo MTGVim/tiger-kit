@@ -131,7 +131,14 @@ When fixing an expression, check that the replacement does not introduce another
 
 Remove unsupported praise, vague authority, generic optimism, fake candor, and ceremonial padding when they add no meaning. Keep politeness and necessary uncertainty. Replace abstract or metaphor-swapped vocabulary with literal actions when clearer; retain established idioms and useful domain terminology.
 
-Inspect both clauses before revising a concession or contrast. Openers such as `다만`, `하지만`, `그럼에도`, or `Despite these challenges` alone establish no defect. Preserve a genuine source-supported concession and its concrete outcome; do not flatten it into unrelated parallel statements. Edit a hollow rhetorical frame only when its actual context warrants it, without inventing the missing challenge or response.
+Inspect both clauses before revising a concession or contrast. Openers such as `다만`, `하지만`, `그럼에도`, or `Despite these challenges` alone establish no defect. Preserve a genuine source-supported concession and its concrete outcome; do not flatten it into unrelated parallel statements. Edit a hollow rhetorical frame only when its actual context warrants it, without inventing the missing challenge or response. Do not introduce an imagined overinterpretation merely to negate it before explaining the actual condition, action and consequence. Preserve negation when it resolves a real misconception or conveys a necessary limit; this is not a banned-word rule.
+
+```text
+Unnecessary lead-in: 이곳에 서면 곧바로 맞는다는 뜻은 아닙니다. 생존자는 판자를 쓰거나 다른 구간으로 떠날 수 있습니다.
+Context: 설명할 행동은 안쪽 길을 막는 것입니다.
+Direct explanation: 안쪽 길을 막으면 생존자는 판자를 쓰거나 다른 구간으로 떠날 수 있습니다.
+Preserve: 실제로 오해한 즉시 피격 여부를 교정하거나 조건부 제한이 중요할 때의 부정 설명.
+```
 
 ```text
 Before: 또한 해당 이슈는 초기 설정 과정에서 발생할 수 있는 부분이므로 이용에 참고 부탁드립니다.
