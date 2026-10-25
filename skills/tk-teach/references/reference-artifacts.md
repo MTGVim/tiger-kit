@@ -12,7 +12,7 @@ belong in the approved scope. Preserve canonical terminology and claim provenanc
 
 When useful, create a `reference/<slug>.html` file under the current
 identity-verified course home (new `.tigerkit/teach/<topic>/`, explicitly selected
-workspace, or legacy `.tigerkit/study/<topic>/`) and link it from `index.html` and relevant chapters. Honor an
+workspace, or legacy `.tigerkit/study/<topic>/`) and link it from relevant lessons and an existing `index.html`. Honor an
 explicit Markdown-only format with reference Markdown files rather than forcing HTML.
 Use no per-chapter quota or minimum count; if there is no recurring lookup value, create
 neither files nor an empty reference directory. A continuation reuses only that course's

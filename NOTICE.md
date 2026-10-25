@@ -975,3 +975,8 @@ cognitive-debt 장부나 merge/edit 강제는 `tk-explain-diff`의 단일 변경
 두 모델 카드는 `Apache-2.0`을 명시하며, `ppaso`의 G2P/사전 및 관련 MIT/BSD 고지를 함께 보존합니다.
 샘플 아바타·VRM·립싱크·선택적 `Vocos/RKNN` 자료는 기본 스냅샷에 포함하지 않습니다.
 각 패키지의 조건부 출처 참조와 매니페스트가 적용 범위와 정확한 핀을 소유합니다.
+
+
+## 2026-10-25: 수업별 HTML과 실제 답변의 피드백
+
+`tk-teach`는 `mattpocock/skills@5beb35b040e3de97e54fa9e386d7e42d15c295c2`의 수업별 HTML과 희소 학습 기록을 기존 오프라인 계약에 맞게 적응했습니다. `SebastianElvis/hammer@c5b86153b15621649560cee247659840738aadae`의 실제 답변에 따른 판별은 관찰된 추론과 다음 도움에 한정해 적응하며, 고정 답변 거절과 전역 프로필은 제외했습니다. 상세 근거는 `skills/tk-teach/references/distillation.md`, 두 소스의 MIT 고지는 `skills/tk-teach/LICENSE.txt`에 있습니다. 상류 실행 및 일반적인 학습 효과는 검증하지 않았습니다.

@@ -4,7 +4,7 @@ Read for a new long-term teaching workspace, explicit continuation/resume,
 an observed learner answer or a changed teaching mission. A one-off lesson
 without continuity never needs an empty workspace skeleton.
 
-## Files under one identity-verified course home
+## Files under one identity-verified learning home
 
 - `MISSION.md` (or existing `curriculum.md` mission section):
   concrete outcome, constraints, out-of-scope, user-confirmed revisions.
@@ -17,8 +17,11 @@ without continuity never needs an empty workspace skeleton.
   misconception or declared prior knowledge only when it changes what
   is appropriate to teach next. Use exact observed evidence and limits.
 - `sources.md`: trustworthy sources with explicit uncertainty.
-- `chapters/`, `lessons/`, `reference/`, assets and `index.html`:
-  output as needed, not a mandatory skeleton or separate runtime.
+- New HTML lessons: `lessons/0001-<slug>.html`, increasing within this home.
+  Keep each lesson self-contained; use a lightweight `index.html` only when a collection
+  needs one. Preserve existing lesson numbers, links and prior file bytes on continuation.
+- `chapters/`, `reference/`, assets and an existing complete `index.html`:
+  output as needed for the requested format, not a mandatory skeleton or separate runtime.
 
 A learning record should normally be only a short heading and 1–3
 sentences explaining the insight and why the next lesson changes.
@@ -44,7 +47,8 @@ link its supersession rather than silently overwriting history.
    enough challenge to stretch demonstrated knowledge, not a wholesale
    restart. Use spaced recall and interleaving only where actual prior
    lessons make it useful. Do not schedule reminders automatically.
-4. Produce one lesson with trusted evidence and targeted feedback.
+4. Append one lesson with trusted evidence and targeted feedback, preserving earlier lessons.
+   For observed answers, questions or a stop, apply [response feedback](response-feedback.md).
    After the learner actually attempts an exercise, update the profile
    and sparse learning record if justified. A skipped lesson must not
    count as mastery.

@@ -768,7 +768,16 @@
     "tk-pr-respond:behavior:pr-respond-optional-addition-in-one-approval",
     "tk-pr-respond:behavior:pr-respond-optional-only-answer-is-not-approval",
     "tk-pr-respond:behavior:pr-respond-explicit-option-approval-reused",
-    "tk-retro:behavior:retro-upstream-creates-only-issue-draft"
+    "tk-retro:behavior:retro-upstream-creates-only-issue-draft",
+    "tk-teach:behavior:feedback-correct-reasoning",
+    "tk-teach:behavior:feedback-right-result-wrong-reason",
+    "tk-teach:behavior:feedback-result-without-reason",
+    "tk-teach:behavior:feedback-partial-condition",
+    "tk-teach:behavior:feedback-solution-request",
+    "tk-teach:behavior:feedback-stop-after-reveal",
+    "tk-teach:behavior:offline-answer-unobserved",
+    "tk-teach:behavior:new-lesson-html-unit",
+    "tk-teach:behavior:append-keeps-earlier-lesson"
   ],
   "catalog_cases": [
     "catalog:behavior:native-app-runtime-verify",

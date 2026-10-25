@@ -196,3 +196,35 @@ Sources inform behavior; their runtime and stylistic instructions are not depend
 - `CopilotKit/OpenGenerativeUI`, `apps/agent/skills/advanced-visualization/SKILL.md`, revision `457e60cdf7f63fb78004486e1dc7ba753194696d`, Parts 8–9: keep direct manipulation, self-explanatory visuals and non-color-only cues; adapt its content-dependent visual selection to an offline explanation with complete reset and visible causal differences. Omit sandbox/tool contracts, host bridges, external libraries, and widget-only narration rules.
 
 The source mechanisms and rationale were inspected. Local artifact comparison supplies example-level evidence, not a general upstream performance claim; full host-runtime and video backend efficacy remain outside this contract.
+
+
+## Lesson files and response adaptation (2026-10-25)
+
+Reviewed `mattpocock/skills@5beb35b040e3de97e54fa9e386d7e42d15c295c2`:
+`skills/productivity/teach/SKILL.md`, `LEARNING-RECORD-FORMAT.md` and
+`docs/productivity/teach.md`. The current source, not stale usage anecdotes, owns behavior.
+
+- **keep:** one scoped HTML lesson tied to the mission, trusted resources and sparse records.
+- **adapt:** numbered lesson files for new topics, a lightweight collection index, and reused
+  presentation under TigerKit's existing self-contained offline HTML contract. Preserve explicit
+  complete multi-chapter requests and identity-matching legacy homes rather than migrating them.
+- **omit:** mandatory separate repository, automatic browser opening, compulsory reference
+  output, exact equal answer lengths, global notes and automatic community routing.
+
+Reviewed `SebastianElvis/hammer@c5b86153b15621649560cee247659840738aadae`:
+`skills/teach/SKILL.md`, `references/evaluation-rubric.md`, `references/refusal-rules.md`,
+`evals/README.md`, `evals/tasks/refusal/just-tell-me.json` and
+`evals/graders/code/no_answer_leak.sh`.
+
+- **keep:** distinguish correct reasoning, partial understanding and a right result reached
+  through a wrong model; select the next help from actual evidence.
+- **adapt:** narrowly scoped feedback, counterexamples/retries and sparse records only when
+  observed evidence changes the next unit. With absent reasoning, preserve uncertainty.
+- **omit:** fixed refusal ladder, inferring unshown reasoning, treating confidence as proof of
+  misconception, global profiles, daily logs and runtime/evaluation infrastructure.
+
+The upstream harness has one refusal task and no human-calibrated judge labels at this revision.
+Its token-leak checks do not establish understanding, transfer or TigerKit learning efficacy.
+No upstream harness was executed. TigerKit's behavioral scenarios are independently authored;
+forward teaching checks are implementation evidence, not a controlled learning comparison.
+Matt Pocock's MIT notice was already present; Hammer's MIT notice is included in `LICENSE.txt`.
