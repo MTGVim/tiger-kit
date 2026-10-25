@@ -112,13 +112,22 @@ Keep content independent of renderer logic and avoid rendering duplicate modes o
 
 Read [clear writing](references/clear-writing.md) when composing or revising prose.
 Use a clear conversational voice by default; preserve the facts, causal steps, conditions,
-exercise answers and limits when simplifying. Revise in actual reading order, including
+exercise answers and limits when simplifying. When the user requests a guided teaching voice,
+introduce new concepts and transitions by saying what the learner will inspect, where to look,
+or what to try next. Keep accurate declarative definitions; do not mechanically replace every
+ending or use childish simplifications. Compare the actual introduction and transitions against
+any supplied voice example before treating this requirement as met. Revise in actual reading order, including
 headings, captions, controls, exercises, feedback and image text. Edit the owning source
 and regenerate; shorter is not necessarily clearer. Before rendering, read from the learner's
 perspective: repair unexplained prerequisites and advice to check or adapt that omits the actual
 decision and its reason. Judge explanation continuity separately from screen checks. Read
 [visual grammar](references/visual-grammar.md) only when a figure helps, and a technique
-entry only for a requested or unfamiliar format. For recurring lookup value, read
+entry only for a requested or unfamiliar format. For a goal about movement order or another
+actor's response, check whether separate static scenes omit intermediate positions or choices
+needed for understanding. If so, consider a controlled sequence in the same spatial frame,
+showing all relevant actors, the event/condition and resulting positions at each step; captions
+alone are not a state change. Keep static diagrams for recognition or whenever they teach the
+whole relationship. Do not imply measured seconds, speed or collision accuracy without evidence. For recurring lookup value, read
 [revisit references](references/reference-artifacts.md); no reference quota applies.
 
 Match practice to the outcome and taught prerequisites. Keep answers separately revealed
@@ -127,7 +136,11 @@ conditions to the outcome and help a retry. They do not record an attempt or hid
 from source inspection. Use faded support, spaced retrieval and interleaving when justified
 by actual prior learning; do not create reminders or community invitations automatically.
 Before a spatial/state-dependent answer reveal, provide the exact initial state and visual
-inputs inline or by an immediate link to the matching view. An earlier, different scene is
+inputs inline or by an immediate link to the matching view. A question that calls two figures
+A/B must show those identifiers on the figures or their directly attached visible labels,
+including when a figure is read in isolation. Hidden SVG `title`/`desc` or answer-only labels
+cannot supply that mapping. Match each answer reference to the visible figure and location
+cues; do not force graphics or A/B labels into text-complete exercises. An earlier, different scene is
 not sufficient unless recall is the stated goal. Keep solution routes and correctness cues
 in the revealed explanation; text-complete questions need no extra figure.
 
