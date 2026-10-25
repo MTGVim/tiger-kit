@@ -165,3 +165,51 @@ test('card flow preserves grouping, text geometry and offline controls across vi
     if (output) fs.writeFileSync(path.join(output, 'render-results.json'), JSON.stringify({ browser: browser.version(), checks: records, noJS: 'Pass' }, null, 2));
   } finally { await browser.close(); }
 });
+
+test('inline references keep backlinks on a short line and wrap long titles without clipping', {
+  skip: !process.env.TK_PLAYWRIGHT_MODULE || !process.env.TK_CHROMIUM_EXECUTABLE,
+}, async () => {
+  const { chromium } = require(process.env.TK_PLAYWRIGHT_MODULE);
+  const browser = await chromium.launch({ headless: true, executablePath: process.env.TK_CHROMIUM_EXECUTABLE,
+    args: ['--no-sandbox', '--disable-webgl', '--disable-dev-shm-usage'] });
+  try {
+    for (const width of [1280, 390]) for (const theme of ['light', 'dark']) {
+      const context = await browser.newContext({ javaScriptEnabled: false,
+        viewport: { width, height: 1000 }, reducedMotion: 'reduce', colorScheme: theme });
+      const page = await context.newPage();
+      await page.route('**/*', route => { throw new Error('Offline reference requested network: ' + route.request().url()); });
+      for (const long of [false, true]) {
+        const title = long ? '한국어 설명의 조건과 실제 동작을 순서대로 확인하는 긴 참고 자료 제목 '.repeat(12) : '자료 제목';
+        const entry = `<li id="ref-1"><a href="https://example.org/guide">${title}</a> (기관, 2026) <a href="#cite-1-1" aria-label="첫 인용으로 복귀">↩ 1</a> <a href="#cite-1-2" aria-label="둘째 인용으로 복귀">↩ 2</a></li>`;
+        const html = fs.readFileSync(path.join(root, 'skills/tk-research/assets/report.html'), 'utf8')
+          .replace(/<li id="ref-1">[\s\S]*?<\/li>/, entry)
+          .replace('data-default-theme="system"', `data-default-theme="${theme}" data-theme="${theme}"`);
+        await page.setContent(html);
+        await page.evaluate(() => document.fonts.ready);
+        assert.equal(await page.locator('#ref-1 p, #ref-1 br').count(), 0);
+        const layout = await page.locator('#ref-1').evaluate(li => {
+          const box = li.getBoundingClientRect();
+          const range = document.createRange(); range.selectNodeContents(li);
+          const rects = [...range.getClientRects()];
+          return { lines: new Set(rects.map(r => Math.round(r.top))).size,
+            clipped: rects.some(r => r.left < box.left - 1 || r.right > box.right + 1),
+            nowrap: getComputedStyle(li).whiteSpace === 'nowrap',
+            overflow: document.documentElement.scrollWidth > innerWidth };
+        });
+        assert.equal(layout.clipped, false); assert.equal(layout.overflow, false); assert.equal(layout.nowrap, false);
+        // Inline text and anchors may have different font baselines: compare total height instead.
+        const height = await page.locator('#ref-1').evaluate(li => ({ actual: li.getBoundingClientRect().height,
+          line: parseFloat(getComputedStyle(li).lineHeight) }));
+        if (!long) assert.ok(height.actual <= height.line + 1);
+        if (long && width === 390) assert.ok(height.actual > height.line * 2);
+        for (const occurrence of ['cite-1-1', 'cite-1-2']) {
+          await page.locator(`#${occurrence} > a`).click();
+          assert.equal(await page.evaluate(() => location.hash), '#ref-1');
+          await page.locator(`#ref-1 a[href="#${occurrence}"]`).click();
+          assert.equal(await page.evaluate(() => location.hash), `#${occurrence}`);
+        }
+      }
+      await context.close();
+    }
+  } finally { await browser.close(); }
+});

@@ -57,6 +57,10 @@ problem, needed terms and mechanism, a worked case and relevant limits before as
 for retrieval or application under changed conditions. Include reasoned answer feedback
 and a retry. Choose extent and presentation from the content, without a fixed chapter
 length, word/panel count, analogy or diagram quota. An analogy cannot replace the mechanism.
+For situation-dependent choices, follow one worked situation from its starting state through
+the action, mechanism and result, then change one condition and explain why the choice stays
+or changes. Teach those relationships before summary advice and transfer practice; an explicitly
+requested short review table remains valid without a repeated lesson.
 Use actual attempts to choose what comes next; liking an artifact does not prove learning.
 
 ## Ground the lesson
@@ -103,7 +107,9 @@ Read [clear writing](references/clear-writing.md) when composing or revising pro
 Use a clear conversational voice by default; preserve the facts, causal steps, conditions,
 exercise answers and limits when simplifying. Revise in actual reading order, including
 headings, captions, controls, exercises, feedback and image text. Edit the owning source
-and regenerate; shorter is not necessarily clearer. Read
+and regenerate; shorter is not necessarily clearer. Before rendering, read from the learner's
+perspective: repair unexplained prerequisites and advice to check or adapt that omits the actual
+decision and its reason. Judge explanation continuity separately from screen checks. Read
 [visual grammar](references/visual-grammar.md) only when a figure helps, and a technique
 entry only for a requested or unfamiliar format. For recurring lookup value, read
 [revisit references](references/reference-artifacts.md); no reference quota applies.

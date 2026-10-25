@@ -60,6 +60,12 @@ label, edge, value and transition. This is a planning check, not a required user
 worksheet, file, JSON schema, new approval gate, or separate agent. Omit it for obvious
 single-fact presentations and straightforward semantic tables.
 
+For spatial comparisons, represent every materially distinct layout needed to answer the
+question in labeled views; one shared annotated view suffices when differences stay explicit.
+Match prose actors/names and verify connecting elements. Tables or representative drawings
+cannot replace missing geometry. This is coverage, not a figure quota; nonspatial comparisons
+may remain prose or tables.
+
 Choose the view by the cognitive task: compare alternatives side by side, orient a hierarchy
 with a stable spatial map, trace causal order with directed connections, show temporal change
 with shared identities and scales, or explore a stateful mechanism with controlled steps.

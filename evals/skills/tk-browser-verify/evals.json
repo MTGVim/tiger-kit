@@ -2809,6 +2809,66 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "browser-new-verifier-smoke-before-matrix",
+      "path": "success",
+      "prompt": "`$tk-browser-verify` 승인된 `headless` 환경에서 새 직접 CDP 보조 함수로 HTML 검증을 준비합니다. `desktop`/`mobile`, `light`/`dark` 캡처 14장과 `keyboard`, `no-JS`, `reduced-motion` 검사가 필요합니다. 평가 JS는 아직 실행한 적 없고 `Enter` 보조 함수도 새로 썼습니다. 실행 순서를 정해주세요.",
+      "expected_output": "최소 검증기 점검 후 전체 검증을 수행한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "평가식 구문, 한 DOM 관찰, 안전한 native 컨트롤에서 필요한 `trusted` 입력과 사후 상태, 소유 자원 종료를 먼저 확인한다. 사전 점검 실패를 제품 결함으로 단정하거나 대량 캡처를 시작하지 않는다. 이후 필요한 전체 검증 조합와 `keyboard`/`no-JS`/`reduced-motion`을 줄이지 않는다. 새 체계나 제공자 설치를 요구하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "browser-original-key-failure-not-substituted",
+      "path": "boundary",
+      "prompt": "`$tk-browser-verify` 새 보조 함수의 `Enter` 활성화가 실패했으나 `Space`는 통과했습니다. 입력 이벤트 구성 문제인지 제품 문제인지는 모릅니다. 제품 후보는 그대로입니다. `Enter`도 해결됐다고 적고 전체 14장 캡처를 다시 할까요?",
+      "expected_output": "`Enter` 실패와 `Space` 통과의 실제 검증 범위를 구분한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`Enter`를 해결 또는 미확인으로 정확히 남기고 원래 입력 경로와 사후 상태를 분리 점검한다. `Space` 성공으로 `Enter` 결함 수정/통과를 주장하지 않는다. 한 제공자의 입력 데이터를 보편 규칙으로 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "browser-verifier-only-evidence-reuse",
+      "path": "success",
+      "prompt": "`$tk-browser-verify` 같은 HTML 후보 SHA, 같은 호스트와 실행 설정에서 14장 화면 근거를 이미 직접 열람했습니다. 이후 `keyboard` 평가식 구문 오류를 발견해 검증기만 고쳤습니다. 독립 점검상 오류는 캡처와 레이아웃 관찰에 영향을 주지 않고 `viewport`/`theme`도 같습니다. 다음 검증 범위를 정해주세요.",
+      "expected_output": "유효한 화면 증거를 보존하고 영향받은 동작을 재검사한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "후보/관찰 조건과 오류의 독립성을 확인한 기준만 재사용하며 입력 실패와 관련된 검사는 다시 수행한다. 전체 캡처를 관성적으로 반복하거나 필요한 동작 검사를 생략하지 않는다. 비교 실행 없이 자원 절감률이나 무오류를 주장하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "browser-layout-change-invalidates-evidence",
+      "path": "boundary",
+      "prompt": "`$tk-browser-verify` 입력 검증기를 고치는 동안 HTML 제목도 두 줄로 길어졌고 `topbar` CSS를 바꿨습니다. 이전 후보의 `desktop`/`mobile` `light`/`dark` 화면은 모두 통과했습니다. 입력만 다시 보고 이전 화면으로 통과시켜도 될까요?",
+      "expected_output": "변경된 화면 기준은 새 후보에서 재검사한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "후보와 레이아웃 의존성 변경으로 무효가 된 화면 근거를 재사용하지 않는다. 영향을 받은 `desktop`/`mobile` `light`/`dark`와 `header`/`overflow` 기준을 다시 확인하고 입력, `no-JS`, `reduced-motion` 등 필요한 범위를 보존한다. 무관한 근거는 독립성이 입증될 때만 보존한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "migrations": [

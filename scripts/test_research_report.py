@@ -1,4 +1,5 @@
 import json
+import importlib.util
 import os
 from pathlib import Path
 import re
@@ -99,7 +100,8 @@ class ResearchReportTest(unittest.TestCase):
                     'id': 'overview',
                     'title': '목표와 결론',
                     'html': '<p>ETag validation reduces transfer when a representation is unchanged.'
-                            '<sup id="cite-1"><a href="#ref-1">[1]</a></sup></p>',
+                            '<sup id="cite-1"><a href="#ref-1">[1]</a></sup>'
+                            '<sup id="cite-2"><a href="#ref-1">[1]</a></sup></p>',
                 },
                 {
                     'id': 'verification',
@@ -114,7 +116,7 @@ class ResearchReportTest(unittest.TestCase):
                     'id': 'ref-1', 'title': 'HTTP caching documentation',
                     'url': 'https://example.test/http-cache', 'local_path': '',
                     'date': '2026-10-16', 'revision': 'current',
-                    'link_unavailable': False, 'citations': ['cite-1'],
+                    'link_unavailable': False, 'citations': ['cite-1', 'cite-2'],
                 },
             ],
         }
@@ -144,6 +146,24 @@ class ResearchReportTest(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertIn('created default HTML theme settings', result.stderr)
             rendered = output_path.read_text(encoding='utf-8')
+            # Reuse the existing HTML parser, without applying its report-only CLI to lessons.
+            spec = importlib.util.spec_from_file_location('report_reference_parser', checker)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            parser = module.ReportParser()
+            parser.feed(rendered)
+            parser.close()
+            nodes = list(parser.root.descendants())
+            reference = next(node for node in nodes if node.attrs.get('id') == 'ref-1')
+            self.assertFalse(any(node.tag in {'p', 'br'} for node in reference.descendants()))
+            links = [node for node in reference.descendants() if node.tag == 'a']
+            self.assertEqual([node.attrs.get('href') for node in links],
+                             ['https://example.test/http-cache', '#cite-1', '#cite-2'])
+            self.assertTrue(all(node.attrs.get('aria-label') for node in links[1:]))
+            self.assertIn('2026-10-16', reference.text_content())
+            self.assertIn('current', reference.text_content())
+            ids = {node.attrs.get('id') for node in nodes}
+            self.assertTrue(all(node.attrs['href'][1:] in ids for node in links[1:]))
             self.assertIn('data-default-theme="system"', rendered)
             self.assertIn('<title>ETag {{REPORT_META}} validation supports efficient cache checks · 연구 보고서</title>', rendered)
             self.assertIn('<p class="ht-topbar-title">{{REPORT_TITLE}} lets the server', rendered)

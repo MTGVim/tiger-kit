@@ -286,6 +286,51 @@
       ]
     },
     {
+      "id": "rewrite-concrete-conditions-before-distinction",
+      "path": "success",
+      "prompt": "`$tk-rewrite` 다음 설명을 초심자에게 자연스럽게 고쳐줘. 제목: 단계보다 흐름을 읽는 처리. 본문: 대기열이 있다는 사실과 처리가 된다는 판단은 다릅니다. 요청은 대기열에 최대 100개 쌓입니다. 소비자가 하나씩 꺼내 처리합니다. 소비자가 멈추면 요청은 기다립니다. 저장소 장애 때 보존되는지는 확인하지 못했습니다. 이 절은 요청이 대기하고 처리되는 과정을 설명합니다.",
+      "expected_output": "구체적인 주체와 동작 및 조건을 먼저 연결하고 문맥에 맞는 제목을 쓴다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "요청이 쌓이고 소비자가 꺼내며 멈추면 기다리는 이유를 독자가 답할 수 있다. 추상적 구분이나 부정형 주의문이 과정을 대신하지 않는다. 100개 한도와 저장소 장애 시 보존 여부 미확인을 유지한다. 근거 없는 재시도나 내구성을 추가하지 않으며 제목은 설명 대상이나 행동을 특정한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "rewrite-hard-warning-and-uncertainty-control",
+      "path": "boundary",
+      "prompt": "`$tk-rewrite` 읽기 편하게 다듬어줘. 원문: 운영 DB의 삭제 명령은 별도 승인 전에는 실행하면 안 됩니다. 내부 테스트 한 번에서 120`ms`가 95`ms`로 줄었지만 운영 성능은 확인하지 못했습니다.",
+      "expected_output": "승인 경계와 측정 범위 및 불확실성을 보존한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "삭제 금지를 권장이나 참고사항으로 약화하지 않는다. 내부 1회, 120`ms`와 `95ms`, 운영 미확인을 모두 보존한다. 친절한 어조나 인과 전개를 이유로 실제 안전 경고를 뒤로 숨기거나 삭제하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "rewrite-clear-flow-heading-control",
+      "path": "boundary",
+      "prompt": "`$tk-rewrite` 명확한 부분은 유지해줘. 제목: 처리 흐름. 본문: 요청은 대기열에 쌓이고, 소비자가 하나씩 꺼내 처리합니다. 소비자가 멈추면 요청은 대기열에서 기다립니다. 이 절의 화살표는 이 순서를 나타냅니다.",
+      "expected_output": "이미 정의된 처리 흐름과 명확한 설명을 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "흐름이라는 단어만 보고 제목을 바꾸거나 새로운 운영 조언을 추가하지 않는다. 원문에 없는 시스템 사실과 주체를 보충하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
       "id": "humanize-preserve-technical-text",
       "path": "boundary",
       "prompt": "`$tk-rewrite` 개발자용 안내의 한국어만 다듬어줘. 'API 호출이 가능합니다. 명령은 `curl /v1/orders`이고 주석은 `// keep retry_count`입니다. 오류 문구 `\"Request failed\"`와 [문서](https://example.com/api)를 확인해 주세요. 🤖 본 안내는 AI가 작성했습니다.' 인용과 출처 표시는 필수야.",

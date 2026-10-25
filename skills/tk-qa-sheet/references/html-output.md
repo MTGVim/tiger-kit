@@ -156,9 +156,16 @@ languages, wrap-mode overflow and token contrast >=4.5 against `--code-bg` in bo
 For document prose, place numbered superscript citations immediately beside supported claims,
 then collect verified source titles, links and relevant date/revision metadata in a numbered
 bottom `참고문헌` section. Reuse a source number, assigning a unique ID to each citation occurrence.
-Use native `<sup id="cite-1-1"><a href="#ref-1" aria-label="참고문헌 1">[1]</a></sup>` and
-`<li id="ref-1">... <a href="#cite-1-1" aria-label="인용 1의 첫 위치로 복귀">↩ 1</a></li>`.
+Use native `<sup id="cite-1-1"><a href="#ref-1" aria-label="참고문헌 1">[1]</a></sup>` with inline references below.
 For another occurrence `cite-1-2`, add a second labeled backlink in the same reference entry.
+Default entries to inline title links, needed institution/version/date and short backlinks,
+without automatic `<p>`/`<br>`. Keep internal inspection/adoption notes in source records and
+reader-relevant limits beside claims. Short entries fit one line when space permits; long titles
+and narrow screens wrap without truncation or `white-space: nowrap`.
+
+```html
+<li id="ref-1"><a href="https://example.org/guide">자료 제목</a> (발행 기관, 2026) <a href="#cite-1-1" aria-label="본문 인용으로 복귀">↩</a></li>
+```
 Render each reference item slightly smaller than body text, at `.875em` relative to the body
 with `line-height: 1.55`; keep the text readable and allow long titles and URLs to wrap. Keep its
 return link visible without letting it dominate the source details. Verify every forward/back target

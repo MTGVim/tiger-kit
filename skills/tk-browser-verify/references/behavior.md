@@ -13,6 +13,12 @@ Use provider-native trusted pointer and keyboard APIs. Use `evaluate_script` onl
 observe state, computed values, or coordinates. Never treat `element.click()`,
 `form.submit()`, or `dispatchEvent()` as interaction evidence.
 
+For a newly implemented direct-input helper, first prove the required action and observed
+postcondition on one safe target control before broad captures. Observe native default behavior,
+not merely event receipt. A passing Space action does not resolve a failed Enter action: repair
+and replay the original input or retain it as unverified, with separate coverage. Do not copy
+one provider's event payload as a universal rule.
+
 Enter form values through trusted keyboard input and operate native date/select controls through
 their visible keyboard or pointer behavior. Do not assign DOM values or use scripted input that may
 bypass constraints such as `maxLength` or fail to exercise native control behavior. If a provider's

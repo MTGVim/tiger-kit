@@ -8,9 +8,9 @@ Apply these within the calling skill's authorized editing scope, before and afte
 
 ### Meaning Before Polish
 
-A reader should identify the subject, what happens, why, under what conditions, and what remains unknown. Introduce prerequisites this audience needs before relying on them. For standalone or shareable output, carry the context needed for its purpose without relying on the authoring conversation; definitions already present in the document need no repetition. For an explicit reply to an identified reader in a visible, directly linked thread, omit only background that reader already has there. Retain new information, changed scope, exceptions, verification results, and decision reasons. Being in the same chat alone does not establish shared context; when the audience or relevant thread is unclear, preserve needed background or ask for the missing context. Use concrete actors, stable terms, and actual causal or temporal relationships. When supplied context identifies a department or position, name it instead of an ambiguous umbrella such as `현업`; preserve each actor's distinct responsibility. If the actor or cause is unknown, keep it unknown rather than guessing a department or position. Connect each main point with supporting facts or explanation. Keep useful headings, sequences, comparisons, and domain examples; avoid slogans and decorative structure.
+Make the actor, action, cause, conditions and unknowns clear. Introduce prerequisites this audience needs before relying on them. For standalone or shareable output, carry the context needed for its purpose without relying on the authoring conversation; definitions already present in the document need no repetition. For an explicit reply to an identified reader in a visible, directly linked thread, omit only background that reader already has there. Retain new information, changed scope, exceptions, verification results, and decision reasons. Being in the same chat alone does not establish shared context; when the audience or relevant thread is unclear, preserve needed background or ask for the missing context. Use concrete actors, stable terms, and actual causal or temporal relationships. Explain a concrete situation through actors, actions and causal outcomes before abstract distinctions. Warnings cannot replace this process. Resolve unseen referents from supplied context; explain a path's consequences rather than calling its arrow wrong. When supplied context identifies a department or position, name it instead of an ambiguous umbrella such as `현업`; preserve each actor's distinct responsibility. If the actor or cause is unknown, keep it unknown rather than guessing a department or position. Connect each main point with supporting facts or explanation. Keep useful headings, sequences, comparisons, and domain examples; avoid slogans and decorative structure.
 
-The calling skill determines which facts may be added. Rewriting preserves supplied facts and may restore supplied context; explaining may introduce supported general knowledge and clearly labeled illustrative examples. Neither may invent project history, measurements, decisions, causes, or evidence. Distinguish hypotheses, proposals, observed results, and completed actions. Keep numbers, negation, conditions, alternatives, decision owners, and certainty intact. Do not improve apparent clarity by deleting a limitation or adding a benefit. When rewriting, preserve supported causal, contrastive, temporal, conditional, and conclusion relationships without strengthening, weakening, or inventing them through connectors, reordering, or new assertions. Mere adjacency is not evidence of a relationship. Preserve temporal state as part of meaning: ongoing or repeated action, completed result,
+The calling skill determines which facts may be added. Rewriting preserves supplied facts and may restore supplied context; explaining may introduce supported general knowledge and clearly labeled illustrative examples. Neither may invent project history, measurements, decisions, causes, or evidence. Distinguish hypotheses, proposals, observed results, and completed actions. Keep numbers, negation, conditions, alternatives, decision owners, and certainty intact. Integrate conditions and uncertainty into the mechanism or a useful scope note on depicted/simplified content and its use. Keep standalone consequential safety/authority warnings prominent. Preserve limitations without vague disclaimers or invented benefits. When rewriting, preserve supported causal, contrastive, temporal, conditional, and conclusion relationships without strengthening, weakening, or inventing them through connectors, reordering, or new assertions. Mere adjacency is not evidence of a relationship. Preserve temporal state as part of meaning: ongoing or repeated action, completed result,
 planned action, and merely possible action are not interchangeable. Shortening an auxiliary
 or sentence ending must not turn an in-progress investigation into a habitual claim, a plan
 into a completed event, or a sustained condition into a one-time event.
@@ -39,6 +39,13 @@ the subject. Phrases such as `먼저 볼 것`, `먼저 확인할 것`, `처음 �
 or similar meta-headings are inappropriate when a specific heading such as the actual decision,
 background, constraint, evidence, or next action can be stated. A phrase is not banned from normal
 prose when it carries real meaning; the problem is using it as decorative structure.
+
+```text
+Before: 단계보다 흐름을 읽는 처리
+Context: 신청 전 입력 확인
+After: 신청서를 제출하기 전에 확인할 항목
+Preserve: 정의한 처리 흐름을 추적하는 절의 제목인 '처리 흐름'
+```
 
 For generated Korean reader-facing copy, run the final headings and prose through the same sentence
 clarity checks as the body text. A short heading may be a noun phrase, but the surrounding prose must
@@ -85,6 +92,13 @@ After: 변경의 핵심
 Before: 그러면 경고가 붙습니다.
 Context: 저장하려는 파일이 다른 작업에서 이미 사용 중이면 해당 파일에 경고 표지를 표시한다.
 After: 저장하려는 파일이 다른 작업에서 이미 사용 중이면, 해당 파일에 경고 표지가 표시됩니다.
+```
+
+```text
+Before: 대기열이 있다는 사실과 요청이 처리된다는 판단은 다릅니다.
+Context: 요청은 대기열에 쌓이고 소비자가 하나씩 처리하며, 소비자가 멈추면 요청은 기다립니다.
+After: 요청은 대기열에 쌓이고, 소비자가 하나씩 꺼내 처리합니다.
+       소비자가 멈춰 있다면 대기열에 들어간 요청도 처리되지 않고 기다립니다.
 ```
 
 Examples show relationships, not permission to infer absent details. If the actor or cause is unknown, keep it unknown. Passive sentences or `할 수 있습니다` can be precise for a capability or an unknown actor. Preserve distinct roles instead of treating administrator, customer, and operator as interchangeable synonyms.

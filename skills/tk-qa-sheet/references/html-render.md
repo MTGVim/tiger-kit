@@ -1,5 +1,11 @@
 # Document Render Checks
 
+Finalize prose, figure coverage and labels; run HTML output's cheap static checks before
+the render matrix. Smoke-test a new direct-input path's required trusted action and observed
+postcondition before full captures. After failure, identify affected criteria and dependencies;
+reuse evidence only with independently proven unchanged candidate scope/replay conditions.
+Run required viewport/theme checks on the finalized artifact.
+
 When browser verification is required, inspect desktop (at least 1280px) and mobile (390–500px), in light and dark.
 Delegate browser-visible checks to `tk-browser-verify` within its provider, headless and evidence
 boundaries. Do not launch the user's browser or silently install/switch verification providers.

@@ -29,7 +29,7 @@ irrelevant detail before removing an explanation step. Each paragraph, figure, c
 exchange should add understanding; do not make every section repeat a question, answer, summary
 and reaction. Refine titles, headings, prose, captions and controls against the supported claims.
 Read [clear writing](references/clear-writing.md) when composing new prose or revising existing text;
-reuse it while it remains in context. Before delivery, revise the authored text in actual reading
+reuse it while it remains in context. Before the first browser matrix (or delivery without one), revise the authored text in actual reading
 order, including headings, captions, controls and text planned for images. Preserve prerequisites,
 causal steps, quantities, qualifications and natural language appropriate to the genre. Edit the
 owning content source and regenerate; shorter wording alone does not make an explanation clearer.

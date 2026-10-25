@@ -245,6 +245,66 @@
       ]
     },
     {
+      "id": "explain-korean-causal-reading-order",
+      "path": "success",
+      "prompt": "`$tk-explain` 채팅으로 초심자에게 설명해줘. 가상 시스템에서 요청은 최대 100개 대기열에 들어가고 소비자가 하나씩 처리한다. 소비자가 멈추면 요청이 기다린다. 장애 때 보존 여부는 모른다. 대기열에 들어갔는데 왜 처리되지 않을 수 있는지 궁금해.",
+      "expected_output": "한 상황의 행동과 조건 및 결과를 연결한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "요청, 대기열, 소비자의 구체적 관계와 정지 조건을 추적할 수 있다. 추상적인 두 개념은 다르다는 선언과 주의문만으로 답하지 않는다. 완결된 한국어 문장, 100개와 장애 시 미확인을 보존한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "explain-spatial-layout-coverage",
+      "path": "success",
+      "prompt": "`$tk-explain` 서로 다른 세 가상 방 배치를 처음 보는 사람에게 HTML로 비교해줘. 모두 직사각형이다. `A`는 가운데 세로벽에 위쪽 통로 하나, `B`는 가운데 세로벽에 아래쪽 통로 하나, `C`는 세로벽이 없고 중앙의 가로벽에 오른쪽 통로 하나가 있다. 점은 왼쪽 위에서 오른쪽 아래로 가야 한다. 실제 건축이나 안전 설계가 아니라 이 정의만 쓰는 예시이다.",
+      "expected_output": "필요한 세 배치와 연결 요소를 명시적인 도식으로 비교한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`A`와 `B`의 위/아래 통로 차이, `C`의 벽 방향과 오른쪽 통로가 모두 보인다. 공유 주석 그림도 허용하지만 표나 대표도 하나로 누락한 공간 배치를 대신하지 않는다. 본문 명칭과 이동 설명이 도식과 일치하고 근거 없는 통로를 만들지 않는다. SVG 개수로 판정하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "explain-nonspatial-table-control",
+      "path": "boundary",
+      "prompt": "`$tk-explain` HTML로 가상 요금 `A` 월 1000원, `B` 월 2000원, `C` 월 3000원을 간단한 표로 비교해줘. 기능은 모두 같고 공간 배치는 관계없어.",
+      "expected_output": "요청한 표로 정확히 비교한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "세 요금과 동일 기능을 보존하며 공간 비교 규칙을 이유로 세 도식이나 불필요한 삽화를 강제하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "explain-inline-reference-entry",
+      "path": "success",
+      "prompt": "`$tk-explain` HTML 참고문헌을 고쳐줘. 짧은 제목 링크 뒤에 검토 메모 `p`가 있고 `br` 뒤에 복귀 링크가 있다. 본문 인용은 두 곳이다. 내부 검토 메모는 출처 기록에 있고, 독자에게 중요한 한계는 본문 주장 옆에 있다. 제목 링크, 발행 기관, 2026 버전과 두 복귀 링크를 유지해줘.",
+      "expected_output": "기본 인라인 참고문헌과 접근 가능한 왕복 링크를 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "자동 `p`/`br` 블록을 덜고 제목 링크, 필요한 기관/버전, 두 인용 위치의 복귀 링크를 같은 항목에 둔다. 내부 메모를 다시 노출하거나 본문 한계를 삭제하지 않는다. 넓은 화면에서 짧은 항목은 한 줄이고 좁은 화면/긴 제목은 잘림이나 `nowrap` 없이 자연스럽게 줄바꿈한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
       "id": "explain-live-figure-shared-state",
       "path": "success",
       "prompt": "`$tk-explain` `evals/skills/tk-explain/fixtures/live-figure.json`의 용량 모델을 오프라인 `capacity.html`에 설명해줘. 사용자가 항목 수를 바꾸며 그림, 숫자와 설명을 함께 이해하게 해줘. 단순화한 개념 모델이며 운영 코드와 측정 데이터는 없다. 아래 기준으로 실제 항목 수 4에서 7로 변경했을 때도 그림과 값 및 문장의 관계를 확인해줘.",
