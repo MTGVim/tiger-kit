@@ -83,6 +83,8 @@ claim-level citations without a search-result ledger, IDs or coverage percentage
 
 ## Build a reusable HTML lesson
 
+For new HTML use [assembly](references/html-assembly.md); reuse generators for edits.
+
 For a new topic use ignored `.tigerkit/teach/<topic>/`; resolve a collision with a numeric
 suffix for the whole run, reusing only an explicitly continued, identity-verified home.
 Default a new HTML lesson to `lessons/0001-<slug>.html` there and increment within that

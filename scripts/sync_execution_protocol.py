@@ -65,6 +65,7 @@ HTML_THEME_CONSUMERS = HTML_CONSUMERS + QUESTION_HTML_CONSUMERS
 VISUAL_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research")
 HTML_ASSETS = ("html-theme.css", "html-theme.js")
 CHART_FILES = ("references/chart-design.md", "assets/chart-examples.html", "references/html-figures.md")
+ASSEMBLY_FILES = ("scripts/build_html.py", "assets/document-shell.html", "references/html-assembly.md")
 HTML_TEMPLATES = ("skills/tk-research/assets/report.html", "skills/tk-qa-sheet/assets/qa-sheet-template.html")
 FEEDBACK_MARKER = "<!-- tigerkit:skill-feedback -->"
 FEEDBACK_END = "<!-- /tigerkit:skill-feedback -->"
@@ -158,7 +159,7 @@ def html_policy_errors(root: Path) -> list[str]:
         if not canonical.is_file() or not target.is_file() or target.read_bytes() != canonical.read_bytes():
             errors.append(f"{target.relative_to(root)}: shared visual grammar drift")
     for name in HTML_CONSUMERS:
-        for relative in ("references/html-output.md", "scripts/package_html.py", "scripts/highlight_code.py", *CHART_FILES):
+        for relative in ("references/html-output.md", "scripts/package_html.py", "scripts/highlight_code.py", *CHART_FILES, *ASSEMBLY_FILES):
             canonical = source / relative
             target = root / "skills" / name / relative
             if not canonical.is_file() or not target.is_file() or target.read_bytes() != canonical.read_bytes():
@@ -356,7 +357,7 @@ def main() -> int:
                 pairs.append((ROOT / "skills/tk-explain/references/html-output.md", ROOT / "skills" / name / "references/html-output.md"))
                 for relative in ("references/explanation-techniques.md", "references/html-render.md"):
                     pairs.append((ROOT / "skills/tk-explain" / relative, ROOT / "skills" / name / relative))
-                for relative in (*CHART_FILES, "scripts/package_html.py", "scripts/highlight_code.py"):
+                for relative in (*CHART_FILES, *ASSEMBLY_FILES, "scripts/package_html.py", "scripts/highlight_code.py"):
                     pairs.append((ROOT / "skills/tk-explain" / relative, ROOT / "skills" / name / relative))
     for name in HTML_THEME_CONSUMERS:
         if (ROOT / "skills" / name).is_dir():

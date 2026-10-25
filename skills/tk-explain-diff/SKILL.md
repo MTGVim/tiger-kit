@@ -99,6 +99,8 @@ assembles them and owns media inspection. Keep the explanation document linked t
 
 ## Deliver
 
+For new HTML use [assembly](references/html-assembly.md); reuse generators for edits.
+
 Default to one self-contained offline HTML artifact at `.tigerkit/explanations/<target-slug>.html`.
 Read [HTML output](references/html-output.md) for HTML; honor explicit Markdown and custom final
 paths. Use a numeric suffix for default collisions; an existing explicit target needs overwrite

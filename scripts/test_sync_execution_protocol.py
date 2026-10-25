@@ -105,7 +105,8 @@ class SyncExecutionProtocolTest(unittest.TestCase):
                 copy = self.root / "skills" / consumer / "references" / name
                 copy.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(canonical, copy)
-        for relative in (*sync_execution_protocol.CHART_FILES, "scripts/package_html.py", "scripts/highlight_code.py"):
+        for relative in (*sync_execution_protocol.CHART_FILES, *sync_execution_protocol.ASSEMBLY_FILES,
+                         "scripts/package_html.py", "scripts/highlight_code.py"):
             target = self.root / "skills/tk-explain" / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(repo / "skills/tk-explain" / relative, target)
@@ -303,7 +304,8 @@ class SyncExecutionProtocolTest(unittest.TestCase):
 
     def test_chart_reference_and_recipe_drift_are_repaired(self) -> None:
         self.assertEqual(self.run_main(), 0)
-        for relative in (*sync_execution_protocol.CHART_FILES, "scripts/package_html.py", "scripts/highlight_code.py"):
+        for relative in (*sync_execution_protocol.CHART_FILES, *sync_execution_protocol.ASSEMBLY_FILES,
+                         "scripts/package_html.py", "scripts/highlight_code.py"):
             consumer = self.root / "skills/tk-research" / relative
             canonical = self.root / "skills/tk-explain" / relative
             consumer.write_text("Stale chart recipe\n", encoding="utf-8")

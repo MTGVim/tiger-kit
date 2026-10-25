@@ -49,48 +49,8 @@ shared `.ht-document`, `.ht-doc-content`, `.ht-doc-nav`, `.ht-doc-toc` and `.ht-
 styles in the theme assets. The left rail and mobile disclosure must work without JavaScript.
 Use the target heading's full text in each TOC link. Shorten an overlong heading itself,
 or put a short label above the full heading in a `<small>` line inside the same link.
-For example, adapt the labels/IDs:
-
-```html
-<body class="ht-document" id="document-top">
-<header class="ht-topbar">
-  <p class="ht-topbar-title">문서 주제와 결론</p>
-  <div class="ht-document-actions">
-    <button type="button" class="ht-icon-button" data-ht-download aria-label="다운로드" title="다운로드" hidden>↓</button>
-    <button type="button" class="ht-icon-button" data-ht-share aria-label="파일 공유" title="파일 공유" hidden>↗</button>
-    <fieldset class="ht-theme-control" data-ht-theme-control hidden>
-      <legend class="ht-theme-label ht-visually-hidden">테마</legend>
-      <div class="ht-theme-buttons">
-        <label class="ht-theme-option" title="시스템"><input type="radio" name="ht-theme" value="system" aria-label="시스템"><span>🖥️</span></label>
-        <label class="ht-theme-option" title="라이트"><input type="radio" name="ht-theme" value="light" aria-label="라이트"><span>☀️</span></label>
-        <label class="ht-theme-option" title="다크"><input type="radio" name="ht-theme" value="dark" aria-label="다크"><span>🌙</span></label>
-      </div>
-    </fieldset>
-    <output class="ht-export-status" data-ht-export-status role="status" hidden></output>
-  </div>
-</header>
-<!-- Document content, with meaningful section IDs. -->
-<main class="ht-doc-content">
-  <!-- Sections. -->
-</main>
-<footer id="document-bottom">...</footer>
-<nav class="ht-doc-nav" aria-label="문서 탐색">
-  <h2 class="ht-doc-nav-heading">목차</h2>
-  <details class="ht-doc-toc" open>
-    <summary aria-label="목차 열기 또는 닫기">목차</summary>
-    <div class="ht-doc-toc-panel" tabindex="-1"><ol>
-      <li><a href="#overview">목표와 결론</a><ol>
-        <li><a href="#conditions">판단 조건</a></li>
-      </ol></li>
-      <li><a href="#sources">참고문헌</a></li>
-    </ol></div>
-  </details>
-</nav>
-<nav class="ht-doc-controls" aria-label="문서 이동">
-  <a href="#document-top" aria-label="맨 위로 이동">↑</a>
-  <a href="#document-bottom" aria-label="맨 아래로 이동">↓</a>
-</nav>
-```
+For new ordinary documents, use [document assembly](html-assembly.md) to insert the package's
+[document shell](../assets/document-shell.html); specialized interfaces retain their generators.
 
 Place the footer directly under `.ht-document`, after `main`; shared CSS centers it.
 Separate source/version and date into paragraphs when present.

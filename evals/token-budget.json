@@ -35,6 +35,7 @@
           "skills/tk-explain/SKILL.md",
           "skills/tk-explain/references/clear-writing.md",
           "skills/tk-explain/references/html-output.md",
+          "skills/tk-explain/references/html-assembly.md",
           "skills/tk-explain/references/artifact-paths.md"
         ],
         "max_bytes": 68000

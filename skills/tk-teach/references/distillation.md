@@ -228,3 +228,25 @@ Its token-leak checks do not establish understanding, transfer or TigerKit learn
 No upstream harness was executed. TigerKit's behavioral scenarios are independently authored;
 forward teaching checks are implementation evidence, not a controlled learning comparison.
 Matt Pocock's MIT notice was already present; Hammer's MIT notice is included in `LICENSE.txt`.
+
+## Content-only document assembly (2026-10-25)
+
+Reviewed current `nicobailon/visual-explainer@5f378868e0ea745a6284b51e710c390f0c76f72c`:
+`plugins/visual-explainer/SKILL.md`, `templates/page.html`, and `eval/README.md`; also
+`mattpocock/skills@5beb35b040e3de97e54fa9e386d7e42d15c295c2`,
+`skills/productivity/teach/SKILL.md` (Assets and scoped lessons). The implementation and
+embedded design rationale favor local asset injection, reuse and small source edits; the
+visual-explainer evaluation separates correctness from token use. Upstream runtime and
+end-to-end timing were not reproduced.
+
+- **keep:** local insertion of shared presentation, reusable semantic components, source edits.
+- **adapt:** an independently authored stdlib builder and shell under the existing offline
+  HTML, settings, export and browser-verification contracts. Default it only for new ordinary
+  explanation/lesson documents; retained generators and specialized interfaces keep ownership.
+- **omit:** donor kit/code/templates, external fonts/CDNs, automatic browser opening,
+  figure-first/prose quotas, extra Markdown, consumer runtimes and render-check exemptions.
+
+TigerKit's gap was executable shell assembly: it already supplied CSS/JS and navigation
+markup instructions, but agents still had to construct that markup and inline assets.
+Reduced authored markup is an observable mechanism, not an end-to-end speed claim.
+The current user request explicitly preserves one-step HTML and content/verification quality.

@@ -63,6 +63,8 @@ When structure, flow, state or causality may become clearer in a figure, read
 [visual grammar](references/visual-grammar.md) before choosing its type and layout.
 Read [HTML output](references/html-output.md) for the shared offline and accessible renderer contract. Keep this artifact focused on one concept or system; prerequisite background does not authorize a course or learner-progress workflow.
 
+For new HTML use [assembly](references/html-assembly.md); reuse generators for edits.
+
 Write one complete document with a clear conversational voice by default; avoid repeating the
 same content in another mode or tab. Read only the relevant [technique entry](references/explanation-techniques.md) when a requested
 or unfamiliar supporting format needs guidance. Prose and tables need no technique assignment.
