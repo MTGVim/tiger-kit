@@ -1749,6 +1749,21 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "research-diataxis-decision-report-not-four-forms",
+      "path": "success",
+      "prompt": "$tk-research 여러 캐시 전략 중 하나를 결정할 수 있는 HTML 보고서를 작성해줘. 출처와 불확실성도 정리해줘. 강의나 튜토리얼은 필요 없어.",
+      "expected_output": "기존 보고서의 권고, 증거, 미확인 조건, 실제 검증 상태와 다음 결정을 유지한다. Diátaxis 네 문서 유형을 네 고정 섹션으로 만들거나 불필요한 튜토리얼과 수행 절차를 추가하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "기존 보고서의 권고, 증거, 미확인 조건, 실제 검증 상태와 다음 결정을 유지한다. Diátaxis 네 문서 유형을 네 고정 섹션으로 만들거나 불필요한 튜토리얼과 수행 절차를 추가하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "merged_from": {

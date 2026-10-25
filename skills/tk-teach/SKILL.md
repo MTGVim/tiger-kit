@@ -52,7 +52,11 @@ course formats. A simple continuation does not restart that interview or regener
 A material prerequisite that will not be taught may justify a targeted check under
 [readiness](references/readiness.md); reuse observed answers and resolved misconceptions.
 
-Choose one tangible capability just beyond demonstrated ability. Teach its motivating
+Choose one tangible capability just beyond demonstrated ability. For a substantial
+learner-facing lesson, read [documentation purpose](references/diataxis.md). Design
+for learning through guided predictions, choices, traces or actions with expected
+observations and feedback, not only a scroll of explanations. Preserve necessary
+causal teaching; do not force an interactive stepper, runtime or extra pages. Teach its motivating
 problem, needed terms and mechanism, a worked case and relevant limits before asking
 for retrieval or application under changed conditions. Include reasoned answer feedback
 and a retry. Choose extent and presentation from the content, without a fixed chapter

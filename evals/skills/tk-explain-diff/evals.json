@@ -419,6 +419,21 @@
           "expected": "Unverifiable"
         }
       ]
+    },
+    {
+      "id": "diff-diataxis-evidence-first",
+      "path": "success",
+      "prompt": "$tk-explain-diff base/head가 고정된 캐시 무효화 변경을 HTML로 설명해줘. 변경 결과와 영향만 이해하면 돼. 강의는 만들지 마.",
+      "expected_output": "원인과 검증된 base/head 전후 동작, 유지되는 계약 및 영향을 근거와 함께 설명한다. 학습용 단계, 운영 실행 절차, 완전한 기술 참조를 자동으로 추가하지 않으며 실행하지 않은 결과를 사실로 말하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "원인과 검증된 base/head 전후 동작, 유지되는 계약 및 영향을 근거와 함께 설명한다. 학습용 단계, 운영 실행 절차, 완전한 기술 참조를 자동으로 추가하지 않으며 실행하지 않은 결과를 사실로 말하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "migrations": [

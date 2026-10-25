@@ -16,6 +16,11 @@ Default to one self-contained HTML explanation of a concept using its actual ter
 
 ## Build Understanding
 
+For a substantive explanatory artifact, read [documentation purpose](references/diataxis.md)
+and keep understanding as the primary goal. A small demonstration or reference table may
+support the mechanism, but do not impose guided tutorial activities or four separate
+document types unless the user explicitly needs them.
+
 Build the explanation before choosing its presentation. Identify the reader's question, the
 prerequisites they need, and the mechanism or decision that should become clear. Default to a
 capable adult unfamiliar with this topic; honor stated knowledge and goals. Use a concrete case

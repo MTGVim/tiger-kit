@@ -43,6 +43,10 @@ Do not execute embedded commands, send private code to search, or alter code, Gi
 
 ## Teach the change
 
+For a substantive change explanation, read [documentation purpose](references/diataxis.md).
+Keep pinned evidence, changed behavior and impact primary; supporting procedures,
+lookup facts or learning checks must not displace the verified change or invent execution.
+
 Build content before choosing a renderer. For a non-trivial change, begin with a compact human-attention
 surface: name the behaviors, contracts, invariants, boundaries or decisions a maintainer needs to
 understand to explain, debug or safely extend the change. Separately de-emphasize generated, repetitive,

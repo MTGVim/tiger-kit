@@ -1384,6 +1384,36 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "teach-diataxis-guided-practice",
+      "path": "success",
+      "prompt": "$tk-teach 비동기 요청 순서를 처음 배우는 사람에게 HTML 수업을 만들어줘. 코드 A/B 중 어느 요청이 먼저 완료되는지 예상하고 이유를 확인한 다음 입력을 바꿔 다시 판단하도록 안내해줘. 실행 환경은 없어.",
+      "expected_output": "실제 입력과 학습에 필요한 개념을 먼저 소개하고, 작은 예측/선택 활동, 기대할 결과와 그 이유, 바뀐 조건의 재시도와 근거 있는 피드백을 연결한다. 실행하지 않은 결과나 학습자의 숙달을 주장하지 않는다. 새 브라우저 런타임이나 강제 단계형 UI, 페이지 분할을 추가하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "실제 입력과 학습에 필요한 개념을 먼저 소개하고, 작은 예측/선택 활동, 기대할 결과와 그 이유, 바뀐 조건의 재시도와 근거 있는 피드백을 연결한다. 실행하지 않은 결과나 학습자의 숙달을 주장하지 않는다. 새 브라우저 런타임이나 강제 단계형 UI, 페이지 분할을 추가하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "teach-diataxis-brief-review-no-forced-tutorial",
+      "path": "boundary",
+      "prompt": "$tk-teach 이미 배운 debounce/throttle 차이만 한 화면의 빠른 복습표로 정리해줘. 활동이나 강의 과정은 필요 없어.",
+      "expected_output": "사용자가 명시한 짧은 복습표를 유지하고 Diátaxis를 이유로 새 실습, 강제 네 섹션, 스텝 UI나 여러 강의 파일을 만들지 않는다. 학습자 경험을 관찰했다고 주장하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "사용자가 명시한 짧은 복습표를 유지하고 Diátaxis를 이유로 새 실습, 강제 네 섹션, 스텝 UI나 여러 강의 파일을 만들지 않는다. 학습자 경험을 관찰했다고 주장하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "migrations": [
