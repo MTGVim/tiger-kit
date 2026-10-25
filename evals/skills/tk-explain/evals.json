@@ -1271,6 +1271,36 @@
           ]
         }
       ]
+    },
+    {
+      "id": "explain-diataxis-explanation-over-exercise",
+      "path": "success",
+      "prompt": "$tk-explain React useEffect cleanup의 실행 순서와 이유를 단일 HTML로 설명해 줘. 실습 과제나 진행 저장은 원하지 않아.",
+      "expected_output": "구체적 사례와 원인, 조건, 동작 결과를 연결한 설명을 우선한다. 필요한 도해나 작은 코드 예제는 허용하되 튜토리얼 실습, how-to 절차, reference 표, 진행 상태 UI를 모두 필수로 만들지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "구체적 사례와 원인, 조건, 동작 결과를 연결한 설명을 우선한다. 필요한 도해나 작은 코드 예제는 허용하되 튜토리얼 실습, how-to 절차, reference 표, 진행 상태 UI를 모두 필수로 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "explain-diataxis-supporting-lookup-table",
+      "path": "boundary",
+      "prompt": "$tk-explain HTTP Cache-Control max-age가 왜 만료되는지 이해할 수 있는 HTML 설명과 지시어 단위 요약표를 만들어 줘.",
+      "expected_output": "원리 설명을 유지하면서 조회용 요약표를 보조로 배치한다. 표를 포함했다는 이유로 전체 결과를 reference로 바꾸거나 네 형식의 탭을 추가하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "원리 설명을 유지하면서 조회용 요약표를 보조로 배치한다. 표를 포함했다는 이유로 전체 결과를 reference로 바꾸거나 네 형식의 탭을 추가하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "renamed_from": {
