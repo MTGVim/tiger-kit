@@ -9,7 +9,7 @@ available local Korean voices, preferring a browser-designated default, and refr
 voiceschanged. If no usable voice exists, show the unavailable state and offer explicit silent
 reading or file audio; do not silently switch production routes or claim successful speech.
 Voice availability, pronunciation and boundary events depend on the learner's browser/device.
-The HTML is self-contained, but installed voices are not embedded assets or guaranteed available.
+The default course folder includes its media; installed voices are neither bundled nor guaranteed available.
 
 Only selected local synthesis loads tk-tts options/readiness: engine/model/voice, dependencies,
 device, model cache/download, cost and whether text leaves the machine. Installation/download
@@ -84,7 +84,7 @@ toggles playback, M sound, C captions and F fullscreen/expansion; `?` and the pl
 open a modal help list. Do not intercept typing, composition, native range/select keys or browser
 modifier shortcuts. Respect paused playback, cue boundaries and lesson bounds.
 
-Delegate fullscreen to the generated trusted `srcdoc` frame with `allow="fullscreen *"` and
+Delegate fullscreen to the generated trusted `srcdoc` lesson frame with `allow="fullscreen *"` and
 `allowfullscreen`: file origins may be opaque, so the default `src` allowlist can reject them.
 This cannot override an enclosing host policy. Attempt native fullscreen from the learner's
 gesture; on disabled/rejected APIs use a labeled in-window stage expansion with controls and

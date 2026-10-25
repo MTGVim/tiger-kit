@@ -62,9 +62,31 @@ def embedded_manifest(course):
     value={k:course[k] for k in ('id','title','description','level','revision','objectives','narration_seconds')}
     value.update({k:course[k] for k in ('created_at','updated_at') if k in course})
     value.update(schema=1,lessons=[{'id':l['id'],'title':l['title'],'kind':l['kind'],'narration':l.get('narration','none')} for l in course['lessons']],preview_slide=preview)
+    if 'delivery' in course:value['delivery']=course['delivery']
     tag='<script type="application/json" id="'+MANIFEST_ID+'">'+json.dumps(value,ensure_ascii=False).replace('<','\\u003c')+'</script>'
     if len(tag.encode())>LIMIT-1024:raise ValueError('course catalog metadata exceeds the first 64KB budget; shorten descriptions')
     return tag
+
+def delivery_files(base,course):
+    """Validate the explicit public allowlist; never archive an arbitrary directory tree."""
+    index=safe_path(base/'index.html')
+    if 'delivery' not in course:return [index] # Older single-file distributions.
+    if course['delivery']!={'mode':'folder','manifest':'course-files.json'}:raise ValueError('invalid course delivery metadata')
+    manifest=safe_path(base/'course-files.json')
+    if not manifest.is_file() or manifest.stat().st_size>5_000_000:raise ValueError('missing or oversized course file manifest')
+    value=json.loads(manifest.read_text(encoding='utf-8'))
+    if not isinstance(value,dict) or set(value)!={'schema','course_id','files'} or type(value['schema']) is not int or value['schema']!=1 or value['course_id']!=course['id']:raise ValueError('invalid course file manifest')
+    names=value['files']
+    if not isinstance(names,list) or not all(isinstance(n,str) for n in names) or len(names)!=len(set(names)):raise ValueError('invalid course file allowlist')
+    lessons={'lessons/lesson-'+l['id']+ext for l in course['lessons'] for ext in ('.html','.js')}
+    if not lessons.issubset(names):raise ValueError('missing lesson in course file allowlist')
+    result=[index,manifest]
+    for name in names:
+        if name not in lessons and not re.fullmatch(r'assets/(?:image/[a-f0-9]{64}\.(?:png|jpg|jpeg|webp)|audio/[a-f0-9]{64}\.(?:wav|webm|ogg|mp3|m4a)|video/[a-f0-9]{64}\.(?:mp4|webm))',name):raise ValueError('unexpected public course file')
+        path=safe_path(base/name)
+        if not path.is_file():raise ValueError('missing public course file: '+name)
+        result.append(path)
+    return result
 
 def atomic_text(path,content):
     path=safe_path(path);temporary=None

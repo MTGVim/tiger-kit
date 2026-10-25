@@ -27,8 +27,8 @@ test('shared course preferences, breadcrumb, curriculum and standalone catalog d
     await f.locator('#lesson-heading').filter({hasText:'조건과 결과 2'}).waitFor();
     assert.equal(await f.locator('#volume').inputValue(),'60');assert.equal(await f.locator('#caption-opacity').inputValue(),'80');
     await page.reload();await f.locator('#home-start').click();
-    // Resume can replace the initial srcdoc with lesson 2; wait for that document's preferences.
-    await page.waitForFunction(()=>{const d=document.getElementById('course-frame')?.contentDocument;return d?.getElementById('lesson-heading')?.textContent.includes('조건과 결과 2')&&d?.getElementById('volume')?.value==='60'&&d?.getElementById('caption-opacity')?.value==='80';});
+    // Wait through file-frame navigation without assuming a shared file origin.
+    await f.locator('#lesson-heading').filter({hasText:'조건과 결과 2'}).waitFor();
     assert.equal(await f.locator('#volume').inputValue(),'60');assert.equal(await f.locator('#caption-opacity').inputValue(),'80');
     if(width>700)assert.equal(await f.locator('#menu-toggle').getAttribute('aria-expanded'),'false');
     assert(await f.locator('body').evaluate(el=>el.scrollWidth<=el.ownerDocument.defaultView.innerWidth));

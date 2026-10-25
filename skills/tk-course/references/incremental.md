@@ -92,11 +92,14 @@ Do not silently sync personal educational records or commit them.
 ## Shared distribution
 
 Keep source files under `<courses>/<topic>/`, working manifests/changes under `<topic>/build/`,
-and only shareable single-file HTML under `<courses>/dist/<topic>/index.html`. Both builders accept
+and the shareable course folder under `<courses>/dist/<topic>/`. Its small `index.html` loads only
+the chosen lesson; `lessons/` contains standalone HTML and classic-script loader copies, and
+`assets/` contains content-addressed media. `course-files.json` lists public files explicitly. Both builders accept
 `--dist <root>`; reuse the agreed root. `build_course.py` creates/refreshes the root's catalog after
 each successful build, including one course. `--lesson-pages` creates optional direct pages only
-in the working output. Never put source audio, dependencies or separate manifest JSON in `dist/`;
-the public collection settings below are the only optional JSON distribution file.
+in the working output with their media. Copy only selected rendered assets, never source trees,
+plans, learner records or dependencies. Keep public delivery metadata separate from working
+course.json/changes.json. `--single-file` retains small embedded exports (10 MB maximum).
 
 ## Collection order and dates
 
@@ -127,7 +130,7 @@ before final catalog validation. Standalone refresh rejects IDs missing from the
 
 Run `build_catalog.py --dist <dist>` after editing settings. It changes only its marked catalog,
 never existing course HTML or dates. `--zip` includes the validated optional `catalog.json` plus
-the existing HTML allowlist, so an extracted collection can regenerate its recommended path.
+the explicit public course-file allowlists, so an extracted collection can regenerate its recommended path.
 Keep private plans, sources, learner data and raw audio out of that public file.
 
 Cards and course homes show registration and update dates, omitting a duplicate update date and
@@ -141,7 +144,8 @@ stretching the last search result; reserve scrollbar space to avoid extra horizo
 
 The course's first 64KB contains `tigerkit-course-manifest` JSON (public metadata, lesson titles,
 preview, revision and measured audio length). `build_catalog.py --dist <root>` discovers only
-`<root>/*/index.html` and reads that bounded prefix; it needs neither source nor working manifests.
+`<root>/*/index.html` and reads that bounded prefix, then validates the optional public course-files.json allowlist;
+it needs neither source nor working manifests.
 Reject missing/corrupt manifests, duplicate IDs and symlinks; zero courses fails. Adding/removing
 course folders and rebuilding updates the list. The root's marked catalog is replaced atomically;
 unmarked HTML is preserved. Client search covers titles, descriptions, goals and lesson titles;
@@ -151,9 +155,12 @@ Build revisions with `--previous <old-build/course.json>` to new work and distri
 Review `changes.json`, HTML and media before explicitly replacing the prior shared course; retain
 originals, then refresh the destination catalog. Existing shared course targets are refused rather
 than silently overwritten. Catalog generation changes only its own marked output, never courses.
-Use `--zip` to produce a sibling `<root-name>.zip` with the catalog/course HTML and optional public settings;
+Use `--zip` to produce a sibling `<root-name>.zip` with the catalog, listed lesson/media files and optional public settings;
 replace only archives bearing the TigerKit ZIP comment marker. Report path, size and course list.
-A copied/extracted tree retains relative links. Each course verifies a local catalog by frame
+A copied/extracted tree retains relative links. Share each complete topic folder, or the complete
+collection ZIP, rather than copying only index.html. Legacy and explicit small single-file courses
+remain valid catalog entries. The ZIP reads only the explicit public allowlist, refuses missing,
+symlinked or unsafe paths, and excludes unlisted files even inside assets/. Each course verifies a local catalog by frame
 handshake and hides that breadcrumb when shared alone; no fetch/server or external request is needed.
 
 Progress remains course-local; preferences are learner-wide and never included in progress JSON.

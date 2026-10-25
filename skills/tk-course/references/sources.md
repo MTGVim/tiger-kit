@@ -100,3 +100,14 @@ measured. Omit Marp, a hosted LMS, automatic mastery scoring, accounts and a sha
 Earlier source entries describe historical policies. This section supersedes mandatory lesson
 beats and generated-file-first/browser-fallback authoring; current SKILL.md and references own
 behavior. Upstream runtime/learning-effect evaluations were not executed for this adaptation.
+
+## Portable media delivery (2026-10-25)
+
+- Creator-reported oversized index.html, verified in build_course.media_uri, AudioBuild and
+  bundle: adapt separate lesson HTML and content-addressed media with an explicit public ZIP
+  allowlist. Keep offline relative paths, source-bound frame messaging, stable progress identity
+  and optional bounded single-file exports. This supersedes historical HTML-only distribution.
+- Rechecked course-builder main at 1913b09bd1bf947b5ee2d1a75eab4396e669fbd3 and read its
+  orchestrator/build stages: keep the separation of player entry, media and ZIP; adapt it to
+  server-free classic-script lesson loading and same-origin srcdoc frames and validated distribution paths. Omit its TTS/runtime/orchestration
+  choices. Upstream runtime/evals were not executed.

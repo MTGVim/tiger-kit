@@ -13,7 +13,7 @@ metadata:
 
 # Build a Complete Learning Course
 
-Own a reusable curriculum and self-contained HTML learning course. Reuse the audience, sources,
+Own a reusable curriculum and offline HTML learning course. Reuse the audience, sources,
 learning goal and settled choices; ask only material unknowns. tk-teach owns adaptive tutoring,
 tk-explain a single explanation, tk-tts file synthesis and tk-video movie assembly. Creation
 alone grants no commit, push or publication.
@@ -75,8 +75,9 @@ report unavailable voices and pending pronunciation review. A finished movie ret
 and audio, with no live TTS layered over it.
 
 Return the course and automatically refreshed catalog links, actual verification and material
-limits. One course is <dist>/<topic>/index.html; several share the dist folder or build_catalog.py
---dist <dist> --zip output. Do not launch the user's browser. For provenance see [sources](references/sources.md).
+limits. Default to a portable folder: <dist>/<topic>/index.html loads lesson HTML and relative media.
+Share the whole topic folder or build_catalog.py --dist <dist> --zip output; index.html alone is
+insufficient. Offer --single-file only for small exports (10 MB maximum). Do not launch the user's browser. For provenance see [sources](references/sources.md).
 
 <!-- tigerkit:narration-choice -->
 ## Narration Choice

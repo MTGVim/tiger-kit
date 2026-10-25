@@ -80,9 +80,14 @@ browser speech cannot supply an exported audio track. The movie owns its clock a
 ## Build and compatibility
 
 Use build_course.py --input <topic>/course.json --output <topic>/build --dist <courses>/dist.
-Working manifests stay in build; shared output contains <dist>/<topic>/index.html and a refreshed
-catalog even for one course. --lesson-pages adds working direct pages; --audio-format opus|mp3|wav
-controls file-audio encoding only. Originals stay intact. --previous <prior-built/course.json>
+Working manifests stay in build. Default shared output contains a small <dist>/<topic>/index.html,
+lessons/lesson-<id>.html and .js loader copies, content-addressed assets/image|audio|video/ and a public course-files.json
+allowlist, plus a refreshed catalog even for one course. Media remain files; repeated assets are
+copied once. --lesson-pages adds working direct pages and their media; --audio-format opus|mp3|wav
+controls file-audio encoding only. --single-file embeds the whole course only when the final
+UTF-8 HTML is at most 10 MB; an oversized export fails before delivery and directs the creator
+to the default folder. The no-dist Python compatibility API retains its older single-file default;
+pass single_file=False there for a folder. Originals stay intact. --previous <prior-built/course.json>
 protects incremental identity, dates and media digests; build to reviewed staging before replacement.
 See incremental.md for collection order, date provenance, plan preservation and sharing allowlists.
 
@@ -94,8 +99,13 @@ style, learning effectiveness or pronunciation. Review the full slide/script/ans
 separately before declaring completion. Build/source revision consistency preserves prior
 completion and notes; unknown learner schemas remain recoverable rather than reset.
 
-The player remains a same-origin srcdoc single-file HTML with static no-JavaScript reading,
-course-local manual progress and no server requirement. No private plan, setup detail, objective
+The default entry loads only the selected lesson through a classic script and puts its HTML in
+a trusted srcdoc frame. A base URL resolves relative media from lessons/. This avoids fetch, ES
+modules and a server while preserving the entry storage origin across lesson changes and existing
+course progress. Keep source-bound postMessage navigation, static no-JavaScript lesson links/reading
+and existing IDs. --single-file embeds all lessons and retains the same frame origin. Share the complete topic folder (or ZIP),
+not index.html alone. An in-app preview must support sibling relative files; otherwise provide the
+ZIP for extraction and browser opening rather than claiming its preview works. No private plan, setup detail, objective
 ID, generated demo content or sharing control belongs in the teaching screen. Preserve notices.
 Read media.md and slide-components.md for runtime and complete-frame acceptance. Inspect actual
 pixels, cue order and caption coverage at the minimum intended viewport; bounds alone do not

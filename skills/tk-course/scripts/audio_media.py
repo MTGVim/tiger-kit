@@ -36,9 +36,9 @@ def inspect_audio(path):
     return duration
 
 class AudioBuild:
-    def __init__(self,base,names,format,directory):
+    def __init__(self,base,names,format,directory,*,embed=True):
         if format not in {'opus','mp3','wav'}:raise ValueError('unsupported --audio-format')
-        self.uris={};self.records=[];self.format=format
+        self.uris={};self.paths={};self.records=[];self.format=format
         for n,name in enumerate(sorted(set(names))):
             source=base/name;before=inspect_audio(source)
             if format=='wav' and source.suffix.lower()=='.wav':target=source
@@ -48,7 +48,8 @@ class AudioBuild:
                 subprocess.run([tool('ffmpeg'),'-v','error','-xerror','-nostdin','-i',str(source),'-map','0:a:0','-ac','1','-ar','24000',*encoding,'-y',str(target)],check=True,capture_output=True)
             after=inspect_audio(target)
             if abs(before-after)>.1:raise ValueError('encoded narration duration drift exceeds 0.1 seconds')
-            raw=target.read_bytes();self.uris[name]='data:'+MIME[target.suffix.lower()]+';base64,'+base64.b64encode(raw).decode()
-            self.records.append({'source':name,'source_bytes':source.stat().st_size,'encoded_bytes':len(raw),'seconds':round(after,6),'source_seconds':round(before,6)})
+            self.paths[name]=target
+            if embed:self.uris[name]='data:'+MIME[target.suffix.lower()]+';base64,'+base64.b64encode(target.read_bytes()).decode()
+            self.records.append({'source':name,'source_bytes':source.stat().st_size,'encoded_bytes':target.stat().st_size,'seconds':round(after,6),'source_seconds':round(before,6)})
     def manifest(self):
         return {'format':self.format,'bitrate':{'opus':32000,'mp3':48000,'wav':None}[self.format], 'source_bytes':sum(x['source_bytes'] for x in self.records),'encoded_bytes':sum(x['encoded_bytes'] for x in self.records),'files':self.records}

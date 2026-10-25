@@ -8,7 +8,7 @@ from urllib.parse import quote
 from app_shell import THEME_CONTROL,BOOTSTRAP,theme_styles
 from build_course import identifier,text,ASSETS
 from components import svg
-from distribution import safe_path,read_manifest,atomic_text,course_dates,date_label
+from distribution import safe_path,read_manifest,atomic_text,course_dates,date_label,delivery_files
 
 MARKER='tigerkit-course-catalog'
 class CatalogMarker(HTMLParser):
@@ -42,6 +42,7 @@ def discover(root):
         if not entry.is_dir():continue
         index=entry/'index.html'
         course=validate_metadata(read_manifest(index));id=course['id']
+        delivery_files(entry,course)
         if id in ids:raise ValueError('duplicate course identity; no implicit merge')
         ids.add(id);items.append((entry,course))
     return items
@@ -154,7 +155,7 @@ def build(root,output=None,*,zip_output=False):
             with tempfile.NamedTemporaryFile(dir=archive.parent,prefix='.course-zip-',suffix='.tmp',delete=False) as f:temporary=Path(f.name)
             with zipfile.ZipFile(temporary,'w',compression=zipfile.ZIP_DEFLATED) as z:
                 z.comment=ZIP_MARKER
-                for path in [output,*[base/'index.html' for base,_ in items],*([root/'catalog.json'] if settings is not None else [])]:
+                for path in [output,*[p for base,c in items for p in delivery_files(base,c)],*([root/'catalog.json'] if settings is not None else [])]:
                     safe_path(path);z.write(path,path.relative_to(root).as_posix())
             check_archive(archive);os.replace(temporary,archive)
         finally:

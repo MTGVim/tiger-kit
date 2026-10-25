@@ -20,7 +20,7 @@ class CatalogTests(unittest.TestCase):
         self.assertLess(page.index('data-course-id="speed"'),page.index('data-course-id="flaky"'))
         self.assertIn('Reliability &lt;script&gt;',page);self.assertIn('먼저 들을 코스: 테스트 실행 최적화',page);self.assertIn('권장 1',page);self.assertIn('등록 ',page)
         self.assertEqual(before,self.hashes())
-        with zipfile.ZipFile(result['zip']['path']) as archive:self.assertEqual(set(archive.namelist()),{'index.html','aa-flaky/index.html','zz-speed/index.html','catalog.json'})
+        with zipfile.ZipFile(result['zip']['path']) as archive:self.assertEqual(set(archive.namelist()),{'index.html','catalog.json',*[f'{topic}/{name}' for topic in ['aa-flaky','zz-speed'] for name in ['index.html','course-files.json','lessons/lesson-lesson-1.html','lessons/lesson-lesson-1.js','lessons/lesson-lesson-2.html','lessons/lesson-lesson-2.js']]})
         self.settings({'schema':1,'order':['flaky','speed']});catalog.build(self.dist)
         page=(self.dist/'index.html').read_text();self.assertLess(page.index('data-course-id="flaky"'),page.index('data-course-id="speed"'));self.assertEqual(before,self.hashes())
         (self.dist/'catalog.json').unlink();catalog.build(self.dist)

@@ -56,7 +56,7 @@ class CourseTests(unittest.TestCase):
                 for cue in slide['narration']:cue['audio']='voice.wav'
         source=topic/'course.json';source.write_text(json.dumps(self.data));dist=self.root/'dist'
         builder.build(source,topic/'build',dist=dist)
-        alone=self.root/'standalone';alone.mkdir();shutil.copyfile(dist/'browser-topic/index.html',alone/'index.html')
+        alone=self.root/'standalone';shutil.copytree(dist/'browser-topic',alone)
         env={**os.environ,'TK_COURSE_PAGE':str(dist/'browser-topic/index.html'),'TK_COURSE_STANDALONE':str(alone/'index.html'),'TK_COURSE_LONG_PAGE':str(dist/'browser-topic/index.html')}
         result=subprocess.run(['node','--test',str(ROOT/'evals/skills/tk-course/preferences-navigation.test.cjs')],env=env,capture_output=True,text=True,timeout=180)
         self.assertEqual(result.returncode,0,result.stdout+result.stderr)
@@ -152,7 +152,7 @@ class CourseTests(unittest.TestCase):
         for name,content in before.items():self.assertEqual(Path(name).read_bytes(),content)
         import zipfile
         with zipfile.ZipFile(result['zip']['path']) as archive:
-            self.assertEqual(set(archive.namelist()),{'index.html','topic-0/index.html','topic-1/index.html'})
+            self.assertEqual(set(archive.namelist()),{'index.html',*[f'topic-{n}/{name}' for n in range(2) for name in ['index.html','course-files.json','lessons/lesson-lesson-1.html','lessons/lesson-lesson-1.js','lessons/lesson-lesson-2.html','lessons/lesson-lesson-2.js']]})
             moved=self.root/'moved';archive.extractall(moved)
         self.assertEqual(catalog.build(moved)['courses'],2)
         for source in inputs:
@@ -250,7 +250,7 @@ class CourseTests(unittest.TestCase):
         self.assertEqual(result.returncode,0,result.stdout+result.stderr)
         shared=self.root/'dist/topic/index.html';self.assertTrue(shared.is_file());self.assertTrue((self.root/'dist/index.html').is_file())
         self.assertFalse(list((topic/'build').glob('*.html')))
-        self.assertEqual(sorted(str(p.relative_to(self.root/'dist')) for p in (self.root/'dist').rglob('*') if p.is_file()),['index.html','topic/index.html'])
+        self.assertEqual(sorted(str(p.relative_to(self.root/'dist')) for p in (self.root/'dist').rglob('*') if p.is_file()),['index.html','topic/course-files.json','topic/index.html','topic/lessons/lesson-lesson-1.html','topic/lessons/lesson-lesson-1.js','topic/lessons/lesson-lesson-2.html','topic/lessons/lesson-lesson-2.js'])
         before=shared.read_bytes()
         with self.assertRaisesRegex(ValueError,'review'):builder.build(source,topic/'next',dist=self.root/'dist')
         self.assertEqual(shared.read_bytes(),before);self.assertFalse((topic/'next').exists())
@@ -277,7 +277,7 @@ class CourseTests(unittest.TestCase):
         sources.write_text(deferred)
         dist=self.root/'dist';builder.build(source,topic/'build',dist=dist)
         result=catalog.build(dist,zip_output=True)
-        expected=['course-01/index.html','index.html']
+        expected=['course-01/course-files.json','course-01/index.html','course-01/lessons/lesson-lesson-1.html','course-01/lessons/lesson-lesson-1.js','course-01/lessons/lesson-lesson-2.html','course-01/lessons/lesson-lesson-2.js','index.html']
         self.assertEqual(sorted(str(p.relative_to(dist)) for p in dist.rglob('*') if p.is_file()),expected)
         for page in dist.rglob('*.html'):
             self.assertNotIn('PRIVATE-PROGRAM-PLAN',page.read_text())

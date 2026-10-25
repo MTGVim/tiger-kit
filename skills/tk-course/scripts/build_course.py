@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate authored course data and build a local self-contained HTML course."""
+"""Build an offline HTML course folder, with an optional small single-file export."""
 from __future__ import annotations
 import argparse,base64,copy,hashlib,json,math,re,shutil,subprocess,tempfile,wave,zlib
 from pathlib import Path
@@ -12,6 +12,7 @@ from audio_media import MIME,inspect_audio,AudioBuild
 from distribution import embedded_manifest,safe_path,read_manifest,atomic_text,course_dates
 from slide_components import TYPES,contract as figure_contract,table as figure_table
 from readiness import validate_readiness,readiness_html
+from media_delivery import MediaFiles,folder_index,lesson_loader,SINGLE_FILE_LIMIT
 
 ID=re.compile(r'[a-z0-9][a-z0-9-]{0,79}')
 ASSETS=Path(__file__).resolve().parents[1]/'assets'
@@ -77,14 +78,16 @@ def safe_file(base,name):
     if p.resolve()!=p.absolute() or not p.is_file():raise ValueError('media must be a regular nonsymlink file')
     return p
 
-def media_uri(base,name,kind,audio_build=None):
+def media_uri(base,name,kind,audio_build=None,media=None):
     path=safe_file(base,name)
     mime=(MIME if kind=='audio' else {'.mp4':'video/mp4','.webm':'video/webm','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp'}).get(path.suffix.lower())
     if not mime or not mime.startswith(kind+'/'):raise ValueError('unsupported media file type')
     if path.stat().st_size>500_000_000:raise ValueError('media exceeds the single-file build budget; split the course')
     if kind=='audio':
+        if media and audio_build:return media.uri(audio_build.paths[name],kind)
         if audio_build:return audio_build.uris[name]
         inspect_audio(path)
+    if media:return media.uri(path,kind)
     return 'data:'+mime+';base64,'+base64.b64encode(path.read_bytes()).decode()
 
 def fingerprint(lesson,course,base):
@@ -279,29 +282,29 @@ def image_info(base,name):
     except (subprocess.SubprocessError,json.JSONDecodeError) as error:raise ValueError('invalid, truncated or timed-out teaching image: '+name) from error
     return w/h
 
-def embed_visual(slide,base):
+def embed_visual(slide,base,media=None):
     if slide['type']!='image':return slide
     slide=copy.deepcopy(slide)
     slide['visual']['aspect_ratio']=image_info(base,slide['visual']['src'])
-    slide['visual']['src']=media_uri(base,slide['visual']['src'],'image')
+    slide['visual']['src']=media_uri(base,slide['visual']['src'],'image',media=media)
     return slide
 
-def payload(course,lesson,base,audio_build=None):
+def payload(course,lesson,base,audio_build=None,media=None):
     data=copy.deepcopy(lesson)
     meta={'id':course['id'],'revision':course['revision'],'lessons':[{'id':x['id'],'revision':x['revision']} for x in course['lessons']]}
     listing=[{'id':x['id'],'title':x['title'],'section':x['section'],'kind':x['kind'],'kind_label':('슬라이드 '+str(len(x['slides']))+'장') if x['kind']=='slides' else '영상'} for x in course['lessons']]
     mode=lesson['kind'];dummy={'id':'video-cover','title':lesson['title'][:45],'eyebrow':'강의','type':'content','objective_ids':lesson['objective_ids'],'visual':{'items':[{'label':'학습 목표','text':lesson['title'][:60]}]},'narration':[{'id':'cover','speech':lesson['title'],'caption':lesson['title'],'focus':['item-1']}],'transcript':lesson['title']}
     slides=data['slides'] if mode=='slides' else [copy.deepcopy(dummy) for _ in lesson['video']['captions']]
-    slides=[embed_visual(slide,base) for slide in slides]
+    slides=[embed_visual(slide,base,media) for slide in slides]
     for slide in slides:
         for cue in slide['narration']:
             if cue.get('audio'):
                 if audio_build:cue['seconds']=next(row['seconds'] for row in audio_build.records if row['source']==cue['audio'])
-                cue['audio']=media_uri(base,cue['audio'],'audio',audio_build)
+                cue['audio']=media_uri(base,cue['audio'],'audio',audio_build,media)
     video={'src':'','duration':1,'has_audio':False};scenes=[{'id':'unused','caption':'','start':0,'end':1}]
     if mode=='video':
-        video={**lesson['video'],'src':media_uri(base,lesson['video']['src'],'video')}
-        if video.get('poster'):video['poster']=media_uri(base,video['poster'],'image')
+        video={**lesson['video'],'src':media_uri(base,lesson['video']['src'],'video',media=media)}
+        if video.get('poster'):video['poster']=media_uri(base,video['poster'],'image',media=media)
         scenes=copy.deepcopy(video['captions'])
     data.update(sources=copy.deepcopy(course['sources']),title=course['title'],course_label=course['title'],lesson_id=lesson['id'],lesson_title=lesson['title'],course_meta=meta,course_lessons=listing,overview={'description':course['description'],'level':course['level'],'outcomes':[o['description'] for o in course['objectives']],**{k:course[k] for k in ('created_at','updated_at') if k in course}},slides=slides,lessons=[{'id':mode,'title':lesson['title'],'note':lesson['notes']}],published_lessons=[mode],video_lesson=video,video_scenes=scenes,video_transcript=' '.join(x['caption'] for x in scenes),production_choices={'voice':{'none':'none','browser':'browser','supplied':'supplied'}.get(lesson.get('narration'),'generated-local'),'pacing':course_pacing(course)},narration_revision=lesson['revision'])
     data['readiness']=copy.deepcopy(course.get('readiness',[]))
@@ -332,11 +335,12 @@ def bundle(pages,title,course,base=None):
 def build_day():
     return datetime.now().astimezone().date().isoformat()
 
-def build(source,output,previous=None,collection_home=None,*,dist=None,audio_format='opus',lesson_pages=None,catalog_position=None):
+def build(source,output,previous=None,collection_home=None,*,dist=None,audio_format='opus',lesson_pages=None,catalog_position=None,single_file=None):
     source=source.absolute();output=output.absolute()
     if source.resolve()!=source or not source.is_file() or output.resolve()!=output or output.exists() or not output.parent.is_dir():raise ValueError('use safe authored input and a new output directory')
     # The CLI always passes a distribution root. None preserves the in-process legacy builder API.
     legacy=dist is None
+    if single_file is None:single_file=legacy
     if lesson_pages is None:lesson_pages=legacy
     shared=None
     if not legacy:
@@ -344,7 +348,7 @@ def build(source,output,previous=None,collection_home=None,*,dist=None,audio_for
         if output.is_relative_to(dist) or dist.is_relative_to(output) or source.is_relative_to(dist):raise ValueError('working/source paths must not overlap the distribution tree')
         shared=dist/source.parent.name/'index.html'
         safe_path(shared)
-        if shared.exists():raise ValueError('review a new --dist staging tree before replacing an existing shared course')
+        if shared.parent.exists():raise ValueError('review a new --dist staging tree before replacing an existing shared course')
         if dist.exists() and not dist.is_dir():raise ValueError('distribution root must be a directory')
         if (dist/'index.html').exists():
             from build_catalog import owned_output
@@ -352,6 +356,7 @@ def build(source,output,previous=None,collection_home=None,*,dist=None,audio_for
         collection_home=collection_home or '../index.html'
     collection_home=collection_path(collection_home)
     course=validate(json.loads(source.read_text()),source.parent);changes=[]
+    course.pop('delivery',None)
     course['collection_home']=collection_home;course['narration_seconds']=narration_seconds(course,source.parent)
     fingerprints={item['id']:fingerprint(item,course,source.parent) for item in course['lessons']}
     old=None;readiness_changed=False
@@ -394,16 +399,33 @@ def build(source,output,previous=None,collection_home=None,*,dist=None,audio_for
         elif catalog_position is not None:raise ValueError('--catalog-position requires catalog.json')
     for item in course['lessons']:item['content_fingerprint']=fingerprints[item['id']]
     with tempfile.TemporaryDirectory(prefix='.course-build-',dir=output.parent) as tmp:
-        audio=AudioBuild(source.parent,[c['audio'] for l in course['lessons'] if l['kind']=='slides' for slide in l['slides'] for c in slide['narration'] if c.get('audio')],audio_format,tmp)
+        public=Path(tmp)/'public';public.mkdir()
+        media=None if single_file else MediaFiles(public)
+        audio=AudioBuild(source.parent,[c['audio'] for l in course['lessons'] if l['kind']=='slides' for slide in l['slides'] for c in slide['narration'] if c.get('audio')],audio_format,tmp,embed=single_file)
         course['audio_build']=audio.manifest()
         if not legacy:course['distribution']={'root':str(dist),'topic':source.parent.name}
-        pages={l['id']:render({**payload(course,l,source.parent,audio),'collection_home':collection_home}) for l in course['lessons']}
+        if not single_file:course['delivery']={'mode':'folder','manifest':'course-files.json'}
+        page_home=('../'+collection_home) if media and collection_home else collection_home
+        pages={l['id']:render({**payload(course,l,source.parent,audio,media),'collection_home':page_home}) for l in course['lessons']}
         for page in pages.values():
             check_header(page,course['title']);check_visible_objectives(page,[o['id'] for o in course['objectives']])
             if '비동기 검색' in page and '비동기 검색' not in json.dumps(course,ensure_ascii=False):raise ValueError('fixture content leaked into generic course')
-        bundled=bundle(pages,course['title'],course,source.parent)
+        if single_file:
+            # Check the aggregate, including repeated fallback imagery, before publishing anything.
+            if sum(len(p.encode('utf-8')) for p in pages.values())>SINGLE_FILE_LIMIT:raise ValueError('single-file export exceeds 10 MB; use the default folder output')
+            bundled=bundle(pages,course['title'],course,source.parent)
+            if len(bundled.encode('utf-8'))>SINGLE_FILE_LIMIT:raise ValueError('single-file export exceeds 10 MB; use the default folder output')
+        else:
+            (public/'lessons').mkdir()
+            for id,page in pages.items():
+                (public/'lessons'/('lesson-'+id+'.html')).write_text(page,encoding='utf-8')
+                (public/'lessons'/('lesson-'+id+'.js')).write_text(lesson_loader(id,page),encoding='utf-8')
+            files=sorted(media.files|{'lessons/lesson-'+id+ext for id in pages for ext in ('.html','.js')})
+            (public/'course-files.json').write_text(json.dumps({'schema':1,'course_id':course['id'],'files':files},indent=2)+'\n',encoding='utf-8')
+            bundled=folder_index(course)
+        (public/'index.html').write_text(bundled,encoding='utf-8')
         stage=Path(tmp)/'course';stage.mkdir()
-        if legacy:(stage/'index.html').write_text(bundled)
+        if legacy:shutil.copytree(public,stage,dirs_exist_ok=True)
         (stage/'course.json').write_text(json.dumps(course,ensure_ascii=False,indent=2)+'\n')
         (stage/'changes.json').write_text(json.dumps(changes,ensure_ascii=False,indent=2)+'\n')
         if lesson_pages:
@@ -413,28 +435,34 @@ def build(source,output,previous=None,collection_home=None,*,dist=None,audio_for
                 from urllib.parse import quote
                 direct_home=quote(os.path.relpath(dist/'index.html',output),safe='/')
             for l in course['lessons']:
-                page=pages[l['id']] if legacy else render({**payload(course,l,source.parent,audio),'collection_home':direct_home})
+                if media:media.prefix='' # Direct working pages sit beside assets/.
+                page=pages[l['id']] if single_file and legacy else render({**payload(course,l,source.parent,audio,media),'collection_home':direct_home})
                 (stage/('lesson-'+l['id']+'.html')).write_text(page)
+            if media and (public/'assets').exists() and not (stage/'assets').exists():shutil.copytree(public/'assets',stage/'assets')
         if not legacy:
             # Validate the complete proposed gallery before creating either deliverable.
             from build_catalog import discover,validate_metadata,build as catalog_build
             items=discover(dist) if dist.exists() else []
             ids=[c['id'] for _,c in items]
             if course['id'] in ids:raise ValueError('duplicate course identity; no implicit merge')
-            shared.parent.mkdir(parents=True,exist_ok=False)
+            shared.parent.parent.mkdir(parents=True,exist_ok=True)
+            # Stage on the destination filesystem too, so --dist may live on another volume.
+            with tempfile.TemporaryDirectory(prefix='.course-publish-',dir=dist.parent) as publishing:
+                proposal=Path(publishing)/'course';shutil.copytree(public,proposal)
+                proposal.rename(shared.parent)
             try:
-                atomic_text(shared,bundled);validate_metadata(read_manifest(shared))
+                validate_metadata(read_manifest(shared))
                 if settings is not None and settings!=json.loads(original_settings):atomic_text(dist/'catalog.json',json.dumps(settings,ensure_ascii=False,indent=2)+'\n')
                 catalog_build(dist)
             except Exception:
                 if original_settings is not None:atomic_text(dist/'catalog.json',original_settings.decode('utf-8'))
-                shared.unlink(missing_ok=True);shared.parent.rmdir();raise
+                shutil.rmtree(shared.parent);raise
         stage.rename(output)
     path=output/'index.html' if legacy else shared
-    return {'path':str(path),'catalog':str(dist/'index.html') if not legacy else None,'lessons':len(pages),'audio':course['audio_build'],'narration':'selected per lesson; runtime listening remains required','browser_verification':'pending','share_hint':str(path)+' (one course); '+str(dist if not legacy else output)+' folder or build_catalog.py --zip (multiple courses)'}
+    return {'path':str(path),'catalog':str(dist/'index.html') if not legacy else None,'delivery':'single-file' if single_file else 'folder','lessons':len(pages),'audio':course['audio_build'],'narration':'selected per lesson; runtime listening remains required','browser_verification':'pending','share_hint':('Share '+str(path) if single_file else 'Share the entire '+str(path.parent)+' folder, not index.html alone')+'; build_catalog.py --zip for the collection'}
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--input',required=True,type=Path);p.add_argument('--output',required=True,type=Path);p.add_argument('--previous',type=Path);p.add_argument('--collection-home');p.add_argument('--dist',type=Path);p.add_argument('--audio-format',choices=['opus','mp3','wav'],default='opus');p.add_argument('--lesson-pages',action='store_true');p.add_argument('--catalog-position',type=int);a=p.parse_args()
-    try:print(json.dumps(build(a.input,a.output,a.previous,a.collection_home,dist=a.dist or a.input.absolute().parent.parent/'dist',audio_format=a.audio_format,lesson_pages=a.lesson_pages,catalog_position=a.catalog_position),ensure_ascii=False));return 0
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--input',required=True,type=Path);p.add_argument('--output',required=True,type=Path);p.add_argument('--previous',type=Path);p.add_argument('--collection-home');p.add_argument('--dist',type=Path);p.add_argument('--audio-format',choices=['opus','mp3','wav'],default='opus');p.add_argument('--lesson-pages',action='store_true');p.add_argument('--catalog-position',type=int);p.add_argument('--single-file',action='store_true',help='embed all lessons/media; limited to 10 MB');a=p.parse_args()
+    try:print(json.dumps(build(a.input,a.output,a.previous,a.collection_home,dist=a.dist or a.input.absolute().parent.parent/'dist',audio_format=a.audio_format,lesson_pages=a.lesson_pages,catalog_position=a.catalog_position,single_file=a.single_file),ensure_ascii=False));return 0
     except (ValueError,KeyError,TypeError,OSError,subprocess.SubprocessError) as e:print(json.dumps({'status':'failed','detail':str(e)},ensure_ascii=False));return 1
 if __name__=='__main__':raise SystemExit(main())

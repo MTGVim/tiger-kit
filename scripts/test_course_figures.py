@@ -341,7 +341,9 @@ class TeachingImageTests(unittest.TestCase):
             # -S excludes site packages (including Pillow) from the actual builder process.
             result=subprocess.run([sys.executable,'-S',str(builder.__file__),'--input',str(source),'--output',str(self.root/('built-'+suffix)),'--audio-format','wav','--dist',str(self.root/('dist-'+suffix))],capture_output=True,text=True)
             self.assertEqual(result.returncode,0,result.stdout+result.stderr)
-            self.assertIn('data:image/',Path(json.loads(result.stdout)['path']).read_text())
+            entry=Path(json.loads(result.stdout)['path']);self.assertNotIn('data:image/',entry.read_text())
+            self.assertIn('../assets/image/',(entry.parent/'lessons/lesson-lesson-1.html').read_text())
+            self.assertEqual(len(list((entry.parent/'assets/image').iterdir())),1)
             (self.root/'wrong.png').write_bytes(path.read_bytes() if suffix!='png' else b'not an image')
             with self.assertRaises(ValueError):builder.image_info(self.root,'wrong.png')
             (self.root/('cut.'+suffix)).write_bytes(path.read_bytes()[:len(path.read_bytes())//2])
