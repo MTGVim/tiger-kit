@@ -6,7 +6,10 @@ After Artifact Paths checks, create one external-resource-free HTML file in `.ti
 using their `ht-*` components and tokens; add only question-specific wireframe styles.
 Set `<html data-default-theme="system">`. Put the title in `.ht-topbar-title` and a
 `.ht-theme-control[data-ht-theme-control]` fieldset inside `.ht-topbar`. Initially hide the fieldset;
-the shared script reveals it. Give it labeled `system`, `light`, and `dark` radio choices using
+the shared script reveals it and inserts a `글자 크기` select to its left (50–200% in 25% steps,
+100% default, browser preference retained). Reuse scaled font tokens or inheritance; multiply
+custom absolute font sizes once by `var(--ht-font-scale)`. Keep the generated reader controls
+wrapping within the viewport. Give it labeled `system`, `light`, and `dark` radio choices using
 `.ht-theme-buttons` and `.ht-theme-option`, each `input[name="ht-theme"]` immediately followed by
 a nonempty `span`. Place the script after the markup. Verify all three choices and storage-refusal
 behavior before delivery. Show comparable low-fidelity wireframes, option numbers, pros/cons and the recommended option. Offer single-option and side-by-side views when useful, with keyboard-accessible controls and no focus outlines on passive scroll targets. Match the same viewport/content across options; do not add decorative imagery or implementation code. Reuse this file for later visual rounds in the same run; do not generate files for nonvisual questions, a plan recap or a resolved choice.

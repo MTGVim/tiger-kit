@@ -5,12 +5,22 @@ const path = require('node:path');
 const vm = require('node:vm');
 const code = fs.readFileSync(path.join(__dirname, '../../../skills/tk-explain/assets/html-theme.js'), 'utf8');
 
-function run(saved, denied = false, configured = 'system', packageName = 'tk-explain') {
+function run(saved, denied = false, configured = 'system', packageName = 'tk-explain', savedFont) {
   const code = fs.readFileSync(path.join(__dirname, '../../../skills', packageName, 'assets/html-theme.js'), 'utf8');
-  const attributes = new Map(), storage = new Map();
+  const attributes = new Map(), storage = new Map(), styles = new Map(), created = [];
+  const createElement = tag => {
+    const element = {tag, children: [], attributes: new Map(), value: '',
+      append: (...children) => element.children.push(...children),
+      setAttribute: (key, value) => element.attributes.set(key, value),
+      addEventListener: (event, fn) => { element[event] = fn; },
+    };
+    created.push(element);
+    return element;
+  };
   attributes.set('data-default-theme', configured);
   if (configured === 'light' || configured === 'dark') attributes.set('data-theme', configured);
   if (saved !== undefined) storage.set('tigerkit-html-theme', saved);
+  if (savedFont !== undefined) storage.set('tigerkit-html-font-size', savedFont);
   const inputs = ['system', 'light', 'dark'].map(value => {
     const input = {
       value,
@@ -22,8 +32,10 @@ function run(saved, denied = false, configured = 'system', packageName = 'tk-exp
   const control = {
     hidden: true,
     querySelectorAll: selector => selector === 'input[name="ht-theme"]' ? inputs : [],
+    before: element => { control.beforeElement = element; },
   };
   const root = {
+    style: {setProperty: (key, value) => styles.set(key, value)},
     setAttribute: (key, value) => attributes.set(key, value),
     removeAttribute: key => attributes.delete(key),
     getAttribute: key => attributes.has(key) ? attributes.get(key) : null,
@@ -31,6 +43,7 @@ function run(saved, denied = false, configured = 'system', packageName = 'tk-exp
   vm.runInNewContext(code, {
     document: {
       documentElement: root,
+      createElement,
       querySelector: selector => selector === '[data-ht-theme-control]' ? control : null,
     },
     localStorage: {
@@ -38,7 +51,8 @@ function run(saved, denied = false, configured = 'system', packageName = 'tk-exp
       setItem: (key, value) => { if (denied) throw Error('denied'); storage.set(key, value); }
     }
   });
-  return { attributes, storage, control, inputs };
+  return { attributes, storage, control, inputs, styles, created,
+    font: created.find(element => element.tag === 'select') };
 }
 const input = (result, value) => result.inputs.find(item => item.value === value);
 const choose = (result, value) => {
@@ -103,4 +117,56 @@ test('question packages switch all themes and tolerate refused storage', () => {
       }
     }
   }
+});
+
+const packages = ['tk-explain', 'tk-explain-diff', 'tk-teach', 'tk-research', 'tk-qa-sheet',
+  'tk-prototype', 'tk-blind-comparison', 'tk-prep', 'tk-grill', 'tk-roadmap'];
+const sizes = ['50', '75', '100', '125', '150', '175', '200'];
+
+test('all HTML consumers expose the font select immediately left of themes, defaulting to 100%', () => {
+  for (const packageName of packages) {
+    const result = run(undefined, false, 'system', packageName);
+    assert.equal(result.font.attributes.get('aria-label'), '글자 크기');
+    assert.deepEqual(result.font.children.map(option => option.value), sizes);
+    assert.deepEqual(result.font.children.map(option => option.textContent), sizes.map(size => `${size}%`));
+    const group = result.control.beforeElement;
+    assert.equal(group.className, 'ht-reader-controls');
+    assert.equal(group.children[0].className, 'ht-font-control');
+    assert.equal(group.children[0].children[1], result.font);
+    assert.equal(group.children[1], result.control);
+    assert.equal(result.font.value, '100');
+    assert.equal(result.styles.get('--ht-font-scale'), '1');
+    assert.equal(result.storage.has('tigerkit-html-font-size'), false);
+    for (const size of sizes) {
+      result.font.value = size;
+      result.font.change();
+      assert.equal(result.styles.get('--ht-font-scale'), String(Number(size) / 100));
+      assert.equal(result.storage.get('tigerkit-html-font-size'), size);
+      const reloaded = run('dark', false, 'system', packageName, result.storage.get('tigerkit-html-font-size'));
+      assert.equal(reloaded.font.value, size);
+      assert.equal(reloaded.styles.get('--ht-font-scale'), String(Number(size) / 100));
+      assert.equal(reloaded.attributes.get('data-theme'), 'dark');
+    }
+  }
+});
+
+test('invalid stored font sizes use 100%; rejected storage still permits every size and theme', () => {
+  for (const saved of ['', '0', '100%', '125.0', '201', '-50', 'NaN', '150; color:red']) {
+    const result = run('light', false, 'dark', 'tk-explain', saved);
+    assert.equal(result.font.value, '100');
+    assert.equal(result.styles.get('--ht-font-scale'), '1');
+  }
+  const result = run('dark', true, 'light', 'tk-explain', '200');
+  assert.equal(result.font.value, '100');
+  for (const size of sizes) {
+    result.font.value = size;
+    assert.doesNotThrow(() => result.font.change());
+    assert.equal(result.styles.get('--ht-font-scale'), String(Number(size) / 100));
+    choose(result, 'dark');
+    assert.equal(result.attributes.get('data-theme'), 'dark');
+  }
+  result.font.value = 'invalid';
+  result.font.change();
+  assert.equal(result.font.value, '100');
+  assert.equal(result.styles.get('--ht-font-scale'), '1');
 });

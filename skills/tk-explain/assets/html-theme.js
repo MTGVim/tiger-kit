@@ -124,6 +124,45 @@
 })();
 
 (() => {
+  const theme = document.querySelector('[data-ht-theme-control]');
+  if (!theme) return;
+  const root = document.documentElement;
+  const key = 'tigerkit-html-font-size';
+  const sizes = ['50', '75', '100', '125', '150', '175', '200'];
+  const group = document.createElement('div');
+  group.className = 'ht-reader-controls';
+  const label = document.createElement('label');
+  label.className = 'ht-font-control';
+  const caption = document.createElement('span');
+  caption.className = 'ht-visually-hidden';
+  caption.textContent = '글자 크기';
+  const select = document.createElement('select');
+  select.setAttribute('data-ht-font-size', '');
+  select.setAttribute('aria-label', '글자 크기');
+  select.title = '글자 크기';
+  for (const size of sizes) {
+    const option = document.createElement('option');
+    option.value = size;
+    option.textContent = `${size}%`;
+    select.append(option);
+  }
+  const apply = value => {
+    select.value = sizes.includes(value) ? value : '100';
+    root.style.setProperty('--ht-font-scale', String(Number(select.value) / 100));
+  };
+  let saved = '100';
+  try { const value = localStorage.getItem(key); if (sizes.includes(value)) saved = value; } catch {}
+  apply(saved);
+  select.addEventListener('change', () => {
+    apply(select.value);
+    try { localStorage.setItem(key, select.value); } catch {}
+  });
+  label.append(caption, select);
+  theme.before(group);
+  group.append(label, theme);
+})();
+
+(() => {
   const nav = document.querySelector('.ht-doc-nav');
   if (!nav) return;
   const toc = nav.querySelector('.ht-doc-toc');

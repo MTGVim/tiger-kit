@@ -222,6 +222,17 @@ Keep native Tab/arrow-key semantics and visually hidden label text. Reveal the g
 Each `.ht-theme-option` contains the radio input immediately followed by a non-empty `<span>`
 holding the icon and accessible label; the shared CSS styles only that span.
 
+The shared script adds a native `글자 크기` select immediately left of the theme group,
+wrapping them in `.ht-reader-controls`. Keep that wrapper shrinkable and wrapping; do not add a
+second selector. Offer 50%, 75%, 100%, 125%, 150%, 175% and 200%; use 100% without a valid saved
+`tigerkit-html-font-size` browser preference. Store reader changes with storage-refusal fallback.
+Shared font tokens already include `--ht-font-scale`: reuse them directly or inherit. For custom
+absolute font sizes (including SVG text), multiply the base size by `var(--ht-font-scale)` exactly
+once; relative `em` sizes inherit the scaled parent. Preserve natural reflow and scrolling, media
+geometry and browser zoom. Raster/video text cannot be resized independently. Without JavaScript,
+retain 100% readable content and omit the selector. Verify endpoints, reset to 100%, keyboard,
+reload, rejected storage and narrow-screen control/content overflow when changing this contract.
+
 For documents, place actions and theme at the right of a full-width top bar; keep it sticky on desktop and in normal flow on narrow screens so it does not stack with
 section navigation. The top-bar title names the subject and central change/conclusion in reader terms while scrolling. Put ticket keys,
 branch names and other identifiers in secondary metadata; do not use them or generic words such

@@ -73,11 +73,19 @@ const clone = value => JSON.parse(JSON.stringify(value));
 const toggle = box => { if (box.disabled) return; box.checked = !box.checked; box.emit('change'); };
 const make = groups => ({ title: 'QA', storageKey: 'qa', groups });
 
-function runTheme(saved, denied = false, configured = 'system') {
+function runTheme(saved, denied = false, configured = 'system', savedFont) {
   const attributes = new Map(), storage = new Map();
   attributes.set('data-default-theme', configured);
   if (configured === 'light' || configured === 'dark') attributes.set('data-theme', configured);
   if (saved !== undefined) storage.set('tigerkit-html-theme', saved);
+  if (savedFont !== undefined) storage.set('tigerkit-html-font-size', savedFont);
+  let font;
+  const createElement = tag => {
+    const element = {value: '', children: [], append: (...children) => element.children.push(...children),
+      setAttribute: () => {}, addEventListener: (_, fn) => { element.change = fn; }};
+    if (tag === 'select') font = element;
+    return element;
+  };
   const inputs = ['system', 'light', 'dark'].map(value => {
     const item = {
       value,
@@ -88,9 +96,11 @@ function runTheme(saved, denied = false, configured = 'system') {
   });
   const control = {
     hidden: true,
+    before: () => {},
     querySelectorAll: selector => selector === 'input[name="ht-theme"]' ? inputs : [],
   };
   const root = {
+    style: {setProperty: () => {}},
     setAttribute: (key, value) => attributes.set(key, value),
     removeAttribute: key => attributes.delete(key),
     getAttribute: key => attributes.has(key) ? attributes.get(key) : null,
@@ -98,6 +108,7 @@ function runTheme(saved, denied = false, configured = 'system') {
   vm.runInNewContext(themeScript, {
     document: {
       documentElement: root,
+      createElement,
       querySelector: selector => selector === '[data-ht-theme-control]' ? control : null,
     },
     localStorage: {
@@ -105,7 +116,7 @@ function runTheme(saved, denied = false, configured = 'system') {
       setItem: (key, value) => { if (denied) throw Error('denied'); storage.set(key, value); }
     }
   });
-  return { attributes, storage, control, inputs };
+  return { attributes, storage, control, inputs, font };
 }
 const themeInput = (result, value) => result.inputs.find(item => item.value === value);
 const chooseTheme = (result, value) => {
@@ -134,10 +145,14 @@ test('QA template exposes persistent system light dark theme without coupling it
   assert.equal(themeInput(reloaded, 'dark').checked, true);
   assert.equal(reloaded.attributes.get('data-theme'), 'dark');
 
-  const storage = new Map([['tigerkit-html-theme', 'dark']]);
+  first.font.value = '200'; first.font.change();
+  assert.equal(first.storage.get('tigerkit-html-font-size'), '200');
+  assert.equal(runTheme(undefined, false, 'system', '200').font.value, '200');
+  const storage = new Map([['tigerkit-html-theme', 'dark'], ['tigerkit-html-font-size', '200']]);
   const qa = run(sample, storage);
   qa.ids.reset.emit('click');
   assert.equal(storage.get('tigerkit-html-theme'), 'dark');
+  assert.equal(storage.get('tigerkit-html-font-size'), '200');
 
   const denied = runTheme('dark', true);
   assert.equal(themeInput(denied, 'system').checked, true);
