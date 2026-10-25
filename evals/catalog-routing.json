@@ -1030,38 +1030,6 @@
       "critical": true
     },
     {
-      "id": "course-complete-explicit",
-      "boundary": "완결 코스와 개인 과외·개념 설명을 구분합니다.",
-      "prompt": "$tk-course 클로저를 배우는 완결 코스를 만들어 주세요.",
-      "focus_skill": "tk-course",
-      "expected_selected_skill": "tk-course",
-      "critical": true
-    },
-    {
-      "id": "course-incremental-explicit",
-      "boundary": "기존 코스 증분 편집과 일반 제품 수정을 구분합니다.",
-      "prompt": "$tk-course 기존 코스에 두 강의를 추가하고 진도를 보존해 주세요.",
-      "focus_skill": "tk-course",
-      "expected_selected_skill": "tk-course",
-      "critical": true
-    },
-    {
-      "id": "course-catalog-explicit",
-      "boundary": "여러 코스의 정적 모음과 전역 학습 상태를 구분합니다.",
-      "prompt": "$tk-course 여러 주제의 코스를 선택하는 홈을 만들어 주세요.",
-      "focus_skill": "tk-course",
-      "expected_selected_skill": "tk-course",
-      "critical": true
-    },
-    {
-      "id": "course-generic-no-auto",
-      "boundary": "명시 호출 전용 코스를 일반 질문에서 자동 선택하지 않습니다.",
-      "prompt": "클로저가 뭐예요?",
-      "focus_skill": "tk-course",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
       "id": "tts-local-audio",
       "boundary": "음원 생성과 영상 조립을 구분합니다.",
       "prompt": "이 한국어 대본을 로컬 WAV 음원으로 만들어 주세요.",

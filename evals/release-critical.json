@@ -12,7 +12,8 @@
     "tk-mwhat",
     "tk-learn",
     "tk-skill-diagnose",
-    "tk-study"
+    "tk-study",
+    "tk-course"
   ],
   "retired_catalog_cases": [
     "adhd-explicit",
@@ -36,7 +37,11 @@
     "triage-issues-vs-pr-sweep",
     "pr-sweep-vs-triage",
     "wt-create-orca",
-    "wt-close-git-only"
+    "wt-close-git-only",
+    "course-complete-explicit",
+    "course-incremental-explicit",
+    "course-catalog-explicit",
+    "course-generic-no-auto"
   ],
   "behavior_cases": [
     "tk-app-verify:behavior:app-cua-refuses-foreground-escalation",
@@ -749,13 +754,6 @@
     "tk-video:behavior:video-rendered-not-observed",
     "tk-video:behavior:video-silent-selected-narration",
     "tk-video:behavior:video-upload-not-selected",
-    "tk-course:behavior:course-complete-objective-player-quiet-default",
-    "tk-course:behavior:course-recommend-browser-before-build",
-    "tk-course:behavior:course-missing-selected-audio",
-    "tk-course:behavior:course-incremental-revision-preserves-state",
-    "tk-course:behavior:course-multi-topic-catalog",
-    "tk-course:behavior:course-video-native-clock",
-    "tk-course:behavior:course-tutoring-boundary",
     "tk-tts:behavior:tts-options-fivebit-ppaso",
     "tk-tts:behavior:tts-standalone-local-artifact",
     "tk-tts:behavior:tts-runtime-mismatch-recovery",
@@ -848,10 +846,6 @@
     "catalog:behavior:video-concept-explainer",
     "catalog:behavior:video-vs-verification",
     "catalog:behavior:video-existing-edit-negative",
-    "catalog:behavior:course-complete-explicit",
-    "catalog:behavior:course-incremental-explicit",
-    "catalog:behavior:course-catalog-explicit",
-    "catalog:behavior:course-generic-no-auto",
     "catalog:behavior:tts-local-audio",
     "catalog:behavior:tts-options",
     "catalog:behavior:tts-not-browser-speech",

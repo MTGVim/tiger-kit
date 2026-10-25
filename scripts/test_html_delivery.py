@@ -15,7 +15,7 @@ class HtmlDeliveryTests(unittest.TestCase):
 
     def test_all_shared_html_consumers_keep_delivery_boundary_and_chart_notice_removed(self):
         references=list((ROOT/'skills').glob('*/references/html-output.md'))
-        self.assertEqual(len(references),8)
+        self.assertEqual(len(references),7)
         for path in references:
             with self.subTest(package=path.parts[-3]):
                 self.assertIn('omit automatic AI-authorship notices',path.read_text())

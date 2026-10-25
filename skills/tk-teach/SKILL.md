@@ -1,6 +1,6 @@
 ---
 name: tk-teach
-description: "[user] 사용자의 목표·실제 답변·오개념을 바탕으로 개인 수업과 복습을 이어갑니다. 완결 코스 제작은 tk-course, 특정 개념·상황의 시각 설명은 tk-explain이 담당합니다."
+description: "[user] 사용자의 목표·실제 답변·오개념을 바탕으로 개인 수업과 복습을 이어갑니다. 특정 개념·상황의 시각 설명은 tk-explain이 담당합니다."
 disable-model-invocation: true
 argument-hint: "[topic or --resume [topic]] [learning goal] [output path]"
 metadata:
@@ -158,14 +158,12 @@ requested full course retain the existing multi-chapter generation and HTML,
 exercises, research provenance and rendering checks. Avoid reminders or automatic
 community invitations unless requested.
 
-## Deliver a reusable course
+## Deliver reusable learning material
 
-For a newly requested complete standalone course, hand its verified mission, learner constraints,
-source coverage and selected media/narration to `tk-course` through supported skill loading.
-Do not repeat the learner interview or infer that media was selected. Preserve this topic
-workspace and teaching records; do not migrate legacy courses or replace a requested next lesson
-with a whole course. Existing course continuation/rewrite keeps its verified format and scope.
-The contracts below remain applicable to retained learning material and a full-course handoff.
+Preserve this topic workspace and teaching records; do not migrate legacy courses or replace a
+requested next lesson with a whole course. Existing course continuation/rewrite keeps its verified
+format and scope. No separate course-builder skill or player runtime is required. The contracts
+below remain applicable to HTML lessons and explicitly scoped multi-chapter learning material.
 
 Default to `.tigerkit/teach/<topic>/index.html` for newly created courses, using the [HTML output](references/html-output.md)
 contract. Keep `curriculum.md`, `sources.md`, `chapters/`, any learner profile and renderer `assets/`

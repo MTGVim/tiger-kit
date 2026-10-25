@@ -962,9 +962,10 @@ cognitive-debt 장부나 merge/edit 강제는 `tk-explain-diff`의 단일 변경
 
 `tk-course`의 고정 플레이어 레이아웃과 CSS 일부는 MIT 라이선스의
 [`tobyilee/course-builder`](https://github.com/tobyilee/course-builder/tree/1913b09bd1bf947b5ee2d1a75eab4396e669fbd3)를
-참고해 수정했습니다. 원본 고지는 `skills/tk-course/assets/LICENSE-course-builder.txt`에 보존하고
-생성 HTML에도 포함합니다. 코스 셸·교육 원고·큐·미디어 검증을 분리했으며 원본의 실행 파이프라인은
-포함하지 않습니다. 공용 HTML 자산은 기존 TigerKit의 동기화/출처 고지를 따릅니다.
+참고해 수정했습니다. 해당 패키지는 폐기했으며 원본 고지와 구현은
+[폐기 전 Git 기록](https://github.com/MTGVim/tiger-kit/tree/5eecdd788bb38c59f1fe1b96f7ac50abacd574c2/skills/tk-course)에
+남습니다. 기존 생성 HTML의 라이선스 고지는 유지합니다. 공용 HTML 자산은 기존 TigerKit의
+동기화/출처 고지를 따릅니다.
 
 `tk-tts`는 기존 TigerKit `Qwen` 합성 도구를 독립 소유자로 옮겼습니다. 모델 가중치나 외부 런타임
 코드를 저장소에 포함하지 않습니다. `Qwen CustomVoice MLX 5bit`의

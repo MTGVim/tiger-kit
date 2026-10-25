@@ -59,10 +59,10 @@ DOMAIN_CONTEXT_TARGETS = (
     ROOT / "skills/tk-review/references/domain-context.md",
 )
 
-HTML_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research", "tk-qa-sheet", "tk-prototype", "tk-course", "tk-blind-comparison")
+HTML_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research", "tk-qa-sheet", "tk-prototype", "tk-blind-comparison")
 QUESTION_HTML_CONSUMERS = ("tk-prep", "tk-grill", "tk-roadmap")
 HTML_THEME_CONSUMERS = HTML_CONSUMERS + QUESTION_HTML_CONSUMERS
-VISUAL_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research", "tk-course")
+VISUAL_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research")
 HTML_ASSETS = ("html-theme.css", "html-theme.js")
 CHART_FILES = ("references/chart-design.md", "assets/chart-examples.html", "references/html-figures.md")
 HTML_TEMPLATES = ("skills/tk-research/assets/report.html", "skills/tk-qa-sheet/assets/qa-sheet-template.html")

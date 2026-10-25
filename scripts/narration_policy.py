@@ -1,6 +1,6 @@
 """Shared explicit narration choice at media-producing owners; no runtime dispatcher."""
 from pathlib import Path
-OWNERS=('tk-prep','tk-explain','tk-explain-diff','tk-teach','tk-video','tk-course')
+OWNERS=('tk-prep','tk-explain','tk-explain-diff','tk-teach','tk-video')
 START='<!-- tigerkit:narration-choice -->'
 END='<!-- /tigerkit:narration-choice -->'
 BLOCK=START+'''
@@ -14,19 +14,7 @@ Installation/download/publication require their own authority; playback mute/fal
 '''+END+'\n'
 
 
-COURSE_BLOCK=START+'''
-## Narration Choice
-
-Before spoken-slide production, offer Web Speech API (recommended for quickest HTML creation),
-local generated file audio, supplied audio or no narration. Reuse an answered parent/user choice;
-a recommendation is not consent. Browser speech needs no tk-tts setup or file synthesis interview.
-Only selected file generation loads tk-tts options/readiness. A narrated movie needs supplied or
-synthesized audio files; explain that requirement and resolve only the changed choice. A browser
-voice preference does not grant file synthesis, installation, downloads or publication. Playback
-mute, unavailable voices and learner fallback remain separate from the creator's production choice.
-'''+END+'\n'
-
-def block(name):return COURSE_BLOCK if name=='tk-course' else BLOCK
+def block(name):return BLOCK
 
 def errors(root:Path):
     result=[]

@@ -20,8 +20,8 @@ material untaught gap, continue the lesson without a diagnostic. Preserve no-int
 
 Keep any justified sparse evidence in the existing learner-owned state under learning-state.md;
 do not infer mastery from quiz totals, guessing, reading or generated content. Do not introduce
-central scores, login, external submission or cross-course sharing. If handing off to tk-course,
+central scores, login, external submission or cross-course sharing. When preparing the next lesson,
 carry relevant dependency evidence, observed answers and remaining uncertainty within authorized
-scope; keep manual course completion separate from tutoring evidence. The course consumer must
-remain offline HTML without Node/Python/server/API installation. Existing question, source,
+scope; keep manual completion separate from tutoring evidence. HTML lessons must remain usable
+offline without Node/Python/server/API installation. Existing question, source,
 privacy, artifact and optional narration contracts still apply.

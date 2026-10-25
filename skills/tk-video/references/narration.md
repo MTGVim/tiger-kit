@@ -29,11 +29,11 @@ or an already prepared whole track with `--audio`. The assembler places scene WA
 without shell-authored filter graphs; clips cannot overlap the next scene or movie end. Never mix
 scene audio with a full track, truncate speech or guess duration from character count.
 
-## Course teaching handoff
+## Teaching handoff
 
-When tk-course supplies a teaching sequence, retain its accepted scene point, observed start
+When a teaching caller supplies a sequence, retain its accepted scene point, observed start
 state, action/change, deciding visual and explanation. Reuse its already-refined script and
-settled audio choice. Missing causal steps return to the course author before assembly; a
+settled audio choice. Missing causal steps return to the teaching author before assembly; a
 contact sheet, codec check or subtitle coverage does not validate the explanation. Browser Web
 Speech API playback does not provide a file track: a narrated movie requires supplied or
 synthesized file audio under the parent's resolved choice. Do not silently synthesize it.

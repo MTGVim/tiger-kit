@@ -48,7 +48,6 @@
     "skill_md:skills/tk-grill/SKILL.md": "조건부 와이어프레임 산출물에 필요한 canonical artifact guard로 전환하고 시각적 질문 참조만 추가합니다. 비시각적 실행은 새 참조를 읽지 않습니다.",
     "skill_md:skills/tk-pr-media/SKILL.md": "tk-pr-image 이름 변경으로 기존 본문을 이전하며 선택형 GIF와 MP4의 분기 포인터를 추가합니다. 새 검증 절차는 해당 조건부 참조에서만 읽습니다.",
     "skill_md:skills/tk-video/SKILL.md": "선택한 영상의 독립 호출과 캡처·앱 판정·게시 담당자 사이 경계, 조립·완성본 확인만 추가합니다. 상세 매니페스트·복구·음성은 조건부 참조로 두며 기존 스킬의 조립·내레이션 코드는 이동합니다.",
-    "skill_md:skills/tk-course/SKILL.md": "기존 기본 음소거·작업/공유 경로 결정을 명시 사용자 요청으로 재검토합니다. 공유 경로의 최초 결정·재사용, 압축 음성·재생 선호와 자동 탐색기 계약만 본문에 두고 상세 형식·검증은 조건부 참조로 둡니다.",
     "skill_md:skills/tk-tts/SKILL.md": "기존 영상 음성 구현을 독립 합성 소유자로 이동하며 엔진 선택·설치 승인·고정 해시·합성 전후 검증과 중단 조건을 둡니다. 모델별 설치와 합성 절차는 조건부 참조로 읽습니다.",
     "budget_increase:max_total_description_chars": "기존 32개 스킬 설명은 바꾸지 않고 독립 비교 담당 tk-blind-comparison의 143자 트리거만 추가합니다. 명시 블라인드 실행과 취향 비교 제안, QA·공개 설계·자동 지표 제외를 구분하는 데 필요하며 총 한도는 실제 증가량만큼만 올립니다.",
     "skill_md:skills/tk-blind-comparison/SKILL.md": "독립적인 사람 평가 담당자로 제안/실행·원본 불변·안정적 식별자/내용 버전·실패/공개·저장/집계 경계만 본문에 둡니다. 매체별 가공과 manifest·결과 상세는 조건부 참조로 읽습니다.",

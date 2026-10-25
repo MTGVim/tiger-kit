@@ -13,7 +13,7 @@ metadata:
 # Generate Local Narration
 
 Own script-to-WAV synthesis, pinned models/runtime, approved cache reuse and audio validation.
-`tk-video` owns scenes/encoding; `tk-course` owns curriculum/playback. Return ordinary audio and
+`tk-video` owns scenes/encoding; the teaching caller owns lesson content. Return ordinary audio and
 measured duration; do not import or modify sibling packages. Creation grants no publication.
 
 Run `scripts/list_options.py` for supported local routes without importing engines. Compare the
