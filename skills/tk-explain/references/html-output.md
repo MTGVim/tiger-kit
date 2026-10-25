@@ -30,8 +30,8 @@ and sentence against the same result; disclose unexecuted checks.
 Keep exercise answers collapsed until an explicit reveal; initial labels, styling, choice order
 and length must not expose correctness. Offline HTML cannot hide answers from source inspection,
 so never claim exam security. Preserve source anchors and version/snapshot labels in the artifact.
-Inspect saved HTML for self-containment, anchor targets, escaping and answer separation. Apply the
-required Render verification below before delivery; an unavailable renderer is `Unverifiable`.
+Inspect saved HTML for self-containment, anchor targets, escaping and answer separation.
+The owning skill resolves screen-check scope below; unavailable requested rendering is `Unverifiable`.
 
 Live-figure provenance is kept in the calling package's provenance file; the calling package's
 `LICENSE.txt` preserves the MIT notice.
@@ -295,7 +295,13 @@ to every citation occurrence that cites it.
 - Every `<details>` has a first-child `<summary>`; answer reveals and secondary evidence start collapsed, while required conclusions and background remain outside collapsed sections.
 - There is exactly one non-empty, subject-specific `<title>`; it does not use a generic label or transient generated value.
 
-Use `tk-browser-verify` when a document contains a hand-authored SVG whose visual rendering matters,
+For `tk-explain`, `tk-explain-diff` and `tk-teach`, run `tk-browser-verify` only for explicitly
+requested screen/action checks, including in the initial task. HTML, SVG, interaction, a composed
+shell or browser availability alone is not a request. Keep independent content review and static
+checks; label unrequested screen checks as not requested without a visual/runtime verdict or a
+completion failure solely for their absence. Do not add a verification-choice interview.
+
+Other document owners retain their scoped UI checks. Use `tk-browser-verify` when a document contains a hand-authored SVG whose visual rendering matters,
 an interactive figure, browser-specific behavior that static checks cannot establish, a composed or
 customized shared document shell/theme/navigation, or the user requests screen verification. For the
 shared shell, inspect the rendered topbar and theme control, desktop left rail, narrow-screen TOC

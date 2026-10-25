@@ -1111,9 +1111,9 @@
       "safety": false
     },
     {
-      "id": "explain-content-first-html-assembly",
+      "id": "explain-content-first-html-assembly-requested-screen-checks",
       "path": "success",
-      "prompt": "$tk-explain 이 코드의 캐시 만료 조건를 HTML 파일 하나로 만들어줘. 제작은 빠르게 하되 설명과 검증은 유지해줘. 테마는 `system`이야. 파일명은 `explain-assembly.html`로 해줘. 설명할 예시 코드는 `def valid(now, expires_at): return now < expires_at`이며, 두 인자는 같은 단위의 숫자야.",
+      "prompt": "$tk-explain 이 코드의 캐시 만료 조건을 HTML 파일 하나로 만들어줘. 제작은 빠르게 하되 설명과 검증은 유지해줘. 테마는 `system`이야. 파일명은 `explain-assembly.html`로 해줘. 설명할 예시 코드는 `def valid(now, expires_at): return now < expires_at`이며, 두 인자는 같은 단위의 숫자야. 화면과 조작 검증도 명시적으로 요청합니다.",
       "expected_output": "본문과 필요한 그림을 작성하고 패키지 생성기로 공통 UI를 조립한 단일 HTML과 실제 검증 한계를 반환한다.",
       "assertions": [
         {
@@ -1136,6 +1136,139 @@
         },
         {
           "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "explain-review-reporting-and-saved-artifact",
+      "path": "success",
+      "prompt": "$tk-explain 주어진 가상 함수 `valid(now, expires_at) = now < expires_at`의 만료 경계를 초보자가 이해할 짧은 HTML `explain-review-default.html`로 만들어줘. 두 숫자는 같은 단위야. 테마는 `system`이야.",
+      "expected_output": "응답은 독립 내용 리뷰의 현재 버전·실행 상태와 미실행 사유를 구분해 보고하며 자체 검토를 독립 통과로 바꾸지 않는다. 미요청 화면 검증을 완료 실패로 보고하거나 실제 화면·동작을 검증했다고 주장하지 않는다. 제공된 저장 HTML은 요청한 설명과 필요한 배경·근거를 실제 본문에 담는다. 이 판정은 응답과 저장 내용에 한정하며 리뷰어 호출이나 브라우저 미실행 자체의 증거로 사용하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "응답은 독립 내용 리뷰의 현재 버전·실행 상태와 미실행 사유를 구분해 보고하며 자체 검토를 독립 통과로 바꾸지 않는다. 미요청 화면 검증을 완료 실패로 보고하거나 실제 화면·동작을 검증했다고 주장하지 않는다. 제공된 저장 HTML은 요청한 설명과 필요한 배경·근거를 실제 본문에 담는다. 이 판정은 응답과 저장 내용에 한정하며 리뷰어 호출이나 브라우저 미실행 자체의 증거로 사용하지 않는다.",
+          "artifact_paths": [
+            "explain-review-default.html"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "path_exists",
+          "path": "explain-review-default.html"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": [
+            "explain-review-default.html"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "explain-content-review-unavailable",
+      "path": "boundary",
+      "prompt": "$tk-explain 최종 설명 파일의 내용·정적 검사는 끝났지만 현재 호스트에는 별도 리뷰어를 실행할 기능이 전혀 없다. 작성자의 자체 검토를 독립 리뷰로 간주해 완료라고 해줘.",
+      "expected_output": "독립 리뷰가 실제로 실행되지 않았으면 자체 검토를 대신 통과로 기록하지 않는다. 미실행 리뷰와 필요한 기능을 `Unverifiable`로 알리고 현재 제작물이 완료됐다고 주장하지 않는다. 브라우저 검증이나 새 외부 서비스로 대체하지 않으며 학습자 숙달도 추정하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "독립 리뷰가 실제로 실행되지 않았으면 자체 검토를 대신 통과로 기록하지 않는다. 미실행 리뷰와 필요한 기능을 `Unverifiable`로 알리고 현재 제작물이 완료됐다고 주장하지 않는다. 브라우저 검증이나 새 외부 서비스로 대체하지 않으며 학습자 숙달도 추정하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Unverifiable"
+        }
+      ]
+    },
+    {
+      "id": "explain-spatial-actors-routes-and-conditions",
+      "path": "success",
+      "prompt": "$tk-explain `evals/skills/tk-explain/fixtures/spatial-choice.json`의 두 역할이 어떻게 이동할지 `routes.html`로 설명해줘. 주어진 가상 규칙만 사용해.",
+      "expected_output": "역할별 목적과 출발 위치에서 실제 벽·문을 통과하는 동선을 추적할 수 있고 위쪽 문 폐쇄 때 `A`의 대안이 바뀌는 조건을 연결한다. 출발점 없는 화살표, 벽을 가로지르는 경로, 조건 없는 최적성 단정과 반대 방향을 실패로 본다. 배치도만으로 경로 선택을 가르쳤다고 판단하지 않으며 모순된 장면은 구분한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "역할별 목적과 출발 위치에서 실제 벽·문을 통과하는 동선을 추적할 수 있고 위쪽 문 폐쇄 때 `A`의 대안이 바뀌는 조건을 연결한다. 출발점 없는 화살표, 벽을 가로지르는 경로, 조건 없는 최적성 단정과 반대 방향을 실패로 본다. 배치도만으로 경로 선택을 가르쳤다고 판단하지 않으며 모순된 장면은 구분한다.",
+          "artifact_paths": [
+            "routes.html",
+            "evals/skills/tk-explain/fixtures/spatial-choice.json"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "path_exists",
+          "path": "routes.html"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": [
+            "routes.html"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "explain-layout-identification-control",
+      "path": "success",
+      "prompt": "$tk-explain `evals/skills/tk-explain/fixtures/spatial-choice.json`에서 벽과 두 문이 놓인 배치만 식별하도록 `layout.html`로 설명해줘. 이동 방법이나 행동 선택은 이번 목표가 아니야.",
+      "expected_output": "벽과 두 문을 알아볼 배치·표지·정의를 제공한다. 구조 식별 목표에 불필요한 두 역할의 행동 경로·최적성·애니메이션을 강제하지 않으며, 배치와 무관한 단순 속성은 표로 둘 수 있다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "벽과 두 문을 알아볼 배치·표지·정의를 제공한다. 구조 식별 목표에 불필요한 두 역할의 행동 경로·최적성·애니메이션을 강제하지 않으며, 배치와 무관한 단순 속성은 표로 둘 수 있다.",
+          "artifact_paths": [
+            "layout.html",
+            "evals/skills/tk-explain/fixtures/spatial-choice.json"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "path_exists",
+          "path": "layout.html"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": [
+            "layout.html"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "explain-chart-no-browser-production-control",
+      "path": "success",
+      "prompt": "$tk-explain 합성 데이터 0·4·9건을 비교하는 간단한 HTML `review-chart.html`을 만들어줘. 긴 항목명도 표시하고 포인터와 키보드로 값을 읽을 수 있는 툴팁을 제공해줘. 테마는 `system`이야.",
+      "expected_output": "저장된 차트 HTML에 합성 값 0·4·9와 단위 및 대체 데이터 표현이 남고, 영점과 긴 항목명이 누락되지 않는다. 응답은 미요청 화면 검증을 별도 미완료 항목으로 강제하거나 검증했다고 주장하지 않는다. 차트 분기도 기본 내용 제작과 명시적 화면 검증을 구별해야 하며, 실제 브라우저 호출 부재는 별도 실행 근거로 확인한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "저장된 차트 HTML에 합성 값 0·4·9와 단위 및 대체 데이터 표현이 남고, 영점과 긴 항목명이 누락되지 않는다. 응답은 미요청 화면 검증을 별도 미완료 항목으로 강제하거나 검증했다고 주장하지 않는다. 차트 분기도 기본 내용 제작과 명시적 화면 검증을 구별해야 하며, 실제 브라우저 호출 부재는 별도 실행 근거로 확인한다.",
+          "artifact_paths": [
+            "review-chart.html"
+          ]
+        },
+        {
+          "type": "path_exists",
+          "path": "review-chart.html"
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": [
+            "review-chart.html"
+          ]
         }
       ]
     }
@@ -1183,6 +1316,11 @@
       "to": "explain-topic-title-and-plain-copy-user-file",
       "allow_assertion_changes": true,
       "reason": "사용자 요청으로 직접 전달하는 HTML의 자동 AI 작성 표기를 제거합니다. 설명·출처·상호작용과 다른 검증 조건은 보존합니다."
+    },
+    {
+      "from": "explain-content-first-html-assembly",
+      "to": "explain-content-first-html-assembly-requested-screen-checks",
+      "reason": "기존 화면·조작 검증 검사를 명시적으로 요청한 분기로 보존합니다. 기본 제작은 독립 내용 리뷰와 정적 검사로 완료하며, 별도 기본 분기 평가를 추가합니다."
     }
   ]
 }

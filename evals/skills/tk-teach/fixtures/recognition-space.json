@@ -1,0 +1,192 @@
+{
+  "scope": "Illustrative grid-world rules, not a claim about a real product or game. Coordinates are (x,y), x increases right, y increases down. Each cell is one unit.",
+  "rules": [
+    "Stay inside the 7 by 7 grid, coordinates 0 through 6.",
+    "Move one cell horizontally or vertically; do not cross wall cells.",
+    "An opening is a passable cell in a wall. S is the courier starting position; G is the destination.",
+    "Several legal routes or first moves can exist; an example route is not a uniquely optimal route."
+  ],
+  "layouts": [
+    {
+      "name": "중앙 문이 있는 세로벽",
+      "wall_cells": [
+        [
+          3,
+          0
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          3,
+          6
+        ]
+      ],
+      "opening": [
+        3,
+        3
+      ],
+      "start": [
+        1,
+        3
+      ],
+      "goal": [
+        5,
+        3
+      ],
+      "example_route": [
+        [
+          1,
+          3
+        ],
+        [
+          5,
+          3
+        ]
+      ]
+    },
+    {
+      "name": "위쪽 문이 있는 세로벽",
+      "wall_cells": [
+        [
+          3,
+          0
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          3,
+          6
+        ]
+      ],
+      "opening": [
+        3,
+        1
+      ],
+      "start": [
+        1,
+        3
+      ],
+      "goal": [
+        5,
+        3
+      ],
+      "example_route": [
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          5,
+          1
+        ],
+        [
+          5,
+          3
+        ]
+      ]
+    },
+    {
+      "name": "왼쪽 문이 있는 가로벽",
+      "wall_cells": [
+        [
+          0,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          5,
+          3
+        ],
+        [
+          6,
+          3
+        ]
+      ],
+      "opening": [
+        1,
+        3
+      ],
+      "start": [
+        3,
+        1
+      ],
+      "goal": [
+        3,
+        5
+      ],
+      "example_route": [
+        [
+          3,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          5
+        ],
+        [
+          3,
+          5
+        ]
+      ]
+    }
+  ],
+  "exercise": {
+    "layout_index": 2,
+    "start": [
+      5,
+      1
+    ],
+    "goal": [
+      5,
+      5
+    ],
+    "task": "Identify the opening and propose one legal first move on a route to G; justify it. Do not claim a unique first move."
+  }
+}

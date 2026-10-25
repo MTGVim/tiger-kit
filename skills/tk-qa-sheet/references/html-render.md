@@ -1,5 +1,9 @@
 # Document Render Checks
 
+Run only within the owning skill's screen/action verification scope. Explanation and lesson
+production requires an explicit user request for these checks; reading this reference or
+having a browser available grants no automatic browser run.
+
 Finalize prose, figure coverage and labels; run HTML output's cheap static checks before
 the render matrix. Smoke-test a new direct-input path's required trusted action and observed
 postcondition before full captures. After failure, identify affected criteria and dependencies;

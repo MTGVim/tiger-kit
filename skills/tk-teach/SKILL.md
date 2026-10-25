@@ -61,6 +61,11 @@ For situation-dependent choices, follow one worked situation from its starting s
 the action, mechanism and result, then change one condition and explain why the choice stays
 or changes. Teach those relationships before summary advice and transfer practice; an explicitly
 requested short review table remains valid without a repeated lesson.
+For recognition or spatial-action goals, teach each in-scope type from an identifiable example
+and the relevant starting positions. Summary-only names do not establish coverage: supply the
+missing teaching or mark an item outside this unit without silently dropping requested scope.
+Show visible cues, the first action and its reason/result; separate states when an overlay
+would make the reader reconstruct their order. Do not infer prior recognition from a type name.
 Use actual attempts to choose what comes next; liking an artifact does not prove learning.
 
 ## Ground the lesson
@@ -121,6 +126,10 @@ without wording/order/length/style clues. Offline answer explanations must conne
 conditions to the outcome and help a retry. They do not record an attempt or hide answers
 from source inspection. Use faded support, spaced retrieval and interleaving when justified
 by actual prior learning; do not create reminders or community invitations automatically.
+Before a spatial/state-dependent answer reveal, provide the exact initial state and visual
+inputs inline or by an immediate link to the matching view. An earlier, different scene is
+not sufficient unless recall is the stated goal. Keep solution routes and correctness cues
+in the revealed explanation; text-complete questions need no extra figure.
 
 ## Respond to the learner
 
@@ -139,14 +148,16 @@ remain with their owners; no binary-embedding or new packaging path is introduce
 
 ## Verify and deliver
 
-Check prerequisite order, outcome coverage, sources, examples, lesson/index links and
-question/answer separation. Apply HTML output's static and actual render checks; disclose
-unavailable rendering. For executable exercises read
+Check prerequisite order, taught recognition/action coverage, sources, examples, lesson/index
+links and question inputs/answer separation. Before artifact delivery, use
+[independent content review](references/content-review.md). Keep static checks; run browser
+screen/action verification only when explicitly requested. For executable exercises read
 [exercise verification](references/exercise-verification.md): with an available safe runtime,
 run reference-pass and a plausible valid-running wrong-fail. Conceptual/open-ended questions
 keep lightweight content checks. Do not claim execution from inspection or client success alone.
 
-`Pass` requires readable sourced material and outcome-matched practice with reasoned feedback;
+`Pass` requires the current artifact's independent content-review pass, readable sourced
+material and outcome-matched practice with reasoned feedback;
 explicit multi-chapter material also retains curriculum, chapter sources, mission and a
 profile when interviewed. `Pass` never certifies learner mastery. Return the actual lesson
 link, next practice when useful and material verification limits. Preserve unrelated files.

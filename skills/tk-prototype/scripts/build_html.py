@@ -180,7 +180,7 @@ def main():
             stream.write(document)
         for note in notes:
             print(note)
-        print('Built ' + str(args.output) + '; structural preflight only; final export and content/render checks remain required.')
+        print('Built ' + str(args.output) + '; structural preflight only; final export and owning content/static/requested checks remain required.')
     except (OSError, UnicodeError, ValueError) as error:
         parser.exit(1, str(error) + '\n')
 

@@ -94,6 +94,8 @@ class SyncExecutionProtocolTest(unittest.TestCase):
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_text((path.read_text() if path.exists() else "") + block)
         repo = Path(__file__).resolve().parents[1]
+        target = self.root / "skills/tk-explain/references/content-review.md"
+        shutil.copyfile(repo / "skills/tk-explain/references/content-review.md", target)
         for name in ("explanation-techniques.md", "html-render.md"):
             canonical = repo / "skills/tk-explain/references" / name
             target = self.root / "skills/tk-explain/references" / name
@@ -316,6 +318,20 @@ class SyncExecutionProtocolTest(unittest.TestCase):
             self.assertEqual(self.run_main("--check"), 1)
             self.assertEqual(self.run_main(), 0)
         self.assertEqual(self.run_main("--check"), 0)
+
+    def test_content_review_drift_and_missing_copy_are_repaired(self) -> None:
+        self.assertEqual(self.run_main(), 0)
+        canonical = self.root / 'skills/tk-explain/references/content-review.md'
+        for name in ('tk-teach', 'tk-explain-diff'):
+            consumer = self.root / 'skills' / name / 'references/content-review.md'
+            consumer.write_text('Stale content-review contract\n')
+            self.assertEqual(self.run_main('--check'), 1)
+            self.assertEqual(self.run_main(), 0)
+            self.assertEqual(consumer.read_bytes(), canonical.read_bytes())
+            consumer.unlink()
+            self.assertEqual(self.run_main('--check'), 1)
+            self.assertEqual(self.run_main(), 0)
+        self.assertEqual(self.run_main('--check'), 0)
 
     def test_visual_grammar_drift_missing_copy_and_canonical_change_fail_check(self) -> None:
         self.assertEqual(self.run_main(), 0)

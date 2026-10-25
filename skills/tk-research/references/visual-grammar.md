@@ -66,6 +66,12 @@ Match prose actors/names and verify connecting elements. Tables or representativ
 cannot replace missing geometry. This is coverage, not a figure quota; nonspatial comparisons
 may remain prose or tables.
 
+For a spatial action choice, show the relevant actors' objectives and starting positions,
+then trace each taught route through the actual layout. Tie alternatives to their conditions;
+separate incompatible scenes when an overlay hides their order or choice. Layout-only views
+suffice for structure identification, not route selection. An optimal-route claim needs a
+supported objective and starting conditions; movement alone does not require animation.
+
 Choose the view by the cognitive task: compare alternatives side by side, orient a hierarchy
 with a stable spatial map, trace causal order with directed connections, show temporal change
 with shared identities and scales, or explore a stateful mechanism with controlled steps.
@@ -153,7 +159,7 @@ upstream pixel ceiling substitutes for the actual reader and viewport checks.
 
 ## Verify geometry and correspondence
 
-Trace every connector from its source to its destination in the rendered figure. Repair
+Trace every connector from its source to its destination in the final figure. Repair
 overlapping/shared strokes, ambiguous crossings, labels hiding a connection, routes passing
 through unrelated nodes, clipped endpoints and indistinguishable attachment points. Use
 clear routes and enough separation; an orthogonal path is useful when it improves tracing,
@@ -173,7 +179,7 @@ Before and After wherever practical. Pair the views with a Changes ledger identi
 added, removed, changed, moved and rewired elements as applicable. Preserve unchanged context;
 an attribute-only change usually needs a table rather than a topology diagram.
 
-Inspect the actual figures at the required HTML viewports/themes, including the complete
+When screen checks are in scope, inspect figures at the required HTML viewports/themes, including the complete
 static form of an interactive figure. A clean page-width measurement does not prove all
 diagram content is reachable: check clipping and any local scroller. Correct geometry
 failures before claiming visual acceptance; report unavailable checks honestly.

@@ -23,7 +23,7 @@ final collection export allowlist instead of the single-file command above.
 
 Preflight checks fragment balance, section headings, IDs/targets and summary placement;
 it is not full static/offline validation or a prose/render/learning verdict. Preserve all
-owning content/source/practice and HTML Output checks. The composed shell still triggers
-browser verification. Finalize content before the matrix; batch compatible checks in one
-browser session, execute all exposed actions and reuse evidence under existing replay rules.
+owning content/source/practice and HTML Output checks. A composed shell alone does not request
+browser verification for explanation/lesson production. When screen/action checks are explicitly
+requested, finalize content first, batch compatible checks and preserve existing replay rules.
 Edit fragments and rebuild affected outputs.

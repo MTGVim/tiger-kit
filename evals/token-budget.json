@@ -36,16 +36,17 @@
           "skills/tk-explain/references/clear-writing.md",
           "skills/tk-explain/references/html-output.md",
           "skills/tk-explain/references/html-assembly.md",
+          "skills/tk-explain/references/content-review.md",
           "skills/tk-explain/references/artifact-paths.md"
         ],
-        "max_bytes": 68000
+        "max_bytes": 70000
       }
     },
     "max_skill_md_chars": 19999
   },
   "max_growth_ratio": 0.1,
   "rationales": {
-    "budget_increase:always_read:tk-explain-html": "F2 explicitly requires the existing meaning-preserving clear-writing reference for new prose; the profile now counts that previously conditional file. Shared reporting/question blocks and routing files are reduced; other caps stay unchanged. The shared font-size request adds 968 bytes of authoring rules: avoid duplicate controls, scale custom absolute fonts once, retain reflow and verify reader settings. The group cap rises by 1000 bytes; other caps stay unchanged.",
+    "budget_increase:always_read:tk-explain-html": "The user explicitly requires an independent adversarial review of the current saved explanation/lesson before completion. Count its shared content-review reference in the new-HTML profile, while removing automatic browser execution and duplicated owner verification prose. The ceiling grows only to cover this requested completion gate; other ceilings remain unchanged.",
     "skill_md:skills/tk-grill/SKILL.md": "조건부 와이어프레임 산출물에 필요한 canonical artifact guard로 전환하고 시각적 질문 참조만 추가합니다. 비시각적 실행은 새 참조를 읽지 않습니다.",
     "skill_md:skills/tk-pr-media/SKILL.md": "tk-pr-image 이름 변경으로 기존 본문을 이전하며 선택형 GIF와 MP4의 분기 포인터를 추가합니다. 새 검증 절차는 해당 조건부 참조에서만 읽습니다.",
     "skill_md:skills/tk-video/SKILL.md": "선택한 영상의 독립 호출과 캡처·앱 판정·게시 담당자 사이 경계, 조립·완성본 확인만 추가합니다. 상세 매니페스트·복구·음성은 조건부 참조로 두며 기존 스킬의 조립·내레이션 코드는 이동합니다.",

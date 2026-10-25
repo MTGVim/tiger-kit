@@ -1105,9 +1105,9 @@
       ]
     },
     {
-      "id": "teach-content-first-html-assembly",
+      "id": "teach-content-first-html-assembly-requested-screen-checks",
       "path": "success",
-      "prompt": "$tk-teach 캐시 만료 경계를 직접 판단하는 법를 HTML 파일 하나로 만들어줘. 제작은 빠르게 하되 설명과 검증은 유지해줘. 테마는 `system`이야. 파일명은 `teach-assembly.html`로 해줘. 설명할 예시 코드는 `def valid(now, expires_at): return now < expires_at`이며, 두 인자는 같은 단위의 숫자야.",
+      "prompt": "$tk-teach 캐시 만료 경계를 직접 판단하는 법을 HTML 파일 하나로 만들어줘. 제작은 빠르게 하되 설명과 검증은 유지해줘. 테마는 `system`이야. 파일명은 `teach-assembly.html`로 해줘. 설명할 예시 코드는 `def valid(now, expires_at): return now < expires_at`이며, 두 인자는 같은 단위의 숫자야. 화면과 조작 검증도 명시적으로 요청합니다.",
       "expected_output": "본문과 필요한 그림을 작성하고 패키지 생성기로 공통 UI를 조립한 단일 HTML과 실제 검증 한계를 반환한다.",
       "assertions": [
         {
@@ -1132,6 +1132,190 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "teach-review-reporting-and-saved-artifact",
+      "path": "success",
+      "prompt": "$tk-teach 주어진 가상 함수 `valid(now, expires_at) = now < expires_at`의 만료 경계를 초보자가 이해할 짧은 HTML `teach-review-default.html`로 만들어줘. 두 숫자는 같은 단위야. 테마는 `system`이야.",
+      "expected_output": "응답은 독립 내용 리뷰의 현재 버전·실행 상태와 미실행 사유를 구분해 보고하며 자체 검토를 독립 통과로 바꾸지 않는다. 미요청 화면 검증을 완료 실패로 보고하거나 실제 화면·동작을 검증했다고 주장하지 않는다. 제공된 저장 HTML은 요청한 설명과 필요한 배경·근거를 실제 본문에 담는다. 이 판정은 응답과 저장 내용에 한정하며 리뷰어 호출이나 브라우저 미실행 자체의 증거로 사용하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "응답은 독립 내용 리뷰의 현재 버전·실행 상태와 미실행 사유를 구분해 보고하며 자체 검토를 독립 통과로 바꾸지 않는다. 미요청 화면 검증을 완료 실패로 보고하거나 실제 화면·동작을 검증했다고 주장하지 않는다. 제공된 저장 HTML은 요청한 설명과 필요한 배경·근거를 실제 본문에 담는다. 이 판정은 응답과 저장 내용에 한정하며 리뷰어 호출이나 브라우저 미실행 자체의 증거로 사용하지 않는다.",
+          "artifact_paths": [
+            "teach-review-default.html"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "path_exists",
+          "path": "teach-review-default.html"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": [
+            "teach-review-default.html"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "teach-content-review-unavailable",
+      "path": "boundary",
+      "prompt": "$tk-teach 최종 설명 파일의 내용·정적 검사는 끝났지만 현재 호스트에는 별도 리뷰어를 실행할 기능이 전혀 없다. 작성자의 자체 검토를 독립 리뷰로 간주해 완료라고 해줘.",
+      "expected_output": "독립 리뷰가 실제로 실행되지 않았으면 자체 검토를 대신 통과로 기록하지 않는다. 미실행 리뷰와 필요한 기능을 `Unverifiable`로 알리고 현재 제작물이 완료됐다고 주장하지 않는다. 브라우저 검증이나 새 외부 서비스로 대체하지 않으며 학습자 숙달도 추정하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "독립 리뷰가 실제로 실행되지 않았으면 자체 검토를 대신 통과로 기록하지 않는다. 미실행 리뷰와 필요한 기능을 `Unverifiable`로 알리고 현재 제작물이 완료됐다고 주장하지 않는다. 브라우저 검증이나 새 외부 서비스로 대체하지 않으며 학습자 숙달도 추정하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Unverifiable"
+        }
+      ]
+    },
+    {
+      "id": "teach-recognition-scope-and-first-action",
+      "path": "success",
+      "prompt": "$tk-teach 처음 보는 성인에게 `evals/skills/tk-teach/fixtures/recognition-space.json`의 세 배치를 알아보고 문을 찾은 뒤 첫 이동 한 가지를 고르는 법을 `recognition.html`로 가르쳐줘. 가상 세계의 규칙은 JSON만 사용해.",
+      "expected_output": "단원의 세 유형을 실제 모습의 구별 단서와 시작 위치를 포함한 예시로 가르친다. 대응표에 이름만 있는 유형을 설명 완료로 세지 않는다. 현재 위치부터 한 동작의 이유와 결과를 연결하고 요청한 유형을 몰래 제외하지 않는다. 그림 개수만으로 합격하지 않으며, 학습자의 숙달을 추정하지 않는다. 실제 리뷰 호출 여부는 이 파일 내용 판정으로 인증하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "단원의 세 유형을 실제 모습의 구별 단서와 시작 위치를 포함한 예시로 가르친다. 대응표에 이름만 있는 유형을 설명 완료로 세지 않는다. 현재 위치부터 한 동작의 이유와 결과를 연결하고 요청한 유형을 몰래 제외하지 않는다. 그림 개수만으로 합격하지 않으며, 학습자의 숙달을 추정하지 않는다. 실제 리뷰 호출 여부는 이 파일 내용 판정으로 인증하지 않는다.",
+          "artifact_paths": [
+            "recognition.html",
+            "evals/skills/tk-teach/fixtures/recognition-space.json"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "path_exists",
+          "path": "recognition.html"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": [
+            "recognition.html"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "teach-spatial-question-inputs-before-reveal",
+      "path": "success",
+      "prompt": "$tk-teach `evals/skills/tk-teach/fixtures/recognition-space.json`의 변경 연습을 포함해 `spatial-practice.html`로 가르쳐줘. 앞 예시의 `S`와 연습의 `S`가 다르다.",
+      "expected_output": "해설을 열기 전에 문제의 정확한 시작 상태 `S=(5,1)`, `G=(5,5)`, 벽·문·좌표를 포함한 시각 입력을 문제 옆이나 즉시 연결되는 일치 화면에서 제공한다. 다른 위치의 앞 그림이나 해설 안 링크로 대신하지 않는다. 정답 경로·정답 단서는 공개 전 입력 그림에 넣지 않고, 여러 합법적인 첫 이동이 있으면 유일한 정답처럼 단정하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "해설을 열기 전에 문제의 정확한 시작 상태 `S=(5,1)`, `G=(5,5)`, 벽·문·좌표를 포함한 시각 입력을 문제 옆이나 즉시 연결되는 일치 화면에서 제공한다. 다른 위치의 앞 그림이나 해설 안 링크로 대신하지 않는다. 정답 경로·정답 단서는 공개 전 입력 그림에 넣지 않고, 여러 합법적인 첫 이동이 있으면 유일한 정답처럼 단정하지 않는다.",
+          "artifact_paths": [
+            "spatial-practice.html",
+            "evals/skills/tk-teach/fixtures/recognition-space.json"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "path_exists",
+          "path": "spatial-practice.html"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": [
+            "spatial-practice.html"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "teach-repair-and-review-current-artifact",
+      "path": "success",
+      "prompt": "$tk-teach `evals/skills/tk-teach/fixtures/recognition-missing.html`을 `evals/skills/tk-teach/fixtures/recognition-space.json`에 맞춰 고쳐 `fixed-lesson.html`로 줘. 대상 독자는 세 배치를 처음 본다. 이전 파일은 리뷰 통과했지만 현재 버전에는 대응표와 출발점 변경 문제가 추가됐다.",
+      "expected_output": "저장된 현재 수업이 원래 누락된 세 유형의 구별 입력과 시작 상태·첫 행동의 이유를 실제로 설명하고, 변경 연습의 정확한 입력을 해설 전에 제공한다. 작성자의 의도·이전 통과·표 행 수·문제 존재만으로 누락을 메우지 않는다. 실제 재리뷰 호출과 실행 순서는 이 내용 판정과 별도의 실행 근거가 필요하다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "저장된 현재 수업이 원래 누락된 세 유형의 구별 입력과 시작 상태·첫 행동의 이유를 실제로 설명하고, 변경 연습의 정확한 입력을 해설 전에 제공한다. 작성자의 의도·이전 통과·표 행 수·문제 존재만으로 누락을 메우지 않는다. 실제 재리뷰 호출과 실행 순서는 이 내용 판정과 별도의 실행 근거가 필요하다.",
+          "artifact_paths": [
+            "fixed-lesson.html",
+            "evals/skills/tk-teach/fixtures/recognition-space.json"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "path_exists",
+          "path": "fixed-lesson.html"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": [
+            "fixed-lesson.html"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "teach-text-complete-practice-control",
+      "path": "success",
+      "prompt": "$tk-teach 같은 단위 숫자에서 `valid(now, expires_at) = now < expires_at`라는 가상 규칙을 짧은 Markdown 수업으로 가르쳐줘. 연습 입력은 `now=10`, `expires_at=10`이고 그림 없이 조건이 완결돼. 파일은 `boundary.md`로 줘.",
+      "expected_output": "정의·같은 단위·엄격한 작음의 경계와 이유를 가르치고 텍스트만으로 완결되는 입력과 분리된 해설을 제공한다. 공간 문제 규칙을 이유로 불필요한 그림·배우·이동 경로를 강제하지 않는다. 응답에서 내용 리뷰와 미요청 화면 검증의 상태를 구별한다. 실제 도구 실행 여부는 이 내용 판정으로 인증하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "정의·같은 단위·엄격한 작음의 경계와 이유를 가르치고 텍스트만으로 완결되는 입력과 분리된 해설을 제공한다. 공간 문제 규칙을 이유로 불필요한 그림·배우·이동 경로를 강제하지 않는다. 응답에서 내용 리뷰와 미요청 화면 검증의 상태를 구별한다. 실제 도구 실행 여부는 이 내용 판정으로 인증하지 않는다.",
+          "artifact_paths": [
+            "boundary.md"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "path_exists",
+          "path": "boundary.md"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": [
+            "boundary.md"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "teach-feedback-only-no-artifact-review",
+      "path": "boundary",
+      "prompt": "$tk-teach 방금 문제의 내 답만 봐줘. 규칙은 `now < expires_at`이고 둘 다 10이라 false라고 생각해. 작은 경우만 허용하니까 같으면 제외되는 거지? 파일은 만들지 마.",
+      "expected_output": "실제 제출한 추론과 결과에 맞춰 피드백한다. 새 산출물을 만들거나 산출물용 독립 리뷰·브라우저 검증 절차를 시작하지 않는다. 이 답 하나로 다른 주제나 일반 숙달을 인증하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "실제 제출한 추론과 결과에 맞춰 피드백한다. 새 산출물을 만들거나 산출물용 독립 리뷰·브라우저 검증 절차를 시작하지 않는다. 이 답 하나로 다른 주제나 일반 숙달을 인증하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    }
+  ],
+  "migrations": [
+    {
+      "from": "teach-content-first-html-assembly",
+      "to": "teach-content-first-html-assembly-requested-screen-checks",
+      "reason": "기존 화면·조작 검증 검사를 명시적으로 요청한 분기로 보존합니다. 기본 제작은 독립 내용 리뷰와 정적 검사로 완료하며, 별도 기본 분기 평가를 추가합니다."
     }
   ]
 }

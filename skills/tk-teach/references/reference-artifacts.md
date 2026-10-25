@@ -28,5 +28,5 @@ Link to the fuller course explanation without depending on it for essential cave
 Before delivery, verify that reference claims match taught content and `sources.md`,
 conditions/limits survive compression, links resolve within the course, and the course's
 curriculum, chapters, practice and continuation state remain intact. Apply required HTML
-render checks to every generated reference. Reference creation or reading does not prove
+static checks and only explicitly requested screen checks to generated references. Reference creation or reading does not prove
 learner mastery and does not create reminders, flashcards or a new learning-state system.

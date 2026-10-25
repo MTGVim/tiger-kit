@@ -71,7 +71,7 @@ Adapt this minimal structure, naming every input, result and supported relations
 Use two output columns on desktop and one below 600px; one output spans the group
 without an empty slot. Let cards grow with their text, use shrinkable tracks and
 wrap long Korean/English labels. Do not use fixed card heights, positional arrows
-between columns or color alone to distinguish stages/choices. Verify 1, 2 and 4
+between columns or color alone to distinguish stages/choices. For scoped screen checks, verify 1, 2 and 4
 results, long labels, simultaneous/alternative wording, DOM order, no-JS reading,
 keyboard targets and light/dark/system/reduced-motion at the required viewports.
 Check card text and relationship labels for overlap/clipping as well as page width.
@@ -86,7 +86,7 @@ Check card text and relationship labels for overlap/clipping as well as page wid
   meaning, retain a bounded horizontal scroller on narrow screens. Derive its minimum width as
   `viewBox width * 11 / smallest label font-size` (round up), rather than choosing an arbitrary
   width. Choose label sizes/viewBox so that this minimum fits the actual 1280px desktop content
-  width; measure the rendered label size and wrapper overflow. Stack only figures whose meaning
+  width; measure rendered label size and overflow when screen checks are in scope. Stack only figures whose meaning
   survives a vertical arrangement.
 - Short identifiers in table cells, such as commit SHAs, IDs, and status tokens, stay on one line.
   Use `.ht-token` or an equivalent local rule for them. Long paths and URLs may wrap or use their

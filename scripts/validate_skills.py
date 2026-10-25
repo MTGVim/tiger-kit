@@ -522,6 +522,12 @@ def validate_behavior_contract(name: str, path: Path) -> tuple[list[str], set[st
             if assertion_type == "judge":
                 if not isinstance(assertion.get("criterion"), str) or not str(assertion.get("criterion")).strip():
                     errors.append(f"{_display_path(path)}: judge assertion needs criterion")
+                if "artifact_paths" in assertion:
+                    artifact_paths = assertion["artifact_paths"]
+                    if (not isinstance(artifact_paths, list) or not artifact_paths
+                            or any(not _safe_relative(value) for value in artifact_paths)
+                            or len(artifact_paths) != len(set(artifact_paths))):
+                        errors.append(f"{_display_path(path)}: judge artifact_paths needs unique safe relative paths")
                 continue
             if assertion_type not in MECHANICAL_ASSERTION_TYPES:
                 errors.append(f"{_display_path(path)}: unknown assertion type {assertion_type!r}")

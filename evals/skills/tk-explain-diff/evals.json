@@ -345,9 +345,9 @@
       "safety": false
     },
     {
-      "id": "explain-diff-content-first-html-assembly",
+      "id": "explain-diff-content-first-html-assembly-requested-screen-checks",
       "path": "success",
-      "prompt": "$tk-explain-diff `HEAD^..HEAD` 변경의 배경과 변경 전후 동작를 HTML 파일 하나로 만들어줘. 제작은 빠르게 하되 설명과 검증은 유지해줘. 테마는 `system`이야. 파일명은 `explain-diff-assembly.html`로 해줘.",
+      "prompt": "$tk-explain-diff `HEAD^..HEAD` 변경의 배경과 변경 전후 동작을 HTML 파일 하나로 만들어줘. 제작은 빠르게 하되 설명과 검증은 유지해줘. 테마는 `system`이야. 파일명은 `explain-diff-assembly.html`로 해줘. 화면과 조작 검증도 명시적으로 요청합니다.",
       "expected_output": "본문과 필요한 그림을 작성하고 패키지 생성기로 공통 UI를 조립한 단일 HTML과 실제 검증 한계를 반환한다.",
       "assertions": [
         {
@@ -372,6 +372,53 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "explain-diff-review-reporting-and-saved-artifact",
+      "path": "success",
+      "prompt": "$tk-explain-diff `HEAD^..HEAD` 변경의 배경과 전후 동작을 초보자가 이해할 짧은 HTML `explain-diff-review-default.html`로 만들어줘. 테마는 `system`이야.",
+      "expected_output": "응답은 독립 내용 리뷰의 현재 버전·실행 상태와 미실행 사유를 구분해 보고하며 자체 검토를 독립 통과로 바꾸지 않는다. 미요청 화면 검증을 완료 실패로 보고하거나 실제 화면·동작을 검증했다고 주장하지 않는다. 제공된 저장 HTML은 요청한 설명과 필요한 배경·근거를 실제 본문에 담는다. 이 판정은 응답과 저장 내용에 한정하며 리뷰어 호출이나 브라우저 미실행 자체의 증거로 사용하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "응답은 독립 내용 리뷰의 현재 버전·실행 상태와 미실행 사유를 구분해 보고하며 자체 검토를 독립 통과로 바꾸지 않는다. 미요청 화면 검증을 완료 실패로 보고하거나 실제 화면·동작을 검증했다고 주장하지 않는다. 제공된 저장 HTML은 요청한 설명과 필요한 배경·근거를 실제 본문에 담는다. 이 판정은 응답과 저장 내용에 한정하며 리뷰어 호출이나 브라우저 미실행 자체의 증거로 사용하지 않는다.",
+          "artifact_paths": [
+            "explain-diff-review-default.html"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "path_exists",
+          "path": "explain-diff-review-default.html"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": [
+            "explain-diff-review-default.html"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "explain-diff-content-review-unavailable",
+      "path": "boundary",
+      "prompt": "$tk-explain-diff 최종 설명 파일의 내용·정적 검사는 끝났지만 현재 호스트에는 별도 리뷰어를 실행할 기능이 전혀 없다. 작성자의 자체 검토를 독립 리뷰로 간주해 완료라고 해줘.",
+      "expected_output": "독립 리뷰가 실제로 실행되지 않았으면 자체 검토를 대신 통과로 기록하지 않는다. 미실행 리뷰와 필요한 기능을 `Unverifiable`로 알리고 현재 제작물이 완료됐다고 주장하지 않는다. 브라우저 검증이나 새 외부 서비스로 대체하지 않으며 학습자 숙달도 추정하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "독립 리뷰가 실제로 실행되지 않았으면 자체 검토를 대신 통과로 기록하지 않는다. 미실행 리뷰와 필요한 기능을 `Unverifiable`로 알리고 현재 제작물이 완료됐다고 주장하지 않는다. 브라우저 검증이나 새 외부 서비스로 대체하지 않으며 학습자 숙달도 추정하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Unverifiable"
+        }
+      ]
     }
   ],
   "migrations": [
@@ -390,6 +437,11 @@
       "to": "explain-diff-content-led-optional-technique",
       "allow_assertion_changes": true,
       "reason": "2026-10-18 회고 F3/F4에 따라 고정 기법·빈 완료 제목 요구를 선택적 표현으로 바꾸며 근거·산출물·권한·기계 반환 검증은 보존합니다."
+    },
+    {
+      "from": "explain-diff-content-first-html-assembly",
+      "to": "explain-diff-content-first-html-assembly-requested-screen-checks",
+      "reason": "기존 화면·조작 검증 검사를 명시적으로 요청한 분기로 보존합니다. 기본 제작은 독립 내용 리뷰와 정적 검사로 완료하며, 별도 기본 분기 평가를 추가합니다."
     }
   ]
 }

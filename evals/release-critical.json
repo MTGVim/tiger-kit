@@ -777,7 +777,15 @@
     "tk-teach:behavior:feedback-stop-after-reveal",
     "tk-teach:behavior:offline-answer-unobserved",
     "tk-teach:behavior:new-lesson-html-unit",
-    "tk-teach:behavior:append-keeps-earlier-lesson"
+    "tk-teach:behavior:append-keeps-earlier-lesson",
+    "tk-explain:behavior:explain-review-reporting-and-saved-artifact",
+    "tk-explain-diff:behavior:explain-diff-review-reporting-and-saved-artifact",
+    "tk-teach:behavior:teach-review-reporting-and-saved-artifact",
+    "tk-teach:behavior:teach-recognition-scope-and-first-action",
+    "tk-teach:behavior:teach-spatial-question-inputs-before-reveal",
+    "tk-teach:behavior:teach-repair-and-review-current-artifact",
+    "tk-explain:behavior:explain-spatial-actors-routes-and-conditions",
+    "tk-explain:behavior:explain-chart-no-browser-production-control"
   ],
   "catalog_cases": [
     "catalog:behavior:native-app-runtime-verify",

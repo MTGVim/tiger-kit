@@ -250,3 +250,26 @@ TigerKit's gap was executable shell assembly: it already supplied CSS/JS and nav
 markup instructions, but agents still had to construct that markup and inline assets.
 Reduced authored markup is an observable mechanism, not an end-to-end speed claim.
 The current user request explicitly preserves one-step HTML and content/verification quality.
+
+## Independent artifact review and recognition/action coverage (2026-10-26)
+
+Reviewed current `mattpocock/skills@5beb35b040e3de97e54fa9e386d7e42d15c295c2`
+(`skills/productivity/teach/SKILL.md`, retained in context and main identity rechecked) and
+`obra/superpowers@2ce8aa15d05bd57213e6f746f953aafb7ded7a8b`
+(`skills/requesting-code-review/SKILL.md`, `code-reviewer.md`). The latter's implementation
+and rationale use fresh reviewer context, inspected evidence, severity and correction before
+proceeding. A separate upstream content-review eval was not established; a tests/README.md
+lookup was unavailable, and upstream runtime/learning efficacy were not reproduced.
+
+- **keep:** scoped teaching goals, complete worked material and evidence-based independent review.
+- **adapt:** the current explicit user workflow to one read-only adversarial content reviewer,
+  current-artifact identity, goal-blocking omissions, repair/re-review and honest unavailable
+  execution. Teach recognition inputs, spatial actors/routes and exact pre-reveal question state.
+- **omit:** code-review/merge verdicts, Git-range templates, author assessments as reviewer context,
+  orchestration runtime, new skills, reviewer cascades, stylistic quotas and mastery inference.
+
+Earlier causal prose, spatial-layout coverage, verifier preflight and inline references already
+exist and are retained. Browser checks now require explicit user scope for explanation/lesson
+production; separately requested checks retain the existing provider/evidence/safety contract.
+Other HTML owners keep their scoped UI checks. Source checks and content review remain required.
+The instructions and fixtures are independently authored; no donor code/template is copied.

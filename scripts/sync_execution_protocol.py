@@ -63,6 +63,7 @@ HTML_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research", "t
 QUESTION_HTML_CONSUMERS = ("tk-prep", "tk-grill", "tk-roadmap")
 HTML_THEME_CONSUMERS = HTML_CONSUMERS + QUESTION_HTML_CONSUMERS
 VISUAL_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research")
+CONTENT_REVIEW_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach")
 HTML_ASSETS = ("html-theme.css", "html-theme.js")
 CHART_FILES = ("references/chart-design.md", "assets/chart-examples.html", "references/html-figures.md")
 ASSEMBLY_FILES = ("scripts/build_html.py", "assets/document-shell.html", "references/html-assembly.md")
@@ -153,6 +154,11 @@ def research_verification_errors(text: str) -> list[str]:
 def html_policy_errors(root: Path) -> list[str]:
     errors = []
     source = root / "skills/tk-explain"
+    for name in CONTENT_REVIEW_CONSUMERS:
+        canonical = source / "references/content-review.md"
+        target = root / "skills" / name / "references/content-review.md"
+        if not canonical.is_file() or not target.is_file() or target.read_bytes() != canonical.read_bytes():
+            errors.append(f"{target.relative_to(root)}: shared content review drift")
     for name in VISUAL_CONSUMERS:
         canonical = source / "references/visual-grammar.md"
         target = root / "skills" / name / "references/visual-grammar.md"
@@ -369,6 +375,10 @@ def main() -> int:
         source = ROOT / "skills/tk-explain/references/visual-grammar.md"
         if name != "tk-explain" and source.is_file():
             pairs.append((source, ROOT / "skills" / name / "references/visual-grammar.md"))
+    for name in CONTENT_REVIEW_CONSUMERS:
+        if name != "tk-explain":
+            pairs.append((ROOT / "skills/tk-explain/references/content-review.md",
+                          ROOT / "skills" / name / "references/content-review.md"))
     for name in UI_EVIDENCE_CONSUMERS:
         path = ROOT / "skills" / name / "references/ui-evidence.md"
         if not args.check:

@@ -239,6 +239,24 @@ class EvalSotValidatorTest(unittest.TestCase):
             errors, _ = validate_skills.validate_behavior_contract("tk-example", path)
             self.assertTrue(any("mechanical evidence" in error for error in errors))
 
+    def test_judge_artifact_paths_are_safe_and_do_not_shadow_case_paths(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "evals.json"
+            for paths in (["lesson.html", "fixtures/source.json"], [], "lesson.html",
+                          ["../outside"], ["/absolute"], ["same", "same"], [None], [["nested"]]):
+                with self.subTest(paths=paths):
+                    data = {"skill_name": "tk-example", "evals": [
+                        {"id": "success", "path": "success", "prompt": "teach", "expected_output": "done",
+                         "assertions": [{"type": "terminal_status", "expected": "Pass"},
+                                        {"type": "judge", "criterion": "Read saved material", "artifact_paths": paths}]},
+                        {"id": "boundary", "path": "boundary", "prompt": "stop", "expected_output": "stopped",
+                         "assertions": [{"type": "terminal_status", "expected": "Blocked"}]}]}
+                    path.write_text(json.dumps(data), encoding="utf-8")
+                    errors, _ = validate_skills.validate_behavior_contract("tk-example", path)
+                    self.assertEqual(bool(errors), paths != ["lesson.html", "fixtures/source.json"])
+                    if errors:
+                        self.assertTrue(any("artifact_paths" in error for error in errors))
+
     def test_path_not_read_requires_a_safe_checkout_relative_path(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             skill = Path(directory) / "tk-example"

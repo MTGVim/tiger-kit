@@ -89,14 +89,15 @@ and an accessible relationship list; the small static recipe is not a large-grap
 
 ## Verify the adapted result
 
-Check the real browser at desktop and narrow mobile widths in light and dark themes, with
+Follow HTML Output's owning screen-check scope. When browser checks are in scope, check
+desktop and narrow mobile widths in light and dark themes, with
 JavaScript both enabled and disabled. Inspect actual screenshots, not DOM existence alone.
 At narrow widths reflow long labels or keep a labeled, keyboard-accessible local plot scroller;
 do not shrink a fixed viewBox until labels become unreadable or overflow the whole document.
 
 Reconcile every mark and tooltip with the same source row. Check minimum/maximum, zero,
 negative/constant values where supported, missing samples, long labels and duplicate figure IDs.
-Test hover, Tab/Enter/Space/Escape, touch activation, legend off/on, all-hidden state, reset,
+For those screen/action checks, test hover, Tab/Enter/Space/Escape, touch activation, legend off/on, all-hidden state, reset,
 tooltip boundaries, and absence of external requests. Verify glyph/line contrast and non-color
 cues; do not claim full accessibility compliance from this limited inspection.
 The screenshot supplied by a user may guide visual treatment without supplying measurements:

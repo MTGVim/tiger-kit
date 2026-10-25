@@ -74,14 +74,22 @@ mechanism, evidence, technical names and limitations.
 
 ## Verify and Return
 
-Read the final artifact without the conversation or attachment: can a reader state the target claim/question, its premises, conclusion and reason without guessing? Deictic phrases are valid only when their referent exists inside the artifact; do not ban the phrases themselves or repeat an already stated target. Inspect the generated HTML for self-containment, prerequisites before use, factual qualifications, matching diagram/prose terminology and arrows, readable text, accessibility, verified source links near the claims they support, and the document structure. Preserve the complete explanation, caveats, sources, and attribution when adding interaction. When local rendering is available, inspect the rendered artifact and any interaction without starting a server or automatically opening the user's browser. Report execution evidence separately from the author's reading judgment. A render pass or
-answer reveal does not establish reader understanding. Keep build/static/browser results in the
-delivery receipt or evidence attachment; keep material content limits beside their claims.
-Never claim a render or browser test that did not run. Keep file edits within the artifact; creation grants no commits, publication, or unrelated implementation.
+Use [independent content review](references/content-review.md) before artifact delivery.
+Inspect self-containment, prerequisites, qualifications, diagram/prose correspondence,
+accessibility, source links and document structure. Keep deictic phrases only with an
+in-artifact referent. Preserve complete content, caveats, sources and attribution in interaction;
+check its authored states/model, visible consequences and reset without assuming runtime success.
+Keep readable static content and manual control under reduced motion.
 
-For an interactive example, replay an input change, its expected visible consequence, and a complete reset; include alternate modes when present. Inspect whether the affected entity itself shows what changed, its cause, and any mismatch, without requiring the reader to remember an earlier screen or decode a separate result paragraph. For an implemented sequence, check step boundaries, backward navigation, and pause/resume when present. Preserve readable static content and manual control under reduced motion. When a local browser runtime is available, execute initial load and every exposed action before returning; a screenshot or syntax check alone does not verify interaction. Treat uncaught startup/action errors, inert controls, and mismatched current-result prose as failures to repair, then replay the checks. Distinguish source inspection from executed behavior checks, and disclose missing runtime verification.
+Run browser screen/action checks only when explicitly requested; then follow HTML Output's
+render contract, execute exposed actions and preserve actual failures/limitations. Availability,
+SVG, interaction and the shared shell do not trigger that request. Keep build/static/content
+results separate from any executed screen checks and from observed reader responses.
 
-Return `Pass` only when the file exists and its content satisfies the explanation and offline artifact requirements; surface unresolved content or execution failures instead. Return a concise link/path identifying the explanation, plus a brief material verification limitation if any. Do not append a second full text explanation or a review ledger.
+`Pass` requires an existing artifact satisfying the explanation/offline requirements and an
+independent content-review pass for its current version; surface unresolved content or requested
+execution failures. Return a concise link and material verification limits, without repeating
+the explanation or a review ledger. Creation grants no commits, publication or unrelated edits.
 
 Adapted from `anthropics/claude-plugins-community` `eli5` at `a727be1c7bd6064419b6f60d71993a19198adc17`, with shared writing criteria whose sources are recorded in `references/sources.md`. Original notices are in [LICENSE.txt](LICENSE.txt).
 

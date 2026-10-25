@@ -21,7 +21,7 @@ Make the causal difference visible on the affected entities, not only in a resul
 
 Keep the small set of causally useful controls. Use native labeled controls and predictable keyboard behavior. Render user-entered text as text, never as unescaped HTML. Preserve the focused control across updates, including repeated button activation as well as an input's caret; replacing its entire container must not drop keyboard focus.
 
-Build the baseline diagram, values, and conclusion as static HTML before adding JavaScript. Do not leave empty containers that only `render()` fills. Put `readonly` on baseline input fields in the HTML itself and start action controls hidden; enable the baseline editor only after its handlers are attached. Enforce `[hidden] { display: none !important; }` when a control's layout rule sets `display`, since that rule can override the browser's hidden styling. With JavaScript disabled, the example must still show a meaningful outcome and no editable fields or inert action controls. Test the actual script-disabled render separately, including the fields' editability; finding `hidden` in the source or capturing visible content is not proof of this behavior.
+Build the baseline diagram, values, and conclusion as static HTML before adding JavaScript. Do not leave empty containers that only `render()` fills. Put `readonly` on baseline input fields in the HTML itself and start action controls hidden; enable the baseline editor only after its handlers are attached. Enforce `[hidden] { display: none !important; }` when a control's layout rule sets `display`, since that rule can override the browser's hidden styling. With JavaScript disabled, the example must still show a meaningful outcome and no editable fields or inert action controls. When screen checks are requested, test the actual script-disabled render separately, including the fields' editability; finding `hidden` in the source or capturing visible content is not proof of this behavior.
 
 ## Show intermediate steps when they teach the mechanism
 
@@ -35,7 +35,7 @@ Add optional automatic playback only when it helps. Expose play/pause, leave eno
 
 Define the reset scope visibly. A full reset restores original data/order, user-entered values, genuine state history, all strategy/mode branches including hidden ones, the initial step, and paused playback. A narrower action must be labeled for its scope rather than called a full reset. Never clear only the currently visible branch and leave old state to reappear after switching modes.
 
-Before returning, trace and, when a local runtime is available, execute these applicable paths:
+Before returning, trace these paths in the authored model/source; execute browser paths only for explicitly requested screen/action checks:
 
 - Exercise every exposed action. When at least two meaningful non-default inputs exist, test two; otherwise test every available state. Use distinctive replacement values rather than the initial defaults. Check every visible conclusion and stage caption against the diagram and displayed state after each change, including a second event from the already changed state; default example names or values must not survive in a current-result sentence. One successful preset does not establish consistency across choices.
 - For identity/state examples, edit local state, change order or membership, and inspect which identity retains it. Compare alternate strategies from equivalent starting conditions.
@@ -45,6 +45,6 @@ Before returning, trace and, when a local runtime is available, execute these ap
 - Step forward, backward, and at both boundaries; verify the visible mechanism state as well as the step label. If playback exists, pause, wait beyond one interval, resume, and reset while running; check for unintended advancement or duplicate clocks.
 - Check keyboard input, a narrow viewport, JavaScript-off static content, and reduced-motion manual operation where feasible. Preserve failure evidence and report unexecuted checks as limitations.
 
-These are acceptance checks, not permission to install a browser provider, open the user's browser, or modify unrelated files. When runtime access is absent, inspect the code and state that execution was not verified.
+These are acceptance checks, not permission to install a browser provider, open the user's browser, or modify unrelated files. For requested checks without runtime access, inspect the code and report unavailable execution; otherwise screen/action checks remain not requested.
 
 Upstream sources and dispositions for this reference are kept in the calling package's provenance file.

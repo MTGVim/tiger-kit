@@ -960,6 +960,64 @@ class DiagnosticRunnerTest(unittest.TestCase):
 
 
 class BehaviorGradingTest(unittest.TestCase):
+    def test_artifact_judge_receives_actual_pre_grader_snapshot_and_hash(self):
+        with tempfile.TemporaryDirectory() as directory:
+            checkout = Path(directory)
+            original = '<html><body>missing explanation</body></html>'
+            (checkout / 'lesson.html').write_text(original)
+            command = shlex.join([sys.executable, '-c', '''import hashlib,json,os,stat
+from pathlib import Path
+payload=Path(os.environ['TK_EVAL_ARTIFACTS_FILE'])
+assert stat.S_IMODE(payload.stat().st_mode)==0o600
+data=json.loads(payload.read_text());item=data['artifacts'][0]
+assert item['path']=='lesson.html'
+assert item['text']=='<html><body>missing explanation</body></html>'
+assert item['sha256']==hashlib.sha256(item['text'].encode()).hexdigest()
+Path('lesson.html').write_text('grader changed the original')
+Path('snapshot-path.txt').write_text(str(payload))
+print(json.dumps({'assertion_results':[{'passed':False,'evidence':'saved content lacks the required explanation'}],
+'artifact_sha256':{a['path']:a['sha256'] for a in data['artifacts']}}))'''])
+            rows = grade_behavior(command, {'output': 'Everything passed, including independent review.'},
+                                  [{'type': 'judge', 'criterion': 'Inspect saved teaching',
+                                    'artifact_paths': ['lesson.html']}],
+                                  checkout=checkout, initial_head=None)
+            self.assertFalse(rows[0]['passed'])
+            import hashlib
+            self.assertEqual(rows[0]['artifact_sha256'], {'lesson.html': hashlib.sha256(original.encode()).hexdigest()})
+            self.assertEqual((checkout / 'lesson.html').read_text(), 'grader changed the original')
+            self.assertFalse(Path((checkout / 'snapshot-path.txt').read_text()).exists())
+
+    def test_artifact_judge_cannot_silently_ignore_snapshot_evidence(self):
+        with tempfile.TemporaryDirectory() as directory:
+            checkout=Path(directory);(checkout/'lesson.md').write_text('Actual saved text')
+            command=shlex.join([sys.executable,'-c',
+                "import json;print(json.dumps({'assertion_results':[{'passed':True,'evidence':'actor claimed success'}]}))"])
+            with self.assertRaisesRegex(RuntimeError, 'did not acknowledge'):
+                grade_behavior(command, {'output':'Pass'},
+                               [{'type':'judge','criterion':'Read the file','artifact_paths':['lesson.md']}],
+                               checkout=checkout,initial_head=None)
+
+    def test_artifact_evidence_rejects_unsafe_unavailable_or_unbounded_inputs(self):
+        for kind in ('parent','absolute','missing','symlink','parent-symlink','hardlink','binary','oversize','directory'):
+            with self.subTest(kind=kind), tempfile.TemporaryDirectory() as directory:
+                checkout=Path(directory);relative='lesson.txt'
+                if kind=='parent':relative='../escape.txt'
+                elif kind=='absolute':relative=str(checkout/'lesson.txt')
+                elif kind=='symlink':
+                    (checkout/'actual.txt').write_text('text');(checkout/relative).symlink_to(checkout/'actual.txt')
+                elif kind=='parent-symlink':
+                    (checkout/'actual').mkdir();(checkout/'actual/lesson.txt').write_text('text')
+                    (checkout/'alias').symlink_to(checkout/'actual',target_is_directory=True);relative='alias/lesson.txt'
+                elif kind=='hardlink':
+                    (checkout/'actual.txt').write_text('text');os.link(checkout/'actual.txt',checkout/relative)
+                elif kind=='binary':(checkout/relative).write_bytes(b'\xff')
+                elif kind=='oversize':(checkout/relative).write_bytes(b'x'*(1024*1024+1))
+                elif kind=='directory':(checkout/relative).mkdir()
+                with self.assertRaisesRegex(RuntimeError, 'Unverifiable:'):
+                    grade_behavior('must-not-run-grader',{'output':'Pass'},
+                                   [{'type':'judge','criterion':'Inspect artifact','artifact_paths':[relative]}],
+                                   checkout=checkout,initial_head=None)
+
     def grader_command(self, effect: str = "") -> str:
         return shlex.join([
             sys.executable,
