@@ -25,7 +25,7 @@ section/table/figure counts and render success cannot supply missing teaching or
 
 For explanatory prose, does formatting show priority rather than repeated bold list labels,
 code-styled ordinary names and duplicate summary sentences? Apply the caller's reader-formatting
-defaults where relevant, preserving required warnings and verification structures. Do supporting
+defaults without cutting needed teaching for brevity; preserve required warnings and verification. Do supporting
 headings name one category? Does each composed figure show its boundary and label every meaningful
 lane, row or panel? Are references readable and their supported claims traceable?
 

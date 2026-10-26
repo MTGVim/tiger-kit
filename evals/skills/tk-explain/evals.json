@@ -1303,17 +1303,24 @@
       ]
     },
     {
-      "id": "explain-reader-formatting-priority",
+      "id": "explain-reader-formatting-priority-compared-identifiers",
       "path": "boundary",
-      "prompt": "$tk-explain 캐시 무효화의 원리를 HTML로 설명해줘. 강조와 코드 장식이 과하지 않고, 그림의 각 줄을 바로 구분할 수 있게 해줘.",
+      "prompt": "$tk-explain 캐시 무효화의 원리를 HTML로 설명해줘. 강조와 코드 장식이 과하지 않고, 그림의 각 줄을 바로 구분할 수 있게 해줘. 결과를 `.tigerkit/explanations/reader-priority.html`에 만들어줘.",
       "expected_output": "원인과 결과를 짧게 전개하며 서식 우선순위와 그림 경계를 드러낸다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "`reader-formatting.md`를 읽고, 절당 굵은 결론을 기본 1개 이하로 제한한다. 반복된 굵은 라벨 목록과 요약 복제를 제거하고 복사·검색할 식별자만 코드로 표시한다. 보조 절은 한 분류를 나타내며 그림 전체 경계와 각 줄의 보이는 이름표가 있다. 필수 경고나 호출자 고유 검증 구조를 훼손하지 않는다."
+          "criterion": "`reader-formatting.md`를 읽고, 절당 굵은 결론을 기본 1개 이하로 제한한다. 반복된 굵은 라벨 목록과 요약 복제를 제거하고 복사·검색·정확한 비교에 필요한 식별자만 코드로 표시한다. 보조 절은 한 분류를 나타내며 그림 전체 경계와 각 줄의 보이는 이름표가 있다. 필수 경고나 호출자 고유 검증 구조를 훼손하지 않는다.",
+          "artifact_paths": [
+            ".tigerkit/explanations/reader-priority.html"
+          ]
         },
         {
           "type": "git_head_unchanged"
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/explanations/reader-priority.html"
         }
       ]
     },
@@ -1329,6 +1336,50 @@
         },
         {
           "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "explain-reader-brevity-preserves-understanding",
+      "path": "boundary",
+      "prompt": "$tk-explain 앱 개발은 알지만 `Git` 내부는 모르는 독자에게 `cherry-pick` 후 커밋 식별자가 달라지는 이유를 설명하는 새 HTML을 `.tigerkit/explanations/reader-brevity.html`에 만들어줘. 문장과 서식을 간결하게 해줘. 잘못 넣은 수정만 다른 브랜치로 옮기는 현실적인 상황, 앞쪽 핵심 그림, 커밋 부모와 내용이 식별자에 미치는 이유, 요약 상자, 이해 확인을 모두 포함해줘. 이 다섯 가지는 독자에게 필요해.",
+      "expected_output": "문장을 짧게 다듬고 서식의 강조를 줄이면서 필요한 학습 내용을 보존한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "간결함을 문장 단위에 적용한다. 필요한 상황·앞쪽 그림·원인·이미 선택된 요약과 이해 확인을 분량만을 이유로 빼지 않는다. 현실적인 상황을 원리보다 먼저 제시하고 핵심 그림을 읽는 순서에서 가까이 둔다. 가로 배치를 강제하지 않는다. 모든 설명에 요약과 이해 확인을 의무화하지 않는다.",
+          "artifact_paths": [
+            ".tigerkit/explanations/reader-brevity.html"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/explanations/reader-brevity.html"
+        }
+      ]
+    },
+    {
+      "id": "explain-reader-exact-comparison-values",
+      "path": "boundary",
+      "prompt": "$tk-explain 예시 커밋의 식별자를 비교하는 새 설명 HTML을 `.tigerkit/explanations/reader-comparison.html`에 만들어줘. 가상 값은 `A`의 해시 `a1b2c3d`, 버전 `1.2.0`, 키 `feature_flag`와 `B`의 해시 `e4f5a6b`, 버전 `1.3.0`, 키 `feature_flag`야. 표에 값과 설명문을 함께 넣어줘. 과도한 코드 서식은 줄이되 직접 대조할 정확한 값은 구분되게 해줘.",
+      "expected_output": "정확히 대조할 식별자는 코드나 칩으로 구분하고 단순 언급과 장식은 줄인다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "서로 대조할 해시·버전·키처럼 표 값 자체가 정확한 식별자인 경우 인라인 코드나 칩을 허용한다. 독자가 그대로 복사하거나 검색할 필요가 없다는 이유만으로 비교에 필요한 구분을 제거하지 않는다. 일반적인 제품·버전의 단순 언급과 장식용 칩은 구분한다. 실제 식별자와 의미는 보존한다.",
+          "artifact_paths": [
+            ".tigerkit/explanations/reader-comparison.html"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/explanations/reader-comparison.html"
         }
       ]
     }
@@ -1381,6 +1432,12 @@
       "from": "explain-content-first-html-assembly",
       "to": "explain-content-first-html-assembly-requested-screen-checks",
       "reason": "기존 화면·조작 검증 검사를 명시적으로 요청한 분기로 보존합니다. 기본 제작은 독립 내용 리뷰와 정적 검사로 완료하며, 별도 기본 분기 평가를 추가합니다."
+    },
+    {
+      "from": "explain-reader-formatting-priority",
+      "to": "explain-reader-formatting-priority-compared-identifiers",
+      "allow_assertion_changes": true,
+      "reason": "후속 사용자 요청의 정확한 비교 식별자 예외를 기존 서식 평가에 반영합니다. 강조·중복·그림·필수 경고 기준을 유지하고 실제 생성 파일을 판정 근거로 연결합니다."
     }
   ]
 }

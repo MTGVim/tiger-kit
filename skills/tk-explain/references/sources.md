@@ -142,10 +142,13 @@ The instructions and fixtures are independently authored; no donor code/template
 
 ## Reader formatting and bounded figures (2026-10-26)
 
-The supplied reader-formatting bundle documents repeated formatting feedback on one explanation.
-Its rule file is `applied-once`: manually applied and accepted, not a fresh skill invocation.
-The grid overflow diagnosis was explicitly a hypothesis; a 360px wide-SVG baseline/replay checks
-it separately from writing quality. No reader-comprehension or end-to-end speed claim follows.
+The original reader-formatting bundle documents repeated feedback on one explanation and a
+manual `applied-once` result. A subsequent supplied comparison reports that the reader preferred
+the control to the first skill run. Its revised run restored context, an early figure and a check,
+but reader comparison remains pending. Shortening as a cause is a supported hypothesis, not an
+isolated causal result. Keep `applied-once`; do not promote this evidence to `field-tested`.
+The grid overflow hypothesis was checked separately with a 360px wide-SVG baseline/replay.
+Neither result establishes reader comprehension or end-to-end speed.
 
 Reviewed GitHub Docs' `Troubleshooting content type` and `LICENSE` at
 `github/docs@564868161b9cd8bb75f789079690fb44a4a5149d`
@@ -160,11 +163,16 @@ A separate upstream evaluation was not established.
   public source provenance, required warnings/verification structures and offline output.
 - **adapt:** sparse emphasis, sentence breaks, category headings, visible figure boundaries,
   package-local synchronized reference copies, safe grid shrinkage and two logical reference rows.
+  Shortness applies to sentences: retain needed scenarios, early figures, causal steps, selected
+  summaries/checks and exact comparison values. Put a motivating situation before the mechanism
+  with the main figure nearby in reading order; preserve responsive layout and optional checks.
   This reconsiders the older single-line reference default; natural multi-line wrapping remains.
   Immediate citations may be reduced only when exact supported sections/claims remain identifiable;
   research's checker-owned citation/backlink coverage is unchanged.
 - **omit:** copied private examples, hard two-physical-line limits, blanket code bans in tables,
   uncertain external license claims, broad writing-rule duplication and new document runtimes.
+  A mandatory summary box and a stricter opening-sentence rule remain unverified proposals;
+  do not add those defaults from this single comparison.
 
 Only the GitHub primary text and license above were verified here. The bundle also names Google
 Cloud, Red Hat, Oracle and Splunk as concept-level influences; their pages, exact editions and

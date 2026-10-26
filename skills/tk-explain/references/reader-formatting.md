@@ -6,12 +6,14 @@ the calling owner's required evidence, warning or verification structure take pr
 
 ## Density and repetition
 
-Prefer one claim per sentence. Open with what happens, why and its consequence in a short
-paragraph; preserve prerequisite and causal steps before cutting length. In multi-sentence
-explanatory paragraphs, separate sentences with authored line breaks (`<br>` in HTML),
-without fixed-width lines or splitting a sentence. Let each sentence reflow on narrow screens.
-The summary identifies a point; the body develops its mechanism or evidence rather than
-copying the summary. Omit irrelevant decisions, including rejected work unrelated to the question.
+Keep sentences short, not the document: prefer one claim per sentence. Preserve needed scenarios,
+early figures, summary boxes, causal steps and chosen understanding checks; remove repetition
+instead. Summary boxes and checks remain optional under the caller's contract, never cut solely
+for brevity. When a realistic situation motivates the topic, put it before the mechanism and
+place the main figure beside it in reading order, without forcing horizontal layout.
+Separate sentences in explanatory paragraphs with `<br>` in HTML; let each reflow naturally.
+The summary identifies a point; the body develops its mechanism or evidence without copying it.
+Omit irrelevant decisions and rejected work unrelated to the question.
 
 After a substantive analogy, map its elements to actual actors, values or events in a compact
 two-column `비유 | 실제` table and state where the analogy stops matching. A passing comparison
@@ -21,10 +23,11 @@ that adds no explanatory mapping needs neither an analogy nor a table.
 
 - Default to at most one bold conclusion sentence per section. Replace repeated
   `**Label**: explanation` list prefixes with plain sentences, or a table for shared attributes.
-- Reserve inline code for literals the reader must copy or search exactly. Merely mentioning
+- Reserve inline code for literals the reader must copy, search or compare exactly. Merely mentioning
   a product, version or file does not require code styling; preserve exact technical spelling.
-- Tables already separate attributes: omit decorative chips and repeated emphasis. Keep code
-  where an exact identifier is necessary, and preserve meaningful status or warning distinctions.
+- Tables already separate attributes: omit decorative chips and repeated emphasis. Code or chips
+  may distinguish exact cell values being compared (hashes, versions, keys) from explanations.
+  Preserve meaningful status or warning distinctions.
 - Use code blocks for executable commands, configuration and diffs. Do not combine emphasis,
   code and citation marks on ordinary sentences without a reader need. Audit authored `<strong>`,
   `<code>` outside `<pre>` and `<sup>` uses; remove weak signals, not evidence or required warnings.
@@ -52,7 +55,6 @@ Do not add nested decorative frames around tables, ordinary prose or every secti
 
 ## Provenance
 
-Adapted from the supplied 2026-10-26 reader-feedback proposal. Its formatting rules were
-applied manually to one accepted output (`applied-once`), not exercised by a fresh skill run.
-Reference layout and citation bindings remain owned by HTML output, not a second rule set.
-Public-source verification and keep/adapt/omit decisions are in `sources.md`.
+The supplied 2026-10-26 proposal was manually accepted once (`applied-once`). Its first comparative
+skill run was rejected; the revised run awaits reader judgment. Do not label it `field-tested`.
+Source verification and keep/adapt/omit decisions are in `sources.md`.
