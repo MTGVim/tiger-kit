@@ -52,12 +52,12 @@ course formats. A simple continuation does not restart that interview or regener
 A material prerequisite that will not be taught may justify a targeted check under
 [readiness](references/readiness.md); reuse observed answers and resolved misconceptions.
 
-Choose one tangible capability just beyond demonstrated ability. For a substantial
-learner-facing lesson, read [documentation purpose](references/diataxis.md). Design
-for learning through guided predictions, choices, traces or actions with expected
-observations and feedback, not only a scroll of explanations. Preserve necessary
-causal teaching; do not force an interactive stepper, runtime or extra pages. Teach its motivating
-problem, needed terms and mechanism, a worked case and relevant limits before asking
+Choose one tangible capability just beyond demonstrated ability. In a substantial
+lesson, teach through a guided prediction, choice, trace or action: supply the needed
+inputs, expected observation and reasoning, then a changed-condition attempt with
+feedback. Keep short requested reviews short; do not require a stepper, runtime or
+extra pages. Teach its motivating problem, needed terms and mechanism, a worked case
+and relevant limits before asking
 for retrieval or application under changed conditions. Include reasoned answer feedback
 and a retry. Choose extent and presentation from the content, without a fixed chapter
 length, word/panel count, analogy or diagram quota. An analogy cannot replace the mechanism.

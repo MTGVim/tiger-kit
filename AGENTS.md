@@ -5,6 +5,7 @@
 TigerKit은 `workflow` `runner`, `plugin`, `scheduler`, `shared-state` `framework`가 아닌 `Agent Skills` 저장소입니다.
 
 - 각 `skills/tk-*` `package`는 `self-contained`합니다.
+- 문서 유형에 관한 유지보수용 설계 근거는 `docs/diataxis.md` 한 곳에 둡니다. 설치된 스킬의 실행 규칙은 해당 `SKILL.md`에 유지하며, 다른 패키지나 저장소 공용 파일을 실행 중에 읽도록 요구하지 않습니다.
 - `SKILL.md`가 현재 실행 `behavior`를 소유합니다.
 - `package-local` `references/`는 조건부 `readable knowledge`만 소유합니다.
 - `package-local` `scripts/`는 `executable helper`를, `agents/`는 실행 메타데이터를 소유합니다. 검증용 `eval`은 `evals/skills/<skill>/`에서 저장소 전용 증거를 소유합니다.
