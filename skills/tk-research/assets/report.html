@@ -53,6 +53,9 @@ pre { max-width: 100%; overflow-x: auto; }
 .ht-visual-stack > * { margin-block: 0; min-width: 0; }
 .ht-figure { min-width: 0; max-width: 100%; margin-inline: 0; padding: calc(2 * var(--space)); border: 1px solid var(--line); border-radius: var(--radius); }
 .ht-ref-meta { display: block; color: var(--muted); }
+.ht-backlinks { display: inline; }
+.ht-backlinks a { display: inline-block; margin-inline-end: .5em; }
+.ht-backlink-current { font-weight: 600; }
 /* Opt-in document flow; outputs are a group, never a horizontal sequence. */
 .ht-flow { display: grid; gap: var(--space); min-width: 0; padding: 0; margin: 1rem 0; list-style: none; }
 .ht-flow > li { min-width: 0; }
@@ -255,7 +258,7 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
 <header><p class="kicker">RESEARCH</p><h1>{{REPORT_TITLE}}</h1><p class="meta">{{REPORT_META}}</p></header>
 <!-- tigerkit:generated-sections:start -->
 <section id="overview"><h2>목표와 결론</h2>
-<p class="lead">가장 중요한 결론과 근거를 먼저 적습니다.<sup id="cite-1-1"><a href="#ref-1" aria-label="참고문헌 1">[1]</a></sup></p>
+<p class="lead">가장 중요한 결론과 근거를 먼저 적습니다.<sup id="cite-1-1"><a href="#ref-1" aria-label="참고문헌 1의 첫 인용">[1.1]</a></sup></p>
 <dl><dt>판단할 문제</dt><dd>결과가 어떤 다음 결정을 도와야 하는지 적습니다.</dd><dt>신뢰도</dt><dd>높음·보통·낮음과 그 이유를 적습니다.</dd><dt>근거 시점</dt><dd>실제로 확인한 날짜와 리비전을 적습니다.</dd></dl></section>
 <!-- If unfamiliar terms need a glossary, use the heading “용어 정리” and keep each definition complete and searchable. Define every term at first use. -->
 <section id="context"><h2>문제와 배경</h2>
@@ -265,7 +268,7 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
 <p><span class="badge">작성 전</span> 현재 연구 단계와 의미 있는 진행 경과를 적습니다. 지속 연구에서는 전체 발견·실험·인계 내역의 개수를 정본과 대조합니다.</p>
 </section>
 <section id="directions"><h2>검토한 방향</h2>
-<p>기준안, 다른 접근법, 지지하거나 제외한 방향과 근거를 적습니다. 실행하지 않은 자원 보류는 반증과 구분합니다.<sup id="cite-1-2"><a href="#ref-1" aria-label="참고문헌 1">[1]</a></sup></p>
+<p>기준안, 다른 접근법, 지지하거나 제외한 방향과 근거를 적습니다. 실행하지 않은 자원 보류는 반증과 구분합니다.<sup id="cite-1-2"><a href="#ref-1" aria-label="참고문헌 1의 두 번째 인용">[1.2]</a></sup></p>
 </section>
 <section id="experiments"><h2>조사와 실험</h2>
 <p>모든 발견과 실험의 ID, 주제, 판정을 짧게 표시하고 상세 근거는 펼쳐 볼 수 있게 적습니다. 실제로 읽은 자료와 수행한 테스트를 구별합니다. 수행하지 않은 실험은 계획으로 표시합니다.</p>
@@ -284,7 +287,7 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
 </ul></section>
 <section id="sources"><h2>참고문헌</h2><!-- Include one source entry per verified source. -->
 <ol><li id="ref-1">실제로 읽은 근거의 제목·링크로 교체합니다.
-<span class="ht-ref-meta">날짜·리비전·행 범위와 근거 절로 교체합니다. 이 항목은 인용 형식 예시이며 연구 근거가 아닙니다. <a href="#cite-1-1" aria-label="인용 1의 첫 위치로 복귀">↩ 1</a> <a href="#cite-1-2" aria-label="인용 1의 두 번째 위치로 복귀">↩ 2</a></span></li></ol>
+<span class="ht-ref-meta">날짜·리비전·행 범위와 근거 절로 교체합니다. 이 항목은 인용 형식 예시이며 연구 근거가 아닙니다. <span class="ht-backlinks" data-ht-backlinks="ref-1">본문으로 ↩ <a href="#cite-1-1" aria-label="인용 1의 첫 위치로 복귀">[1.1]</a> <a href="#cite-1-2" aria-label="인용 1의 두 번째 위치로 복귀">[1.2]</a></span></span></li></ol>
 </section>
 <!-- tigerkit:generated-sections:end -->
 </main>
@@ -558,7 +561,7 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
   const citations = [...(document.querySelectorAll?.('.ht-document a[href^="#"]') || [])].filter(link => {
     let target;
     try { target = document.getElementById(decodeURIComponent(link.hash.slice(1))); } catch { return false; }
-    return target && (link.hasAttribute('data-ht-preview') || target.matches('dt[id], li[id], sup[id^="cite-"]'));
+    return target && (link.hasAttribute('data-ht-preview') || link.closest('[data-ht-backlinks]') || target.matches('dt[id], li[id], sup[id^="cite-"]'));
   });
   if (!citations.length) return;
   const preview = document.createElement('div');
@@ -594,7 +597,7 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
     if (!reference) return;
     const plain = element => {
       const copy = element.cloneNode(true);
-      for (const back of copy.querySelectorAll('a[href^="#cite-"], .ht-external-mark')) back.remove();
+      for (const back of copy.querySelectorAll('a[href^="#cite-"], [data-ht-backlinks], .ht-backlink-current, .ht-external-mark')) back.remove();
       return copy.textContent.replace(/\s+/g, ' ').trim();
     };
     const clip = (text, length) => text.length > length ? text.slice(0, length).trimEnd() + '…' : text;
@@ -604,9 +607,18 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
       let next = reference.nextElementSibling;
       while (next?.matches('dt')) next = next.nextElementSibling;
       while (next?.matches('dd')) { text += ' ' + plain(next); next = next.nextElementSibling; }
-    } else if (reference.matches('sup[id^="cite-"]')) {
+    } else if (link.closest('[data-ht-backlinks]') || reference.matches('sup[id^="cite-"]')) {
       title = reference.closest('section')?.querySelector('h2,h3,h4,h5,h6')?.textContent || '';
-      text = plain(reference.closest('p,li,td,dd,figcaption,blockquote') || reference);
+      const context = reference.closest('p,li,td,dd,figcaption,blockquote') || reference;
+      text = plain(context);
+      if (text.length > 200 && context !== reference) {
+        const before = document.createRange();
+        before.selectNodeContents(context);
+        before.setEndBefore(reference);
+        const offset = plain(before.cloneContents()).length;
+        const start = Math.max(0, offset - 80);
+        text = (start ? '…' : '') + text.slice(start);
+      }
     } else {
       const heading = reference.querySelector('h2,h3,h4,h5,h6,a:not([href^="#"])');
       title = heading ? plain(heading) : '';
@@ -642,6 +654,60 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
   addEventListener('hashchange', hide);
   addEventListener('scroll', position, {passive: true});
   addEventListener('resize', position);
+})();
+
+(() => {
+  // The authored numbers and hrefs work without JS; only the recent origin is transient.
+  const root = document.querySelector('.ht-document');
+  if (!root) return;
+  const groups = [...root.querySelectorAll('[data-ht-backlinks]')];
+  if (!groups.length) return;
+  const targetOf = link => {
+    try { return document.getElementById(decodeURIComponent(link.hash.slice(1))); }
+    catch { return null; }
+  };
+  let marked = null, destination = null, originalLabel = null;
+  const clear = () => {
+    if (marked) {
+      marked.querySelector('.ht-backlink-current')?.remove();
+      if (originalLabel === null) marked.removeAttribute('aria-label');
+      else marked.setAttribute('aria-label', originalLabel);
+    }
+    marked = destination = null;
+  };
+  root.addEventListener('click', event => {
+    const link = event.target.closest('a[href^="#"]');
+    if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    clear();
+    if (link.closest('[data-ht-backlinks]')) return;
+    const target = targetOf(link);
+    if (!target) return;
+    for (const group of groups) {
+      if (group.getAttribute('data-ht-backlinks') !== target.id) continue;
+      const backlinks = [...group.querySelectorAll('a[href^="#"]')];
+      if (backlinks.length < 2) continue;
+      const back = backlinks.find(back => {
+        const origin = targetOf(back);
+        return origin === link || (origin?.matches('sup') && origin.contains(link));
+      });
+      if (!back) continue;
+      marked = back; destination = target;
+      originalLabel = back.getAttribute('aria-label');
+      const label = originalLabel || back.textContent.trim();
+      const marker = document.createElement('span');
+      marker.className = 'ht-backlink-current';
+      marker.textContent = ' · 읽던 곳';
+      back.append(marker);
+      back.setAttribute('aria-label', label + ' · 읽던 곳');
+      break;
+    }
+  });
+  addEventListener('hashchange', () => {
+    let id;
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch { clear(); return; }
+    if (destination?.id !== id) clear();
+  });
+  addEventListener('pageshow', event => { if (event.persisted) clear(); });
 })();
 
 (() => {

@@ -46,6 +46,9 @@ pre { max-width: 100%; overflow-x: auto; }
 .ht-visual-stack > * { margin-block: 0; min-width: 0; }
 .ht-figure { min-width: 0; max-width: 100%; margin-inline: 0; padding: calc(2 * var(--space)); border: 1px solid var(--line); border-radius: var(--radius); }
 .ht-ref-meta { display: block; color: var(--muted); }
+.ht-backlinks { display: inline; }
+.ht-backlinks a { display: inline-block; margin-inline-end: .5em; }
+.ht-backlink-current { font-weight: 600; }
 /* Opt-in document flow; outputs are a group, never a horizontal sequence. */
 .ht-flow { display: grid; gap: var(--space); min-width: 0; padding: 0; margin: 1rem 0; list-style: none; }
 .ht-flow > li { min-width: 0; }

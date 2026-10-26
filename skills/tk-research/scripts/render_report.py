@@ -148,7 +148,7 @@ def render_sections(sections, sources):
         toc.append(f'<li><a href="#{escape(identifier)}">{escape(title)}</a></li>')
 
     source_entries = []
-    for source in sources:
+    for source_number, source in enumerate(sources, 1):
         title = escape(source["title"])
         if source["url"]:
             title = f'<a href="{escape(source["url"])}">{title}</a>'
@@ -162,10 +162,14 @@ def render_sections(sections, sources):
         if source["link_unavailable"]:
             details.append("링크 없음")
         suffix = " · ".join(details)
+        multiple = len(source["citations"]) > 1
         backlinks = " ".join(
-            f'<a href="#{escape(citation_id)}" aria-label="인용 {index}의 위치로 복귀">↩ {index}</a>'
+            f'<a href="#{escape(citation_id)}" aria-label="참고문헌 {source_number}의 인용 {index}로 복귀">'
+            + (f'[{source_number}.{index}]' if multiple else '본문으로 돌아가기') + '</a>'
             for index, citation_id in enumerate(source["citations"], 1)
         )
+        backlinks = (f'<span class="ht-backlinks" data-ht-backlinks="{escape(source["id"])}">'
+                     + ('본문으로 ↩ ' if multiple else '') + backlinks + '</span>')
         source_entries.append(
             f'<li id="{escape(source["id"])}">{title}'
             f'{f" · {suffix}" if suffix else ""} {backlinks}</li>'

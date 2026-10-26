@@ -31,8 +31,9 @@ section. For other sourced explanation, name the supported section or exact clai
 metadata; use a citation beside the claim whenever section-level binding would be ambiguous.
 Keep every external claim traceable; a source list without that binding is insufficient.
 Research reports retain their checker-owned requirement that each entry has citation backlinks. Reuse a source number, assigning a unique ID to each citation occurrence.
-Use native `<sup id="cite-1-1"><a href="#ref-1" aria-label="참고문헌 1">[1]</a></sup>` with inline references below.
-For another occurrence `cite-1-2`, add a second labeled backlink in the same reference entry.
+For a source cited once, use native `<sup id="cite-1-1"><a href="#ref-1" aria-label="참고문헌 1">[1]</a></sup>`.
+For repeated citations, keep source 1 but show occurrence labels `[1.1]`, `[1.2]` in both the
+body superscripts and matching backlinks; accessible names identify source and occurrence.
 Default each entry to two logical rows: a linked title followed by a muted `.ht-ref-meta`
 block with needed institution/version/date, source line range, supported section or claim and
 short backlinks for actual citation occurrences. Let long titles and metadata wrap naturally;
@@ -42,8 +43,23 @@ An entry with section-level support only needs no fabricated citation or backlin
 
 ```html
 <li id="ref-1"><a href="https://example.org/guide">자료 제목</a>
-<span class="ht-ref-meta">발행 기관, 2026. 근거: 동작 원리 <a href="#cite-1-1" aria-label="본문 인용으로 복귀">↩</a></span></li>
+<span class="ht-ref-meta">발행 기관, 2026. 근거: 동작 원리
+<span class="ht-backlinks" data-ht-backlinks="ref-1">본문으로 ↩
+<a href="#cite-1-1" aria-label="참고문헌 1의 첫 인용으로 복귀">[1.1]</a>
+<a href="#cite-1-2" aria-label="참고문헌 1의 두 번째 인용으로 복귀">[1.2]</a>
+</span></span></li>
 ```
+For repeated glossary/appendix links, number occurrences per destination in document order:
+`<a id="mention-foo-1" href="#foo">FOO<sup>[1]</sup></a>`, then `[2]`. Put matching native
+backlinks `[1]`, `[2]` inside `.ht-backlinks[data-ht-backlinks="foo"]` by the explanation
+(inside the `dd` for a `dt`). The attribute names the destination ID, without `#`.
+With only one occurrence, omit the occurrence number and label the backlink `본문으로 돌아가기`.
+Keep all numbers, IDs and return links in authored HTML, not JS-generated markup. The shared
+script adds `읽던 곳` only to the matching backlink after a same-tab forward activation;
+fresh loads/deep links have no inferred origin. It clears the marker on return/other navigation
+and preserves native history, keyboard activation and no-JS links. Backlink previews show the
+origin section and surrounding sentence. Check repeated terms and sources, single occurrences,
+switching origins, reload, history, modified clicks and no-JS return navigation.
 Render each reference item slightly smaller than body text, at `.875em` relative to the body
 with `line-height: 1.55`; keep the text readable and allow long titles and URLs to wrap. Keep its
 return link visible without letting it dominate the source details. Verify every forward/back target

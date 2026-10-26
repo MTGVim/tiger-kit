@@ -47,7 +47,12 @@ Render through `scripts/render_report.py`. Author a JSON content file with this 
 Include `overview` and `verification` sections. Add any other relevant sections as `{id, title,
 html}` objects; section HTML is a fragment, not a complete page. Put each citation in that content as
 `<sup id="cite-1"><a href="#ref-1">[1]</a></sup>` and list the matching citation ID under its
-source; the renderer creates reference entries, return links, and the table of contents. Use a
+source. For repeated citations, use `[1.1]`, `[1.2]` in the body superscripts, ordered by the
+source's `citations` array; the first number is the source's position in `sources`. Give each
+link an accessible name identifying its source and occurrence. The renderer creates matching
+numbered return links and transient recent-origin support; single citations keep `[1]` and a
+plain return link. For repeated glossary/appendix links, read [HTML Components](html-components.md).
+The renderer also creates reference entries and the table of contents. Use a
 verified HTTPS URL, a local path, or set `link_unavailable` to `true`; the checker warns when all
 three are absent. The renderer escapes title, section-title, source and metadata fields, selects the
 theme from the user settings (an explicit request wins), and copies the offline shell, navigation,

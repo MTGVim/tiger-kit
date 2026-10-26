@@ -1,7 +1,7 @@
 <p class="ht-lede">캐시의 만료 시점에 따라 사용자가 받는 값이 달라집니다.<br>아래 예시는 정확성과 응답 속도를 비교하기 위한 가상 시나리오입니다.</p>
 <p>만료된 값을 막으면 최신 조회를 기다려야 합니다. 이전 값을 먼저 보여 주면 빨리 응답할 수 있지만, 갱신 전까지 오래된 값이 보입니다.</p>
 <section id="scenario"><h2>만료 시각에 도착한 요청</h2>
-<p>오전 10시에 저장한 값이 10시 5분에 만료된다고 가정합니다.<br>10시 5분에 요청이 도착하면 <a href="#term-expiry">만료 조건</a>에 따라 저장된 값을 사용할지 결정합니다.</p>
+<p>오전 10시에 저장한 값이 10시 5분에 만료된다고 가정합니다.<br>10시 5분에 요청이 도착하면 <a id="mention-expiry-1" href="#term-expiry">만료 조건<sup>[1]</sup></a>에 따라 저장된 값을 사용할지 결정합니다.</p>
 <div class="ht-table-scroll"><table><thead><tr><th>처리 방식</th><th>사용자가 받는 결과</th><th>주요 단점</th></tr></thead><tbody>
 <tr><td>조회가 끝난 뒤 응답합니다.</td><td>새로 조회한 값을 받습니다.</td><td>조회 시간만큼 기다립니다.</td></tr>
 <tr><td>이전 값으로 먼저 응답합니다.</td><td>저장된 값을 받고 이후에 갱신합니다.</td><td>오래된 값이 보일 수 있습니다.</td></tr>
@@ -9,14 +9,15 @@
 <p>허용할 수 있는 지연과 데이터의 유효 기간을 모르므로, 이 예시에서는 어느 방식도 권장하지 않습니다.</p>
 </section>
 <section id="condition"><h2>경계 조건을 코드로 확인하기</h2>
-<p>이 예시에서는 현재 시각이 만료 시각보다 작을 때만 캐시 값을 반환합니다.<br>두 시각이 같을 때의 결과는 <a href="#appendix-boundary">경계 해설</a>에서 확인할 수 있습니다.<sup id="cite-example"><a href="#ref-example" aria-label="예시 근거">[1]</a></sup></p>
+<p>이 예시의 <a id="mention-expiry-2" href="#term-expiry">만료 조건<sup>[2]</sup></a>에서는 현재 시각이 만료 시각보다 작을 때만 캐시 값을 반환합니다.<br>두 시각이 같을 때의 결과는 <a href="#appendix-boundary">경계 해설</a>에서 확인할 수 있습니다.<sup id="cite-example"><a href="#ref-example" aria-label="예시 근거">[1]</a></sup></p>
 <pre class="ht-code" data-label="cache.ts"><code>function readCache(entry, now) {
   return now &lt; entry.expiresAt ? entry.value : null;
 }
 </code></pre>
 </section>
 <section id="glossary"><h2>용어</h2><dl>
-<dt id="term-expiry">만료 조건</dt><dd>저장된 값을 더 이상 사용하지 않기로 정한 시각 비교 조건입니다.</dd>
+<dt id="term-expiry">만료 조건</dt><dd>저장된 값을 더 이상 사용하지 않기로 정한 시각 비교 조건입니다.
+<span class="ht-backlinks" data-ht-backlinks="term-expiry">본문으로 ↩ <a href="#mention-expiry-1" aria-label="만료 조건의 첫 위치로 복귀">[1]</a> <a href="#mention-expiry-2" aria-label="만료 조건의 두 번째 위치로 복귀">[2]</a></span></dd>
 </dl></section>
 <section id="appendix"><h2>경계 해설과 예시 근거</h2><ol>
 <li id="appendix-boundary"><h3>두 시각이 같은 경우</h3><p>작다는 조건을 만족하지 않으므로 위 함수는 null을 반환합니다.</p><a href="#condition" data-ht-preview>코드 설명으로 돌아갑니다.</a></li>

@@ -243,7 +243,7 @@
   const citations = [...(document.querySelectorAll?.('.ht-document a[href^="#"]') || [])].filter(link => {
     let target;
     try { target = document.getElementById(decodeURIComponent(link.hash.slice(1))); } catch { return false; }
-    return target && (link.hasAttribute('data-ht-preview') || target.matches('dt[id], li[id], sup[id^="cite-"]'));
+    return target && (link.hasAttribute('data-ht-preview') || link.closest('[data-ht-backlinks]') || target.matches('dt[id], li[id], sup[id^="cite-"]'));
   });
   if (!citations.length) return;
   const preview = document.createElement('div');
@@ -279,7 +279,7 @@
     if (!reference) return;
     const plain = element => {
       const copy = element.cloneNode(true);
-      for (const back of copy.querySelectorAll('a[href^="#cite-"], .ht-external-mark')) back.remove();
+      for (const back of copy.querySelectorAll('a[href^="#cite-"], [data-ht-backlinks], .ht-backlink-current, .ht-external-mark')) back.remove();
       return copy.textContent.replace(/\s+/g, ' ').trim();
     };
     const clip = (text, length) => text.length > length ? text.slice(0, length).trimEnd() + '…' : text;
@@ -289,9 +289,18 @@
       let next = reference.nextElementSibling;
       while (next?.matches('dt')) next = next.nextElementSibling;
       while (next?.matches('dd')) { text += ' ' + plain(next); next = next.nextElementSibling; }
-    } else if (reference.matches('sup[id^="cite-"]')) {
+    } else if (link.closest('[data-ht-backlinks]') || reference.matches('sup[id^="cite-"]')) {
       title = reference.closest('section')?.querySelector('h2,h3,h4,h5,h6')?.textContent || '';
-      text = plain(reference.closest('p,li,td,dd,figcaption,blockquote') || reference);
+      const context = reference.closest('p,li,td,dd,figcaption,blockquote') || reference;
+      text = plain(context);
+      if (text.length > 200 && context !== reference) {
+        const before = document.createRange();
+        before.selectNodeContents(context);
+        before.setEndBefore(reference);
+        const offset = plain(before.cloneContents()).length;
+        const start = Math.max(0, offset - 80);
+        text = (start ? '…' : '') + text.slice(start);
+      }
     } else {
       const heading = reference.querySelector('h2,h3,h4,h5,h6,a:not([href^="#"])');
       title = heading ? plain(heading) : '';
@@ -327,6 +336,60 @@
   addEventListener('hashchange', hide);
   addEventListener('scroll', position, {passive: true});
   addEventListener('resize', position);
+})();
+
+(() => {
+  // The authored numbers and hrefs work without JS; only the recent origin is transient.
+  const root = document.querySelector('.ht-document');
+  if (!root) return;
+  const groups = [...root.querySelectorAll('[data-ht-backlinks]')];
+  if (!groups.length) return;
+  const targetOf = link => {
+    try { return document.getElementById(decodeURIComponent(link.hash.slice(1))); }
+    catch { return null; }
+  };
+  let marked = null, destination = null, originalLabel = null;
+  const clear = () => {
+    if (marked) {
+      marked.querySelector('.ht-backlink-current')?.remove();
+      if (originalLabel === null) marked.removeAttribute('aria-label');
+      else marked.setAttribute('aria-label', originalLabel);
+    }
+    marked = destination = null;
+  };
+  root.addEventListener('click', event => {
+    const link = event.target.closest('a[href^="#"]');
+    if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    clear();
+    if (link.closest('[data-ht-backlinks]')) return;
+    const target = targetOf(link);
+    if (!target) return;
+    for (const group of groups) {
+      if (group.getAttribute('data-ht-backlinks') !== target.id) continue;
+      const backlinks = [...group.querySelectorAll('a[href^="#"]')];
+      if (backlinks.length < 2) continue;
+      const back = backlinks.find(back => {
+        const origin = targetOf(back);
+        return origin === link || (origin?.matches('sup') && origin.contains(link));
+      });
+      if (!back) continue;
+      marked = back; destination = target;
+      originalLabel = back.getAttribute('aria-label');
+      const label = originalLabel || back.textContent.trim();
+      const marker = document.createElement('span');
+      marker.className = 'ht-backlink-current';
+      marker.textContent = ' · 읽던 곳';
+      back.append(marker);
+      back.setAttribute('aria-label', label + ' · 읽던 곳');
+      break;
+    }
+  });
+  addEventListener('hashchange', () => {
+    let id;
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch { clear(); return; }
+    if (destination?.id !== id) clear();
+  });
+  addEventListener('pageshow', event => { if (event.persisted) clear(); });
 })();
 
 (() => {

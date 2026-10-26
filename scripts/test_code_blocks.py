@@ -72,6 +72,7 @@ class CodeBlocksTest(unittest.TestCase):
                          'Shell render regression requires an explicitly configured local browser')
     def test_document_shell_and_code_browser_regression(self):
         result = subprocess.run(['node', '--test', 'evals/skills/tk-explain/document-shell.test.cjs',
-                                 'evals/skills/tk-explain/reader-enhancements.test.cjs'],
+                                 'evals/skills/tk-explain/reader-enhancements.test.cjs',
+                                 'evals/skills/tk-explain/backlinks.test.cjs'],
                                 cwd=ROOT, capture_output=True, text=True, timeout=90)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)

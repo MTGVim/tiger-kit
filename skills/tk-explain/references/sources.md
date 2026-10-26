@@ -196,3 +196,15 @@ style passes. The Impeccable source-path lookup returned 404; its public catalog
 instead. No donor runtime or behavior eval was executed; no measured improvement in user
 revision count, comprehension or token cost is claimed. Local regression checks are listed in
 `evals/changes/html-reader-corrections.md` at the repository level.
+
+## Repeated-link return navigation (2026-10-26)
+
+Compared the user's repeated-link ambiguity report with TigerKit `096ce0bc` and
+MediaWiki Help:Cite, revision `8659984`, “Multiple uses of the same footnote” and
+“Set references to use ^ and letters”:
+<https://www.mediawiki.org/w/index.php?title=Help:Cite&oldid=8659984>.
+Keep distinct native return anchors; adapt occurrence labels to both ends of the link,
+using source.occurrence for citations and per-target numbers for terms. The transient
+recent-origin marker is an independently authored TigerKit extension. Omit wiki syntax,
+runtime, templates, skin and source code. No upstream runtime/eval was executed and no
+NamuWiki behavior is asserted. Local browser regression owns the interaction evidence.

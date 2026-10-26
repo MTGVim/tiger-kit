@@ -100,8 +100,8 @@ class ResearchReportTest(unittest.TestCase):
                     'id': 'overview',
                     'title': '목표와 결론',
                     'html': '<p>ETag validation reduces transfer when a representation is unchanged.'
-                            '<sup id="cite-1"><a href="#ref-1">[1]</a></sup>'
-                            '<sup id="cite-2"><a href="#ref-1">[1]</a></sup></p>',
+                            '<sup id="cite-1"><a href="#ref-1">[1.1]</a></sup>'
+                            '<sup id="cite-2"><a href="#ref-1">[1.2]</a></sup></p>',
                 },
                 {
                     'id': 'verification',
@@ -160,6 +160,9 @@ class ResearchReportTest(unittest.TestCase):
             self.assertEqual([node.attrs.get('href') for node in links],
                              ['https://example.test/http-cache', '#cite-1', '#cite-2'])
             self.assertTrue(all(node.attrs.get('aria-label') for node in links[1:]))
+            self.assertEqual([node.text_content() for node in links[1:]], ['[1.1]', '[1.2]'])
+            self.assertTrue(any(node.attrs.get('data-ht-backlinks') == 'ref-1'
+                                for node in reference.descendants()))
             self.assertIn('2026-10-16', reference.text_content())
             self.assertIn('current', reference.text_content())
             ids = {node.attrs.get('id') for node in nodes}
