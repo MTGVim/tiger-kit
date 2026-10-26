@@ -351,9 +351,9 @@ class SyncExecutionProtocolTest(unittest.TestCase):
                 if mutation == "missing":
                     consumer.unlink()
                 elif mutation == "canonical":
-                    canonical.write_text("# Changed reader purposes\\n", encoding="utf-8")
+                    canonical.write_text("# Changed reader purposes\n", encoding="utf-8")
                 else:
-                    consumer.write_text("# Incorrect reader purposes\\n", encoding="utf-8")
+                    consumer.write_text("# Incorrect reader purposes\n", encoding="utf-8")
                 self.assertEqual(self.run_main("--check"), 1)
                 self.assertEqual(self.run_main(), 0)
                 self.assertEqual(consumer.read_bytes(), canonical.read_bytes())
