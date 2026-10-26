@@ -52,7 +52,7 @@ token. All classes are opt-in and reuse the common theme, without a renderer or 
 Adapt this minimal structure, naming every input, result and supported relationship:
 
 ```html
-<figure aria-labelledby="flow-title">
+<figure class="ht-figure" aria-labelledby="flow-title">
   <figcaption id="flow-title">Input, processing and simultaneous results</figcaption>
   <ol class="ht-flow">
     <li><div class="ht-card"><h3>Input set</h3><p>Verified input scope.</p></div>

@@ -23,6 +23,12 @@ change with the described step, rather than only the caption? A static drawing r
 when it explains the goal without hidden intermediate states. Author intent,
 section/table/figure counts and render success cannot supply missing teaching or establish reader mastery.
 
+For explanatory prose, does formatting show priority rather than repeated bold list labels,
+code-styled ordinary names and duplicate summary sentences? Apply the caller's reader-formatting
+defaults where relevant, preserving required warnings and verification structures. Do supporting
+headings name one category? Does each composed figure show its boundary and label every meaningful
+lane, row or panel? Are references readable and their supported claims traceable?
+
 Each blocking finding names its location, missing information, the consequence for the
 reader's goal and minimum correction. Prioritize those failures over incidental stylistic preference, but explicitly requested
 voice or presentation constraints are acceptance requirements. Check whether introductions

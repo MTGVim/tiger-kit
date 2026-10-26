@@ -166,7 +166,7 @@ test('card flow preserves grouping, text geometry and offline controls across vi
   } finally { await browser.close(); }
 });
 
-test('inline references keep backlinks on a short line and wrap long titles without clipping', {
+test('two-row references keep backlinks and wrap long titles without clipping', {
   skip: !process.env.TK_PLAYWRIGHT_MODULE || !process.env.TK_CHROMIUM_EXECUTABLE,
 }, async () => {
   const { chromium } = require(process.env.TK_PLAYWRIGHT_MODULE);
@@ -180,13 +180,14 @@ test('inline references keep backlinks on a short line and wrap long titles with
       await page.route('**/*', route => { throw new Error('Offline reference requested network: ' + route.request().url()); });
       for (const long of [false, true]) {
         const title = long ? '한국어 설명의 조건과 실제 동작을 순서대로 확인하는 긴 참고 자료 제목 '.repeat(12) : '자료 제목';
-        const entry = `<li id="ref-1"><a href="https://example.org/guide">${title}</a> (기관, 2026) <a href="#cite-1-1" aria-label="첫 인용으로 복귀">↩ 1</a> <a href="#cite-1-2" aria-label="둘째 인용으로 복귀">↩ 2</a></li>`;
+        const entry = `<li id="ref-1"><a href="https://example.org/guide">${title}</a><span class="ht-ref-meta">기관, 2026. 근거: 동작 원리 <a href="#cite-1-1" aria-label="첫 인용으로 복귀">↩ 1</a> <a href="#cite-1-2" aria-label="둘째 인용으로 복귀">↩ 2</a></span></li>`;
         const html = fs.readFileSync(path.join(root, 'skills/tk-research/assets/report.html'), 'utf8')
           .replace(/<li id="ref-1">[\s\S]*?<\/li>/, entry)
           .replace('data-default-theme="system"', `data-default-theme="${theme}" data-theme="${theme}"`);
         await page.setContent(html);
         await page.evaluate(() => document.fonts.ready);
-        assert.equal(await page.locator('#ref-1 p, #ref-1 br').count(), 0);
+        assert.equal(await page.locator('#ref-1 > .ht-ref-meta').count(), 1);
+        assert.equal(await page.locator('#ref-1 > .ht-ref-meta').evaluate(el => getComputedStyle(el).display), 'block');
         const layout = await page.locator('#ref-1').evaluate(li => {
           const box = li.getBoundingClientRect();
           const range = document.createRange(); range.selectNodeContents(li);
@@ -200,7 +201,7 @@ test('inline references keep backlinks on a short line and wrap long titles with
         // Inline text and anchors may have different font baselines: compare total height instead.
         const height = await page.locator('#ref-1').evaluate(li => ({ actual: li.getBoundingClientRect().height,
           line: parseFloat(getComputedStyle(li).lineHeight) }));
-        if (!long) assert.ok(height.actual <= height.line + 1);
+        if (!long) assert.ok(height.actual >= height.line * 2 - 1);
         if (long && width === 390) assert.ok(height.actual > height.line * 2);
         for (const occurrence of ['cite-1-1', 'cite-1-2']) {
           await page.locator(`#${occurrence} > a`).click();
@@ -212,4 +213,47 @@ test('inline references keep backlinks on a short line and wrap long titles with
       await context.close();
     }
   } finally { await browser.close(); }
+});
+
+test('visual-stack children contain a wide SVG scroller at 360px', {
+  skip: !process.env.TK_PLAYWRIGHT_MODULE || !process.env.TK_CHROMIUM_EXECUTABLE,
+}, async () => {
+  const { chromium } = require(process.env.TK_PLAYWRIGHT_MODULE);
+  const browser = await chromium.launch({headless:true, executablePath:process.env.TK_CHROMIUM_EXECUTABLE,
+    args:['--no-sandbox','--disable-webgl','--disable-dev-shm-usage']});
+  const current = fs.readFileSync(path.join(root,'skills/tk-explain/assets/html-theme.css'),'utf8');
+  const variants = [['after',current]];
+  if (process.env.TK_FORMATTING_BASELINE) {
+    const {spawnSync} = require('node:child_process');
+    const before=spawnSync('git',['show',`${process.env.TK_FORMATTING_BASELINE}:skills/tk-explain/assets/html-theme.css`],{cwd:root,encoding:'utf8'});
+    assert.equal(before.status,0,before.stderr); variants.unshift(['before',before.stdout]);
+  }
+  try {
+    for(const theme of ['light','dark']) for(const width of [360,1280]) for(const [phase,css] of variants) {
+      const context=await browser.newContext({viewport:{width,height:800},javaScriptEnabled:false,colorScheme:theme});
+      const page=await context.newPage();
+      await page.route('**/*',route=>{throw Error('Unexpected network request');});
+      await page.setContent(`<!doctype html><html lang="ko" data-theme="${theme}"><meta charset="utf-8"><style>${css}</style><style>main{margin:16px}figure{margin-inline:0}.wide{min-width:640px}</style><main><div class="ht-visual-stack"><figure><div class="ht-table-scroll" tabindex="0" aria-label="가로로 볼 수 있는 그림"><svg class="wide" viewBox="0 0 640 180" role="img" aria-label="두 줄 비교"><text x="10" y="40">이전 상태</text><text x="10" y="130">갱신 후 상태</text></svg></div><figcaption>서로 다른 두 시점의 상태</figcaption></figure></div></main></html>`);
+      const measurement=await page.evaluate(()=>({pageOverflow:document.documentElement.scrollWidth>innerWidth,
+        wrapperWidth:document.querySelector('.ht-table-scroll').clientWidth,
+        scrollWidth:document.querySelector('.ht-table-scroll').scrollWidth}));
+      if(phase==='before' && width===360) assert.equal(measurement.pageOverflow,true);
+      else {
+        assert.equal(measurement.pageOverflow,false,JSON.stringify({phase,theme,width,measurement}));
+        if(width===360) assert.ok(measurement.scrollWidth>measurement.wrapperWidth);
+      }
+      await page.locator('figure').evaluate(el=>el.classList.add('ht-figure'));
+      if(phase==='after') {
+        const framed=await page.locator('figure').evaluate(el=>({border:getComputedStyle(el).borderTopWidth,
+          overflow:document.documentElement.scrollWidth>innerWidth,
+          containsCaption:el.contains(document.querySelector('figcaption'))}));
+        assert.deepEqual(framed,{border:'1px',overflow:false,containsCaption:true});
+        const scroller=page.locator('.ht-table-scroll');await scroller.focus();
+        await page.keyboard.press('ArrowRight');
+        // Reduced/smooth key scrolling can be asynchronous: programmatic containment is deterministic.
+        assert.ok(await scroller.evaluate(el=>{el.scrollLeft=100;return el.scrollLeft>0 || el.scrollWidth===el.clientWidth;}));
+      }
+      await context.close();
+    }
+  } finally {await browser.close();}
 });

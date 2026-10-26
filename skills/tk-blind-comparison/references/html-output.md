@@ -113,18 +113,25 @@ languages, wrap-mode overflow and token contrast >=4.5 against `--code-bg` in bo
 
 ## Citations and references
 
-For document prose, place numbered superscript citations immediately beside supported claims,
-then collect verified source titles, links and relevant date/revision metadata in a numbered
-bottom `참고문헌` section. Reuse a source number, assigning a unique ID to each citation occurrence.
+For document prose, place numbered superscript citations beside claims where the reader needs
+an immediate source, especially disputed, consequential or precisely quoted claims. Collect
+verified titles, links and relevant date/revision metadata in a numbered bottom `참고문헌`
+section. For other sourced explanation, name the supported section or exact claim in the reference
+metadata; use a citation beside the claim whenever section-level binding would be ambiguous.
+Keep every external claim traceable; a source list without that binding is insufficient.
+Research reports retain their checker-owned requirement that each entry has citation backlinks. Reuse a source number, assigning a unique ID to each citation occurrence.
 Use native `<sup id="cite-1-1"><a href="#ref-1" aria-label="참고문헌 1">[1]</a></sup>` with inline references below.
 For another occurrence `cite-1-2`, add a second labeled backlink in the same reference entry.
-Default entries to inline title links, needed institution/version/date and short backlinks,
-without automatic `<p>`/`<br>`. Keep internal inspection/adoption notes in source records and
-reader-relevant limits beside claims. Short entries fit one line when space permits; long titles
-and narrow screens wrap without truncation or `white-space: nowrap`.
+Default each entry to two logical rows: a linked title followed by a muted `.ht-ref-meta`
+block with needed institution/version/date, source line range, supported section or claim and
+short backlinks for actual citation occurrences. Let long titles and metadata wrap naturally;
+never truncate, clamp to two physical lines or use `white-space: nowrap`.
+Keep internal inspection/adoption notes in source records and reader-relevant limits beside claims.
+An entry with section-level support only needs no fabricated citation or backlink.
 
 ```html
-<li id="ref-1"><a href="https://example.org/guide">자료 제목</a> (발행 기관, 2026) <a href="#cite-1-1" aria-label="본문 인용으로 복귀">↩</a></li>
+<li id="ref-1"><a href="https://example.org/guide">자료 제목</a>
+<span class="ht-ref-meta">발행 기관, 2026. 근거: 동작 원리 <a href="#cite-1-1" aria-label="본문 인용으로 복귀">↩</a></span></li>
 ```
 Render each reference item slightly smaller than body text, at `.875em` relative to the body
 with `line-height: 1.55`; keep the text readable and allow long titles and URLs to wrap. Keep its
@@ -156,6 +163,9 @@ code, identifiers and necessary quotations as marked evidence, with context. Bef
 reader-facing prose, headings, labels or captions, connect concrete subjects, actions, conditions
 and consequences while preserving claim-evidence bindings. Use the calling skill's writing procedure;
 read its `clear-writing.md` when composing or revising prose and reuse it in the active context.
+For document density, emphasis, supporting headings and composed figure boundaries, read
+[reader formatting](reader-formatting.md). Preserve the owner's required warning, test/checklist
+or verification-summary structure when it differs from ordinary explanation defaults.
 Let each section's opening establish its subject and purpose without repeating an answer formula.
 Use content-specific headings that name the subject, decision, evidence or limitation; do not
 narrate the assistant's reading order with generic headings such as `먼저 볼 것`, `먼저 확인할 것`

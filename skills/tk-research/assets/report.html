@@ -50,7 +50,9 @@ pre { max-width: 100%; overflow-x: auto; }
 .ht-chat-turn[data-speaker="reader"] { justify-self: end; border-color: var(--accent); border-radius: 1rem 1rem .25rem 1rem; background: var(--panel); }
 .ht-visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .ht-visual-stack { display: grid; gap: calc(2 * var(--space)); margin-block: calc(2 * var(--space)); min-width: 0; }
-.ht-visual-stack > * { margin-block: 0; }
+.ht-visual-stack > * { margin-block: 0; min-width: 0; }
+.ht-figure { min-width: 0; max-width: 100%; margin-inline: 0; padding: calc(2 * var(--space)); border: 1px solid var(--line); border-radius: var(--radius); }
+.ht-ref-meta { display: block; color: var(--muted); }
 /* Opt-in document flow; outputs are a group, never a horizontal sequence. */
 .ht-flow { display: grid; gap: var(--space); min-width: 0; padding: 0; margin: 1rem 0; list-style: none; }
 .ht-flow > li { min-width: 0; }
@@ -267,7 +269,8 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
 <li><strong>화면 검증:</strong> 미기록. 실제로 확인한 화면 크기와 테마, 조작 및 결과를 적습니다. 수행하지 못했다면 검증 불가 상태와 이유를 적습니다.</li>
 </ul></section>
 <section id="sources"><h2>참고문헌</h2><!-- Include one source entry per verified source. -->
-<ol><li id="ref-1">실제로 읽은 근거의 제목·링크·날짜·리비전으로 교체합니다. 이 항목은 인용 형식 예시이며 연구 근거가 아닙니다. <a href="#cite-1-1" aria-label="인용 1의 첫 위치로 복귀">↩ 1</a> <a href="#cite-1-2" aria-label="인용 1의 두 번째 위치로 복귀">↩ 2</a></li></ol>
+<ol><li id="ref-1">실제로 읽은 근거의 제목·링크로 교체합니다.
+<span class="ht-ref-meta">날짜·리비전·행 범위와 근거 절로 교체합니다. 이 항목은 인용 형식 예시이며 연구 근거가 아닙니다. <a href="#cite-1-1" aria-label="인용 1의 첫 위치로 복귀">↩ 1</a> <a href="#cite-1-2" aria-label="인용 1의 두 번째 위치로 복귀">↩ 2</a></span></li></ol>
 </section>
 <!-- tigerkit:generated-sections:end -->
 </main>

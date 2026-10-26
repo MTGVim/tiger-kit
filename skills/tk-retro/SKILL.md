@@ -92,6 +92,11 @@ omit report-internal finding IDs, local absolute paths and private identifiers. 
 need distinct recipients, use package-specific slugs. Reuse a matching draft from this session for
 the same upstream package and append new items; inspect it first and preserve prior content.
 Without upstream findings, create no issue draft. Never post it or offer publication.
+Before writing a draft, read [privacy and requested bundles](references/privacy-and-bundles.md)
+for all-file anonymization, identifier/verbatim scans and a fresh read-only privacy reviewer.
+When the user requests session-produced reusable attachments, include their verification levels
+and evidence in a manifest and ZIP with the draft; otherwise the draft remains the only file.
+Withhold file delivery until those checks pass; retain sanitized conversational findings if blocked.
 
 Use this conversation layout, omitting empty groups and repeating the upstream group per package.
 Give exact user-owned before/after wording in conversation.
@@ -131,20 +136,19 @@ hypotheses and preventive rationale distinct; a reasoned `no change` remains val
 rules, tests, Git state, or remote issues/PRs. Do not auto-invoke an implementation
 skill or silently route a handoff. Provide an exact recommendation for the owning
 workflow; a request to actually perform the change is a separate implementation
-task. Return the retrospective in conversation. Write no report file; the only file output
-is the upstream issue draft under Disposition, after the Artifact Paths checks.
+task. Return the retrospective in conversation. Write no report file; file outputs are limited
+to the upstream issue draft and, on request, its labeled attachments, manifest and bundle under
+Disposition, after the Artifact Paths checks.
 For conversation-only output or blocked Artifact Paths checks, return the findings in
 conversation without writing a draft; report a blocked file branch without losing the
 conversational findings. Honor an explicit final destination for the issue draft. Keep
 secrets, raw logs, private identifiers and unnecessary user details out of reusable proposals.
 
-Anonymize the issue draft by default, including its topic slug: replace ticket keys, private organization,
-product and domain terms, private repository names and paths, people's names, local home
-paths and verbatim user requests with neutral descriptions. Public upstream names,
-revisions and skill-internal file names may stay. After writing, scan the issue draft
-for identifiers seen in the session with fixed-string search (for example `rg -n -F`),
-remove any that remain, and repeat until no private identifiers match. Do not include
-secrets in search arguments or output. Apply the same sanitization to conversational output.
+Anonymize every reusable file, name and example; preserve only public upstream identifiers.
+Run the privacy reference's identifier scan, verbatim comparison and independent read on the
+final files. Report categories, repaired counts, justified exceptions and reviewer status without
+private terms. Keep secrets and raw private evidence out of search arguments, output and bundles;
+apply the same sanitization to conversational findings.
 
 For upstream rationale, read [sources](references/sources.md) only when comparing
 or maintaining this skill.

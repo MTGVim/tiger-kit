@@ -1301,6 +1301,36 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "explain-reader-formatting-priority",
+      "path": "boundary",
+      "prompt": "$tk-explain 캐시 무효화의 원리를 HTML로 설명해줘. 강조와 코드 장식이 과하지 않고, 그림의 각 줄을 바로 구분할 수 있게 해줘.",
+      "expected_output": "원인과 결과를 짧게 전개하며 서식 우선순위와 그림 경계를 드러낸다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`reader-formatting.md`를 읽고, 절당 굵은 결론을 기본 1개 이하로 제한한다. 반복된 굵은 라벨 목록과 요약 복제를 제거하고 복사·검색할 식별자만 코드로 표시한다. 보조 절은 한 분류를 나타내며 그림 전체 경계와 각 줄의 보이는 이름표가 있다. 필수 경고나 호출자 고유 검증 구조를 훼손하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "explain-reference-two-logical-rows",
+      "path": "boundary",
+      "prompt": "$tk-explain 제공한 공개 자료 두 개로 긴 제목이 있는 설명 HTML을 만들어줘. 참고문헌은 제목과 세부정보가 구분되게 해줘.",
+      "expected_output": "참고문헌을 제목과 메타정보로 구분하며 출처 연결을 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "제목 링크 다음에 흐린 색의 `ht-ref-meta` 행을 두고 판·날짜·근거 절 또는 주장을 연결한다. 긴 제목과 좁은 화면의 자연 줄바꿈을 허용한다. 중요한 주장은 인접 인용을 쓰며, 인용을 줄여도 정확한 주장과 근거를 연결한다. 실제 인용의 전진·복귀 앵커를 보존하고 가짜 복귀 링크를 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "renamed_from": {

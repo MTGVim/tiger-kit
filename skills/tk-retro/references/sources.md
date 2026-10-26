@@ -23,3 +23,24 @@
 
 The MIT source notice is in `LICENSE.txt`. The previous skill packages and
 their historical changes remain traceable through Git.
+
+## Requested labeled bundles and privacy checks (2026-10-26)
+
+The supplied improvement bundle provides an explicit reusable workflow and incident evidence:
+identifier-only scanning missed copied user wording and examples. Its attachment was manually
+applied once; its proposed skill changes were unverified. This does not establish general
+privacy detection accuracy or turn accepted prose into a field-tested skill.
+
+- **keep:** conversation as the report, proposal-only authority, package-specific upstream drafts,
+  preserved public upstream identifiers, source/license attribution and no publication offer.
+- **adapt:** requested attachments and a manifest/ZIP, exact verification levels, fixed-string
+  identifier scanning plus redacted deterministic wording comparison and a separate fresh
+  read-only privacy reviewer. Generic/public exceptions need a reason; unavailable evidence
+  remains Unverifiable. The new conditional reference owns file-delivery checks.
+- **omit:** unsolicited bundles, raw evidence in reusable files, private search output, automatic
+  source deletion, persistent incident corpora, canonical skill edits and issue publication.
+
+The prior issue-draft-only decision remains the default; user-requested reusable attachments
+are its narrow exception. Independently authored scanner tests check wording, Unicode,
+whitespace, separate messages, public exceptions, private-term protection and redacted failures.
+They do not establish that a fresh reviewer recognizes every real private incident.

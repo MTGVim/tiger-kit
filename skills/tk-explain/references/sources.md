@@ -139,3 +139,33 @@ exist and are retained. Browser checks now require explicit user scope for expla
 production; separately requested checks retain the existing provider/evidence/safety contract.
 Other HTML owners keep their scoped UI checks. Source checks and content review remain required.
 The instructions and fixtures are independently authored; no donor code/template is copied.
+
+## Reader formatting and bounded figures (2026-10-26)
+
+The supplied reader-formatting bundle documents repeated formatting feedback on one explanation.
+Its rule file is `applied-once`: manually applied and accepted, not a fresh skill invocation.
+The grid overflow diagnosis was explicitly a hypothesis; a 360px wide-SVG baseline/replay checks
+it separately from writing quality. No reader-comprehension or end-to-end speed claim follows.
+
+Reviewed GitHub Docs' `Troubleshooting content type` and `LICENSE` at
+`github/docs@564868161b9cd8bb75f789079690fb44a4a5149d`
+(`content/contributing/style-guide-and-content-model/troubleshooting-content-type.md`,
+CC BY 4.0, https://creativecommons.org/licenses/by/4.0/). GitHub's content distinguishes
+known issues from broader troubleshooting and gives category-based titles. The four-way
+Korean supporting-section taxonomy is independently adapted from the supplied proposal;
+it is not a GitHub mandate. No upstream prose, implementation or template is copied.
+A separate upstream evaluation was not established.
+
+- **keep:** concrete causal explanation, independent content review, exact identifiers when needed,
+  public source provenance, required warnings/verification structures and offline output.
+- **adapt:** sparse emphasis, sentence breaks, category headings, visible figure boundaries,
+  package-local synchronized reference copies, safe grid shrinkage and two logical reference rows.
+  This reconsiders the older single-line reference default; natural multi-line wrapping remains.
+  Immediate citations may be reduced only when exact supported sections/claims remain identifiable;
+  research's checker-owned citation/backlink coverage is unchanged.
+- **omit:** copied private examples, hard two-physical-line limits, blanket code bans in tables,
+  uncertain external license claims, broad writing-rule duplication and new document runtimes.
+
+Only the GitHub primary text and license above were verified here. The bundle also names Google
+Cloud, Red Hat, Oracle and Splunk as concept-level influences; their pages, exact editions and
+licenses were not verified in this change, and no content from them is incorporated.
