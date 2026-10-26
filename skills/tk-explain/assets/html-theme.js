@@ -64,6 +64,7 @@
       return;
     }
     download.title = download.getAttribute('aria-label') === '다운로드' ? filename : download.title;
+    download.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4"/></svg>';
     download.hidden = false;
     download.addEventListener('click', () => {
       let url;
@@ -77,7 +78,7 @@
       finally { if (url) setTimeout(() => URL.revokeObjectURL(url), 30000); }
     });
     const nav = globalThis.navigator;
-    if (share && globalThis.isSecureContext && nav?.share && nav?.canShare && typeof File !== 'undefined') {
+    if (share && globalThis.location?.protocol !== 'file:' && globalThis.isSecureContext && nav?.share && nav?.canShare && typeof File !== 'undefined') {
       const file = new File([blob], filename, {type: blob.type});
       let supported = false;
       try { supported = nav.canShare({files: [file]}); } catch {}
@@ -239,7 +240,11 @@
 })();
 
 (() => {
-  const citations = [...(document.querySelectorAll?.('.ht-document sup[id^="cite-"] > a[href^="#ref-"]') || [])];
+  const citations = [...(document.querySelectorAll?.('.ht-document a[href^="#"]') || [])].filter(link => {
+    let target;
+    try { target = document.getElementById(decodeURIComponent(link.hash.slice(1))); } catch { return false; }
+    return target && (link.hasAttribute('data-ht-preview') || target.matches('dt[id], li[id], sup[id^="cite-"]'));
+  });
   if (!citations.length) return;
   const preview = document.createElement('div');
   preview.id = 'ht-citation-preview';
@@ -271,14 +276,41 @@
   const show = link => {
     let reference;
     try { reference = document.getElementById(decodeURIComponent(link.hash.slice(1))); } catch { return; }
-    if (!reference?.matches('li[id]')) return;
-    const content = reference.cloneNode(true);
-    for (const back of content.querySelectorAll('a[href^="#cite-"]')) back.remove();
-    const text = content.textContent.replace(/\s+/g, ' ').trim();
-    if (!text) return;
+    if (!reference) return;
+    const plain = element => {
+      const copy = element.cloneNode(true);
+      for (const back of copy.querySelectorAll('a[href^="#cite-"], .ht-external-mark')) back.remove();
+      return copy.textContent.replace(/\s+/g, ' ').trim();
+    };
+    const clip = (text, length) => text.length > length ? text.slice(0, length).trimEnd() + '…' : text;
+    let title = '', text = '';
+    if (reference.matches('dt')) {
+      title = plain(reference);
+      let next = reference.nextElementSibling;
+      while (next?.matches('dt')) next = next.nextElementSibling;
+      while (next?.matches('dd')) { text += ' ' + plain(next); next = next.nextElementSibling; }
+    } else if (reference.matches('sup[id^="cite-"]')) {
+      title = reference.closest('section')?.querySelector('h2,h3,h4,h5,h6')?.textContent || '';
+      text = plain(reference.closest('p,li,td,dd,figcaption,blockquote') || reference);
+    } else {
+      const heading = reference.querySelector('h2,h3,h4,h5,h6,a:not([href^="#"])');
+      title = heading ? plain(heading) : '';
+      text = plain(reference);
+      if (title && text.startsWith(title)) text = text.slice(title.length).trim();
+    }
+    if (!title.trim() && !text.trim()) return;
     hide();
     active = link;
-    preview.textContent = text;
+    preview.replaceChildren();
+    if (title.trim()) {
+      const heading = document.createElement('strong');
+      heading.className = 'ht-preview-title';
+      heading.textContent = clip(title.trim(), 80);
+      preview.append(heading);
+    }
+    const summary = document.createElement('span');
+    summary.textContent = clip(text.trim(), 200);
+    preview.append(summary);
     preview.hidden = false;
     const described = link.getAttribute('aria-describedby');
     link.setAttribute('aria-describedby', [described, preview.id].filter(Boolean).join(' '));
@@ -303,19 +335,112 @@
       if (block.previousElementSibling?.classList.contains('ht-code-toolbar')) return;
       const toolbar = document.createElement('div');
       toolbar.className = 'ht-code-toolbar';
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.textContent = '줄바꿈';
-      button.setAttribute('aria-label', `코드 블록 ${index + 1} 줄바꿈`);
-      button.setAttribute('aria-pressed', 'false');
+      const label = document.createElement('span');
+      label.className = 'ht-code-label';
+      label.textContent = block.getAttribute('data-label') || block.getAttribute('data-language') || `코드 ${index + 1}`;
+      const iconButton = (name, paths) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.title = name;
+        button.setAttribute('aria-label', name);
+        button.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${paths}</svg>`;
+        return button;
+      };
+      const copy = iconButton(`코드 블록 ${index + 1} 복사`, '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4H4v12h4"/>');
+      copy.setAttribute('data-ht-copy', '');
+      const status = document.createElement('span');
+      status.className = 'ht-visually-hidden';
+      status.setAttribute('aria-live', 'polite');
+      copy.addEventListener('click', async () => {
+        const text = (block.querySelector('code') || block).textContent;
+        let success = false;
+        try { await navigator.clipboard.writeText(text); success = true; } catch {
+          // Local files may deny Clipboard API; never trim the source or steal focus.
+          const focus = document.activeElement;
+          const selection = document.getSelection();
+          const ranges = selection ? Array.from({length: selection.rangeCount}, (_, i) => selection.getRangeAt(i).cloneRange()) : [];
+          const area = document.createElement('textarea');
+          area.value = text;
+          area.className = 'ht-visually-hidden';
+          document.body.append(area);
+          try { area.select(); success = document.execCommand('copy'); } catch {} finally {
+            area.remove();
+            focus?.focus({preventScroll: true});
+            if (selection) { selection.removeAllRanges(); for (const range of ranges) selection.addRange(range); }
+          }
+        }
+        status.textContent = success ? '코드를 복사했습니다.' : '복사하지 못했습니다. 코드를 선택해서 복사해 주세요.';
+      });
+      const button = iconButton(`코드 블록 ${index + 1} 줄바꿈`, '<path d="M3 5h18M3 10h13a4 4 0 0 1 0 8h-4m3-3-3 3 3 3M3 16h4"/>');
+      button.setAttribute('aria-pressed', String(block.hasAttribute('data-wrap')));
       button.addEventListener('click', () => {
         const wrap = block.toggleAttribute('data-wrap');
         button.setAttribute('aria-pressed', String(wrap));
       });
-      toolbar.append(button);
+      toolbar.append(label, copy, button, status);
       block.before(toolbar);
     });
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once: true});
   else start();
+})();
+
+(() => {
+  const root = document.querySelector('.ht-document');
+  if (!root) return;
+  root.setAttribute('data-ht-anchor-cues', '');
+  let active = [], hold, fade;
+  const clear = () => {
+    clearTimeout(hold); clearTimeout(fade);
+    for (const item of active) item.classList.remove('ht-arrival', 'ht-arrival-fade');
+    active = [];
+  };
+  const settled = () => {
+    if (!active.length) return;
+    clearTimeout(hold); clearTimeout(fade);
+    for (const item of active) item.classList.remove('ht-arrival-fade');
+    // Every scroll event restarts the quiet period, including nested scrollers.
+    hold = setTimeout(() => {
+      for (const item of active) item.classList.add('ht-arrival-fade');
+      fade = setTimeout(clear, 450);
+    }, 1100);
+  };
+  const show = hash => {
+    clear();
+    let target;
+    try { target = document.getElementById(decodeURIComponent(hash.slice(1))); } catch { return; }
+    if (!target || !root.contains(target)) return;
+    const heading = target.matches('section,article,main,header,footer') ? target.querySelector('h1,h2,h3,h4,h5,h6') : null;
+    // Never frame a whole section (or the whole page).
+    if (target === root || target.matches('section,article,main,header,footer') && !heading) return;
+    active = [heading || target];
+    if (target.matches('dt')) {
+      let next = target.nextElementSibling;
+      while (next?.matches('dd')) { active.push(next); next = next.nextElementSibling; }
+    }
+    for (const item of active) item.classList.add('ht-arrival');
+    settled();
+  };
+  document.addEventListener('click', event => {
+    const link = event.target.closest?.('a[href^="#"]');
+    clear();
+    if (link && !event.defaultPrevented && event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) show(link.hash);
+  });
+  document.addEventListener('scroll', settled, {passive: true, capture: true});
+  addEventListener('hashchange', () => show(location.hash));
+  if (location.hash) show(location.hash);
+
+  for (const link of root.querySelectorAll('a[href]')) {
+    let url;
+    try { url = new URL(link.getAttribute('href'), document.baseURI); } catch { continue; }
+    if (!['http:', 'https:'].includes(url.protocol) || url.origin === location.origin) continue;
+    link.target = '_blank';
+    link.relList.add('noopener', 'noreferrer');
+    const mark = document.createElement('span');
+    mark.className = 'ht-external-mark';
+    mark.innerHTML = '<span aria-hidden="true"> ↗</span><span class="ht-visually-hidden"> (새 탭에서 열림)</span>';
+    link.append(mark);
+    const label = link.getAttribute('aria-label');
+    if (label) link.setAttribute('aria-label', label + ' (새 탭에서 열림)');
+  }
 })();

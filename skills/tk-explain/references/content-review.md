@@ -3,6 +3,15 @@
 Ordinary chat and feedback on a learner's answer
 do not start this artifact workflow.
 
+Run independent review before first delivery. Repeat it when claims, sources, conclusions,
+taught mechanisms, exercise logic or required qualifications change materially, or the user
+requests it. In a user-driven loop limited to wording, layout or interaction, retain the last
+reviewed version and explicitly say the latest revision was not independently re-reviewed.
+Check changed source text/state logic for semantic preservation; a diagram/state change that
+alters what is taught is material. Keep applicable static and requested runtime checks.
+An unresolved blocker still needs reviewer confirmation on its corrected scope; cosmetic edits
+cannot convert a failed or unavailable review to `Pass`.
+
 Use a separate reviewer with fresh context: the final saved artifact and its exact version,
 the audience's confirmed knowledge and labeled assumptions, understanding/action goal, constraints (including
 explicit voice, register, formatting requirements and relevant user examples) and necessary
@@ -11,6 +20,8 @@ expected verdict. The reviewer reads what the artifact actually teaches, includi
 examples, question inputs and revealed answers. For HTML, skip shared CSS/JS/export payloads
 unless needed for the content, retaining figure/state logic and evidence anchors.
 
+Verify claim-evidence binding and fairness of alternatives. When the reader requests brevity,
+add only definitions or steps necessary for their goal, not length for its own sake.
 Challenge hidden premises, missing definitions or causal steps, unintroduced types, and
 unexplained spatial positions/order/routes. Can this reader understand the conclusion or
 perform the first action using the taught material? Do examples and exercises provide the
@@ -39,6 +50,6 @@ findings, without extra reviewers or a required report file.
 
 Record the mandatory requirements actually inspected with the verdict; a `Pass` for factual
 content does not imply an unreviewed voice, visible-label or sequence requirement passed.
-Repair the owning content and regenerate before re-reviewing the current saved version.
+Repair the owning content and regenerate; re-review the affected scope when the conditions above apply.
 If independent review or essential evidence is unavailable, report `Unverifiable` and the
 pending requirement; do not substitute self-review or claim completed production.

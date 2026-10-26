@@ -20,6 +20,85 @@ PY_TOKEN = re.compile(TOKEN.pattern.replace(r'/\*[\s\S]*?\*/|//[^\r\n]*', r'\#[^
 JSON_TOKEN = re.compile(r'(?P<string>"(?:\\.|[^"\\])*")|(?P<number>-?\b\d+(?:\.\d+)?(?:[eE][+-]?\d+)?\b)|(?P<word>\b(?:true|false|null)\b)')
 
 
+
+LITERALS = {'true', 'false', 'null', 'undefined', 'True', 'False', 'None'}
+PUNCTUATION = set('{}()[].,;:?!=<>+-*/%&|~^')
+
+
+def tokens(source, language):
+    """Conservative lexical roles; templates recurse through balanced expressions.
+
+    This is not a parser: ambiguous regex/JSX/type contexts may stay approximate.
+    Every source character is retained even for malformed or unsupported syntax.
+    """
+    pattern = PY_TOKEN if language == 'python' else JSON_TOKEN if language == 'json' else TOKEN
+    keywords = set(KEYWORDS[language].split())
+    parts = []
+
+    def template(position):
+        start = position
+        position += 1
+        while position < len(source):
+            if source[position] == '\\':
+                position = min(len(source), position + 2)
+            elif source[position] == '`':
+                parts.append((source[start:position + 1], 'string'))
+                return position + 1
+            elif source.startswith('${', position):
+                parts.append((source[start:position], 'string'))
+                parts.append(('${', 'punctuation'))
+                position = scan(position + 2, expression=True)
+                start = position
+            else:
+                position += 1
+        parts.append((source[start:position], 'string'))
+        return position
+
+    def scan(position, expression=False):
+        depth = 0
+        while position < len(source):
+            char = source[position]
+            if language in ('javascript', 'typescript') and char == '`':
+                position = template(position)
+                continue
+            if expression and char == '}' and depth == 0:
+                parts.append(('}', 'punctuation'))
+                return position + 1
+            match = pattern.match(source, position)
+            if match:
+                text, kind = match.group(), match.lastgroup
+                following = source[match.end():].lstrip()
+                previous = source[:position].rstrip()
+                if kind == 'word':
+                    if text in LITERALS:
+                        kind = 'literal'
+                    elif text in keywords:
+                        kind = 'keyword'
+                    elif following.startswith('('):
+                        kind = 'function'
+                    elif previous.endswith('.') or (following.startswith(':') and (not previous or previous[-1] in '{,')):
+                        kind = 'property'
+                    elif text[0].isupper():
+                        kind = 'type'
+                    else:
+                        kind = None
+                elif kind == 'string' and language == 'json' and following.startswith(':'):
+                    kind = 'property'
+                parts.append((text, kind))
+                position = match.end()
+            else:
+                if char == '{':
+                    depth += 1
+                elif char == '}':
+                    depth -= 1
+                parts.append((char, 'punctuation' if char in PUNCTUATION else None))
+                position += 1
+        return position
+
+    scan(0)
+    return parts
+
+
 def highlight(source, language='', line_start=None):
     """Return a pre/code component; line numbers are CSS metadata, never source text.
 
@@ -29,19 +108,7 @@ def highlight(source, language='', line_start=None):
     if '\r' in source or '\x00' in source:
         raise ValueError('HTML cannot preserve CR or NUL textContent; normalize explicitly')
     language = ALIASES.get(language.lower(), language.lower())
-    parts = []
-    position = 0
-    keywords = set(KEYWORDS.get(language, '').split())
-    pattern = PY_TOKEN if language == 'python' else JSON_TOKEN if language == 'json' else TOKEN
-    if language in KEYWORDS:
-        for match in pattern.finditer(source):
-            parts.append((source[position:match.start()], None))
-            kind = match.lastgroup
-            if kind == 'word':
-                kind = 'keyword' if match.group() in keywords else None
-            parts.append((match.group(), kind))
-            position = match.end()
-    parts.append((source[position:], None))
+    parts = tokens(source, language) if language in KEYWORDS else [(source, None)]
     # Split raw tokens before escaping; tags cannot straddle physical source lines.
     lines = ['']
     for text, kind in parts:

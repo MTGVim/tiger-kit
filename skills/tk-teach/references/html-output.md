@@ -61,17 +61,19 @@ intercept hash navigation or replace browser history. Native anchors remain usab
 expose `aria-current="location"` with a non-color-only cue when JS is available. TOC and top/bottom
 navigation must not leave a persistent outline around the destination section or heading,
 including after programmatic focus transfer. Keep the shared static-target suppression and
-brief heading cue: its outline fades within about 1.5 seconds; reduced motion uses a static
-background cue instead. CSS `:target` does not replay the animation when the same hash is clicked
-again. Custom static wrappers need the same narrowly scoped treatment. Never disable outlines globally: preserve
+arrival cue: JavaScript highlights the destination immediately, waits for scrolling to
+settle plus about one second, then fades it. Repeated clicks restart it; another click cancels it.
+Section links mark only the heading. Reduced motion removes the fade. Without JavaScript,
+CSS `:target` briefly marks headings, but cannot replay the same hash or detect scroll completion. Custom static wrappers need the same narrowly scoped treatment. Never disable outlines globally: preserve
 visible keyboard focus on links, buttons, inputs and other interactive controls. Keep the popup
 within viewport and safe-area bounds at desktop/mobile widths and preserve keyboard order.
 Smooth anchor scrolling is the default; reduced motion uses immediate scrolling. Set the
 `--ht-anchor-offset` to the actual sticky header height plus breathing room, and verify targets
 remain visible. Verification-only positioning uses instant scrolling. Required background and
 conclusions stay expanded, readable and searchable; only secondary evidence may collapse.
-Keep flex/grid children shrinkable with `min-width: 0`; wide tables/code need bounded scrolling
-wrappers, never page-level clipping. Give the page canvas and `.ht-doc-content` visibly distinct
+Keep flex/grid children shrinkable with `min-width: 0`; wrap wide tables in `.ht-table-scroll`
+and use `.ht-code` for wide code, never page-level clipping. Builder preflight warns about
+undefined `ht-*` classes; fix typos and use document-specific names for additive components. Give the page canvas and `.ht-doc-content` visibly distinct
 surface colors in light and dark themes; keep the content surface readable when cards or section
 surfaces are nested inside it. Verify TOC open/close, all links, top/bottom, hash reload/back,
 keyboard, no-JS, reduced motion and unobscured control/target geometry.
@@ -86,8 +88,14 @@ radio inputs. Keep the document body, content, navigation, disclosure and contro
 `.ht-document`, `.ht-doc-content`, `.ht-doc-nav`, `.ht-doc-toc` and `.ht-doc-controls` classes.
 Reuse the shared theme CSS and script unchanged. Do not replace or override their shell geometry,
 surface or control rules with page-level selectors, duplicate `.ht-doc-content` layout rules,
-one-off theme tokens, or substitute class names. Add scoped styles for content figures and cards;
-leave shell layout to the shared component rules. The theme control's `data-ht-theme-control`
+one-off theme tokens, or substitute class names. Add document-specific styles and scripts only as an additive, scoped layer; leave shell layout
+and controls to the shared rules. If a default needs overriding or removal, report a shared-shell
+defect rather than patching it per document. Rebuild and rerun class, anchor and external-request
+checks after postprocessing. For a density/interaction example, assemble the optional
+[reader example](../assets/reader-example.html) through the same builder; it is a content fragment,
+not another shell or a mandatory section template. During user-led revisions, retain the
+request count in the active conversation as an observational cost signal, not a quality verdict
+or a new persistent ledger. The theme control's `data-ht-theme-control`
 attribute alone is insufficient because it enables the script but does not apply the shared styling.
 
 A document uses one continuous presentation. Prose and semantic tables are valid without a named
@@ -95,63 +103,27 @@ technique. Consult only a relevant [technique entry](explanation-techniques.md) 
 or unfamiliar format. Avoid duplicate
 versions in modes or hidden tabs. Honor an explicit technique preference when it fits the content.
 
-## Code excerpts
+## Code and reference components
 
-Generate static code markup with [the code helper](../scripts/highlight_code.py):
-`python3 <package>/scripts/highlight_code.py source.kt --language kotlin --line-start 1`.
-Use `.ht-code` with unchanged shared CSS/script.
-Color known Kotlin, JavaScript/TypeScript, Python and JSON tokens; mark `diff` additions/deletions.
-Leave unknown languages plain. This lexical aid does not validate syntax. Line numbers are CSS
-metadata. Compare parsed code `textContent` with the exact source before/after generation and
-interaction. Explicitly normalize CR/CRLF/NUL before establishing that baseline: HTML cannot
-preserve them. Preserve cited line numbers.
-
-Default to horizontal scrolling. The shared script adds a per-block keyboard-operable `줄바꿈`
-button with `aria-pressed` and hanging indentation; keep no page-wide preference. Without JS,
-retain static colors and scrolling with no inert buttons. Check long/blank lines, diff and unknown
-languages, wrap-mode overflow and token contrast >=4.5 against `--code-bg` in both themes.
-
-## Citations and references
-
-For document prose, place numbered superscript citations beside claims where the reader needs
-an immediate source, especially disputed, consequential or precisely quoted claims. Collect
-verified titles, links and relevant date/revision metadata in a numbered bottom `참고문헌`
-section. For other sourced explanation, name the supported section or exact claim in the reference
-metadata; use a citation beside the claim whenever section-level binding would be ambiguous.
-Keep every external claim traceable; a source list without that binding is insufficient.
-Research reports retain their checker-owned requirement that each entry has citation backlinks. Reuse a source number, assigning a unique ID to each citation occurrence.
-Use native `<sup id="cite-1-1"><a href="#ref-1" aria-label="참고문헌 1">[1]</a></sup>` with inline references below.
-For another occurrence `cite-1-2`, add a second labeled backlink in the same reference entry.
-Default each entry to two logical rows: a linked title followed by a muted `.ht-ref-meta`
-block with needed institution/version/date, source line range, supported section or claim and
-short backlinks for actual citation occurrences. Let long titles and metadata wrap naturally;
-never truncate, clamp to two physical lines or use `white-space: nowrap`.
-Keep internal inspection/adoption notes in source records and reader-relevant limits beside claims.
-An entry with section-level support only needs no fabricated citation or backlink.
-
-```html
-<li id="ref-1"><a href="https://example.org/guide">자료 제목</a>
-<span class="ht-ref-meta">발행 기관, 2026. 근거: 동작 원리 <a href="#cite-1-1" aria-label="본문 인용으로 복귀">↩</a></span></li>
-```
-Render each reference item slightly smaller than body text, at `.875em` relative to the body
-with `line-height: 1.55`; keep the text readable and allow long titles and URLs to wrap. Keep its
-return link visible without letting it dominate the source details. Verify every forward/back target
-and claim-source relationship; a bibliography alone is not attribution. Keep code evidence bound to its base/head SHA and `path:line` in the referenced entry;
-do not require full diff/source duplication. A supplied explanation target is content, not a
-replacement for citations. For document HTML, inline the shared theme script and CSS so that
-hovering over a numbered citation, or focusing it with the keyboard, previews the matching
-reference entry in a bounded, viewport-safe tooltip. Exclude return links from its displayed
-text, preserve existing `aria-describedby` values, and derive text from the rendered reference
-rather than injecting external HTML. Escape closes the preview; touching or clicking the native
-link still navigates to the full reference, including with JavaScript disabled. On a backlink
-return, suppress the outline on the citation superscript alone, without suppressing the visible
-keyboard focus of its anchor or other interactive elements. Verify pointer, keyboard, mobile,
-no-JavaScript and forward/back navigation. Use independently authored assets: functional UX
-inspiration does not authorize copying another site's code, content, branding or visual skin.
+When the artifact includes code excerpts, numbered references, glossary/appendix previews or
+citation backlinks, read [code and references](html-components.md) for markup and checks.
+Preserve exact code text and source-line bindings. Keep external claims traceable beside the
+supported claim or unambiguous section; a source list alone is insufficient attribution.
+Required explanations remain inline; previews are supplementary.
 
 Experimental prototype UIs are not document viewers: do not force this navigation shell onto them.
 Their offline/accessibility principles still apply. Document portions of QA sheets can use these
 navigation rules without changing the behavior of their test/checklist interface.
+
+## Observable evidence and precedents
+
+Before leaving observable system behavior unknown, inspect an already reachable, authorized
+read-only surface. Record time, environment and limits; a single observation does not establish
+universal behavior. Preserve the caller's pinned snapshot and execution boundaries: no new
+authentication, writes or production manipulation to answer the question.
+For a procedure modeled on a precedent, identify each step as observed in that precedent,
+general source guidance or an author proposal. Describe the sequence as identical only when
+its steps, actors and methods match.
 
 ## Reader contract
 
@@ -248,7 +220,7 @@ controls after extraction. Source duplication and STORE increase size; deliver l
 as archives and disclose the viewer-button limitation.
 
 No filesystem/network access. Without JavaScript hide actions; show failures in the live status. Reveal sharing only when a secure
-context's `navigator.canShare` accepts the actual HTML/ZIP `File`. On click, open `navigator.share`
+non-`file://` context's `navigator.canShare` accepts the actual HTML/ZIP `File`. On click, open `navigator.share`
 with that file, never a local/preview URL. Keep download on unsupported/failed sharing; cancel silently. No automatic hosting/publication. Verify bytes, ZIP integrity/links/reexport and share fallbacks separately from rendering.
 
 ## Section-level explanation techniques

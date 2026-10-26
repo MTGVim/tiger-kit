@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import re
+import warnings
 from string import Template
 from urllib.parse import quote, unquote
 
@@ -27,9 +28,11 @@ class Fragment(HTMLParser):
         self.links = []
         self.heading = None
         self.details = []
+        self.classes = set()
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
+        self.classes.update((attrs.get('class') or '').split())
         if tag in {'html', 'head', 'body', 'main', 'script', 'style', 'h1'}:
             raise ValueError('body/footer must be content fragments; use --css/--script for authored code')
         if self.details and self.details[-1]['first'] is None:
@@ -139,6 +142,11 @@ def assemble(body, title, *, theme='system', lang='ko', css='', script='', foote
         raise ValueError('body needs at least one section with a heading')
     parser.feed(footer)
     parser.finish()
+    theme_css = (PACKAGE / 'assets/html-theme.css').read_text(encoding='utf-8')
+    known = set(re.findall(r'\.(ht-[\w-]+)', theme_css))
+    unknown = sorted(name for name in parser.classes if name.startswith('ht-') and name not in known)
+    if unknown:
+        warnings.warn('Undefined shared theme classes: ' + ', '.join(unknown), stacklevel=2)
     if re.search(r'</style\b', css, re.I) or re.search(r'</script\b', script, re.I):
         raise ValueError('escape embedded closing style/script tags in authored code')
     template = Template((PACKAGE / 'assets/document-shell.html').read_text(encoding='utf-8'))
@@ -146,7 +154,7 @@ def assemble(body, title, *, theme='system', lang='ko', css='', script='', foote
         title=html.escape(title), lang=html.escape(lang, quote=True), theme=theme,
         theme_attr='' if theme == 'system' else ' data-theme="' + theme + '"',
         body=body, footer=footer, toc=toc(parser.sections),
-        css=(PACKAGE / 'assets/html-theme.css').read_text(encoding='utf-8'),
+        css=theme_css,
         script=(PACKAGE / 'assets/html-theme.js').read_text(encoding='utf-8'),
         extra_css='<style>' + css + '</style>' if css else '',
         extra_script='<script>' + script + '</script>' if script else '',

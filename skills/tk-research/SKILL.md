@@ -96,13 +96,15 @@ Use existing explicit action/target authority if needed. Prior-session external 
 context, not fresh-session authority; pursue independent local work before asking for required access.
 Essential unavailable evidence is `BLOCKED`, never convergence. No self-scheduling or busy loops.
 
+Use HTML Output's observable-evidence and precedent rules for the report's unknowns and procedures.
+
 ## Human result
 
 Before drafting a report, read [report](references/report.md) and [clear writing](references/clear-writing.md).
 Consult a [technique entry](references/explanation-techniques.md) only for a requested or unfamiliar format. Generate the file with the package-local
 renderer; it reads the complete template and shared shell. If a tool archives or truncates a required
 reference, retrieve that same file fully before applying its rules.
-Lead with the recommendation and confidence. Explain decisive evidence, what was actually researched
+Lead with the conclusion and confidence; recommend an option only when its deciding conditions are known. Explain decisive evidence, what was actually researched
 or tested, failed directions, current stage, unknowns and the next frontier/action. Cite sources beside
 claims with revision/date. Keep the result self-contained for `tk-prep` without implementation authority.
 Before delivery, revise authored text in actual reading order, including headings, captions,

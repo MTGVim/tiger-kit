@@ -177,3 +177,22 @@ A separate upstream evaluation was not established.
 Only the GitHub primary text and license above were verified here. The bundle also names Google
 Cloud, Red Hat, Oracle and Splunk as concept-level influences; their pages, exact editions and
 licenses were not verified in this change, and no content from them is incorporated.
+
+## Shared reader corrections (2026-10-26)
+
+The supplied HTML-artifacts proposal and reference implementations are an explicit reusable
+workflow, reported as applied once before generalization; their generalized browser behavior
+was unverified. Compared with TigerKit `ec09ba42`, keep source-text preservation, offline
+export and package-local copies; adapt code headers, local sharing guard, opt-in previews and
+cancelable arrival cues. Omit domain-specific CSS, unconditional share removal and newline
+trimming. Existing reader-formatting guidance owns density and emphasis; extend that owner.
+
+Design sources inspected on 2026-10-26: `anthropics/skills`,
+`skills/frontend-design/SKILL.md`, content blob `a5333457c414d20d625f307df945842c0952ecc3`;
+<https://impeccable.style/slop/>; <https://vercel.com/design/guidelines>.
+Adapt semantic emphasis and accessible icon/status behavior, using independently authored
+wording and code. Omit page templates, visual branding, fonts, orchestrators and mandatory
+style passes. The Impeccable source-path lookup returned 404; its public catalog was read
+instead. No donor runtime or behavior eval was executed; no measured improvement in user
+revision count, comprehension or token cost is claimed. Local regression checks are listed in
+`evals/changes/html-reader-corrections.md` at the repository level.

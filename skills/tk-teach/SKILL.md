@@ -148,6 +148,8 @@ cues; do not force graphics or A/B labels into text-complete exercises. An earli
 not sufficient unless recall is the stated goal. Keep solution routes and correctness cues
 in the revealed explanation; text-complete questions need no extra figure.
 
+Apply HTML Output's observable-evidence and precedent rules to the mechanism taught here.
+
 ## Respond to the learner
 
 When an answer, execution result, question, solution request or stop/skip arrives, read
@@ -173,7 +175,7 @@ screen/action verification only when explicitly requested. For executable exerci
 run reference-pass and a plausible valid-running wrong-fail. Conceptual/open-ended questions
 keep lightweight content checks. Do not claim execution from inspection or client success alone.
 
-`Pass` requires the current artifact's independent content-review pass, readable sourced
+`Pass` requires an independent content-review pass under the shared material-change/revision rules, readable sourced
 material and outcome-matched practice with reasoned feedback;
 explicit multi-chapter material also retains curriculum, chapter sources, mission and a
 profile when interviewed. `Pass` never certifies learner mastery. Return the actual lesson

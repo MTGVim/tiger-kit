@@ -14,6 +14,11 @@ place the main figure beside it in reading order, without forcing horizontal lay
 Separate sentences in explanatory paragraphs with `<br>` in HTML; let each reflow naturally.
 The summary identifies a point; the body develops its mechanism or evidence without copying it.
 Omit irrelevant decisions and rejected work unrelated to the question.
+Open with at most two short lede sentences and a compact account of the mechanism or decision.
+Use lists for parallel points, without replacing causal explanation with fragments. When the
+reader chooses between alternatives, include each option's main downside in the summary;
+recommend one only when the deciding conditions are known. Preserve the caller's learning
+objectives and required evidence rather than imposing a decision summary on every lesson.
 
 After a substantive analogy, map its elements to actual actors, values or events in a compact
 two-column `비유 | 실제` table and state where the analogy stops matching. A passing comparison
@@ -33,6 +38,10 @@ that adds no explanatory mapping needs neither an analogy nor a table.
   `<code>` outside `<pre>` and `<sup>` uses; remove weak signals, not evidence or required warnings.
 - Citation placement and reference layout follow [HTML output](html-output.md); reducing marks
   must retain an unambiguous claim-source relationship.
+
+Spend emphasis where it carries information. Badges, cards, dividers and numbering need a
+semantic role; prefer spacing and typography to a badge per item or a card per section.
+Tooltips supplement the visible explanation rather than carrying required definitions.
 
 ## Supporting headings
 

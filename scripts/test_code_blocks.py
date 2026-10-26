@@ -40,6 +40,18 @@ class CodeBlocksTest(unittest.TestCase):
         for source in ('x\r\ny', 'x\x00y'):
             with self.assertRaises(ValueError): MODULE.highlight(source, 'kt')
 
+    def test_rich_tokens_and_nested_templates_preserve_exact_source(self):
+        source = 'const value: Result = service.read({enabled: true, key: `hi ${user.name} ${fn({n: 2})} ${`nested ${x}`} \u003c`});\n'
+        markup = MODULE.highlight(source, 'ts')
+        parser = Text(); parser.feed(markup)
+        self.assertEqual(parser.text, source)
+        for kind, text in [('function', 'read'), ('property', 'name'), ('property', 'enabled'),
+                           ('type', 'Result'), ('literal', 'true'), ('punctuation', '${')]:
+            self.assertIn(f'<span class="ht-code-{kind}">{text}</span>', markup)
+        for source in ['`unfinished ${obj.value', '`escaped \\${notCode}`', 'const x = /* comment */ "s";']:
+            parser = Text(); parser.feed(MODULE.highlight(source, 'ts'))
+            self.assertEqual(parser.text, source)
+
     def test_research_template_footer_is_a_shell_child(self):
         class Structure(HTMLParser):
             def __init__(self):
@@ -59,6 +71,7 @@ class CodeBlocksTest(unittest.TestCase):
     @unittest.skipUnless(os.environ.get('TK_PLAYWRIGHT_MODULE') and os.environ.get('TK_CHROMIUM_EXECUTABLE'),
                          'Shell render regression requires an explicitly configured local browser')
     def test_document_shell_and_code_browser_regression(self):
-        result = subprocess.run(['node', '--test', 'evals/skills/tk-explain/document-shell.test.cjs'],
+        result = subprocess.run(['node', '--test', 'evals/skills/tk-explain/document-shell.test.cjs',
+                                 'evals/skills/tk-explain/reader-enhancements.test.cjs'],
                                 cwd=ROOT, capture_output=True, text=True, timeout=90)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)

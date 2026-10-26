@@ -21,7 +21,8 @@ figure code and provenance markup. Escape source/code and closing script/style s
 per HTML Output. Carry printed creation/fallback notes into the receipt. Linked lessons use the
 final collection export allowlist instead of the single-file command above.
 
-Preflight checks fragment balance, section headings, IDs/targets and summary placement;
+Preflight checks fragment balance, section headings, IDs/targets and summary placement,
+and warns about classes absent from the shared theme;
 it is not full static/offline validation or a prose/render/learning verdict. Preserve all
 owning content/source/practice and HTML Output checks. A composed shell alone does not request
 browser verification for explanation/lesson production. When screen/action checks are explicitly

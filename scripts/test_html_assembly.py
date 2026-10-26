@@ -46,6 +46,25 @@ class HTMLAssemblyTests(unittest.TestCase):
                 self.assertIn('<details><summary>해설 보기</summary>', source)
                 self.assertNotIn('data-ht-font-size', (package / 'assets/document-shell.html').read_text())
 
+    def test_warns_for_unknown_theme_class_but_keeps_custom_components(self):
+        module = load('tk-explain')
+        with self.assertWarnsRegex(UserWarning, 'ht-table-wrap'):
+            output = module.assemble(BODY + '<div class="ht-table-wrap custom-chart"></div>', 'Cache')
+        self.assertIn('custom-chart', output)
+        import warnings
+        with warnings.catch_warnings(record=True) as notes:
+            module.assemble(BODY + '<div class="ht-table-scroll custom-chart"></div><div class></div>', 'Cache')
+        self.assertEqual(notes, [])
+
+    def test_reference_fragment_assembles_with_valid_anchors_and_classes(self):
+        import warnings
+        with warnings.catch_warnings(record=True) as notes:
+            for skill in SKILLS:
+                module = load(skill)
+                body = (ROOT / 'skills' / skill / 'assets/reader-example.html').read_text()
+                module.assemble(body, '캐시의 만료 조건')
+        self.assertEqual(notes, [])
+
     def test_rejects_broken_structure_before_delivering_a_document(self):
         bad = [
             '<section id="a"><h2>A</h2>',

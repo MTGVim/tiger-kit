@@ -121,7 +121,7 @@ test('centered shell, footer, status, code and native fallbacks', {skip:!process
         return [...document.querySelectorAll('code span[class^="ht-code-"]:not(.ht-code-line)')].map(e=>{const a=lum(getComputedStyle(e).color),b=lum(getComputedStyle(e.closest('pre')).backgroundColor);return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);});
       });
       assert.ok(contrast.length);assert.ok(Math.min(...contrast)>=4.5,Math.min(...contrast));
-      const buttons=page.locator('.ht-code-toolbar button');assert.equal(await buttons.count(),3);
+      const buttons=page.locator('.ht-code-toolbar button[aria-pressed]');assert.equal(await buttons.count(),3);
       if(evidence && [1280,390].includes(width)){await page.screenshot({path:path.join(evidence,`${width}-${theme}-top.png`)});}
       for(let i=0;i<3;i++){
         await buttons.nth(i).focus();await page.keyboard.press('Space');assert.equal(await buttons.nth(i).getAttribute('aria-pressed'),'true');

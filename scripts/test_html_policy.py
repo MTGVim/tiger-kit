@@ -98,7 +98,7 @@ class HTMLPolicyTest(unittest.TestCase):
         self.assertRegex(section_rule.group(1), r'background:\s*transparent')
         self.assertRegex(section_rule.group(1), r'border:\s*0')
         self.assertIn('border-block-start: 1px solid var(--line)', css)
-        self.assertNotRegex(css, r'border(?:-[\w-]+)?\s*:\s*[2-9]px')
+        self.assertNotRegex(css, r'border(?:-(?!radius)[\w-]+)?\s*:\s*[2-9]px')
 
     def test_document_static_checks_and_conditional_browser_verification_contract(self):
         text = (ROOT / 'skills/tk-explain/references/html-output.md').read_text()
@@ -132,7 +132,9 @@ class HTMLPolicyTest(unittest.TestCase):
                 self.assertEqual((package / 'references/content-review.md').read_bytes(), canonical.read_bytes())
         contract = ' '.join(canonical.read_text().split())
         for guard in ('separate reviewer with fresh context', 'final saved artifact and its exact version',
-                      'minimum correction', 'current saved version',
+                      'minimum correction', 'before first delivery', 'change materially',
+                      'latest revision was not independently re-reviewed',
+                      'cosmetic edits cannot convert a failed or unavailable review',
                       'Ordinary chat and feedback', 'do not substitute self-review'):
             self.assertIn(guard, contract)
         html = ' '.join((ROOT / 'skills/tk-explain/references/html-output.md').read_text().split())
@@ -193,7 +195,8 @@ class HTMLPolicyTest(unittest.TestCase):
         css = (ROOT / 'skills/tk-explain/assets/html-theme.css').read_text()
         script = (ROOT / 'skills/tk-explain/assets/html-theme.js').read_text()
         self.assertIn('sup[id^="cite-"]:is(:target, :focus-visible) { outline: none; }', css)
-        self.assertIn('sup[id^="cite-"] > a[href^="#ref-"]', script)
+        self.assertIn("link.hasAttribute('data-ht-preview')", script)
+        self.assertIn('dt[id], li[id], sup[id^="cite-"]', script)
         self.assertIn("preview.setAttribute('role', 'tooltip')", script)
         self.assertIn("if (event.pointerType !== 'touch') show(link)", script)
         self.assertIn("link.addEventListener('focus', () => show(link))", script)

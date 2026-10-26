@@ -11,7 +11,7 @@ const code = fs.readFileSync(path.join(root, 'skills/tk-explain/assets/html-them
 const packager = path.join(root, 'skills/tk-explain/scripts/package_html.py');
 const payload = html => html.match(/<template\b[^>]*data-ht-export[^>]*>([A-Za-z0-9+/=]+)<\/template>/)?.[1];
 
-function run(encoded, { supported = false, error, denied = false, secure = true } = {}) {
+function run(encoded, { supported = false, error, denied = false, secure = true, protocol = 'https:' } = {}) {
   const control = () => ({ hidden: true, title: '', addEventListener(type, fn) { this[type] = fn; }, getAttribute() { return '다운로드'; } });
   const download = control(), share = control(), status = control();
   const timers = [], blobs = [], shared = [];
@@ -30,7 +30,7 @@ function run(encoded, { supported = false, error, denied = false, secure = true 
     body: { append() {} },
   };
   vm.runInNewContext(code, { document, TextEncoder, TextDecoder, Blob, File, Uint8Array, DataView, ArrayBuffer, atob,
-    isSecureContext: secure,
+    isSecureContext: secure, location: {protocol},
     URL: { createObjectURL(blob) { if (denied) throw Error('blocked'); blobs.push(blob); return 'blob:export'; }, revokeObjectURL(url) { assert.equal(url, 'blob:export'); } },
     setTimeout(fn) { timers.push(fn); },
     navigator: { canShare({ files }) { assert.equal(files.length, 1); return supported; },
@@ -105,6 +105,9 @@ test('sharing sends the file only, preserves download, and handles unsupported, 
       assert.equal(!!result.status.textContent, error === 'NotAllowedError');
     }
     assert.equal(run(encoded, { supported: true, secure: false }).share.hidden, true);
+    const local = run(encoded, { supported: true, protocol: 'file:' });
+    assert.equal(local.share.hidden, true); assert.equal(local.download.hidden, false);
+    local.download.click(); assert.equal(local.savedName, 'one.html');
     const blocked = run(encoded, { denied: true }); blocked.download.click();
     assert.ok(blocked.status.textContent.includes('다운로드하지 못했습니다'));
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
