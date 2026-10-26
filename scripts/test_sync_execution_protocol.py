@@ -96,6 +96,8 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         repo = Path(__file__).resolve().parents[1]
         target = self.root / "skills/tk-explain/references/content-review.md"
         shutil.copyfile(repo / "skills/tk-explain/references/content-review.md", target)
+        shutil.copyfile(repo / "skills/tk-explain/references/diataxis.md",
+                        self.root / "skills/tk-explain/references/diataxis.md")
         for name in ("explanation-techniques.md", "html-render.md"):
             canonical = repo / "skills/tk-explain/references" / name
             target = self.root / "skills/tk-explain/references" / name
@@ -332,6 +334,30 @@ class SyncExecutionProtocolTest(unittest.TestCase):
             self.assertEqual(self.run_main('--check'), 1)
             self.assertEqual(self.run_main(), 0)
         self.assertEqual(self.run_main('--check'), 0)
+
+    def test_diataxis_drift_missing_copy_and_canonical_update_are_repaired(self) -> None:
+        self.assertEqual(self.run_main(), 0)
+        canonical = self.root / "skills/tk-explain/references/diataxis.md"
+        consumers = ("tk-explain-diff", "tk-teach", "tk-research")
+        for name in consumers:
+            target = self.root / "skills" / name / "references/diataxis.md"
+            with self.subTest(owner=name):
+                self.assertTrue(target.is_file())
+                self.assertFalse(target.is_symlink())
+                self.assertEqual(target.read_bytes(), canonical.read_bytes())
+        consumer = self.root / "skills/tk-teach/references/diataxis.md"
+        for mutation in ("stale", "missing", "canonical"):
+            with self.subTest(mutation=mutation):
+                if mutation == "missing":
+                    consumer.unlink()
+                elif mutation == "canonical":
+                    canonical.write_text("# Changed reader purposes\n", encoding="utf-8")
+                else:
+                    consumer.write_text("# Incorrect reader purposes\n", encoding="utf-8")
+                self.assertEqual(self.run_main("--check"), 1)
+                self.assertEqual(self.run_main(), 0)
+                self.assertEqual(consumer.read_bytes(), canonical.read_bytes())
+                self.assertEqual(self.run_main("--check"), 0)
 
     def test_visual_grammar_drift_missing_copy_and_canonical_change_fail_check(self) -> None:
         self.assertEqual(self.run_main(), 0)
