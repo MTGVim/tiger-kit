@@ -1,10 +1,9 @@
 # Human research report
 
-Before drafting, read [clear writing](clear-writing.md), [documentation purpose](diataxis.md)
-and this report contract. The report informs a concrete decision, not a four-category
-handbook or an obligatory tutorial. Use short explanation, lookup or procedural
-content only when it improves that decision.
-Consult only the relevant
+Before drafting, read [clear writing](clear-writing.md) and this report contract.
+The report informs a concrete decision. Include explanatory, lookup or procedural
+content only when it improves the decision; do not turn it into a tutorial or
+four-category handbook. Consult only the relevant
 [technique entry](explanation-techniques.md) for a requested or unfamiliar format. The renderer reads the complete
 offline template for you, so do not load `assets/report.html` or the full shared HTML reference.
 

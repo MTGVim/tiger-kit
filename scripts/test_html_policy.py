@@ -14,6 +14,30 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class HTMLPolicyTest(unittest.TestCase):
+    def test_diataxis_has_one_maintainer_copy_and_independent_skills(self):
+        source = ROOT / 'docs/diataxis.md'
+        text = source.read_text(encoding='utf-8')
+        for form in ('Tutorial (learning)', 'How-to (task)',
+                     'Reference (lookup)', 'Explanation (understanding)'):
+            self.assertIn(form, text)
+        owners = {
+            'tk-teach': ('SKILL.md', 'guided prediction'),
+            'tk-explain': ('SKILL.md', 'prioritize understanding'),
+            'tk-explain-diff': ('SKILL.md', 'change explanations as understanding'),
+            'tk-research': ('references/report.md', 'report informs a concrete decision'),
+        }
+        for owner, (relative, behavior) in owners.items():
+            with self.subTest(owner=owner):
+                package = ROOT / 'skills' / owner
+                self.assertFalse((package / 'references/diataxis.md').exists())
+                content = (package / relative).read_text(encoding='utf-8')
+                self.assertNotIn('references/diataxis.md', content)
+                self.assertNotIn('(diataxis.md)', content)
+                self.assertIn(behavior.lower(), content.lower())
+        sync = (ROOT / 'scripts/sync_execution_protocol.py').read_text(encoding='utf-8')
+        self.assertNotIn('DOCUMENT_PURPOSE_CONSUMERS', sync)
+        self.assertNotIn('shared Diataxis guidance drift', sync)
+
     @unittest.skipUnless(os.environ.get('TK_PLAYWRIGHT_MODULE') and os.environ.get('TK_CHROMIUM_EXECUTABLE'),
                          'Document render regression requires an explicitly configured local browser')
     def test_document_pattern_render_regression(self):

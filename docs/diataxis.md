@@ -1,10 +1,11 @@
 # Reader Purpose: Diátaxis-Informed Documentation
 
-Use this reference for substantive reader-facing lessons, explanations, change
-walkthroughs and research reports. It governs the reader's purpose and content
-order, not renderer implementation. Preserve the calling skill's scope, source
-evidence, explicit format and existing output contract. One primary purpose
-per unit is usually enough; another form may support that purpose.
+This is the canonical repository-maintainer design reference, not an installed
+runtime dependency. Each independently installable skill keeps its own short,
+relevant authoring rules in its SKILL.md. Use the framework to decide the
+reader's primary purpose while preserving each skill's ownership, evidence,
+explicit format and existing output contract. Supporting content may serve
+a second purpose without requiring a second document.
 
 ## Choose by what the reader needs next
 

@@ -63,7 +63,6 @@ HTML_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research", "t
 QUESTION_HTML_CONSUMERS = ("tk-prep", "tk-grill", "tk-roadmap")
 HTML_THEME_CONSUMERS = HTML_CONSUMERS + QUESTION_HTML_CONSUMERS
 VISUAL_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research")
-DOCUMENT_PURPOSE_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research")
 CONTENT_REVIEW_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach")
 HTML_ASSETS = ("html-theme.css", "html-theme.js")
 CHART_FILES = ("references/chart-design.md", "assets/chart-examples.html", "references/html-figures.md")
@@ -160,11 +159,6 @@ def html_policy_errors(root: Path) -> list[str]:
         target = root / "skills" / name / "references/content-review.md"
         if not canonical.is_file() or not target.is_file() or target.read_bytes() != canonical.read_bytes():
             errors.append(f"{target.relative_to(root)}: shared content review drift")
-    for name in DOCUMENT_PURPOSE_CONSUMERS:
-        canonical = source / "references/diataxis.md"
-        target = root / "skills" / name / "references/diataxis.md"
-        if not canonical.is_file() or not target.is_file() or target.read_bytes() != canonical.read_bytes():
-            errors.append(f"{target.relative_to(root)}: shared Diataxis guidance drift")
     for name in VISUAL_CONSUMERS:
         canonical = source / "references/visual-grammar.md"
         target = root / "skills" / name / "references/visual-grammar.md"
@@ -377,10 +371,6 @@ def main() -> int:
                 source = ROOT / "skills/tk-explain/assets" / asset
                 if source.is_file():
                     pairs.append((source, ROOT / "skills" / name / "assets" / asset))
-    for name in DOCUMENT_PURPOSE_CONSUMERS:
-        source = ROOT / "skills/tk-explain/references/diataxis.md"
-        if name != "tk-explain":
-            pairs.append((source, ROOT / "skills" / name / "references/diataxis.md"))
     for name in VISUAL_CONSUMERS:
         source = ROOT / "skills/tk-explain/references/visual-grammar.md"
         if name != "tk-explain" and source.is_file():
