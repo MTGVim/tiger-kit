@@ -179,3 +179,8 @@ those ideas to source-bound logical groups, endpoint versions and a small pure v
 PR Lens node groups are architecture clusters, not proof of hunk grouping. Omit donor runtime,
 code, templates, hosting, upload, publication and graph layout engine. Upstream runtime behavior
 and quality effects were not reproduced in this implementation.
+
+The change walkthrough adapts that pinned source's focused paths and source links to a single
+local document with ordered groups and optional user-operated flow steps. It omits the hosted
+canvas, agent bridge, donor renderer and runtime. The UI is independently implemented; visual
+usability and upstream runtime effects require their own evidence and are not implied by a build.

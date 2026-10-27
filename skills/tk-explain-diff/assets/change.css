@@ -1,0 +1,22 @@
+.ht-change { display:grid; grid-template-columns:minmax(12rem,15rem) minmax(0,1fr); gap:1.5rem; padding:1.5rem; }
+.ht-change > header, .ht-change > footer, .ht-change-controls { grid-column:1 / -1; }
+.ht-change-content { grid-column:2; grid-row:2; width:100%; max-width:76rem; margin:0 auto; min-width:0; }
+.ht-change-nav { grid-column:1; grid-row:2; align-self:start; position:sticky; top:6rem; min-width:0; border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; background: var(--panel); }
+.ht-change-nav h2 { font-size: var(--font-body); margin: 0 0 .5rem; }
+.ht-change-nav ol { display:grid; gap:.5rem; padding-left:1.5rem; }
+.ht-change-nav [aria-current="location"] { font-weight: 700; text-decoration-thickness: .18em; }
+.ht-change-controls { display:flex; gap:1rem; justify-content:center; margin:2rem; }
+.ht-change-group { border-top: 1px solid var(--line); padding: 1.5rem 0; }
+.ht-change-pair { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; }
+.ht-change-side, .ht-change-evidence { min-width:0; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:1rem; }
+.ht-change-evidence-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; margin-block:1rem; }
+.ht-change-evidence { margin-block:0; overflow-wrap:anywhere; }
+.ht-change-metadata { white-space:pre-wrap; }
+.ht-change-evidence pre { max-width:100%; overflow:auto; }
+.ht-change-flow { margin-block:1rem; }
+.ht-change-flow ol { padding-inline-start:1.5rem; }
+.ht-change-flow [data-active="true"] { outline:2px solid var(--accent); outline-offset:3px; }
+.ht-change-flow-controls { display:flex; flex-wrap:wrap; gap:.5rem; }
+.ht-change footer { max-width:76rem; margin:2rem auto; }
+@media(max-width:960px) { .ht-change { display:block; padding:.75rem; } .ht-change-nav { position:static; margin-block:1rem; } .ht-change-pair, .ht-change-evidence-grid { grid-template-columns:minmax(0,1fr); } }
+@media(prefers-reduced-motion:reduce) { .ht-change-flow * { transition:none; } }

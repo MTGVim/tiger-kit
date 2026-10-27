@@ -110,7 +110,9 @@ assembles them and owns media inspection. Keep the explanation document linked t
 
 ## Deliver
 
-For new HTML use [assembly](references/html-assembly.md); reuse generators for edits.
+For default HTML use [change walkthrough](references/html-change.md) and its package-local
+`build_change.py`; validate the model and source bundle before building, then package the result.
+Reuse generators for edits. Preserve explicit Markdown and custom destination requests.
 
 Default to one self-contained offline HTML artifact at `.tigerkit/explanations/<target-slug>.html`.
 Read [HTML output](references/html-output.md) for HTML; honor explicit Markdown and custom final
