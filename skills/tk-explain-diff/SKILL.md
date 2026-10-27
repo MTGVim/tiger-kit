@@ -89,6 +89,11 @@ visible neighbor changed. When deletion or movement rewires relationships, use s
 views when an overlay would obscure which edge belongs to which version. Prefer this bounded
 neighborhood over a whole-repository dependency map.
 
+For a nonempty change, use [change grouping](references/change-grouping.md) and validate the
+source-bound model using [change model](references/change-model.md) after snapshot and inventory
+analysis, before rendering. Preserve incomplete or unavailable evidence and the existing content
+review; model validation is not a Git, runtime or semantic correctness verdict.
+
 Write one complete explanation from the verified change model. Follow [HTML output](references/html-output.md)
 for HTML; consult a technique entry only for a requested or unfamiliar format. Prose and
 tables are valid; avoid repeating the same content in modes or tabs. Use a clear

@@ -168,3 +168,14 @@ exist and are retained. Browser checks now require explicit user scope for expla
 production; separately requested checks retain the existing provider/evidence/safety contract.
 Other HTML owners keep their scoped UI checks. Source checks and content review remain required.
 The instructions and fixtures are independently authored; no donor code/template is copied.
+
+## Source-bound change groups (2026-10-27)
+
+PR Lens `coldteadotai/pr-lens@132ff8bd7d86a318a06965377f8511a267808a5a`,
+`packages/agent-skill/references/graph-document.md`, `packages/schema/src/integrity.ts`,
+`packages/agent-skill/manual.md` and the MIT license are the issue's pinned research basis.
+Keep explicit identities, deltas, neighboring evidence and rejected dangling references. Adapt
+those ideas to source-bound logical groups, endpoint versions and a small pure validator;
+PR Lens node groups are architecture clusters, not proof of hunk grouping. Omit donor runtime,
+code, templates, hosting, upload, publication and graph layout engine. Upstream runtime behavior
+and quality effects were not reproduced in this implementation.

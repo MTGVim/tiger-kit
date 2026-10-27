@@ -1,0 +1,208 @@
+{
+  "schema_version": 1,
+  "title": "합성 예시: 캐시 수명과 만료 경계",
+  "summary": "TTL 변경은 두 파일에 걸치며 경계 연산자 변경은 별도 그룹으로 설명합니다.",
+  "snapshot": {
+    "repository": "synthetic/cache",
+    "comparison": "synthetic",
+    "from": "base",
+    "to": "head",
+    "versions": {
+      "base": {
+        "kind": "synthetic",
+        "id": "cache-base-v1"
+      },
+      "head": {
+        "kind": "synthetic",
+        "id": "cache-head-v1"
+      }
+    }
+  },
+  "inventory_complete": true,
+  "inventory_limit": null,
+  "units": [
+    {
+      "id": "u-policy",
+      "kind": "text",
+      "before": [
+        "e-policy-base"
+      ],
+      "after": [
+        "e-policy-head"
+      ],
+      "disposition": "primary",
+      "reason": null
+    },
+    {
+      "id": "u-banner",
+      "kind": "text",
+      "before": [
+        "e-banner-base"
+      ],
+      "after": [
+        "e-banner-head"
+      ],
+      "disposition": "primary",
+      "reason": null
+    }
+  ],
+  "evidence": [
+    {
+      "id": "e-policy-base",
+      "kind": "text",
+      "version": "base",
+      "path": "src/policy.ts",
+      "start": 1,
+      "end": 2,
+      "availability": "available",
+      "sha256": "55b11869f179d792bf86a307e97010c3ca2f05f46eadd08af1872b03090bb59f",
+      "reason": null
+    },
+    {
+      "id": "e-banner-base",
+      "kind": "text",
+      "version": "base",
+      "path": "src/banner.ts",
+      "start": 1,
+      "end": 1,
+      "availability": "available",
+      "sha256": "25551324f62d7a411d00e248165274800304bc9acaf80904f3ef2ccf7ac27975",
+      "reason": null
+    },
+    {
+      "id": "e-cache-base",
+      "kind": "text",
+      "version": "base",
+      "path": "src/cache.ts",
+      "start": 1,
+      "end": 2,
+      "availability": "available",
+      "sha256": "94ea8e8c2dd2590617b2e09943199f067c99ead175f77d46c68833c79fb9df8d",
+      "reason": null
+    },
+    {
+      "id": "e-policy-head",
+      "kind": "text",
+      "version": "head",
+      "path": "src/policy.ts",
+      "start": 1,
+      "end": 2,
+      "availability": "available",
+      "sha256": "547a7a35d17157d2784a7899226d277a5abe6e47bd09decaf4b3afa3b52261f6",
+      "reason": null
+    },
+    {
+      "id": "e-banner-head",
+      "kind": "text",
+      "version": "head",
+      "path": "src/banner.ts",
+      "start": 1,
+      "end": 1,
+      "availability": "available",
+      "sha256": "cedd69fbdfa558cb4a8549e8277d24ac994160640718494aaf6c745cbf798d90",
+      "reason": null
+    },
+    {
+      "id": "e-cache-head",
+      "kind": "text",
+      "version": "head",
+      "path": "src/cache.ts",
+      "start": 1,
+      "end": 2,
+      "availability": "available",
+      "sha256": "94ea8e8c2dd2590617b2e09943199f067c99ead175f77d46c68833c79fb9df8d",
+      "reason": null
+    }
+  ],
+  "groups": [
+    {
+      "id": "ttl-duration",
+      "title": "캐시 수명을 60초로 늘립니다.",
+      "summary": "정책과 안내 문구를 함께 변경합니다.",
+      "unit_ids": [
+        "u-policy",
+        "u-banner"
+      ],
+      "evidence_ids": [
+        "e-policy-base",
+        "e-policy-head",
+        "e-banner-base",
+        "e-banner-head"
+      ],
+      "depends_on": [],
+      "before": {
+        "text": "TTL과 문구가 30초입니다.",
+        "basis": "source",
+        "evidence": [
+          "e-policy-base",
+          "e-banner-base"
+        ],
+        "limitation": null
+      },
+      "after": {
+        "text": "TTL과 문구가 60초입니다.",
+        "basis": "source",
+        "evidence": [
+          "e-policy-head",
+          "e-banner-head"
+        ],
+        "limitation": null
+      },
+      "invariants": [],
+      "checkpoints": [
+        "정책만 바꾸고 문구를 유지하면 무엇이 어긋날까요?"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "expiry-boundary",
+      "title": "만료 경계에 같은 시각을 포함합니다.",
+      "summary": "같은 policy 파일의 비교 연산자 변경을 구분합니다.",
+      "unit_ids": [
+        "u-policy"
+      ],
+      "evidence_ids": [
+        "e-policy-base",
+        "e-policy-head",
+        "e-cache-base",
+        "e-cache-head"
+      ],
+      "depends_on": [
+        "ttl-duration"
+      ],
+      "before": {
+        "text": "age가 TTL보다 클 때 만료입니다.",
+        "basis": "source",
+        "evidence": [
+          "e-policy-base"
+        ],
+        "limitation": null
+      },
+      "after": {
+        "text": "age가 TTL 이상이면 만료입니다.",
+        "basis": "source",
+        "evidence": [
+          "e-policy-head"
+        ],
+        "limitation": null
+      },
+      "invariants": [
+        {
+          "text": "호출부는 만료된 값 대신 null을 반환합니다.",
+          "basis": "source",
+          "evidence": [
+            "e-cache-base",
+            "e-cache-head"
+          ],
+          "limitation": null
+        }
+      ],
+      "checkpoints": [
+        "새 정책에서 age=59, 60, 61을 비교하세요."
+      ],
+      "limitations": [
+        "코드에서 도출한 설명이며 runtime 테스트를 실행한 결과가 아닙니다."
+      ]
+    }
+  ]
+}
