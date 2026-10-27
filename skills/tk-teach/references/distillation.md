@@ -273,3 +273,13 @@ exist and are retained. Browser checks now require explicit user scope for expla
 production; separately requested checks retain the existing provider/evidence/safety contract.
 Other HTML owners keep their scoped UI checks. Source checks and content review remain required.
 The instructions and fixtures are independently authored; no donor code/template is copied.
+
+## Lesson presentation (2026-10-27)
+
+The issue's pinned research basis is Code Hike `code-hike/codehike@cd81d8af1c503b699cbf0458d504e4578bcb9c74`
+(`apps/web/content/docs/layouts/scrollycoding.mdx`) and TutorialKit
+`stackblitz/tutorialkit@80cb118647a45cc0dcef1f8018ebc0eef845c8eb`
+(`packages/react/src/Panels/EditorPanel.tsx`). Keep nearby explanation/example and distinguish
+practice, hint, solution and retry. Adapt them to native offline HTML and small local enhancements;
+omit donor code, editor, runtime, server, progress tracking and grading. Their runtime and learning
+outcomes were not reproduced or established by this implementation.

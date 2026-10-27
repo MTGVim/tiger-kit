@@ -1459,6 +1459,46 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "lesson-practice-feedback-retry",
+      "path": "success",
+      "prompt": "학습자에게 한 단계를 설명하고 예상 답을 시도할 기회를 준 다음, 힌트와 해설을 제공해줘.",
+      "expected_output": "설명과 활동을 인접하게 두고 힌트와 해설을 분리한다. 학습자의 실제 시도 없이 정답이나 숙달을 추정하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "설명과 활동을 인접하게 두고 힌트와 해설을 분리한다. 학습자의 실제 시도 없이 정답이나 숙달을 추정하지 않는다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "Unverifiable",
+            "Blocked"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lesson-noncode-preserves-scope",
+      "path": "success",
+      "prompt": "코드를 사용하지 않는 카드 분류 규칙을 학습할 수업을 만들어줘.",
+      "expected_output": "코드나 실행기를 강제하지 않고 예시, 시도, 해설과 재시도를 규칙에 맞게 제공한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "코드나 실행기를 강제하지 않고 예시, 시도, 해설과 재시도를 규칙에 맞게 제공한다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "Unverifiable",
+            "Blocked"
+          ]
+        }
+      ]
     }
   ],
   "migrations": [

@@ -1,0 +1,18 @@
+.ht-lesson { display:grid; grid-template-columns:minmax(11rem,14rem) minmax(0,1fr); gap:1.5rem; padding:1.5rem; }
+.ht-lesson > header,.ht-lesson > footer,.ht-lesson-controls { grid-column:1 / -1; }
+.ht-lesson-content { grid-column:2; grid-row:2; width:100%; max-width:72rem; margin:0 auto; min-width:0; }
+.ht-lesson-nav { grid-column:1; grid-row:2; align-self:start; position:sticky; top:6rem; min-width:0; border:1px solid var(--line); border-radius:var(--radius); padding:1rem; background:var(--panel); }
+.ht-lesson-nav h2 { font-size:var(--font-body); margin:0 0 .5rem; }
+.ht-lesson-nav ol { display:grid; gap:.5rem; padding-left:1.5rem; }
+.ht-lesson-nav [aria-current="location"] { font-weight:700; text-decoration-thickness:.18em; }
+.ht-lesson-controls { display:flex; gap:1rem; justify-content:center; margin:2rem; }
+.ht-lesson-step { border-top:1px solid var(--line); padding:1.5rem 0; }
+.ht-lesson-workbench { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; align-items:start; }
+.ht-lesson-instruction,.ht-lesson-example,.ht-lesson-practice { min-width:0; margin:0; padding:1rem; border:1px solid var(--line); border-radius:var(--radius); background:var(--panel); }
+.ht-lesson-practice { margin-block:1rem; }
+.ht-lesson-practice details { margin-block:.75rem; }
+.ht-lesson-example pre { max-width:100%; overflow:auto; }
+.ht-lesson-focus { outline:2px solid var(--accent); outline-offset:3px; }
+.ht-lesson footer { max-width:72rem; margin:2rem auto; }
+@media(max-width:960px) { .ht-lesson { display:block; padding:.75rem; } .ht-lesson-nav { position:static; margin-block:1rem; } .ht-lesson-workbench { grid-template-columns:minmax(0,1fr); } }
+@media(prefers-reduced-motion:reduce) { .ht-lesson * { transition:none; } }
