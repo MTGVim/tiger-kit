@@ -95,7 +95,9 @@ claim-level citations without a search-result ledger, IDs or coverage percentage
 For new HTML follow [lesson presentation](references/html-lesson.md): run the lesson preflight,
 then use [assembly](references/html-assembly.md) with `--profile lesson`; reuse generators for edits.
 
-For a new topic use ignored `.tigerkit/teach/<topic>/`; resolve a collision with a numeric
+For a new topic resolve an explicit home first, then the configured durable root or ignored
+`.tigerkit/teach/<topic>/` via [artifact paths](references/artifact-paths.md). For a missing
+durable-root choice follow its first-use question before saving; resolve a collision with a numeric
 suffix for the whole run, reusing only an explicitly continued, identity-verified home.
 Default a new HTML lesson to `lessons/0001-<slug>.html` there and increment within that
 home. Link earlier relevant lessons and useful references; maintain a lightweight
@@ -199,7 +201,7 @@ Installation/download/publication require their own authority; playback mute/fal
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
+Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
 
 <!-- tigerkit:result-summary -->
 ## Reader-facing Result Summary

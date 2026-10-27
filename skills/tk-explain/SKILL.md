@@ -66,7 +66,10 @@ learning task. Prefer a prediction, transfer task or free-response question abou
 consequence or boundary over terminology trivia. Keep the grounded answer separately revealed
 without correctness clues. Reading, revealing an answer or agreeing with it never establishes mastery.
 
-Use the user-specified output path, or `.tigerkit/explanations/<topic-slug>.html`. If the default exists, choose a numeric suffix. Do not overwrite an existing explicit target without authorization for that overwrite.
+Resolve the user-specified output path first, otherwise use the configured durable root or
+`.tigerkit/explanations/<topic-slug>.html` through [artifact paths](references/artifact-paths.md).
+When the choice is missing, follow that reference before saving. If the default
+exists, choose a numeric suffix. Do not overwrite an explicit target without overwrite authority.
 
 When structure, flow, state or causality may become clearer in a figure, read
 [visual grammar](references/visual-grammar.md) before choosing its type and layout.
@@ -121,7 +124,7 @@ Installation/download/publication require their own authority; playback mute/fal
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
+Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
 
 <!-- tigerkit:result-summary -->
 ## Reader-facing Result Summary

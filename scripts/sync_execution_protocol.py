@@ -60,6 +60,7 @@ DOMAIN_CONTEXT_TARGETS = (
 )
 
 HTML_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research", "tk-qa-sheet", "tk-prototype", "tk-blind-comparison")
+DURABLE_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach")
 QUESTION_HTML_CONSUMERS = ("tk-prep", "tk-grill", "tk-roadmap")
 HTML_THEME_CONSUMERS = HTML_CONSUMERS + QUESTION_HTML_CONSUMERS
 VISUAL_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research")
@@ -185,6 +186,11 @@ def html_policy_errors(root: Path) -> list[str]:
         clear_target = root / "skills" / name / "references/clear-writing.md"
         if not CLEAR_WRITING_SOURCE.is_file() or not clear_target.is_file() or clear_target.read_bytes() != CLEAR_WRITING_SOURCE.read_bytes():
             errors.append(f"{clear_target.relative_to(root)}: shared clear-writing drift")
+    for name in DURABLE_CONSUMERS:
+        canonical = source / "scripts/durable_artifacts.py"
+        target = root / "skills" / name / "scripts/durable_artifacts.py"
+        if not canonical.is_file() or not target.is_file() or target.read_bytes() != canonical.read_bytes():
+            errors.append(f"{target.relative_to(root)}: durable artifact helper drift")
     for name in HTML_THEME_CONSUMERS:
         for asset in HTML_ASSETS:
             canonical = source / "assets" / asset
@@ -375,6 +381,10 @@ def main() -> int:
                     pairs.append((ROOT / "skills/tk-explain" / relative, ROOT / "skills" / name / relative))
                 for relative in (*CHART_FILES, *ASSEMBLY_FILES, *READER_FILES, "scripts/package_html.py", "scripts/highlight_code.py"):
                     pairs.append((ROOT / "skills/tk-explain" / relative, ROOT / "skills" / name / relative))
+    for name in DURABLE_CONSUMERS:
+        if name != "tk-explain" and (ROOT / "skills" / name).is_dir():
+            pairs.append((ROOT / "skills/tk-explain/scripts/durable_artifacts.py",
+                          ROOT / "skills" / name / "scripts/durable_artifacts.py"))
     for name in HTML_THEME_CONSUMERS:
         if (ROOT / "skills" / name).is_dir():
             for asset in HTML_ASSETS:

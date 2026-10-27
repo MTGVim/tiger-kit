@@ -242,7 +242,9 @@ $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 `release`/`eval` 결과는 `.tigerkit/evidence/`를 기본으로 사용합니다. 외부 도구 자체 캐시와
 격리 단위 테스트용 데이터는 저장소를 흉내 내거나 손상시켜 검증해야 하므로 도구의 임시 공간을 유지합니다.
 원자적 교체에 필요한 동일 디렉터리의 임시 파일은 같은 파일시스템에서 실행 소유권을 확인하고 성공 후 정리합니다.
-설명은 `.tigerkit/explanations/`, 학습은 `.tigerkit/study/<topic>/`, 저장한 조사는 `.tigerkit/research/`를
+설명과 신규 `tk-teach` 학습 공간은 설정된 `artifacts.durableRoot`를 우선하고, 설정이 없으면
+각각 `.tigerkit/explanations/`와 `.tigerkit/teach/<topic>/`를 사용합니다. 기존
+`.tigerkit/study/<topic>/`는 이어 하기에서 보존합니다. 저장한 조사는 `.tigerkit/research/`를
 기본으로 사용합니다. 명시한 최종 목적지는 존중합니다. `scripts/artifact_policy.py`가 공통 정책을 소유하며
 파일을 쓰지 않는 스킬의 쓰기 금지 경계, 파일을 쓰는 스킬의 조건부 본문·패키지 로컬 참조와 실행 도구를 릴리즈 체크리스트의 자동 검사에서 확인합니다.
 

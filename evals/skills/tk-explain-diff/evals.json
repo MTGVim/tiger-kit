@@ -524,6 +524,21 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "durable-change-output-scope",
+      "path": "success",
+      "prompt": "외부 보관 경로가 설정된 상태에서 변경 설명을 생성해줘. 임시 작업과 최종 결과의 경로를 구분해줘.",
+      "expected_output": "설정된 외부 경로에 저장하되 임시 파일과 검증 근거는 저장소 안에 두고 명시된 출력 경로가 있으면 그것을 우선한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "설정된 외부 경로에 저장하되 임시 파일과 검증 근거는 저장소 안에 두고 명시된 출력 경로가 있으면 그것을 우선한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "migrations": [

@@ -1472,6 +1472,51 @@
         }
       ],
       "path": "success"
+    },
+    {
+      "id": "durable-first-choice",
+      "path": "boundary",
+      "prompt": "대화형 설명 산출물을 처음 저장하려고 합니다. 설정에 보관 경로 키가 없습니다.",
+      "expected_output": "작업 트리 정리 시 무시된 산출물이 사라진다는 이유와 저장소 밖 보관 선택을 한 번 묻고, 응답 전에는 선택을 기록하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "작업 트리 정리 시 무시된 산출물이 사라진다는 이유와 저장소 밖 보관 선택을 한 번 묻고, 응답 전에는 선택을 기록하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "durable-noninteractive",
+      "path": "boundary",
+      "prompt": "비대화형 설명 실행이며 보관 경로 키가 없습니다.",
+      "expected_output": "질문이나 설정 키 기록 없이 기존 저장소 기본 경로와 기존 보호 검사를 사용한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "질문이나 설정 키 기록 없이 기존 저장소 기본 경로와 기존 보호 검사를 사용한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "durable-explicit-wins",
+      "path": "boundary",
+      "prompt": "외부 보관 경로가 설정되어 있지만 이번 설명의 명시적 출력 경로가 따로 지정됐다.",
+      "expected_output": "이번에 지정된 경로를 우선하고 기존 덮어쓰기와 안전 경계를 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "이번에 지정된 경로를 우선하고 기존 덮어쓰기와 안전 경계를 유지한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "renamed_from": {

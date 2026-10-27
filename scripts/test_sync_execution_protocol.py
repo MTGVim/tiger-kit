@@ -115,6 +115,9 @@ class SyncExecutionProtocolTest(unittest.TestCase):
             target = self.root / "skills/tk-explain" / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(repo / "skills/tk-explain" / relative, target)
+        durable = self.root / "skills/tk-explain/scripts/durable_artifacts.py"
+        durable.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(repo / "skills/tk-explain/scripts/durable_artifacts.py", durable)
         for name in sync_execution_protocol.HTML_CONSUMERS:
             assets = self.root / "skills" / name / "assets"
             assets.mkdir(parents=True, exist_ok=True)
@@ -187,6 +190,17 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         for path in (self.root / "skills").glob("tk-*/SKILL.md"):
             self.assertIn(sync_execution_protocol.RESULT_SUMMARY_BLOCK, path.read_text(encoding="utf-8"))
         self.assertEqual(sync_execution_protocol.result_summary_errors(self.root / "skills"), [])
+
+    def test_durable_helper_is_distributed_and_drift_is_repaired(self) -> None:
+        self.assertEqual(self.run_main(), 0)
+        source=self.root/'skills/tk-explain/scripts/durable_artifacts.py'
+        for name in ('tk-explain-diff','tk-teach'):
+            target=self.root/'skills'/name/'scripts/durable_artifacts.py'
+            self.assertEqual(target.read_bytes(),source.read_bytes())
+            target.write_text('drift')
+            self.assertNotEqual(self.run_main('--check'),0)
+            self.assertEqual(self.run_main(),0)
+            self.assertEqual(target.read_bytes(),source.read_bytes())
 
     def test_research_and_repository_context_drift_fail_and_repair(self) -> None:
         self.assertEqual(self.run_main(), 0)

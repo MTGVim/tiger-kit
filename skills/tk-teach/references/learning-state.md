@@ -35,7 +35,9 @@ link its supersession rather than silently overwriting history.
 
 ## Resume and next lesson
 
-1. Resolve the exact course home and verify repository or external
+1. Run `scripts/durable_artifacts.py resume --repo <repository>` to find configured durable,
+   `.tigerkit/teach/` and legacy `.tigerkit/study/` candidates; use `--slug <topic>` when known.
+   Resolve the exact course home and verify repository or external
    workspace, topic, mission, current goal, provenance and permissions.
    A name collision never proves identical identity.
 2. Read mission, existing learner profile, relevant latest learning
@@ -57,7 +59,8 @@ link its supersession rather than silently overwriting history.
 
 ## Persistence and migration
 
-New default: ignored `.tigerkit/teach/<topic>/`, reusable across sessions
+New default: configured `<durableRoot>/<repo-key>/study/<topic>/` when available, otherwise
+ignored `.tigerkit/teach/<topic>/`, reusable across sessions
 in the *same* filesystem but not guaranteed across hosts/devices.
 For long-lived Git-shared learning, the user may explicitly select a
 tracked path such as `learning/<topic>/` and approve the file writes.

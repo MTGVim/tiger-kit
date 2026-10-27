@@ -14,7 +14,7 @@ ARTIFACT_CLEANUP_GUARD = "Prefer fresh directories and supported trash for autho
 ARTIFACT_BLOCK = """<!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority.
+Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority.
 """.rstrip() + " " + ARTIFACT_CLEANUP_GUARD + "\n"
 NO_ARTIFACT_BLOCK = """<!-- tigerkit:artifact-paths -->
 ## Artifact Paths
@@ -58,7 +58,37 @@ Request the smallest missing user input only when supported autonomous recovery 
 '''
 ARTIFACT_REFERENCE = """# Artifact Paths
 
-Default repository-owned output to `.tigerkit/`: transient files in `tmp/<skill>/<run-id>/`, verification evidence in `evidence/<skill>/<run-id>/`, explanations in `explanations/`, lessons in `study/<topic>/`, and retrospectives in `retro/`. Preserve existing owner-specific paths and explicit user-selected final destinations. Create artifacts only when the active task calls for them. Before writing, verify the repository root, no tracked `.tigerkit` paths, and safe nonsymlink destinations. From the repository root, run `git ls-files -- .tigerkit .tigerkit/` to check tracking, then `git check-ignore -q -- .tigerkit/` to check effective exclusion. Exit 0 means leave ignore files unchanged, including when exclusion comes from `core.excludesFile` (such as configured `~/.gitignore`), the default global ignore file, or `.git/info/exclude`; a missing repository `.gitignore` or missing literal entry is not evidence of missing coverage. Only exit 1 permits creating the root `.gitignore` or appending `/.tigerkit/`, preserving existing bytes and line endings, then rerunning the same check before writing. Any other exit status or command failure blocks the file branch without an ignore edit. Use `git check-ignore -v -- .tigerkit/` only to diagnose the source; a printed negated pattern is not proof of exclusion. This narrow ignore setup is part of an authorized artifact write even for a read-only task; it grants no other source/config/index/commit/publication authority. Existing effective ignore rules need no edit. Do not untrack files or follow a symlinked/nonregular `.gitignore`; if unsafe, unwritable, still unignored, or no repository is identified, hold only the file branch as `Blocked | Unverifiable` and follow the recovery procedure below, without an OS-temp fallback. Briefly report an ignore edit; never stage or commit it solely for setup. Atomic replacement may use a run-owned sibling temporary file on the destination filesystem; clean it after success. External tool caches and isolated test fixtures retain their tool-owned lifecycle.
+Default repository-owned output to `.tigerkit/`: transient files in `tmp/<skill>/<run-id>/`, verification evidence in `evidence/<skill>/<run-id>/`, explanations in `explanations/`, lessons in their owner-specific learning home, and retrospectives in `retro/`. Preserve existing owner-specific paths and explicit user-selected final destinations. Create artifacts only when the active task calls for them. For repository-local artifacts, before writing, verify the repository root, no tracked `.tigerkit` paths, and safe nonsymlink destinations. From the repository root, run `git ls-files -- .tigerkit .tigerkit/` to check tracking, then `git check-ignore -q -- .tigerkit/` to check effective exclusion. Exit 0 means leave ignore files unchanged, including when exclusion comes from `core.excludesFile` (such as configured `~/.gitignore`), the default global ignore file, or `.git/info/exclude`; a missing repository `.gitignore` or missing literal entry is not evidence of missing coverage. Only exit 1 permits creating the root `.gitignore` or appending `/.tigerkit/`, preserving existing bytes and line endings, then rerunning the same check before writing. Any other exit status or command failure blocks the file branch without an ignore edit. Use `git check-ignore -v -- .tigerkit/` only to diagnose the source; a printed negated pattern is not proof of exclusion. This narrow ignore setup is part of an authorized artifact write even for a read-only task; it grants no other source/config/index/commit/publication authority. Existing effective ignore rules need no edit. Do not untrack files or follow a symlinked/nonregular `.gitignore`; if unsafe, unwritable, still unignored, or no repository is identified, hold only the file branch as `Blocked | Unverifiable` and follow the recovery procedure below, without an OS-temp fallback. Briefly report an ignore edit; never stage or commit it solely for setup. Atomic replacement may use a run-owned sibling temporary file on the destination filesystem; clean it after success. External tool caches and isolated test fixtures retain their tool-owned lifecycle.
+
+
+## Optional durable final artifacts
+
+Only `tk-explain`, `tk-explain-diff` and `tk-teach` may use `artifacts.durableRoot` for
+final explanations and newly created learning homes. Explicit destinations win; transient
+`tmp/` and `evidence/` stay repository-local. Before the first eligible artifact, run the
+package-local `scripts/durable_artifacts.py status`. If `durableRoot` is absent and an
+interactive question is possible, ask once before saving whether to use an outside-repository
+location, suggesting `~/.tigerkit` and explaining that removing a worktree also removes its
+ignored `.tigerkit/` files. Use the accepted path, not an inferred preference.
+After the answer, record only that answer using `choose --root <path> --repo <repository>`
+or `choose --disable --repo <repository>`. If another writer changes settings before the
+choice is recorded, re-read status and preserve any existing choice; do not overwrite it. If the
+key remains absent, retry using the already approved answer. A null choice means deliberately
+disabled; do not ask again when the key exists. If questioning is unavailable, use the existing default
+without recording a choice. Preserve other settings and never replace malformed settings.
+
+For an eligible final artifact, use `resolve --repo <repository> --kind explanations|study
+--slug <safe-topic-slug>`. Pass `--explicit <path>` for a user-selected destination; a slug is unnecessary in that case. A configured
+root yields `<root>/<repo-key>/explanations/<slug>.html` or `<root>/<repo-key>/study/<slug>/`;
+otherwise use the existing owner default. Use `--create` only when ready to create an authorized
+durable destination. The helper derives the key from the actual Git common directory, rejects
+symlink paths and roots within any worktree, and creates new directories with private mode.
+For a durable path, verify repository identity and safe destination but skip `.tigerkit/` Git
+ignore setup solely for that final path. Apply ordinary exclusion checks to any local scratch.
+Existing default targets get numeric suffixes; explicit targets require overwrite authority.
+Invalid configuration falls back without modifying it; report its warning once. Do not move or
+copy existing artifacts. Existing teach homes remain where they are and are identity-checked
+before continuation; use the owner's resume procedure to inspect durable and legacy candidates.
 
 
 ## Recovering a blocked file branch
