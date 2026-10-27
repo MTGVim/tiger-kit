@@ -8,6 +8,10 @@ object-level authorization; SSRF across redirects and resolved destinations; pat
 injection; XSS through framework escape hatches; secret leakage in logs, URLs, or artifacts; webhook signature, replay,
 and idempotency; and race/TOCTOU/transaction/lock boundaries when the touched behavior makes them reachable.
 
+When the changed behavior reaches browser messages, DOM escape hatches, browser persistence,
+or model/retrieval/tool execution, read [browser and agent boundaries](security-boundaries.md)
+and trace only the affected branch and its direct consumers.
+
 Do not impose universal rate limiting, CSRF, storage, dependency scanning, or sanitization rules. Framework defaults,
 deployment topology, repository policy, and the concrete exploit path decide whether a finding exists. Never introduce a
 new scanner or dependency merely to complete review.

@@ -76,6 +76,7 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         discovery = self.root / "skills/tk-audit/references/repository-context.md"
         discovery.parent.mkdir(parents=True, exist_ok=True)
         discovery.write_text("Optional context, not authority\n", encoding="utf-8")
+        (discovery.parent / "security-boundaries.md").write_text("Conditional boundaries\n", encoding="utf-8")
         canonical = Path(__file__).resolve().parents[1] / "skills/tk-browser-verify"
         fixture = self.root / "skills/tk-browser-verify"
         for directory, names in (("references", verification_policy.REFERENCES),
@@ -261,6 +262,18 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         self.assertEqual(self.run_main("--check"), 0)
         for target in self.rebase_targets:
             self.assertEqual(target.read_bytes(), self.rebase_readiness.read_bytes())
+
+    def test_security_boundaries_sync_repairs_missing_and_stale_installed_copies(self) -> None:
+        self.assertEqual(self.run_main(), 0)
+        for target in (self.review, self.prep, self.respond):
+            path = target / "security-boundaries.md"
+            path.unlink()
+            self.assertEqual(self.run_main("--check"), 1)
+            self.assertEqual(self.run_main(), 0)
+            path.write_text("stale\n", encoding="utf-8")
+            self.assertEqual(self.run_main("--check"), 1)
+            self.assertEqual(self.run_main(), 0)
+            self.assertEqual(path.read_text(), "Conditional boundaries\n")
 
     def test_installed_notice_is_required_and_sync_preserves_other_attribution(self) -> None:
         self.assertEqual(self.run_main(), 0)

@@ -13,6 +13,9 @@ checklist, not as quotas.
   and sensitive logging. Record only the location and credential type.
   For dependency advisories in the selected security scope, read
   [dependency evidence](dependency-audit.md).
+  When scoped code handles browser messages, DOM escape hatches, browser persistence,
+  or model/retrieval/tool execution, read [browser and agent boundaries](security-boundaries.md)
+  and apply only the matching branch.
 - **Performance**: Check N+1 work, repeated scans, unbounded payloads, caching gaps,
   queue boundaries, and slow build/test feedback.
 - **Testing**: Check critical paths without meaningful coverage, frequently changed

@@ -359,6 +359,9 @@ def main() -> int:
     pairs.append((EXTERNAL_CONTRACT_SOURCE, EXTERNAL_CONTRACT_TARGET))
     pairs.extend((PR_VISUAL_SOURCE, target) for target in PR_VISUAL_TARGETS)
     pairs.extend((REBASE_READINESS_SOURCE, target) for target in REBASE_READINESS_TARGETS)
+    boundaries = ROOT / "skills/tk-audit/references/security-boundaries.md"
+    pairs.extend((boundaries, ROOT / "skills" / name / "references/security-boundaries.md")
+                 for name in ("tk-review", "tk-prep", "tk-pr-respond"))
     context = ROOT / "skills/tk-audit/references/repository-context.md"
     if context.is_file():
         pairs.extend((context, ROOT / "skills" / name / "references/repository-context.md")
