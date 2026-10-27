@@ -132,13 +132,7 @@ Explain each PR at the level the user needs to understand:
 - whether it is independent of the other work
 - whether the PR owner is likely to use direct execution or its shared SDD protocol
 
-Before presenting a design choice, read the PR body, linked ticket and relevant parent/discussion,
-and the cross-team contracts it depends on. Inspect open counterpart PRs changing that same API:
-use changed file paths as well as keywords, and inspect the bounded open list before claiming none
-exist. State unavailable evidence in one or two lines. Resolve existing edit/copy behavior and a
-proposed document's repository convention, tracking and ignore status before asking about them.
-An unmerged counterpart change cannot supersede an agreed task requirement: retain that premise,
-disclose the conflict as a verification item, and change the requirement only with user direction.
+Before presenting a design choice, read and follow [design choice evidence](references/design-context.md).
 
 TigerKit decides only the execution shape. Model selection remains the host/user's responsibility and is never persisted.
 Do not mark the entire Sweep as `Blocked` merely because model controls are unavailable.
