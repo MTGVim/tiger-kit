@@ -1,6 +1,8 @@
 # 릴리즈 체크리스트
 
-`main`에 변경을 반영하기 전에 이 문서의 필수 검사를 통과합니다. 모든 검사는 로컬에서 실행합니다.
+`main`에 변경을 반영하기 전에 이 문서의 필수 검사를 통과합니다. 모든 검사는 로컬에서 실행합니다. 아래 명령은
+릴리즈 검사기가 실행하는 내용을 보여 줍니다. 기준 버전 비교를 실행하면 이 명령들을
+별도로 반복할 필요가 없습니다.
 
 ## README 기준
 
@@ -18,14 +20,10 @@
 python3 scripts/sync_execution_protocol.py --check
 python3 scripts/check_token_budget.py --check
 python3 scripts/validate_skills.py
-python3 scripts/validate_skills.py --links-only
 python3 -B -m unittest discover -s scripts -p 'test_*.py'
 python3 scripts/audit_catalog.py --check
 python3 scripts/check_docs.py
-node --check skills/tk-pr-sweep/scripts/triage.mjs
 node --test skills/tk-pr-sweep/scripts/triage.test.mjs
-npx --yes skills@1.5.9 add . --list
-npx --yes skills add . --list
 git diff --check
 ```
 
@@ -34,6 +32,10 @@ git diff --check
 압축 후 재주입 시 잘림을 예방하는 별도 기준이며, 기존 36KB 제한은 바이트 부하를 검사합니다.
 실제 호스트의 압축 동작을 실행했다는 증거는 아닙니다. 나머지 값은 컨텍스트 크기의 근사
 지표이며 모델 토큰 수, 이미지 비용, 평가별 실행 비용을 직접 측정하지 않습니다.
+
+실제 설치 검사는 기준 버전 비교에서 격리된 소비자 디렉터리에 패키지를 설치하고
+설치 파일을 원본과 비교합니다. 전체 스킬 검사가 링크도 확인하고, `Node` 테스트가
+대상 모듈을 불러오므로 링크 전용 검사와 구문 검사도 반복하지 않습니다.
 
 ## 기준 버전 비교
 

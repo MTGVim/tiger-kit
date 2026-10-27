@@ -589,15 +589,11 @@ def main() -> int:
             ["python3", "scripts/sync_execution_protocol.py", "--check"],
             ["python3", "scripts/check_token_budget.py", "--check"],
             ["python3", "scripts/check_docs.py"],
-            ["node", "--check", "skills/tk-pr-sweep/scripts/triage.mjs"],
             ["node", "--test", "skills/tk-pr-sweep/scripts/triage.test.mjs"],
             ["python3", "scripts/validate_skills.py"],
-            ["python3", "scripts/validate_skills.py", "--links-only"],
             ["python3", "-B", "-m", "unittest", "discover", "-s", "scripts", "-p", "test_*.py"],
             ["python3", "scripts/audit_catalog.py", "--check"],
             ["git", "diff", "--exit-code"],
-            ["npx", "--yes", "skills@1.5.9", "add", ".", "--list"],
-            ["npx", "--yes", "skills", "add", ".", "--list"],
             ["git", "diff", "--check"],
         ]
         for command in commands:
