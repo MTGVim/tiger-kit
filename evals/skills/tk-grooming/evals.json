@@ -903,6 +903,66 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "vendor-freshness-behind-apply",
+      "path": "boundary",
+      "prompt": "확인된 외부 장터 플러그인은 같은 채널의 설치 버전 1.0, 출처 버전 2.0이며 자동 업데이트가 꺼져 있다. `--apply`로 감사해줘.",
+      "expected_output": "분류는 `keep (vendor)`로 유지하고 근거에 설치·출처 버전과 자동 업데이트 상태를 기록한다. 업데이트나 설정 변경은 안내만 하고 캐시와 메타데이터를 포함해 수정하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "분류는 `keep (vendor)`로 유지하고 근거에 설치·출처 버전과 자동 업데이트 상태를 기록한다. 업데이트나 설정 변경은 안내만 하고 캐시와 메타데이터를 포함해 수정하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "vendor-freshness-current",
+      "path": "boundary",
+      "prompt": "확인된 장터 플러그인의 설치본은 신뢰할 수 있는 출처와 같고 자동 업데이트가 켜져 있다.",
+      "expected_output": "신선도만을 이유로 지적 사항이나 예외를 만들지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "신선도만을 이유로 지적 사항이나 예외를 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "vendor-freshness-unverifiable",
+      "path": "boundary",
+      "prompt": "확인된 장터 플러그인의 설치 커밋은 기록됐지만 원격 접근 또는 조상 관계를 확인할 수 없다.",
+      "expected_output": "신선도를 `Unverifiable`로 기록하고 근거 없이 최신 또는 뒤처짐을 주장하거나 로컬 상태를 변경하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "신선도를 `Unverifiable`로 기록하고 근거 없이 최신 또는 뒤처짐을 주장하거나 로컬 상태를 변경하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "vendor-hook-attribution",
+      "path": "boundary",
+      "prompt": "관찰된 플러그인 훅이 현재 담당 스킬과 충돌하는 오래된 도구 지시를 주입한다.",
+      "expected_output": "관찰된 훅 지시를 근거 사슬에 포함하되 훅을 실행하거나 파일 존재만으로 인과관계를 추정하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "관찰된 훅 지시를 근거 사슬에 포함하되 훅을 실행하거나 파일 존재만으로 인과관계를 추정하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

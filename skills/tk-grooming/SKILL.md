@@ -33,7 +33,8 @@ Implicit mode is report-only.
    [persistent context](references/persistent-context.md) only when rules, memory, or a
    user-corrected behavior is in scope.
 3. `evidence`: Record area-specific observations, paths, verification status,
-   and ownership evidence for every candidate.
+   and ownership evidence for every candidate. For confirmed marketplace vendor candidates,
+   check [freshness evidence](references/discovery.md#freshness-evidence-vendor).
 4. `incident attribution`: When user feedback says prior behavior was wrong, compare
    the behavior's cited or observed instruction with the active skill and persistent
    context. Classify a proven obsolete instruction that conflicts with the current owner
@@ -122,7 +123,9 @@ Determine ownership from confirmed paths and link targets, package-manager
 installation locations, updater/version artifacts, and verifiable author history.
 Names and conventions are not evidence. Always treat candidates confirmed as
 vendor-managed as `keep (vendor)`; report only quality findings and do not create
-proposals or edits. If ownership is uncertain, stop before proposing edits and ask
+proposals or edits. Report outdated installations and disabled auto-update as quality
+findings; only advise host update/settings actions, never execute them, including in `--apply`.
+If ownership is uncertain, stop before proposing edits and ask
 whether it is user-managed or externally installed.
 
 Classification alone does not grant modification authority. Even after approval,
@@ -177,7 +180,11 @@ Record the overall `report-only | applied` disposition in `## Disposition`, but 
 not repeat the table or append metadata. If there are no items, output one
 `— | None | — | keep | — | no finding` row. Use `keep (vendor)` for vendor rows;
 use `Unverifiable` in Tier when classification evidence is missing. Preserve IDs
-across tier checkpoints without repeating the complete table.
+across tier checkpoints without repeating the complete table. For an outdated vendor
+installation, keep `Action` as `keep (vendor)` and put installed version or commit, source
+version or commit, and auto-update state in `Basis`. Mark unknown values `Unverifiable`;
+report a freshness evidence gap without claiming current. Do not add a freshness-only row
+or exception for a confirmed current installation with auto-update enabled.
 
 For distillation maintenance, see [sources](references/sources.md); ordinary audits do not need it.
 

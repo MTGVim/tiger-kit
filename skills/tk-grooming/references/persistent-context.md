@@ -3,6 +3,9 @@
 Use this branch only for repository/user rules, imported instructions, auto memory, or
 user-corrected behavior plausibly influenced by them.
 
+Plugin hook-injected instructions are persistent-context candidates when their actual
+loading and content are evidenced; do not execute the hook to discover them.
+
 ## Evidence chain
 
 1. Identify the behavior and the user's correction without converting either into a
