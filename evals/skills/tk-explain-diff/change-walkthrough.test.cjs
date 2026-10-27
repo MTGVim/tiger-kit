@@ -31,6 +31,11 @@ test('change groups, evidence, controls and no-JS reading', {skip}, async () => 
       assert.equal(await flow.locator('[data-change-step][data-active="true"]').count(),1);
       await flow.getByRole('button',{name:'다음 단계'}).click();
       assert.equal(await flow.locator('[data-change-step]').nth(1).getAttribute('data-active'),'true');
+      const active=flow.locator('[data-change-step]').nth(1);
+      assert.equal(await active.getAttribute('aria-current'),'step');
+      assert.equal(await active.locator('[data-change-node]').count(),2);assert.equal(await active.locator('[data-change-edge]').count(),1);
+      assert.ok((await active.innerText()).includes('변경'));
+
       await flow.getByRole('button',{name:'처음으로'}).click();
       assert.equal(await flow.locator('[data-change-step]').first().getAttribute('data-active'),'true');
       const link=page.locator('#cite-change-1-1 a'); await link.click();

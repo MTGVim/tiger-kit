@@ -15,6 +15,10 @@ def esc(value):
     return html.escape(str(value), quote=True)
 
 
+BASIS_LABEL = {'source': '원문 근거', 'inference': '추론', 'unverified': '미검증'}
+DELTA_LABEL = {'added': '추가', 'modified': '변경', 'removed': '삭제', 'unchanged': '변경 없음'}
+
+
 def check_supplement(fragment):
     class Markers(HTMLParser):
         def handle_starttag(self, tag, attrs):
@@ -54,12 +58,12 @@ def render_body(model, sources, intro='', outro=''):
         body.append('<div class="ht-change-pair">')
         for side, label in (('before','이전'),('after','이후')):
             claim=group[side]
-            body.append('<div class="ht-change-side"><h3>' + label + '</h3><p>' + esc(claim['text']) + ' ' + references(claim['evidence']) + '</p><p>근거 유형: ' + esc(claim['basis']) + '</p>')
+            body.append('<div class="ht-change-side"><h3>' + label + '</h3><p>' + esc(claim['text']) + ' ' + references(claim['evidence']) + '</p><p>근거 유형: ' + esc(BASIS_LABEL[claim['basis']]) + '</p>')
             if claim['limitation']: body.append('<p>한계: ' + esc(claim['limitation']) + '</p>')
             body.append('</div>')
         body.append('</div>')
         for claim in group['invariants']:
-            body.append('<p>보존 조건: ' + esc(claim['text']) + ' (' + esc(claim['basis']) + ') ' + references(claim['evidence']) + '</p>')
+            body.append('<p>보존 조건: ' + esc(claim['text']) + ' (' + esc(BASIS_LABEL[claim['basis']]) + ') ' + references(claim['evidence']) + '</p>')
             if claim['limitation']: body.append('<p>한계: ' + esc(claim['limitation']) + '</p>')
         for item in group['limitations']: body.append('<p>한계: ' + esc(item) + '</p>')
         for item in group['checkpoints']: body.append('<p>확인할 지점: ' + esc(item) + '</p>')
@@ -83,7 +87,11 @@ def render_body(model, sources, intro='', outro=''):
             body.append('<div class="ht-change-flow" data-change-flow><h3>' + esc(flow['title']) + ' · ' + esc(flow['version']) + '</h3><ol>')
             for step in flow['steps']:
                 edge=edges[step['edge_id']]; source=nodes[edge['from']]; target=nodes[edge['to']]
-                body.append('<li data-change-step><strong>' + esc(source['label']) + '</strong> (' + esc(source['delta']) + ') → ' + esc(edge['label']) + ' (' + esc(edge['delta']) + ') → <strong>' + esc(target['label']) + '</strong> (' + esc(target['delta']) + '): ' + esc(step['explanation']) + ' · 근거: ' + esc(edge['basis']) + ((' · 한계: ' + esc(edge['limitation'])) if edge['limitation'] else '') + '</li>')
+                body.append('<li data-change-step><div class="ht-change-flow-path">'
+                    '<span class="ht-change-flow-node" data-change-node="' + esc(source['id']) + '"><strong>' + esc(source['label']) + '</strong><small>' + esc(DELTA_LABEL[source['delta']]) + '</small></span>'
+                    '<span class="ht-change-flow-edge" data-change-edge="' + esc(edge['id']) + '"><span aria-hidden="true">→</span> ' + esc(edge['label']) + ' <small>' + esc(DELTA_LABEL[edge['delta']]) + '</small> <span aria-hidden="true">→</span></span>'
+                    '<span class="ht-change-flow-node" data-change-node="' + esc(target['id']) + '"><strong>' + esc(target['label']) + '</strong><small>' + esc(DELTA_LABEL[target['delta']]) + '</small></span></div>'
+                    '<p>' + esc(step['explanation']) + ' · 근거: ' + esc(BASIS_LABEL[edge['basis']]) + ((' · 한계: ' + esc(edge['limitation'])) if edge['limitation'] else '') + '</p></li>')
             body.append('</ol><div class="ht-change-flow-controls" data-change-flow-controls hidden><button type="button">이전 단계</button><button type="button">다음 단계</button><button type="button">처음으로</button></div></div>')
         first_evidence = [ident for ident, origins in links.items() if origins and origins[0][1] == index]
         if first_evidence:

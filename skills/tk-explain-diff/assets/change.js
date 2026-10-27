@@ -6,7 +6,10 @@
     let index = 0;
     const buttons = [...controls.querySelectorAll('button')];
     const show = () => {
-      steps.forEach((step, i) => step.setAttribute('data-active', String(i === index)));
+      steps.forEach((step, i) => {
+        step.setAttribute('data-active', String(i === index));
+        if (i === index) step.setAttribute('aria-current', 'step'); else step.removeAttribute('aria-current');
+      });
       buttons[0].disabled = index === 0; buttons[1].disabled = index === steps.length - 1;
     };
     buttons[0].addEventListener('click', () => { index = Math.max(0, index - 1); show(); });

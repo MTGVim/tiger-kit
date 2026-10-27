@@ -13,6 +13,12 @@
 .ht-lesson-practice details { margin-block:.75rem; }
 .ht-lesson-example pre { max-width:100%; overflow:auto; }
 .ht-lesson-focus { outline:2px solid var(--accent); outline-offset:3px; }
+/* The practice container is a programmatic anchor, not an interactive control. */
+.ht-lesson-practice:focus { outline:none; }
+.ht-lesson-practice.ht-arrival { box-shadow:none; background:var(--panel); }
+.ht-lesson-practice.ht-arrival > :is(h2,h3,h4,h5,h6) { box-shadow:0 0 0 2px var(--accent); background:var(--hover); }
+.ht-lesson-practice.ht-arrival.ht-arrival-fade > :is(h2,h3,h4,h5,h6) { box-shadow:0 0 0 2px transparent; background:transparent; }
+
 .ht-lesson footer { max-width:72rem; margin:2rem auto; }
 @media(max-width:960px) { .ht-lesson { display:block; padding:.75rem; } .ht-lesson-nav { position:static; margin-block:1rem; } .ht-lesson-workbench { grid-template-columns:minmax(0,1fr); } }
 @media(prefers-reduced-motion:reduce) { .ht-lesson * { transition:none; } }

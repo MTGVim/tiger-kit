@@ -47,6 +47,7 @@ class ChangeHTMLTest(unittest.TestCase):
             self.assertIn('id="evidence-e-policy-base"',first_group)
             self.assertGreaterEqual(text.count('href="#evidence-e-policy-base"'),2)
             self.assertIn('data-change-flow-controls hidden',text);self.assertIn('이전 판정',text);self.assertIn('이후 판정',text)
+            self.assertIn('data-change-node="cache"',text);self.assertIn('data-change-edge="cache-policy"',text);self.assertIn('원문 근거',text)
     def test_escaping_and_exact_copy_source(self):
         with tempfile.TemporaryDirectory() as root:
             model=copy.deepcopy(MODEL);sources=copy.deepcopy(SOURCES)

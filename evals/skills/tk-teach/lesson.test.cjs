@@ -20,6 +20,8 @@ test('lesson focus, scoped retry and native fallbacks', {skip}, async()=>{
       await hint.locator('summary').click();await solution.locator('summary').click();
       assert.ok(await hint.getAttribute('open')!==null);await page.locator('[data-ht-retry]').press('Enter');
       assert.equal(await hint.getAttribute('open'),null);assert.equal(await solution.getAttribute('open'),null);
+      const frame=await page.locator('#expiry-practice').evaluate(e=>({outline:getComputedStyle(e).outlineStyle,shadow:getComputedStyle(e).boxShadow}));
+      assert.equal(frame.outline,'none');assert.equal(frame.shadow,'none');
       const font=page.getByLabel('글자 크기');if(await font.count())await font.selectOption('200');
       assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));assert.deepEqual(requests,[]);await context.close();
     }
