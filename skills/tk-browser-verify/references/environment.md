@@ -99,6 +99,16 @@ expiry. An authentication rejection does not establish that a separate refresh g
 
 Before the first input request and any later request, inspect the existing application auth client and supported refresh contract:
 trusted endpoint, required client authentication/header/cookie/body, response fields and rotation.
+Search the whole application source recursively for renewal identifiers (such as `refresh`, `renew`,
+`reissue`) and the identified access/refresh cookie or storage key names. Read each hit that consumes
+these identifiers, including UI components and hooks, as a possible renewal call site; follow its
+calls to establish the supported contract. Conclude that no renewal route exists only after this
+search and review; if the search is incomplete or a candidate remains unresolved, do not claim
+there is no route or seed an access-only template on that basis. Before seeding, record one
+non-secret decision line: the verified call site (`path:symbol` and endpoint), or the search scope
+and identifiers with no renewal candidates after reviewing hits. For browser-managed renewal,
+record its verified call site and state that no user-supplied refresh material is needed. Never
+include token or cookie values or account information in this line.
 Use the existing authorized renewal route; collect a refresh token only if that route needs one.
 When it requires user-supplied refresh material, include that field as required in the first input
 template, alongside the bootstrap fields; do not defer it until access expires. If no renewal route
@@ -138,8 +148,10 @@ user-level excludes file. Then create
 `.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json` with directory mode `0700` and
 file mode `0600`. Apply the user-editable input branch in [artifact paths](artifact-paths.md):
 seed a plain JSON object using the bootstrap and renewal fields identified above, with empty strings.
-For access-only input use `{"token": ""}`; when the verified route requires both, use the app's exact
-field names, for example `{"accessToken": "", "refreshToken": ""}`.
+When the verified route requires both, use the app's exact field names, for example
+`{"accessToken": "", "refreshToken": ""}`. Use access-only input such as `{"token": ""}`
+only when the recorded investigation establishes no renewal route or that the verified route
+needs no user-supplied refresh material.
 Before showing paths or input mechanics, state in one sentence which pending verification step
 needs this user-only input and why the existing evidence or authenticated state cannot satisfy it,
 using the user's terms. For example, say that the earlier run verified a different head or that
