@@ -78,6 +78,7 @@ Write one complete document with a clear conversational voice by default; avoid 
 same content in another mode or tab. Read only the relevant [technique entry](references/explanation-techniques.md) when a requested
 or unfamiliar supporting format needs guidance. Prose and tables need no technique assignment.
 For charts, SVG, card flows or diagnostic figures, read [figure authoring](references/html-figures.md).
+For code excerpts, generate markup with `scripts/highlight_code.py` and read [code and references](references/html-components.md).
 Honor an established format preference when it fits the content. Simpler wording keeps the same
 mechanism, evidence, technical names and limitations.
 

@@ -29,10 +29,13 @@ class Fragment(HTMLParser):
         self.heading = None
         self.details = []
         self.classes = set()
+        self.plain_pre = 0
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
         self.classes.update((attrs.get('class') or '').split())
+        if tag == 'pre' and 'ht-code' not in (attrs.get('class') or '').split():
+            self.plain_pre += 1
         if tag in {'html', 'head', 'body', 'main', 'script', 'style', 'h1'}:
             raise ValueError('body/footer must be content fragments; use --css/--script for authored code')
         if self.details and self.details[-1]['first'] is None:
@@ -129,7 +132,7 @@ def resolve_theme(explicit=None):
         return 'system', notes + ['Theme settings unavailable; preserved existing data: ' + str(error)]
 
 
-def assemble(body, title, *, theme='system', lang='ko', css='', script='', footer=''):
+def assemble(body, title, *, theme='system', lang='ko', css='', script='', footer='', warn_plain_pre=True):
     if not title.strip() or not body.strip():
         raise ValueError('a subject-specific title and non-empty body are required')
     if theme not in ('system', 'light', 'dark'):
@@ -147,6 +150,10 @@ def assemble(body, title, *, theme='system', lang='ko', css='', script='', foote
     unknown = sorted(name for name in parser.classes if name.startswith('ht-') and name not in known)
     if unknown:
         warnings.warn('Undefined shared theme classes: ' + ', '.join(unknown), stacklevel=2)
+    if parser.plain_pre and warn_plain_pre:
+        warnings.warn(
+            f'{parser.plain_pre} <pre> block(s) without .ht-code; '
+            'generate code excerpts with scripts/highlight_code.py', stacklevel=2)
     if re.search(r'</style\b', css, re.I) or re.search(r'</script\b', script, re.I):
         raise ValueError('escape embedded closing style/script tags in authored code')
     template = Template((PACKAGE / 'assets/document-shell.html').read_text(encoding='utf-8'))
@@ -181,7 +188,7 @@ def main():
         read = lambda path: path.read_text(encoding='utf-8') if path else ''
         body, css, script, footer = map(read, (args.body, args.css, args.script, args.footer))
         # Validate content before any preference bootstrap or output mutation.
-        assemble(body, args.title, theme=args.theme or 'system', lang=args.lang, css=css, script=script, footer=footer)
+        assemble(body, args.title, theme=args.theme or 'system', lang=args.lang, css=css, script=script, footer=footer, warn_plain_pre=False)
         theme, notes = resolve_theme(args.theme)
         document = assemble(body, args.title, theme=theme, lang=args.lang, css=css, script=script, footer=footer)
         with args.output.open('w' if args.replace else 'x', encoding='utf-8') as stream:

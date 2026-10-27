@@ -56,6 +56,31 @@ class HTMLAssemblyTests(unittest.TestCase):
             module.assemble(BODY + '<div class="ht-table-scroll custom-chart"></div><div class></div>', 'Cache')
         self.assertEqual(notes, [])
 
+    def test_cli_warns_once_for_plain_pre_and_accepts_generated_code(self):
+        helper = load('tk-explain', 'highlight_code.py')
+        generated = helper.highlight('const value = 1;\n', 'js')
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            body, output = root / 'body.html', root / 'result.html'
+            command = [sys.executable, str(ROOT / 'skills/tk-explain/scripts/build_html.py'),
+                       '--body', str(body), '--title', 'Cache', '--output', str(output), '--theme', 'system']
+            for fragment, expected in [
+                ('<pre><code>plain</code></pre><pre class="other">text</pre>', 2),
+                (generated, 0),
+                ('<p>No preformatted text</p>', 0),
+            ]:
+                with self.subTest(fragment=fragment):
+                    body.write_text(BODY + fragment)
+                    result = subprocess.run(command + ['--replace'], capture_output=True, text=True)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertTrue(output.exists())
+                    self.assertEqual(result.stderr.count('without .ht-code'), bool(expected))
+                    if expected:
+                        self.assertIn(f'{expected} <pre> block(s)', result.stderr)
+                        self.assertIn('scripts/highlight_code.py', result.stderr)
+                    else:
+                        self.assertEqual(result.stderr, '')
+
     def test_reference_fragment_assembles_with_valid_anchors_and_classes(self):
         import warnings
         with warnings.catch_warnings(record=True) as notes:
