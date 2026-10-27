@@ -274,6 +274,51 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "voice-fallback-and-contradiction-link",
+      "path": "success",
+      "prompt": "$tk-inquiry `Jira` 담당자가 `API` 필드가 적용됐다고 했지만 로그 한 건 `https://example.com/record/42` 에서는 필드가 없어요. 스레드에 제 글은 없고 말투 설정이나 최근 글도 없습니다. 댓글 초안을 주세요. 클립보드 도구는 사용 가능합니다.",
+      "expected_output": "정중한 중립 말투와 그 사실을 초안 밖에 알리고, 정확히 제공된 단일 기록 링크 하나를 포함한다. 실제 붙여넣을 수 있는 본문과 복사 제안으로 끝내고 동의 없이 복사하거나 게시하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "정중한 중립 말투와 그 사실을 초안 밖에 알리고, 정확히 제공된 단일 기록 링크 하나를 포함한다. 실제 붙여넣을 수 있는 본문과 복사 제안으로 끝내고 동의 없이 복사하거나 게시하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "polish-preserves-voice-and-certainty",
+      "path": "success",
+      "prompt": "$tk-inquiry 슬랙 진행 공유를 다듬어줘: 안녕하세요!! 다른 팀 배포는 다음 주로 예상됩니다 :) 문의는 이미 남겼어요!",
+      "expected_output": "원문의 인사, 문장부호, 웃음 표시와 예상이라는 불확실성을 보존하고 없는 굵은 제목을 넣지 않는다. 상태 공유에 `tk-rewrite`가 더 적합함을 알리고 `voice drift`와 `added claims`를 점검하며 게시하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "원문의 인사, 문장부호, 웃음 표시와 예상이라는 불확실성을 보존하고 없는 굵은 제목을 넣지 않는다. 상태 공유에 `tk-rewrite`가 더 적합함을 알리고 `voice drift`와 `added claims`를 점검하며 게시하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "ordinary-question-no-evidence-link",
+      "path": "success",
+      "prompt": "$tk-inquiry 슬랙에 동료에게 배포 일정을 확인하는 질문을 써줘. 링크는 요청하지 않았어.",
+      "expected_output": "상대의 이전 발언에 반박하지 않는 일반 질문에 근거 링크를 추가하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "상대의 이전 발언에 반박하지 않는 일반 질문에 근거 링크를 추가하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "renamed_from": {

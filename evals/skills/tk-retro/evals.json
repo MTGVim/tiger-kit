@@ -527,6 +527,21 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "retro-issue-draft-korean-default",
+      "path": "success",
+      "prompt": "$tk-retro 외부 패키지에서 확인된 스킬 장애에 대한 익명화 이슈 초안을 작성해줘. 공개 식별자 `upstream/tool`과 정확한 오류 `timeout`은 보존해줘.",
+      "expected_output": "이슈 초안 본문은 한국어로 작성하고 정확한 식별자와 인용을 보존한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "외부 패키지 이슈 초안의 배경, 증상, 수정 위치, 수용 기준과 보존 동작을 한국어로 작성하고 정확한 코드와 식별자를 보존한다. 게시하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "migrations": [

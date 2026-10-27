@@ -87,7 +87,10 @@ proven consumer override; a shared package defect still belongs in its upstream 
 Separate findings by owning layer: external upstream package, user-owned global guidance/personal
 skill/repository-local settings, or `no change`. When file output is permitted, for upstream-owned findings write a standalone,
 paste-ready `.tigerkit/retro/<YYYY-MM-DD>-<topic-slug>-issue.md`. Include only
-that package's background, symptoms, exact patch locations, acceptance checks and preserved behavior;
+that package's background, symptoms, exact patch locations, acceptance checks and preserved behavior.
+Write the issue draft in Korean by default, preserving exact identifiers, code, quotations and
+required technical literals; honor an explicitly requested language instead. Do not translate
+quoted evidence as if it were verbatim. The draft should
 omit report-internal finding IDs, local absolute paths and private identifiers. If several packages
 need distinct recipients, use package-specific slugs. Reuse a matching draft from this session for
 the same upstream package and append new items; inspect it first and preserve prior content.

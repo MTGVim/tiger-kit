@@ -28,7 +28,11 @@ send, or thread reply is owned by this skill.
    history supplied in the current conversation. Use it to check prior asks and
    answers, contradictions, participants, and the requester's established tone. If
    the thread cannot be accessed, say so and use only supplied context; do not
-   invent its contents.
+   invent its contents. When the thread has no requester message, use applicable
+   user-level voice guidance or the configured `questionnaire.policy` (check the
+   optional configuration when needed); otherwise
+   consult a few accessible recent requester messages on the same surface. If no
+   voice source exists, use a neutral polite voice and note this after the draft.
 2. Investigate facts available from authorized sources before asking. If the
    recipient/channel/required return is still material and user-owned, ask only
    these together in a short round. Ask about **the send, not the subject**.
@@ -65,13 +69,23 @@ send, or thread reply is owned by this skill.
    Ask only questions whose answers change the requester's next action. When the
    recipient owns the judgment, request their review instead of asking them to decide
    for the requester. Keep the explanation concise and avoid decorative markers or
-   chatty endings.
+   chatty endings for new drafts unless the established voice calls for them.
+   For a user-supplied draft, preserve its register, sign-offs, punctuation habits,
+   emphasis and degree of certainty; do not add formatting absent from it. Change
+   only what clarity or factual accuracy requires. Apply known user-level writing
+   habits to new drafts too, without inventing them. If the draft mainly shares
+   status, explain that `tk-rewrite` fits better and apply its voice-drift and
+   added-claims checks while completing the requested polish. Ask for missing
+   context only if it materially changes the message.
 
    In comments and DMs, describe the observed behavior before any code identifier;
    put a needed identifier in parentheses. Include no source links by default. Add
    only the relevant issue or ticket link when useful, and add code or other evidence
-   links only when the user asks. Use deadline or schedule-pressure language only
-   when the user supplied a deadline.
+   links only when the user asks. If the message contradicts the recipient's earlier
+   statement, include exactly one verified, directly openable evidence link to a
+   specific record when available, unless the user declines; do not invent a link.
+   If no such link is available, say so outside the draft. Use deadline or
+   schedule-pressure language only when the user supplied a deadline.
 5. Read only the reference for the selected destination: [Slack](references/channels/slack.md),
    [GitHub](references/channels/github.md), [Jira](references/channels/jira.md),
    [email](references/channels/email.md) or
@@ -79,8 +93,12 @@ send, or thread reply is owned by this skill.
    rules. Use a configured template only for this formatting role. Fill only known
    placeholders `{recipient}`, `{context}`, `{questions}`, `{deadline}`; omit missing
    values or label them unknown, and never guess.
-6. Return the complete draft in the conversation, ready to copy. Create a Markdown
-   file only on explicit save and after Artifact Paths safety checks; a named
+6. Return the complete draft in the conversation, ready to copy. For tracker, chat
+   and code-review destinations, use text that can be pasted
+   into the actual destination without chat-only markup that would print literally.
+   If a clipboard tool is available, end by offering to copy; copy only after the
+   user accepts. Copying is not posting. Create a Markdown file only on explicit
+   save and after Artifact Paths safety checks; a named
    destination controls the output path. Do not create artifacts for every message.
 
 ## Contract
