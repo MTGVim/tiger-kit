@@ -36,6 +36,12 @@ checklist, not as quotas.
     makes the complexity itself disappear.
   - Check whether frequently changed, hard-to-test boundaries or interface mismatches
     create measurable maintenance or testing cost.
+  - When actual task or change evidence is available, trace repeated wrong edit
+    locations, duplicated policy implementations, navigation, or blocked verification
+    to the responsible repository structure or contract and explain the observed cost
+    and how the proposed change would reduce it. Distinguish structural causes from
+    missing context, model limitations, one-off tooling failures, and ADR trade-offs;
+    file count or directory depth alone is not evidence of friction.
 - **Dependencies / migration**: Check EOL or deprecated APIs, neglected critical
   dependencies, duplicate solutions, lockfile drift, and blast radius.
   For a selected dependency audit, read [dependency evidence](dependency-audit.md).

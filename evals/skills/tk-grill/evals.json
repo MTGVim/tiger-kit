@@ -356,6 +356,36 @@
           "expected": "Pending"
         }
       ]
+    },
+    {
+      "id": "material-alternative-turning-condition",
+      "path": "success",
+      "prompt": "$tk-grill 저장 방식 `A`는 강한 정합성을 보장하고 운영 부담이 큽니다. `B`는 운영이 쉽지만 지연 동기화입니다. 자료에서 두 성질은 검증되었고 사용자는 정합성을 우선한다고 확인했습니다. 합의 전 결론을 점검해 주세요.",
+      "expected_output": "`A` 추천과 근거, 정합성 요구가 완화되면 `B`가 유리해지는 조건을 설명하고 사용자 합의 절차를 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "확인된 정합성 우선순위에서 `A`를 추천하고 요구가 완화되어 운영 부담이 우선될 때 `B`가 유리해지는 조건을 설명한다. 검증된 사실을 다시 묻거나 근거 없는 수치 임계값을 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "minor-reversible-choice-no-forced-threshold",
+      "path": "boundary",
+      "prompt": "$tk-grill 간단히 되돌릴 수 있는 내부 버튼 색상 두 가지를 비교하고 있습니다. 알려진 전환 조건이나 수치 근거는 없습니다.",
+      "expected_output": "사소한 선택에 강제적인 전환 분석이나 임의의 수치 임계값을 만들지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "쉽게 되돌릴 수 있는 선택을 과도하게 분석하지 않고 근거 없는 전환 조건이나 수치를 발명하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

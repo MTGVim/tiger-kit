@@ -61,6 +61,13 @@ Work in rounds:
 Do not turn fact-finding into unbounded research. Investigate only facts that can
 materially change the current decision tree.
 
+For a consequential choice between alternatives, test the recommendation against
+its decisive assumptions and priorities: identify an evidence-supported change in
+conditions that would favor another option, when one is known. Research checkable
+constraints rather than asking the user; ask only for user-owned priorities. If the
+turning condition is unknown, retain that uncertainty rather than inventing a threshold.
+Skip this analysis for minor, easily reversible choices.
+
 ## Visual questions
 
 For unresolved spatial alternatives, read [visual questions](references/visual-questions.md) and attach one HTML comparison to the numbered text round. Keep every decision complete in chat; the aid also collects nonvisual choices from that same round. The Boundary permits only this question aid and its canonical artifact setup.
@@ -90,7 +97,8 @@ When the frontier appears empty:
    and continue from the new frontier.
 4. After confirmation, return a compact synthesis of the purpose or conclusion, key
    decisions and reasons, intentionally open assumptions or risks, and optional next
-   routes. Create no additional artifact; keep only an already-authorized visual question aid.
+   routes. Include a material turning condition when identified. Create no additional
+   artifact; keep only an already-authorized visual question aid.
 
 ## Source
 
