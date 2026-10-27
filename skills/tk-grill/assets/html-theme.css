@@ -101,7 +101,7 @@ pre { max-width: 100%; overflow-x: auto; }
 @media (max-width: 760px) {
   .ht-topbar { position: static; grid-template-columns: minmax(0, 1fr); padding: .75rem 1.2rem; gap: .5rem; }
 }
-html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scroll-padding-top: var(--ht-anchor-offset); }
+html:has(:is(.ht-document, [data-ht-document])) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scroll-padding-top: var(--ht-anchor-offset); }
 .ht-doc-content { --font-body: calc(14px * var(--ht-font-scale)); --font-h2: calc(19px * var(--ht-font-scale)); font-size: var(--font-body); min-width: 0; width: auto; max-width: min(var(--ht-content-max-width), calc(100% - 2 * (var(--ht-nav-width) + var(--ht-nav-gap)))); margin: 1.5rem auto; padding: clamp(1.25rem, 3vw, 2.5rem); background: var(--panel); border: 1px solid var(--line); border-radius: calc(1.5 * var(--radius)); box-shadow: 0 12px 36px #10131912; }
 .ht-doc-content .ht-lede { font-size: calc(17px * var(--ht-font-scale)); }
 .ht-doc-content h3 { font-size: calc(16px * var(--ht-font-scale)); }
@@ -112,34 +112,34 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
 .ht-document .ht-doc-content > section[id] { margin: 0; padding-block: 1.5rem .5rem; border-block-start: 1px solid var(--line); }
 .ht-document .ht-doc-content > section[id] > h2 { margin-block-start: 0; }
 .ht-doc-content > :last-child { margin-block-end: 0; }
-.ht-document :is(section[id], li[id], sup[id], footer[id]) { scroll-margin-top: 1rem; }
+:is(.ht-document, [data-ht-document]) :is(section[id], li[id], sup[id], footer[id]) { scroll-margin-top: 1rem; }
 .ht-document li[id^="ref-"] { font-size: calc(var(--font-body) - 1.5px * var(--ht-font-scale)); line-height: 1.55; }
 /* Native fragment navigation keeps focus/scroll without framing static content. */
-.ht-document:is(:target, :focus),
-.ht-document :is(section, article, main, header, footer, h1, h2, h3, h4, h5, h6)[id]:is(:target, :focus) { outline: none; }
+:is(.ht-document, [data-ht-document]):is(:target, :focus),
+:is(.ht-document, [data-ht-document]) :is(section, article, main, header, footer, h1, h2, h3, h4, h5, h6)[id]:is(:target, :focus) { outline: none; }
 
 /* Mark the fragment heading briefly without leaving a persistent frame. */
 @keyframes ht-target-flash {
   from { outline-color: var(--accent); }
   to { outline-color: transparent; }
 }
-.ht-document:not([data-ht-anchor-cues]) .ht-doc-content section[id]:target > :is(h1, h2, h3, h4, h5, h6),
-.ht-document:not([data-ht-anchor-cues]) .ht-doc-content :is(h1, h2, h3, h4, h5, h6)[id]:target {
+:is(.ht-document, [data-ht-document]):not([data-ht-anchor-cues]) :is(.ht-doc-content, [data-ht-content]) section[id]:target > :is(h1, h2, h3, h4, h5, h6),
+:is(.ht-document, [data-ht-document]):not([data-ht-anchor-cues]) :is(.ht-doc-content, [data-ht-content]) :is(h1, h2, h3, h4, h5, h6)[id]:target {
   outline: 2px solid transparent;
   outline-offset: 4px;
   border-radius: calc(.5 * var(--radius));
   animation: ht-target-flash 1.5s ease-out;
 }
 @media (prefers-reduced-motion: reduce) {
-  .ht-document:not([data-ht-anchor-cues]) .ht-doc-content section[id]:target > :is(h1, h2, h3, h4, h5, h6),
-  .ht-document:not([data-ht-anchor-cues]) .ht-doc-content :is(h1, h2, h3, h4, h5, h6)[id]:target {
+  :is(.ht-document, [data-ht-document]):not([data-ht-anchor-cues]) :is(.ht-doc-content, [data-ht-content]) section[id]:target > :is(h1, h2, h3, h4, h5, h6),
+  :is(.ht-document, [data-ht-document]):not([data-ht-anchor-cues]) :is(.ht-doc-content, [data-ht-content]) :is(h1, h2, h3, h4, h5, h6)[id]:target {
     animation: none;
     background: var(--hover);
   }
 }
 
 /* A return link may focus the citation superscript; keep link keyboard focus visible. */
-.ht-document sup[id^="cite-"]:is(:target, :focus-visible) { outline: none; }
+:is(.ht-document, [data-ht-document]) sup[id^="cite-"]:is(:target, :focus-visible) { outline: none; }
 .ht-citation-preview {
   position: fixed; z-index: 20; width: max-content;
   max-width: min(28rem, calc(100vw - 1.5rem));
@@ -174,7 +174,7 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
 @media (max-width: 960px) {
   .ht-document > footer { max-width: none; }
   .ht-document { --ht-nav-width: 0rem; --ht-nav-gap: 0rem; padding: 1rem .75rem calc(6rem + env(safe-area-inset-bottom, 0px)); }
-  html:has(.ht-document) { --ht-anchor-offset: 1rem; }
+  html:has(:is(.ht-document, [data-ht-document])) { --ht-anchor-offset: 1rem; }
   .ht-doc-content { width: auto; margin: .75rem 0; padding: clamp(1rem, 4vw, 1.5rem); }
   .ht-doc-nav { inset-inline-start: calc(.5rem + env(safe-area-inset-left, 0px)); top: auto; bottom: calc(.5rem + env(safe-area-inset-bottom, 0px)); width: auto; max-width: calc(100vw - 7.5rem - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)); max-height: none; overflow: visible; padding: 0; background: transparent; border: 0; box-shadow: none; }
   .ht-doc-nav-heading { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
@@ -185,7 +185,7 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
   .ht-doc-toc[open] > .ht-doc-toc-panel { display: block; }
   .ht-doc-controls { inset-inline-end: calc(.5rem + env(safe-area-inset-right, 0px)); bottom: calc(.5rem + env(safe-area-inset-bottom, 0px)); }
 }
-@media (prefers-reduced-motion: reduce) { html:has(.ht-document) { scroll-behavior: auto; } }
+@media (prefers-reduced-motion: reduce) { html:has(:is(.ht-document, [data-ht-document])) { scroll-behavior: auto; } }
 
 /* Portable document actions; download precedes the compact native theme group. */
 .ht-document-actions { display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: .5rem; min-width: 0; max-width: 100%; }

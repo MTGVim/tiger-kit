@@ -28,3 +28,16 @@ owning content/source/practice and HTML Output checks. A composed shell alone do
 browser verification for explanation/lesson production. When screen/action checks are explicitly
 requested, finalize content first, batch compatible checks and preserve existing replay rules.
 Edit fragments and rebuild affected outputs.
+
+## Presentation profiles
+
+`--profile reader` is the default and preserves the existing reader. The closed choices
+`lesson` and `change` use only the corresponding package-local shell, CSS and JS. Missing
+assets fail before theme settings or output are changed; there is no reader fallback.
+Only top-level sections marked `data-ht-nav-unit` become lesson/change navigation units;
+at least one is required and markers cannot be nested. Reader navigation remains hierarchical.
+Profile assets are injected after shared theme assets and before optional authored code.
+The resulting `data-ht-profile` identifies presentation, not an in-page mode switch.
+Specialized shells use `data-ht-document`, `data-ht-content`, `data-ht-section-nav`,
+`data-ht-section-disclosure` and `data-ht-section-links` for shared behavior without
+reusing reader geometry classes.

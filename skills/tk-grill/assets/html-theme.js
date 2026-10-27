@@ -164,15 +164,15 @@
 })();
 
 (() => {
-  const nav = document.querySelector('.ht-doc-nav');
+  const nav = document.querySelector('[data-ht-section-nav]') || document.querySelector('.ht-doc-nav');
   if (!nav) return;
-  const toc = nav.querySelector('.ht-doc-toc');
+  const toc = nav.querySelector('[data-ht-section-disclosure]') || nav.querySelector('.ht-doc-toc');
   const summary = toc?.querySelector('summary');
   const narrowNavigation = globalThis.matchMedia?.('(max-width: 960px)');
   const syncNavigationMode = () => { if (toc && narrowNavigation) toc.open = !narrowNavigation.matches; };
   syncNavigationMode();
   narrowNavigation?.addEventListener('change', syncNavigationMode);
-  const links = [...nav.querySelectorAll('.ht-doc-toc-panel a[href^="#"]')];
+  const links = [...nav.querySelectorAll('[data-ht-section-links] a[href^="#"], .ht-doc-toc-panel a[href^="#"]')];
   const targetFor = hash => {
     try { return document.getElementById(decodeURIComponent(hash.slice(1))); } catch { return null; }
   };
@@ -240,7 +240,7 @@
 })();
 
 (() => {
-  const citations = [...(document.querySelectorAll?.('.ht-document a[href^="#"]') || [])].filter(link => {
+  const citations = [...(document.querySelectorAll?.(':is(.ht-document, [data-ht-document]) a[href^="#"]') || [])].filter(link => {
     let target;
     try { target = document.getElementById(decodeURIComponent(link.hash.slice(1))); } catch { return false; }
     return target && (link.hasAttribute('data-ht-preview') || link.closest('[data-ht-backlinks]') || target.matches('dt[id], li[id], sup[id^="cite-"]'));
@@ -340,7 +340,7 @@
 
 (() => {
   // The authored numbers and hrefs work without JS; only the recent origin is transient.
-  const root = document.querySelector('.ht-document');
+  const root = document.querySelector('[data-ht-document]') || document.querySelector('.ht-document');
   if (!root) return;
   const groups = [...root.querySelectorAll('[data-ht-backlinks]')];
   if (!groups.length) return;
@@ -449,7 +449,7 @@
 })();
 
 (() => {
-  const root = document.querySelector('.ht-document');
+  const root = document.querySelector('[data-ht-document]') || document.querySelector('.ht-document');
   if (!root) return;
   root.setAttribute('data-ht-anchor-cues', '');
   let active = [], hold, fade;

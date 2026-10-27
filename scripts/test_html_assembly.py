@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -45,6 +46,50 @@ class HTMLAssemblyTests(unittest.TestCase):
                 self.assertIn('<details class="ht-doc-toc" open>', source)
                 self.assertIn('<details><summary>해설 보기</summary>', source)
                 self.assertNotIn('data-ht-font-size', (package / 'assets/document-shell.html').read_text())
+
+    def test_closed_profiles_use_local_assets_and_top_level_units(self):
+        module = load('tk-explain')
+        with tempfile.TemporaryDirectory() as directory:
+            package = Path(directory) / 'package'
+            shutil.copytree(ROOT / 'skills/tk-explain', package)
+            assets = package / 'assets'
+            shell = (assets / 'document-shell.html').read_text()
+            for profile in ('lesson', 'change'):
+                (assets / (profile + '-shell.html')).write_text(shell)
+                (assets / (profile + '.css')).write_text('.ht-profile-example { color: red; }')
+                (assets / (profile + '.js')).write_text('const profileExample = true;')
+            marked = '<section id="unit" data-ht-nav-unit><h2>Unit</h2><section id="detail"><h3>Detail</h3></section></section>'
+            with patch.object(module, 'PACKAGE', package):
+                for profile in ('lesson', 'change'):
+                    source = module.assemble(marked, 'Example', profile=profile)
+                    self.assertIn('data-ht-profile="' + profile + '"', source)
+                    toc_part = source.split('<div class="ht-doc-toc-panel"', 1)[1].split('</div>', 1)[0]
+                    self.assertIn('href="#unit"', toc_part)
+                    self.assertNotIn('href="#detail"', toc_part)
+                    self.assertIn('.ht-profile-example', source)
+                    self.assertIn('const profileExample = true;', source)
+                    with self.assertRaises(ValueError): module.assemble(BODY, 'Example', profile=profile)
+                    for unsafe in ('<script>alert(1)</script>', '<a href="#missing">broken</a>', '<details><p>x</p><summary>late</summary></details>'):
+                        with self.assertRaises(ValueError): module.assemble(marked + unsafe, 'Example', profile=profile)
+                    with self.assertRaises(ValueError): module.assemble(marked.replace('<section id="detail"', '<section data-ht-nav-unit id="detail"'), 'Example', profile=profile)
+                for bad in ('../reader', 'unknown'):
+                    with self.assertRaises(ValueError): module.assemble(marked, 'Example', profile=bad)
+                (assets / 'change.js').unlink()
+                with self.assertRaisesRegex(ValueError, 'profile assets unavailable'):
+                    module.assemble(marked, 'Example', profile='change')
+
+    def test_missing_profile_asset_does_not_create_output_or_settings(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            body = root / 'body.html'; body.write_text('<section id="unit" data-ht-nav-unit><h2>Unit</h2></section>')
+            output = root / 'result.html'; output.write_text('existing')
+            env = dict(os.environ, XDG_CONFIG_HOME=str(root / 'config'))
+            result = subprocess.run([sys.executable, str(ROOT / 'skills/tk-explain/scripts/build_html.py'),
+                '--body', str(body), '--title', 'Test', '--output', str(output), '--profile', 'lesson', '--replace'],
+                capture_output=True, text=True, env=env)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertEqual(output.read_text(), 'existing')
+            self.assertFalse((root / 'config').exists())
 
     def test_warns_for_unknown_theme_class_but_keeps_custom_components(self):
         module = load('tk-explain')

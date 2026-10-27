@@ -102,7 +102,8 @@ class HTMLPolicyTest(unittest.TestCase):
 
     def test_document_static_checks_and_conditional_browser_verification_contract(self):
         text = (ROOT / 'skills/tk-explain/references/html-output.md').read_text()
-        normalized = ' '.join(text.split())
+        reader = (ROOT / 'skills/tk-explain/references/html-reader.md').read_text()
+        normalized = ' '.join((text + reader).split())
         for requirement in (
             'Every local fragment `href` resolves',
             'No runtime network requests are present',
@@ -151,7 +152,7 @@ class HTMLPolicyTest(unittest.TestCase):
         normalized_explain = ' '.join(explain.split())
         normalized_diff = ' '.join(diff.split())
         self.assertIn('prose and tables need no technique assignment', ' '.join(text.split()))
-        self.assertIn('explanation-techniques.md', text)
+        self.assertIn('explanation-techniques.md', (ROOT / 'skills/tk-explain/references/html-reader.md').read_text())
         self.assertIn('avoid repeating the same content', normalized_explain)
         self.assertIn('avoid repeating the same content', normalized_diff)
         self.assertIn('avoid rendering duplicate modes or hidden tabs', ' '.join(teach.split()))
@@ -279,6 +280,25 @@ class HTMLPolicyTest(unittest.TestCase):
             result = subprocess.run([sys.executable, 'scripts/sync_execution_protocol.py', '--check'],
                                     cwd=root, text=True, capture_output=True, timeout=30)
             self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_profile_assets_are_not_shared_and_reader_copy_drift_is_detected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in ('skills', 'scripts'):
+                shutil.copytree(ROOT / name, root / name, ignore=shutil.ignore_patterns('__pycache__'))
+            local = root / 'skills/tk-teach/assets/lesson.css'
+            local.write_text('local sentinel')
+            for _ in range(2):
+                result = subprocess.run([sys.executable, 'scripts/sync_execution_protocol.py'], cwd=root,
+                                        text=True, capture_output=True, timeout=30)
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertEqual(local.read_text(), 'local sentinel')
+            copied = root / 'skills/tk-teach/references/html-reader.md'
+            copied.write_text('drift')
+            result = subprocess.run([sys.executable, 'scripts/sync_execution_protocol.py', '--check'], cwd=root,
+                                    text=True, capture_output=True, timeout=30)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn('html-reader.md', result.stdout + result.stderr)
 
     def test_theme_control_behavior(self):
         result = subprocess.run(['node', '--test', 'evals/skills/tk-explain/theme.test.cjs'],

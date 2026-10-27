@@ -15,6 +15,11 @@ PACKAGE = Path(__file__).resolve().parents[1]
 VOID = {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link',
         'meta', 'param', 'source', 'track', 'wbr'}
 RESERVED = {'document-top', 'document-bottom'}
+PROFILE_FILES = {
+    'reader': ('document-shell.html', None, None),
+    'lesson': ('lesson-shell.html', 'lesson.css', 'lesson.js'),
+    'change': ('change-shell.html', 'change.css', 'change.js'),
+}
 
 
 class Fragment(HTMLParser):
@@ -30,6 +35,7 @@ class Fragment(HTMLParser):
         self.details = []
         self.classes = set()
         self.plain_pre = 0
+        self.nav_units = []
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
@@ -49,12 +55,16 @@ class Fragment(HTMLParser):
             self.ids.add(identifier)
         if tag == 'a' and attrs.get('href', '').startswith('#'):
             self.links.append(unquote(attrs['href'][1:]))
+        if 'data-ht-nav-unit' in attrs and (tag != 'section' or self.stack):
+            raise ValueError('navigation units must be top-level sections')
         if tag == 'section':
             if not identifier:
                 raise ValueError('each section needs a stable ID')
             section = {'id': identifier, 'title': '', 'children': []}
             (self.active[-1]['children'] if self.active else self.sections).append(section)
             self.active.append(section)
+            if 'data-ht-nav-unit' in attrs:
+                self.nav_units.append(section)
         if re.fullmatch('h[2-6]', tag) and self.active and not self.active[-1]['title']:
             self.heading = self.active[-1]
         if tag == 'details':
@@ -132,21 +142,34 @@ def resolve_theme(explicit=None):
         return 'system', notes + ['Theme settings unavailable; preserved existing data: ' + str(error)]
 
 
-def assemble(body, title, *, theme='system', lang='ko', css='', script='', footer='', warn_plain_pre=True):
+def assemble(body, title, *, theme='system', lang='ko', css='', script='', footer='', warn_plain_pre=True, profile='reader'):
     if not title.strip() or not body.strip():
         raise ValueError('a subject-specific title and non-empty body are required')
     if theme not in ('system', 'light', 'dark'):
         raise ValueError('unsupported theme')
+    if profile not in PROFILE_FILES:
+        raise ValueError('unsupported profile: ' + str(profile))
+    shell, profile_css_file, profile_js_file = PROFILE_FILES[profile]
+    assets = PACKAGE / 'assets'
+    try:
+        template_text = (assets / shell).read_text(encoding='utf-8')
+        profile_css = (assets / profile_css_file).read_text(encoding='utf-8') if profile_css_file else ''
+        profile_js = (assets / profile_js_file).read_text(encoding='utf-8') if profile_js_file else ''
+    except OSError as error:
+        raise ValueError('profile assets unavailable: ' + str(error)) from error
     parser = Fragment()
     parser.feed(body)
     if parser.stack:
         raise ValueError('unclosed body fragment tag: ' + parser.stack[-1])
     if not parser.sections:
         raise ValueError('body needs at least one section with a heading')
+    if profile != 'reader' and not parser.nav_units:
+        raise ValueError('profile requires top-level navigation units')
+    navigation = parser.sections if profile == 'reader' else [dict(unit, children=[]) for unit in parser.nav_units]
     parser.feed(footer)
     parser.finish()
     theme_css = (PACKAGE / 'assets/html-theme.css').read_text(encoding='utf-8')
-    known = set(re.findall(r'\.(ht-[\w-]+)', theme_css))
+    known = set(re.findall(r'\.(ht-[\w-]+)', theme_css + '\n' + profile_css))
     unknown = sorted(name for name in parser.classes if name.startswith('ht-') and name not in known)
     if unknown:
         warnings.warn('Undefined shared theme classes: ' + ', '.join(unknown), stacklevel=2)
@@ -156,20 +179,24 @@ def assemble(body, title, *, theme='system', lang='ko', css='', script='', foote
             'generate code excerpts with scripts/highlight_code.py', stacklevel=2)
     if re.search(r'</style\b', css, re.I) or re.search(r'</script\b', script, re.I):
         raise ValueError('escape embedded closing style/script tags in authored code')
-    template = Template((PACKAGE / 'assets/document-shell.html').read_text(encoding='utf-8'))
-    return template.substitute(
+    if re.search(r'</style\b', profile_css, re.I) or re.search(r'</script\b', profile_js, re.I):
+        raise ValueError('profile assets contain embedded closing tags')
+    template = Template(template_text)
+    document = template.substitute(
         title=html.escape(title), lang=html.escape(lang, quote=True), theme=theme,
         theme_attr='' if theme == 'system' else ' data-theme="' + theme + '"',
-        body=body, footer=footer, toc=toc(parser.sections),
+        body=body, footer=footer, toc=toc(navigation),
         css=theme_css,
         script=(PACKAGE / 'assets/html-theme.js').read_text(encoding='utf-8'),
-        extra_css='<style>' + css + '</style>' if css else '',
-        extra_script='<script>' + script + '</script>' if script else '',
+        extra_css=('<style>' + profile_css + '</style>' if profile_css else '') + ('<style>' + css + '</style>' if css else ''),
+        extra_script=('<script>' + profile_js + '</script>' if profile_js else '') + ('<script>' + script + '</script>' if script else ''),
     )
+    return document.replace('<html ', '<html data-ht-profile="' + profile + '" ', 1)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--profile', choices=PROFILE_FILES, default='reader')
     parser.add_argument('--body', type=Path, required=True, help='authored main-content HTML fragment, without h1')
     parser.add_argument('--title', required=True, help='subject-specific title, also used for h1/topbar')
     parser.add_argument('--output', type=Path, required=True)
@@ -188,9 +215,9 @@ def main():
         read = lambda path: path.read_text(encoding='utf-8') if path else ''
         body, css, script, footer = map(read, (args.body, args.css, args.script, args.footer))
         # Validate content before any preference bootstrap or output mutation.
-        assemble(body, args.title, theme=args.theme or 'system', lang=args.lang, css=css, script=script, footer=footer, warn_plain_pre=False)
+        assemble(body, args.title, theme=args.theme or 'system', lang=args.lang, css=css, script=script, footer=footer, warn_plain_pre=False, profile=args.profile)
         theme, notes = resolve_theme(args.theme)
-        document = assemble(body, args.title, theme=theme, lang=args.lang, css=css, script=script, footer=footer)
+        document = assemble(body, args.title, theme=theme, lang=args.lang, css=css, script=script, footer=footer, profile=args.profile)
         with args.output.open('w' if args.replace else 'x', encoding='utf-8') as stream:
             stream.write(document)
         for note in notes:
