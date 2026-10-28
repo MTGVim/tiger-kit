@@ -123,30 +123,39 @@ class HTMLPolicyTest(unittest.TestCase):
             self.assertIn(' '.join(requirement.split()), normalized)
 
     def test_explanation_owners_require_current_independent_review_and_opt_in_browser(self):
-        canonical = ROOT / 'skills/tk-explain/references/content-review.md'
-        for name in ('tk-explain',):
-            with self.subTest(skill=name):
-                package = ROOT / 'skills' / name
-                self.assertIn('(references/content-review.md)', (package / 'SKILL.md').read_text())
-                self.assertEqual((package / 'references/content-review.md').read_bytes(), canonical.read_bytes())
-        contract = ' '.join(canonical.read_text().split())
-        for guard in ('separate reviewer with fresh context', 'final saved artifact and its exact version',
-                      'minimum correction', 'before first delivery', 'change materially',
-                      'latest revision was not independently re-reviewed',
-                      'cosmetic edits cannot convert a failed or unavailable review',
-                      'Ordinary chat and feedback', 'do not substitute self-review'):
+        package = ROOT / 'skills/tk-explain'
+        skill = (package / 'SKILL.md').read_text()
+        self.assertIn('(references/review-rubric.md)', skill)
+        contract = ' '.join((package / 'references/review-rubric.md').read_text().split())
+        for guard in ('exact saved artifact', 'minimum correction',
+                      'same reviewer', 'whole-artifact check', 'including low ones',
+                      'cannot be replaced by author self-approval'):
             self.assertIn(guard, contract)
-        html = ' '.join((ROOT / 'skills/tk-explain/references/html-output.md').read_text().split())
-        self.assertIn('For `tk-explain` retained-renderer artifacts', html)
-        self.assertIn('only for explicitly requested screen/action checks', html)
-        self.assertIn('Other document owners retain their scoped UI checks', html)
-        self.assertNotIn('The composed shell still triggers', (ROOT / 'skills/tk-explain/references/html-assembly.md').read_text())
+        self.assertIn('Browser action/theme/viewport matrices run only when requested', skill)
+        self.assertIn('explicit live interaction', ' '.join(skill.split()))
 
-    def test_renderer_routing_keeps_explicit_interaction(self):
+    def test_renderer_routing_keeps_explicit_interaction_in_archify(self):
         source = (ROOT / 'skills/tk-explain/SKILL.md').read_text()
         self.assertIn('explicit request for live interaction', source)
-        self.assertIn('archify explainer page layout by default', source)
-        self.assertIn('(references/content-review.md)', source)
+        self.assertIn('archify explainer page layout for every explanation page', source)
+        self.assertIn('interaction request never selects the legacy document', source)
+        self.assertNotIn('scripts/build_html.py', source)
+        self.assertIn('(references/interactive-examples.md)', source)
+
+    def test_archify_contracts_are_package_local_and_drift_is_rejected(self):
+        from sync_execution_protocol import html_policy_errors, ARCHIFY_FILES
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            shutil.copytree(ROOT / 'skills', root / 'skills')
+            self.assertEqual(html_policy_errors(root), [])
+            for relative in ARCHIFY_FILES:
+                with self.subTest(relative=relative):
+                    path = root / 'skills/tk-research' / relative
+                    content = path.read_bytes()
+                    path.write_bytes(content + b'\nDrift\n')
+                    self.assertTrue(any(relative in error and 'archify' in error
+                                        for error in html_policy_errors(root)))
+                    path.write_bytes(content)
 
     def test_explanations_default_to_natural_conversation(self):
         skill = (ROOT / 'skills/tk-explain/SKILL.md').read_text()

@@ -32,28 +32,26 @@ source set needs an inspected/partial/unavailable/omitted-with-reason account.
 
 ## 2. Select figures
 
-Use the archify explainer page layout by default. For components, calls, states and data
+Use the archify explainer page layout for every explanation page. For components, calls, states and data
 flow, use its native diagrams. For scenes, spatial relationships or physical placement,
 read [scene figures](references/scene-figures.md), draw SVG and embed converted PNG with
 `@image`, alt text and a caption. Show two to four comparable states when input changes
 explain a mechanism; do not substitute a flowchart for an actual spatial scene.
 Keep labels, state transitions and prose consistent; preserve supplied geometry and inputs.
 
-Only an explicit request for live interaction selects the retained renderer: read
-[interactive examples](references/interactive-examples.md), [HTML output](references/html-output.md),
-[assembly](references/html-assembly.md), [figure authoring](references/html-figures.md) and
-[independent content review](references/content-review.md). Use `scripts/build_html.py` and
-its installed assets; verify the authored model, visible consequences, reset and reduced
-motion. This branch retains its independent content review and offline contract.
+For an explicit request for live interaction, read
+[interactive examples](references/interactive-examples.md). Use archify's supported native
+interactions in the same page; an interaction request never selects the legacy document
+renderer. Image helpers produce figures for `@image`, not a second explanation shell.
 For an explicitly requested standalone looping SVG, use [animated SVG](references/animated-svg.md).
 For selected video, read [video output](references/video-output.md) and hand off to `tk-video`.
 Neither selected output changes the evidence obligation or authorizes publication.
 
 ## 3. Render
 
-For archify-selected pages only, read [renderer contract](references/renderer-contract.md).
-Retained HTML, selected SVG/video and chat-only feedback use their own checks and do not
-require archify. For the archify branch, verify the installed package and minimum version; absent, old or unverifiable installation means
+For explanation pages, read [renderer contract](references/renderer-contract.md).
+Selected standalone SVG/video and chat-only feedback use their own checks and do not
+require archify. Verify the installed package and minimum version; absent, old or unverifiable installation means
 `Blocked` with an exact `tk-wizard` installation/update handoff, never automatic installation.
 Write the candidate in the run's temporary directory and run archify's complete explainer
 `finalize` command. Retain its validation/delivery/check receipt and truthful browser status.

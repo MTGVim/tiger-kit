@@ -19,7 +19,8 @@
         "paths": [
           "skills/tk-research/SKILL.md",
           "skills/tk-research/references/report.md",
-          "skills/tk-research/references/clear-writing.md"
+          "skills/tk-research/references/clear-writing.md",
+          "skills/tk-research/references/renderer-contract.md"
         ],
         "max_bytes": 46000
       },

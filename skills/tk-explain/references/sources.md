@@ -228,3 +228,28 @@ and scene PNG conversion; omit automatic updates and a separate Korean rewrite s
 See [renderer contract](renderer-contract.md) for compatibility and known limitations.
 Retained [change provenance](change-provenance.md) and [teaching provenance](teaching-provenance.md)
 record earlier design sources; they are provenance, not current runtime instructions.
+
+## Archify-only document routing (2026-10-28)
+
+Fresh source still resolves to `tt-a1i/archify@d6059331abbddb49bca380ff46dca8ce33158b04`
+(3.2.0). Inspected its release manifest, SKILL.md, explainer authoring and viewer-runtime
+contracts, explainer renderer, and CLI/packaging tests before removing the legacy-document
+route. Keep native guided steps, node/route exploration, source bindings and offline finalize
+gates. Adapt shared package-local renderer/scene helpers to both explanation and research
+output. Omit automatic installs, vendored runtime and custom script injection. Arbitrary
+parameter-driven simulation is not part of this version's explainer grammar; preserve the
+requested behavior as unmet instead of claiming a static picture implements it. Specialized
+QA/gallery/prototype/question interfaces and existing user artifacts retain their owners.
+Earlier shared-shell provenance records history, not a new explanation/report rendering path.
+
+
+## Specialized HTML appearance (2026-10-28)
+
+Reviewed `tt-a1i/archify@d6059331abbddb49bca380ff46dca8ce33158b04`,
+`archify/explainer/reader.css`, alongside its renderer and CLI/packaging tests.
+Keep each QA, blind-comparison, prototype and question interface's own structure and
+interaction/storage contracts. Adapt neutral surfaces, typographic hierarchy, subtle
+card elevation, bounded spacing and accessible selected controls in the shared theme.
+Omit document navigation, upstream code copying, external fonts and runtime replacement.
+All blind candidates receive the same styles. This is a visual adaptation, not a claim
+that the specialized interfaces use archify or that its usability was independently proven.

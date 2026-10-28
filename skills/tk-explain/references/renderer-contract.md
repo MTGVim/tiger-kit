@@ -6,10 +6,11 @@ Use the host's installed skill location and read its `skill-release.json` and `S
 verify `skillId`, repository identity and version rather than inferring them from a folder.
 Unknown or incomparable metadata is not a pass. Missing/older dependencies return `Blocked`
 with installed/required versions and a `tk-wizard` install/update handoff. Do not install,
-update, vendor archify, or silently fall back to the retained renderer.
+update or vendor archify. Explanation and research pages never fall back to TigerKit's
+legacy document builder/report template, including when interaction is requested.
 
 Read the installed `references/explainer-authoring.md` before drafting. Work entirely in
-`.tigerkit/tmp/tk-explain/<run-id>/`; use unique panel/block IDs and same-directory image/spec
+the calling owner's `.tigerkit/tmp/<skill>/<run-id>/`; use unique panel/block IDs and same-directory image/spec
 files. Respect installed syntax rather than copying implementation or a cached example.
 Run:
 
@@ -29,7 +30,12 @@ Consume finalize's update receipt instead of issuing a duplicate update check. I
 notice is required, show it once; prefer the user's verified bulk-update routine when known.
 Never execute an update. A sufficiently new version is not proof its generated output passed.
 The archify page owns its theme and does not read TigerKit `html.theme`; that preference
-continues to apply only to the retained renderer and other existing consumers.
+continues to apply to separate QA, gallery, prototype and visual-question interfaces.
+
+For requested interaction, read [interactive examples](interactive-examples.md). Native
+diagram selection, guided steps, focus and route exploration remain live in archify;
+do not flatten them into images. Image conversion is for spatial figures the native
+diagram grammar cannot express, under [scene figures](scene-figures.md).
 
 For non-software subjects, begin with native `@diagram` plus meaningful `meta.legend`
 entries (or the supported explicit hidden legend), using the installed schema. Compact

@@ -570,7 +570,7 @@
     "tk-audit:behavior:discovery-semantic-ambiguity",
     "tk-audit:behavior:discovery-scoped-new",
     "tk-explain:behavior:html-unreadable-output-cannot-pass",
-    "tk-explain:behavior:retained-html-no-renderer-stays-unverifiable",
+    "tk-explain:behavior:archify-interaction-no-renderer-stays-unverifiable",
     "tk-qa-sheet:behavior:html-unreadable-output-cannot-pass",
     "tk-qa-sheet:behavior:html-no-renderer-stays-unverifiable",
     "tk-research:behavior:html-unreadable-output-cannot-pass",
@@ -597,7 +597,7 @@
     "tk-research:behavior:visual-question-and-geometry",
     "tk-explain:behavior:visual-exact-comparison-table",
     "tk-explain:behavior:understanding-check-mechanism-transfer",
-    "tk-explain:behavior:retained-html-theme-user-default-bootstrap",
+    "tk-explain:behavior:archify-interaction-theme-owned-by-renderer",
     "tk-research:behavior:research-automation-suggestion-needs-opt-in",
     "tk-prep:behavior:prep-proposal-stays-conversational-not-html",
     "tk-retro:behavior:retro-session-evidence-severity",
@@ -751,7 +751,12 @@
     "tk-explain:behavior:archify-low-content-and-renderer-limits",
     "tk-explain:behavior:archify-followup-belief-evidence",
     "tk-grooming:behavior:declared-dependency-minimum-report-only",
-    "tk-blind-comparison:behavior:long-image-public-evidence"
+    "tk-blind-comparison:behavior:long-image-public-evidence",
+    "tk-prep:behavior:prep-first-missed-reproduction-loads-diagnosis",
+    "tk-prep:behavior:prep-timing-local-only-safe-probe",
+    "tk-prep:behavior:prep-probe-output-filter-failure-no-repeat-mutation",
+    "tk-prep:behavior:prep-timing-no-access-preserves-uncertainty",
+    "tk-research:behavior:research-archify-missing-no-legacy-fallback"
   ],
   "catalog_cases": [
     "catalog:behavior:native-app-runtime-verify",

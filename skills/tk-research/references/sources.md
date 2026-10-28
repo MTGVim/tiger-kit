@@ -166,3 +166,16 @@ scripts and raw session details. The reported proprietary `dataviz` bundle is re
 no wording, code, palettes or validation script is included. Its distribution/license and upstream
 behavior were not independently verified here; the general chart rules and neutral tokens are
 independently authored. Runtime/provider observations remain conditional, not compatibility claims.
+
+## Archify-only document routing (2026-10-28)
+
+Fresh source still resolves to `tt-a1i/archify@d6059331abbddb49bca380ff46dca8ce33158b04`
+(3.2.0). Inspected its release manifest, SKILL.md, explainer authoring and viewer-runtime
+contracts, explainer renderer, and CLI/packaging tests before removing the legacy-document
+route. Keep native guided steps, node/route exploration, source bindings and offline finalize
+gates. Adapt shared package-local renderer/scene helpers to both explanation and research
+output. Omit automatic installs, vendored runtime and custom script injection. Arbitrary
+parameter-driven simulation is not part of this version's explainer grammar; preserve the
+requested behavior as unmet instead of claiming a static picture implements it. Specialized
+QA/gallery/prototype/question interfaces and existing user artifacts retain their owners.
+Earlier shared-shell provenance records history, not a new explanation/report rendering path.

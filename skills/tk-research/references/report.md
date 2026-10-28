@@ -1,126 +1,85 @@
 # Human research report
 
 Before drafting, read [clear writing](clear-writing.md), [documentation purpose](diataxis.md)
-and this report contract. The report informs a concrete decision, not a four-category
-handbook or an obligatory tutorial. Use short explanation, lookup or procedural
-content only when it improves that decision.
-Consult only the relevant
-[technique entry](explanation-techniques.md) for a requested or unfamiliar format. The renderer reads the complete
-offline template for you, so do not load `assets/report.html` or the full shared HTML reference.
+and [renderer contract](renderer-contract.md). The report informs a concrete decision, not
+an obligatory tutorial. Use archify for every new or materially updated report, including
+supported native interactions. Do not use `render_report.py`, `build_html.py` or the legacy
+`assets/report.html`; shared specialized UI assets do not select a research renderer.
 
-Read when writing the final short-research report or a material persistent checkpoint projection.
-Apply [clear writing](clear-writing.md) and Artifact Paths; reuse their contracts directly without
-invoking another skill. Default to `.tigerkit/research/<slug>/report.html`, or an explicit safe
-destination. The directory/report alone never starts a durable project.
-When a verified structure, flow, timeline or comparison relationship is clearer in a figure
-than prose/table, read [visual grammar](visual-grammar.md). Do not add decorative diagrams.
+## Content and sources
 
-Render only verified current facts from the interaction or canonical state/findings. HTML is a
-readable projection, not an execution ledger or editable state UI; never recover authority or merge
-edits back from HTML. Bind goal/research identity, evidence revision/date and projection freshness.
-Check ownership before overwrite; atomically replace only this project's report and reread it.
+Render verified current facts from the interaction or canonical state/findings. Lead with
+the conclusion, confidence and deciding conditions. Cover the goal and downstream decision,
+strongest evidence, baseline and alternatives, actual investigations/experiments and their
+verdicts, rejected tested directions versus untested budget deferrals, unknowns and limits,
+conditions that would reverse the conclusion, and the next frontier or action. Include the
+smallest plausible implementation scope and cost of doing nothing when material. Preserve
+source, direction, experiment and finding IDs; a proposal is not an executed test.
 
-Write one coherent report; prose and tables need no technique assignment. Never add duplicate
-views, hidden tabs or a document-mode selector. Use a clear conversational voice by default and
-preserve evidence, uncertainty, confidence, limitations and next actions in the same document.
+Keep the report coherent and conversational. Short reports can combine related facts into
+few panels; never create empty categories, duplicate views or a document-mode selector.
+Keep observations, inference and examples distinct. Explain unknowns where they affect the
+decision, and derive recommended procedures from inspected evidence or label them proposals.
+Do not add comprehension quizzes; `tk-explain` owns learning checks.
 
-Render through `scripts/render_report.py`. Author a JSON content file with this shape:
+Author `candidate.archify.md` under `.tigerkit/tmp/tk-research/<run-id>/` using the installed
+archify authoring reference. Use a conclusion and panels for evidence, alternatives, limits,
+next action, and actual verification; stable IDs bind the readable projection to its sources.
+Declare each source with `@source` and cite it beside the supported claim using archify's
+`source:id` inline-link syntax. Preserve revision/access date and research identity
+in readable scope/evidence text. Use verified URLs or pinned repository positions. If a
+source is unavailable, say so; a reachable link alone does not verify its claim. Code excerpts
+must resolve at the pinned revision. Never fabricate a source or turn raw private logs into
+report content. Preserve negative results and contradictions.
 
-```json
-{
-  "title": "Subject and conclusion",
-  "topbar_title": "Short reader-facing conclusion",
-  "meta": "Evidence date, scope and revision",
-  "sections": [
-    {"id": "overview", "title": "목표와 결론", "html": "<p>...</p>"},
-    {"id": "verification", "title": "검증 및 예외", "html": "<ul>...</ul>"}
-  ],
-  "sources": [
-    {"id": "ref-1", "title": "Source title", "url": "https://example.test/source",
-     "local_path": "", "date": "2026-01-01", "revision": "v1",
-     "link_unavailable": false, "citations": ["cite-1"]}
-  ],
-  "extra_css": ""
-}
-```
+Use native diagrams and `@steps` when relationships or event order explain the conclusion;
+use comparisons for alternatives. For requested live behavior, read
+[interactive examples](interactive-examples.md) and verify actual archify support. For a
+spatial figure that native diagrams cannot express, read [scene figures](scene-figures.md)
+and embed its converted PNG with `@image`, alt text and a caption. Do not turn native
+interactive diagrams into pictures or use image generation to invent measured evidence.
 
-Include `overview` and `verification` sections. Add any other relevant sections as `{id, title,
-html}` objects; section HTML is a fragment, not a complete page. Put each citation in that content as
-`<sup id="cite-1"><a href="#ref-1">[1]</a></sup>` and list the matching citation ID under its
-source. For repeated citations, use `[1.1]`, `[1.2]` in the body superscripts, ordered by the
-source's `citations` array; the first number is the source's position in `sources`. Give each
-link an accessible name identifying its source and occurrence. The renderer creates matching
-numbered return links and transient recent-origin support; single citations keep `[1]` and a
-plain return link. For repeated glossary/appendix links, read [HTML Components](html-components.md).
-The renderer also creates reference entries and the table of contents. Use a
-verified HTTPS URL, a local path, or set `link_unavailable` to `true`; the checker warns when all
-three are absent. The renderer escapes title, section-title, source and metadata fields, selects the
-theme from the user settings (an explicit request wins), and copies the offline shell, navigation,
-theme control, scripts and footer. `extra_css` is optional local CSS; the checker rejects network
-references and altered scripts. Report any theme-settings bootstrap or invalid-settings warning in
-the completion summary.
+## Delivery and checks
 
-Run the renderer and then run the package-local checker against the saved output. Preserve the
-renderer-owned document shell and replace content only through the declared fields. Long reports
-include both navigation structures; the renderer keeps them for short reports too.
-The report is decision-ready
-at the evidence available now, including the first material persistent checkpoint: it should let the
-reader decide whether more research is needed, whether a candidate should become implementation work,
-or whether to stop. Core content answers: goal/downstream decision; recommendation/confidence/why;
-the strongest evidence; assumptions or evidence that could reverse the recommendation; current stage;
-baseline and directions; actual investigations/experiments and their links/verdicts; rejected alternatives
-and evidence versus untested budget deferrals; unknowns/limits; the smallest plausible implementation
-scope if the recommendation is accepted; the consequence of doing nothing when material; next
-frontier/action and ready handoff candidates; sources. Do not add a comprehension quiz by default:
-`tk-explain` and `tk-explain` follow-up own teaching checks, while this report owns decision readiness.
-Show meaningful changes in a timeline only when they exist. Preserve direction/experiment/source IDs
-and relationships when relevant. A short report can combine these into a few sections. Label proposed
-tests as proposed, never executed. Escape untrusted text/attributes, validate source links and use no
-external assets, unsafe URL schemes, raw sensitive logs or HTML injection.
+Apply Artifact Paths. Default to `.tigerkit/research/<slug>/report.html`, or an explicit safe
+destination. The directory/report alone never starts durable research. HTML is a readable
+projection, never the execution ledger, authority or canonical editable state. Check
+ownership before replacing only this project's report. Keep an existing valid report until
+a passing candidate is ready; stage rendering under the run directory before atomic replacement.
 
-Before reporting the report artifact as successful, run the package-local checker against the saved
-file and fix every failure:
+Run archify's complete `finalize explainer` command as specified in the renderer contract.
+The final file must open alone, with no external runtime requests; clickable source links
+are allowed. Retain the candidate and receipt bound to its final bytes. Inspect conclusion,
+claim-source links, quantities, IDs and coverage after rendering; the renderer does not
+prove factual accuracy. A failed/missing renderer or unsupported required interaction is
+not report success and never authorizes fallback to the old document template.
 
-    python3 <package>/scripts/render_report.py --input /path/to/report-content.json --output /path/to/report.html
-    python3 <package>/scripts/check_report.py /path/to/report.html
+Include separate outcomes for static/artifact checks and screen/action checks in the
+verification panel. `finalize` does not run a browser. Use `tk-browser-verify` when the user
+requests screen checks or a material visual/interaction uncertainty requires them; report
+unrun checks honestly as not requested or unavailable, as applicable. Never assert theme,
+keyboard, navigation or interaction success from a static receipt alone.
 
-The checker verifies that the table of contents links to every section, movement controls link to
-the top and bottom, local fragments resolve, citations link to reference entries with return links,
-URL schemes are safe, runtime HTML/CSS resources and common JavaScript network APIs are absent. Safe source hyperlinks remain allowed. It does not
-establish screen behavior. Use tk-browser-verify for the
-template's navigation, links, keyboard, no-JavaScript and reduced-motion checks. If the verifier or
-render environment is unavailable, record the screen result as Unverifiable with the reason in the
-`검증 및 예외` section and in the completion response.
-
-For persistent research, regenerate only after a material checkpoint/conclusion or evidence-producing
-blocker. Unchanged resumes and no-action/no-delta runs preserve report bytes. A changed report cannot
-make unchanged canonical facts fresh. Report failure leaves canonical facts intact and marks its
-artifact branch `Unverifiable`; do not fall back outside the identified repository. Return the file
-link and a concise conclusion without automatically opening a browser or changing user focus.
-
-## Evidence-backed decision evolution
-
-When the research has actual recorded changes of assessment, show a compact decision
-timeline only if it helps the reader understand the recommendation. Each stop links
-the prior assessment, newly verified evidence, resulting changed judgment and its
-consequence. Preserve source IDs, experiment/decision dates when recorded, and whether
-a claim is observed, inferred or proposed. Do not infer an earlier opinion from the
-final recommendation or convert the order of sources into the order of decisions.
-
-When only final findings are known, prefer a candidate comparison or evidence-to-conclusion
-map, not a fabricated chronological narrative. Distinguish candidate exclusion from
-untested budget deferral and maintain the report's core evidence and limitations.
-Use brief content-specific headings and captions under `clear-writing.md`; optional
-semantic emoji in chat summaries must not be imported as decorative HTML requirements.
-Reuse the existing `visual-grammar.md` and offline verification requirements.
+The first short-research conclusion or material persistent checkpoint must provide a
+current decision-ready report unless the user requested no files. Missing rendering leaves
+findings intact: report the artifact branch as `Blocked | Unverifiable` and give the useful
+conclusion in chat. Later `NO-ACTION | NO-DELTA` runs preserve existing report bytes; changing
+a report cannot make unchanged canonical facts fresh. Return its link and concise conclusion
+without opening a browser or changing user focus.
 
 ## Persistent-project coverage
 
-Project the whole research project, never only its latest batch or a paragraph replacing earlier
-checkpoints. Include meaningful progress history, every finding and experiment with ID, topic,
-verdict and expandable reader-written evidence, rejected tested directions separately from untested
-deferrals, waiting/reopen conditions, and handoff/approval status. Keep essential conclusions expanded.
-Before replacement, reconcile findings, experiments and handoffs against canonical IDs and counts;
-missing or duplicate records fail report acceptance. State the reconciled coverage in the report.
-Prefer a small run-owned generator reading canonical inputs. Edit that generator/template and
-regenerate instead of patching its output; HTML never becomes canonical research state.
+Project the whole project, not only the latest batch. Reconcile canonical IDs/counts for
+all findings, experiments and handoffs before replacement. Preserve meaningful progress,
+evidence, verdicts, rejected directions, waiting/reopen conditions and approval status.
+Use readable panels/tables instead of requiring unsupported raw HTML or collapsing away
+essential results. Missing/duplicate records fail coverage acceptance; an upstream page
+limit must not silently drop evidence. Keep current content within a supported layout or
+report the exact remaining limit, preserving the previous artifact.
+
+Show a decision timeline only when recorded evidence actually changed a judgment; link the
+prior assessment, new evidence, resulting conclusion and consequence with known dates/IDs.
+Do not invent earlier opinions or chronology from source order. If only final findings are
+known, use a comparison or evidence-to-conclusion map. Prefer a small run-owned generator
+from canonical inputs when needed; edit its source and regenerate, never recover state or
+authority from report HTML. Existing user reports and research homes remain in place.

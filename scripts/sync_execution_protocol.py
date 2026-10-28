@@ -60,6 +60,11 @@ DOMAIN_CONTEXT_TARGETS = (
 )
 
 HTML_CONSUMERS = ("tk-explain", "tk-research", "tk-qa-sheet", "tk-prototype", "tk-blind-comparison")
+# Legacy shared assets remain package-local for specialized UIs and regression coverage;
+# current explanation/research pages use the external renderer contract below.
+ARCHIFY_CONSUMERS = ("tk-explain", "tk-research")
+ARCHIFY_FILES = ("references/renderer-contract.md", "references/interactive-examples.md",
+                 "references/scene-figures.md", "scripts/svg_to_png.mjs", "scripts/chrome_capture.mjs")
 DURABLE_CONSUMERS = ("tk-explain",)
 QUESTION_HTML_CONSUMERS = ("tk-prep", "tk-grill", "tk-roadmap")
 HTML_THEME_CONSUMERS = HTML_CONSUMERS + QUESTION_HTML_CONSUMERS
@@ -157,6 +162,12 @@ def research_verification_errors(text: str) -> list[str]:
 def html_policy_errors(root: Path) -> list[str]:
     errors = []
     source = root / "skills/tk-explain"
+    for name in ARCHIFY_CONSUMERS:
+        for relative in ARCHIFY_FILES:
+            canonical = source / relative
+            target = root / "skills" / name / relative
+            if not canonical.is_file() or not target.is_file() or target.read_bytes() != canonical.read_bytes():
+                errors.append(f"{target.relative_to(root)}: shared archify contract/helper drift")
     for name in CONTENT_REVIEW_CONSUMERS:
         canonical = source / "references/content-review.md"
         target = root / "skills" / name / "references/content-review.md"
@@ -381,6 +392,10 @@ def main() -> int:
                     pairs.append((ROOT / "skills/tk-explain" / relative, ROOT / "skills" / name / relative))
                 for relative in (*CHART_FILES, *ASSEMBLY_FILES, *READER_FILES, "scripts/package_html.py", "scripts/highlight_code.py"):
                     pairs.append((ROOT / "skills/tk-explain" / relative, ROOT / "skills" / name / relative))
+    for name in ARCHIFY_CONSUMERS:
+        if name != "tk-explain" and (ROOT / "skills" / name).is_dir():
+            for relative in ARCHIFY_FILES:
+                pairs.append((ROOT / "skills/tk-explain" / relative, ROOT / "skills" / name / relative))
     for name in DURABLE_CONSUMERS:
         if name != "tk-explain" and (ROOT / "skills" / name).is_dir():
             pairs.append((ROOT / "skills/tk-explain/scripts/durable_artifacts.py",

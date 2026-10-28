@@ -1,8 +1,9 @@
 # HTML Output
 
-This shared shell contract applies to the retained renderer when live interaction is explicitly
-requested. Default `tk-explain` archify pages use renderer-contract.md instead: archify owns
-its theme and does not read TigerKit `html.theme`. Other owners retain this shared contract.
+This shared shell contract serves specialized QA, gallery, prototype and visual-question
+interfaces. `tk-explain` and `tk-research` pages use their renderer-contract.md instead,
+including requested live interaction. Archify owns their theme and does not read TigerKit
+`html.theme`. Shared assets kept here are not a fallback explanation or report renderer.
 
 Render already verified content with a suitable available renderer or minimal semantic HTML.
 Produce one offline-readable HTML file with inline CSS, SVG and optional JavaScript, without
@@ -223,9 +224,9 @@ to every citation occurrence that cites it.
 - Every `<details>` has a first-child `<summary>`; answer reveals and secondary evidence start collapsed, while required conclusions and background remain outside collapsed sections.
 - There is exactly one non-empty, subject-specific `<title>`; it does not use a generic label or transient generated value.
 
-For `tk-explain` retained-renderer artifacts, run `tk-browser-verify` only for explicitly
-requested screen/action checks, including in the initial task. HTML, SVG, interaction, a composed
-shell or browser availability alone is not a request. Keep independent content review and static
+For explanation pages, follow the archify renderer and owning skill's checks instead of this
+shell. HTML, SVG, interaction or browser availability alone is not a screen-check request.
+Keep independent content review and static
 checks; label unrequested screen checks as not requested without a visual/runtime verdict or a
 completion failure solely for their absence. Do not add a verification-choice interview.
 

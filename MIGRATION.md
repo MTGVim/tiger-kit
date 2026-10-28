@@ -17,8 +17,11 @@ npx skills remove tk-pr-image --global --agent claude-code codex hermes-agent
 
 `tk-explain-diff`와 `tk-teach`를 제거했습니다. PR·브랜치·커밋 범위 설명은
 `tk-explain`의 `change` 모드, 실제 답변을 바탕으로 한 다음 수업은 `follow-up` 경로를 사용합니다.
-기본 HTML에는 별도 설치된 `archify 3.2.0` 이상이 필요합니다. 명시한 실시간 인터랙션은
-기존 렌더러를 사용합니다. 기존 학습 자료와 학습 공간은 이동·삭제하지 않습니다.
+설명과 조사 보고서 HTML에는 별도 설치된 `archify 3.2.0` 이상이 필요합니다. 명시한
+상호작용도 `archify`의 지원 기능으로 작성하며 구 문서 렌더러로 전환하지 않습니다.
+지원되지 않는 임의 입력 시뮬레이션은 제한을 알리고 완료로 주장하지 않습니다.
+장면 그림은 SVG를 PNG로 바꾸어 `@image`에 넣습니다. QA 시트·블라인드 갤러리·시제품·
+시각 질문은 별도 인터페이스를 유지합니다. 기존 학습 자료와 학습 공간은 이동·삭제하지 않습니다.
 
 
 ## 질문 초안 스킬 이름 변경 (`tk-inquiry`)

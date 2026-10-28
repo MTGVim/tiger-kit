@@ -60,7 +60,7 @@ test('diagnostic rows preserve evidence, counts, semantics and narrow-screen rea
       await page.setContent(buildReport(reportData).replace('data-default-theme="system"', `data-default-theme="system"${theme === 'system' ? '' : ` data-theme="${theme}"`}`));
       await page.evaluate(async () => { await document.fonts.ready; });
       assert.deepEqual(await page.locator('.ht-kpis dd').allTextContents(), ['3', '2', '1']);
-      assert.equal(await page.evaluate(() => getComputedStyle(document.body).backgroundColor), theme === 'light' ? 'rgb(233, 237, 243)' : 'rgb(16, 19, 25)');
+      assert.equal(await page.evaluate(() => getComputedStyle(document.body).backgroundColor), theme === 'light' ? 'rgb(244, 245, 247)' : 'rgb(14, 16, 20)');
       assert.equal(await page.locator('[data-solved="true"]').count(), 1);
       assert.equal(await page.locator('#criteria-title + ol > li').count(), 4);
       const snapshot = await page.locator('main').ariaSnapshot();
@@ -132,7 +132,7 @@ test('card flow preserves grouping, text geometry and offline controls across vi
       assert.deepEqual(geometry.clipped, []); assert.equal(geometry.rects.length, count);
       assert.deepEqual(geometry.stages, ['입력 자료', '중심 처리', '동시 결과', '후속 재사용']);
       assert.deepEqual(geometry.results, titles.slice(0, count));
-      assert.equal(geometry.background, theme === 'light' ? 'rgb(233, 237, 243)' : 'rgb(16, 19, 25)');
+      assert.equal(geometry.background, theme === 'light' ? 'rgb(244, 245, 247)' : 'rgb(14, 16, 20)');
       const r = geometry.rects;
       if (count === 1) assert.ok(r[0].width > width * (width < 600 ? .7 : .5));
       else if (width < 600) for (let i = 1; i < count; i++) assert.ok(r[i].y >= r[i - 1].y + r[i - 1].height);

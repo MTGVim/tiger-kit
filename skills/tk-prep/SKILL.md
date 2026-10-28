@@ -116,7 +116,10 @@ For every direct or SDD code review, load [independent review protocol](referenc
 [finding quality](references/finding-quality.md). Load
 [TypeScript](references/typescript.md), [React](references/react.md), and [security](references/security.md) only when the
 review scope meets those references' stated conditions. Conditional lenses do not change the protocol's review seats.
-When the cause and exact RED seam are obvious, proceed directly. Lazy-load [diagnosis](references/diagnosis.md) only for hard, flaky, performance, or difficult-to-reproduce bugs and establish a red-capable loop before a fix hypothesis. If that is impossible, record why and do not apply a speculative fix.
+With a clear cause and exact RED seam, proceed directly. Read [diagnosis](references/diagnosis.md)
+for hard/flaky/performance bugs and on the first attempt missing the reported symptom, before
+concluding or reporting non-reproduction. Establish a red-capable loop before a fix hypothesis;
+if impossible, record why without speculative fixes.
 
 ## Runtime verification
 

@@ -1,50 +1,38 @@
-# Interactive Examples and Controlled Mechanisms
+# Interaction in archify pages
 
-Read only when a concept's cause and effect depends on input, identity, state, or event order. Follow [HTML output](html-output.md); use inline HTML/CSS/SVG/JavaScript without a framework, build step, server, or runtime network dependency. This reference adds no course, research, product-prototype, or video-rendering responsibility.
+Read for an explicit interaction request. Keep the complete explanation in archify, with
+prerequisites, causal steps, sources and material caveats outside controls. Read the installed
+`references/explainer-authoring.md` and, for viewer-specific behavior, `references/viewer-runtime.md`.
+Use supported directives and native diagrams; do not insert a TigerKit document shell,
+hand-authored script, iframe or post-render patch that invalidates archify's receipt.
 
-## Let the reader cause the difference
+## Match the requested action
 
-Choose a live figure when varying a parameter reveals the claim: for example, how
-worker concurrency changes queue completion time, or how a retry delay changes
-waiting time. Each control must change a relevant consequence, rather than merely
-reveal a caption or animate an unchanged picture. Prefer a static figure for fixed
-structure and a step-through for event order alone, such as DNS lookup; neither
-needs a parameter slider.
+Use a native diagram with `@steps` for an ordered walkthrough, and native node/route links
+for selection, focus and path exploration. Bind targets to real authored node/edge IDs.
+The visible label, highlighted entity, step description and source must agree. Native
+exploration reveals authored relationships; it does not run the represented application
+or prove runtime causality. Preserve any actual spatial relationship with scene images;
+do not replace live native controls with screenshots.
 
-Choose the smallest useful experiment: edit a value, reorder items, toggle a condition, or trigger an event. For stateful concepts, provide a native input for the reader's own local-state value and a separate causal change; a button that generates a preset value cannot substitute for editing. Give one short experiment instruction, such as predict the outcome, change the input, then compare what actually happened. Every instruction must correspond to a working control. Keep prerequisites, mechanism, and material caveats beside the experiment rather than replacing them with controls.
+Check the installed version's documented capabilities before promising a custom action.
+Archify 3.2.0 supports guided steps and viewer exploration, not arbitrary authored JavaScript
+or parameter-driven simulation in an explainer. If a requested edit/reorder/calculation
+cannot be represented faithfully, report that requirement as `Blocked` with the missing
+capability. A static comparison may support the explanation, but cannot silently replace
+requested live behavior or turn partial delivery into `Pass`. Do not auto-switch to the
+legacy renderer, install/update a dependency or invoke a product-prototype workflow.
 
-For a comparison of alternative rules, start from one shared set of experiment inputs and apply the same causal change to every alternative. Let the reader edit the common input once rather than manually copying it between alternatives; apply the exact same entered value, not different generated suffixes or transformations. Define what that edit targets: a baseline editor updates the same original entity/state in every alternative, using its original association rather than its current display position; an editor for the currently displayed entity applies the same event to that entity in every alternative. Label the scope clearly and preserve the current order and relevant history. Track each retained instance's identity and each state value's intended entity as separate fields. On an edit, update the value and its intended entity together; preserve both across reordering. Derive value-mismatch markers and conclusions from that intended entity versus the current displayed entity, not from the instance's initial identity or a changed-order flag. Keep the instance identity visible so state ownership and value provenance are not conflated.
+## Preserve meaning and verify
 
-Use the shared pure `model(settings)` result for diagrams, values, and explanatory sentences. Keep independent inputs and genuine state history in `settings`; calculate derived labels, mappings, and conclusions together. Generate the conclusion from the current result, rather than hardcoding one example behind a generic changed/not-changed flag. A stateful mechanism must preserve relevant history across events, rather than silently recalculating local state from the current item data. Clearly distinguish data identity, persistent state, and display position when those differ. Label a simplified model and its assumptions; do not imply that it executes the real library or measures its runtime.
+For a stateful comparison, preserve common inputs, entity identity, event order and actual
+state history across alternatives; visible consequences must follow those inputs. Label
+illustrative states and assumptions. A changed caption or highlighted node alone cannot
+claim a recalculated result, persistent state change or a successful reset. Unsupported
+custom input, branch-wide reset and backward replay remain unmet requirements.
 
-Make the causal difference visible on the affected entities, not only in a result paragraph. Keep a comparable before state or expected outcome beside the changed result, using the same user inputs across compared modes. Mark a mismatch on its card/node with both a visual distinction and a short local label identifying the expected and actual association. Distinguish the displayed entity, the retained instance's initial identity, and the current value's intended entity. Labeling an instance's initial identity as the author or intended entity of a subsequently edited value hides the defect. Use consistent identity labels, shapes or colors and visible connections where helpful, with text cues so color is never the only evidence. Let the reader see the difference without remembering the previous screen or inferring it from arbitrary values. Retain prerequisites, worked explanation, caveats, verified source links and required attribution as interaction is added.
-
-Keep the small set of causally useful controls. Use native labeled controls and predictable keyboard behavior. Render user-entered text as text, never as unescaped HTML. Preserve the focused control across updates, including repeated button activation as well as an input's caret; replacing its entire container must not drop keyboard focus.
-
-Build the baseline diagram, values, and conclusion as static HTML before adding JavaScript. Do not leave empty containers that only `render()` fills. Put `readonly` on baseline input fields in the HTML itself and start action controls hidden; enable the baseline editor only after its handlers are attached. Enforce `[hidden] { display: none !important; }` when a control's layout rule sets `display`, since that rule can override the browser's hidden styling. With JavaScript disabled, the example must still show a meaningful outcome and no editable fields or inert action controls. When screen checks are requested, test the actual script-disabled render separately, including the fields' editability; finding `hidden` in the source or capturing visible content is not proof of this behavior.
-
-## Show intermediate steps when they teach the mechanism
-
-Choose the simplest visual explanation that makes the cause observable. Integrate matching or state transitions with the experiment's persistent entities instead of creating a second textual walkthrough. A direct before/after comparison may fully explain an identity change; add a sequence only when intermediate states answer a question the comparison cannot. A text list replaced on each click is not a visual mechanism, even when its wording is correct.
-
-When a sequence is useful or requested, start paused and provide previous/next, current step or progress, and reset. Keep a consistent spatial frame with recognizable entities; change their positions, connections, or state markers to show the current mechanism stage, and explain the causal change beside the affected entity. An initial stage must not already display the final matching/state result. Animate the causal transition or match, not an unrelated decorative loop. Backward navigation must reproduce the corresponding mechanism state; changing only a caption, progress bar, or emphasis is insufficient. Keep the complete explanation available outside the sequence.
-
-Add optional automatic playback only when it helps. Expose play/pause, leave enough reading time, keep one active playback clock, and stop at the end. User edits and manual stepping should pause playback before changing the state. Reset cancels playback and restores a documented baseline. Reduced motion removes or shortens transitions while retaining visible states and manual controls; do not force timed progression on readers who prefer reduced motion. Static explanations need no timeline, controls, or artificial motion.
-
-## Reset and verify the entire experiment
-
-Define the reset scope visibly. A full reset restores original data/order, user-entered values, genuine state history, all strategy/mode branches including hidden ones, the initial step, and paused playback. A narrower action must be labeled for its scope rather than called a full reset. Never clear only the currently visible branch and leave old state to reappear after switching modes.
-
-Before returning, trace these paths in the authored model/source; execute browser paths only for explicitly requested screen/action checks:
-
-- Exercise every exposed action. When at least two meaningful non-default inputs exist, test two; otherwise test every available state. Use distinctive replacement values rather than the initial defaults. Check every visible conclusion and stage caption against the diagram and displayed state after each change, including a second event from the already changed state; default example names or values must not survive in a current-result sentence. One successful preset does not establish consistency across choices.
-- For identity/state examples, edit local state, change order or membership, and inspect which identity retains it. Compare alternate strategies from equivalent starting conditions.
-- For a paired comparison, edit one common input once and inspect both alternatives against its documented scope; manually filling both sides cannot establish equivalent conditions. Change order, edit a distinctive value again, and return to the original order without resetting. Compare current values, their intended entities, local markers, and conclusions; returning to the original order does not prove that edited state has returned to its original association.
-- Inspect the actual rendered affected entities: a reader must be able to locate a mismatch and identify both associations from their local labels/markers and a visible baseline, without reconstructing earlier values. Different HTML strings, a warning paragraph, working buttons, or a progress bar do not prove this. Check the explanation and source links as well as the controls.
-- Change more than one mode's state, reset, switch back through modes, and confirm no stale values return.
-- Step forward, backward, and at both boundaries; verify the visible mechanism state as well as the step label. If playback exists, pause, wait beyond one interval, resume, and reset while running; check for unintended advancement or duplicate clocks.
-- Check keyboard input, a narrow viewport, JavaScript-off static content, and reduced-motion manual operation where feasible. Preserve failure evidence and report unexecuted checks as limitations.
-
-These are acceptance checks, not permission to install a browser provider, open the user's browser, or modify unrelated files. For requested checks without runtime access, inspect the code and report unavailable execution; otherwise screen/action checks remain not requested.
-
-Upstream sources and dispositions for this reference are kept in the calling package's provenance file.
+Use the exact saved page for the owning skill's accuracy checks. When screen/action checks
+are requested, route them to `tk-browser-verify`: exercise the requested native controls,
+forward/back movement where supported, keyboard/focus, and the matching visible states.
+Check no-JavaScript/reduced-motion reading when in scope. Keep the full static explanation
+available and report any unrun checks. `finalize explainer` alone is not browser evidence.
