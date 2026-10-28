@@ -15,8 +15,10 @@ import tempfile
 
 try:
     from .artifact_policy import scratch_directory, output_directory
+    from .eval_source import source_snapshot, checkout_id
 except ImportError:
     from artifact_policy import scratch_directory, output_directory
+    from eval_source import source_snapshot, checkout_id
 import time
 from collections import Counter
 from contextlib import contextmanager
@@ -206,6 +208,13 @@ def valid_execution_provenance(value: object) -> bool:
 def execution_record(result: Mapping[str, object], prompt: str) -> dict[str, object]:
     return {"execution_identity": result.get("execution_identity"),
             "execution_provenance": result.get("execution_provenance"),
+            **({"execution_source": result.get("execution_source"),
+                "expected_source": result["expected_source"],
+                "terminal_status": result.get("terminal_status"),
+                "events": result.get("events"),
+                "tool_uses": result.get("tool_uses"),
+                "nested_calls": result.get("nested_calls"),
+                "instrument_errors": result.get("instrument_errors", [])} if "expected_source" in result else {}),
             "prompt_sha256": hashlib.sha256(prompt.encode()).hexdigest()}
 
 
@@ -972,12 +981,18 @@ def run_adapter(
     mode: str,
     host: str,
     watch_paths: list[str] | None = None,
+    calibration_source: dict[str, str] | None = None,
 ) -> dict[str, object]:
+    if calibration_source is not None and source_snapshot(checkout) != calibration_source:
+        raise ValueError("calibration run checkout differs from frozen source")
     with scratch_directory("eval-run", ROOT) as directory:
         run_dir = Path(directory)
         home = run_dir / "home"
         home.mkdir()
         env = os.environ.copy()
+        env.pop("TK_EVAL_OBSERVE_SOURCE", None)
+        if calibration_source is not None:
+            env["TK_EVAL_OBSERVE_SOURCE"] = "1"
         # Keep only the original auth-directory path across temporary HOME setup.
         # The adapter reuses it; no auth files or secret values enter run artifacts.
         if host == "codex":
@@ -997,6 +1012,7 @@ def run_adapter(
                 "TK_EVAL_WATCH_PATHS": json.dumps(watch_paths or []),
             }
         )
+        adapter_before = command_fingerprint(command, cwd=checkout) if calibration_source else None
         result = run_json_command(command, env, cwd=checkout)
         errors = validate_adapter_result(result, diagnostic=mode == "diagnostic")
         if errors:
@@ -1007,6 +1023,10 @@ def run_adapter(
             if isinstance(result.get("skill_loaded"), bool) and result["skill_loaded"] is not catalog_loaded:
                 raise RuntimeError("adapter result skill_loaded disagrees with loaded_skills")
             result["skill_loaded"] = catalog_loaded
+        if calibration_source is not None:
+            result["expected_source"] = {**calibration_source, "checkout_id": checkout_id(checkout)}
+            result["instrument_errors"] = ([] if adapter_before == command_fingerprint(command, cwd=checkout)
+                                           else ["actual run adapter changed during execution"])
         return result
 
 
@@ -1590,6 +1610,7 @@ def grade_behavior(
     checkout: Path,
     initial_head: str | None,
     host: str | None = None,
+    tolerate_judge_error: bool = False,
 ) -> list[dict[str, object]]:
     # Observe actor state before the grader can mutate the checkout.
     mechanical_rows = iter([
@@ -1609,16 +1630,24 @@ def grade_behavior(
         if assertion.get("type") == "judge"
     ]
     judge_rows: Iterator[dict[str, object]]
+    artifacts = []
     if judge_assertions:
-        artifacts = snapshot_judge_artifacts(checkout, assertions)
-        grade = run_grader(
-            grader_command,
-            str(adapter_result["output"]),
-            judge_assertions,
-            cwd=checkout,
-            **({"artifacts": artifacts} if artifacts else {}),
-        )
-        judge_rows = iter(grade["assertion_results"])  # type: ignore[arg-type]
+        try:
+            artifacts = snapshot_judge_artifacts(checkout, assertions)
+            grade = run_grader(
+                grader_command,
+                str(adapter_result["output"]),
+                judge_assertions,
+                cwd=checkout,
+                **({"artifacts": artifacts} if artifacts else {}),
+            )
+            judge_rows = iter(grade["assertion_results"])  # type: ignore[arg-type]
+        except (OSError, subprocess.SubprocessError, RuntimeError, ValueError):
+            if not tolerate_judge_error:
+                raise
+            artifacts = []
+            judge_rows = iter({"passed": None, "evidence": "Unverifiable: judge execution failed; mechanical evidence retained"}
+                              for _ in judge_assertions)
     else:
         judge_rows = iter(())
     results: list[dict[str, object]] = []
@@ -2217,6 +2246,7 @@ def evaluate_checkout(
     runs: int,
     case_filter: set[str] | None,
     catalog_contract: Mapping[str, object] | None = None,
+    calibration_source: dict[str, str] | None = None,
 ) -> tuple[dict[str, object], list[dict[str, object]]]:
     records: list[dict[str, object]] = []
     trigger_total = 0
@@ -2248,6 +2278,7 @@ def evaluate_checkout(
                         prompt=query["query"],
                         mode="trigger",
                         host=host,
+                        **({"calibration_source": calibration_source} if calibration_source else {}),
                     )
                 passed = result["skill_loaded"] is query["should_trigger"]
                 trigger_outcome = trigger_outcomes.setdefault(
@@ -2291,6 +2322,7 @@ def evaluate_checkout(
             for run_number in range(1, runs + 1):
                 with isolated_checkout(checkout) as run_checkout:
                     initial_head = git_head(run_checkout)
+                    grader_before = command_fingerprint(grader_command, cwd=run_checkout) if calibration_source else None
                     result = run_adapter(
                         adapter_command,
                         checkout=run_checkout,
@@ -2299,19 +2331,38 @@ def evaluate_checkout(
                         mode="behavior",
                         host=host,
                         watch_paths=assertion_watch_paths(case.get("assertions")),
+                        **({"calibration_source": calibration_source} if calibration_source else {}),
                     )
-                    assertion_results = grade_behavior(
-                        grader_command,
-                        result,
-                        case["assertions"],
-                        checkout=run_checkout,
-                        initial_head=initial_head,
-                        host=host,
-                    )
-                passed = all(row["passed"] for row in assertion_results)
+                    grader_changed_before = bool(calibration_source and grader_before != command_fingerprint(grader_command, cwd=run_checkout))
+                    if grader_changed_before:
+                        result.setdefault("instrument_errors", []).append("actual run grader changed before grading; altered judge not run")
+                        assertion_results = [
+                            {"type": "judge", "criterion": assertion["criterion"], "passed": None,
+                             "evidence": "Unverifiable: altered grader was not executed"}
+                            if assertion.get("type") == "judge" else verify_mechanical_assertion(
+                                assertion, adapter_result=result, checkout=run_checkout,
+                                initial_head=initial_head, host=host)
+                            for assertion in case["assertions"]
+                        ]
+                    else:
+                        assertion_results = grade_behavior(
+                            grader_command,
+                            result,
+                            case["assertions"],
+                            checkout=run_checkout,
+                            initial_head=initial_head,
+                            host=host,
+                            **({"tolerate_judge_error": True} if calibration_source else {}),
+                        )
+                    if calibration_source and any(row["passed"] is None for row in assertion_results):
+                        result.setdefault("instrument_errors", []).append("judge unavailable; independent mechanical evidence retained")
+                    if calibration_source and not grader_changed_before and grader_before != command_fingerprint(grader_command, cwd=run_checkout):
+                        result.setdefault("instrument_errors", []).append("actual run grader changed during grading")
+                passed = all(row["passed"] is True for row in assertion_results)
+                safety_violation = case.get("safety") is True and any(row["passed"] is False for row in assertion_results)
                 behavior_total += 1
                 behavior_passed += int(passed)
-                if case.get("safety") is True and not passed:
+                if safety_violation:
                     safety_failures += 1
                 if result.get("duration_ms") is None:
                     duration_available = False
@@ -2329,6 +2380,7 @@ def evaluate_checkout(
                         "run": run_number,
                         "passed": passed,
                         "safety": case.get("safety") is True,
+                        **({"safety_violation_observed": safety_violation} if calibration_source else {}),
                         "assertion_results": assertion_results,
                         "terminal_status": result.get("terminal_status"),
                         "events": result.get("events"),
@@ -2356,6 +2408,7 @@ def evaluate_checkout(
                         prompt=str(case["prompt"]),
                         mode="catalog-routing",
                         host=host,
+                        **({"calibration_source": calibration_source} if calibration_source else {}),
                     )
                 expected = case.get("expected_selected_skill")
                 selected_skill = result.get("selected_skill")
@@ -2417,6 +2470,148 @@ def evaluate_checkout(
     return summary, records
 
 
+def calibration_cases(contracts, catalog, host, case_filter) -> list[str]:
+    cases = []
+    for skill, contract in contracts.items():
+        cases.extend(f"{skill}:trigger:{row['id']}" for row in contract["triggers"]["queries"])
+        cases.extend(f"{skill}:behavior:{row['id']}" for row in contract["behavior"]["evals"]
+                     if not isinstance(row.get("hosts"), list) or host in row["hosts"])
+    if catalog is not None:
+        cases.extend(f"catalog:behavior:{row['id']}" for row in catalog.get("cases", []))
+    return [case for case in cases if case_filter is None or case in case_filter]
+
+
+def calibration_schedule(cases: list[str], pairs: int):
+    for case in cases:
+        for pair in range(1, pairs + 1):
+            for position, arm in enumerate(("a", "b") if pair % 2 else ("b", "a"), 1):
+                yield {"case": case, "pair_index": pair, "position_in_pair": position, "arm": arm}
+
+
+def command_fingerprint(command: str, *, cwd: Path = ROOT) -> str:
+    """Catch command and directly referenced script/executable drift between slots."""
+    digest = hashlib.sha256(command.encode())
+    for word in shlex.split(command):
+        path = Path(word) if Path(word).is_absolute() else cwd / word
+        if not path.is_file():
+            resolved = shutil.which(word)
+            path = Path(resolved) if resolved else path
+        if path.is_file():
+            digest.update(hashlib.sha256(path.read_bytes()).digest())
+    return digest.hexdigest()
+
+
+def summarize_noise(records, expected_slots, *, error=None) -> dict[str, object]:
+    """Descriptive same-source variability; never a candidate change verdict."""
+    reasons, unavailable = [], []
+    if error:
+        unavailable.append(f"calibration interrupted: {error}")
+    expected = {(row["host"], row["case"], row["pair_index"], row["arm"], row["position_in_pair"])
+                for row in expected_slots}
+    actual = [(row.get("host"), row.get("case"), row.get("pair_index"), row.get("arm"),
+               row.get("position_in_pair")) for row in records]
+    if len(actual) != len(set(actual)) or set(actual) != expected or not records:
+        unavailable.append("missing, duplicate or unexpected calibration slots")
+    if actual != [(row["host"], row["case"], row["pair_index"], row["arm"], row["position_in_pair"])
+                  for row in expected_slots]:
+        unavailable.append("calibration interleave order mismatch")
+    grouped = {}
+    for row in records:
+        key = (row["host"], row["case"])
+        grouped.setdefault(key, []).append(row)
+        proof, expected_source = row.get("execution_source"), row.get("expected_source")
+        if (not isinstance(expected_source, dict) or not expected_source
+                or not isinstance(proof, dict)
+                or proof != {**expected_source, "selector_status": "observed"}):
+            unavailable.append("actual build selector/source is unverified or mismatched")
+        provenance = row.get("execution_provenance")
+        if (not valid_execution_provenance(provenance)
+                or provenance.get("isolation_status") != "Pass"
+                or provenance.get("project_fixture_status") != "Pass"):
+            unavailable.append("host isolation or project fixture loading is unverified")
+        if row.get("terminal_status") in {None, "Pending", "Unverifiable"}:
+            unavailable.append("terminal execution evidence unavailable or incomplete")
+        if row.get("safety") and row.get("safety_violation_observed", not row.get("passed")):
+            reasons.append("protected safety/authority assertion failed; never discounted as noise")
+        unavailable.extend(row.get("instrument_errors", []))
+    groups = []
+    for (host, case), rows in sorted(grouped.items()):
+        anchor = rows[0]
+        for row in rows:
+            left, right = ({"execution_runs": [{**record, "run": 1}]} for record in (anchor, row))
+            unavailable.extend(comparison_errors(left, right))
+            if row.get("instrument") != anchor.get("instrument"):
+                unavailable.append("adapter/grader identity changed within calibration")
+            for name in ("host_version", "isolation_mechanism"):
+                if (row.get("execution_provenance") or {}).get(name) != (anchor.get("execution_provenance") or {}).get(name):
+                    unavailable.append("observed host/isolation identity mismatch")
+            for name in ("commit", "tree", "files_sha256"):
+                if (row.get("expected_source") or {}).get(name) != (anchor.get("expected_source") or {}).get(name):
+                    unavailable.append("run source changed within calibration")
+        arms = {}
+        for arm in ("a", "b"):
+            samples = [row for row in rows if row["arm"] == arm]
+            metrics = {}
+            for metric in ("total_tokens", "duration_ms", "cost_usd", "tool_uses", "nested_calls"):
+                values = [float(row[metric]) for row in samples if valid_measurement(row.get(metric))]
+                metrics[metric] = {"observed": len(values), "missing": len(samples) - len(values),
+                                   "min": min(values) if values else None,
+                                   "max": max(values) if values else None,
+                                   "total": sum(values) if values else None}
+            arms[arm] = {"samples": len(samples), "assertion_passed": sum(bool(row["passed"]) for row in samples),
+                         "terminal_statuses": dict(Counter(row.get("terminal_status") for row in samples)),
+                         "metrics": metrics}
+        groups.append({"host": host, "case": case, "arms": arms})
+    return {"status": "Fail" if reasons else "Unverifiable" if unavailable else "Pass",
+            "reasons": sorted(set(reasons)), "unverifiable": sorted(set(unavailable)),
+            "change_verdict": "not-applicable", "inference": "insufficient evidence for an improvement claim",
+            "interpretation": "Observed ranges only; no significance, stable noise floor or A/B win is established. "
+                              "Compare later A/B only under the same source/fixture/grader/model contract; "
+                              "differences within this observed variation do not demonstrate an effect.",
+            "expected_runs": len(expected_slots), "completed_runs": len(records), "groups": groups}
+
+
+def run_noise_calibration(args, plan, contracts, catalog, hosts, case_filter, output):
+    slots = [{"host": host, **slot} for host in hosts for slot in calibration_schedule(
+        calibration_cases(contracts, catalog, host, case_filter), args.runs)]
+    records, error = [], None
+    instrument = None
+    try:
+        with detached_worktree(plan["baseline"]) as arm_a, detached_worktree(plan["candidate"]) as arm_b:
+            instrument = {"adapter": command_fingerprint(args.adapter_command, cwd=arm_a),
+                          "grader": command_fingerprint(args.grader_command, cwd=arm_a)}
+            source = source_snapshot(arm_a)
+            if source != source_snapshot(arm_b):
+                raise ValueError("A/A source checkouts differ")
+            for slot in slots:
+                arm_root = arm_a if slot["arm"] == "a" else arm_b
+                if instrument != {"adapter": command_fingerprint(args.adapter_command, cwd=arm_root),
+                                  "grader": command_fingerprint(args.grader_command, cwd=arm_root)}:
+                    raise ValueError("adapter/grader changed during calibration")
+                _, rows = evaluate_checkout(
+                    arm_root, contracts,
+                    adapter_command=args.adapter_command, grader_command=args.grader_command,
+                    host=slot["host"], runs=1, case_filter={slot["case"]},
+                    catalog_contract=catalog, calibration_source=source)
+                for row in rows:
+                    records.append({**row, **slot, "run": slot["pair_index"],
+                                    "instrument": instrument})
+                if len(rows) != 1:
+                    raise ValueError("calibration slot did not produce exactly one record")
+                if instrument != {"adapter": command_fingerprint(args.adapter_command, cwd=arm_root),
+                                  "grader": command_fingerprint(args.grader_command, cwd=arm_root)}:
+                    raise ValueError("adapter/grader changed during calibration")
+    except (OSError, subprocess.SubprocessError, RuntimeError, ValueError) as exc:
+        error = str(exc)
+    calibration = summarize_noise(records, slots, error=error)
+    result = {"status": calibration["status"], "plan": plan, "noise_calibration": calibration}
+    for arm, name in (("a", "baseline"), ("b", "candidate")):
+        (output / f"{name}-records.json").write_text(
+            json.dumps([row for row in records if row["arm"] == arm], ensure_ascii=False, indent=2) + "\n")
+    write_result(output, result)
+    return 0 if result["status"] == "Pass" else 1 if result["status"] == "Fail" else 2
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--baseline", required=True)
@@ -2429,6 +2624,8 @@ def parse_args() -> argparse.Namespace:
         help="repeat for a host matrix or pass all",
     )
     parser.add_argument("--runs", type=int, default=2)
+    parser.add_argument("--calibrate-noise", action="store_true",
+                        help="opt-in same-SHA A/A calibration; runs is pairs per case, no change verdict")
     parser.add_argument("--skill", action="append", dest="skills")
     parser.add_argument("--case", action="append", dest="cases")
     parser.add_argument("--adapter-command")
@@ -2469,6 +2666,8 @@ def write_result(output: Path, result: Mapping[str, object]) -> None:
 
 def main() -> int:
     args = parse_args()
+    if args.calibrate_noise and args.diagnose:
+        raise SystemExit("run --calibrate-noise separately from --diagnose; diagnostics change the prompt contract")
     if args.runs < 1:
         raise SystemExit("--runs must be positive")
     if args.diagnostic_scenario_limit < 1:
@@ -2491,10 +2690,12 @@ def main() -> int:
         write_result(output, result)
         return 2
     hosts = list(SUPPORTED_HOSTS) if "all" in args.host else list(dict.fromkeys(args.host))
+    if args.calibrate_noise and baseline_sha != candidate_sha:
+        raise SystemExit("--calibrate-noise requires identical frozen baseline/candidate SHAs")
     selected = set(args.skills) if args.skills else None
     try:
-        with detached_worktree(args.baseline) as baseline_root, detached_worktree(
-            args.candidate
+        with detached_worktree(baseline_sha if args.calibrate_noise else args.baseline) as baseline_root, detached_worktree(
+            candidate_sha if args.calibrate_noise else args.candidate
         ) as candidate_root:
             baseline_contracts = load_eval_contracts(
                 baseline_root, selected, allow_legacy_skill_local=True
@@ -2564,6 +2765,14 @@ def main() -> int:
         "contract_drift": contract_errors,
         "output": str(output) if output else "not-written-in-dry-run",
     }
+    if args.calibrate_noise:
+        if baseline_contracts != candidate_contracts or baseline_catalog != candidate_catalog:
+            contract_errors.append("A/A eval/fixture contract differs")
+        plan["noise_calibration"] = {"enabled": True, "pairs_per_case": args.runs,
+                                     "order": "AB then BA, repeated per host/case",
+                                     "planned_runs": sum(2 * args.runs * len(calibration_cases(
+                                         baseline_contracts, baseline_catalog, host, case_filter)) for host in hosts),
+                                     "change_verdict": "not-applicable"}
     if args.diagnose:
         plan["diagnostics"] = {
             "enabled": True,
@@ -2593,6 +2802,10 @@ def main() -> int:
         }
         write_result(output, result)  # type: ignore[arg-type]
         return 2
+    if args.calibrate_noise:
+        output.mkdir(parents=True, exist_ok=True)
+        return run_noise_calibration(args, plan, baseline_contracts, baseline_catalog,
+                                     hosts, case_filter, output)
     diagnostic_suffix: str | None = None
     if args.diagnose:
         try:

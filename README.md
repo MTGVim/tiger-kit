@@ -54,7 +54,7 @@ npx skills update --global --yes
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
 | [tk-ask-repo](skills/tk-ask-repo/SKILL.md) | `user` | 저장소의 동작과 근거를 설명합니다. |
-| [tk-explain](skills/tk-explain/SKILL.md) | `hybrid` | 배경지식과 실제 동작을 HTML로 설명합니다. |
+| [tk-explain](skills/tk-explain/SKILL.md) | `hybrid` | 배경지식과 실제 동작을 HTML이나 요청한 SVG로 설명합니다. |
 | [tk-video](skills/tk-video/SKILL.md) | `hybrid` | 소프트웨어와 개념을 설명하는 MP4·GIF 영상을 만듭니다. |
 | [tk-explain-diff](skills/tk-explain-diff/SKILL.md) | `hybrid` | 코드 변경의 배경과 실행 흐름을 설명합니다. |
 | [tk-research](skills/tk-research/SKILL.md) | `hybrid` | 근거를 조사하고 접근법을 비교합니다. |

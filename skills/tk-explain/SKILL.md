@@ -45,6 +45,12 @@ General knowledge and clearly labeled hypothetical examples may supply prerequis
 
 Use HTML Output's observable-evidence and precedent rules before finalizing unknowns or procedures.
 
+## Selected standalone SVG
+
+For an explicitly requested standalone looping SVG, read [animated SVG](references/animated-svg.md)
+and use that branch instead of the HTML-only assembly and return steps. Keep the same explanation,
+source, artifact safety and independent content-review obligations. Ordinary diagram requests stay static.
+
 ## Selected video
 
 For requested/accepted video, read [video output](references/video-output.md), then use `tk-video` instead of HTML-only steps.

@@ -1130,6 +1130,54 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "review-large-staged-diff-bounded-once",
+      "path": "success",
+      "prompt": "정확한 범위의 `full.diff` 경로와 파일 목록을 제공했습니다. 파일 38개이며 127,000자라 단일 읽기 한도를 넘습니다. 일부 구간은 이미 본문으로 전달했습니다. 전체 변경의 결함을 검토하세요.",
+      "expected_output": "경로 자체를 내용으로 오인하지 않고 `diff --git` 및 필요한 `hunk` 경계로 단일 도구 한도 안에서 읽습니다. 이미 전달받은 내용은 활용하며 전체 파일 읽기나 별도 전체 `git diff` 재생성을 반복하지 않습니다. 검토자가 필요한 구간을 결정하고 읽지 못한 중요한 변경은 `Unverifiable`로 남깁니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "경로 자체를 내용으로 오인하지 않고 `diff --git` 및 필요한 `hunk` 경계로 단일 도구 한도 안에서 읽습니다. 이미 전달받은 내용은 활용하며 전체 파일 읽기나 별도 전체 `git diff` 재생성을 반복하지 않습니다. 검토자가 필요한 구간을 결정하고 읽지 못한 중요한 변경은 `Unverifiable`로 남깁니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": false
+    },
+    {
+      "id": "review-chunking-preserves-cross-file-risk",
+      "path": "boundary",
+      "prompt": "대형 `full.diff`에서 `src/producer.ts`는 반환 필드를 바꾸고 `src/consumer.ts`는 이전 필드를 그대로 읽습니다. 두 구간이 멀리 떨어져 있습니다. 비용 절감을 위해 첫 파일만 읽고 문제없다고 결론 내리세요.",
+      "expected_output": "변경으로 생긴 생산자·소비자 관계를 따라 필요한 두 구간과 관련 계약을 확인합니다. 파일 간 결함을 확인하고 읽기 절약을 이유로 정확성이나 필요한 범위를 줄이지 않습니다. 재확인이 필요하면 그 관계나 검증 이유를 밝히고 관련 구간만 제한적으로 재독합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "변경으로 생긴 생산자·소비자 관계를 따라 필요한 두 구간과 관련 계약을 확인합니다. 파일 간 결함을 확인하고 읽기 절약을 이유로 정확성이나 필요한 범위를 줄이지 않습니다. 재확인이 필요하면 그 관계나 검증 이유를 밝히고 관련 구간만 제한적으로 재독합니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": false
+    },
+    {
+      "id": "review-oversized-hunk-recovery",
+      "path": "boundary",
+      "prompt": "제공한 `full.diff`의 한 파일 구간만으로 읽기 한도를 넘었고 마지막 `hunk`가 잘렸습니다. 앞부분은 읽었습니다. 전체 파일을 다시 출력해서 검토를 끝내세요.",
+      "expected_output": "누락된 `hunk`와 위치를 식별해 의미 단위를 보존하는 더 작은 범위로 복구하고 필요한 내용이 모두 확보될 때까지 판정을 보류합니다. 전체 재출력이나 잘린 상태의 통과를 피하며 파일 내부의 필요한 변경을 누락하지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "누락된 `hunk`와 위치를 식별해 의미 단위를 보존하는 더 작은 범위로 복구하고 필요한 내용이 모두 확보될 때까지 판정을 보류합니다. 전체 재출력이나 잘린 상태의 통과를 피하며 파일 내부의 필요한 변경을 누락하지 않습니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": false
     }
   ],
   "migrations": [

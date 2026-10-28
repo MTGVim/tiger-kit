@@ -52,7 +52,8 @@ class HostAdapterTest(unittest.TestCase):
             (auth / "AGENTS.md").write_text("GLOBAL_SENTINEL")
             payload = {"output": "profile evidence", "terminal_status": "Pass", "selected_skill": "tk-example",
                        "loaded_skills": ["tk-example"], "events": [{"type": "final_output", "terminal_status": "Pass"}],
-                       "execution_provenance": {"isolation_status": "Pass"}}
+                       "execution_provenance": {"isolation_status": "Pass"},
+                       "execution_source": {"selector_status": "observed", "commit": "agent-claim"}}
             stdout = json.dumps({"type": "item.completed", "item": {"type": "agent_message", "text":
                 adapter.MARKER_START + json.dumps(payload) + adapter.MARKER_END}})
             seen = {}
@@ -64,6 +65,7 @@ class HostAdapterTest(unittest.TestCase):
             with patch.object(adapter.Path, "cwd", return_value=checkout), patch.object(adapter, "executable_for", return_value="codex"), patch.object(adapter, "codex_preflight", return_value={"host_version":"codex-cli 1.2.3", "supports_user_config_exclusion":True}), patch.object(adapter, "run_process", side_effect=process), patch.dict(os.environ, {"TK_EVAL_HOST":"codex", "TK_EVAL_PROMPT":"task", "TK_EVAL_AUTH_CODEX_HOME":str(auth), "TK_EVAL_WATCH_PATHS":"[]"}), contextlib.redirect_stdout(output):
                 self.assertEqual(adapter.main(), 0)
             result = json.loads(output.getvalue())
+            self.assertNotIn("execution_source", result)
             self.assertIn("--ignore-user-config", seen["command"])
             self.assertEqual(seen["auth"], str(auth))
             self.assertEqual(result["execution_provenance"]["isolation_status"], "Unverifiable")
@@ -75,6 +77,28 @@ class HostAdapterTest(unittest.TestCase):
             (checkout / ".agents/skills/tk-example/SKILL.md").unlink()
             proof = adapter.codex_provenance({"host_version":"codex-cli 1.2.3", "supports_user_config_exclusion":True}, checkout, ["tk-example"])
             self.assertEqual(proof["project_fixture_status"], "Unverifiable")
+
+    def test_calibration_stock_adapter_reports_installed_not_host_observed_source(self):
+        with tempfile.TemporaryDirectory() as directory:
+            checkout = Path(directory)
+            skill = checkout / "skills/tk-example"
+            skill.mkdir(parents=True)
+            (skill / "SKILL.md").write_text("# Synthetic fixture\n")
+            for args in (["init", "-q"], ["add", "."],
+                         ["-c", "user.email=fixture@example.invalid", "-c", "user.name=Fixture", "commit", "-qm", "fixture"]):
+                subprocess.run(["git", "-C", str(checkout), *args], check=True, capture_output=True)
+            payload = {"output": "fixture", "terminal_status": "Pass", "selected_skill": "tk-example",
+                       "loaded_skills": ["tk-example"], "events": [{"type": "final_output", "terminal_status": "Pass"}],
+                       "execution_source": {"selector_status": "observed", "commit": "agent-claim"}}
+            stdout = json.dumps({"result": adapter.MARKER_START + json.dumps(payload) + adapter.MARKER_END})
+            output = io.StringIO()
+            with patch.object(adapter.Path, "cwd", return_value=checkout), patch.object(adapter, "executable_for", return_value="claude"), patch.object(adapter, "run_process", return_value=(stdout, "", 0, 1)), patch.dict(os.environ, {"TK_EVAL_HOST":"claude-code", "TK_EVAL_PROMPT":"fixture", "TK_EVAL_OBSERVE_SOURCE":"1"}), contextlib.redirect_stdout(output):
+                self.assertEqual(adapter.main(), 0)
+            proof = json.loads(output.getvalue())["execution_source"]
+            self.assertEqual(proof["selector_status"], "installed")
+            self.assertEqual(len(proof["checkout_id"]), 64)
+            self.assertEqual(len(proof["files_sha256"]), 64)
+            self.assertNotEqual(proof["commit"], "agent-claim")
 
     def test_codex_unsupported_isolation_stops_before_task_execution(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

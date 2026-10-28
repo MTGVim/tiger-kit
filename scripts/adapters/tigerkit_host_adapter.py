@@ -401,6 +401,14 @@ def main() -> int:
     checkout = Path.cwd()
     executable = executable_for(host)
     installed = install_skills(host, checkout)
+    source_proof = None
+    if os.environ.get("TK_EVAL_OBSERVE_SOURCE") == "1":
+        # This is adapter-observed installed input, not an agent's claim that the
+        # host selected it. Only a host-level selector observer can prove loading.
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+        from eval_source import source_snapshot, checkout_id
+        source_proof = {**source_snapshot(checkout), "checkout_id": checkout_id(checkout),
+                        "selector_status": "installed"}
     wrapped = harness_prompt(prompt, installed)
     env = host_environment(host)
     provenance = None
@@ -475,6 +483,9 @@ def main() -> int:
     else:
         text, total_tokens = stdout, None
     payload = extract_payload(text)
+    payload.pop("execution_source", None)
+    if source_proof is not None:
+        payload["execution_source"] = source_proof
     payload["duration_ms"] = duration_ms
     payload["total_tokens"] = total_tokens
     payload["execution_identity"] = observed_execution_identity(host, stdout)

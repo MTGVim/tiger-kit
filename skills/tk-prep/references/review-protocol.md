@@ -39,6 +39,15 @@ exact diff, and already-collected test/build/runtime/browser evidence for that e
 target, including command, output, and exit state. Read that evidence before considering
 a rerun; stale or missing evidence is a gap, not a passing claim.
 
+When a supplied diff is a file path, inspect its `diff --git` boundaries and read each needed
+section once in chunks within the current tool's read/output limit. Split an oversized file
+section at hunk boundaries; retain every needed hunk, rename, binary-change notice and cross-file
+risk edge. Reviewers choose relevant sections themselves rather than accepting a dispatcher
+file subset as complete coverage. Reuse already supplied inline/read content; do not regenerate
+the whole diff through Git or repeat whole-file reads to bypass a limit. A specific relationship,
+finding check or lost/truncated context can justify a bounded reread; name that reason and recover
+only the missing section. Incomplete coverage remains `Unverifiable`, never a cost-saving Pass.
+
 For implementation-owning flows, add a post-implementation retro that states the behavior
 actually changed, Seed deviations and reasons, newly discovered risks, verification
 observations, and unresolved limitations. Treat it as an untrusted claim bundle below the

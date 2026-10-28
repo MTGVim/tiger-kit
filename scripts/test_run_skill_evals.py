@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 import json
+import copy
 import os
 import shlex
 import subprocess
 import sys
 import tempfile
 import unittest
+from types import SimpleNamespace
 from contextlib import nullcontext
 from pathlib import Path
 from unittest.mock import patch
@@ -15,6 +17,11 @@ if __package__:
         DIAGNOSTIC_MARKER_END,
         DIAGNOSTIC_MARKER_START,
         build_verdict,
+        calibration_schedule,
+        summarize_noise,
+        source_snapshot,
+        run_adapter,
+        run_noise_calibration,
         build_diagnostic_ledger,
         compare_catalog_contracts,
         compare_diagnostics,
@@ -37,6 +44,11 @@ else:
         DIAGNOSTIC_MARKER_END,
         DIAGNOSTIC_MARKER_START,
         build_verdict,
+        calibration_schedule,
+        summarize_noise,
+        source_snapshot,
+        run_adapter,
+        run_noise_calibration,
         build_diagnostic_ledger,
         compare_catalog_contracts,
         compare_diagnostics,
@@ -64,6 +76,224 @@ def observed_runs():
              "execution_provenance": {"host_version": "codex-cli fixture",
                                       "isolation_status": "Pass", "project_fixture_status": "Pass",
                                       "isolation_mechanism": "controlled-fixture"}}]
+
+
+class NoiseCalibrationTest(unittest.TestCase):
+    def test_grader_process_and_schema_errors_preserve_mechanical_safety_observations(self):
+        runner = sys.modules[evaluate_checkout.__module__]
+        contracts = {"tk-sample": {"triggers": {"kind": "user-invoked", "queries": []},
+                    "behavior": {"evals": [{"id": "one", "prompt": "fixture", "safety": True,
+                        "assertions": [{"type": "path_not_read", "path": "forbidden.txt"},
+                                       {"type": "judge", "criterion": "fixture"}]}]}}}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); (root / "scripts").mkdir()
+            for grader_code in ("raise SystemExit(2)\n", "print('invalid json')\n", "print('{\"assertion_results\":[]}')\n"):
+                (root / "scripts/grader.py").write_text(grader_code)
+                for read_paths in ([], ["forbidden.txt"]):
+                    actor = {"skill_loaded": True, "output": "fixture", "terminal_status": "Pass", "duration_ms": 1,
+                             "expected_source": {"commit": "fixture"}, "file_access": {"available": True, "read_paths": read_paths}}
+                    with self.subTest(code=grader_code, read_paths=read_paths), patch.object(runner, "run_adapter", return_value=actor.copy()):
+                        _, records = evaluate_checkout(root, contracts, adapter_command="fixture", grader_command="python3 scripts/grader.py",
+                            host="codex", runs=1, case_filter=None, calibration_source={"commit": "fixture"})
+                        self.assertIsNone(records[0]["assertion_results"][1]["passed"])
+                        self.assertEqual(records[0]["safety_violation_observed"], bool(read_paths))
+                        slots = [{"host": "codex", **slot} for slot in calibration_schedule([records[0]["case"]], 1)]
+                        records[0].update(slots[0])
+                        self.assertEqual(summarize_noise(records, slots)["status"], "Fail" if read_paths else "Unverifiable")
+
+    def test_relative_grader_mutation_is_rejected_in_the_actual_run_checkout(self):
+        runner = sys.modules[evaluate_checkout.__module__]
+        contracts = {"tk-sample": {"triggers": {"kind": "user-invoked", "queries": []},
+                    "behavior": {"evals": [{"id": "one", "prompt": "fixture", "safety": True,
+                                              "assertions": [{"type": "judge", "criterion": "fixture"}]}]}}}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "scripts").mkdir()
+            (root / "scripts/grader.py").write_text("original grader\n")
+            def mutate(command, *, checkout, **kwargs):
+                (checkout / "scripts/grader.py").write_text("altered grader\n")
+                return {"skill_loaded": True, "output": "fixture", "terminal_status": "Pass", "duration_ms": 1,
+                        "expected_source": {"commit": "fixture"},
+                        "file_access": {"available": True, "read_paths": ["forbidden.txt"]}}
+            with patch.object(runner, "run_adapter", side_effect=mutate), patch.object(runner, "grade_behavior") as grade:
+                _, records = evaluate_checkout(root, contracts, adapter_command="fixture", grader_command="python3 scripts/grader.py",
+                                  host="codex", runs=1, case_filter=None, calibration_source={"commit": "fixture"})
+                self.assertIsNone(records[0]["assertion_results"][0]["passed"])
+                self.assertFalse(records[0]["safety_violation_observed"])
+                self.assertIn("altered judge not run", records[0]["instrument_errors"][0])
+                slots = [{"host": "codex", **slot} for slot in calibration_schedule([records[0]["case"]], 1)]
+                records[0].update(slots[0])
+                self.assertEqual(summarize_noise(records, slots)["status"], "Unverifiable")
+                contracts["tk-sample"]["behavior"]["evals"][0]["assertions"].append({"type": "path_not_read", "path": "forbidden.txt"})
+                _, records = evaluate_checkout(root, contracts, adapter_command="fixture", grader_command="python3 scripts/grader.py",
+                                  host="codex", runs=1, case_filter=None, calibration_source={"commit": "fixture"})
+                self.assertFalse(records[0]["assertion_results"][1]["passed"])
+                self.assertTrue(records[0]["safety_violation_observed"])
+                records[0].update(slots[0])
+                self.assertEqual(summarize_noise(records, slots)["status"], "Fail")
+                grade.assert_not_called()
+            self.assertEqual((root / "scripts/grader.py").read_text(), "original grader\n")
+            def actor(command, **kwargs):
+                return {"skill_loaded": True, "output": "fixture", "terminal_status": "Pass", "duration_ms": 1, "expected_source": {"commit": "fixture"}}
+            def grader(command, result, assertions, *, checkout, **kwargs):
+                (checkout / "scripts/grader.py").write_text("grader changed itself\n")
+                return [{"passed": False, "evidence": "protected fixture failed"}]
+            with patch.object(runner, "run_adapter", side_effect=actor), patch.object(runner, "grade_behavior", side_effect=grader):
+                _, records = evaluate_checkout(root, contracts, adapter_command="fixture", grader_command="python3 scripts/grader.py",
+                    host="codex", runs=1, case_filter=None, calibration_source={"commit": "fixture"})
+            self.assertFalse(records[0]["passed"])
+            # The observation is retained even when the grader changes after returning its assertion.
+            self.assertIn("actual run grader changed during grading", records[0]["instrument_errors"] if "instrument_errors" in records[0] else [])
+
+    def test_source_fingerprint_checks_real_input_before_adapter_execution(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = root / "SKILL.md"
+            target.write_text("frozen fixture\n")
+            for args in (["init", "-q"], ["add", "."],
+                         ["-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "commit", "-qm", "fixture"]):
+                subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True)
+            source = source_snapshot(root)
+            (root / "untracked-output").write_text("not source")
+            self.assertEqual(source_snapshot(root), source)
+            target.chmod(0o755)
+            self.assertNotEqual(source_snapshot(root), source)
+            target.chmod(0o644)
+            target.write_text("modified source\n")
+            with self.assertRaisesRegex(ValueError, "differs from frozen"):
+                run_adapter("must-not-execute", checkout=root, skill="fixture", prompt="fixture",
+                            mode="behavior", host="codex", calibration_source=source)
+
+    def test_instrument_drift_stops_and_preserves_completed_safety_failure(self):
+        runner = sys.modules[run_noise_calibration.__module__]
+        contracts = {"tk-sample": {"triggers": {"queries": [{"id": "one"}]}, "behavior": {"evals": []}}}
+        row = self.records()[0][0]
+        row.update(safety=True, passed=False)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            args = SimpleNamespace(adapter_command="adapter", grader_command="grader", runs=2)
+            with patch("builtins.print"), patch.object(runner, "detached_worktree", side_effect=lambda ref: nullcontext(root)), patch.object(runner, "source_snapshot", return_value={"commit": "fixed"}), patch.object(runner, "evaluate_checkout", return_value=({}, [row])) as execute, patch.object(runner, "command_fingerprint", side_effect=["a", "g", "a", "g", "changed", "g"]):
+                code = run_noise_calibration(args, {"baseline": "fixed", "candidate": "fixed"},
+                    contracts, None, ["codex"], None, root)
+            self.assertEqual(code, 1)
+            self.assertEqual(execute.call_count, 1)
+            summary = json.loads((root / "summary.json").read_text())["noise_calibration"]
+            self.assertEqual(summary["completed_runs"], 1)
+            self.assertEqual(summary["expected_runs"], 4)
+            self.assertTrue(any("adapter/grader changed" in message for message in summary["unverifiable"]))
+            self.assertEqual(len(json.loads((root / "baseline-records.json").read_text())), 1)
+
+    def records(self):
+        slots = [{"host": "codex", **row} for row in calibration_schedule(["fixture"], 2)]
+        records = []
+        for n, slot in enumerate(slots):
+            source = {"commit": "a" * 40, "tree": "b" * 40, "files_sha256": "c" * 64,
+                      "checkout_id": str(n)}
+            records.append({**observed_runs()[0], **slot, "run": slot["pair_index"],
+                            "expected_source": source, "execution_source": {**source, "selector_status": "observed"},
+                            "instrument": {"adapter": "fixed", "grader": "fixed"},
+                            "passed": n % 2 == 0, "terminal_status": "Pass", "safety": False,
+                            "total_tokens": n * 10, "duration_ms": 10 + n, "cost_usd": None})
+        return records, slots
+
+    def test_interleaved_pairs_report_ranges_without_candidate_regressions(self):
+        records, slots = self.records()
+        self.assertEqual([row["arm"] for row in records], ["a", "b", "b", "a"])
+        summary = summarize_noise(records, slots)
+        self.assertEqual(summary["status"], "Pass")
+        self.assertEqual(summary["change_verdict"], "not-applicable")
+        self.assertIn("insufficient evidence", summary["inference"])
+        arms = summary["groups"][0]["arms"]
+        self.assertEqual(arms["a"]["assertion_passed"], arms["b"]["assertion_passed"])
+        self.assertEqual(arms["a"]["metrics"]["total_tokens"]["min"], 0)
+        self.assertEqual(arms["a"]["metrics"]["total_tokens"]["max"], 30)
+        self.assertEqual(arms["b"]["metrics"]["duration_ms"]["total"], 23)
+        self.assertEqual(arms["a"]["metrics"]["cost_usd"]["missing"], 2)
+
+    def test_missing_tampered_or_installed_only_provenance_stays_unverifiable(self):
+        records, slots = self.records()
+        mutations = [
+            lambda rows: rows[0].pop("execution_source"),
+            lambda rows: rows[0]["execution_source"].update(selector_status="installed"),
+            lambda rows: rows[0]["execution_source"].update(commit="other"),
+            lambda rows: rows[0]["execution_source"].update(checkout_id="other"),
+            lambda rows: rows[0].pop("execution_identity"),
+            lambda rows: rows[0]["execution_identity"].update(model="different"),
+            lambda rows: rows[0]["execution_identity"].update(config={"reasoning_effort": "high"}),
+            lambda rows: rows[0]["execution_provenance"].update(project_fixture_status="installed"),
+            lambda rows: rows[0].update(terminal_status="Unverifiable"),
+            lambda rows: rows[0].update(prompt_sha256="different"),
+            lambda rows: rows[0]["instrument"].update(grader="changed"),
+            lambda rows: rows.pop(),
+            lambda rows: rows.append(rows[0].copy()),
+            lambda rows: rows.reverse(),
+        ]
+        for mutate in mutations:
+            with self.subTest(mutation=mutate):
+                changed = copy.deepcopy(records)
+                mutate(changed)
+                self.assertEqual(summarize_noise(changed, slots)["status"], "Unverifiable")
+        self.assertEqual(summarize_noise([], slots, error="adapter exited 2")["status"], "Unverifiable")
+
+    def test_safety_failure_in_either_arm_survives_missing_later_runs(self):
+        for arm in ("a", "b"):
+            records, slots = self.records()
+            row = next(row for row in records if row["arm"] == arm)
+            row.update(safety=True, passed=False)
+            summary = summarize_noise(records[:-1], slots, error="later adapter failure")
+            self.assertEqual(summary["status"], "Fail")
+            self.assertIn("protected safety/authority", summary["reasons"][0])
+
+    def test_cli_dry_run_budget_same_sha_requirement_and_diagnostic_separation(self):
+        root = Path(__file__).resolve().parents[1]
+        command = [sys.executable, str(root / "scripts/run_skill_evals.py"), "--baseline", "HEAD",
+                   "--candidate", "HEAD", "--host", "claude-code", "--runs", "2",
+                   "--skill", "tk-prototype", "--case", "tk-prototype:behavior:legacy-1", "--dry-run"]
+        normal = subprocess.run(command, cwd=root, capture_output=True, text=True, check=True)
+        self.assertNotIn("noise_calibration", json.loads(normal.stdout)["plan"])
+        result = subprocess.run([*command, "--calibrate-noise"], cwd=root, capture_output=True, text=True, check=True)
+        self.assertEqual(json.loads(result.stdout)["plan"]["noise_calibration"]["planned_runs"], 4)
+        different = command.copy()
+        different[different.index("--candidate") + 1] = "HEAD^"
+        result = subprocess.run([*different, "--calibrate-noise"], cwd=root, capture_output=True, text=True)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("identical frozen", result.stderr)
+        result = subprocess.run([*command, "--calibrate-noise", "--diagnose"], cwd=root, capture_output=True, text=True)
+        self.assertIn("separately", result.stderr)
+
+    def test_fake_adapter_end_to_end_preserves_source_and_pair_metadata(self):
+        root = Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory() as directory:
+            directory = Path(directory)
+            adapter = directory / "adapter.py"
+            adapter.write_text(
+                "import json, sys\nfrom pathlib import Path\n"
+                f"sys.path.insert(0, {str(root / 'scripts')!r})\n"
+                "from eval_source import source_snapshot, checkout_id\n"
+                "proof = {**source_snapshot(Path.cwd()), 'checkout_id': checkout_id(Path.cwd()), 'selector_status': 'observed'}\n"
+                "print(json.dumps({'skill_loaded':True, 'output':'synthetic fixture', 'terminal_status':'Pass',\n"
+                "'total_tokens':3,'duration_ms':5,'cost_usd':0.0,\n"
+                "'execution_identity': {'model':'synthetic-fixture'}, 'execution_source':proof,\n"
+                "'execution_provenance':{'host_version':'fixture 1', 'isolation_status':'Pass',\n"
+                "'isolation_mechanism':'fixture', 'project_fixture_status':'Pass'}}))\n")
+            grader = directory / "grader.py"
+            grader.write_text("import json,os\nprint(json.dumps({'assertion_results':[{'passed':True,'evidence':'synthetic fixture'} for _ in json.loads(os.environ['TK_EVAL_ASSERTIONS'])]}))\n")
+            output = directory / "results"
+            result = subprocess.run([sys.executable, str(root / "scripts/run_skill_evals.py"),
+                "--baseline", "HEAD", "--candidate", "HEAD", "--host", "claude-code", "--host", "hermes-agent",
+                "--skill", "tk-prototype", "--case", "tk-prototype:behavior:legacy-1", "--runs", "2", "--calibrate-noise",
+                "--adapter-command", f"{shlex.quote(sys.executable)} {shlex.quote(str(adapter))}",
+                "--grader-command", f"{shlex.quote(sys.executable)} {shlex.quote(str(grader))}", "--output", str(output)],
+                cwd=root, capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            summary = json.loads((output / "summary.json").read_text())
+            self.assertEqual(summary["noise_calibration"]["completed_runs"], 8)
+            a = json.loads((output / "baseline-records.json").read_text())
+            self.assertEqual([row["position_in_pair"] for row in a], [1, 2, 1, 2])
+            self.assertEqual({row["arm"] for row in a}, {"a"})
+            self.assertEqual(len({row["execution_source"]["checkout_id"] for row in a}), 4)
+            self.assertEqual({row["total_tokens"] for row in a}, {3})
+            self.assertEqual(len(summary["noise_calibration"]["groups"]), 2)
 
 
 class AdapterResultTest(unittest.TestCase):

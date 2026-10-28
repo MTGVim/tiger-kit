@@ -87,6 +87,9 @@ Do not compress multiple captures into an undifferentiated path list: report one
 per capture with its AC, file, viewport, state/region, and inspected result.
 Each result row must state that the screenshot was non-empty after actual image inspection, or that
 the candidate bounded-region file was byte-identical to its named already-inspected baseline.
+For an explicitly requested overview of existing multiple captures, use the optional
+[contact sheet](contact-sheet.md). It is navigation only; inspect each required original
+and retain every AC row and its real verdict. A thumbnail cannot prove text, geometry or input.
 Use the mandatory `capture_only_mutation` field from [the evidence contract](results.md)
 in the index and result. An outline or label is an annotation, so annotated captures cannot report `none`.
 

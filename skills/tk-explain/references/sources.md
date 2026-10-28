@@ -208,3 +208,13 @@ using source.occurrence for citations and per-target numbers for terms. The tran
 recent-origin marker is an independently authored TigerKit extension. Omit wiki syntax,
 runtime, templates, skin and source code. No upstream runtime/eval was executed and no
 NamuWiki behavior is asserted. Local browser regression owns the interaction evidence.
+
+## Standalone looping SVG (2026-10-28)
+
+Compared `praveenvijayan/animdiagram@a8edca75f041ebb75c74ac9d3b3fbec3b9cd5486`:
+`SKILL.md`, `scripts/timeline.py`, `scripts/check.py` and README. Keep a shared causal clock,
+static meaning without moving packets and reduced-motion fallback. Adapt this into the existing
+explanation owner's explicit SVG branch with a small independently authored stdlib scene compiler.
+Omit its style system, skins, automatic browser preview, MP4 exporter, extra invocation and runtime.
+The donor is MIT; no source code, SVG assets or instruction blocks were copied. Python/scene tests
+are separate from browser animation and GitHub embedding; unexecuted checks remain unverified.

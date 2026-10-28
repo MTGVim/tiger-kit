@@ -14,6 +14,8 @@ Binary evidence may be stored in run-owned `.tigerkit/evidence/tk-browser-verify
 AC to its screenshot, exact publication-safe `display_route`, replay procedure, and disclosed capture-only or
 nondeterministic exclusions; it is an evidence index, not a lifecycle ledger.
 Do not place other Markdown files there.
+An explicitly requested [contact sheet](contact-sheet.md) may add derived PNGs and tile-to-original
+links to this same README. Record generation skips there without changing verification status.
 Do not move user fixtures. Use sensitive captures as evidence only after verifying redaction and absence of residue.
 If any failure appears, whether deterministic, rare, or flaky, preserve its run-owned screenshot, trace, log, or dump
 before a rerun that could overwrite or delete it. Keep baseline comparison failures in a new unique `failed-<attempt>/` path,
