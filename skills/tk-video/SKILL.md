@@ -57,7 +57,11 @@ audio when selected. Assembly consumes ordinary WAV files and imports no TTS eng
 TTS requires actual accepted non-silent audio; missing synthesis is not a voiced silent preview.
 
 Run the finished-media checks and inspect the generated contact sheet plus representative decoded
-frames, including the initial/final state and every material caption or scene transition. Return
+frames, including the initial/final state and every material caption or scene transition.
+For narrated video also inspect interval samples (for example every two seconds) and beat
+boundaries, including just before each beat ends. Review intervals with narration and prolonged
+unchanged or irrelevant visuals; record sample count, candidate intervals and disposition in the
+inspection receipt. The assembler's capped contact sheet alone may not provide this coverage. Return
 `human_action: listen` with the names/numbers/terms to check and relevant sample paths for selected
 narration; retain it as pending until the user confirms meaning, pronunciation and clipping.
 A decode pass is not visual or pronunciation

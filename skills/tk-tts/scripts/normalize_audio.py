@@ -26,14 +26,15 @@ def measured(stderr):
     if not blocks:raise ValueError('FFmpeg returned no loudness measurements')
     return json.loads(blocks[-1])
 
-def normalize(inputs,output):
+def normalize(inputs,output,target_lufs=TARGET_I):
+    if not isinstance(target_lufs,(int,float)) or isinstance(target_lufs,bool) or not math.isfinite(target_lufs) or not -70 <= target_lufs <= -5:raise ValueError("target LUFS must be finite and between -70 and -5")
     paths=[Path(p).absolute() for p in inputs];output=Path(output).absolute()
     if not paths or len(set(paths))!=len(paths):raise ValueError('supply unique WAV inputs')
     if output.exists() or output.resolve()!=output or not output.parent.is_dir():raise ValueError('use a new safe output directory')
     info=[inspect(p) for p in paths]
     ffmpeg=shutil.which('ffmpeg')
     if not ffmpeg:raise ValueError('FFmpeg is required for loudness normalization; do not install implicitly')
-    base=f'loudnorm=I={TARGET_I}:TP={TARGET_TP}:LRA={TARGET_LRA}'
+    base=f'loudnorm=I={target_lufs}:TP={TARGET_TP}:LRA={TARGET_LRA}'
     rows=[]
     with tempfile.TemporaryDirectory(prefix='.normalize-',dir=output.parent) as folder:
         stage=Path(folder)/'normalized';stage.mkdir()
@@ -46,7 +47,7 @@ def normalize(inputs,output):
                 filter=base+':linear=true:print_format=json'+''.join(':'+key+'='+stats[value] for key,value in [('measured_I','input_i'),('measured_TP','input_tp'),('measured_LRA','input_lra'),('measured_thresh','input_thresh'),('offset','target_offset')])
                 mode='ebu-r128-two-pass';limitation=None
             else:
-                gain=min(-20-before['rms_db'],TARGET_TP-before['peak_db'],20)
+                gain=min((target_lufs-2)-before['rms_db'],TARGET_TP-before['peak_db'],20)
                 filter=f'volume={gain:.6f}dB';mode='rms-fallback';limitation='Clip has no finite gated loudness; bounded RMS/peak matching is not a LUFS measurement.'
             name=f'{n:03d}-{source.name}';target=stage/name
             second=subprocess.run([*common,'-af',filter,'-ac','1','-ar',str(before['rate']),'-c:a','pcm_s16le',str(target)],capture_output=True,text=True,check=True,timeout=300)
@@ -57,10 +58,10 @@ def normalize(inputs,output):
             rows.append(row)
         if output.exists() or output.resolve()!=output:raise ValueError('output was replaced during normalization')
         stage.rename(output)
-    return {'target_lufs':TARGET_I,'true_peak_db':TARGET_TP,'lra':TARGET_LRA,'files':rows,'human_action':'listen'}
+    return {'target_lufs':target_lufs,'true_peak_db':TARGET_TP,'lra':TARGET_LRA,'files':rows,'human_action':'listen'}
 
 def main():
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--inputs',nargs='+',type=Path,required=True);parser.add_argument('--output-dir',type=Path,required=True);args=parser.parse_args()
-    try:print(json.dumps(normalize(args.inputs,args.output_dir),ensure_ascii=False,allow_nan=False));return 0
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--inputs',nargs='+',type=Path,required=True);parser.add_argument('--output-dir',type=Path,required=True);parser.add_argument('--target-lufs',type=float,default=TARGET_I);args=parser.parse_args()
+    try:print(json.dumps(normalize(args.inputs,args.output_dir,args.target_lufs),ensure_ascii=False,allow_nan=False));return 0
     except (ValueError,OSError,wave.Error,subprocess.SubprocessError) as exc:print(json.dumps({'status':'failed','detail':str(exc)}));return 1
 if __name__=='__main__':raise SystemExit(main())

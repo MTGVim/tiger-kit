@@ -15,7 +15,8 @@ python3 scripts/normalize_audio.py --inputs <raw-01.wav> <raw-02.wav> --output-d
 It requires local FFmpeg and mono PCM16 WAVs, uses two-pass EBU R128 `loudnorm` at -18 LUFS,
 -1.5 dBTP and LRA 7, and returns source/output paths, measurements, duration checks and
 `human_action: listen`. These are consistent narration defaults, not a universal broadcast
-requirement. Missing FFmpeg is a readiness problem; installation retains its own authority.
+requirement. For video narration, `--target-lufs -23` is an alternative batch target;
+measure and listen to the result. Missing FFmpeg is a readiness problem; installation retains its own authority.
 Invalid, silent, unsafe or overwritten inputs/targets fail without replacing source files.
 
 Very short or ungated clips can yield nonfinite LUFS measurements. The helper explicitly reports

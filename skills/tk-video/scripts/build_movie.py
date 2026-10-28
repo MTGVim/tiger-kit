@@ -18,6 +18,7 @@ from statistics import median
 import subprocess
 import tempfile
 import wave
+import unicodedata
 
 
 def regular(path: Path, root: Path | None = None) -> Path:
@@ -266,6 +267,12 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
     burn = bool(captions) and caption_support
     image_stream = next(s for s in probe(frames[0][0], ffprobe)["streams"] if s["codec_type"] == "video")
     layout = caption_layout(int(image_stream["height"]), mode == "evidence", caption_size)
+    # Conservative estimate only: font metrics and line breaking vary by renderer.
+    capacity = int(int(image_stream["width"]) * .85 / layout["size_px"] * 2)
+    for index, caption in enumerate(captions, 1):
+        units = sum(2 if unicodedata.east_asian_width(c) in "WF" else 1 for c in caption["text"])
+        if units > capacity:
+            warnings.append(f"caption {index} may wrap or clip; inspect decoded frames and split or resize it")
     sidecar = output.with_suffix(".srt") if captions else None
     if sidecar and (sidecar.resolve() != sidecar or (sidecar.exists() and not sidecar.is_file())):
         raise ValueError("caption sidecar must be a regular run-owned file")

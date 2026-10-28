@@ -32,3 +32,23 @@ arrow sequence across locales. Privately assert the resulting value immediately 
 mismatch. Record only publication-safe observed values. Use one clock for scene/frame times,
 normalizing all timestamps to the first frame; wait only the remainder of a measured narration
 hold after actions, rather than adding the full hold again. Deliberate waits are not latency proof.
+
+
+For narrated beats, clear prior cues at each boundary and draw only the named targets on the
+capture-only layer; use distinct colors and labels for groups. Mark a disappearing target before
+its action and draw a badge at its prior position only after runtime confirms disappearance.
+Keep the layer separate from assertion screenshots and record its mutations and cleanup.
+
+After actions bring the narrated result into the viewport. Before page-wheel input, position the
+pointer outside nested scroll containers; after scrolling remeasure the target with
+`getBoundingClientRect()` and fail the capture step if it is still outside the viewport. Verify
+beat targets are visible at beat end, not merely that scrolling stopped.
+
+For an action with a known associated network request, track request IDs and completion or
+failure using provider network events (CDP `Network.requestWillBeSent`, `loadingFinished`,
+`loadingFailed`); account for concurrent relevant requests and redirects. Show a centered,
+indeterminate spinner and accurate label only if the actual request remains pending for over one
+second, and remove it on completion/failure. No request means no loading indicator. If request
+association or completion cannot be observed, disclose the limitation rather than inventing a
+loading state. Record each wait's observed duration, indicator visibility and reason in capture
+provenance; narration holds are separate from measured request time.

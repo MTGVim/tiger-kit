@@ -76,6 +76,11 @@ use its version-matched help/repository guidance in addition to the protocol URL
 one CLI's flags from another. A live CDP endpoint requires headless and run-ownership proof
 before any browser call, and explicit attach selection after observed launch-boundary evidence.
 
+For `Page.captureScreenshot`, translate viewport-relative target rectangles to document
+coordinates before passing `clip` on a scrolled page. Inspect actual pixels: with
+`captureBeyondViewport: true`, fixed elements outside the visible viewport may appear in the
+capture. Keep screenshots independent of tutorial overlays and report any capture limitation.
+
 ### Installed Chrome CLI capture caveats
 
 A supplied 2026-10-07 incident observed CLI `--screenshot` capturing a blank scrolled region,

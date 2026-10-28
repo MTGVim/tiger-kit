@@ -73,6 +73,16 @@ class OptionalMediaTests(unittest.TestCase):
                 with self.assertRaises(ValueError): movie.caption_layout(424, True, size)
 
     @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "media tools unavailable")
+    def test_long_korean_caption_reports_possible_clipping(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); image = root / "frame.png"; png(image, (40, 90, 120), 1920, 1080)
+            manifest = root / "manifest.json"
+            manifest.write_text(json.dumps({"frames": [{"path": str(image), "timestamp_ms": 0}],
+                "end_ms": 1000, "captions": [{"start_ms": 0, "end_ms": 1000, "text": "자막입니다 " * 10}]}))
+            result = movie.build(manifest, root / "movie.mp4")
+            self.assertTrue(any("caption 1 may wrap or clip" in w for w in result["warnings"]))
+
+    @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "media tools unavailable")
     def test_crf_rejects_invalid_values_and_gif_override_without_creating_output(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory); manifest = self.fixture(root)

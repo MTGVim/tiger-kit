@@ -67,6 +67,10 @@ Do not rerun a mutating flow, slow existing evidence or claim deliberate waits m
 
 Write an ordered capture manifest in the owned evidence run: `mode: evidence`, `frames` with
 absolute PNG/JPEG `path` and `timestamp_ms` starting at zero, and `end_ms` after the last frame.
+Sort by the original event time before conversion to milliseconds; after rounding, collapse
+same-millisecond frames deterministically (retain the last observed state), verify strictly
+increasing timestamps and preserve the actual end after the final frame. Do not fabricate time
+or mask a clock discontinuity; report it and stop if ordering cannot be established.
 Include approved captions and capture identity in the handoff. Include `source_fps` only when
 the provider exposes a real capture-rate value; do not invent
 one from idle gaps or a requested output rate. Otherwise retain frame timestamps for estimation.

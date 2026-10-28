@@ -29,6 +29,14 @@ or an already prepared whole track with `--audio`. The assembler places scene WA
 without shell-authored filter graphs; clips cannot overlap the next scene or movie end. Never mix
 scene audio with a full track, truncate speech or guess duration from character count.
 
+For narrated evidence, plan sentence-level beats with start/end and `cue_targets` in the
+capture handoff. At each beat start clear previous marks and show only the targets named in
+that sentence. Match explicit quantities to all corresponding targets; state separate group
+counts and distinguish groups with colors and labels. Preserve UI labels verbatim, separate
+from narration. For disappearance, mark the target before the action and show a hidden/deleted
+badge at its prior location only after runtime confirms the state. Verify counts and target
+visibility at the beat end; record the evidence and any unresolved mismatch.
+
 ## Teaching handoff
 
 When a teaching caller supplies a sequence, retain its accepted scene point, observed start
