@@ -22,8 +22,6 @@ class HTMLPolicyTest(unittest.TestCase):
             self.assertIn(form, content)
         owners = {
             'tk-explain': ('SKILL.md', '(references/diataxis.md)'),
-            'tk-explain-diff': ('SKILL.md', '(references/diataxis.md)'),
-            'tk-teach': ('SKILL.md', '(references/diataxis.md)'),
             'tk-research': ('references/report.md', '(diataxis.md)'),
         }
         for owner, (relative, pointer) in owners.items():
@@ -126,7 +124,7 @@ class HTMLPolicyTest(unittest.TestCase):
 
     def test_explanation_owners_require_current_independent_review_and_opt_in_browser(self):
         canonical = ROOT / 'skills/tk-explain/references/content-review.md'
-        for name in ('tk-explain', 'tk-explain-diff', 'tk-teach'):
+        for name in ('tk-explain',):
             with self.subTest(skill=name):
                 package = ROOT / 'skills' / name
                 self.assertIn('(references/content-review.md)', (package / 'SKILL.md').read_text())
@@ -139,28 +137,21 @@ class HTMLPolicyTest(unittest.TestCase):
                       'Ordinary chat and feedback', 'do not substitute self-review'):
             self.assertIn(guard, contract)
         html = ' '.join((ROOT / 'skills/tk-explain/references/html-output.md').read_text().split())
-        self.assertIn('For `tk-explain`, `tk-explain-diff` and `tk-teach`', html)
+        self.assertIn('For `tk-explain` retained-renderer artifacts', html)
         self.assertIn('only for explicitly requested screen/action checks', html)
         self.assertIn('Other document owners retain their scoped UI checks', html)
         self.assertNotIn('The composed shell still triggers', (ROOT / 'skills/tk-explain/references/html-assembly.md').read_text())
 
-    def test_section_level_routing_replaces_document_modes(self):
-        text = (ROOT / 'skills/tk-explain/references/html-output.md').read_text()
-        explain = (ROOT / 'skills/tk-explain/SKILL.md').read_text()
-        diff = (ROOT / 'skills/tk-explain-diff/SKILL.md').read_text()
-        teach = (ROOT / 'skills/tk-teach/SKILL.md').read_text()
-        normalized_explain = ' '.join(explain.split())
-        normalized_diff = ' '.join(diff.split())
-        self.assertIn('prose and tables need no technique assignment', ' '.join(text.split()))
-        self.assertIn('explanation-techniques.md', (ROOT / 'skills/tk-explain/references/html-reader.md').read_text())
-        self.assertIn('avoid repeating the same content', normalized_explain)
-        self.assertIn('avoid repeating the same content', normalized_diff)
-        self.assertIn('avoid rendering duplicate modes or hidden tabs', ' '.join(teach.split()))
+    def test_renderer_routing_keeps_explicit_interaction(self):
+        source = (ROOT / 'skills/tk-explain/SKILL.md').read_text()
+        self.assertIn('explicit request for live interaction', source)
+        self.assertIn('archify explainer page layout by default', source)
+        self.assertIn('(references/content-review.md)', source)
 
     def test_explanations_default_to_natural_conversation(self):
         skill = (ROOT / 'skills/tk-explain/SKILL.md').read_text()
         contract = (ROOT / 'skills/tk-explain/references/html-output.md').read_text()
-        self.assertIn('clear conversational voice by default', skill)
+        self.assertIn("Honor the user's voice", skill)
         self.assertIn('only when the user has explicitly requested them', contract)
         self.assertIn('Do not add visible `질문:` or `답변:`', contract)
 
@@ -286,14 +277,14 @@ class HTMLPolicyTest(unittest.TestCase):
             root = Path(directory)
             for name in ('skills', 'scripts'):
                 shutil.copytree(ROOT / name, root / name, ignore=shutil.ignore_patterns('__pycache__'))
-            local = root / 'skills/tk-teach/assets/lesson.css'
+            local = root / 'skills/tk-research/assets/local.css'
             local.write_text('local sentinel')
             for _ in range(2):
                 result = subprocess.run([sys.executable, 'scripts/sync_execution_protocol.py'], cwd=root,
                                         text=True, capture_output=True, timeout=30)
                 self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
                 self.assertEqual(local.read_text(), 'local sentinel')
-            copied = root / 'skills/tk-teach/references/html-reader.md'
+            copied = root / 'skills/tk-research/references/html-reader.md'
             copied.write_text('drift')
             result = subprocess.run([sys.executable, 'scripts/sync_execution_protocol.py', '--check'], cwd=root,
                                     text=True, capture_output=True, timeout=30)
@@ -382,7 +373,7 @@ class HTMLPolicyTest(unittest.TestCase):
 
     def test_package_theme_drift_blocks_release_check(self):
         def mutate(root):
-            path = root / 'skills/tk-teach/assets/html-theme.css'
+            path = root / 'skills/tk-research/assets/html-theme.css'
             path.parent.mkdir(exist_ok=True)
             path.write_text(':root { --bg: red; }\n')
         self.check_mutation(mutate)
@@ -401,7 +392,7 @@ class HTMLPolicyTest(unittest.TestCase):
 
     def test_feedback_guard_loss_blocks_release_check(self):
         def mutate(root):
-            path = root / 'skills/tk-teach/SKILL.md'
+            path = root / 'skills/tk-research/SKILL.md'
             text = path.read_text()
             start = text.find('<!-- tigerkit:skill-feedback -->')
             end = text.find('<!-- /tigerkit:skill-feedback -->', start)

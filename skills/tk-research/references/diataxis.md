@@ -18,8 +18,7 @@ per unit is usually enough; another form may support that purpose.
 A numbered procedure is not necessarily a tutorial, and a table is not
 automatically reference. The reader's immediate goal matters more than the
 document extension, layout, skill name or presence of examples. The calling
-owner keeps its task: `tk-teach` normally leads learning, `tk-explain` and
-`tk-explain-diff` explain a concept or pinned change, and `tk-research`
+owner keeps its task: `tk-explain` explains concepts/pinned changes and continues from learner answers, and `tk-research`
 produces a decision-ready evidence report. Do not reroute the request,
 discard its constraints or relabel the work without an explicit reason.
 

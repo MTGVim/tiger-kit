@@ -191,17 +191,6 @@ class SyncExecutionProtocolTest(unittest.TestCase):
             self.assertIn(sync_execution_protocol.RESULT_SUMMARY_BLOCK, path.read_text(encoding="utf-8"))
         self.assertEqual(sync_execution_protocol.result_summary_errors(self.root / "skills"), [])
 
-    def test_durable_helper_is_distributed_and_drift_is_repaired(self) -> None:
-        self.assertEqual(self.run_main(), 0)
-        source=self.root/'skills/tk-explain/scripts/durable_artifacts.py'
-        for name in ('tk-explain-diff','tk-teach'):
-            target=self.root/'skills'/name/'scripts/durable_artifacts.py'
-            self.assertEqual(target.read_bytes(),source.read_bytes())
-            target.write_text('drift')
-            self.assertNotEqual(self.run_main('--check'),0)
-            self.assertEqual(self.run_main(),0)
-            self.assertEqual(target.read_bytes(),source.read_bytes())
-
     def test_research_and_repository_context_drift_fail_and_repair(self) -> None:
         self.assertEqual(self.run_main(), 0)
         for name in ("html-output.md", "clear-writing.md", "repository-context.md"):
@@ -348,31 +337,17 @@ class SyncExecutionProtocolTest(unittest.TestCase):
             self.assertEqual(self.run_main(), 0)
         self.assertEqual(self.run_main("--check"), 0)
 
-    def test_content_review_drift_and_missing_copy_are_repaired(self) -> None:
-        self.assertEqual(self.run_main(), 0)
-        canonical = self.root / 'skills/tk-explain/references/content-review.md'
-        for name in ('tk-teach', 'tk-explain-diff'):
-            consumer = self.root / 'skills' / name / 'references/content-review.md'
-            consumer.write_text('Stale content-review contract\n')
-            self.assertEqual(self.run_main('--check'), 1)
-            self.assertEqual(self.run_main(), 0)
-            self.assertEqual(consumer.read_bytes(), canonical.read_bytes())
-            consumer.unlink()
-            self.assertEqual(self.run_main('--check'), 1)
-            self.assertEqual(self.run_main(), 0)
-        self.assertEqual(self.run_main('--check'), 0)
-
     def test_diataxis_drift_missing_copy_and_canonical_update_are_repaired(self) -> None:
         self.assertEqual(self.run_main(), 0)
         canonical = self.root / "skills/tk-explain/references/diataxis.md"
-        consumers = ("tk-explain-diff", "tk-teach", "tk-research")
+        consumers = ("tk-research",)
         for name in consumers:
             target = self.root / "skills" / name / "references/diataxis.md"
             with self.subTest(owner=name):
                 self.assertTrue(target.is_file())
                 self.assertFalse(target.is_symlink())
                 self.assertEqual(target.read_bytes(), canonical.read_bytes())
-        consumer = self.root / "skills/tk-teach/references/diataxis.md"
+        consumer = self.root / "skills/tk-research/references/diataxis.md"
         for mutation in ("stale", "missing", "canonical"):
             with self.subTest(mutation=mutation):
                 if mutation == "missing":
@@ -389,7 +364,7 @@ class SyncExecutionProtocolTest(unittest.TestCase):
     def test_visual_grammar_drift_missing_copy_and_canonical_change_fail_check(self) -> None:
         self.assertEqual(self.run_main(), 0)
         canonical = self.clear_target.parent / "visual-grammar.md"
-        consumer = self.root / "skills/tk-teach/references/visual-grammar.md"
+        consumer = self.root / "skills/tk-research/references/visual-grammar.md"
         for mutation in ("consumer", "missing", "canonical"):
             with self.subTest(mutation=mutation):
                 if mutation == "missing":

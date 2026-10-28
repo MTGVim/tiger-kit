@@ -1,6 +1,6 @@
 """Shared explicit narration choice at media-producing owners; no runtime dispatcher."""
 from pathlib import Path
-OWNERS=('tk-prep','tk-explain','tk-explain-diff','tk-teach','tk-video')
+OWNERS=('tk-prep','tk-explain','tk-video')
 START='<!-- tigerkit:narration-choice -->'
 END='<!-- /tigerkit:narration-choice -->'
 BLOCK=START+'''

@@ -3,7 +3,7 @@
 Read only for an explicitly requested single looping SVG explanation. The explanation owner,
 source investigation, clear writing and independent content review remain `tk-explain`; no new
 skill, player, daemon or browser startup is needed. Static diagrams remain static by default.
-Use HTML for reader-controlled interactions or a document, `tk-explain-diff` for a change, and
+Use HTML for reader-controlled interactions or a document, `tk-explain` change mode for a change, and
 `tk-video` for requested audio/video. Never infer an animated-SVG request from a generic diagram.
 
 Choose one mechanism whose event order, wait or propagation needs motion. Establish the actual

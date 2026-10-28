@@ -49,16 +49,14 @@ npx skills update --global --yes
 
 ### 이해·연구·학습
 
-개념·상황 설명은 `tk-explain`, 실제 답변에 맞춘 HTML 수업과 복습은 `tk-teach`를 사용합니다.
+개념·상황·코드 변경 설명과 실제 답변에 맞춘 후속 수업은 `tk-explain`을 사용합니다.
 
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
 | [tk-ask-repo](skills/tk-ask-repo/SKILL.md) | `user` | 저장소의 동작과 근거를 설명합니다. |
-| [tk-explain](skills/tk-explain/SKILL.md) | `hybrid` | 배경지식과 실제 동작을 HTML이나 요청한 SVG로 설명합니다. |
+| [tk-explain](skills/tk-explain/SKILL.md) | `hybrid` | 개념·상황·코드 변경을 설명하고 학습자 답변에 맞춰 후속 수업을 제공합니다. |
 | [tk-video](skills/tk-video/SKILL.md) | `hybrid` | 소프트웨어와 개념을 설명하는 MP4·GIF 영상을 만듭니다. |
-| [tk-explain-diff](skills/tk-explain-diff/SKILL.md) | `hybrid` | 코드 변경의 배경과 실행 흐름을 설명합니다. |
 | [tk-research](skills/tk-research/SKILL.md) | `hybrid` | 근거를 조사하고 접근법을 비교합니다. |
-| [tk-teach](skills/tk-teach/SKILL.md) | `user` | 실제 답변·오개념에 맞춰 개인 수업과 복습을 이어갑니다. |
 | [tk-tts](skills/tk-tts/SKILL.md) | `hybrid` | 한국어 원고에서 검수 가능한 로컬 음원을 생성합니다. |
 
 ### 대화·글쓰기

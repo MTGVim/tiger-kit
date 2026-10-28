@@ -13,7 +13,7 @@ import unittest
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILLS = ('tk-explain', 'tk-explain-diff', 'tk-teach')
+SKILLS = ('tk-explain',)
 BODY = '''<p class="ht-lede">캐시는 만료 시각 전까지만 값을 반환합니다.</p>
 <section id="before"><h2>만료 <code>전</code> &amp; 후</h2><p>예시 값은 10입니다.</p>
 <section id="boundary"><h3>경계 조건</h3><p>같은 시각에는 만료됩니다.</p></section></section>
@@ -175,7 +175,7 @@ class HTMLAssemblyTests(unittest.TestCase):
             body, output = root / 'body.html', root / 'result.html'
             body.write_text(BODY)
             env = dict(os.environ, XDG_CONFIG_HOME=str(root / 'config'))
-            command = [sys.executable, str(ROOT / 'skills/tk-teach/scripts/build_html.py'),
+            command = [sys.executable, str(ROOT / 'skills/tk-explain/scripts/build_html.py'),
                        '--body', str(body), '--title', 'Cache', '--output', str(output), '--theme', 'system']
             built = subprocess.run(command, capture_output=True, text=True, env=env)
             self.assertEqual(built.returncode, 0, built.stderr)

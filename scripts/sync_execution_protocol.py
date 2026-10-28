@@ -59,13 +59,13 @@ DOMAIN_CONTEXT_TARGETS = (
     ROOT / "skills/tk-review/references/domain-context.md",
 )
 
-HTML_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research", "tk-qa-sheet", "tk-prototype", "tk-blind-comparison")
-DURABLE_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach")
+HTML_CONSUMERS = ("tk-explain", "tk-research", "tk-qa-sheet", "tk-prototype", "tk-blind-comparison")
+DURABLE_CONSUMERS = ("tk-explain",)
 QUESTION_HTML_CONSUMERS = ("tk-prep", "tk-grill", "tk-roadmap")
 HTML_THEME_CONSUMERS = HTML_CONSUMERS + QUESTION_HTML_CONSUMERS
-VISUAL_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research")
-DOCUMENT_PURPOSE_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research")
-CONTENT_REVIEW_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach")
+VISUAL_CONSUMERS = ("tk-explain", "tk-research")
+DOCUMENT_PURPOSE_CONSUMERS = ("tk-explain", "tk-research")
+CONTENT_REVIEW_CONSUMERS = ("tk-explain",)
 HTML_ASSETS = ("html-theme.css", "html-theme.js")
 CHART_FILES = ("references/chart-design.md", "assets/chart-examples.html", "references/html-figures.md")
 ASSEMBLY_FILES = ("scripts/build_html.py", "assets/document-shell.html", "assets/reader-example.html", "references/html-assembly.md")

@@ -59,6 +59,67 @@ class BlindComparisonTests(unittest.TestCase):
     def build(self, name='built', previous=None):
         self.manifest.write_text(json.dumps(self.data,ensure_ascii=False))
         return builder.build(self.manifest,self.root/name,previous)
+    def test_long_image_original_link_annotation_and_legacy_fingerprint(self):
+        from PIL import Image
+        Image.new('RGB', (600, 11000), 'white').save(self.root / 'tall.png')
+        self.data = fixture(2, 1, kind='image')
+        row = self.data['outputs'][1]
+        row['path'] = 'tall.png'
+        public, _ = self.build('legacy')
+        legacy = next(c for c in public['items'][0]['cards'] if not c['failed'])
+        page = (self.root / 'legacy/gallery.html').read_text()
+        self.assertIn('원본 크기로 보기', page)
+        self.assertTrue((self.root / 'legacy' / legacy['display_file']).exists())
+        self.assertIn('target="_blank" rel="noopener noreferrer"', page)
+        row['annotation'] = '<b>검증 완료</b>'
+        (self.root / 'prepared.html').write_text('<html><p>익명 원본</p></html>')
+        row['links'] = [{'label': '원본 문서', 'path': 'prepared.html'}]
+        public2, _ = self.build('extended', self.root / 'legacy/answer-key.json')
+        card = next(c for c in public2['items'][0]['cards'] if not c['failed'])
+        self.assertNotEqual(card['fingerprint'], legacy['fingerprint'])
+        page = (self.root / 'extended/gallery.html').read_text()
+        self.assertIn('&lt;b&gt;검증 완료&lt;/b&gt;', page)
+        self.assertNotIn('href="prepared.html"', page)
+        self.assertTrue((self.root / 'extended' / card['links'][0]['href']).exists())
+        public3, _ = self.build('same', self.root / 'extended/answer-key.json')
+        self.assertEqual(card['fingerprint'], next(c for c in public3['items'][0]['cards'] if not c['failed'])['fingerprint'])
+
+    def test_additional_public_evidence_rejects_identity_and_missing_files(self):
+        self.data = fixture(2, 1, kind='text')
+        row = self.data['outputs'][1]
+        row['annotation'] = 'Model 1 won'
+        with self.assertRaises(ValueError): self.build()
+        del row['annotation']
+        row['links'] = [{'label': '원본', 'path': 'prepared.html'}]
+        (self.root / 'prepared.html').write_text('<title>Model&#32;1</title>')
+        with self.assertRaises(ValueError): self.build()
+        (self.root / 'prepared.html').write_text('<title>Anonymous</title>')
+        row['links'][0]['label'] = 'engine-1'
+        with self.assertRaises(ValueError): self.build()
+        row['links'][0] = {'label': '원본', 'path': 'absent.html'}
+        with self.assertRaises(ValueError): self.build()
+
+    def test_binary_links_allow_short_ids_and_format_changes_reset_rating(self):
+        from PIL import Image
+        import random
+        self.data = fixture(2, 1, kind='text')
+        for i, candidate in enumerate(self.data['candidates']):
+            candidate['id'] = ('a', 'b')[i]
+            self.data['outputs'][i]['candidate_id'] = candidate['id']
+        image = Image.frombytes('RGB', (64, 64), random.Random(7).randbytes(64 * 64 * 3))
+        image.save(self.root / 'mobile.png')
+        row = self.data['outputs'][1]
+        row['links'] = [{'label': '모바일', 'path': 'mobile.png'}]
+        self.build('binary')
+        for suffix in ('html', 'txt'):
+            (self.root / ('original.' + suffix)).write_text('<h1>Title</h1>')
+        row['links'] = [{'label': '원본', 'path': 'original.html'}]
+        public, _ = self.build('html', self.root / 'binary/answer-key.json')
+        row['links'][0]['path'] = 'original.txt'
+        public2, _ = self.build('txt', self.root / 'html/answer-key.json')
+        card = lambda p: next(c for c in p['items'][0]['cards'] if not c['failed'])
+        self.assertNotEqual(card(public)['fingerprint'], card(public2)['fingerprint'])
+
     def test_runtime_import_export_regressions(self):
         result=subprocess.run(['node','--test',str(ROOT/'scripts/test_blind_comparison_runtime.cjs')],capture_output=True,text=True)
         self.assertEqual(result.returncode,0,result.stdout+result.stderr)

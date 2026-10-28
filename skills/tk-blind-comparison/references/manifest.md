@@ -57,3 +57,21 @@ of easily guessed model names. Adding/removing candidates reshuffles each item u
 candidate set; unchanged content fingerprints preserve scores. Do not reuse a study ID for
 an unrelated comparison. Keep the new key with the exported revision. If moving the HTML,
 export/import ratings explicitly rather than assuming local-file storage follows the file.
+
+## Additional public evidence
+
+An output may include `annotation` (nonempty plain text) and `links`:
+`[{"label": "Mobile capture", "path": "prepared/mobile.png"}]`.
+Links accept prepared PNG/JPEG/WebP, HTML, TXT or PDF copies. Make linked HTML self-contained;
+normalize document metadata, titles, scripts, alt text, embedded content and visible identity
+cues before building. The builder checks literal candidate names/IDs in annotation, labels
+and UTF-8 HTML/TXT contents (including decoded HTML entities). Binary metadata, PDF text,
+encoded/pixel/semantic identity still needs manual inspection; compressed bytes are not text. Never supply raw producer HTML or the answer key as a public link.
+Source filenames remain private; copied names use `item-NNNN-slot-NNNN-link-NNNN.ext`.
+
+Image cards always link their neutral display copy at original size in a new tab. Keep the
+HTML and display copies together for these local links; embedded primary media still works
+when only the HTML is moved. Annotation is escaped text, not HTML. No source file is modified.
+Legacy outputs without these fields retain the exact fingerprint algorithm. Adding/changing
+public evidence changes that card's fingerprint, so old scores cannot silently apply to a
+changed evaluation surface. Rebuilding unchanged evidence preserves it.

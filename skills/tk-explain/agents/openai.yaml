@@ -1,5 +1,5 @@
 interface:
-  short_description: "[user/auto] 배경지식과 실제 작동 방식을 HTML이나 요청한 SVG로 설명합니다."
+  short_description: "[user/auto] 개념·상황·코드 변경을 시각 자료로 설명하고 실제 답변에 맞춰 후속 수업을 제공합니다."
   default_prompt: "$tk-explain을 사용해 필요한 배경지식과 실제 작동 방식을 자체 완결형 HTML로 설명해 주세요."
 
 policy:

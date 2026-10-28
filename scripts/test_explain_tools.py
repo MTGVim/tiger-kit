@@ -1,0 +1,62 @@
+import importlib.util
+import os
+from pathlib import Path
+import struct
+import subprocess
+import tempfile
+import unittest
+
+ROOT = Path(__file__).resolve().parents[1]
+SCRIPTS = ROOT / 'skills/tk-explain/scripts'
+spec = importlib.util.spec_from_file_location('visible_text', SCRIPTS / 'visible_text.py')
+visible = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(visible)
+
+
+class ExplainTools(unittest.TestCase):
+    def test_review_text_includes_alt_and_revealed_answer_excludes_code_and_hidden(self):
+        result = visible.extract('<head><title>Hidden title</title></head><h1>실제 제목</h1>'
+            '<script>bad()</script><style>body{}</style><div hidden>secret</div>'
+            '<p aria-hidden="true">Visible factual label</p><p>A &amp; B</p><img alt="벽 옆의 경로"><details><summary>답</summary>조건을 바꾸면 결과도 바뀝니다.</details>')
+        for text in ('실제 제목', 'Visible factual label', 'A & B', '[image: 벽 옆의 경로]', '조건을 바꾸면 결과도 바뀝니다.'):
+            self.assertIn(text, result)
+        for text in ('bad()', 'body{}', 'secret', 'Hidden title'):
+            self.assertNotIn(text, result)
+
+    def test_missing_chrome_blocks_without_output(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source, dest = Path(tmp) / 'figure.svg', Path(tmp) / 'figure.png'
+            source.write_text('<svg xmlns="http://www.w3.org/2000/svg" width="560" height="200"/>')
+            result = subprocess.run(['node', str(SCRIPTS / 'svg_to_png.mjs'), str(source), str(dest)],
+                env={**os.environ, 'CHROME_PATH': str(Path(tmp) / 'missing')}, capture_output=True, text=True, timeout=30)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn('Blocked', result.stderr)
+            self.assertFalse(dest.exists())
+
+    @unittest.skipUnless(os.environ.get('TK_CHROMIUM_EXECUTABLE'), 'Local Chrome not configured')
+    def test_svg_image_is_inert_transparent_double_resolution_and_page_capture_is_full(self):
+        from PIL import Image
+        with tempfile.TemporaryDirectory() as tmp:
+            source, dest = Path(tmp) / 'figure.svg', Path(tmp) / 'figure.png'
+            source.write_text('''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 200">
+              <rect id="box" x="10" y="10" width="100" height="100" fill="red"/>
+              <script>document.getElementById('box').setAttribute('fill','blue')</script></svg>''')
+            env = {**os.environ, 'CHROME_PATH': os.environ['TK_CHROMIUM_EXECUTABLE']}
+            command = ['node', str(SCRIPTS / 'svg_to_png.mjs'), str(source), str(dest)]
+            result = subprocess.run(command, env=env, capture_output=True, text=True, timeout=40)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            with Image.open(dest) as img:
+                self.assertEqual(img.size, (1120, 400))
+                self.assertEqual(img.convert('RGBA').getpixel((40, 40)), (255, 0, 0, 255))
+                self.assertEqual(img.convert('RGBA').getpixel((500, 300))[3], 0)
+            original = dest.read_bytes()
+            self.assertNotEqual(subprocess.run(command, env=env, capture_output=True, timeout=40).returncode, 0)
+            self.assertEqual(original, dest.read_bytes())
+            page, capture = Path(tmp) / 'long.html', Path(tmp) / 'long.png'
+            page.write_text('<!doctype html><style>body{margin:0;height:11000px;background:#fff}</style><h1>Long page</h1>')
+            result = subprocess.run(['node', str(SCRIPTS / 'capture_page.mjs'), str(page), str(capture), '800'],
+                env=env, capture_output=True, text=True, timeout=40)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            with Image.open(capture) as img:
+                self.assertGreaterEqual(img.height, 11000)
+                self.assertEqual(img.width, 800)

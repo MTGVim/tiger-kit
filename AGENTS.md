@@ -136,7 +136,7 @@ Ready `Seed`는 `fresh` `lower-capability` `executor`가 원 대화 없이 다�
 - `tk-pr-rebase`: `exact` `rebase` + `force-with-lease`.
 - `tk-pr-sweep`: `deterministic` `multi-PR` `triage`와 승인된 `child` `maintenance`.
 - `tk-inquiry`: 외부 담당자에게 보낼 질문 초안 작성만 담당하며 게시·전송 권한 없음.
-- `tk-teach`: 미션·실제 학습 기록에 따라 다음 수업을 선택하고 검증된 자료를 유지하며, 과거 tk-study 과정은 보존.
+- `tk-explain`: 개념·변경 설명과 실제 답변에 따른 후속 자료. 기존 학습 공간은 보존.
 - `tk-retro`: 세션 회고, 관찰된 Agent Skill 사고 진단과 재발 방지 제안 전용. 실제 수정은 별도 구현 담당자가 맡습니다.
 - `tk-compound`: 여러 완료 PR과 연결된 세션 이력의 반복 문제를 읽기 전용으로 진단하고 최소 예방책을 제안합니다. 기본 결과는 채팅이며 지식 문서·메모리·규칙을 작성하거나 자동 승격하지 않습니다.
 - `tk-adhd`: 현재 답변·결과의 출력 구조 정리. 실행과 지속 상태의 담당자는 아닙니다.
@@ -242,9 +242,8 @@ $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 `release`/`eval` 결과는 `.tigerkit/evidence/`를 기본으로 사용합니다. 외부 도구 자체 캐시와
 격리 단위 테스트용 데이터는 저장소를 흉내 내거나 손상시켜 검증해야 하므로 도구의 임시 공간을 유지합니다.
 원자적 교체에 필요한 동일 디렉터리의 임시 파일은 같은 파일시스템에서 실행 소유권을 확인하고 성공 후 정리합니다.
-설명과 신규 `tk-teach` 학습 공간은 설정된 `artifacts.durableRoot`를 우선하고, 설정이 없으면
-각각 `.tigerkit/explanations/`와 `.tigerkit/teach/<topic>/`를 사용합니다. 기존
-`.tigerkit/study/<topic>/`는 이어 하기에서 보존합니다. 저장한 조사는 `.tigerkit/research/`를
+설명 자료는 설정된 `artifacts.durableRoot`를 우선하고, 설정이 없으면
+`.tigerkit/explanations/`를 사용합니다. 기존 학습 공간은 이동하거나 삭제하지 않습니다. 저장한 조사는 `.tigerkit/research/`를
 기본으로 사용합니다. 명시한 최종 목적지는 존중합니다. `scripts/artifact_policy.py`가 공통 정책을 소유하며
 파일을 쓰지 않는 스킬의 쓰기 금지 경계, 파일을 쓰는 스킬의 조건부 본문·패키지 로컬 참조와 실행 도구를 릴리즈 체크리스트의 자동 검사에서 확인합니다.
 

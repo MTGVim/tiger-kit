@@ -26,7 +26,7 @@ class DurableArtifactsTest(unittest.TestCase):
         self.assertEqual(path['source'],'repository');self.assertEqual(Path(path['path']),self.repo/'.tigerkit/explanations/topic.html')
         self.assertFalse(self.config.exists());self.assertFalse((self.repo/'.tigerkit').exists())
     def test_each_package_helper_exposes_status_without_writing(self):
-        for owner in ('tk-explain','tk-explain-diff','tk-teach'):
+        for owner in ('tk-explain',):
             with self.subTest(owner=owner):
                 result=subprocess.run(['python3',str(ROOT/'skills'/owner/'scripts/durable_artifacts.py'),'status'],capture_output=True,text=True)
                 self.assertEqual(result.returncode,0,result.stderr);self.assertTrue(json.loads(result.stdout)['needs_choice'])

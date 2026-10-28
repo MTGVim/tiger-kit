@@ -218,3 +218,13 @@ explanation owner's explicit SVG branch with a small independently authored stdl
 Omit its style system, skins, automatic browser preview, MP4 exporter, extra invocation and runtime.
 The donor is MIT; no source code, SVG assets or instruction blocks were copied. Python/scene tests
 are separate from browser animation and GitHub embedding; unexecuted checks remain unverified.
+
+## Archify consolidation
+
+Use the external `tt-a1i/archify` 3.2.0 explainer contract verified at
+`d6059331abbddb49bca380ff46dca8ce33158b04`; do not vendor its runtime. Keep conclusion-first
+layout, native diagrams, contained images and finalize gates; adapt evidence/review scope
+and scene PNG conversion; omit automatic updates and a separate Korean rewrite stage.
+See [renderer contract](renderer-contract.md) for compatibility and known limitations.
+Retained [change provenance](change-provenance.md) and [teaching provenance](teaching-provenance.md)
+record earlier design sources; they are provenance, not current runtime instructions.

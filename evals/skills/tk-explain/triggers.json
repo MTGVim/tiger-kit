@@ -163,6 +163,24 @@
       "facets": [
         "compound"
       ]
+    },
+    {
+      "id": "change-pr",
+      "split": "validation",
+      "query": "이 PR이 동작을 어떻게 바꾸는지 HTML로 설명해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "change-range",
+      "split": "validation",
+      "query": "두 커밋 사이 변경의 배경과 실행 흐름을 설명해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "followup-answer",
+      "split": "validation",
+      "query": "방금 만든 설명 자료에 대한 내 답을 보고 오개념을 고치는 후속 수업을 만들어줘",
+      "should_trigger": true
     }
   ]
 }

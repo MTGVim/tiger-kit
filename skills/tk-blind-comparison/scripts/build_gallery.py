@@ -155,9 +155,42 @@ def prepare(manifest, source, previous=None):
                 filename = f"item-{i:04d}-slot-{slot:04d}{path.suffix.lower()}"
                 files.append((filename, data))
                 card["src"] = content
+                if kind == "image":
+                    card["display_file"] = filename
                 fingerprint_bytes = data
             else:
                 fingerprint_bytes = diagnostic.encode()
+            # Optional public evidence changes the rated material; legacy bytes keep their hash.
+            extras = {}
+            if "annotation" in raw:
+                card["annotation"] = neutral(raw["annotation"], candidates)
+                extras["annotation"] = card["annotation"]
+            links = raw.get("links", [])
+            require(isinstance(links, list), "links must be a list")
+            link_fingerprints = []
+            for index, link in enumerate(links, 1):
+                require(isinstance(link, dict), "link must be an object")
+                label_text = neutral(link.get("label"), candidates)
+                path = (source.parent / text(link.get("path"))).resolve()
+                require(path.is_file() and path.suffix.lower() in {".png", ".jpg", ".jpeg", ".webp", ".html", ".txt", ".pdf"},
+                        "missing or unsupported prepared link")
+                data = path.read_bytes()
+                require(bool(data), "empty prepared link")
+                # Textual link contents are inspectable; compressed bytes are not text.
+                # Binary metadata, pixels and encoded cues retain the manual identity review.
+                if path.suffix.lower() in {".html", ".txt"}:
+                    decoded = data.decode("utf-8")
+                    neutral(decoded, candidates)
+                    neutral(html.unescape(decoded), candidates)
+                used_inputs.append(path)
+                filename = f"item-{i:04d}-slot-{slot:04d}-link-{index:04d}{path.suffix.lower()}"
+                files.append((filename, data))
+                card.setdefault("links", []).append({"label": label_text, "href": filename})
+                link_fingerprints.append({"label": label_text, "type": path.suffix.lower(), "sha256": hashlib.sha256(data).hexdigest()})
+            if link_fingerprints:
+                extras["links"] = link_fingerprints
+            if extras:
+                fingerprint_bytes += b"\0public-evidence\0" + json.dumps(extras, sort_keys=True, ensure_ascii=False).encode()
             fingerprint = hashlib.sha256(kind.encode() + b"\0" + fingerprint_bytes).hexdigest()
             card["fingerprint"] = fingerprint
             record = {"item": item_registry[item_id], "candidate": registry[candidate], "fingerprint": fingerprint,
@@ -188,6 +221,14 @@ def render(public, key, theme):
                 else:
                     tag = card["kind"]
                     content = f'<{tag} controls preload="metadata" src="{card["src"]}" aria-label="{card["label"]} 재생"></{tag}>'
+            if card.get("display_file"):
+                content += f'<p><a href="{card["display_file"]}" target="_blank" rel="noopener noreferrer">원본 크기로 보기</a></p>'
+            if card.get("links"):
+                content += '<ul class="display-links">' + ''.join(
+                    f'<li><a href="{link["href"]}" target="_blank" rel="noopener noreferrer">{html.escape(link["label"])}</a></li>'
+                    for link in card["links"]) + '</ul>'
+            if card.get("annotation"):
+                content += '<p class="annotation">' + html.escape(card["annotation"]) + '</p>'
             controls = ''
             if not card["failed"]:
                 options = '<option value="">미평가</option>' + ''.join(f'<option value="{n}">{n}점</option>' for n in range(1, 6))

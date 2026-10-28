@@ -29,7 +29,7 @@ Select for a clear external prior-art/solution-comparison request, an evolving r
 or an explicit matching resume. Short and continuing research share this owner: the user need not
 choose a mode. Generic mentions, recovered artifacts and scheduler ticks without an active research
 request do not authorize work. `tk-ask-repo` owns repository behavior, `tk-audit` defects/discovery,
-`tk-teach` learning, `tk-roadmap` delivery planning and `tk-prep` product implementation. Naming a
+`tk-explain` follow-up learning, `tk-roadmap` delivery planning and `tk-prep` product implementation. Naming a
 next owner never dispatches it automatically.
 
 1. Reuse the goal, downstream decision, constraints and success criteria. Resolve facts first;

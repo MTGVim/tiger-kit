@@ -119,7 +119,7 @@ test('question packages switch all themes and tolerate refused storage', () => {
   }
 });
 
-const packages = ['tk-explain', 'tk-explain-diff', 'tk-teach', 'tk-research', 'tk-qa-sheet',
+const packages = ['tk-explain', 'tk-research', 'tk-qa-sheet',
   'tk-prototype', 'tk-blind-comparison', 'tk-prep', 'tk-grill', 'tk-roadmap'];
 const sizes = ['50', '75', '100', '125', '150', '175', '200'];
 

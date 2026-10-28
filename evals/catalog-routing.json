@@ -130,6 +130,61 @@
       "from": "pr-image-vs-pr-open-existing-pr",
       "to": "pr-image-vs-pr-open-existing-pr-media",
       "reason": "이미지 첨부 담당 스킬을 영상까지 확장한 이름으로 바꾸며 기존 선택 조건을 보존합니다."
+    },
+    {
+      "from": "teach-learning",
+      "to": "unified-teach-learning",
+      "reason": "설명과 후속 수업을 tk-explain으로 통합하고 기존 선택 경계를 현재 호출명으로 검증합니다."
+    },
+    {
+      "from": "teach-implicit-disabled",
+      "to": "unified-teach-implicit-disabled",
+      "reason": "설명과 후속 수업을 tk-explain으로 통합하고 기존 선택 경계를 현재 호출명으로 검증합니다."
+    },
+    {
+      "from": "teach-vs-research",
+      "to": "unified-teach-vs-research",
+      "reason": "설명과 후속 수업을 tk-explain으로 통합하고 기존 선택 경계를 현재 호출명으로 검증합니다."
+    },
+    {
+      "from": "teach-vs-explain",
+      "to": "unified-teach-vs-explain",
+      "reason": "설명과 후속 수업을 tk-explain으로 통합하고 기존 선택 경계를 현재 호출명으로 검증합니다."
+    },
+    {
+      "from": "diff-understanding",
+      "to": "unified-diff-understanding",
+      "reason": "설명과 후속 수업을 tk-explain으로 통합하고 기존 선택 경계를 현재 호출명으로 검증합니다."
+    },
+    {
+      "from": "diff-vs-review",
+      "to": "unified-diff-vs-review",
+      "reason": "설명과 후속 수업을 tk-explain으로 통합하고 기존 선택 경계를 현재 호출명으로 검증합니다."
+    },
+    {
+      "from": "teach-vs-retro",
+      "to": "unified-teach-vs-retro",
+      "reason": "설명과 후속 수업을 tk-explain으로 통합하고 기존 선택 경계를 현재 호출명으로 검증합니다."
+    },
+    {
+      "from": "teach-course-vs-explain",
+      "to": "unified-teach-course-vs-explain",
+      "reason": "설명과 후속 수업을 tk-explain으로 통합하고 기존 선택 경계를 현재 호출명으로 검증합니다."
+    },
+    {
+      "from": "explain-focused-vs-teach",
+      "to": "unified-explain-focused-vs-teach",
+      "reason": "설명과 후속 수업을 tk-explain으로 통합하고 기존 선택 경계를 현재 호출명으로 검증합니다."
+    },
+    {
+      "from": "teach-resume-learning-records",
+      "to": "unified-teach-resume-learning-records",
+      "reason": "설명과 후속 수업을 tk-explain으로 통합하고 기존 선택 경계를 현재 호출명으로 검증합니다."
+    },
+    {
+      "from": "teach-personal-course-explain",
+      "to": "unified-teach-personal-course-explain",
+      "reason": "설명과 후속 수업을 tk-explain으로 통합하고 기존 선택 경계를 현재 호출명으로 검증합니다."
     }
   ],
   "cases": [
@@ -710,58 +765,58 @@
       "critical": true
     },
     {
-      "id": "teach-learning",
+      "id": "unified-teach-learning",
       "boundary": "조사·학습·변경 설명·리뷰 소유권 구분",
-      "prompt": "$tk-teach `Kafka` 처음 배우는데 조사해서 가르쳐줘.",
-      "focus_skill": "tk-teach",
-      "expected_selected_skill": "tk-teach",
-      "critical": true
-    },
-    {
-      "id": "teach-implicit-disabled",
-      "boundary": "명시 호출 없이는 학습 스킬을 자동 선택하지 않음",
-      "prompt": "`Kafka` 처음 배우는데 조사해서 가르쳐줘.",
-      "focus_skill": "tk-teach",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "teach-vs-research",
-      "boundary": "조사·학습·변경 설명·리뷰 소유권 구분",
-      "prompt": "`Kafka`와 `RabbitMQ` 비교해줘.",
-      "focus_skill": "tk-teach",
-      "expected_selected_skill": "tk-research",
-      "critical": true
-    },
-    {
-      "id": "teach-vs-explain",
-      "boundary": "조사·학습·변경 설명·리뷰 소유권 구분",
-      "prompt": "`Kafka` 동작을 시각적으로 설명해줘.",
-      "focus_skill": "tk-teach",
+      "prompt": "$tk-explain `Kafka` 처음 배우는데 조사해서 가르쳐줘.",
+      "focus_skill": "tk-explain",
       "expected_selected_skill": "tk-explain",
       "critical": true
     },
     {
-      "id": "diff-understanding",
-      "boundary": "조사·학습·변경 설명·리뷰 소유권 구분",
-      "prompt": "이 PR에서 `Kafka` `consumer`가 왜 이렇게 바뀌었어?",
-      "focus_skill": "tk-explain-diff",
-      "expected_selected_skill": "tk-explain-diff",
-      "critical": true
-    },
-    {
-      "id": "diff-vs-review",
-      "boundary": "조사·학습·변경 설명·리뷰 소유권 구분",
-      "prompt": "이 PR 리뷰해줘.",
-      "focus_skill": "tk-explain-diff",
+      "id": "unified-teach-implicit-disabled",
+      "boundary": "명시 호출 없이는 학습 스킬을 자동 선택하지 않음",
+      "prompt": "`Kafka` 처음 배우는데 조사해서 가르쳐줘.",
+      "focus_skill": "tk-explain",
       "expected_selected_skill": null,
       "critical": true
     },
     {
-      "id": "teach-vs-retro",
+      "id": "unified-teach-vs-research",
+      "boundary": "조사·학습·변경 설명·리뷰 소유권 구분",
+      "prompt": "`Kafka`와 `RabbitMQ` 비교해줘.",
+      "focus_skill": "tk-explain",
+      "expected_selected_skill": "tk-research",
+      "critical": true
+    },
+    {
+      "id": "unified-teach-vs-explain",
+      "boundary": "조사·학습·변경 설명·리뷰 소유권 구분",
+      "prompt": "`Kafka` 동작을 시각적으로 설명해줘.",
+      "focus_skill": "tk-explain",
+      "expected_selected_skill": "tk-explain",
+      "critical": true
+    },
+    {
+      "id": "unified-diff-understanding",
+      "boundary": "조사·학습·변경 설명·리뷰 소유권 구분",
+      "prompt": "이 PR에서 `Kafka` `consumer`가 왜 이렇게 바뀌었어?",
+      "focus_skill": "tk-explain",
+      "expected_selected_skill": "tk-explain",
+      "critical": true
+    },
+    {
+      "id": "unified-diff-vs-review",
+      "boundary": "조사·학습·변경 설명·리뷰 소유권 구분",
+      "prompt": "이 PR 리뷰해줘.",
+      "focus_skill": "tk-explain",
+      "expected_selected_skill": null,
+      "critical": true
+    },
+    {
+      "id": "unified-teach-vs-retro",
       "boundary": "조사·학습·변경 설명·리뷰 소유권 구분",
       "prompt": "지난 작업에서 얻은 경험을 회고하고 다음 세션의 스킬 개선 후보를 제안해줘.",
-      "focus_skill": "tk-teach",
+      "focus_skill": "tk-explain",
       "expected_selected_skill": "tk-retro",
       "critical": true
     },
@@ -798,18 +853,18 @@
       "critical": true
     },
     {
-      "id": "teach-course-vs-explain",
+      "id": "unified-teach-course-vs-explain",
       "boundary": "다중 챕터 학습 과정과 한 개념 설명의 경계",
       "prompt": "HTTP와 브라우저 식별을 선수지식 확인부터 여러 챕터로 공부할 학습 과정을 만들어줘.",
-      "focus_skill": "tk-teach",
-      "expected_selected_skill": "tk-teach",
+      "focus_skill": "tk-explain",
+      "expected_selected_skill": "tk-explain",
       "critical": true
     },
     {
-      "id": "explain-focused-vs-teach",
+      "id": "unified-explain-focused-vs-teach",
       "boundary": "다중 챕터 학습 과정과 한 개념 설명의 경계",
       "prompt": "HTTP 캐시 검증자 하나의 작동 원리를 HTML 시각 자료로 설명해줘.",
-      "focus_skill": "tk-teach",
+      "focus_skill": "tk-explain",
       "expected_selected_skill": "tk-explain",
       "critical": true
     },
@@ -926,11 +981,11 @@
       "critical": true
     },
     {
-      "id": "teach-resume-learning-records",
-      "boundary": "tk-teach longitudinal learning vs one-off generated course",
-      "prompt": "$tk-teach --resume 이전 학습 기록을 읽어 다음 수업 이어서 해줘.",
-      "focus_skill": "tk-teach",
-      "expected_selected_skill": "tk-teach",
+      "id": "unified-teach-resume-learning-records",
+      "boundary": "tk-explain longitudinal learning vs one-off generated course",
+      "prompt": "$tk-explain --resume 이전 학습 기록을 읽어 다음 수업 이어서 해줘.",
+      "focus_skill": "tk-explain",
+      "expected_selected_skill": "tk-explain",
       "critical": true
     },
     {
@@ -1054,11 +1109,11 @@
       "critical": true
     },
     {
-      "id": "teach-personal-course-explain",
+      "id": "unified-teach-personal-course-explain",
       "boundary": "개인 답변에 따른 과외와 완결 코스·단일 설명을 구분합니다.",
-      "prompt": "$tk-teach 지난번 틀린 부분부터 다음 수업을 해 주세요.",
-      "focus_skill": "tk-teach",
-      "expected_selected_skill": "tk-teach",
+      "prompt": "$tk-explain 지난번 틀린 부분부터 다음 수업을 해 주세요.",
+      "focus_skill": "tk-explain",
+      "expected_selected_skill": "tk-explain",
       "critical": true
     },
     {

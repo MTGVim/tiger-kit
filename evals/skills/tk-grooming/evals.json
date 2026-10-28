@@ -963,6 +963,21 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "declared-dependency-minimum-report-only",
+      "path": "boundary",
+      "prompt": "`$tk-grooming` --`apply` `tk-explain` `renderer-contract`는 `archify` >=3.2.0을 요구한다. 검증된 설치는 3.1.0이다. 내 일괄 업데이트 함수는 `update_all_skills`다. 의존 상태를 감사해줘.",
+      "expected_output": "선언 경로와 설치 근거를 대조해 `archify` 3.1.0이 최소 3.2.0 미달이라는 품질 지적을 남긴다. 검증된 사용자 일괄 업데이트 루틴을 우선 안내하되 --`apply`에서도 업데이트·자동 업데이트 설정·셸 함수 실행을 하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "선언 경로와 설치 근거를 대조해 `archify` 3.1.0이 최소 3.2.0 미달이라는 품질 지적을 남긴다. 검증된 사용자 일괄 업데이트 루틴을 우선 안내하되 --`apply`에서도 업데이트·자동 업데이트 설정·셸 함수 실행을 하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

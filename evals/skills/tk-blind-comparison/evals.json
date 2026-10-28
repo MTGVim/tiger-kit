@@ -214,6 +214,21 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "long-image-public-evidence",
+      "path": "success",
+      "prompt": "`$tk-blind-comparison` 세로 `11000px` 캡처 후보 두 개를 비교할 갤러리를 만들어줘. 각 후보에 익명화한 `HTML` 원본 `links`와 정확성 `annotation`이 있다.",
+      "expected_output": "세로 `11000px` 캡처를 중립 표시 사본의 원본 크기 링크로 열 수 있다. 추가 `links`는 중립 파일명으로 복사하고 `annotation`은 이스케이프한다. 두 필드를 신원 검사하며 기존 평가 `fingerprint`는 불변 콘텐츠에서 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "세로 `11000px` 캡처를 중립 표시 사본의 원본 크기 링크로 열 수 있다. 추가 `links`는 중립 파일명으로 복사하고 `annotation`은 이스케이프한다. 두 필드를 신원 검사하며 기존 평가 `fingerprint`는 불변 콘텐츠에서 유지한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

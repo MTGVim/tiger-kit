@@ -1,5 +1,9 @@
 # HTML Output
 
+This shared shell contract applies to the retained renderer when live interaction is explicitly
+requested. Default `tk-explain` archify pages use renderer-contract.md instead: archify owns
+its theme and does not read TigerKit `html.theme`. Other owners retain this shared contract.
+
 Render already verified content with a suitable available renderer or minimal semantic HTML.
 Produce one offline-readable HTML file with inline CSS, SVG and optional JavaScript, without
 external assets, fonts, frameworks, build steps or runtime network requests. Source hyperlinks
@@ -120,7 +124,7 @@ branch names and other identifiers in secondary metadata; do not use them or gen
 as `설명`, `explanation` or `report` as the title. The existing prototype UI exception applies;
 apply this document shell only to document portions of QA sheets, preserving their checklist UI.
 
-For `tk-explain`, `tk-explain-diff` and new `tk-teach` homes, the same settings object may
+For `tk-explain` final explanations, the same settings object may
 contain `"artifacts":{"durableRoot":"~/..."}` or an explicit null choice. Use the
 [artifact paths](artifact-paths.md) first-use choice and resolution before saving; invalid
 settings fall back with a reported warning and are not overwritten. If theme resolution reports
@@ -219,7 +223,7 @@ to every citation occurrence that cites it.
 - Every `<details>` has a first-child `<summary>`; answer reveals and secondary evidence start collapsed, while required conclusions and background remain outside collapsed sections.
 - There is exactly one non-empty, subject-specific `<title>`; it does not use a generic label or transient generated value.
 
-For `tk-explain`, `tk-explain-diff` and `tk-teach`, run `tk-browser-verify` only for explicitly
+For `tk-explain` retained-renderer artifacts, run `tk-browser-verify` only for explicitly
 requested screen/action checks, including in the initial task. HTML, SVG, interaction, a composed
 shell or browser availability alone is not a request. Keep independent content review and static
 checks; label unrequested screen checks as not requested without a visual/runtime verdict or a

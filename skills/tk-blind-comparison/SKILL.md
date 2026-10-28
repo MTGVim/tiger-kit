@@ -30,6 +30,7 @@ to `tk-grill`; candidate creation to `tk-prototype`, `tk-tts` or the relevant pr
 3. Prepare identity-neutral display copies. Read only the applicable
    [audio](references/audio.md), [images and UI captures](references/images.md),
    [text](references/text.md), or [video](references/video.md) reference.
+   Include optional neutral original/mobile links and public annotations under the manifest contract.
    Strip surface identifiers and metadata without erasing the dimension being compared.
    Record transformations and residual cues visibly. A failed normalization remains a
    failed card with a neutral reason; preserve diagnostic details privately in the answer key.
@@ -43,7 +44,7 @@ to `tk-grill`; candidate creation to `tk-prototype`, `tk-tts` or the relevant pr
    Keep the comparison topic, item title, shared script and evaluation guide visible within
    the active item's sticky context; bound long context height so scoring stays reachable.
 5. Verify the saved local HTML through `tk-browser-verify`: desktop/mobile and both themes,
-   media decode, all failure cards, keyboard controls, native 1-5 score selection, notes, optional favorite,
+   media decode, original-size/additional links, escaped annotations, all failure cards, keyboard controls, native 1-5 score selection, notes, optional favorite,
    reload, candidate addition, JSON import/export, rating copy and clipboard refusal,
    partial-reveal confirmation/cancellation, reveal-only averages and storage refusal.
    Copy uses the same blind-key payload as

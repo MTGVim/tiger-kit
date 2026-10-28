@@ -49,3 +49,19 @@ Freshness does not establish ownership; inspect only the current host and do not
 another host's installation as evidence.
 
 User-facing progress and receipt prose follow the user's language.
+
+## Declared installed-skill dependencies
+
+When an in-scope skill declares a minimum dependency (for example `tk-explain`'s
+`references/renderer-contract.md`), read that exact declaration and the installed dependency's
+identity/version metadata. Record declaring path, dependency, installed version, required
+minimum and comparison evidence. Compare only the declared version scheme: stable SemVer
+uses numeric components and prerelease precedence, never lexical string order. Unknown,
+missing or incomparable metadata is `Unverifiable`, not compatible. A verified below-minimum
+version is a quality finding even if auto-update is enabled or the package reports current.
+
+Before advising an update, check already supplied or in-scope configuration for a user-defined
+bulk-update routine (such as a shell function). Prefer that verified routine over individual
+commands; do not invent a routine or source/execute shell configuration to discover one.
+Keep every finding report-only, including `--apply`: never install, update, enable automatic
+updates or run the user's routine. Use the existing vendor ownership boundary.
