@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 from fractions import Fraction
 import hashlib
+import importlib.util
 import json
 import math
 import os
@@ -19,6 +20,10 @@ import subprocess
 import tempfile
 import wave
 import unicodedata
+
+_presentation_spec = importlib.util.spec_from_file_location("movie_presentation", Path(__file__).with_name("presentation.py"))
+presentation = importlib.util.module_from_spec(_presentation_spec)
+_presentation_spec.loader.exec_module(presentation)
 
 
 def regular(path: Path, root: Path | None = None) -> Path:
@@ -266,18 +271,31 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
         raise ValueError("contact sheet must be a new run-owned path")
     burn = bool(captions) and caption_support
     image_stream = next(s for s in probe(frames[0][0], ffprobe)["streams"] if s["codec_type"] == "video")
-    layout = caption_layout(int(image_stream["height"]), mode == "evidence", caption_size)
+    source_width, source_height = int(image_stream["width"]), int(image_stream["height"])
+    width, height = math.ceil(source_width/2)*2, math.ceil(source_height/2)*2
+    caption_style, callouts, highlights = presentation.validate(data, source_width, source_height, end)
+    layout = caption_layout(source_height, mode == "evidence" and caption_style == "band", caption_size)
+    enhanced = caption_style != "band" or bool(callouts) or bool(highlights)
+    if enhanced:
+        for image, _ in frames[1:]:
+            geometry = next(s for s in probe(image, ffprobe)["streams"] if s["codec_type"] == "video")
+            if (int(geometry["width"]), int(geometry["height"])) != (source_width, source_height):
+                raise ValueError("presentation coordinates require equal-sized source frames")
+    presentation_blocked = bool(callouts) and not caption_support
+    presentation_receipt = {"caption_style": caption_style, "caption_boxes": [], "callout_boxes": [], "zoom_plan": []}
     # Conservative estimate only: font metrics and line breaking vary by renderer.
     capacity = int(int(image_stream["width"]) * .85 / layout["size_px"] * 2)
     for index, caption in enumerate(captions, 1):
         units = sum(2 if unicodedata.east_asian_width(c) in "WF" else 1 for c in caption["text"])
-        if units > capacity:
+        if caption_style == "band" and units > capacity:
             warnings.append(f"caption {index} may wrap or clip; inspect decoded frames and split or resize it")
     sidecar = output.with_suffix(".srt") if captions else None
     if sidecar and (sidecar.resolve() != sidecar or (sidecar.exists() and not sidecar.is_file())):
         raise ValueError("caption sidecar must be a regular run-owned file")
     if captions and not burn:
         warnings.append("ffmpeg lacks the subtitles filter; hard captions blocked, soft captions retained")
+    if presentation_blocked:
+        warnings.append("ffmpeg lacks the subtitles filter; callouts and dependent zooms blocked")
     if kind == ".gif" and audio is not None:
         warnings.append("GIF has no audio; narration omitted")
         audio = None
@@ -339,13 +357,20 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
         if soft:
             cmd += ["-i", "captions.srt"]
         filters = f"fps={rate_text},pad=ceil(iw/2)*2:ceil(ih/2)*2"
+        if enhanced and not presentation_blocked:
+            extra_filters, presentation_receipt = presentation.prepare(data, captions if burn else [], width, height,
+                end, layout["size_px"], float(rate), ffmpeg, stage, env, warnings)
+            if extra_filters: filters += "," + ",".join(extra_filters)
         if burn:
             # Evidence frames preserve the complete UI; captions live in an appended band.
-            if mode == "evidence":
+            if mode == "evidence" and caption_style == "band":
                 filters += f",pad=iw:ih+{layout['band_px']}:0:0:black"
-            filters += (",subtitles=filename=captions.srt:force_style='FontName=Noto Sans CJK KR,"
-                        f"FontSize={layout['font_size']:.6f},MarginV={layout['margin_v']:.6f},"
-                        f"Alignment=2,Outline={0 if mode == 'evidence' else 1},Bold=1'")
+            if caption_style == "band":
+                filters += (",subtitles=filename=captions.srt:force_style='FontName=Noto Sans CJK KR,"
+                            f"FontSize={layout['font_size']:.6f},MarginV={layout['margin_v']:.6f},"
+                            f"Alignment=2,Outline={0 if mode == 'evidence' else 1},Bold=1'")
+            else:
+                filters += ",subtitles=filename=overlay-captions.ass"
         if kind == ".mp4":
             cmd += ["-map", "0:v:0"]
             if audio is not None: cmd += ["-map", "1:a:0"]
@@ -410,15 +435,16 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
             "encoded_duration_ms": float(info["format"]["duration"]) * 1000,
             "audio": audio is not None, "warnings": warnings,
             "ffmpeg_path": ffmpeg, "ffprobe_path": ffprobe,
-            "media_status": "failed" if errors else "blocked" if captions and not burn else "ready",
+            "media_status": "failed" if errors else "blocked" if (captions and not burn) or presentation_blocked else "ready",
             "media_validation": {"status": "fail" if errors else "pass", "errors": errors},
             "contact_sheet": str(contact),
-            "prerequisite": "ffmpeg-subtitles-filter" if captions and not burn else None,
+            "prerequisite": "ffmpeg-subtitles-filter" if (captions and not burn) or presentation_blocked else None,
             "subtitles": "hard" if burn else "soft" if soft else "sidecar" if captions else "none",
             "caption_size_px": layout["size_px"] if burn else None,
             "caption_band_px": layout["band_px"] if burn else 0,
             "captions_path": str(sidecar) if sidecar else None,
-            "verification_status": "not-assessed", "source_frames_preserved": True}
+            "verification_status": "not-assessed", "source_frames_preserved": True,
+            "presentation": presentation_receipt}
 
 
 def main() -> int:

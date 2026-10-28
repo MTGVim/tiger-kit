@@ -386,8 +386,9 @@ class OptionalMediaTests(unittest.TestCase):
     def test_removed_narration_and_missing_audio_preserve_captioned_movie(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory); path = self.fixture(root)
-            # Copy the standalone assembler into a package with no narration module/dependencies.
+            # Copy this package's assembler/helpers, without any narration engine or sibling package.
             shutil.copyfile(SOURCE, root / "build_movie.py")
+            shutil.copyfile(SOURCE.with_name("presentation.py"), root / "presentation.py")
             isolated_spec = importlib.util.spec_from_file_location("isolated_movie", root / "build_movie.py")
             isolated = importlib.util.module_from_spec(isolated_spec)
             isolated_spec.loader.exec_module(isolated)

@@ -357,6 +357,74 @@
         }
       ],
       "safety": false
+    },
+    {
+      "id": "video-presentation-geometry",
+      "path": "success",
+      "prompt": "같은 캡처로 둥근 화면 위 자막, 항목 이름 설명문, 두 그룹의 확대를 추가해 주세요. 음성은 기존 WAV를 씁니다.",
+      "expected_output": "`caption_style`을 `overlay-rounded`로 선택하고 실제 `libass` 글자 크기에 맞춘 상자와 `source-frame` 좌표의 설명문을 만듭니다. 모든 강조 상자와 같은 시간의 설명문을 합쳐 확대하고 원래 시간·원본·SRT를 보존합니다. 카드·확대·자막의 실제 디코드 프레임을 확인합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`caption_style`을 `overlay-rounded`로 선택하고 실제 `libass` 글자 크기에 맞춘 상자와 `source-frame` 좌표의 설명문을 만듭니다. 모든 강조 상자와 같은 시간의 설명문을 합쳐 확대하고 원래 시간·원본·SRT를 보존합니다. 카드·확대·자막의 실제 디코드 프레임을 확인합니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": false
+    },
+    {
+      "id": "video-overlay-collision",
+      "path": "success",
+      "prompt": "중요한 지표가 화면 아래에 있고 자막은 박자 전체에 표시됩니다. 중간 확대에서 자막이 지표와 겹칩니다.",
+      "expected_output": "자막 구간 전체와 확대 전환에 걸쳐 강조 상자와 설명문을 검사합니다. 아래에 겹치면 위로 이동하고 `receipt` 경고를 남깁니다. 위아래 모두 가리면 띠 자막 또는 재구도를 선택할 수 있도록 조립을 실패시키며 성공으로 반환하지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "자막 구간 전체와 확대 전환에 걸쳐 강조 상자와 설명문을 검사합니다. 아래에 겹치면 위로 이동하고 `receipt` 경고를 남깁니다. 위아래 모두 가리면 띠 자막 또는 재구도를 선택할 수 있도록 조립을 실패시키며 성공으로 반환하지 않습니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": true
+    },
+    {
+      "id": "video-beat-inspection-coverage",
+      "path": "success",
+      "prompt": "해설이 `A` 지표 2개와 `B` 지표 3개를 말하는 영상입니다. 각 박자 끝 프레임만 봤고 중간에 3초간 무관한 표가 보입니다.",
+      "expected_output": "5개 `cue_targets`와 그룹별 수량·색·라벨을 대조하고 이전 표시를 지웁니다. 박자 끝뿐 아니라 2초 간격 표본과 경계 프레임을 검수하며 표본 수, 정체 후보와 처리 결과를 `receipt`에 남깁니다. 해설이 가리키는 요소가 보이지 않는 구간을 고친 뒤 다시 검사합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "5개 `cue_targets`와 그룹별 수량·색·라벨을 대조하고 이전 표시를 지웁니다. 박자 끝뿐 아니라 2초 간격 표본과 경계 프레임을 검수하며 표본 수, 정체 후보와 처리 결과를 `receipt`에 남깁니다. 해설이 가리키는 요소가 보이지 않는 구간을 고친 뒤 다시 검사합니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": false
+    },
+    {
+      "id": "video-band-compatibility",
+      "path": "success",
+      "prompt": "기존 `evidence` 매니페스트를 다시 조립해 주세요. 새 스타일, `highlights`, `callouts`는 지정하지 않았습니다.",
+      "expected_output": "기본 `band`와 UI 보존, 기존 출력과 SRT를 유지합니다. 선택하지 않은 확대나 화면 위 자막을 추가하지 않습니다. 긴 한국어 자막은 기존 넘침 경고를 확인하고 실제 프레임 검수 후 문장 분할 또는 크기 조정으로 고칩니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "기본 `band`와 UI 보존, 기존 출력과 SRT를 유지합니다. 선택하지 않은 확대나 화면 위 자막을 추가하지 않습니다. 긴 한국어 자막은 기존 넘침 경고를 확인하고 실제 프레임 검수 후 문장 분할 또는 크기 조정으로 고칩니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": false
     }
   ],
   "migrations": [

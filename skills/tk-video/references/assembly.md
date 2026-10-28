@@ -1,5 +1,9 @@
 # Video assembly
 
+- [Inputs and timing](#inputs-and-timing)
+- [Optional captions, callouts and zoom](#optional-captions-callouts-and-zoom)
+- [Quality and recovery](#quality-and-recovery)
+
 Use this package's `scripts/build_movie.py` with already installed ffmpeg and ffprobe. Never
 install tools automatically. The safe input/output rules apply independently of package location.
 
@@ -68,12 +72,68 @@ a package or changes PATH. Receipts report `ffmpeg_path` and `ffprobe_path`.
 A mismatched or too-long optional track is omitted with a warning; retain any selected-but-missing
 narration limitation. Retain original sources independently of output and screenshot manifests.
 
+## Optional captions, callouts and zoom
+
+Use these fields only for the selected presentation treatment. Defaults retain the existing
+`band` captions and untransformed frames. A single evaluator's variant preferences support that
+creator's choice, not a universal default or evidence of improved learning.
+
+```json
+{
+  "caption_style": "overlay-rounded",
+  "callouts": [{"start_ms": 1000, "end_ms": 4000, "x": 620, "y": 340, "text": "Revenue, margin and orders", "size": 24}],
+  "highlights": [{"start_ms": 1000, "end_ms": 4000, "rects": [{"x": 120, "y": 320, "w": 420, "h": 120}], "zoom": true, "margin": 32, "max_scale": 2}]
+}
+```
+
+All coordinates are pixels in equal-sized original capture frames, before even padding, zoom or
+caption band. Convert the recorder's viewport `cue_targets` using its actual screenshot scale,
+crop origin and frame dimensions; retain that mapping and capture-only provenance. Reuse observed
+beat times and refresh coordinates after scroll/layout changes. Split intervals when geometry
+changes; a stale rectangle cannot protect a moving target. `rects` describe already captured
+highlights; assembly does not invent UI state or draw disappearance badges. Include any required
+in-picture source tag in the protected rectangles or retain a source label in the captions.
+
+- `caption_style`: `band` (default), `overlay` (square 50% black libass box) or
+  `overlay-rounded` (50% black ASS vector box and white text). Overlays preserve source height
+  except existing even padding. Default text size is 5% of that height; `--caption-size` still
+  applies. Boxes sit 6% above the bottom. SRT sidecars remain unchanged by styling.
+- `callouts`: original-frame top-left `x/y`, plain `text`, observed interval and optional nominal
+  `size` (default 2.5% of source height, minimum 12px). Render a white card with a thin border,
+  left accent, dark text and light shadow. Actual libass glyph bounds determine wrapping and
+  padding; no extra imaging library is needed. Overlarge cards, missing glyphs, overlapping
+  cards or a card covering an active target fail with an authoring correction.
+- `highlights`: ordered, nonoverlapping intervals; combine simultaneous groups in one `rects`
+  list. `zoom` defaults to true; false protects targets from captions without enlargement.
+  Union every rectangle and every callout that overlaps the interval, add `margin` (default
+  32px, at least 2px internally for integer cropping), fit the output aspect ratio and clamp
+  to the source. Scale is capped by the region fit and `max_scale` (default 2, allowed 1-10).
+  Fixed-size `zoompan` uses input frame number/output fps, with 500ms smoothstep at each end;
+  intervals shorter than one second use half their duration per transition. No source timing
+  is stretched. Integer cropping can still cause slight motion jitter. RGB cropping with bounded, upward-rounded
+  origins retains borders flush with the source edge before final 4:2:0 encoding.
+
+The filter order is fps/even padding, callouts, fixed-canvas zoom, optional band, then captions;
+cards scale with the UI while captions keep their size. Variable-size `scale` followed by `crop`
+can reinitialize filters and reset their time/frame counters; do not use it for animated zoom.
+
+For each overlay caption, test protected target/card geometry across its full interval and zoom
+transitions, using effective ASS centisecond boundaries (reported alongside requested times).
+If the lower box intersects it, use the upper position and record
+`caption moved to top to keep highlights visible: <time>`. If both positions collide, fail and
+use `band` or recapture with a clear safe region. Read the returned `presentation` geometry and
+inspect decoded frames: a geometry check cannot prove cue facts, glyph readability or aesthetics.
+Check each callout's middle frame and each zoom's transition/middle frames; compare actual box
+padding (caption left/right difference at most 30% of text size, card top/bottom at most 20%).
+Keep the original capture frames for alternate styling. Missing libass blocks required text
+effects and dependent zooms; it never authorizes installing dependencies or claiming completion.
+
 ## Quality and recovery
 
 MP4 uses `libx264`, `yuv420p` and explicit CRF 18. `--crf <integer>` selects 0-51 for MP4 only;
 lower values retain more detail at potentially larger size. GIF rejects an explicit `--crf`.
 For equal-sized source frames, retain their dimensions with only even-dimension padding and the
-evidence caption band; avoid resolution changes during authoring or capture. The receipt reports `encoder`, requested `crf`, encoded `width`/`height`
+default evidence caption band (selected overlay styles omit it); avoid resolution changes during authoring or capture. The receipt reports `encoder`, requested `crf`, encoded `width`/`height`
 and `pixel_format`. CRF is an encoder setting, not a measured visual-quality score or lossless claim;
 4:2:0 color conversion can soften fine colored text even at CRF 0. Inspect the actual cut.
 
@@ -90,7 +150,7 @@ Present the `tk-wizard` installation-guidance question with the exact missing ca
 returning a blocked result or considering a workaround. Do not implement frame-composited captions. Inspect existing
 package/PATH conflicts before proposing a platform-specific package such as ffmpeg-full.
 
-For UI recordings (`evidence`), hard captions use an appended black lower band (`pad`), preserving
+For UI recordings (`evidence`), default hard captions use an appended black lower band (`pad`), preserving
 the complete UI. Default nominal text size is 5% of final output height; `--caption-size <px>`
 overrides it (positive, at most half the source height). The band holds two text heights, with
 a 48px minimum; the helper converts size and centered vertical margin into libass's 288-unit

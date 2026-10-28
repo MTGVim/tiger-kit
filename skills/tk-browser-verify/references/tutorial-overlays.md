@@ -44,6 +44,15 @@ pointer outside nested scroll containers; after scrolling remeasure the target w
 `getBoundingClientRect()` and fail the capture step if it is still outside the viewport. Verify
 beat targets are visible at beat end, not merely that scrolling stopped.
 
+For selected overlay captions, keep narrated targets outside the bottom 15% caption-safe region
+while capturing. Remeasure after scrolling and after the resulting layout settles; if the target
+cannot fit, retain the limitation and let the video author choose band captions or another view.
+Return each beat's observed times, target identities/group counts and measured `cue_targets`
+rectangles with viewport dimensions, screenshot scale and any crop offset. The video author can
+derive `highlights` and nearby `callouts` from this handoff without guessing coordinates or click
+times. Split a beat's geometry when it changes; keep disappearance confirmations separate from
+authored captions and cards.
+
 For an action with a known associated network request, track request IDs and completion or
 failure using provider network events (CDP `Network.requestWillBeSent`, `loadingFinished`,
 `loadingFailed`); account for concurrent relevant requests and redirects. Show a centered,

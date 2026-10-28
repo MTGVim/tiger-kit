@@ -2965,6 +2965,40 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "capture-overlay-safe-handoff",
+      "path": "success",
+      "prompt": "관리 화면 녹화에서 결과 표가 내부 스크롤 영역에 있습니다. 화면 위 자막과 두 그룹 확대를 선택했습니다.",
+      "expected_output": "포인터를 중첩 스크롤 밖으로 이동하고 실제 입력 뒤 `getBoundingClientRect`로 결과를 재확인합니다. 하단 약 15% 자막 영역을 피하고 각 박자의 실제 시각과 `cue_targets`를 뷰포트·캡처 크기·배율·크롭 기준과 함께 넘깁니다. 레이아웃 변경 뒤 다시 측정하며 캡처 전용 표시를 독립 판정 스크린샷 전에 제거합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "포인터를 중첩 스크롤 밖으로 이동하고 실제 입력 뒤 `getBoundingClientRect`로 결과를 재확인합니다. 하단 약 15% 자막 영역을 피하고 각 박자의 실제 시각과 `cue_targets`를 뷰포트·캡처 크기·배율·크롭 기준과 함께 넘깁니다. 레이아웃 변경 뒤 다시 측정하며 캡처 전용 표시를 독립 판정 스크린샷 전에 제거합니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": true
+    },
+    {
+      "id": "capture-waits-and-disappearance",
+      "path": "success",
+      "prompt": "초기화는 네트워크 요청이 없고 조회는 동시 요청 둘이 1.4초 걸립니다. 조회 뒤 한 열이 사라질 예정입니다.",
+      "expected_output": "요청이 없는 초기화에는 로딩 표시를 쓰지 않습니다. 관련 `request ID`와 실제 완료·실패를 추적해 1초를 넘긴 요청에만 중앙 표시를 띄우고 즉시 지웁니다. 대기 실측과 표시 여부를 기록하고 숨김 배지는 런타임 확인 후에만 그립니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "요청이 없는 초기화에는 로딩 표시를 쓰지 않습니다. 관련 `request ID`와 실제 완료·실패를 추적해 1초를 넘긴 요청에만 중앙 표시를 띄우고 즉시 지웁니다. 대기 실측과 표시 여부를 기록하고 숨김 배지는 런타임 확인 후에만 그립니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": true
     }
   ],
   "migrations": [

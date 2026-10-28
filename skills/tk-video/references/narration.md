@@ -37,6 +37,13 @@ from narration. For disappearance, mark the target before the action and show a 
 badge at its prior location only after runtime confirms the state. Verify counts and target
 visibility at the beat end; record the evidence and any unresolved mismatch.
 
+When selected, put short callouts beside the cue at that beat, using measured source-frame
+coordinates and observed times from the capture handoff. Add facts the narration omits (item
+names or the condition/result relationship); avoid repeating the caption sentence. Keep callouts
+clear of targets. Pass all simultaneously named rectangles together for zoom planning, including
+groups in different parts of the screen; never start a zoom before the targets actually appear.
+See [assembly](assembly.md) for optional presentation fields and collision checks.
+
 ## Teaching handoff
 
 When a teaching caller supplies a sequence, retain its accepted scene point, observed start

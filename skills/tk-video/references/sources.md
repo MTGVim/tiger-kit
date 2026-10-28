@@ -17,3 +17,27 @@ its code and change record name the rate but give no MP4-specific rationale. The
 assembling examples above use `-r 30`, not a shared 10fps requirement. Keep 10fps as GIF's compact
 default alongside its 5MiB size warning and for stills; MP4 capture rate follows source metadata
 or disclosed timestamp estimation, capped at 30fps. This is a product tradeoff, not a size guarantee.
+
+
+## Optional presentation effects
+
+Reviewed 2026-10-28: [FFmpeg zoompan source](https://github.com/FFmpeg/FFmpeg/blob/c69954c34522c53234dfd43fa7a0cb3b02f39e47/libavfilter/vf_zoompan.c),
+its filter documentation and the installed FFmpeg 6.1 implementation;
+[libass format guidance](https://github.com/libass/libass/wiki/ASS-File-Format-Guide) and
+[Aegisub drawing tags](https://aegisub.org/docs/latest/ass_tags/). Keep original timing and
+fixed output dimensions; adapt input-frame-based zoom expressions, actual glyph-ink measurement
+and ASS vector cards. Use RGB crop input and upward-rounded origins to preserve edge borders;
+integer crop positions remain a motion limitation.
+Square boxes use libass's `BorderStyle=4` extension, verified by decoded-frame tests; portable
+ASS playback compatibility is not claimed. The delivery is already burned video plus plain SRT.
+
+The supplied four-variant experiment is single-creator preference evidence. Adapt its combined
+callout/zoom treatment as opt-in; omit a universal style change. [Openscreen](https://github.com/siddharthvaddem/openscreen)
+provides cursor-following automatic zoom as prior art only; no desktop recorder, runtime or code
+is imported. Keep source-coordinate handoff under the existing capture owner.
+
+For existing wait/loudness policies, [Fluent Spinner](https://fluent2.microsoft.design/components/web/react/core/spinner/usage)
+and [Wait UX](https://fluent2.microsoft.design/wait-ux) support the one-second threshold;
+[Primer loading](https://primer.style/product/ui-patterns/loading/) supports indeterminate
+feedback but does not establish that exact threshold. [EBU R128](https://tech.ebu.ch/publications/r128)
+supports -23 LUFS programme loudness; preserve -18 as tk-tts's default and actual listening.
