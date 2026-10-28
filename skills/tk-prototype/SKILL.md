@@ -62,7 +62,8 @@ Screenshot: <absolute path | N/A>; actual inspection: yes | no | N/A
    `Fail | Blocked | Unverifiable`, preserve owned failure artifacts and return the real status, but
    do not emit a `verification_status: Pass` publication manifest. If required image publication
    cannot be satisfied, report that publication requirement as blocked or unverifiable.
-6. `terminal summary`: Render the applicable sections under the output contract below;
+6. When a comparison informs follow-up implementation, read [selected prototype handoff](references/selection-handoff.md) and return its selection record in the existing result.
+7. `terminal summary`: Render the applicable sections under the output contract below;
    do not add a separate provenance/status block.
 
 For unresolved UI comparisons, vary only the decision-relevant dimension. Color-only alternatives are valid when color, contrast, or state identification is the question; preserve layout and behavior in that comparison. Vary architecture, flow or navigation only when that is the actual question. For logic, prefer a small pure harness using example input/output

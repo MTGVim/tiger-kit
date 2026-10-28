@@ -31,6 +31,7 @@ REVIEW_TARGETS = (
     ROOT / "skills/tk-pr-respond/references",
 )
 REVIEW_FILES = (
+    "project-rules.md",
     "review-protocol.md",
     "finding-quality.md",
     "typescript.md",
@@ -373,6 +374,8 @@ def main() -> int:
     if visual_questions.is_file():
         pairs.extend((visual_questions, ROOT / "skills" / name / "references/visual-questions.md")
                      for name in ("tk-prep", "tk-roadmap") if (ROOT / "skills" / name).is_dir())
+    pairs.append((ROOT / "skills/tk-prototype/references/selection-handoff.md",
+                  SOURCE / "selection-handoff.md"))
     pairs.append((EXTERNAL_CONTRACT_SOURCE, EXTERNAL_CONTRACT_TARGET))
     pairs.extend((PR_VISUAL_SOURCE, target) for target in PR_VISUAL_TARGETS)
     pairs.extend((REBASE_READINESS_SOURCE, target) for target in REBASE_READINESS_TARGETS)

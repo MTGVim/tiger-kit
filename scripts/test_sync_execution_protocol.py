@@ -95,6 +95,9 @@ class SyncExecutionProtocolTest(unittest.TestCase):
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_text((path.read_text() if path.exists() else "") + block)
         repo = Path(__file__).resolve().parents[1]
+        selection = self.root / "skills/tk-prototype/references/selection-handoff.md"
+        selection.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(repo / "skills/tk-prototype/references/selection-handoff.md", selection)
         target = self.root / "skills/tk-explain/references/content-review.md"
         shutil.copyfile(repo / "skills/tk-explain/references/content-review.md", target)
         shutil.copyfile(repo / "skills/tk-explain/references/diataxis.md",
@@ -156,6 +159,20 @@ class SyncExecutionProtocolTest(unittest.TestCase):
             redirect_stdout(io.StringIO()),
         ):
             return sync_execution_protocol.main()
+
+    def test_selection_handoff_detects_missing_copy_and_changed_source(self) -> None:
+        self.assertEqual(self.run_main(), 0)
+        source = self.root / "skills/tk-prototype/references/selection-handoff.md"
+        target = self.prep / "selection-handoff.md"
+        self.assertEqual(target.read_bytes(), source.read_bytes())
+        target.unlink()
+        self.assertEqual(self.run_main("--check"), 1)
+        self.assertEqual(self.run_main(), 0)
+        source.write_text(source.read_text() + "Keep the selected state.\n")
+        self.assertEqual(self.run_main("--check"), 1)
+        self.assertEqual(self.run_main(), 0)
+        self.assertEqual(self.run_main("--check"), 0)
+        self.assertEqual(target.read_bytes(), source.read_bytes())
 
     def test_sync_creates_missing_copies_and_clean_check_passes(self) -> None:
         self.assertEqual(self.run_main(), 0)

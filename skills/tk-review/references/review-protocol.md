@@ -33,6 +33,10 @@ a permission registry, durable environment ledger, or re-dispatch ceremony.
 
 ## Inputs and evidence authority
 
+When repository instructions, the task or its plan name project rules, read
+[project rule selection](project-rules.md); revalidate selection against the actual
+diff and pinned baseline before judging compliance.
+
 Bind every seat to the same exact repository/range or worktree fingerprint, original task or
 incident when one exists, expected scenario, approved decisions and AC, repository rules,
 exact diff, and already-collected test/build/runtime/browser evidence for that exact

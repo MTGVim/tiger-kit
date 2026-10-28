@@ -8,6 +8,7 @@ for a fresh lower-capability executor and preserve:
 
 - source, goal/background, exact checkout or PR head, and current evidence/entry points;
 - scope, exclusions, do-not-change constraints, and approved material decisions with reasons;
+- selected prototype decisions and evidence citations, when relevant, following the already-loaded selection-handoff contract;
 - implementation direction and only material Reuse/Simplicity/Tests/Security/Experience gaps, exceptions, or decisions;
 - AC with per-AC verification, runtime verification plan (verifier, baseline/replay, evidence location), exceptions, traps, and exact UI literals;
 - a semantic Review Plan: change intent, original incident or expected scenario, expected changed outcome,

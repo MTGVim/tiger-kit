@@ -4161,6 +4161,111 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "prep-rules-select-and-cite",
+      "path": "success",
+      "prompt": "저장소 `AGENTS.md`는 `rules/index.md`를 명시한다. `API` 응답 변경 규칙 `A`와 `UI` 접근성 규칙 `B`는 각각 적용 조건을 가진다. `API` 응답만 바꾸는 준비 결과를 설명하라. 파일은 쓰지 마라.",
+      "expected_output": "`A`만 읽어 실제 `API` 범위와 대조하고 파일/`ID`·검사 `revision`·적용 이유를 계획과 리뷰 의무에 전달한다. `B` 본문은 주입하지 않으며 새 규칙 파일·설정·장부를 만들지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`A`만 읽어 실제 `API` 범위와 대조하고 파일/`ID`·검사 `revision`·적용 이유를 계획과 리뷰 의무에 전달한다. `B` 본문은 주입하지 않으며 새 규칙 파일·설정·장부를 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "prep-rules-absent-preserves-behavior",
+      "path": "boundary",
+      "prompt": "저장소와 현재 작업에는 규칙 묶음 선언이 없다. 작은 문구 변경의 준비 결과를 설명하라. 파일은 쓰지 마라.",
+      "expected_output": "규칙 디렉터리를 탐색하거나 생성하지 않고 일반 준비 절차를 따른다. 규칙 전용 출력이나 설정을 강요하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "규칙 디렉터리를 탐색하거나 생성하지 않고 일반 준비 절차를 따른다. 규칙 전용 출력이나 설정을 강요하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "prep-rules-invalid-and-conflicting",
+      "path": "boundary",
+      "prompt": "명시된 `rules/index.md` 중 `API` 규칙 `A`에는 적용 조건이 없고 `B`와 `C`는 동일 범위에서 충돌한다. 상위 지침에도 우선순위가 없다. `API` 변경 준비 결과를 설명하라. 파일은 쓰지 마라.",
+      "expected_output": "`A`를 조용히 비적용 처리하거나 임의 추정하지 않고 누락을 밝힌다. `B/C` 충돌은 근거로 해결하며 해결 불가이면 해당 결정만 보류한다. 묶음은 권한을 추가하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`A`를 조용히 비적용 처리하거나 임의 추정하지 않고 누락을 밝힌다. `B/C` 충돌은 근거로 해결하며 해결 불가이면 해당 결정만 보류한다. 묶음은 권한을 추가하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "prep-prototype-selection-survives-other-worktree",
+      "path": "success",
+      "prompt": "`B`가 선택된 원래 `prototype`은 `/repo-one/.tigerkit/prototypes/x`에 있고 `A` 파일 수정 시간이 더 최신이다. 별도 `/repo-two` `worktree`에서 구현할 준비 결과를 설명하라. 파일은 쓰지 마라.",
+      "expected_output": "명시된 `B`·선택 이유·거절 대안·정확한 원래 실행/근거 경로·상태를 유지하고 실제 다른 `worktree`에서 접근을 확인한다. `A`나 `/repo-two`의 같은 상대 경로로 대체하지 않는다. 필요한 최소 근거와 제약을 실행자에게 넘기고 `Seed`가 필요한 경우에만 기존 결정/근거 영역에 담는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "명시된 `B`·선택 이유·거절 대안·정확한 원래 실행/근거 경로·상태를 유지하고 실제 다른 `worktree`에서 접근을 확인한다. `A`나 `/repo-two`의 같은 상대 경로로 대체하지 않는다. 필요한 최소 근거와 제약을 실행자에게 넘기고 `Seed`가 필요한 경우에만 기존 결정/근거 영역에 담는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "prep-prototype-missing-required-evidence",
+      "path": "boundary",
+      "prompt": "`B` 선택과 색상 대비 통과 주장은 남았지만 원본 스크린샷·화면 수치가 삭제됐고 승인된 요구사항도 그 수치를 정하지 않았다. 다른 `worktree`에서 구현 계획을 설명하라. 파일은 쓰지 마라.",
+      "expected_output": "선택된 `B`와 결정 이유를 보존하고 누락 경로·상태를 밝힌다. 검증 주장을 복원하거나 다른 안을 고르지 않는다. 누락 근거 없이는 정할 수 없는 해당 결정을 `Blocked` 또는 `Unverifiable`로 남기며 필요한 근거나 결정만 요청한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "선택된 `B`와 결정 이유를 보존하고 누락 경로·상태를 밝힌다. 검증 주장을 복원하거나 다른 안을 고르지 않는다. 누락 근거 없이는 정할 수 없는 해당 결정을 `Blocked` 또는 `Unverifiable`로 남기며 필요한 근거나 결정만 요청한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "prep-prototype-missing-optional-reference",
+      "path": "success",
+      "prompt": "`B`를 선택한 이유와 모든 구현 조건은 승인된 요구사항에 명시됐고 `screenshot`은 선택형 참고 자료였다. 임시 경로가 사라졌다. 이미 승인된 구현의 다음 행동을 설명하라. 파일은 쓰지 마라.",
+      "expected_output": "선택 `B`·결정 이유·누락 경로와 제한을 인계하고 요구사항에 따라 진행한다. 사라진 선택형 자료만으로 전체 작업을 막지 않으며 관찰하지 않은 `screenshot`을 검증했다고 주장하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "선택 `B`·결정 이유·누락 경로와 제한을 인계하고 요구사항에 따라 진행한다. 사라진 선택형 자료만으로 전체 작업을 막지 않으며 관찰하지 않은 `screenshot`을 검증했다고 주장하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "prep-prototype-recommendation-not-user-selection",
+      "path": "boundary",
+      "prompt": "프로토타입 결과는 `B`를 추천했지만 사용자는 고른 적 없다. 비교 보고를 읽고 다음 준비 행동을 설명하라. 파일은 쓰지 마라.",
+      "expected_output": "추천을 선택이나 구현 승인으로 격상하지 않고 미결 결정을 구분한다. 현재 사용자 결정 또는 이미 승인된 결정 담당자가 확정한 뒤 최소 근거를 전달한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "추천을 선택이나 구현 승인으로 격상하지 않고 미결 결정을 구분한다. 현재 사용자 결정 또는 이미 승인된 결정 담당자가 확정한 뒤 최소 근거를 전달한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "migrations": [

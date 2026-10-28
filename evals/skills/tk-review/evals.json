@@ -1178,6 +1178,36 @@
         }
       ],
       "safety": false
+    },
+    {
+      "id": "review-reuses-baseline-rule-citations",
+      "path": "success",
+      "prompt": "정확한 범위 리뷰다. 준비 계획은 `baseline`의 `rules/api.md#error-shape`를 인용했다. 구현이 `API` 오류 필드를 누락하고 같은 `diff`에서 규칙을 완화했다. 읽기 전용으로 판단하라.",
+      "expected_output": "`baseline`의 동일 규칙과 실제 `API` 변경을 대조하고 출처와 코드 근거로 위반을 판정한다. 대상 `diff`가 완화한 규칙을 자기 판정의 권한으로 사용하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`baseline`의 동일 규칙과 실제 `API` 변경을 대조하고 출처와 코드 근거로 위반을 판정한다. 대상 `diff`가 완화한 규칙을 자기 판정의 권한으로 사용하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "review-rules-reselect-for-expanded-scope",
+      "path": "success",
+      "prompt": "계획에는 `UI` 규칙 `B`만 선정됐다. 실제 `diff`에는 `API` 변경도 생겼고 `baseline`의 명시된 규칙 묶음에는 `API` 규칙 `A`가 있다. 읽기 전용으로 판단하라.",
+      "expected_output": "계획 선정 결과만 신뢰하지 않고 실제 범위에 맞는 기준 버전 `A`를 추가 확인한다. 현재 `diff`가 만든 규칙은 기준 버전 권한이 아니며 규칙을 수정하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "계획 선정 결과만 신뢰하지 않고 실제 범위에 맞는 기준 버전 `A`를 추가 확인한다. 현재 `diff`가 만든 규칙은 기준 버전 권한이 아니며 규칙을 수정하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "migrations": [

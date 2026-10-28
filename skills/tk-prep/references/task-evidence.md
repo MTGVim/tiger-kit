@@ -1,6 +1,6 @@
 # Task evidence
 
-Read the task source, instructions, code/callers, tests, commands, and Git state. If the task source is a child work item,
+Read the task source, instructions, code/callers, tests, commands, and Git state. When the task carries a prototype comparison or selection, read [selected prototype handoff](selection-handoff.md) before translating it into requirements or implementation decisions. If the task source is a child work item,
 read its parent work item's body and comments as the next source lookup, before opening linked documents or asking the
 user. The parent's explicit shared rules, including fallback and unresolved-decision instructions, govern the child; do
 not replace them with a conflicting child-level suggestion or linked document. Read parent comments for clarifications
@@ -16,6 +16,10 @@ settings file exists. Inspect available facts first, then ask only the
 remaining project-owned decisions and offer an exact approved settings
 draft. Never select a guessed issue source as an implementation contract.
 Ordinary local fixes require no tracker onboarding.
+
+When repository instructions or the task explicitly declare local rule bundles, read
+[project rule selection](project-rules.md) and carry applicable constraints and citations
+into the current plan, executor handoff and review obligations.
 
 Follow repository-defined documentation discovery/update procedures and verification commands within the approved scope;
 otherwise allow an optional search of root documents and documentation directories using changed paths or symbols.
