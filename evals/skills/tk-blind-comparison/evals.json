@@ -234,11 +234,11 @@
       "id": "versus-odd-both-co-winners",
       "path": "success",
       "prompt": "후보 다섯 개를 대결형으로 비교하겠습니다. 모두 마음에 들면 양쪽을 계속 진출시키고 공동 1위로 마칠 수 있게 해 주세요.",
-      "expected_output": "명시적 --mode versus를 사용하며 seed와 opaque identity를 재사용합니다. 홀수 부전승을 직접 확인하고 양쪽 진출을 보존합니다. 모든 생존 후보를 본 뒤 다음 라운드 시작에만 공동 1위를 제안하고 명시적 확인 후 확정합니다. 자동 동점 해소나 강제 단일 승자는 없으며 종료 선택도 취소할 수 있습니다.",
+      "expected_output": "명시적 `--mode versus`를 사용하며 무작위 배치의 기준값과 익명 식별자를 재사용합니다. 홀수 부전승을 직접 확인하고 양쪽 진출을 보존합니다. 모든 생존 후보를 본 뒤 다음 라운드 시작에만 공동 1위를 제안하고 명시적 확인 후 확정합니다. 자동 동점 해소나 강제 단일 승자는 없으며 종료 선택도 취소할 수 있습니다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "명시적 --mode versus를 사용하며 seed와 opaque identity를 재사용합니다. 홀수 부전승을 직접 확인하고 양쪽 진출을 보존합니다. 모든 생존 후보를 본 뒤 다음 라운드 시작에만 공동 1위를 제안하고 명시적 확인 후 확정합니다. 자동 동점 해소나 강제 단일 승자는 없으며 종료 선택도 취소할 수 있습니다."
+          "criterion": "명시적 `--mode versus`를 사용하며 무작위 배치의 기준값과 익명 식별자를 재사용합니다. 홀수 부전승을 직접 확인하고 양쪽 진출을 보존합니다. 모든 생존 후보를 본 뒤 다음 라운드 시작에만 공동 1위를 제안하고 명시적 확인 후 확정합니다. 자동 동점 해소나 강제 단일 승자는 없으며 종료 선택도 취소할 수 있습니다."
         },
         {
           "type": "git_head_unchanged"
@@ -249,11 +249,11 @@
       "id": "versus-replay-and-stale-import",
       "path": "success",
       "prompt": "대결을 중단했다가 파일을 옮겨 계속하고 싶습니다. 후보 내용 한 개가 바뀐 버전도 있습니다.",
-      "expected_output": "동일 revision에서 항목별 선택과 활성 항목을 reload/import로 재현합니다. study/version/revision, 전체 출력 fingerprint와 실패 상태, evaluator/revealed 및 event 순서를 검증합니다. 변경 콘텐츠에 기존 bracket을 재사용하지 않고 잘못된 입력은 현재 기록과 저장값을 보존해 거부합니다. 복사 실패에도 파일 export가 동작합니다.",
+      "expected_output": "동일한 `revision`에서 항목별 선택과 활성 항목을 다시 불러오거나 가져와 재현합니다. `study/version/revision`, 전체 출력 지문과 실패 상태, `evaluator/revealed` 및 사건 순서를 검증합니다. 변경 콘텐츠에 기존 대진표를 재사용하지 않고 잘못된 입력은 현재 기록과 저장값을 보존해 거부합니다. 복사 실패에도 파일 내보내기가 동작합니다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "동일 revision에서 항목별 선택과 활성 항목을 reload/import로 재현합니다. study/version/revision, 전체 출력 fingerprint와 실패 상태, evaluator/revealed 및 event 순서를 검증합니다. 변경 콘텐츠에 기존 bracket을 재사용하지 않고 잘못된 입력은 현재 기록과 저장값을 보존해 거부합니다. 복사 실패에도 파일 export가 동작합니다."
+          "criterion": "동일한 `revision`에서 항목별 선택과 활성 항목을 다시 불러오거나 가져와 재현합니다. `study/version/revision`, 전체 출력 지문과 실패 상태, `evaluator/revealed` 및 사건 순서를 검증합니다. 변경 콘텐츠에 기존 대진표를 재사용하지 않고 잘못된 입력은 현재 기록과 저장값을 보존해 거부합니다. 복사 실패에도 파일 내보내기가 동작합니다."
         },
         {
           "type": "git_head_unchanged"
@@ -264,11 +264,11 @@
       "id": "versus-failure-and-incomparable",
       "path": "success",
       "prompt": "세 후보 중 두 개가 생성에 실패했습니다. 남은 후보를 자동 1위로 삼지는 말아 주세요.",
-      "expected_output": "실패 표본과 비공개 진단을 버리지 않고 실패 목록·JSON roster·summary에 보존합니다. 성공 0/1개는 incomparable이고 승자가 없습니다. 성공 표본만 bracket에 참가하며 한쪽을 선택한 정당한 대결 뒤 남은 한 후보와 초기 비교 불가를 구분합니다.",
+      "expected_output": "실패 표본과 비공개 진단을 버리지 않고 실패 목록·JSON 후보 명단·요약에 보존합니다. 성공 0/1개는 `incomparable`이고 승자가 없습니다. 성공 표본만 대진표에 참가하며 한쪽을 선택한 정당한 대결 뒤 남은 한 후보와 초기 비교 불가를 구분합니다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "실패 표본과 비공개 진단을 버리지 않고 실패 목록·JSON roster·summary에 보존합니다. 성공 0/1개는 incomparable이고 승자가 없습니다. 성공 표본만 bracket에 참가하며 한쪽을 선택한 정당한 대결 뒤 남은 한 후보와 초기 비교 불가를 구분합니다."
+          "criterion": "실패 표본과 비공개 진단을 버리지 않고 실패 목록·JSON 후보 명단·요약에 보존합니다. 성공 0/1개는 `incomparable`이고 승자가 없습니다. 성공 표본만 대진표에 참가하며 한쪽을 선택한 정당한 대결 뒤 남은 한 후보와 초기 비교 불가를 구분합니다."
         },
         {
           "type": "git_head_unchanged"
@@ -279,11 +279,11 @@
       "id": "split-offline-private-key",
       "path": "success",
       "prompt": "파일 크기 기준을 임의로 만들지 말고 압축을 풀어 여는 대결형 ZIP을 주세요. 이름과 정답표는 공개하기 전까지 따로 보관하겠습니다.",
-      "expected_output": "--delivery split --mode versus로 index.html 및 익명 상대 경로 assets를 포함한 comparison.zip을 만들고 answer-key.json을 ZIP에서 제외합니다. 새 HTML에는 base64 후보명 mapping도 없습니다. 명시적으로 선택한 matching key를 검증한 뒤 별도 reveal 확인으로 공개합니다. file://에서 외부 요청 없이 이미지/음성/영상 decode와 링크를 실제 검증하며 확인하지 않은 브라우저 실패 원인을 단정하지 않습니다.",
+      "expected_output": "`--delivery split --mode versus`로 `index.html` 및 익명 상대 경로 `assets`를 포함한 `comparison.zip`을 만들고 `answer-key.json`을 ZIP에서 제외합니다. 새 HTML에는 `base64` 후보명 대응표도 없습니다. 명시적으로 선택한 일치하는 정답표를 검증한 뒤 별도 공개 확인을 거쳐 이름을 보여줍니다. `file://`에서 외부 요청 없이 이미지/음성/영상의 디코딩과 링크를 실제 검증하며 확인하지 않은 브라우저 실패 원인을 단정하지 않습니다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "--delivery split --mode versus로 index.html 및 익명 상대 경로 assets를 포함한 comparison.zip을 만들고 answer-key.json을 ZIP에서 제외합니다. 새 HTML에는 base64 후보명 mapping도 없습니다. 명시적으로 선택한 matching key를 검증한 뒤 별도 reveal 확인으로 공개합니다. file://에서 외부 요청 없이 이미지/음성/영상 decode와 링크를 실제 검증하며 확인하지 않은 브라우저 실패 원인을 단정하지 않습니다."
+          "criterion": "`--delivery split --mode versus`로 `index.html` 및 익명 상대 경로 `assets`를 포함한 `comparison.zip`을 만들고 `answer-key.json`을 ZIP에서 제외합니다. 새 HTML에는 `base64` 후보명 대응표도 없습니다. 명시적으로 선택한 일치하는 정답표를 검증한 뒤 별도 공개 확인을 거쳐 이름을 보여줍니다. `file://`에서 외부 요청 없이 이미지/음성/영상의 디코딩과 링크를 실제 검증하며 확인하지 않은 브라우저 실패 원인을 단정하지 않습니다."
         },
         {
           "type": "git_head_unchanged"
@@ -294,11 +294,11 @@
       "id": "versus-export-summary-not-ratings",
       "path": "success",
       "prompt": "대결 선택 JSON을 붙였습니다. 아직 끝나지 않은 항목과 공동 1위가 있습니다. 정체를 공개하지 말고 집계해 주세요.",
-      "expected_output": "기존 summarize - --key <matching-key> --blind가 mode:versus를 인식하고 revision/roster/event replay를 검증합니다. 점수나 평균으로 변환하지 않고 complete/pending/incomparable/failures와 사람의 선정 기록을 보고합니다. revealed flag를 현재 공개 권한으로 추론하지 않으며 평가자 1명 및 통계적 우열 미입증을 밝힙니다.",
+      "expected_output": "기존 `summarize - --key <matching-key> --blind`가 `mode:versus`를 인식하고 `revision/roster/event`의 재현을 검증합니다. 점수나 평균으로 변환하지 않고 `complete/pending/incomparable/failures`와 사람의 선정 기록을 보고합니다. `revealed` 값을 현재 공개 권한으로 추론하지 않으며 평가자 1명 및 통계적 우열 미입증을 밝힙니다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "기존 summarize - --key <matching-key> --blind가 mode:versus를 인식하고 revision/roster/event replay를 검증합니다. 점수나 평균으로 변환하지 않고 complete/pending/incomparable/failures와 사람의 선정 기록을 보고합니다. revealed flag를 현재 공개 권한으로 추론하지 않으며 평가자 1명 및 통계적 우열 미입증을 밝힙니다."
+          "criterion": "기존 `summarize - --key <matching-key> --blind`가 `mode:versus`를 인식하고 `revision/roster/event`의 재현을 검증합니다. 점수나 평균으로 변환하지 않고 `complete/pending/incomparable/failures`와 사람의 선정 기록을 보고합니다. `revealed` 값을 현재 공개 권한으로 추론하지 않으며 평가자 1명 및 통계적 우열 미입증을 밝힙니다."
         },
         {
           "type": "git_head_unchanged"
@@ -309,11 +309,11 @@
       "id": "legacy-gallery-and-prepared-html-boundary",
       "path": "success",
       "prompt": "기존 점수형 단일 HTML과 익명화한 HTML 원본 링크를 그대로 유지하면서 전달 방식만 추가해 주세요.",
-      "expected_output": "기본 gallery/single과 schema1 ratings의 점수·메모·즐겨찾기·부분 공개·복사·저장거부 대안을 보존합니다. primary kind는 media/text이고 prepared self-contained neutral HTML links만 기존 mechanism으로 제공합니다. raw producer HTML 실행, 임의 파일 재귀 수집, sandbox 보안 보장을 추가하지 않습니다.",
+      "expected_output": "기본 `gallery/single`과 `schema1 ratings`의 점수·메모·즐겨찾기·부분 공개·복사·저장거부 대안을 보존합니다. 주 표본의 `kind`는 `media/text`이고 사전 준비한 자체 완결형 익명 HTML 링크만 기존 방식으로 제공합니다. 제작자의 원시 HTML 실행, 임의 파일 재귀 수집, 격리 실행 보안 보장을 추가하지 않습니다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "기본 gallery/single과 schema1 ratings의 점수·메모·즐겨찾기·부분 공개·복사·저장거부 대안을 보존합니다. primary kind는 media/text이고 prepared self-contained neutral HTML links만 기존 mechanism으로 제공합니다. raw producer HTML 실행, 임의 파일 재귀 수집, sandbox 보안 보장을 추가하지 않습니다."
+          "criterion": "기본 `gallery/single`과 `schema1 ratings`의 점수·메모·즐겨찾기·부분 공개·복사·저장거부 대안을 보존합니다. 주 표본의 `kind`는 `media/text`이고 사전 준비한 자체 완결형 익명 HTML 링크만 기존 방식으로 제공합니다. 제작자의 원시 HTML 실행, 임의 파일 재귀 수집, 격리 실행 보안 보장을 추가하지 않습니다."
         },
         {
           "type": "git_head_unchanged"
