@@ -263,3 +263,35 @@ single PR/issue infographic. The destination-specific PNG branch is an original 
 correction grounded in the supplied long-page versus compact-image incident, not a claimed
 upstream PNG feature. Adapt existing inert SVG/capture helpers, evidence binding and change
 review; omit new dependencies, publishing authority and a second explanation shell.
+
+## Explanation selection and four principles (2026-10-30)
+
+Fresh default-branch HEADs were resolved through GitHub's commit API on 2026-10-30,
+then the following pinned files were inspected before distillation. These sources inform
+principles, not runtime dependencies. The selection reference and eval prompts are independently
+authored; no donor instruction block, renderer code, template, image or font is incorporated.
+Original license notices are retained in this package's `LICENSE.txt` for provenance.
+
+| Upstream / pinned revision | Inspected implementation and rationale | Keep / adapt / omit |
+| --- | --- | --- |
+| [JimLiu/baoyu-skills](https://github.com/JimLiu/baoyu-skills/tree/1567581c26ec29f4216c6e6835415bf30343b0e3), `1567581c26ec29f4216c6e6835415bf30343b0e3`, MIT | `skills/baoyu-infographic/SKILL.md` (layout/style, learning objectives and backend boundaries), `references/analysis-framework.md` under that skill, `docs/testing.md`, root `LICENSE` | Keep separate information structure and visual style; adapt source-faithful ordering to current explanation evidence and renderer; omit backend routing, EXTEND settings, quotas, default combinations and verbatim-only source constraints. |
+| [anthropics/skills canvas-design](https://github.com/anthropics/skills/tree/ca45fc496a3436251f191354091d557da31c15b5/skills/canvas-design), `ca45fc496a3436251f191354091d557da31c15b5`, Apache-2.0 | `skills/canvas-design/SKILL.md` (philosophy, hierarchy and contained readable text), package `LICENSE.txt`, repository tree for eval/NOTICE discovery | Keep intentional spatial hierarchy; adapt a brief design intent without deleting necessary explanatory text; omit art-only output, philosophy-document quotas, craft rhetoric, mandatory font downloads and bundled fonts. |
+| [OrRon/EpicInfographics](https://github.com/OrRon/EpicInfographics/tree/bf97e589df21302aacb24d9c7631393e81b9a015), `bf97e589df21302aacb24d9c7631393e81b9a015`, MIT | `skills/epic-infographics/SKILL.md`, its `references/composition.md`, `docs/PLAN.md` (composition and manual-eval rationale), root `LICENSE` and tree | Keep a meaningful focal subject and reading path; adapt a source-bound central scene only where fitting; omit blanket minimalism bans, claimed audience superiority, area/type ratios, Google Fonts, donor renderer, installation and motion machinery. |
+| [excalidraw/excalidraw](https://github.com/excalidraw/excalidraw/tree/e7b534668a60add7f725531f3c9abf32508c7b4e), `e7b534668a60add7f725531f3c9abf32508c7b4e`, MIT | `README.md` (hand-drawn editor and SVG export), `packages/element/src/renderElement.ts` (RoughJS canvas drawing), `packages/excalidraw/tests/export.test.tsx` (scale, metadata and transformed-image export), root `LICENSE` | Keep an approachable sketch idiom; adapt it as independent inert SVG under scene geometry/label checks; omit RoughJS/editor code, export metadata, collaboration, runtime, assets and fidelity claims. This treatment is contrasted with Excalidraw, not produced by it. |
+
+Evaluation limits: baoyu's testing document describes library/CLI coverage, not demonstrated
+infographic comprehension. Epic's plan describes manual brief/render assessment; no separately
+named automated eval/test file was found in its pinned tree. No canvas-design-specific eval or
+NOTICE file was found in the inspected tree. Excalidraw export tests were read, not executed,
+and do not establish the quality of independently authored sketches. None of the upstream
+runtimes or comparative efficacy was reproduced. The approved local preference evidence concerns
+one evaluator and one topic; the baoyu/canvas treatments were adaptations rather than formal skill
+runs, and two examples used built-in image generation. Do not generalize rankings or claim that
+image generation is unnecessary for every selected output.
+
+Legal/asset boundary: the three root licenses above are MIT; canvas-design's own license is
+Apache-2.0 with `Copyright 2026 Anthropic, PBC.`. Its bundled fonts have separate OFL notices;
+no bundled fonts, screenshots, artwork or third-party images are redistributed here. Future asset
+reuse needs the actual asset's terms and required attribution checked independently, not an
+assumption that the repository license covers every asset. Existing package notices remain intact.
+The four principle descriptions are selective independent adaptations, not copied source files.

@@ -12,7 +12,8 @@ metadata:
 
 # Visual Explanation
 
-Create one self-contained explanation of a concept, situation or concrete change. Ordinary
+Create one self-contained explanation of a concept, situation or concrete change, or multiple
+variants only when the user explicitly requests technique comparison or broad exploration. Ordinary
 text questions, defect reviews, implementation and product prototypes are outside this owner.
 Return `NotApplicable` without files for those requests. For answer-only feedback without a
 continued-artifact or saving request, go directly to step 5 and stay chat-only. Infer the topic
@@ -31,6 +32,14 @@ conditions and causal steps. Separate observations, inference and examples. A fi
 source set needs an inspected/partial/unavailable/omitted-with-reason account.
 
 ## 2. Select figures
+
+Read [explanation selection](references/explanation-selection.md) before selecting a presentation.
+Show up to five fitting recommendations with a reason and limitation for each; do not fill a quota.
+Normally produce one explanation. Explicit technique comparison permits up to five variants;
+explicit broad exploration permits up to fifteen. Comparing subjects alone does not request variants.
+Keep the four distilled principles in the available choice set, not behind another evaluation gate.
+The reference owns shared-evidence variant checks, blind-comparison handoff and consent-based
+external preference use; selecting a technique grants neither comparison nor memory-write consent.
 
 Choose the deliverable from the stated destination before laying it out. For an infographic
 or summary visual for a PR body or issue, default to one compact PNG without another format
