@@ -34,6 +34,10 @@ class TokenBudgetTest(unittest.TestCase):
         with temporary:
             path = candidate / 'skills/tk-explain/SKILL.md'
             path.write_text(path.read_text() + '\n' + ('x' * 1600), encoding='utf-8')
+            manifest_path = candidate / 'evals/token-budget.json'
+            manifest = json.loads(manifest_path.read_text())
+            manifest['rationales'].pop('skill_md:skills/tk-explain/SKILL.md', None)
+            manifest_path.write_text(json.dumps(manifest), encoding='utf-8')
             errors = compare_token_budget(base, candidate)
             self.assertTrue(any('unexplained context growth: skill_md:skills/tk-explain/SKILL.md' in e for e in errors), errors)
 

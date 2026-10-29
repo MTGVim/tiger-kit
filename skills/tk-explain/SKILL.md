@@ -53,8 +53,29 @@ For explanation pages, read [renderer contract](references/renderer-contract.md)
 Selected standalone SVG/video and chat-only feedback use their own checks and do not
 require archify. Verify the installed package and minimum version; absent, old or unverifiable installation means
 `Blocked` with an exact `tk-wizard` installation/update handoff, never automatic installation.
-Write the candidate in the run's temporary directory and run archify's complete explainer
-`finalize` command. Retain its validation/delivery/check receipt and truthful browser status.
+Write the candidate in the run's temporary directory. Before `finalize`, for both `change`
+and `concept` regardless of independent review, perform an author check: render a temporary
+HTML with `node <archify>/bin/archify.mjs deliver explainer candidate.archify.md author-check.html --json`
+(add the same `--repo-root <repo>` when needed), extract it with `scripts/visible_text.py`,
+and compare it with the authored candidate (including badge tones and diagram relationships):
+- Read [clear writing](references/clear-writing.md), "Content-led headings and labels": check
+  every heading, table row name/cell, callout title, scope note and diagram label. Name content
+  in the stated reader's vocabulary, make comparison subjects explicit, and keep one attribute
+  per comparison row rather than inventing categories.
+- Read [reader formatting](references/reader-formatting.md): each badge adds information and
+  its tone matches the fact; remove redundant badges and positive tones on neutral facts.
+- Match sentence-form headings, callout titles and table cells to the body's register; use
+  complete sentences for scope notes. For a Korean formal-polite body, use `~만듭니다` and
+  question headings like `~ㄹ까요?`. Explicit user voice takes precedence. Allow meaningful
+  short phrases in cells/labels and varied endings within one register; keep valid text unchanged.
+- Read [visual grammar](references/visual-grammar.md): a tree needs real parent/child relations;
+  keep parts or ingredients as a list/table when hierarchy adds no meaning.
+Fix the authored candidate, regenerate temporary HTML and repeat the check for changed content.
+Record checked candidate identity, findings/fixes or no-change result in the run evidence and
+mention completion in the execution report. Renderer-owned UI wording/tooltips remain P/R
+limitations, outside this check. This is authoring, not independent review or a Korean polishing pass.
+Then run archify's complete explainer `finalize` command on the checked candidate. Retain its
+validation/delivery/check receipt and truthful browser status.
 A failing command is not success. Honor the user's voice and existing language preferences
 from initial drafting; do not add a separate Korean polishing pass or change register to
 silence renderer warnings. Keep qualifications even when a writing warning suggests removal.
