@@ -94,22 +94,11 @@ Accepting media in that summary, a direct request or approved `evidenceMedia` op
 selection grants installation or publication authority. Preserve timing assertions and screenshot
 pairs. Narration is optional; its absence cannot block prep or verification.
 
-Resolve optional `evidenceMedia` fields independently: current explicit instruction > ignored
-`.tigerkit/repository.json` > user `${XDG_CONFIG_HOME:-~/.config}/tigerkit/settings.json` > team
-`tigerkit.config.json` > defaults (`enabled: false`, `format: auto`, `narration: false`,
-`voice: sohee`). A missing upper field retains a lower value. Validate `enabled`/`narration`
-as booleans, `format` as `auto | gif | mp4`, and `voice` as `serena | sohee`; reject a malformed
-media object, disclose it and use safe media defaults for that run without overwriting its file.
-Pass the effective format/narration/voice to the capture/movie owners.
-If saved `gif` and selected narration conflict, resolve voice MP4 versus caption-only GIF in that
-same approval summary; do not silently change format, disable narration or claim audio in a GIF.
-
-When no saved media choice exists, append `이 선택을 기본값으로 저장할까요?` to that same
-media suggestion line as the user accepts or declines it. Name the user settings destination and
-exact proposed values; do not create another question stage or treat accepting this run's movie
-as consent to save. Save only when the user approves the destination and values, merging only
-the approved `evidenceMedia` fields atomically while preserving unrelated settings; reread them
-before continuing. On refusal or no save consent, apply only the current run's media choice.
-Remember the declined/offered prompt in the active conversation so retries and child phases do
-not repeat it; do not persist a prompt ledger, hidden opt-in or refusal flag. A new independent
-run may offer it again. An explicit request to save defaults uses the same approval/write contract.
+Before that media choice, read [media choices](media-preferences.md) for the complete optional
+`evidenceMedia` schema, per-field precedence, safe defaults and malformed-object handling.
+Resolve missing narration and presentation fields plus `이 선택을 기본값으로 저장할까요?` in
+that same ordinary-chat round; reuse answered/saved values. Pass values, their sources and the
+save-offer disposition to the capture/movie owners. A selected movie is not save consent.
+Only explicitly approved fields/destination may use its atomic merge/readback contract, preserving
+unrelated settings. Keep GIF/narration conflicts in that same round; do not silently change format
+or sound. Save refusal/current-run choices pass through child phases without repeating the offer.

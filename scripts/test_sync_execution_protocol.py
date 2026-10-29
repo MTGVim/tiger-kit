@@ -208,6 +208,22 @@ class SyncExecutionProtocolTest(unittest.TestCase):
             self.assertIn(sync_execution_protocol.RESULT_SUMMARY_BLOCK, path.read_text(encoding="utf-8"))
         self.assertEqual(sync_execution_protocol.result_summary_errors(self.root / "skills"), [])
 
+    def test_media_choices_are_package_local_and_all_copies_detect_drift(self) -> None:
+        source = self.root / "skills/tk-video/references/media-preferences.md"
+        source.parent.mkdir(parents=True, exist_ok=True)
+        source.write_bytes((Path(__file__).resolve().parents[1] /
+                           "skills/tk-video/references/media-preferences.md").read_bytes())
+        self.assertEqual(self.run_main(), 0)
+        targets = [self.root / "skills" / name / "references/media-preferences.md"
+                   for name in ("tk-prep", "tk-explain", "tk-browser-verify", "tk-audit", "tk-research")]
+        for target in targets:
+            self.assertFalse(target.is_symlink())
+            self.assertEqual(target.read_bytes(), source.read_bytes())
+            target.write_text("stale choices")
+            self.assertEqual(self.run_main("--check"), 1)
+            self.assertEqual(self.run_main(), 0)
+            self.assertEqual(target.read_bytes(), source.read_bytes())
+
     def test_research_and_repository_context_drift_fail_and_repair(self) -> None:
         self.assertEqual(self.run_main(), 0)
         for name in ("html-output.md", "clear-writing.md", "repository-context.md"):

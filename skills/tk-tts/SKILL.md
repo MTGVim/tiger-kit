@@ -20,6 +20,9 @@ Run `scripts/list_options.py` for supported local routes without importing engin
 actual device/dependencies/cache before proposing options: Qwen3 0.6B CustomVoice MLX 5bit is the
 Apple Silicon recommendation, ppaso ONNX CPU the lightweight Korean option; retain explicit
 Qwen MLX 8bit and official PyTorch. Discovery is not runtime/model readiness or a quality ranking.
+Present every `list_options.py` route with its device/platform, voices and dependency/cache setup
+status; past evaluations affect recommendations only, never which engines are shown. Reuse the
+ordinary-chat question format below and retain unsupported/uninstalled routes with their limits.
 Read [installation and pins](references/installation.md) before verification, download or synthesis.
 Reuse verified setup and matching approval. Resolve material engine/voice choices before work;
 never silently switch engines after a failure or install into a global environment.

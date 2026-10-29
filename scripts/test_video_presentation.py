@@ -173,6 +173,21 @@ class VideoPresentationTests(unittest.TestCase):
             with self.assertRaises(ValueError): self.build("bad.mp4")
             self.assertFalse((self.root/"bad.mp4").exists())
 
+    def test_captions_off_preserves_selected_callouts_and_capture_zoom(self):
+        self.data["caption_style"] = "none"
+        self.data["callouts"] = [{"start_ms":0,"end_ms":3000,"x":100,"y":100,"text":"A fact"}]
+        self.data["highlights"] = [{"start_ms":500,"end_ms":2500,"zoom":True,
+            "rects":[{"x":100,"y":220,"w":160,"h":60}]}]
+        result = self.build("callout-without-captions.mp4")
+        self.assertEqual(result["media_status"], "ready")
+        self.assertEqual(result["subtitles"], "none")
+        self.assertEqual(result["height"], 360)
+        self.assertEqual(result["presentation"]["caption_boxes"], [])
+        self.assertTrue(result["presentation"]["callout_boxes"])
+        self.assertTrue(result["presentation"]["zoom_plan"])
+        self.assertFalse(Path(result["path"]).with_suffix(".srt").exists())
+        self.bounds(self.pixels(result), lambda r,g,b:min(r,g,b)>225)
+
     def test_missing_libass_blocks_callouts_even_without_captions(self):
         self.data["captions"]=[]
         self.data["callouts"]=[{"start_ms":0,"end_ms":3000,"x":100,"y":100,"text":"A fact"}]

@@ -19,6 +19,31 @@ Qwen5bit's two weights total about 1.76GB; ppaso's eight ONNX/external-data file
 These are model-file sizes, not full install or memory figures. The model card's conversion-time
 mlx-audio version is not proof of compatibility with the current pinned runtime.
 
+## Installation footprint and dependency scope
+
+Before setup, distinguish model bytes, compressed wheel/download bytes, expanded venv/runtime,
+retained installation cache and peak temporary/headroom needs. Model size alone is never the
+installation estimate. Select wheels for the actual OS, architecture and Python version; sum their
+metadata sizes and include transitive dependencies plus expanded files in the estimate. State the
+basis and uncertainty, not an invented exact total. If metadata/sizes are unavailable, label that
+part unknown and use a comparable environment observation rather than the model-only number.
+Do not download/install merely to estimate without the corresponding authority.
+
+A supplied installation observation (2026-10-29, macOS arm64, Python 3.12, ppaso ONNX dedicated
+venv plus model) was about 406MB, versus about 38.50MB of model files. It is a user-reported
+measurement, not a native measurement performed by this skill or a cross-platform guarantee.
+For a comparable setup, use roughly 0.4GB as the observed installed-footprint reference and add
+separate wheel-cache/temporary headroom; do not advertise a 38.50MB total installation. Other
+engines need their selected platform's own wheel/dependency estimate; do not reuse ppaso's total.
+After approved installation, measure venv/model/cache separately on that host and report actual
+bytes and environment, comparing them with the plan instead of silently changing its meaning.
+
+The current `ppaso-files.json` fixes versions/hashes for five core runtime packages, not a complete
+transitive lock. Installation plans must explicitly disclose `하위 의존성은 해시 고정이 없습니다`.
+Resolve/list transitive versions and their wheel sources in the approved plan; do not claim
+`--require-hashes` completeness or deterministic full-environment reproduction. Preserve all
+existing core/model pins; never invent unverified transitive hashes to silence this disclosure.
+
 After approved installation/download, use the selected venv Python:
 
 ```bash

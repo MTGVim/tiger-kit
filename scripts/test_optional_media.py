@@ -43,6 +43,8 @@ class OptionalMediaTests(unittest.TestCase):
             self.assertEqual(movie.timeline(data, root)[1], 5000)
             row["hold_ms"] = 2000
             self.assertEqual(movie.timeline(data, root)[1], 2000)
+            row.pop("hold_ms"); data["caption_style"] = "none"
+            self.assertEqual(movie.timeline(data, root)[1:], (3000, []))
 
     @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "media tools unavailable")
     def test_caption_pixels_and_band_center_at_two_sizes_and_override(self):
@@ -381,6 +383,43 @@ class OptionalMediaTests(unittest.TestCase):
             data["frames"][0]["hold_ms"] = 100
             manifest.write_text(json.dumps(data))
             with self.assertRaises(ValueError): movie.build(manifest, root / "too-short.mp4")
+
+    @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "media tools unavailable")
+    def test_narration_with_explicit_captions_off_keeps_audio_and_all_voice_guards(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); image = root / "card.png"; png(image, (40, 90, 120))
+            audio = root / "speech.wav"
+            with wave.open(str(audio), "wb") as wav:
+                wav.setparams((1, 2, 22050, 0, "NONE", "not compressed"))
+                wav.writeframes(b"".join(struct.pack("<h", int(8000 * math.sin(i * 2 * math.pi * 440 / 22050))) for i in range(11025)))
+            data = {"mode": "explainer", "narration_requested": True, "caption_style": "none",
+                    "frames": [{"path": str(image), "source_kind": "rendered", "source_in_picture": True,
+                                "caption": "Still retained in authored source", "audio_path": str(audio), "hold_ms": 1000}]}
+            manifest = root / "manifest.json"; manifest.write_text(json.dumps(data))
+            # Captions-off must not depend on a libass-capable binary.
+            with patch.object(movie, "subtitle_filter", return_value=False) as filters:
+                result = movie.build(manifest, root / "voice-only.mp4")
+                filters.assert_not_called()
+            self.assertEqual(result["media_status"], "ready")
+            self.assertTrue(result["audio"])
+            self.assertEqual(result["subtitles"], "none")
+            self.assertEqual(result["subtitles_reason"], "user-disabled")
+            self.assertEqual(result["caption_band_px"], 0)
+            self.assertIsNone(result["captions_path"])
+            self.assertFalse((root / "voice-only.srt").exists())
+            self.assertFalse(any(s["codec_type"] == "subtitle" for s in movie.probe(root / "voice-only.mp4")["streams"]))
+            data["frames"][0].pop("audio_path"); manifest.write_text(json.dumps(data))
+            missing = movie.build(manifest, root / "missing-audio.mp4")
+            self.assertIn("narration-missing", missing["media_validation"]["errors"])
+            self.assertNotIn("narration-subtitles-short", missing["media_validation"]["errors"])
+            with wave.open(str(audio), "wb") as wav:
+                wav.setparams((1, 2, 22050, 0, "NONE", "not compressed")); wav.writeframes(b"\0" * 11025)
+            data["frames"][0]["audio_path"] = str(audio); manifest.write_text(json.dumps(data))
+            silent = movie.build(manifest, root / "silent.mp4")
+            self.assertIn("narration-silent", silent["media_validation"]["errors"])
+            data["caption_style"] = "band"; data["captions"] = []; manifest.write_text(json.dumps(data))
+            enabled = movie.build(manifest, root / "enabled-empty.mp4")
+            self.assertIn("narration-subtitles-short", enabled["media_validation"]["errors"])
 
     @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "media tools unavailable")
     def test_removed_narration_and_missing_audio_preserve_captioned_movie(self):

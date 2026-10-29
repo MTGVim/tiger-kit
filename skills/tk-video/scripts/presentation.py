@@ -40,8 +40,8 @@ def union(rects):
 
 def validate(data, width, height, end):
     style = data.get("caption_style", "band")
-    if style not in ("band", "overlay", "overlay-rounded"):
-        raise ValueError("caption_style must be band, overlay or overlay-rounded")
+    if style not in ("none", "band", "overlay", "overlay-rounded"):
+        raise ValueError("caption_style must be none, band, overlay or overlay-rounded")
     calls, highlights = data.get("callouts", []), data.get("highlights", [])
     if not isinstance(calls, list) or not isinstance(highlights, list):
         raise ValueError("callouts and highlights must be lists")
@@ -323,7 +323,7 @@ def prepare(data, captions, width, height, end, size, fps, ffmpeg, stage, env, w
     zoom = zoom_filter(plans,width,height,fps)
     if zoom: filters.append(zoom)
     boxes = []
-    if style != "band" and captions:
+    if style in {"overlay", "overlay-rounded"} and captions:
         events,boxes = caption_events(captions,style,metrics,width,height,size,plans,calls,float(fps),warnings)
         (stage/"overlay-captions.ass").write_text(document(width,height,events),encoding="utf-8")
     return filters,{"caption_style":style,"caption_boxes":boxes,"callout_boxes":calls,"zoom_plan":plans,

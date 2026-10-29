@@ -1911,6 +1911,21 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "video-handoff-requires-dedicated-slides-and-shared-choice",
+      "path": "success",
+      "prompt": "설명 페이지를 강의형 영상으로 옮겨줘. 아직 음성과 연출을 선택하지 않았어.",
+      "expected_output": "내레이션과 연출·저장 여부를 같은 라운드에서 해결하거나 전체 질문 라운드를 `tk-video`에 위임한다. 페이지 패널을 자르지 않고 영상 전용 슬라이드를 다시 작성하도록 장면·근거와 함께 인계하며, 부모가 확인한 선택은 자식에서 다시 묻지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "내레이션과 연출·저장 여부를 같은 라운드에서 해결하거나 전체 질문 라운드를 `tk-video`에 위임한다. 페이지 패널을 자르지 않고 영상 전용 슬라이드를 다시 작성하도록 장면·근거와 함께 인계하며, 부모가 확인한 선택은 자식에서 다시 묻지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "renamed_from": {

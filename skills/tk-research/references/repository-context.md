@@ -22,10 +22,11 @@ credentials into settings.
 | --- | --- |
 | `evidenceMedia` fields | current request > `.tigerkit/repository.json` > user `${XDG_CONFIG_HOME:-~/.config}/tigerkit/settings.json` > `tigerkit.config.json` > safe defaults |
 
-This personal-media preference adds the existing user settings layer without changing unrelated
-repository-policy precedence. Its schema and one-line save offer belong to the owning runtime-plan approval summary. Preserve existing `html`, `verificationDataPolicy`
-and other user settings during an approved atomic merge/readback. The save offer remains within
-the existing runtime-plan summary; absence of this preference does not trigger setup onboarding.
+This personal-media preference adds the user settings layer without changing unrelated
+repository-policy precedence. Read [media choices](media-preferences.md) for the complete schema
+(including captions, emphasis, callouts and slide theme), defaults, first-round choice and
+approved atomic merge/readback contract. Prep, direct video and explanation handoffs use the
+same contract. A missing media preference does not trigger unrelated setup onboarding.
 
 A missing **material** decision triggers minimal onboarding within the owning
 skill: inspect repo origin, existing tracker/issue facts, existing

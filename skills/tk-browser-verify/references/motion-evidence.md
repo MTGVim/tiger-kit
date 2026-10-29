@@ -1,16 +1,11 @@
 # Optional capture for video
 
 Read when a demo capture is requested or the current request, accepted runtime-plan summary or
-approved opt-in selects a GIF/MP4 supplement. Resolve `evidenceMedia` per field in this order:
-current explicit request, `.tigerkit/repository.json`, user
-`${XDG_CONFIG_HOME:-~/.config}/tigerkit/settings.json`, team `tigerkit.config.json`, then defaults.
-Missing upper fields retain lower values. Optional keys are `enabled: boolean`,
-`format: auto | gif | mp4`, `narration: boolean`, `voice: serena | sohee`.
-Defaults are `enabled: false`, `format: auto`, `narration: false`, `voice: sohee`.
-Reject a malformed `evidenceMedia` object and use these safe defaults for the run; disclose the
-invalid setting and preserve its file rather than silently enabling media through a lower layer.
-Pass the resolved voice to `tk-video` only when narration is selected. Preferences grant no installs
-or publication, and a missing movie never blocks verification.
+approved opt-in selects a GIF/MP4 supplement. Read [media choices](media-preferences.md) for
+all `evidenceMedia` field types, precedence, defaults and malformed-object handling. Pass the
+resolved format/narration/voice and presentation values, their sources and current choice/save
+disposition to `tk-video`; it resolves any still-missing presentation choices before production.
+Preferences grant no installs or publication, and a missing movie never blocks verification.
 
 ## Media-only phase
 

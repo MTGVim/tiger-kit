@@ -45,7 +45,8 @@ For rendered cards, `source_in_picture: true` declares an inspected source tag a
 in the image and suppresses the caption prefix. The declaration never marks the frame as capture.
 Without it, `source_label` supplies a nonempty label in the audience's language; the Korean default
 is `렌더링 장면`. Empty narration captions still fail the subtitle coverage check even when
-source provenance appears in the image.
+source provenance appears in the image, unless the user explicitly selected `caption_style: none`.
+With captions disabled, keep the source tag inside every rendered card.
 
 For observed per-scene narration, add `scenes: [{"start_ms": 0, "audio_path": "/absolute/run/scene.wav"}]`
 to the `evidence` manifest. Starts must be strictly increasing actual scene boundaries inside
@@ -60,7 +61,7 @@ to its hold and joins the clips in order. Explicit holds shorter than their audi
 use false only when narration was not selected or a caption-only fallback was accepted.
 Do not combine scene audio with the separate full-track `--audio` input. Never guess duration
 from character count. Bind audio only to accepted current scene text and ensure
-captions cover it. No narration failure authorizes invented observed waiting time. `evidence`
+captions cover it when enabled. No narration failure authorizes invented observed waiting time. `evidence`
 returns `timing: observed`; `explainer` returns `timing: presentation`. Neither is a timing assertion.
 
 Keep frames, scene WAVs and output inside the manifest directory; output must be a new path.
@@ -74,7 +75,8 @@ narration limitation. Retain original sources independently of output and screen
 
 ## Optional captions, callouts and zoom
 
-Use these fields only for the selected presentation treatment. Defaults retain the existing
+Resolve these fields before production through [media choices](media-preferences.md), including
+saved values and the first-round save offer. Use them only for the selected presentation treatment. Defaults retain the existing
 `band` captions and untransformed frames. A single evaluator's variant preferences support that
 creator's choice, not a universal default or evidence of improved learning.
 
@@ -94,10 +96,17 @@ changes; a stale rectangle cannot protect a moving target. `rects` describe alre
 highlights; assembly does not invent UI state or draw disappearance badges. Include any required
 in-picture source tag in the protected rectangles or retain a source label in the captions.
 
-- `caption_style`: `band` (default), `overlay` (square 50% black libass box) or
+- `caption_style`: `none` (explicit user choice: no hard/soft captions, band or SRT),
+  `band` (default), `overlay` (square 50% black libass box) or
   `overlay-rounded` (50% black ASS vector box and white text). Overlays preserve source height
   except existing even padding. Default text size is 5% of that height; `--caption-size` still
   applies. Boxes sit 6% above the bottom. SRT sidecars remain unchanged by styling.
+  With `none`, keep `narration_requested: true` for selected narration; only subtitle coverage
+  is skipped. Missing/silent audio still fails. The receipt returns `subtitles: none`,
+  `subtitles_reason: user-disabled`, `captions_path: null` and no sidecar. Caption-only reading time is excluded from default holds; measured audio plus
+  breathing room and explicit holds still apply. Authored caption text
+  may remain in the source but is not rendered. Callouts remain separately selected and still
+  need libass; captions-off does not disable selected callouts or their checks.
 - `callouts`: original-frame top-left `x/y`, plain `text`, observed interval and optional nominal
   `size` (default 2.5% of source height, minimum 12px). Render a white card with a thin border,
   left accent, dark text and light shadow. Actual libass glyph bounds determine wrapping and

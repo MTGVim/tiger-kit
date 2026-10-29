@@ -14,6 +14,15 @@ class TTSOwnerTests(unittest.TestCase):
             rows=list_options.options();self.assertEqual({x['id'] for x in rows},{'qwen3-mlx-5bit','ppaso-onnx','qwen3-mlx-8bit','qwen3-pytorch'});self.assertTrue(all(not x['runtime_verified'] for x in rows));net.assert_not_called()
         self.assertIn('5bit',qwen3.mlx_adapter().manifest()['repository']);self.assertIn('8bit',qwen3.mlx_adapter().manifest(8)['repository'])
         self.assertNotEqual(qwen3.mlx_adapter().manifest()['files']['model.safetensors'],qwen3.mlx_adapter().manifest(8)['files']['model.safetensors'])
+    def test_option_setup_status_never_claims_model_readiness_from_module_presence(self):
+        for found, expected in [(None, 'missing'), (object(), 'modules-present-unverified')]:
+            with patch.object(list_options.importlib.util, 'find_spec', return_value=found):
+                rows = list_options.options()
+            self.assertEqual(len(rows), 4)
+            self.assertTrue(all(row['dependency_status'] == expected for row in rows))
+            self.assertTrue(all(row['model_cache_status'] == 'not-inspected' for row in rows))
+            self.assertTrue(all(row['runtime_verified'] is False for row in rows))
+
     def test_mac_wheels_have_hashes_and_dictionary_is_pinned(self):
         d=ppaso.manifest();self.assertIn('python-mecab-ko-dic',d['dependencies'])
         for name in ['numpy','soundfile','python-mecab-ko','onnxruntime']:

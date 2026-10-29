@@ -96,7 +96,7 @@ def timeline(data: dict, root: Path, ffprobe: str = "ffprobe") -> tuple[list[tup
                 label = row.get("source_label", "렌더링 장면")
                 if not isinstance(label, str) or not label.strip(): raise ValueError("source_label must be nonempty text")
                 caption = "[" + label + "] " + caption
-            hold = number(row.get("hold_ms", max(3000, len(caption) * 125, voice_duration + 800)))
+            hold = number(row.get("hold_ms", max(3000, (0 if data.get("caption_style") == "none" else len(caption) * 125), voice_duration + 800)))
             if hold <= 0: raise ValueError("presentation holds must be positive")
             if hold < voice_duration: raise ValueError("scene hold is shorter than accepted narration")
             if caption: scene_captions.append({"start_ms": cursor, "end_ms": cursor + hold, "text": caption})
@@ -109,7 +109,7 @@ def timeline(data: dict, root: Path, ffprobe: str = "ffprobe") -> tuple[list[tup
         start, stop = number(row["start_ms"]), number(row["end_ms"])
         if not 0 <= start < stop <= end or not isinstance(row["text"], str):
             raise ValueError("invalid caption interval/text")
-    return frames, end, captions
+    return frames, end, [] if data.get("caption_style") == "none" else captions
 
 
 def load_manifest(path: Path) -> tuple[list[tuple[Path, float]], float, list[dict]]:
@@ -239,7 +239,8 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
           fps: float | None = None, crf: int | None = None, caption_size: float | None = None) -> dict:
     manifest = regular(manifest)
     data = json.loads(manifest.read_text(encoding="utf-8"))
-    ffmpeg, ffprobe, caption_support = media_tools(ffmpeg, True)
+    ffmpeg, ffprobe, caption_support = media_tools(
+        ffmpeg, data.get("caption_style", "band") != "none" or bool(data.get("callouts")))
     root = manifest.parent
     frames, end, captions = timeline(data, root, ffprobe)
     mode = data.get("mode", "evidence")
@@ -275,7 +276,7 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
     width, height = math.ceil(source_width/2)*2, math.ceil(source_height/2)*2
     caption_style, callouts, highlights = presentation.validate(data, source_width, source_height, end)
     layout = caption_layout(source_height, mode == "evidence" and caption_style == "band", caption_size)
-    enhanced = caption_style != "band" or bool(callouts) or bool(highlights)
+    enhanced = caption_style not in {"band", "none"} or bool(callouts) or bool(highlights)
     if enhanced:
         for image, _ in frames[1:]:
             geometry = next(s for s in probe(image, ffprobe)["streams"] if s["codec_type"] == "video")
@@ -319,9 +320,9 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
             warnings.append("GIF has no audio; scene narration omitted")
         if narration_requested:
             if audio is None: errors.append("narration-missing")
-            if not captions:
+            if caption_style != "none" and not captions:
                 errors.append("narration-subtitles-short")
-        if audio is not None and captions and max(row["end_ms"] for row in captions) < audio_duration:
+        if caption_style != "none" and audio is not None and captions and max(row["end_ms"] for row in captions) < audio_duration:
             errors.append("narration-subtitles-short")
         lines = ["ffconcat version 1.0"]
         hashes = []
@@ -440,6 +441,7 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
             "contact_sheet": str(contact),
             "prerequisite": "ffmpeg-subtitles-filter" if (captions and not burn) or presentation_blocked else None,
             "subtitles": "hard" if burn else "soft" if soft else "sidecar" if captions else "none",
+            "subtitles_reason": "user-disabled" if caption_style == "none" else None,
             "caption_size_px": layout["size_px"] if burn else None,
             "caption_band_px": layout["band_px"] if burn else 0,
             "captions_path": str(sidecar) if sidecar else None,

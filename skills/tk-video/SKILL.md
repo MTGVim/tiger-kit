@@ -21,9 +21,11 @@ a flow; it does not establish application correctness, latency, performance or r
 Resolve the audience, claim, selected format and available scene sources. Prefer stills when
 motion itself is not the claim. A short flow around ten seconds often fits GIF; longer explanation
 fits MP4. Reuse supplied material and approved choices without another routine question.
-For a human-facing tutorial, resolve narration and cursor/input overlays with format in the same
-existing choice, only where not already selected. Give captions reading time and measured narration
-at least 800ms of breathing room. Plan each crop and highlight its region before zooming in.
+Before production, read [media choices](references/media-preferences.md): resolve saved fields,
+ask unresolved narration/presentation and the default-save offer in one ordinary-chat round,
+and pass answered choices through parent/child phases. Reuse selections; save only explicitly
+approved fields through that reference's atomic merge/readback contract. Give captions reading time and measured narration
+at least 800ms of breathing room. For captures, plan each selected crop and highlight its region before zooming in.
 
 List each scene's source, caption, optional narration and hold or observed timestamp. Label rendered
 cards with a corner source tag in the audience's language and declare `source_in_picture: true`
@@ -36,7 +38,10 @@ authentication, test data, actual input/capture and resource lifecycle. Return t
 ordered, publication-safe frame paths and provenance. Do not import a sibling skill's script path.
 If that owner is unavailable, report the missing capture; do not invent a replacement.
 
-Create cards with an already available renderer, retaining their authored source. HTML cards may
+For authored cards, read [slide authoring](references/slide-authoring.md) before rendering;
+retain the full scene-copy list and author-check result in inspection evidence. Use the resolved
+slide theme (light fallback), in-slide emphasis unless another treatment was selected, and keep
+assembler zoom off by default. Create cards with an already available renderer, retaining their authored source. HTML cards may
 use an already approved headless rendering boundary; installed plotting/rendering tools are also
 eligible. No dependency installation or user-profile attachment follows from choosing video.
 
@@ -79,8 +84,8 @@ Until then preserve reusable frames/audio/manifests and report retained frame by
 Release capture resources through their owning verifier.
 
 Generation authorizes no publication. Hand selected attachments to `tk-pr-media` only when upload
-is separately authorized. This skill changes no application source, Git state, global settings,
-credentials. It creates only the requested movie, scene sources and run-owned evidence, plus the
+is separately authorized. This skill changes no application source, Git state or credentials; its only settings write
+is the explicitly approved media-preference merge. It creates only the requested movie, scene sources and run-owned evidence, plus the
 selected audio artifacts. `tk-tts` owns its separately approved installation and model cache.
 
 Design sources and deliberate omissions are recorded in [sources](references/sources.md).

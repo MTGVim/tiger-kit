@@ -27,3 +27,14 @@ Keep longest-input/equal-cache smoke and actual/expected runtime diagnostics. Om
 model/engine fallback, untested short-utterance retry rules and a new blind-gallery skill.
 Actual model synthesis/listening on target hardware must be reported separately from mocked
 adapter tests, source/pin inspection and missing-runtime diagnostics.
+
+
+## Setup transparency (2026-10-29)
+
+Inspected the current package-local `ppaso-files.json` core dependency/wheel hashes and
+`list_options.py` discovery behavior at TigerKit `e672abcc0fedc8b91766266c8117a21496f02cbe`.
+Keep the five core pins; disclose the absence of a complete transitive lock rather than inventing
+hashes or claiming full reproducibility. Adapt the supplied macOS arm64/Python 3.12 observation
+(about 406MB venv plus model) as a clearly attributed footprint reference; it is not a fresh native
+installation measurement. Omit model/runtime upgrades, hidden engine exclusion and automatic
+setup merely to obtain a size. Option discovery remains offline and imports no engine.

@@ -41,3 +41,21 @@ and [Wait UX](https://fluent2.microsoft.design/wait-ux) support the one-second t
 [Primer loading](https://primer.style/product/ui-patterns/loading/) supports indeterminate
 feedback but does not establish that exact threshold. [EBU R128](https://tech.ebu.ch/publications/r128)
 supports -23 LUFS programme loudness; preserve -18 as tk-tts's default and actual listening.
+
+## Presentation planning, slides and captions-off (2026-10-29)
+
+Fresh [FFmpeg filter documentation](https://github.com/FFmpeg/FFmpeg/blob/31ba826726fd0d1547f2c22e041848d1d7f3f860/doc/filters.texi)
+was inspected at current HEAD `31ba826726fd0d1547f2c22e041848d1d7f3f860`, including subtitles/libass,
+zoompan's explicit size/rate/timing and the installed FFmpeg encode/decode behavior. Keep existing
+capture-coordinate and text-effect checks; adapt captions-off by omitting subtitle filters/tracks
+while preserving audio validation. Omit new renderers, tool installation and implicit effects.
+The shared media-choice/save contract extends TigerKit's existing runtime-verification preference
+contract; the supplied repeated-assembly incident motivates one first-round resolution across
+parents and direct video, without adding a runtime dispatcher or new standing authority.
+
+Slide copy criteria selectively adapt TigerKit's `tk-explain` clear-writing/reader-formatting
+contracts (source baseline `e672abcc0fedc8b91766266c8117a21496f02cbe`) to predicate completeness,
+consistent register, caption/narration semantics and comparison visibility. Keep actual frame and
+listening checks separate; omit a sibling-package runtime import or full prose-review pipeline.
+Light slides and in-slide emphasis are authoring fallbacks for this workflow, not empirical claims
+of universally better learning. Explicit/saved choices take precedence.

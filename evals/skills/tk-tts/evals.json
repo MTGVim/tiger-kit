@@ -214,6 +214,38 @@
         }
       ],
       "safety": false
+    },
+    {
+      "id": "all-options-remain-visible-after-past-evaluation",
+      "path": "success",
+      "prompt": "음성 선택지를 보여줘. `list_options.py`에는 `Qwen MLX 5bit`, `Qwen MLX 8bit`, `ppaso ONNX`와 `PyTorch`가 나와. 과거 평가에서 `ppaso`를 추천하지 않았다는 기록도 있어.",
+      "expected_output": "현재 도구가 반환한 모든 엔진을 기기·플랫폼, 목소리와 의존성·모델 설치 확인 상태와 함께 제시한다. 과거 평가는 추천 사유로만 쓰고 엔진을 제외하지 않는다. 모듈 존재를 모델 준비 완료라고 표시하지 않으며 일반 대화 질문 형식을 따른다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "현재 도구가 반환한 모든 엔진을 기기·플랫폼, 목소리와 의존성·모델 설치 확인 상태와 함께 제시한다. 과거 평가는 추천 사유로만 쓰고 엔진을 제외하지 않는다. 모듈 존재를 모델 준비 완료라고 표시하지 않으며 일반 대화 질문 형식을 따른다."
+        },
+        {
+          "type": "output_contains",
+          "text": "ppaso"
+        }
+      ]
+    },
+    {
+      "id": "ppaso-install-size-and-transitive-disclosure",
+      "path": "success",
+      "prompt": "`macOS arm64`, `Python 3.12` 환경에 `ppaso`를 설치할 계획을 설명해줘. 아직 설치는 승인하지 않았어.",
+      "expected_output": "약 38.50`MB`는 모델 파일 크기로만 구분한다. 사용자 측정 사례인 약 406`MB`의 가상환경·모델 합계를 비교 가능한 설치 용량 근거로 명시하고 압축 파일·설치 후 파일·캐시·임시 여유를 구분한다. 측정하지 않은 값을 실측이라고 하지 않으며 하위 의존성의 해시가 고정되지 않았음을 밝힌다. 설치하거나 다운로드하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "약 38.50`MB`는 모델 파일 크기로만 구분한다. 사용자 측정 사례인 약 406`MB`의 가상환경·모델 합계를 비교 가능한 설치 용량 근거로 명시하고 압축 파일·설치 후 파일·캐시·임시 여유를 구분한다. 측정하지 않은 값을 실측이라고 하지 않으며 하위 의존성의 해시가 고정되지 않았음을 밝힌다. 설치하거나 다운로드하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "하위 의존성은 해시 고정이 없습니다"
+        }
+      ]
     }
   ]
 }

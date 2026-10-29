@@ -16,6 +16,6 @@ def options():
             try:found=importlib.util.find_spec(name) is not None
             except (ModuleNotFoundError,ValueError):found=False
             if not found:missing.append(name)
-        rows.append({'id':id,'model':d['repository'],'revision':d['revision'],'device':device,'platform_supported':apple if 'mlx' in id else True,'missing_modules':missing,'runtime_verified':False,'speakers':speakers,'recommended':id==('qwen3-mlx-5bit' if apple else 'qwen3-pytorch'),'network_for_synthesis':False,'installation_or_model_download':'requires prior approval; inspect selected manifest and cache'})
+        rows.append({'id':id,'model':d['repository'],'revision':d['revision'],'device':device,'platform_supported':apple if 'mlx' in id else True,'missing_modules':missing,'dependency_status':'missing' if missing else 'modules-present-unverified','model_cache_status':'not-inspected','runtime_verified':False,'speakers':speakers,'recommended':id==('qwen3-mlx-5bit' if apple else 'qwen3-pytorch'),'network_for_synthesis':False,'installation_or_model_download':'requires prior approval; inspect selected manifest and cache'})
     return rows
 if __name__=='__main__':print(json.dumps({'options':options(),'note':'Module discovery is not runtime, model, pronunciation or license verification. Browser speech is a playback fallback, not an exported-audio engine.'},ensure_ascii=False,indent=2))

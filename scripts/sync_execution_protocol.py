@@ -382,6 +382,11 @@ def main() -> int:
     boundaries = ROOT / "skills/tk-audit/references/security-boundaries.md"
     pairs.extend((boundaries, ROOT / "skills" / name / "references/security-boundaries.md")
                  for name in ("tk-review", "tk-prep", "tk-pr-respond"))
+    media_preferences = ROOT / "skills/tk-video/references/media-preferences.md"
+    if media_preferences.is_file():
+        pairs.extend((media_preferences, ROOT / "skills" / name / "references/media-preferences.md")
+                     for name in ("tk-prep", "tk-explain", "tk-browser-verify", "tk-audit", "tk-research")
+                     if (ROOT / "skills" / name).is_dir())
     context = ROOT / "skills/tk-audit/references/repository-context.md"
     if context.is_file():
         pairs.extend((context, ROOT / "skills" / name / "references/repository-context.md")
