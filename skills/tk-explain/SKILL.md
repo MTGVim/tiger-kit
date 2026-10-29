@@ -32,6 +32,10 @@ source set needs an inspected/partial/unavailable/omitted-with-reason account.
 
 ## 2. Select figures
 
+Choose the deliverable from the stated destination before laying it out. For an infographic
+or summary visual for a PR body or issue, default to one compact PNG without another format
+question; read [summary image](references/summary-image.md). For that destination, create an
+explanation page only when requested. An explicit page/HTML request retains the page route even for a PR destination.
 Use the archify explainer page layout for every explanation page. For components, calls, states and data
 flow, use its native diagrams. For scenes, spatial relationships or physical placement,
 read [scene figures](references/scene-figures.md), draw SVG and embed converted PNG with
@@ -50,8 +54,9 @@ Neither selected output changes the evidence obligation or authorizes publicatio
 ## 3. Render
 
 For explanation pages, read [renderer contract](references/renderer-contract.md).
-Selected standalone SVG/video and chat-only feedback use their own checks and do not
-require archify. Verify the installed package and minimum version; absent, old or unverifiable installation means
+Selected summary PNG, standalone SVG/video and chat-only feedback use their own checks and do not
+require archify. The rest of this step applies only to explanation pages.
+Verify the installed package and minimum version; absent, old or unverifiable installation means
 `Blocked` with an exact `tk-wizard` installation/update handoff, never automatic installation.
 Write the candidate in the run's temporary directory. Before `finalize`, for both `change`
 and `concept` regardless of independent review, perform an author check: render a temporary
@@ -82,9 +87,11 @@ silence renderer warnings. Keep qualifications even when a writing warning sugge
 
 ## 4. Check accuracy
 
-Independent review is on by default for `change`, pages containing scene figures, explicit
+Independent review is on by default for `change` (including summary PNG), pages containing scene figures, explicit
 live interaction and an explicit review request. Other `concept` pages use source/static
 checks without independent review by default. State which ran; do not imply review occurred.
+For summary PNG review, give a fresh reviewer the final image, source content,
+`evidence.md` and reader constraints; apply the same factual correction/recheck obligations below.
 For archify review, give a fresh reviewer the entire [review rubric](references/review-rubric.md),
 exact saved HTML, `evidence.md`, reader goal/constraints, extracted text and scene/capture
 images. Use `scripts/visible_text.py`; use `scripts/capture_page.mjs` when local Chrome is
@@ -111,11 +118,11 @@ skip or stop; ordinary answer feedback alone need not produce another file.
 ## 6. Deliver
 
 Resolve an explicit destination first, then `artifacts.durableRoot`, then
-`.tigerkit/explanations/<slug>.html` using [artifact paths](references/artifact-paths.md).
+`.tigerkit/explanations/<slug>.html` (or `<slug>.png` for a summary image) using [artifact paths](references/artifact-paths.md).
 Preserve overwrite authority and choose a numeric suffix for an occupied default.
 Keep archify working files in `.tigerkit/tmp/tk-explain/<run-id>/`; keep `evidence.md`, receipts,
 review records and captures in `.tigerkit/evidence/tk-explain/<run-id>/`. Reuse the same evidence
-snapshot with reviewers. The final HTML must open alone with no external requests; source
+snapshot with reviewers. For PNG, follow its image checks rather than HTML/archify gates. The final HTML must open alone with no external requests; source
 links may be clickable without being fetched at startup. Check embedded assets and source
 bindings even when review is off. Return a concise link, actual checks and material limits.
 `Pass` requires the saved artifact, passing applicable renderer/static gates and any required

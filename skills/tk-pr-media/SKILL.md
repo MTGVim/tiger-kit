@@ -76,7 +76,7 @@ Before any upload or PR body/comment update, reverify the explicitly selected ta
 ## Execution Receipt · Single Evidence Record
 
 Record every upload attempt in the single receipt below. It is not a separate lifecycle
-output; it is the sole evidence record used for the `## GitHub media upload` result and
+output; it is the sole evidence record used for the localized media-upload result and
 approval/verification decisions. Use `none` or `unavailable` for absent values; never guess.
 
 ```text
@@ -140,8 +140,11 @@ blocked, the parent cannot claim full completion.
 
 ## Result
 
-Start the terminal response with `## GitHub media upload`. Include `## Uploaded`,
-`## Verification`, and `## Cleanup` when applicable. End the result-owning section with exactly
+Use the user's response language for the result heading and applicable uploaded,
+verification and cleanup headings. In Korean, use `## GitHub 미디어 업로드`,
+`## 업로드 결과`, `## 검증`, and `## 정리`; in English, use `## GitHub media upload`,
+`## Uploaded`, `## Verification`, and `## Cleanup`. Keep machine-readable receipt keys
+and the status line unchanged. End the result-owning section with exactly
 one `Status: Pass|Fail|Pending|Blocked|Unverifiable` line. Expose asset URLs only when safe and
 redact signed parameters.
 

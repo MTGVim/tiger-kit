@@ -1881,6 +1881,36 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "pr-infographic-defaults-to-one-png",
+      "path": "success",
+      "prompt": "PR에 넣을 실측 기반 인포그래픽을 만들어줘. 이전/이후 수치와 측정 조건은 이 대화에서 검증했고 페이지는 요청하지 않았어.",
+      "expected_output": "추가 형식 질문 없이 한 장 `PNG`를 제작한다. 임시 SVG/`HTML`은 허용하되 `archify` 설명 페이지를 최종 산출물로 만들지 않는다. 최종 이미지를 검사하고 수치·단위·비교 기준·조건을 근거와 대조하며 `change` 독립 정확성 리뷰를 유지한다. 업로드 권한은 확대하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "추가 형식 질문 없이 한 장 `PNG`를 제작한다. 임시 SVG/`HTML`은 허용하되 `archify` 설명 페이지를 최종 산출물로 만들지 않는다. 최종 이미지를 검사하고 수치·단위·비교 기준·조건을 근거와 대조하며 `change` 독립 정확성 리뷰를 유지한다. 업로드 권한은 확대하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "pr-explicit-html-keeps-page-route",
+      "path": "success",
+      "prompt": "PR에서 링크할 변경 설명 `HTML` 페이지를 만들어줘. `PNG`는 요청하지 않았어.",
+      "expected_output": "명시한 `HTML` 페이지 요청을 우선하고 `archify` `author check/finalize`와 `change` 독립 정확성 리뷰를 유지한다. PR 목적지라는 이유만으로 `PNG`로 바꾸지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "명시한 `HTML` 페이지 요청을 우선하고 `archify` `author check/finalize`와 `change` 독립 정확성 리뷰를 유지한다. PR 목적지라는 이유만으로 `PNG`로 바꾸지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "renamed_from": {

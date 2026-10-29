@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import {writeFile, realpath} from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
+import {realpathSync} from 'node:fs';
 import {withPage, evaluate} from './chrome_capture.mjs';
 
 export async function capture(input, output, width = 1440) {
@@ -30,7 +31,7 @@ export async function capture(input, output, width = 1440) {
     await writeFile(output, Buffer.from(data, 'base64'), {flag: 'wx'});
   });
 }
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href) {
   if (process.argv.length < 4 || process.argv.length > 5) { console.error('Usage: capture_page.mjs input.html new-output.png [width]'); process.exitCode = 2; }
   else { try { await capture(process.argv[2], process.argv[3], Number(process.argv[4] || 1440)); } catch (e) { console.error(e.message); process.exitCode = 1; } }
 }

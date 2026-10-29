@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import {readFile, writeFile} from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
+import {realpathSync} from 'node:fs';
 import {withPage, evaluate} from './chrome_capture.mjs';
 
 export async function convert(input, output) {
@@ -18,7 +19,7 @@ export async function convert(input, output) {
     await writeFile(output, Buffer.from(png, 'base64'), {flag: 'wx'});
   });
 }
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href) {
   if (process.argv.length !== 4) { console.error('Usage: svg_to_png.mjs input.svg new-output.png'); process.exitCode = 2; }
   else { try { await convert(...process.argv.slice(2)); } catch (e) { console.error(e.message); process.exitCode = 1; } }
 }

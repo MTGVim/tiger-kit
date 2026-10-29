@@ -253,3 +253,13 @@ card elevation, bounded spacing and accessible selected controls in the shared t
 Omit document navigation, upstream code copying, external fonts and runtime replacement.
 All blind candidates receive the same styles. This is a visual adaptation, not a claim
 that the specialized interfaces use archify or that its usability was independently proven.
+
+## Destination-specific summary images (2026-10-29)
+
+Fresh upstream `tt-a1i/archify@d6059331abbddb49bca380ff46dca8ce33158b04` remains
+unchanged. Reviewed explainer authoring, artifact selection and CLI delivery/finalize tests.
+Keep its explainer page contract for explicit pages; omit the page runtime for a requested
+single PR/issue infographic. The destination-specific PNG branch is an original TigerKit
+correction grounded in the supplied long-page versus compact-image incident, not a claimed
+upstream PNG feature. Adapt existing inert SVG/capture helpers, evidence binding and change
+review; omit new dependencies, publishing authority and a second explanation shell.

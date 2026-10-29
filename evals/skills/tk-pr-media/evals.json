@@ -813,6 +813,22 @@
           "expected": "Blocked"
         }
       ]
+    },
+    {
+      "id": "localized-result-preserves-machine-status",
+      "path": "success",
+      "prompt": "한국어로 답해줘. 승인된 PR 이미지 업로드와 토큰 1회 일치, 이미지 바이트 대조, 업로드 `ref` 도달성 검증이 완료됐어. 결과를 보고해줘.",
+      "expected_output": "결과와 적용되는 업로드·검증·정리 머리말을 한국어로 쓴다. 기계가 읽는 `Status: Pass` 줄은 정확히 한 번 원문 그대로 유지하며 실제 검증·정리 상태만 보고한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "결과와 적용되는 업로드·검증·정리 머리말을 한국어로 쓴다. 기계가 읽는 `Status: Pass` 줄은 정확히 한 번 원문 그대로 유지하며 실제 검증·정리 상태만 보고한다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
     }
   ],
   "renamed_from": {

@@ -144,7 +144,7 @@ After repository investigation establishes a concrete implementation topology, r
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Approval and local mutation
 
-Before any frontier or missing approval, read [question rounds](references/questions.md) in this turn. Make the approval request itself a separate numbered `Q` in the final question block; preserve existing approval and defer a dependent approval until its scope is actionable.
+Before frontier/approval questions, read [question rounds](references/questions.md). Put missing approval in its own final `Q`; preserve prior authority and resolve scope first. While approval is pending, follow [pending replies](references/pending-approval.md).
 
 First check whether the active request or an earlier decision already authorizes the concrete scope. If not, perform no source/test/config/Seed/Git mutation and present one natural summary covering goal, scope,
 decisions, approach, testing/TDD, runtime verification plan (verifier, baseline, evidence location), semantic review obligations, execution shape, workspace setup, and local

@@ -33,6 +33,52 @@ class ExplainTools(unittest.TestCase):
             self.assertIn('Blocked', result.stderr)
             self.assertFalse(dest.exists())
 
+    def test_cli_real_and_symlink_usage_and_missing_browser_are_not_silent(self):
+        scripts = [SCRIPTS / 'capture_page.mjs', SCRIPTS / 'svg_to_png.mjs',
+                   ROOT / 'skills/tk-research/scripts/svg_to_png.mjs']
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            page = root / 'input.html'
+            page.write_text('<!doctype html><h1>Capture</h1>')
+            svg = root / 'input.svg'
+            svg.write_text('<svg xmlns="http://www.w3.org/2000/svg" width="560" height="200"/>')
+            for index, script in enumerate(scripts):
+                # Reproduce installation through a linked package directory.
+                link = root / f'package-{index}'
+                link.symlink_to(script.parent.parent, target_is_directory=True)
+                for entry in (script, link / 'scripts' / script.name):
+                    with self.subTest(entry=entry):
+                        usage = subprocess.run(['node', str(entry)], capture_output=True, text=True, timeout=30)
+                        self.assertEqual(usage.returncode, 2, usage.stderr)
+                        self.assertIn('Usage:', usage.stderr)
+                        output = root / 'missing-browser.png'
+                        source = page if script.name == 'capture_page.mjs' else svg
+                        result = subprocess.run(['node', str(entry), str(source), str(output)],
+                            env={**os.environ, 'CHROME_PATH': str(root / 'missing')},
+                            capture_output=True, text=True, timeout=30)
+                        self.assertNotEqual(result.returncode, 0)
+                        self.assertIn('Blocked', result.stderr)
+                        self.assertFalse(output.exists())
+
+    def test_import_with_cli_arguments_never_runs_entrypoint(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for index, script in enumerate([SCRIPTS / 'capture_page.mjs', SCRIPTS / 'svg_to_png.mjs',
+                    ROOT / 'skills/tk-research/scripts/svg_to_png.mjs']):
+                link = root / f'package-{index}'
+                link.symlink_to(script.parent.parent, target_is_directory=True)
+                entry = link / 'scripts' / script.name
+                wrapper = root / 'import.mjs'
+                wrapper.write_text(f'import * as helper from {str(entry.as_uri())!r};\n'
+                                   'console.log(typeof (helper.capture || helper.convert));')
+                output = root / 'unexpected.png'
+                result = subprocess.run(['node', str(wrapper), 'missing-input', str(output)],
+                    capture_output=True, text=True, timeout=30)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(result.stdout.strip(), 'function')
+                self.assertEqual(result.stderr, '')
+                self.assertFalse(output.exists())
+
     @unittest.skipUnless(os.environ.get('TK_CHROMIUM_EXECUTABLE'), 'Local Chrome not configured')
     def test_svg_image_is_inert_transparent_double_resolution_and_page_capture_is_full(self):
         from PIL import Image
@@ -60,3 +106,26 @@ class ExplainTools(unittest.TestCase):
             with Image.open(capture) as img:
                 self.assertGreaterEqual(img.height, 11000)
                 self.assertEqual(img.width, 800)
+
+    @unittest.skipUnless(os.environ.get('TK_CHROMIUM_EXECUTABLE'), 'Local Chrome not configured')
+    def test_symlink_cli_produces_decodable_png(self):
+        from PIL import Image
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            html, svg = root / 'input.html', root / 'input.svg'
+            html.write_text('<!doctype html><style>body{margin:0}</style><h1>Capture</h1>')
+            svg.write_text('<svg xmlns="http://www.w3.org/2000/svg" width="560" height="200"/>')
+            for index, script in enumerate([SCRIPTS / 'capture_page.mjs', SCRIPTS / 'svg_to_png.mjs',
+                    ROOT / 'skills/tk-research/scripts/svg_to_png.mjs']):
+                link = root / f'package-{index}'
+                link.symlink_to(script.parent.parent, target_is_directory=True)
+                source = html if script.name == 'capture_page.mjs' else svg
+                output = root / f'capture-{index}.png'
+                result = subprocess.run(['node', str(link / 'scripts' / script.name), str(source), str(output)],
+                    env={**os.environ, 'CHROME_PATH': os.environ['TK_CHROMIUM_EXECUTABLE']},
+                    capture_output=True, text=True, timeout=40)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                with Image.open(output) as image:
+                    self.assertEqual(image.format, 'PNG')
+                    self.assertGreater(image.width, 0)
+                    self.assertGreater(image.height, 0)
