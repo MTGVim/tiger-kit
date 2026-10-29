@@ -11,13 +11,19 @@ pytorch` with explicit auto/cpu/mps/cuda selection. `mlx-files.json`, `mlx-8bit-
 `qwen3-files.json` own exact model revisions, package/wheel hashes and compatible versions.
 `ppaso.py` uses pinned ONNX CPU only, with `ppaso-files.json` owning the model/runtime file and
 wheel metadata. Do not carry 8bit weight hashes to 5bit or confuse CustomVoice with Base.
+`supertonic3.py` is an opt-in Korean CPU/F1 route; `supertonic3-files.json` pins the archived
+model, official helper/code license and three core runtime packages. Retain the existing defaults.
 
 Use `${XDG_CACHE_HOME:-~/.cache}/tigerkit/tts/mlx/`, `tts/qwen3/` or `tts/ppaso/`, with a dedicated
-venv, installation cache and `snapshots/<revision>`. Select compatible wheels from the manifest,
+venv, installation cache and `snapshots/<revision>`. Supertonic 3 uses `tts/supertonic3/`.
+Select compatible wheels from the manifest,
 verify SHA256 before installing into the approved venv and retain dependency/lexicon notices.
 Qwen5bit's two weights total about 1.76GB; ppaso's eight ONNX/external-data files about 38.50MB.
 These are model-file sizes, not full install or memory figures. The model card's conversion-time
 mlx-audio version is not proof of compatibility with the current pinned runtime.
+Supertonic 3's selected model/config/F1/license files total about 398.68MB; its helper, environment
+and installation cache are additional. Its core pins are NumPy 2.2.6, soundfile 0.13.1 and
+onnxruntime 1.23.1; inspect compatible wheels before choosing the dedicated Python environment.
 
 ## Installation footprint and dependency scope
 
@@ -43,6 +49,8 @@ transitive lock. Installation plans must explicitly disclose `하위 의존성�
 Resolve/list transitive versions and their wheel sources in the approved plan; do not claim
 `--require-hashes` completeness or deterministic full-environment reproduction. Preserve all
 existing core/model pins; never invent unverified transitive hashes to silence this disclosure.
+The Supertonic 3 manifest likewise pins only its three core packages, not a complete transitive
+lock. Disclose `하위 의존성은 해시 고정이 없습니다` in its installation plan too.
 
 After approved installation/download, use the selected venv Python:
 
@@ -51,6 +59,7 @@ python -B scripts/qwen3.py --engine mlx --quantization 5 --download --verify
 python -B scripts/qwen3.py --engine mlx --quantization 8 --verify
 python -B scripts/qwen3.py --engine pytorch --verify
 python -B scripts/ppaso.py --download --verify
+python -B scripts/supertonic3.py --download --verify
 ```
 
 Resolve paths from this package, not the caller's working directory. `--model-dir` accepts an
@@ -66,6 +75,14 @@ Both models declare Apache-2.0. Preserve their model/license/readme and relevant
 attributions; the manifests exclude ppaso sample avatars/VRM, RKNN, Vocos and lipsync assets.
 Core ppaso needs NumPy, soundfile, python-mecab-ko with its pinned dictionary and onnxruntime; use the pinned manifest, not
 upstream's unbounded requirements. Do not bundle weights in TigerKit Git history.
+
+Supertonic 3 differs: its model is OpenRAIL-M and the official helper is MIT. Preserve both
+licenses in the verified snapshot. Attachment A(e) requires expressly intelligible disclosure
+that generated content is machine-generated. Tell the user this requirement when selecting or
+delivering this engine; suggest `이 음성은 AI로 합성되었습니다.` and return the receipt's notice.
+This is user guidance, not automatic labeling or proof that a downstream video carries a notice.
+The archived upstream provides no maintenance/security fixes. No SDK auto-download, server,
+voice cloning or extra presets are included; download only the pinned model files and helper.
 
 `--verify` checks module availability, actual pinned versions and snapshot hashes, not native
 synthesis quality. Report actual/expected mismatches and a venv restoration command without

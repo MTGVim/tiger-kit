@@ -1,0 +1,540 @@
+{
+  "repository": "supertone-oss-archive/supertonic-3",
+  "revision": "aafc6e32416a594460b32413efc49d7fe4ce6d46",
+  "license": "OpenRAIL-M",
+  "code_revision": "1e9799e964ea4c0dad7cde993b65c3c813a7b373",
+  "code_license": "MIT",
+  "upstream_status": "archived",
+  "disclosure_required": true,
+  "disclosure_notice": "이 음성은 AI로 합성되었습니다.",
+  "model_bytes": 398677444,
+  "files": {
+    "LICENSE": "0d944a9110fed9a9602d60e0423a272903e7bd21ab060490774efc77c2275e9f",
+    "README.md": "d414e4b085fb9989ebfd2b64f868ff861694022b4bdb805b09e702386dbdc7d5",
+    "onnx/duration_predictor.onnx": "c3eb91414d5ff8a7a239b7fe9e34e7e2bf8a8140d8375ffb14718b1c639325db",
+    "onnx/text_encoder.onnx": "c7befd5ea8c3119769e8a6c1486c4edc6a3bc8365c67621c881bbb774b9902ff",
+    "onnx/tts.json": "42078d3aef1cd43ab43021f3c54f47d2d75ceb4e75f627f118890128b06a0d09",
+    "onnx/unicode_indexer.json": "9bf7346e43883a81f8645c81224f786d43c5b57f3641f6e7671a7d6c493cb24f",
+    "onnx/vector_estimator.onnx": "883ac868ea0275ef0e991524dc64f16b3c0376efd7c320af6b53f5b780d7c61c",
+    "onnx/vocoder.onnx": "085de76dd8e8d5836d6ca66826601f615939218f90e519f70ee8a36ed2a4c4ba",
+    "voice_styles/F1.json": "bbdec6ee00231c2c742ad05483df5334cab3b52fda3ba38e6a07059c4563dbc2",
+    "runtime/helper.py": "b14b1da8a018aa4db6ca8cbb927c32590bfc889b49116ea344c56e8351d94279",
+    "runtime/LICENSE": "0dfe0d0ba84416fe3879d9a34f4909d8d0137c78d1e95834177b0414ac096fa2"
+  },
+  "file_urls": {
+    "runtime/helper.py": "https://raw.githubusercontent.com/supertone-oss-archive/supertonic/1e9799e964ea4c0dad7cde993b65c3c813a7b373/py/helper.py",
+    "runtime/LICENSE": "https://raw.githubusercontent.com/supertone-oss-archive/supertonic/1e9799e964ea4c0dad7cde993b65c3c813a7b373/LICENSE"
+  },
+  "dependencies": {
+    "numpy": "2.2.6",
+    "soundfile": "0.13.1",
+    "onnxruntime": "1.23.1"
+  },
+  "runtime_pins": {
+    "numpy": {
+      "version": "2.2.6",
+      "requires_python": ">=3.10",
+      "requires_dist": null,
+      "wheels": [
+        {
+          "filename": "numpy-2.2.6-cp310-cp310-macosx_10_9_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/9a/3e/ed6db5be21ce87955c0cbd3009f2803f59fa08df21b5df06862e2d8e2bdd/numpy-2.2.6-cp310-cp310-macosx_10_9_x86_64.whl",
+          "sha256": "b412caa66f72040e6d268491a59f2c43bf03eb6c96dd8f0307829feb7fa2b6fb",
+          "bytes": 21165245
+        },
+        {
+          "filename": "numpy-2.2.6-cp310-cp310-macosx_11_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/22/c2/4b9221495b2a132cc9d2eb862e21d42a009f5a60e45fc44b00118c174bff/numpy-2.2.6-cp310-cp310-macosx_11_0_arm64.whl",
+          "sha256": "8e41fd67c52b86603a91c1a505ebaef50b3314de0213461c7a6e99c9a3beff90",
+          "bytes": 14360048
+        },
+        {
+          "filename": "numpy-2.2.6-cp310-cp310-macosx_14_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/fd/77/dc2fcfc66943c6410e2bf598062f5959372735ffda175b39906d54f02349/numpy-2.2.6-cp310-cp310-macosx_14_0_arm64.whl",
+          "sha256": "37e990a01ae6ec7fe7fa1c26c55ecb672dd98b19c3d0e1d1f326fa13cb38d163",
+          "bytes": 5340542
+        },
+        {
+          "filename": "numpy-2.2.6-cp310-cp310-macosx_14_0_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/7a/4f/1cb5fdc353a5f5cc7feb692db9b8ec2c3d6405453f982435efc52561df58/numpy-2.2.6-cp310-cp310-macosx_14_0_x86_64.whl",
+          "sha256": "5a6429d4be8ca66d889b7cf70f536a397dc45ba6faeb5f8c5427935d9592e9cf",
+          "bytes": 6878301
+        },
+        {
+          "filename": "numpy-2.2.6-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/eb/17/96a3acd228cec142fcb8723bd3cc39c2a474f7dcf0a5d16731980bcafa95/numpy-2.2.6-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "sha256": "efd28d4e9cd7d7a8d39074a4d44c63eda73401580c5c76acda2ce969e0a38e83",
+          "bytes": 14297320
+        },
+        {
+          "filename": "numpy-2.2.6-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/b4/63/3de6a34ad7ad6646ac7d2f55ebc6ad439dbbf9c4370017c50cf403fb19b5/numpy-2.2.6-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "sha256": "fc7b73d02efb0e18c000e9ad8b83480dfcd5dfd11065997ed4c6747470ae8915",
+          "bytes": 16801050
+        },
+        {
+          "filename": "numpy-2.2.6-cp310-cp310-musllinux_1_2_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/07/b6/89d837eddef52b3d0cec5c6ba0456c1bf1b9ef6a6672fc2b7873c3ec4e2e/numpy-2.2.6-cp310-cp310-musllinux_1_2_aarch64.whl",
+          "sha256": "74d4531beb257d2c3f4b261bfb0fc09e0f9ebb8842d82a7b4209415896adc680",
+          "bytes": 15807034
+        },
+        {
+          "filename": "numpy-2.2.6-cp310-cp310-musllinux_1_2_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/01/c8/dc6ae86e3c61cfec1f178e5c9f7858584049b6093f843bca541f94120920/numpy-2.2.6-cp310-cp310-musllinux_1_2_x86_64.whl",
+          "sha256": "8fc377d995680230e83241d8a96def29f204b5782f371c532579b4f20607a289",
+          "bytes": 18614185
+        },
+        {
+          "filename": "numpy-2.2.6-cp310-cp310-win32.whl",
+          "url": "https://files.pythonhosted.org/packages/5b/c5/0064b1b7e7c89137b471ccec1fd2282fceaae0ab3a9550f2568782d80357/numpy-2.2.6-cp310-cp310-win32.whl",
+          "sha256": "b093dd74e50a8cba3e873868d9e93a85b78e0daf2e98c6797566ad8044e8363d",
+          "bytes": 6527149
+        },
+        {
+          "filename": "numpy-2.2.6-cp310-cp310-win_amd64.whl",
+          "url": "https://files.pythonhosted.org/packages/a3/dd/4b822569d6b96c39d1215dbae0582fd99954dcbcf0c1a13c61783feaca3f/numpy-2.2.6-cp310-cp310-win_amd64.whl",
+          "sha256": "f0fd6321b839904e15c46e0d257fdd101dd7f530fe03fd6359c1ea63738703f3",
+          "bytes": 12904620
+        },
+        {
+          "filename": "numpy-2.2.6-cp311-cp311-macosx_10_9_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/da/a8/4f83e2aa666a9fbf56d6118faaaf5f1974d456b1823fda0a176eff722839/numpy-2.2.6-cp311-cp311-macosx_10_9_x86_64.whl",
+          "sha256": "f9f1adb22318e121c5c69a09142811a201ef17ab257a1e66ca3025065b7f53ae",
+          "bytes": 21176963
+        },
+        {
+          "filename": "numpy-2.2.6-cp311-cp311-macosx_11_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/b3/2b/64e1affc7972decb74c9e29e5649fac940514910960ba25cd9af4488b66c/numpy-2.2.6-cp311-cp311-macosx_11_0_arm64.whl",
+          "sha256": "c820a93b0255bc360f53eca31a0e676fd1101f673dda8da93454a12e23fc5f7a",
+          "bytes": 14406743
+        },
+        {
+          "filename": "numpy-2.2.6-cp311-cp311-macosx_14_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/4a/9f/0121e375000b5e50ffdd8b25bf78d8e1a5aa4cca3f185d41265198c7b834/numpy-2.2.6-cp311-cp311-macosx_14_0_arm64.whl",
+          "sha256": "3d70692235e759f260c3d837193090014aebdf026dfd167834bcba43e30c2a42",
+          "bytes": 5352616
+        },
+        {
+          "filename": "numpy-2.2.6-cp311-cp311-macosx_14_0_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/31/0d/b48c405c91693635fbe2dcd7bc84a33a602add5f63286e024d3b6741411c/numpy-2.2.6-cp311-cp311-macosx_14_0_x86_64.whl",
+          "sha256": "481b49095335f8eed42e39e8041327c05b0f6f4780488f61286ed3c01368d491",
+          "bytes": 6889579
+        },
+        {
+          "filename": "numpy-2.2.6-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/52/b8/7f0554d49b565d0171eab6e99001846882000883998e7b7d9f0d98b1f934/numpy-2.2.6-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "sha256": "b64d8d4d17135e00c8e346e0a738deb17e754230d7e0810ac5012750bbd85a5a",
+          "bytes": 14312005
+        },
+        {
+          "filename": "numpy-2.2.6-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/b3/dd/2238b898e51bd6d389b7389ffb20d7f4c10066d80351187ec8e303a5a475/numpy-2.2.6-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "sha256": "ba10f8411898fc418a521833e014a77d3ca01c15b0c6cdcce6a0d2897e6dbbdf",
+          "bytes": 16821570
+        },
+        {
+          "filename": "numpy-2.2.6-cp311-cp311-musllinux_1_2_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/83/6c/44d0325722cf644f191042bf47eedad61c1e6df2432ed65cbe28509d404e/numpy-2.2.6-cp311-cp311-musllinux_1_2_aarch64.whl",
+          "sha256": "bd48227a919f1bafbdda0583705e547892342c26fb127219d60a5c36882609d1",
+          "bytes": 15818548
+        },
+        {
+          "filename": "numpy-2.2.6-cp311-cp311-musllinux_1_2_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/ae/9d/81e8216030ce66be25279098789b665d49ff19eef08bfa8cb96d4957f422/numpy-2.2.6-cp311-cp311-musllinux_1_2_x86_64.whl",
+          "sha256": "9551a499bf125c1d4f9e250377c1ee2eddd02e01eac6644c080162c0c51778ab",
+          "bytes": 18620521
+        },
+        {
+          "filename": "numpy-2.2.6-cp311-cp311-win32.whl",
+          "url": "https://files.pythonhosted.org/packages/6a/fd/e19617b9530b031db51b0926eed5345ce8ddc669bb3bc0044b23e275ebe8/numpy-2.2.6-cp311-cp311-win32.whl",
+          "sha256": "0678000bb9ac1475cd454c6b8c799206af8107e310843532b04d49649c717a47",
+          "bytes": 6525866
+        },
+        {
+          "filename": "numpy-2.2.6-cp311-cp311-win_amd64.whl",
+          "url": "https://files.pythonhosted.org/packages/31/0a/f354fb7176b81747d870f7991dc763e157a934c717b67b58456bc63da3df/numpy-2.2.6-cp311-cp311-win_amd64.whl",
+          "sha256": "e8213002e427c69c45a52bbd94163084025f533a55a59d6f9c5b820774ef3303",
+          "bytes": 12907455
+        },
+        {
+          "filename": "numpy-2.2.6-cp312-cp312-macosx_10_13_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/82/5d/c00588b6cf18e1da539b45d3598d3557084990dcc4331960c15ee776ee41/numpy-2.2.6-cp312-cp312-macosx_10_13_x86_64.whl",
+          "sha256": "41c5a21f4a04fa86436124d388f6ed60a9343a6f767fced1a8a71c3fbca038ff",
+          "bytes": 20875348
+        },
+        {
+          "filename": "numpy-2.2.6-cp312-cp312-macosx_11_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/66/ee/560deadcdde6c2f90200450d5938f63a34b37e27ebff162810f716f6a230/numpy-2.2.6-cp312-cp312-macosx_11_0_arm64.whl",
+          "sha256": "de749064336d37e340f640b05f24e9e3dd678c57318c7289d222a8a2f543e90c",
+          "bytes": 14119362
+        },
+        {
+          "filename": "numpy-2.2.6-cp312-cp312-macosx_14_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/3c/65/4baa99f1c53b30adf0acd9a5519078871ddde8d2339dc5a7fde80d9d87da/numpy-2.2.6-cp312-cp312-macosx_14_0_arm64.whl",
+          "sha256": "894b3a42502226a1cac872f840030665f33326fc3dac8e57c607905773cdcde3",
+          "bytes": 5084103
+        },
+        {
+          "filename": "numpy-2.2.6-cp312-cp312-macosx_14_0_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/cc/89/e5a34c071a0570cc40c9a54eb472d113eea6d002e9ae12bb3a8407fb912e/numpy-2.2.6-cp312-cp312-macosx_14_0_x86_64.whl",
+          "sha256": "71594f7c51a18e728451bb50cc60a3ce4e6538822731b2933209a1f3614e9282",
+          "bytes": 6625382
+        },
+        {
+          "filename": "numpy-2.2.6-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/f8/35/8c80729f1ff76b3921d5c9487c7ac3de9b2a103b1cd05e905b3090513510/numpy-2.2.6-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "sha256": "f2618db89be1b4e05f7a1a847a9c1c0abd63e63a1607d892dd54668dd92faf87",
+          "bytes": 14018462
+        },
+        {
+          "filename": "numpy-2.2.6-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/8c/3d/1e1db36cfd41f895d266b103df00ca5b3cbe965184df824dec5c08c6b803/numpy-2.2.6-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "sha256": "fd83c01228a688733f1ded5201c678f0c53ecc1006ffbc404db9f7a899ac6249",
+          "bytes": 16527618
+        },
+        {
+          "filename": "numpy-2.2.6-cp312-cp312-musllinux_1_2_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/61/c6/03ed30992602c85aa3cd95b9070a514f8b3c33e31124694438d88809ae36/numpy-2.2.6-cp312-cp312-musllinux_1_2_aarch64.whl",
+          "sha256": "37c0ca431f82cd5fa716eca9506aefcabc247fb27ba69c5062a6d3ade8cf8f49",
+          "bytes": 15505511
+        },
+        {
+          "filename": "numpy-2.2.6-cp312-cp312-musllinux_1_2_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/b7/25/5761d832a81df431e260719ec45de696414266613c9ee268394dd5ad8236/numpy-2.2.6-cp312-cp312-musllinux_1_2_x86_64.whl",
+          "sha256": "fe27749d33bb772c80dcd84ae7e8df2adc920ae8297400dabec45f0dedb3f6de",
+          "bytes": 18313783
+        },
+        {
+          "filename": "numpy-2.2.6-cp312-cp312-win32.whl",
+          "url": "https://files.pythonhosted.org/packages/57/0a/72d5a3527c5ebffcd47bde9162c39fae1f90138c961e5296491ce778e682/numpy-2.2.6-cp312-cp312-win32.whl",
+          "sha256": "4eeaae00d789f66c7a25ac5f34b71a7035bb474e679f410e5e1a94deb24cf2d4",
+          "bytes": 6246506
+        },
+        {
+          "filename": "numpy-2.2.6-cp312-cp312-win_amd64.whl",
+          "url": "https://files.pythonhosted.org/packages/36/fa/8c9210162ca1b88529ab76b41ba02d433fd54fecaf6feb70ef9f124683f1/numpy-2.2.6-cp312-cp312-win_amd64.whl",
+          "sha256": "c1f9540be57940698ed329904db803cf7a402f3fc200bfe599334c9bd84a40b2",
+          "bytes": 12614190
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313-macosx_10_13_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/f9/5c/6657823f4f594f72b5471f1db1ab12e26e890bb2e41897522d134d2a3e81/numpy-2.2.6-cp313-cp313-macosx_10_13_x86_64.whl",
+          "sha256": "0811bb762109d9708cca4d0b13c4f67146e3c3b7cf8d34018c722adb2d957c84",
+          "bytes": 20867828
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313-macosx_11_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/dc/9e/14520dc3dadf3c803473bd07e9b2bd1b69bc583cb2497b47000fed2fa92f/numpy-2.2.6-cp313-cp313-macosx_11_0_arm64.whl",
+          "sha256": "287cc3162b6f01463ccd86be154f284d0893d2b3ed7292439ea97eafa8170e0b",
+          "bytes": 14143006
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313-macosx_14_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/4f/06/7e96c57d90bebdce9918412087fc22ca9851cceaf5567a45c1f404480e9e/numpy-2.2.6-cp313-cp313-macosx_14_0_arm64.whl",
+          "sha256": "f1372f041402e37e5e633e586f62aa53de2eac8d98cbfb822806ce4bbefcb74d",
+          "bytes": 5076765
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313-macosx_14_0_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/73/ed/63d920c23b4289fdac96ddbdd6132e9427790977d5457cd132f18e76eae0/numpy-2.2.6-cp313-cp313-macosx_14_0_x86_64.whl",
+          "sha256": "55a4d33fa519660d69614a9fad433be87e5252f4b03850642f88993f7b2ca566",
+          "bytes": 6617736
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/85/c5/e19c8f99d83fd377ec8c7e0cf627a8049746da54afc24ef0a0cb73d5dfb5/numpy-2.2.6-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "sha256": "f92729c95468a2f4f15e9bb94c432a9229d0d50de67304399627a943201baa2f",
+          "bytes": 14010719
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/19/49/4df9123aafa7b539317bf6d342cb6d227e49f7a35b99c287a6109b13dd93/numpy-2.2.6-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "sha256": "1bc23a79bfabc5d056d106f9befb8d50c31ced2fbc70eedb8155aec74a45798f",
+          "bytes": 16526072
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313-musllinux_1_2_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/b2/6c/04b5f47f4f32f7c2b0e7260442a8cbcf8168b0e1a41ff1495da42f42a14f/numpy-2.2.6-cp313-cp313-musllinux_1_2_aarch64.whl",
+          "sha256": "e3143e4451880bed956e706a3220b4e5cf6172ef05fcc397f6f36a550b1dd868",
+          "bytes": 15503213
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313-musllinux_1_2_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/17/0a/5cd92e352c1307640d5b6fec1b2ffb06cd0dabe7d7b8227f97933d378422/numpy-2.2.6-cp313-cp313-musllinux_1_2_x86_64.whl",
+          "sha256": "b4f13750ce79751586ae2eb824ba7e1e8dba64784086c98cdbbcc6a42112ce0d",
+          "bytes": 18316632
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313t-macosx_10_13_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/6b/9e/4bf918b818e516322db999ac25d00c75788ddfd2d2ade4fa66f1f38097e1/numpy-2.2.6-cp313-cp313t-macosx_10_13_x86_64.whl",
+          "sha256": "0bca768cd85ae743b2affdc762d617eddf3bcf8724435498a1e80132d04879e6",
+          "bytes": 20963467
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313t-macosx_11_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/61/66/d2de6b291507517ff2e438e13ff7b1e2cdbdb7cb40b3ed475377aece69f9/numpy-2.2.6-cp313-cp313t-macosx_11_0_arm64.whl",
+          "sha256": "fc0c5673685c508a142ca65209b4e79ed6740a4ed6b2267dbba90f34b0b3cfda",
+          "bytes": 14225144
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313t-macosx_14_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/e4/25/480387655407ead912e28ba3a820bc69af9adf13bcbe40b299d454ec011f/numpy-2.2.6-cp313-cp313t-macosx_14_0_arm64.whl",
+          "sha256": "5bd4fc3ac8926b3819797a7c0e2631eb889b4118a9898c84f585a54d475b7e40",
+          "bytes": 5200217
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313t-macosx_14_0_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/aa/4a/6e313b5108f53dcbf3aca0c0f3e9c92f4c10ce57a0a721851f9785872895/numpy-2.2.6-cp313-cp313t-macosx_14_0_x86_64.whl",
+          "sha256": "fee4236c876c4e8369388054d02d0e9bb84821feb1a64dd59e137e6511a551f8",
+          "bytes": 6712014
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313t-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/b7/30/172c2d5c4be71fdf476e9de553443cf8e25feddbe185e0bd88b096915bcc/numpy-2.2.6-cp313-cp313t-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "sha256": "e1dda9c7e08dc141e0247a5b8f49cf05984955246a327d4c48bda16821947b2f",
+          "bytes": 14077935
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313t-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/12/fb/9e743f8d4e4d3c710902cf87af3512082ae3d43b945d5d16563f26ec251d/numpy-2.2.6-cp313-cp313t-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "sha256": "f447e6acb680fd307f40d3da4852208af94afdfab89cf850986c3ca00562f4fa",
+          "bytes": 16600122
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313t-musllinux_1_2_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/12/75/ee20da0e58d3a66f204f38916757e01e33a9737d0b22373b3eb5a27358f9/numpy-2.2.6-cp313-cp313t-musllinux_1_2_aarch64.whl",
+          "sha256": "389d771b1623ec92636b0786bc4ae56abafad4a4c513d36a55dce14bd9ce8571",
+          "bytes": 15586143
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313t-musllinux_1_2_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/76/95/bef5b37f29fc5e739947e9ce5179ad402875633308504a52d188302319c8/numpy-2.2.6-cp313-cp313t-musllinux_1_2_x86_64.whl",
+          "sha256": "8e9ace4a37db23421249ed236fdcdd457d671e25146786dfc96835cd951aa7c1",
+          "bytes": 18385260
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313t-win32.whl",
+          "url": "https://files.pythonhosted.org/packages/09/04/f2f83279d287407cf36a7a8053a5abe7be3622a4363337338f2585e4afda/numpy-2.2.6-cp313-cp313t-win32.whl",
+          "sha256": "038613e9fb8c72b0a41f025a7e4c3f0b7a1b5d768ece4796b674c8f3fe13efff",
+          "bytes": 6377225
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313t-win_amd64.whl",
+          "url": "https://files.pythonhosted.org/packages/67/0e/35082d13c09c02c011cf21570543d202ad929d961c02a147493cb0c2bdf5/numpy-2.2.6-cp313-cp313t-win_amd64.whl",
+          "sha256": "6031dd6dfecc0cf9f668681a37648373bddd6421fff6c66ec1624eed0180ee06",
+          "bytes": 12771374
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313-win32.whl",
+          "url": "https://files.pythonhosted.org/packages/f0/3b/5cba2b1d88760ef86596ad0f3d484b1cbff7c115ae2429678465057c5155/numpy-2.2.6-cp313-cp313-win32.whl",
+          "sha256": "5beb72339d9d4fa36522fc63802f469b13cdbe4fdab4a288f0c441b74272ebfd",
+          "bytes": 6244532
+        },
+        {
+          "filename": "numpy-2.2.6-cp313-cp313-win_amd64.whl",
+          "url": "https://files.pythonhosted.org/packages/cb/3b/d58c12eafcb298d4e6d0d40216866ab15f59e55d148a5658bb3132311fcf/numpy-2.2.6-cp313-cp313-win_amd64.whl",
+          "sha256": "b0544343a702fa80c95ad5d3d608ea3599dd54d4632df855e4c8d24eb6ecfa1c",
+          "bytes": 12610885
+        }
+      ]
+    },
+    "soundfile": {
+      "version": "0.13.1",
+      "requires_python": null,
+      "requires_dist": [
+        "cffi>=1.0",
+        "numpy"
+      ],
+      "wheels": [
+        {
+          "filename": "soundfile-0.13.1-py2.py3-none-any.whl",
+          "url": "https://files.pythonhosted.org/packages/64/28/e2a36573ccbcf3d57c00626a21fe51989380636e821b341d36ccca0c1c3a/soundfile-0.13.1-py2.py3-none-any.whl",
+          "sha256": "a23c717560da2cf4c7b5ae1142514e0fd82d6bbd9dfc93a50423447142f2c445",
+          "bytes": 25751
+        },
+        {
+          "filename": "soundfile-0.13.1-py2.py3-none-macosx_10_9_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/ea/ab/73e97a5b3cc46bba7ff8650a1504348fa1863a6f9d57d7001c6b67c5f20e/soundfile-0.13.1-py2.py3-none-macosx_10_9_x86_64.whl",
+          "sha256": "82dc664d19831933fe59adad199bf3945ad06d84bc111a5b4c0d3089a5b9ec33",
+          "bytes": 1142250
+        },
+        {
+          "filename": "soundfile-0.13.1-py2.py3-none-macosx_11_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/a0/e5/58fd1a8d7b26fc113af244f966ee3aecf03cb9293cb935daaddc1e455e18/soundfile-0.13.1-py2.py3-none-macosx_11_0_arm64.whl",
+          "sha256": "743f12c12c4054921e15736c6be09ac26b3b3d603aef6fd69f9dde68748f2593",
+          "bytes": 1101406
+        },
+        {
+          "filename": "soundfile-0.13.1-py2.py3-none-manylinux_2_28_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/58/ae/c0e4a53d77cf6e9a04179535766b3321b0b9ced5f70522e4caf9329f0046/soundfile-0.13.1-py2.py3-none-manylinux_2_28_aarch64.whl",
+          "sha256": "9c9e855f5a4d06ce4213f31918653ab7de0c5a8d8107cd2427e44b42df547deb",
+          "bytes": 1235729
+        },
+        {
+          "filename": "soundfile-0.13.1-py2.py3-none-manylinux_2_28_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/57/5e/70bdd9579b35003a489fc850b5047beeda26328053ebadc1fb60f320f7db/soundfile-0.13.1-py2.py3-none-manylinux_2_28_x86_64.whl",
+          "sha256": "03267c4e493315294834a0870f31dbb3b28a95561b80b134f0bd3cf2d5f0e618",
+          "bytes": 1313646
+        },
+        {
+          "filename": "soundfile-0.13.1-py2.py3-none-win32.whl",
+          "url": "https://files.pythonhosted.org/packages/fe/df/8c11dc4dfceda14e3003bb81a0d0edcaaf0796dd7b4f826ea3e532146bba/soundfile-0.13.1-py2.py3-none-win32.whl",
+          "sha256": "c734564fab7c5ddf8e9be5bf70bab68042cd17e9c214c06e365e20d64f9a69d5",
+          "bytes": 899881
+        },
+        {
+          "filename": "soundfile-0.13.1-py2.py3-none-win_amd64.whl",
+          "url": "https://files.pythonhosted.org/packages/14/e9/6b761de83277f2f02ded7e7ea6f07828ec78e4b229b80e4ca55dd205b9dc/soundfile-0.13.1-py2.py3-none-win_amd64.whl",
+          "sha256": "1e70a05a0626524a69e9f0f4dd2ec174b4e9567f4d8b6c11d38b5c289be36ee9",
+          "bytes": 1019162
+        }
+      ]
+    },
+    "onnxruntime": {
+      "version": "1.23.1",
+      "requires_python": ">=3.10",
+      "requires_dist": [
+        "coloredlogs",
+        "flatbuffers",
+        "numpy>=1.21.6",
+        "packaging",
+        "protobuf",
+        "sympy"
+      ],
+      "wheels": [
+        {
+          "filename": "onnxruntime-1.23.1-cp310-cp310-macosx_13_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/b3/84/42b8a11c9ebfb042071aaab73d17829fc094126e30caf65b18a94c3a5116/onnxruntime-1.23.1-cp310-cp310-macosx_13_0_arm64.whl",
+          "sha256": "6b5257157d319abc87aa17294a9acf17119c6ecfdf9531017239b9022334f9b7",
+          "bytes": 17192895
+        },
+        {
+          "filename": "onnxruntime-1.23.1-cp310-cp310-macosx_13_0_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/c8/be/71568624483453083a8da5cecf6cebd78b0c06a65f41636a60db0b63c8a2/onnxruntime-1.23.1-cp310-cp310-macosx_13_0_x86_64.whl",
+          "sha256": "0b99b96743322ed43c7825d339ad7b0fcb840b85b2e3047536ec1112afefdc41",
+          "bytes": 19148658
+        },
+        {
+          "filename": "onnxruntime-1.23.1-cp310-cp310-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/af/56/a5448bb8b33c29e78832cf193ead74ca7ee8c848aae171c6caa32c3c68c5/onnxruntime-1.23.1-cp310-cp310-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "sha256": "04e54ed9f972aadfe41abbf539cab714fe719aba011db6403e2f0098a282bf38",
+          "bytes": 15215524
+        },
+        {
+          "filename": "onnxruntime-1.23.1-cp310-cp310-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/d8/b6/f42e0ca852226fccb34fa9949ea1b31d0170561e6731b9417bd94e19fd4e/onnxruntime-1.23.1-cp310-cp310-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "sha256": "740f8b32903a28d96eb70ad5d2ec586443768018b3e1211db986d6fa9b4d0ca1",
+          "bytes": 17367900
+        },
+        {
+          "filename": "onnxruntime-1.23.1-cp310-cp310-win_amd64.whl",
+          "url": "https://files.pythonhosted.org/packages/82/18/b3c95ef9e2f19c8c1744218912f66867a985254684704fa17630e826c551/onnxruntime-1.23.1-cp310-cp310-win_amd64.whl",
+          "sha256": "cbb28e658dcb60643b56b6ba0b60b03b92004eb9a5e4460471009a5dc16c7d8e",
+          "bytes": 13465277
+        },
+        {
+          "filename": "onnxruntime-1.23.1-cp311-cp311-macosx_13_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/8a/61/ee52bb2c9402cd1a0d550fc65b826c174f8eed49677dd3833ac1bfc0e35a/onnxruntime-1.23.1-cp311-cp311-macosx_13_0_arm64.whl",
+          "sha256": "9ba6e52fb7bc2758a61d1e421d060cf71d5e4259f95ea8a6f72320ae4415f229",
+          "bytes": 17194265
+        },
+        {
+          "filename": "onnxruntime-1.23.1-cp311-cp311-macosx_13_0_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/d3/67/67122b7b4138815090e0d304c8893fefb77370066a847d08e185f04f75fe/onnxruntime-1.23.1-cp311-cp311-macosx_13_0_x86_64.whl",
+          "sha256": "7f130f4b0d31ba17c8789053a641958d0d341d96a1bff578d613fb52ded218c2",
+          "bytes": 19150493
+        },
+        {
+          "filename": "onnxruntime-1.23.1-cp311-cp311-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/73/e6/66cebc4dcdb217ccb1027cfcbcc01d6399e999c294d986806991c144cbe7/onnxruntime-1.23.1-cp311-cp311-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "sha256": "1b89fd116f20b70e1140a77286954a7715eb9347260ff2008ee7ec94994df039",
+          "bytes": 15216531
+        },
+        {
+          "filename": "onnxruntime-1.23.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/38/47/083847220c4a429e272ce9407bc8c47fa77b62e0c787ef2cc94fe9776c1b/onnxruntime-1.23.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "sha256": "61139a29d536b71db6045c75462e593a53feecc19756dc222531971cd08e5efe",
+          "bytes": 17368047
+        },
+        {
+          "filename": "onnxruntime-1.23.1-cp311-cp311-win_amd64.whl",
+          "url": "https://files.pythonhosted.org/packages/ac/8e/b3d861a7d199fd9c6a0b4af9b5d813bcc853d2e4dd4dac2c70b6c23097ed/onnxruntime-1.23.1-cp311-cp311-win_amd64.whl",
+          "sha256": "7973186e8eb66e32ea20cb238ae92b604091e4d1df632653ec830abf7584d0b3",
+          "bytes": 13466816
+        },
+        {
+          "filename": "onnxruntime-1.23.1-cp312-cp312-macosx_13_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/00/3c/4b4f56b5df4596d1d95aafe13cbc987d050a89364ff5b2f90308376901fb/onnxruntime-1.23.1-cp312-cp312-macosx_13_0_arm64.whl",
+          "sha256": "564d6add1688efdb0720cf2158b50314fc35b744ad2623155ee3b805c381d9ce",
+          "bytes": 17194708
+        },
+        {
+          "filename": "onnxruntime-1.23.1-cp312-cp312-macosx_13_0_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/b4/97/05529b97142c1a09bde2caefea4fd29f71329b9275b52bacdbc2c4f9e964/onnxruntime-1.23.1-cp312-cp312-macosx_13_0_x86_64.whl",
+          "sha256": "3864c39307714eff1753149215ad86324a9372e3172a0275d5b16ffd296574bf",
+          "bytes": 19152841
+        },
+        {
+          "filename": "onnxruntime-1.23.1-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/3a/b9/1232fd295fa9c818aa2a7883d87a2f864fb5edee56ec757c6e857fdd1863/onnxruntime-1.23.1-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "sha256": "4e6b6b5ea80a96924f67fe1e5519f6c6f9cd716fdb5a4fd1ecb4f2b0971e8d00",
+          "bytes": 15223749
+        },
+        {
+          "filename": "onnxruntime-1.23.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/c4/b0/4663a333a82c77f159e48fe8639b1f03e4a05036625be9129c20c4d71d12/onnxruntime-1.23.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "sha256": "576502dad714ffe5f3b4e1918c5b3368766b222063c585e5fd88415c063e4c80",
+          "bytes": 17378483
+        },
+        {
+          "filename": "onnxruntime-1.23.1-cp312-cp312-win_amd64.whl",
+          "url": "https://files.pythonhosted.org/packages/7c/60/8100d98690cbf1de03e08d1f3eff33ff00c652806c7130658a48a8f60584/onnxruntime-1.23.1-cp312-cp312-win_amd64.whl",
+          "sha256": "1b89b7c4d4c00a67debc2b0a1484d7f51b23fef85fbd80ac83ed2d17b2161bd6",
+          "bytes": 13467773
+        },
+        {
+          "filename": "onnxruntime-1.23.1-cp313-cp313-macosx_13_0_arm64.whl",
+          "url": "https://files.pythonhosted.org/packages/99/cc/0316dfd705407a78e4bf096aaa09b2de6b97676e3e028e1183b450c2ebd1/onnxruntime-1.23.1-cp313-cp313-macosx_13_0_arm64.whl",
+          "sha256": "a5402841ff0a400739d2c0423f4f3e3a0ed62673af4323237bb5f5052fccf6cf",
+          "bytes": 17194641
+        },
+        {
+          "filename": "onnxruntime-1.23.1-cp313-cp313-macosx_13_0_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/48/32/7f0a3b21ea9282120fcc274f5227a3390661bdf9019e5ca2da5608f0112d/onnxruntime-1.23.1-cp313-cp313-macosx_13_0_x86_64.whl",
+          "sha256": "7059296745fceafcac57badf0386e394185e20c27aa536ec705288c4cde19c8d",
+          "bytes": 19152562
+        },
+        {
+          "filename": "onnxruntime-1.23.1-cp313-cp313-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/c4/4a/f9ce32f39fac4465bae693591c6ff9f999635b6ed53171b50b6c4812d613/onnxruntime-1.23.1-cp313-cp313-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "sha256": "dc8f92157234c3cfba23016576f73deb99aba165a6fc1f2fe4a37d0c524ad3ad",
+          "bytes": 15221548
+        },
+        {
+          "filename": "onnxruntime-1.23.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/e4/30/8a85c09c42a99d97e9445441a4607eacc9db9d40cf9484de6818cab8d154/onnxruntime-1.23.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "sha256": "ce3ea70499aabc7c8b9407b3680b12473dba9322e3dfde0fe11ff8061c44a226",
+          "bytes": 17378269
+        },
+        {
+          "filename": "onnxruntime-1.23.1-cp313-cp313t-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "url": "https://files.pythonhosted.org/packages/60/1f/439d9ed8527734a60bf4efba05fbb228dfd9eba7a9ff6c39a29ad92a914d/onnxruntime-1.23.1-cp313-cp313t-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "sha256": "16217416cb88aadcd6a86f8e7c6c22ff951b65f9f695faef9c1ff94052ba1c36",
+          "bytes": 15225857
+        },
+        {
+          "filename": "onnxruntime-1.23.1-cp313-cp313t-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "url": "https://files.pythonhosted.org/packages/42/03/127876e85542a1ce27cc2d50206d5aba0ccb034b00ab28407839aee272c8/onnxruntime-1.23.1-cp313-cp313t-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "sha256": "38eae2d803de3c08265a5b38211bcec315b19a7ca5867468029cca06fd217a6b",
+          "bytes": 17389605
+        },
+        {
+          "filename": "onnxruntime-1.23.1-cp313-cp313-win_amd64.whl",
+          "url": "https://files.pythonhosted.org/packages/af/2e/1b95ca7b33f0c345fb454f3187a301791e2a2aa2455ef0cf9e7cb0ab6036/onnxruntime-1.23.1-cp313-cp313-win_amd64.whl",
+          "sha256": "371202e1468d5159e78518236cb22f7bbd170e29b31ee77722070a20f8a733ce",
+          "bytes": 13468418
+        }
+      ]
+    }
+  }
+}

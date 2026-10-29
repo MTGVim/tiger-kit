@@ -976,6 +976,15 @@ cognitive-debt 장부나 merge/edit 강제는 `tk-explain-diff`의 단일 변경
 샘플 아바타·VRM·립싱크·선택적 `Vocos/RKNN` 자료는 기본 스냅샷에 포함하지 않습니다.
 각 패키지의 조건부 출처 참조와 매니페스트가 적용 범위와 정확한 핀을 소유합니다.
 
+선택형 `Supertonic 3` 경로는 보관된 모델
+[`aafc6e32416a594460b32413efc49d7fe4ce6d46`](https://huggingface.co/supertone-oss-archive/supertonic-3/tree/aafc6e32416a594460b32413efc49d7fe4ce6d46)과
+공식 `Python helper`
+[`1e9799e964ea4c0dad7cde993b65c3c813a7b373`](https://github.com/supertone-oss-archive/supertonic/tree/1e9799e964ea4c0dad7cde993b65c3c813a7b373/py)를 사용합니다.
+모델은 `OpenRAIL-M`, `helper`는 `Copyright (c) 2025 Supertone Inc.`의 `MIT` 라이선스이며,
+두 원문 고지는 승인된 스냅샷 다운로드에 포함하고 해시를 검증합니다. 외부 코드와 가중치는 저장소에 포함하지 않습니다.
+모델의 `Attachment A(e)`에 따른 AI 합성 고지 필요성을 사용자에게 안내하고 합성 결과에도 반환합니다.
+영상에 고지를 자동 삽입하거나 최종 게시물의 고지 여부를 검증하지는 않습니다. 상류는 개발·지원을 종료한 상태입니다.
+
 
 ## 2026-10-25: 수업별 HTML과 실제 답변의 피드백
 

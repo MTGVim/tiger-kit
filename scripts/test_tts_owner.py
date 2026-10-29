@@ -11,14 +11,14 @@ from narration_policy import errors,sync,OWNERS
 class TTSOwnerTests(unittest.TestCase):
     def test_option_inventory_is_read_only_and_preserves_first_class_and_legacy(self):
         with patch.object(qwen3.urllib.request,'urlopen') as net:
-            rows=list_options.options();self.assertEqual({x['id'] for x in rows},{'qwen3-mlx-5bit','ppaso-onnx','qwen3-mlx-8bit','qwen3-pytorch'});self.assertTrue(all(not x['runtime_verified'] for x in rows));net.assert_not_called()
+            rows=list_options.options();self.assertEqual({x['id'] for x in rows},{'qwen3-mlx-5bit','ppaso-onnx','supertonic3-onnx','qwen3-mlx-8bit','qwen3-pytorch'});self.assertTrue(all(not x['runtime_verified'] for x in rows));net.assert_not_called()
         self.assertIn('5bit',qwen3.mlx_adapter().manifest()['repository']);self.assertIn('8bit',qwen3.mlx_adapter().manifest(8)['repository'])
         self.assertNotEqual(qwen3.mlx_adapter().manifest()['files']['model.safetensors'],qwen3.mlx_adapter().manifest(8)['files']['model.safetensors'])
     def test_option_setup_status_never_claims_model_readiness_from_module_presence(self):
         for found, expected in [(None, 'missing'), (object(), 'modules-present-unverified')]:
             with patch.object(list_options.importlib.util, 'find_spec', return_value=found):
                 rows = list_options.options()
-            self.assertEqual(len(rows), 4)
+            self.assertEqual(len(rows), 5)
             self.assertTrue(all(row['dependency_status'] == expected for row in rows))
             self.assertTrue(all(row['model_cache_status'] == 'not-inspected' for row in rows))
             self.assertTrue(all(row['runtime_verified'] is False for row in rows))

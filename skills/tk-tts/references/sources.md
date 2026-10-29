@@ -9,6 +9,16 @@
 - [ppaso](https://huggingface.co/akamotaco/ppaso-tts-v1/tree/53d09664c4f636a5fb6f2ebe3ec22cd83ee249b9):
   adapt its ONNX CPU/core Korean synthesis only. Keep exact model/runtime/lexicon bytes and
   Apache/MIT/BSD notices. Omit sample avatars, optional graphics, RKNN, lipsync and server.
+- [Supertonic 3 archived model](https://huggingface.co/supertone-oss-archive/supertonic-3/tree/aafc6e32416a594460b32413efc49d7fe4ce6d46)
+  and [official Python helper/example](https://github.com/supertone-oss-archive/supertonic/tree/1e9799e964ea4c0dad7cde993b65c3c813a7b373/py):
+  keep CPUExecutionProvider, Korean/F1, native chunking, eight steps and speed 1.05. Adapt pinned
+  offline loading and crop each decoded chunk before concatenation. Inspect helper, example,
+  requirements, model card and both licenses at these revisions; model/runtime SHA256 values
+  and platform wheel metadata live in `supertonic3-files.json`. Keep OpenRAIL-M Attachment A(e)
+  disclosure as user guidance and receipt fields, not a downstream labeling claim. The code
+  upstream is archived with development/support ended. Omit SDK/server, auto-download, cloning,
+  other languages/presets and video validators. Source inspection and adapter tests do not prove
+  acoustic quality; report native smoke and human listening separately.
 - The supplied 2026-10-21/22 user experiment chose Qwen5bit and ppaso after one listener and one
   sample per sentence. This informs support policy, not a universal quality ranking. Its actual
   model revisions were absent; do not label these latest source pins as benchmark-tested pins.

@@ -87,7 +87,7 @@ def download(root: Path, data: dict | None = None) -> None:
                 raise ValueError("existing mismatched model file preserved: " + name)
             continue
         path.parent.mkdir(parents=True, exist_ok=True)
-        url = f"https://huggingface.co/{data['repository']}/resolve/{data['revision']}/{name}"
+        url = data.get("file_urls", {}).get(name, f"https://huggingface.co/{data['repository']}/resolve/{data['revision']}/{name}")
         # Stream large weights; interrupted downloads never become accepted snapshot files.
         with tempfile.TemporaryDirectory(prefix="qwen3-download-", dir=root.parent) as directory:
             candidate = Path(directory) / "file"

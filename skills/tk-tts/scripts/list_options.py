@@ -9,6 +9,7 @@ def options():
     for id,file,device,modules,speakers in [
         ('qwen3-mlx-5bit','mlx-files.json','Apple Silicon / Metal',['mlx','mlx_audio','soundfile'],['sohee','serena']),
         ('ppaso-onnx','ppaso-files.json','CPU',['onnxruntime','mecab','soundfile'],['model voice']),
+        ('supertonic3-onnx','supertonic3-files.json','CPU',['onnxruntime','numpy','soundfile','cffi'],['F1']),
         ('qwen3-mlx-8bit','mlx-8bit-files.json','Apple Silicon / Metal',['mlx','mlx_audio','soundfile'],['sohee','serena']),
         ('qwen3-pytorch','qwen3-files.json','CUDA / MPS / CPU',['torch','qwen_tts','soundfile'],['sohee','serena'])]:
         d=json.loads((R/file).read_text());missing=[]
@@ -17,5 +18,7 @@ def options():
             except (ModuleNotFoundError,ValueError):found=False
             if not found:missing.append(name)
         rows.append({'id':id,'model':d['repository'],'revision':d['revision'],'device':device,'platform_supported':apple if 'mlx' in id else True,'missing_modules':missing,'dependency_status':'missing' if missing else 'modules-present-unverified','model_cache_status':'not-inspected','runtime_verified':False,'speakers':speakers,'recommended':id==('qwen3-mlx-5bit' if apple else 'qwen3-pytorch'),'network_for_synthesis':False,'installation_or_model_download':'requires prior approval; inspect selected manifest and cache'})
+        if id=='supertonic3-onnx':
+            rows[-1].update({'disclosure_required':True,'disclosure_notice':d['disclosure_notice'],'upstream_status':'archived'})
     return rows
 if __name__=='__main__':print(json.dumps({'options':options(),'note':'Module discovery is not runtime, model, pronunciation or license verification. Browser speech is a playback fallback, not an exported-audio engine.'},ensure_ascii=False,indent=2))

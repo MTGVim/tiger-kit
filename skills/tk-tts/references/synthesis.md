@@ -27,10 +27,15 @@ with the same engine, voice and settings; script review alone is not acoustic ev
 Qwen provides sohee (Korean default) and explicit serena;
 the 0.6B model ignores instruct. Do not offer unsupported styles or silently upgrade models.
 ppaso uses its model voice, not Qwen speaker IDs. Browser speech is never an exported WAV route.
+Supertonic 3 is an explicit Korean CPU/F1 alternative with fixed eight denoising steps and speed
+1.05. Its adapter uses the pinned official helper, crops each native chunk to its predicted
+duration before joining and preserves the helper's 0.3-second inter-chunk gap. It does not add
+gaps between authored sentences. No style, language or custom-voice controls are exposed.
 
 ```bash
 python -B scripts/qwen3.py --engine mlx --quantization 5 --text-file <script.txt> --output <new.wav> --speaker sohee
 python -B scripts/ppaso.py --text-file <script.txt> --output <new.wav>
+python -B scripts/supertonic3.py --text-file <script.txt> --output <new.wav>
 ```
 
 Use a new WAV path after editing text; preserve existing output. Run synthesis in a fresh owned
@@ -46,6 +51,10 @@ PCM16 WAV. The receipt owns actual duration, trim, revision and human_action: li
 cache inventory names new top-level entries and scan limits, not proof of ownership or a full
 recursive audit. Attribute unexpected entries before cleaning exact run-owned paths. Python -B
 prevents bytecode writes; PYTHONDONTWRITEBYTECODE alone is ignored by isolated Python -I.
+Supertonic 3 receipts also return `disclosure_required: true` and `disclosure_notice`. Tell the
+user to clearly disclose AI synthesis when providing the audio or a video using it, with the
+notice as suggested wording. The adapter does not insert a spoken notice, edit videos or verify
+downstream publication; keep that responsibility explicit alongside `human_action: listen`.
 
 Very short Qwen utterances can be silent or garbled depending on seed. Silence rejection does
 not catch garbling. Do not silently retry another engine/seed or merge sentences as a claimed

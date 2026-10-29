@@ -193,6 +193,15 @@
       "facets": [
         "casual"
       ]
+    },
+    {
+      "id": "validation-positive-supertonic3",
+      "split": "validation",
+      "query": "`Supertonic 3`로 로컬 한국어 음원을 생성해 주세요",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
     }
   ]
 }
