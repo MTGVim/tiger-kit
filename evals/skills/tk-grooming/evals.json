@@ -978,6 +978,160 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "external-copy-version-mismatch",
+      "path": "boundary",
+      "prompt": "사용자 관리 지속 지침은 외부 플러그인 1.2.0의 동작을 의도적으로 복사했고 매 호출 조회는 어렵다. 같은 플러그인의 설치 메타데이터는 1.3.0이다. 설치된 규칙은 키워드 우선순위가 바뀌었다. --`apply`로 감사해줘.",
+      "expected_output": "`Disposition`에 `stale override` 후보를 기록하고 `Basis`에 두 버전, 증거 경로, 실제 규칙 차이를 남긴다. 사본을 `cache`로 삭제하거나 의미를 자동 갱신하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`Disposition`에 `stale override` 후보를 기록하고 `Basis`에 두 버전, 증거 경로, 실제 규칙 차이를 남긴다. 사본을 `cache`로 삭제하거나 의미를 자동 갱신하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "external-copy-version-match",
+      "path": "boundary",
+      "prompt": "의도적으로 보존한 사용자 관리 외부 동작 사본과 같은 구성요소의 설치 버전이 1.2.0으로 같고 다른 지적은 없다.",
+      "expected_output": "`keep`을 유지하며 버전 일치만을 이유로 별도 지적 행이나 예외를 추가하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`keep`을 유지하며 버전 일치만을 이유로 별도 지적 행이나 예외를 추가하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "external-copy-version-provenance",
+      "path": "boundary",
+      "prompt": "의도적인 외부 동작 사본에 기준 버전이 없다. 설치본 버전은 2.0이지만 사본 내용과의 일치는 아직 확인하지 않았다.",
+      "expected_output": "기준 버전 누락을 `finding`으로 보고하고 검증된 기준 버전 표기를 위한 `tighten`을 제안한다. 확인 없이 2.0을 붙이거나 최신으로 단정하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "기준 버전 누락을 `finding`으로 보고하고 검증된 기준 버전 표기를 위한 `tighten`을 제안한다. 확인 없이 2.0을 붙이거나 최신으로 단정하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "external-copy-install-unverifiable",
+      "path": "boundary",
+      "prompt": "외부 동작 사본의 기준은 1.0이고 설치된 구성요소의 `identity/version`은 확인할 수 없다.",
+      "expected_output": "버전 대조를 `Unverifiable`로 남기고 사본을 보존한다. 원격 최신 버전을 설치 버전으로 대체하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "버전 대조를 `Unverifiable`로 남기고 사본을 보존한다. 원격 최신 버전을 설치 버전으로 대체하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "external-copy-version-only-difference",
+      "path": "boundary",
+      "prompt": "의도적인 사본 기준 버전과 설치 버전이 다르지만 설치본의 해당 규칙을 다시 읽어 보니 동일하다.",
+      "expected_output": "`stale override` 후보와 두 버전 및 실제 규칙 차이 없음을 구분한다. 버전 차이만으로 충돌을 확정하거나 사본 의미를 바꾸지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`stale override` 후보와 두 버전 및 실제 규칙 차이 없음을 구분한다. 버전 차이만으로 충돌을 확정하거나 사본 의미를 바꾸지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "usage-long-counter-short-sessions",
+      "path": "boundary",
+      "prompt": "사용자 관리 `skill`의 미사용 여부를 --`apply`로 감사해줘. 검증된 실행 전용 기록은 90일간 연속이고 마지막 실행은 45일 전이다. 최근 세션 40개는 이틀치이며 이후 실행 흔적이 없다.",
+      "expected_output": "`usage-evidence`를 읽고 기본 30일 기준, 실행 전용 의미, 90일 커버리지, 마지막 실행과 경로를 `Basis`에 기록해 `pending deprecate`를 제안한다. 이틀치 세션만으로 한 달을 증명하지 않으며 긴 카운터 증거를 버리지 않는다. `skill` 끄기나 설정 변경은 안내만 한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`usage-evidence`를 읽고 기본 30일 기준, 실행 전용 의미, 90일 커버리지, 마지막 실행과 경로를 `Basis`에 기록해 `pending deprecate`를 제안한다. 이틀치 세션만으로 한 달을 증명하지 않으며 긴 카운터 증거를 버리지 않는다. `skill` 끄기나 설정 변경은 안내만 한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "usage-zero-versus-passive",
+      "path": "boundary",
+      "prompt": "미사용 감사를 해줘. 사용자 관리 `skill A`는 실행 때만 기록되는 0 카운터로 60일 전체를 관찰했고 세션에도 실행 흔적이 없다. 패널 플러그인 `B`는 실행 기록 수단이 없으며 카운터가 0이다.",
+      "expected_output": "`A`는 30일 기준 `pending deprecate` 후보이고 `B`는 미사용으로 단정하지 않고 사용자 질문으로 남긴다. `host` 설정은 바꾸지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`A`는 30일 기준 `pending deprecate` 후보이고 `B`는 미사용으로 단정하지 않고 사용자 질문으로 남긴다. `host` 설정은 바꾸지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "usage-seeded-counter-and-short-observation",
+      "path": "boundary",
+      "prompt": "미사용 감사를 해줘. `A`의 카운터는 설치 때 1로 채워지며 실행 여부는 모른다. `B`는 설치 3일째 실행 카운터가 0이다. `C`는 카운터 위치를 모르고 검색 가능한 세션은 하루치뿐이다.",
+      "expected_output": "카운터 의미와 관찰 기간을 분리한다. `A`를 사용 중이라 단정하지 않고 `B/C`도 30일 미사용으로 단정하지 않는다. 부족한 관찰은 보류하고 `C` 카운터는 `Unverifiable`로 기록하며 경로를 지어내거나 다른 `host`를 탐색하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "카운터 의미와 관찰 기간을 분리한다. `A`를 사용 중이라 단정하지 않고 `B/C`도 30일 미사용으로 단정하지 않는다. 부족한 관찰은 보류하고 `C` 카운터는 `Unverifiable`로 기록하며 경로를 지어내거나 다른 `host`를 탐색하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "usage-conflicting-execution-vendor",
+      "path": "boundary",
+      "prompt": "미사용 감사를 --`apply`로 해줘. 사용자 관리 `A`의 카운터는 마지막 실행 50일 전이지만 정확한 `A` 실행이 어제 세션에 있다. `vendor` 관리 `B`는 실행 전용 기록상 60일간 미사용이다.",
+      "expected_output": "`A`는 상충 근거를 해결하기 전 `deprecate`하지 않는다. `B Action`은 `keep (vendor)`로 유지하고 미사용 품질 `finding`만 보고한다. `vendor` 편집 제안·비활성화·삭제·설정 변경을 수행하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`A`는 상충 근거를 해결하기 전 `deprecate`하지 않는다. `B Action`은 `keep (vendor)`로 유지하고 미사용 품질 `finding`만 보고한다. `vendor` 편집 제안·비활성화·삭제·설정 변경을 수행하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "usage-unrelated-memory-skips-reference",
+      "path": "boundary",
+      "prompt": "사용자 `memory` 한 항목과 최신 `skill`의 충돌만 감사해줘. 사용 빈도나 미사용 판정은 범위 밖이다.",
+      "expected_output": "기존 충돌·`attribution` 근거만 읽고 `usage-evidence.md`를 읽지 않는다.",
+      "assertions": [
+        {
+          "type": "path_not_read",
+          "path": "skills/tk-grooming/references/usage-evidence.md"
+        },
+        {
+          "type": "judge",
+          "criterion": "기존 충돌·`attribution` 근거만 읽고 `usage-evidence.md`를 읽지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

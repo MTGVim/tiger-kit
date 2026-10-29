@@ -36,6 +36,7 @@ Implicit mode is report-only.
    and ownership evidence for every candidate. For confirmed marketplace vendor candidates,
    check [freshness evidence](references/discovery.md#freshness-evidence-vendor).
    For a declared installed-skill dependency, also check its minimum version under that reference.
+   When usage frequency or inactivity is in scope, read [usage evidence](references/usage-evidence.md).
 4. `incident attribution`: When user feedback says prior behavior was wrong, compare
    the behavior's cited or observed instruction with the active skill and persistent
    context. Classify a proven obsolete instruction that conflicts with the current owner
