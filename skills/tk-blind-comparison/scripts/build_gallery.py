@@ -11,6 +11,7 @@ import random
 import re
 import secrets
 import sys
+import zipfile
 from pathlib import Path
 
 PACKAGE = Path(__file__).resolve().parents[1]
@@ -207,7 +208,7 @@ def safe_json(value):
     return json.dumps(value, ensure_ascii=False).replace("<", "\\u003c").replace("\u2028", "\\u2028").replace("\u2029", "\\u2029")
 
 
-def render(public, key, theme):
+def render(public, key, theme, mode="gallery", external_key=False):
     sections = []
     for number, item in enumerate(public["items"], 1):
         cards = []
@@ -240,33 +241,135 @@ def render(public, key, theme):
         context = (f'<div class="item-context" role="region" aria-labelledby="context-{number:04d}" tabindex="0">'
                    f'<p class="comparison-topic">{html.escape(public["title"])}</p><h2 id="context-{number:04d}">{title}</h2>'
                    f'{script}<p>{html.escape(item["description"])}</p></div>')
-        sections.append(f'<section id="item-{number:04d}">{context}<div class="sample-grid">' + ''.join(cards) + '</div></section>')
+        failures = ''
+        if mode == "versus":
+            failed_cards = [card for card in item["cards"] if card["failed"]]
+            failures = ('<details class="versus-failures"><summary>생성 실패 ' + str(len(failed_cards)) + '개</summary><ul>' + ''.join('<li>' + html.escape(card["label"]) + ': 생성 실패</li>' for card in failed_cards) + '</ul></details>') if failed_cards else ''
+        sections.append(f'<section id="item-{number:04d}">{context}<div class="sample-grid">' + ''.join(cards) + '</div>' + failures + '</section>')
     template = (PACKAGE / 'assets/gallery.html').read_text(encoding="utf-8")
+    if external_key:
+        template = template.replace('<script>const answerCode = "@@ANSWER@@";</script>', '<script>let answerCode = "";</script><script>@@KEY_JS@@</script>')
+        template = template.replace('<button id="reveal"', '<button id="load-key" type="button">정답표 선택</button><input id="key-file" type="file" accept="application/json,.json" hidden><button id="reveal" disabled')
+    if mode == "versus":
+        template = template.replace('각 항목의 후보를 비교하고 1-5점과 메모를 남겨 주세요. 라벨은 항목마다 달라집니다.', '두 표본을 비교하고 한쪽 또는 양쪽을 진출시켜 주세요. 스타일로 기법을 짐작할 수 있습니다.')
+        template = template.replace('<div id="summary"', '<div id="versus-controls" class="gallery-toolbar" hidden><button id="previous-item" type="button">이전 항목</button><button id="next-item" type="button">다음 항목</button><button id="choose-left" type="button">왼쪽 진출</button><button id="choose-both" type="button">양쪽 진출</button><button id="choose-right" type="button">오른쪽 진출</button><button id="undo" type="button">선택 취소</button><button id="co-winners" type="button">남은 후보 공동 1위</button></div><p id="versus-progress" role="status" aria-live="polite"></p><div id="summary"')
+        template = template.replace('<main><p>', '<main><details class="versus-help"><summary>비교 안내와 가공 내역</summary><p>', 1)
+        footer = re.search(r'<footer>.*?</footer>', template, re.S)[0]
+        template = template.replace(footer, '').replace('<div id="toolbar"', footer + '</details><div id="toolbar"', 1)
+        template = template.replace('</style></head>', (PACKAGE / 'assets/versus.css').read_text(encoding='utf-8') + '\n</style></head>')
+        template = template.replace('점수·메모·저장·결과 공개', '대결·저장·결과 공개').replace('평가 복사', '선택 복사').replace('평가 JSON', '선택 JSON')
     theme_attr = f'data-default-theme="{theme}"' + (f' data-theme="{theme}"' if theme != 'system' else '')
     values = {"THEME_ATTR": theme_attr, "TITLE": html.escape(public["title"]),
               "VERSION": html.escape(public["version"]), "COUNT": str(public["candidate_count"]),
               "TRANSFORMS": ''.join('<li>' + html.escape(x) + '</li>' for x in public['transformations']),
               "SECTIONS": ''.join(sections), "DATA": safe_json(public),
-              "ANSWER": base64.b64encode(json.dumps({"candidates": key["candidates"]}, ensure_ascii=False).encode()).decode(),
+              "KEY_JS": (PACKAGE / "assets/key-loader.js").read_text(encoding="utf-8") if external_key else "",
+              "ANSWER": "" if external_key else base64.b64encode(json.dumps({"candidates": key["candidates"]}, ensure_ascii=False).encode()).decode(),
               "CSS": (PACKAGE / 'assets/html-theme.css').read_text(encoding='utf-8'),
               "THEME_JS": (PACKAGE / 'assets/html-theme.js').read_text(encoding='utf-8'),
-              "APP_JS": (PACKAGE / 'assets/gallery.js').read_text(encoding='utf-8')}
+              "APP_JS": (PACKAGE / ('assets/versus.js' if mode == 'versus' else 'assets/gallery.js')).read_text(encoding='utf-8')}
     return re.sub(r'@@([A-Z_]+)@@', lambda match: values[match[1]], template)
 
 
-def build(manifest_path, output, previous_key=None, theme="system"):
+def build(manifest_path, output, previous_key=None, theme="system", mode="gallery", delivery="single"):
+    require(mode in {"gallery", "versus"} and delivery in {"single", "split"}, "invalid mode/delivery")
     require(theme in {"system", "light", "dark"}, "invalid theme")
     source = Path(manifest_path).resolve()
     public, key, files, inputs = prepare(read_json(source), source, read_json(previous_key) if previous_key else None)
     if previous_key:
         inputs.append(previous_key)
-    rendered = render(public, key, theme)
+    if mode == "versus":
+        public["mode"] = mode
+        roster = [{"id": item["id"], "cards": [{field: card[field] for field in ("candidate", "fingerprint", "failed")} for card in item["cards"]]} for item in public["items"]]
+        public["revision"] = hashlib.sha256(json.dumps([public["study"], public["version"], public["title"], public["transformations"], [{k: v for k, v in item.items() if k != "cards"} for item in public["items"]], roster], sort_keys=True).encode()).hexdigest()
+        key["comparison"] = {"revision": public["revision"], "items": roster}
+    if delivery == "split":
+        media_files = {name.rsplit(".", 1)[0]: name for name, _ in files}
+        for i, item in enumerate(public["items"], 1):
+            for slot, card in enumerate(item["cards"], 1):
+                if "src" in card:
+                    card["src"] = "assets/" + media_files[f"item-{i:04d}-slot-{slot:04d}"]
+                if "display_file" in card:
+                    card["display_file"] = "assets/" + card["display_file"]
+                for link in card.get("links", []):
+                    link["href"] = "assets/" + link["href"]
+    rendered = render(public, key, theme, mode, mode == "versus" or delivery == "split")
     dest = destination(output, inputs)
+    asset_dir = dest / 'assets' if delivery == "split" else dest
+    if delivery == "split":
+        asset_dir.mkdir()
     for filename, data in files:
-        (dest / filename).write_bytes(data)
+        (asset_dir / filename).write_bytes(data)
     (dest / 'answer-key.json').write_text(json.dumps(key, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-    (dest / 'gallery.html').write_text(rendered, encoding='utf-8')
+    page_name = 'index.html' if delivery == "split" else 'gallery.html'
+    (dest / page_name).write_text(rendered, encoding='utf-8')
+    if delivery == "split":
+        with zipfile.ZipFile(dest / 'comparison.zip', 'w', compression=zipfile.ZIP_DEFLATED) as archive:
+            archive.write(dest / page_name, page_name)
+            for filename, _ in files:
+                archive.write(asset_dir / filename, 'assets/' + filename)
     return public, key
+
+
+def replay_versus(item, events):
+    require(isinstance(events, list) and len(events) <= 100000, "invalid versus events")
+    survivors = [card["candidate"] for card in item["cards"] if not card["failed"]]
+    incomparable = len(survivors) < 2
+    round_number, cursor, next_round, done, seen = 1, 0, [], False, set()
+    for event in events:
+        require(not done and not incomparable, "events after completion")
+        if event == "co-winners":
+            require(round_number > 1 and cursor == 0 and all(c in seen for c in survivors), "early co-winners")
+            done = True
+            continue
+        pair = survivors[cursor:cursor + 2]
+        require(event in ("left", "right", "both") and (len(pair) == 2 or event == "left"), "invalid versus choice")
+        seen.update(pair)
+        next_round.extend(pair if event == "both" else [pair[0 if event == "left" else 1]])
+        cursor += len(pair)
+        if cursor == len(survivors):
+            survivors, next_round, cursor = next_round, [], 0
+            done = len(survivors) == 1
+            if not done:
+                round_number += 1
+    return {"status": "incomparable" if incomparable else "complete" if done else "pending",
+            "round": round_number, "winners": survivors if done else []}
+
+
+def summarize_versus(payload, key, blind=False):
+    require(type(payload.get("schema")) is int, "invalid versus schema")
+    comparison = key.get("comparison")
+    require(isinstance(comparison, dict) and payload.get("revision") == comparison["revision"], "versus revision mismatch")
+    expected = comparison["items"]
+    require(type(payload.get("active")) is int and 0 <= payload["active"] < len(expected), "invalid active item")
+    imported = payload.get("items")
+    require(isinstance(imported, list) and len(imported) == len(expected), "invalid versus items")
+    identities = ({token: {"id": token, "name": f"후보 {i:03d}"}
+                   for i, token in enumerate(sorted(key["candidates"]), 1)} if blind else key["candidates"])
+    outputs = {row["item"]: row["item_id"] for row in key["outputs"]}
+    item_rows = []
+    counts = {"items": len(expected), "complete": 0, "pending": 0, "incomparable": 0,
+              "failures": sum(row["failed"] for row in key["outputs"]), "outputs": len(key["outputs"])}
+    wins = {candidate: 0 for candidate in identities}
+    co_wins = dict(wins)
+    for item, supplied in zip(expected, imported):
+        require(isinstance(supplied, dict) and supplied.get("id") == item["id"] and supplied.get("cards") == item["cards"], "unknown/stale versus output")
+        require(all(isinstance(card, dict) and set(card) == {"candidate", "fingerprint", "failed"} and type(card.get("failed")) is bool for card in supplied["cards"]), "invalid versus roster")
+        result = replay_versus(item, supplied.get("events"))
+        counts[result["status"]] += 1
+        for winner in result["winners"]:
+            wins[winner] += 1
+            co_wins[winner] += len(result["winners"]) > 1
+        item_rows.append({"item_id": item["id"] if blind else outputs[item["id"]], **result,
+                          "winners": [identities[token]["id"] for token in result["winners"]],
+                          "winner_names": [identities[token]["name"] for token in result["winners"]],
+                          "failures": sum(card["failed"] for card in item["cards"]), "events": supplied["events"]})
+    candidates = [{"id": identity["id"], "name": identity["name"], "wins": wins[token], "co_wins": co_wins[token],
+                   "failures": sum(row["failed"] for row in key["outputs"] if row["candidate"] == token)} for token, identity in identities.items()]
+    return {"schema": 1, "mode": "versus", "study_id": key["study"] if blind else key["study_id"],
+            "version": key["version"], "revision": comparison["revision"], "evaluators": 1, "blind": blind,
+            "revealed": payload["revealed"], "totals": counts, "candidates": candidates, "items": item_rows,
+            "limitations": "평가자는 1명입니다. 선정은 사람의 선택 기록이며, 생성 실패와 비교 불가를 품질 순위로 바꾸지 않습니다."}
 
 
 def summarize(ratings, key, blind=False):
@@ -274,6 +377,9 @@ def summarize(ratings, key, blind=False):
     require(ratings.get("study") == key["study"] and ratings.get("version") == key["version"], "rating study/revision mismatch")
     text(ratings.get("evaluator"))
     require(type(ratings.get("revealed")) is bool, "invalid reveal state")
+    if ratings.get("mode") == "versus":
+        return summarize_versus(ratings, key, blind)
+    require("mode" not in ratings or ratings["mode"] == "gallery", "invalid comparison mode")
     rows = ratings.get("ratings")
     require(isinstance(rows, list), "ratings must be an array")
     lookup = {(r["item"], r["candidate"], r["fingerprint"]): r for r in key["outputs"]}
@@ -326,6 +432,12 @@ def summarize(ratings, key, blind=False):
 def markdown(summary):
     def cell(value):
         return html.escape(str(value)).replace('|', '\\|').replace('\n', '<br>').replace('\r', '')
+    if summary.get("mode") == "versus":
+        lines = ['# 블라인드 대결 결과', '', summary['limitations'], f"결과 공개 이력: {summary['revealed']}",
+                 '', '| 항목 | 상태 | 선정 · 공동 1위 | 생성 실패 |', '|---|---|---|---:|']
+        for row in summary['items']:
+            lines.append('| ' + ' | '.join(cell(value) for value in (row['item_id'], row['status'], ', '.join(row['winner_names']) or '미선정', row['failures'])) + ' |')
+        return '\n'.join(lines) + '\n'
     lines = ['# 블라인드 비교 결과', '', '평가자는 1명입니다. 미평가와 생성 실패는 평균에서 제외했습니다. 통계적 우열을 입증하지 않습니다.',
              f'결과 공개 이력: {summary["revealed"]}', '', '| 후보 | 평균 | 평가 수 | 미평가 | 생성 실패 | 최선 선택 |', '|---|---:|---:|---:|---:|---:|']
     for row in summary['candidates']:
@@ -342,6 +454,8 @@ def main():
     b = commands.add_parser('build')
     b.add_argument('manifest'); b.add_argument('--output', required=True); b.add_argument('--previous-key')
     b.add_argument('--theme', choices=('system', 'light', 'dark'), default='system')
+    b.add_argument('--mode', choices=('gallery', 'versus'), default='gallery')
+    b.add_argument('--delivery', choices=('single', 'split'), default='single')
     s = commands.add_parser('summarize')
     s.add_argument('ratings', help='rating JSON path, or - for stdin'); s.add_argument('--key', required=True)
     s.add_argument('--output', help='new directory for summary files; omit to print JSON without saving')
@@ -349,7 +463,7 @@ def main():
     args = parser.parse_args()
     try:
         if args.command == 'build':
-            build(args.manifest, args.output, args.previous_key, args.theme)
+            build(args.manifest, args.output, args.previous_key, args.theme, args.mode, args.delivery)
         else:
             summary = summarize(read_json(args.ratings), read_json(args.key), blind=args.blind)
             if args.output:

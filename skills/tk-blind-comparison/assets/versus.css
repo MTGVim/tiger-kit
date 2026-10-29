@@ -1,0 +1,15 @@
+html,body{height:100%;min-height:0}body{height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+.gallery-header{flex:none;padding:10px 24px}.gallery-header h1{font-size:clamp(20px,2vw,28px)}
+main{flex:1;min-height:0;width:100%;box-sizing:border-box;margin:0 auto;padding:10px 24px;display:flex;flex-direction:column;overflow:hidden}
+.versus-help{flex:none;max-height:25dvh;overflow:auto}.versus-help p{margin:8px 0}.versus-help footer{padding:0}
+.gallery-toolbar{flex:none;gap:6px;margin-block:6px}.gallery-toolbar button{min-height:32px;padding:5px 8px;font-size:14px}
+#status{flex:none;min-height:0;margin:4px 0}#versus-progress{flex:none;margin:4px 0;font-size:14px}
+main>section{flex:1;min-height:0;padding:0;display:flex;flex-direction:column;overflow:hidden}
+.item-context{position:static;flex:0 1 auto;max-height:25%;padding:6px 0;margin-bottom:8px}
+.item-context h2{font-size:20px;margin:0}.item-context p{margin:2px 0}
+.sample-grid{flex:1;min-height:0;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:100%;grid-auto-rows:100%;gap:12px;overflow:auto}
+.sample{height:100%;min-height:0;box-sizing:border-box;padding:16px;overflow:auto}.sample h3{font-size:18px;margin-bottom:8px}
+.sample:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}.versus-failures{flex:none;max-height:20%;overflow:auto}
+@media(max-width:600px){main{padding:8px}.gallery-header{padding:8px;gap:2px}.gallery-header .ht-theme-control{margin-top:2px}.sample-grid{gap:6px}.sample{padding:10px}}
+/* Low-height windows and zoom retain reachable controls through page scrolling. */
+@media(max-height:560px){html,body{height:auto;min-height:100%;overflow:visible}body,main,main>section{display:block;overflow:visible}main>section{padding-block:12px}.item-context{max-height:30dvh}.sample-grid{height:55dvh;min-height:220px}.sample{height:100%}}

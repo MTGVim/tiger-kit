@@ -18,7 +18,7 @@
   `check_docs.py`, `check_token_budget.py --check`가 모두 exit 0이었다.
 - 변경 후 같은 네 검사가 모두 exit 0이었다. `validate_skills.py`는 30개 스킬과
   repository-owned trigger/behavior 계약을 오류 없이 검증했다. 기존 줄 수 경고는 남는다.
-- `PYTHONPATH=scripts TMPDIR=/Users/tigeryoo/workspace/tiger-kit/.tigerkit/tmp/issue-485-tests python3 -B -m unittest scripts.test_validate_skills scripts.test_sync_execution_protocol scripts.test_check_docs scripts.test_explain_tools`
+- `PYTHONPATH=scripts TMPDIR="$PWD/.tigerkit/tmp/issue-485-tests" python3 -B -m unittest scripts.test_validate_skills scripts.test_sync_execution_protocol scripts.test_check_docs scripts.test_explain_tools`
   결과는 68 tests, `OK (skipped=2)`였다. 두 Chrome 실행 검사는
   `TK_CHROMIUM_EXECUTABLE`이 지정되지 않아 생략됐다. 최초 실행은 `PYTHONPATH`가 없어
   세 모듈을 import하지 못했으며, 올바른 호출 경로로 다시 실행했다.

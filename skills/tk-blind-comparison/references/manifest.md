@@ -75,3 +75,46 @@ when only the HTML is moved. Annotation is escaped text, not HTML. No source fil
 Legacy outputs without these fields retain the exact fingerprint algorithm. Adding/changing
 public evidence changes that card's fingerprint, so old scores cannot silently apply to a
 changed evaluation surface. Rebuilding unchanged evidence preserves it.
+
+
+## Optional modes and split delivery
+
+`build --mode gallery|versus --delivery single|split` defaults to `gallery` and `single`.
+The options are independent. Versus uses the same prepared media/text manifest, opaque
+identities, per-item seeded shuffle and evidence fingerprints. Read [versus](versus.md)
+for interaction, export and replay rules. Do not create primary `kind: html` outputs:
+use normalized screenshots plus explicitly prepared, identity-neutral, self-contained
+HTML `links` for original inspection. The builder does not sandbox or recursively collect
+HTML dependencies, execute producer pages, or traverse arbitrary linked files.
+
+```bash
+python3 <package>/scripts/build_gallery.py build manifest.json --output <new-run-directory> --mode versus --theme system
+python3 <package>/scripts/build_gallery.py build manifest.json --output <new-run-directory> --mode versus --delivery split --theme system
+python3 <package>/scripts/build_gallery.py build manifest.json --output <new-run-directory> --delivery split --theme system
+```
+
+Single delivery retains `gallery.html`, neutral display/link files and `answer-key.json`.
+Default single-gallery rendering and rating schema are unchanged, including its legacy
+encoded reveal mapping. Versus single delivery has no embedded mapping and requires a
+separately selected matching key, like split delivery.
+
+Split delivery writes `index.html`, `assets/item-NNNN-slot-NNNN.ext` and optional
+`assets/item-NNNN-slot-NNNN-link-NNNN.ext`, `comparison.zip`, and separate `answer-key.json`.
+The ZIP contains only `index.html` and the referenced neutral assets. It never includes the
+answer key or an encoded candidate-name mapping. Inline theme/application assets need no
+network request. Extract the ZIP before opening `index.html` via `file://`; do not open it
+inside an archive viewer. Keep `assets/` beside `index.html`. Missing or modified extracted
+assets require a fresh intact extraction and verification, not reuse of ratings for altered
+material. The builder validates prepared inputs but does not continuously hash extracted files.
+
+Distribute only `comparison.zip`, not the enclosing output directory. Keep the key private
+until disclosure is authorized. `정답표 선택` reads an explicitly chosen key in memory and
+checks study, version, every opaque output identity/fingerprint and failure state. It does
+not reveal names by itself or save key contents to storage/exports. `결과 공개` is a separate
+explicit action; partial comparison still asks for confirmation. A prior `revealed` flag is
+history, never permission for the agent to disclose identities.
+
+Choose split delivery on request or actual environment evidence, without a media-size cutoff
+or invented explanation of a browser failure. Review the entire distribution, including linked
+HTML, metadata and encoded/pixel/semantic cues. Styles can suggest techniques even when exact
+names and mappings remain private. Packaging is not cryptographic anonymity or HTML sanitization.

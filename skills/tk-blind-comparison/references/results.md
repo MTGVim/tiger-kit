@@ -22,3 +22,14 @@ compare common rated items when relevant rather than announcing a winner from un
 If the identity toggle was used, disclose the export's `revealed` flag and possible bias.
 Objective metrics, if provided, belong in a separate sourced comparison beside low-scoring items;
 do not fabricate metrics or add significance tests.
+
+
+## Versus exports
+
+For `mode: "versus"`, read [versus](versus.md) and use the same `summarize` command;
+never reinterpret choices as numeric scores or send them through a ratings-only parser.
+It verifies the revision-bound roster and replays each transcript against the matching key.
+Report complete, pending, incomparable and failure counts before discussing selected candidates.
+Co-winners are explicit human choices, not an automatic quality ranking. Zero/one successful
+output is incomparable, not a default winner. Preserve the single-evaluator and reveal-history
+limitations above. `--blind` also hides the versus summary's item/candidate identities.

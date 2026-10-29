@@ -22,6 +22,8 @@ to `tk-grill`; candidate creation to `tk-prototype`, `tk-tts` or the relevant pr
    from available evidence. Require at least two candidates; preserve failed outputs.
    Read [manifest and commands](references/manifest.md). Keep originals immutable and
    record content revisions: changed outputs need fresh ratings, unchanged outputs retain them.
+   Gallery scoring remains the default. For an explicit head-to-head request read
+   [versus comparison](references/versus.md); do not force a single winner from a tie.
 2. Before writing, apply Artifact Paths. Use `.tigerkit/tmp/tk-blind-comparison/<run-id>/`
    for HTML, display copies and the separate answer key; use
    `.tigerkit/evidence/tk-blind-comparison/<run-id>/` for returned ratings and summaries.
@@ -39,23 +41,32 @@ to `tk-grill`; candidate creation to `tk-prototype`, `tk-tts` or the relevant pr
    Preserve opaque stable candidate IDs, item IDs and content fingerprints. Use seeded
    per-item shuffles and neutral labels disjoint from candidate names. Candidate identity
    must not appear in filenames, DOM IDs, accessibility names, default text or sorting.
+   Choose split delivery when requested or justified by the actual transfer/opening environment,
+   not an invented size threshold or unverified browser-failure diagnosis. Read the split contract
+   in [manifest and commands](references/manifest.md). Distribute only `comparison.zip`, never its
+   enclosing output directory: the separate answer key stays private. Versus and split require
+   explicitly selecting the matching key before reveal; legacy single gallery keeps its behavior.
    Keep a separate answer key and an explicit reveal toggle; offline blinding prevents casual
    cues, not source inspection. Never claim cryptographic or exam security.
    Keep the comparison topic, item title, shared script and evaluation guide visible within
    the active item's sticky context; bound long context height so scoring stays reachable.
 5. Verify the saved local HTML through `tk-browser-verify`: desktop/mobile and both themes,
-   media decode, original-size/additional links, escaped annotations, all failure cards, keyboard controls, native 1-5 score selection, notes, optional favorite,
+   media decode, original-size/additional links, escaped annotations, all failure cards, keyboard controls,
+   and the selected mode's controls. Gallery checks include native 1-5 scores, notes and optional favorite;
    reload, candidate addition, JSON import/export, rating copy and clipboard refusal,
    partial-reveal confirmation/cancellation, reveal-only averages and storage refusal.
    Copy uses the same blind-key payload as
    export; if clipboard access fails, retain ratings and offer file export.
-   The builder embeds media; open via `file://` without hosting. Browser `localStorage` on
+   For versus also verify both-side independent scrolling, odd byes, repeated both-advance,
+   later-round co-winner confirmation/cancellation, undo after completion and cross-item replay.
+   Open via `file://` without hosting. Single delivery embeds primary media; split delivery must
+   work after extracting the ZIP with all neutral assets, without external requests or missing links. Browser `localStorage` on
    local files varies: show save failures and offer JSON backup/import; file relocation or a
    different browser may require importing the previous export. Report unrun checks honestly.
 6. Return the local HTML and answer-key paths, revision/counts, transformations, actual checks
    and remaining human evaluation. Publish only on explicit request. Wait for actual ratings;
    never fabricate scores. Read [results](references/results.md) when copied JSON or a JSON export arrives,
-   validate against its matching key, aggregate counts/means and item tables, and state evaluator
+   validate against its matching key, aggregate mode-appropriate counts/means or selection transcripts and item tables, and state evaluator
    count, missing scores, failures and sample limitations. Compare available objective metrics
    against low-scoring items without treating subjective means as statistical proof.
 

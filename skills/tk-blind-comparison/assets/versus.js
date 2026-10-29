@@ -1,0 +1,118 @@
+(() => {
+  'use strict';
+  const data = JSON.parse(document.getElementById('comparison-data').textContent);
+  const node = id => document.getElementById(id);
+  const status = node('status');
+  const roster = data.items.map(item => ({id:item.id, cards:item.cards.map(({candidate,fingerprint,failed}) => ({candidate,fingerprint,failed}))}));
+  const storageKey = `tigerkit-versus:${data.study}:${data.revision}`;
+  // Bound untrusted replay work, not media size. The UI preserves the last valid transcript at the limit.
+  const MAX_EVENTS = 100000;
+  const replay = (item, events) => {
+    if (!Array.isArray(events) || events.length > MAX_EVENTS) throw Error('invalid events');
+    let survivors = item.cards.filter(card => !card.failed).map(card => card.candidate);
+    let round = 1, cursor = 0, next = [], done = false;
+    const seen = new Set();
+    const incomparable = survivors.length < 2;
+    const canCoWin = () => !done && !incomparable && round > 1 && cursor === 0 && survivors.every(id => seen.has(id));
+    for (const event of events) {
+      if (done || incomparable) throw Error('finished comparison');
+      if (event === 'co-winners') {
+        if (!canCoWin()) throw Error('early co-winners');
+        done = true; continue;
+      }
+      const pair = survivors.slice(cursor,cursor+2);
+      if (!['left','right','both'].includes(event) || pair.length === 1 && event !== 'left') throw Error('invalid choice');
+      pair.forEach(id => seen.add(id));
+      next.push(...(event === 'both' ? pair : [pair[event === 'left' ? 0 : 1]]));
+      cursor += pair.length;
+      if (cursor === survivors.length) {
+        survivors = next; next = []; cursor = 0;
+        if (survivors.length === 1) done = true; else round++;
+      }
+    }
+    return {survivors, round, cursor, done, incomparable, canCoWin:canCoWin(), pair:done || incomparable ? [] : survivors.slice(cursor,cursor+2)};
+  };
+  const blank = () => ({schema:1, mode:'versus', study:data.study, version:data.version, revision:data.revision,
+    evaluator:globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`, revealed:false, active:0,
+    items:roster.map(item => ({...item, events:[]}))});
+  const validate = payload => {
+    if (!payload || payload.schema !== 1 || payload.mode !== 'versus' || payload.study !== data.study || payload.version !== data.version || payload.revision !== data.revision || typeof payload.evaluator !== 'string' || !payload.evaluator.trim() || typeof payload.revealed !== 'boolean' || !Number.isInteger(payload.active) || payload.active < 0 || payload.active >= roster.length || !Array.isArray(payload.items) || payload.items.length !== roster.length) throw Error('invalid comparison');
+    const items = roster.map((item,index) => {
+      const imported = payload.items[index];
+      if (!imported || imported.id !== item.id || !Array.isArray(imported.cards) || imported.cards.length !== item.cards.length || !imported.cards.every((card,i) => card && Object.keys(card).length === 3 && card.candidate === item.cards[i].candidate && card.fingerprint === item.cards[i].fingerprint && card.failed === item.cards[i].failed)) throw Error('changed outputs');
+      replay(item,imported.events);
+      return {...item, events:[...imported.events]};
+    });
+    return {schema:1,mode:'versus',study:data.study,version:data.version,revision:data.revision,evaluator:payload.evaluator,revealed:payload.revealed,active:payload.active,items};
+  };
+  let state = blank(), storageReadable = true, showing = false;
+  let notice = '';
+  try {const raw = localStorage.getItem(storageKey); if (raw) state = validate(JSON.parse(raw));}
+  catch {storageReadable = false; notice = '저장된 대결을 읽을 수 없습니다. 기존 저장값은 보존하며 JSON 내보내기를 사용해 주세요.';}
+  const save = () => {
+    if (!storageReadable) {notice = '브라우저 저장을 사용할 수 없습니다. 선택 JSON을 내보내 주세요.';return;}
+    try {localStorage.setItem(storageKey,JSON.stringify(state));notice = '';}
+    catch {notice = '브라우저 저장이 차단되거나 용량이 부족합니다. 선택 JSON을 내보내 주세요.';}
+  };
+  const names = () => JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(answerCode), c=>c.charCodeAt(0)))).candidates;
+  const render = () => {
+    const item = state.items[state.active], current = replay(item,item.events);
+    const activeIds = new Set(current.done ? current.survivors : current.incomparable ? item.cards.map(c=>c.candidate) : current.pair);
+    document.querySelectorAll('section').forEach((section,index) => {section.hidden = index !== state.active;});
+    for (const sample of document.querySelectorAll('.sample')) {
+      sample.hidden = sample.dataset.item !== item.id || !activeIds.has(sample.dataset.candidate);
+      sample.setAttribute('tabindex','0');
+      sample.querySelector('.identity').textContent = showing ? names()[sample.dataset.candidate].name : '';
+    }
+    node('choose-left').disabled = current.done || current.incomparable;
+    node('choose-right').disabled = current.pair.length !== 2;
+    node('choose-both').disabled = current.pair.length !== 2;
+    node('co-winners').disabled = !current.canCoWin;
+    node('undo').disabled = !item.events.length;
+    node('previous-item').disabled = state.active === 0;
+    node('next-item').disabled = state.active === roster.length-1;
+    const failures = item.cards.filter(c=>c.failed).length;
+    const result = current.incomparable ? '성공 표본이 2개 미만이므로 비교 불가입니다. 선정하지 않았습니다.' : current.done ? `${current.survivors.length > 1 ? '공동 ' : ''}1위 ${current.survivors.length}개를 선정했습니다.` : `${current.round}라운드 · ${current.cursor+1}-${current.cursor+current.pair.length} / ${current.survivors.length}개${current.pair.length === 1 ? ' · 부전승 표본을 확인한 뒤 왼쪽 진출을 눌러 주세요.' : ''}`;
+    node('versus-progress').textContent = `항목 ${state.active+1}/${roster.length} · ${result}${failures ? ` · 생성 실패 ${failures}개` : ''}`;
+    status.textContent = notice; status.hidden = !notice;
+    node('reveal').setAttribute('aria-pressed',String(showing)); node('reveal').textContent = showing ? '결과 가리기' : '결과 공개';
+  };
+  const choose = event => {
+    const item=state.items[state.active], current=replay(item,item.events);
+    if (event === 'co-winners' && (!current.canCoWin || !confirm('남은 후보를 모두 확인했습니다. 남은 후보 전부를 공동 1위로 확정할까요?'))) return;
+    try {replay(item,[...item.events,event]);}
+    catch {notice='선택을 적용하지 못했습니다. 현재 기록을 내보내 주세요.';render();return;}
+    item.events.push(event);save();render();
+  };
+  for(const [id,event] of [['choose-left','left'],['choose-right','right'],['choose-both','both'],['co-winners','co-winners']]) node(id).addEventListener('click',()=>choose(event));
+  node('undo').addEventListener('click',()=>{state.items[state.active].events.pop();save();render();});
+  for(const [id,offset] of [['previous-item',-1],['next-item',1]]) node(id).addEventListener('click',()=>{const next=state.active+offset;if(next>=0 && next<roster.length){state.active=next;save();render();}});
+  node('copy').addEventListener('click',async()=>{
+    status.hidden=false;
+    try{await navigator.clipboard.writeText(JSON.stringify(state,null,2));status.textContent='선택 JSON을 복사했습니다. 대화에 붙여 넣어 주세요.';}
+    catch{status.textContent='선택을 복사하지 못했습니다. 선택 JSON 내보내기를 사용해 주세요. 기존 기록은 유지됩니다.';}
+  });
+  node('export').addEventListener('click',()=>{
+    const url=URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:'application/json'})), link=document.createElement('a');
+    link.href=url;link.download='blind-versus.json';document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  });
+  const input=node('import-file');
+  node('import').addEventListener('click',()=>input.click());
+  input.addEventListener('change',async()=>{
+    status.hidden=false;
+    try{
+      const file=input.files[0];if(!file)return;
+      const imported=validate(JSON.parse(await file.text()));
+      if(state.items.some(item=>item.events.length) && imported.evaluator !== state.evaluator) throw Error('different evaluator');
+      imported.revealed ||= state.revealed;state=imported;showing=false;save();render();
+    }catch{status.textContent='선택 JSON을 가져오지 못했습니다. 같은 비교·버전·내용·평가자의 파일인지 확인해 주세요. 기존 기록은 유지됩니다.';}
+    finally{input.value='';}
+  });
+  node('reveal').addEventListener('click',()=>{
+    if(!answerCode)return;
+    if(!showing && !state.revealed && state.items.some(item=>!replay(item,item.events).done) && !confirm('아직 끝나지 않은 항목이 있습니다. 지금 후보 이름을 공개할까요?')) return;
+    showing=!showing;if(showing){state.revealed=true;save();}render();
+  });
+  node('toolbar').hidden=false;node('versus-controls').hidden=false;
+  render();
+})();

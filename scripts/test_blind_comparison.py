@@ -59,6 +59,92 @@ class BlindComparisonTests(unittest.TestCase):
     def build(self, name='built', previous=None):
         self.manifest.write_text(json.dumps(self.data,ensure_ascii=False))
         return builder.build(self.manifest,self.root/name,previous)
+    def test_versus_revisions_modes_and_cli_replay(self):
+        self.data = fixture(3, 1, 'text')
+        self.manifest.write_text(json.dumps(self.data))
+        public, key = builder.build(self.manifest, self.root / 'first-versus', mode='versus')
+        previous = self.root / 'first-versus/answer-key.json'
+        same, _ = builder.build(self.manifest, self.root / 'split-versus', previous, mode='versus', delivery='split')
+        self.assertEqual(public['revision'], same['revision'])
+        self.assertEqual(public['items'][0]['cards'], same['items'][0]['cards'])
+        self.data['items'][0]['script'] = '수정한 공통 평가 지침입니다.'
+        self.manifest.write_text(json.dumps(self.data))
+        changed, _ = builder.build(self.manifest, self.root / 'context-change', previous, mode='versus')
+        self.assertNotEqual(public['revision'], changed['revision'])
+        export = {'schema':1,'mode':'versus','study':key['study'],'version':key['version'],'revision':public['revision'],
+                  'evaluator':'test','revealed':False,'active':0,'items':[{**key['comparison']['items'][0], 'events':['both','co-winners']}]}
+        result = subprocess.run(['python3', str(PACKAGE / 'scripts/build_gallery.py'), 'summarize', '-', '--key', str(previous), '--blind'], input=json.dumps(export), capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout)['totals']['complete'], 1)
+        result = subprocess.run(['python3', str(PACKAGE / 'scripts/build_gallery.py'), 'build', str(self.manifest), '--output', str(self.root / 'cli-versus'), '--mode', 'versus', '--delivery', 'split'], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        parser = Parser(); parser.feed((self.root / 'cli-versus/index.html').read_text())
+        for script in parser.scripts:
+            syntax = subprocess.run(['node', '--check'], input=script, text=True, capture_output=True)
+            self.assertEqual(syntax.returncode, 0, syntax.stderr)
+        changed = copy.deepcopy(export); changed['items'][0]['cards'][0]['failed'] = int(changed['items'][0]['cards'][0]['failed'])
+        with self.assertRaises(ValueError): builder.summarize(changed, key)
+
+    def test_versus_summary_validates_replay_and_preserves_failures(self):
+        self.data = fixture(5, 2, 'text')
+        self.manifest.write_text(json.dumps(self.data))
+        public, key = builder.build(self.manifest, self.root / 'versus', mode='versus')
+        export = {'schema': 1, 'mode': 'versus', 'study': key['study'], 'version': key['version'],
+                  'revision': public['revision'], 'evaluator': 'test', 'revealed': False, 'active': 0,
+                  'items': [{**copy.deepcopy(item), 'events': events} for item, events in zip(
+                      key['comparison']['items'], [['both', 'both', 'co-winners'], ['left', 'right', 'left', 'left', 'left', 'right']])]}
+        summary = builder.summarize(export, key, blind=True)
+        self.assertEqual(summary['mode'], 'versus')
+        self.assertEqual(summary['totals'], {'items': 2, 'complete': 2, 'pending': 0, 'incomparable': 0, 'failures': 1, 'outputs': 10})
+        self.assertEqual(len(summary['items'][0]['winners']), 4)
+        expected = key['comparison']['items'][1]['cards'][-1]['candidate']
+        self.assertEqual(summary['items'][1]['winners'], [expected])
+        self.assertEqual(summary['items'][1]['round'], 3)
+        self.assertIn('공동', builder.markdown(summary))
+        for candidate in self.data['candidates']:
+            self.assertNotIn(candidate['name'], json.dumps(summary)); self.assertNotIn(candidate['id'], json.dumps(summary))
+        invalid = []
+        for field, value in [('study', 'other'), ('revision', 'stale'), ('version', 'other'), ('evaluator', ''), ('revealed', 'yes'), ('active', True)]:
+            changed = copy.deepcopy(export); changed[field] = value; invalid.append(changed)
+        changed = copy.deepcopy(export); changed['items'][0]['cards'][0]['fingerprint'] = 'stale'; invalid.append(changed)
+        for events in [['co-winners'], ['right'] * 9, ['both'] * 100001]:
+            changed = copy.deepcopy(export); changed['items'][0]['events'] = events; invalid.append(changed)
+        for changed in invalid:
+            with self.assertRaises(ValueError): builder.summarize(changed, key)
+        export['items'][1]['events'] = []
+        self.assertEqual(builder.summarize(export, key)['totals']['pending'], 1)
+
+    def test_split_delivery_has_neutral_assets_and_no_embedded_key(self):
+        import base64
+        import zipfile
+        self.data = fixture(3, 1)
+        (self.root / 'prepared.html').write_text('<!doctype html><title>문서</title><p>중립 원본</p>')
+        self.data['outputs'][1]['links'] = [{'label': '원본 문서', 'path': 'prepared.html'}]
+        self.manifest.write_text(json.dumps(self.data, ensure_ascii=False))
+        public, key = builder.build(self.manifest, self.root / 'split', delivery='split')
+        root = self.root / 'split'
+        self.assertTrue((root / 'answer-key.json').is_file())
+        with zipfile.ZipFile(root / 'comparison.zip') as archive:
+            self.assertEqual(set(archive.namelist()), {'index.html', *('assets/' + p.name for p in (root / 'assets').iterdir())})
+            self.assertIsNone(archive.testzip())
+            page = archive.read('index.html').decode()
+            self.assertNotIn('data:audio/', page)
+            mapping = base64.b64encode(json.dumps({'candidates':key['candidates']}, ensure_ascii=False).encode()).decode()
+            self.assertNotIn(mapping, page)
+            self.assertNotIn('answer-key.json', archive.namelist())
+            for candidate in self.data['candidates']:
+                for name in (candidate['id'], candidate['name']):
+                    self.assertNotIn(name.encode(), b''.join(archive.read(p) for p in archive.namelist()))
+                    self.assertNotIn(base64.b64encode(name.encode()), archive.read('index.html'))
+            for card in public['items'][0]['cards']:
+                if card['failed']: continue
+                with wave.open(str(root / card['src']), 'rb') as audio:
+                    self.assertEqual(audio.getnframes(), 1600)
+                self.assertEqual(archive.read(card['src']), (self.root / 'prepared.wav').read_bytes())
+                for link in card.get('links', []):
+                    self.assertEqual(archive.read(link['href']), (self.root / 'prepared.html').read_bytes())
+            self.assertIn('id="key-file"', page)
+
     def test_long_image_original_link_annotation_and_legacy_fingerprint(self):
         from PIL import Image
         Image.new('RGB', (600, 11000), 'white').save(self.root / 'tall.png')
@@ -121,8 +207,9 @@ class BlindComparisonTests(unittest.TestCase):
         self.assertNotEqual(card(public)['fingerprint'], card(public2)['fingerprint'])
 
     def test_runtime_import_export_regressions(self):
-        result=subprocess.run(['node','--test',str(ROOT/'scripts/test_blind_comparison_runtime.cjs')],capture_output=True,text=True)
-        self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+        for script in ('test_blind_comparison_runtime.cjs', 'test_blind_comparison_versus.cjs'):
+            result=subprocess.run(['node','--test',str(ROOT/'scripts'/script)],capture_output=True,text=True)
+            self.assertEqual(result.returncode,0,result.stdout+result.stderr)
 
     def test_audio_grid_blinding_failure_offline_and_script_syntax(self):
         original=(self.root/'prepared.wav').read_bytes()
