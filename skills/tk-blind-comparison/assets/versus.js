@@ -60,7 +60,9 @@
     const activeIds = new Set(current.done ? current.survivors : current.incomparable ? item.cards.map(c=>c.candidate) : current.pair);
     document.querySelectorAll('section').forEach((section,index) => {section.hidden = index !== state.active;});
     for (const sample of document.querySelectorAll('.sample')) {
-      sample.hidden = sample.dataset.item !== item.id || !activeIds.has(sample.dataset.candidate);
+      const hidden = sample.dataset.item !== item.id || !activeIds.has(sample.dataset.candidate);
+      if (hidden && !sample.hidden) for (const media of sample.querySelectorAll('audio, video')) media.pause();
+      sample.hidden = hidden;
       sample.setAttribute('tabindex','0');
       sample.querySelector('.identity').textContent = showing ? names()[sample.dataset.candidate].name : '';
     }

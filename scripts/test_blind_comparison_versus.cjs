@@ -11,7 +11,13 @@ function runtime(count = 5, options = {}) {
   const node = name => nodes[name] ||= {hidden:true, disabled:false, textContent:'', value:'', setAttribute() {}, click() {}, remove() {},
     addEventListener: (event, callback) => {handlers[name + ':' + event] = callback;}};
   node('comparison-data').textContent = JSON.stringify(data);
-  const samples = data.items.flatMap(item => cards.map(card => ({hidden:false, dataset:{item:item.id, candidate:card.candidate}, setAttribute(){}, querySelector: () => node(item.id + card.candidate + ':identity')})));
+  const samples = data.items.flatMap(item => cards.map((card,index) => ({
+    hidden:false, dataset:{item:item.id, candidate:card.candidate}, setAttribute(){},
+    media:options.media ? [{tagName:index % 2 ? 'VIDEO' : 'AUDIO', paused:true, currentTime:7,
+      pause(){this.paused=true;}}] : [],
+    querySelectorAll(selector){return selector === 'audio, video' ? this.media : [];},
+    querySelector: () => node(item.id + card.candidate + ':identity')
+  })));
   const sections = data.items.map(item => ({hidden:false,querySelectorAll:()=>samples.filter(s=>s.dataset.item===item.id)}));
   let stored = options.raw || null, download, copied, writes = 0;
   const confirms = [];
@@ -149,4 +155,36 @@ test('normal progress is announced once, without repeating it in the storage sta
   const app=runtime(3);
   assert.equal(app.nodes.status.textContent,'');
   assert.match(app.nodes['versus-progress'].textContent,/라운드/);
+});
+
+
+test('pair advance pauses hidden audio/video without stopping a still-visible survivor', () => {
+  const app=runtime(4,{media:true});
+  const first=app.samples[0].media[0], second=app.samples[1].media[0];
+  first.paused=false;second.paused=false;
+  app.click('choose-both');
+  assert.equal(app.samples[0].hidden,true);assert.equal(app.samples[1].hidden,true);
+  assert.equal(first.paused,true);assert.equal(second.paused,true);
+  assert.equal(first.currentTime,7);assert.equal(second.currentTime,7);
+  const final=runtime(2,{media:true});
+  const survivor=final.samples[0].media[0], eliminated=final.samples[1].media[0];
+  survivor.paused=false;eliminated.paused=false;
+  final.click('choose-both');
+  assert.equal(survivor.paused,false);assert.equal(eliminated.paused,false);
+  final.click('choose-left');
+  assert.equal(final.samples[0].hidden,false);assert.equal(survivor.paused,false);
+  assert.equal(final.samples[1].hidden,true);assert.equal(eliminated.paused,true);
+  assert.equal(survivor.currentTime,7);assert.equal(eliminated.currentTime,7);
+});
+
+test('item switch pauses media in the hidden item and does not resume it automatically', () => {
+  const app=runtime(2,{media:true,itemCount:2});
+  const audio=app.samples[0].media[0],video=app.samples[1].media[0];
+  audio.paused=false;video.paused=false;
+  app.click('next-item');
+  assert.equal(app.samples[0].hidden,true);assert.equal(app.samples[1].hidden,true);
+  assert.equal(audio.paused,true);assert.equal(video.paused,true);
+  app.click('previous-item');
+  assert.equal(app.samples[0].hidden,false);assert.equal(audio.paused,true);assert.equal(video.paused,true);
+  assert.equal(audio.currentTime,7);assert.equal(video.currentTime,7);
 });
