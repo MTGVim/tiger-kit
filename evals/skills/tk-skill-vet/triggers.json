@@ -5,7 +5,7 @@
     {
       "id": "train-positive",
       "split": "train",
-      "query": "$tk-skill-vet 이 외부 패키지를 설치 전에 정적으로 점검해 주세요",
+      "query": "`$tk-skill-vet` 이 외부 패키지를 설치 전에 정적으로 점검해 주세요",
       "should_trigger": true
     },
     {
@@ -26,7 +26,7 @@
     {
       "id": "validation-true-2",
       "split": "validation",
-      "query": "이 skill 깔아도 되는지 악성 지시부터 봐줘",
+      "query": "이 `skill` 깔아도 되는지 악성 지시부터 봐줘",
       "should_trigger": true,
       "facets": [
         "casual"
@@ -44,7 +44,7 @@
     {
       "id": "validation-true-4",
       "split": "validation",
-      "query": "external skill의 hidden instruction을 static review 해줘",
+      "query": "`external` `skill`의 `hidden` `instruction`을 `static` `review` 해줘",
       "should_trigger": true,
       "facets": [
         "ko-en"
@@ -80,7 +80,7 @@
     {
       "id": "validation-true-8",
       "split": "validation",
-      "query": "plugin을 설치하기 전에 동봉 hook이 위험한지 검토해 주세요",
+      "query": "`plugin`을 설치하기 전에 동봉 `hook`이 위험한지 검토해 주세요",
       "should_trigger": true,
       "facets": [
         "casual"
@@ -143,7 +143,7 @@
     {
       "id": "validation-false-7",
       "split": "validation",
-      "query": "개인 메모리와 rule이 충돌하는지 확인해 주세요",
+      "query": "개인 메모리와 `rule`이 충돌하는지 확인해 주세요",
       "should_trigger": false,
       "facets": [
         "formal"
@@ -152,7 +152,7 @@
     {
       "id": "validation-false-8",
       "split": "validation",
-      "query": "PR을 만들고 main에 병합해 주세요",
+      "query": "`PR`을 만들고 `main`에 병합해 주세요",
       "should_trigger": false,
       "facets": [
         "casual"

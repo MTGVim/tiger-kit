@@ -867,12 +867,12 @@
     {
       "id": "planned-multi-pr-grouping-survives-handoff",
       "path": "boundary",
-      "prompt": "$tk-pr-open 준비만 해 주세요. 검증된 구현은 PR G1=Unit 1(공유 타입), G2=Unit 2와 3(접근 gate+API), G3=Unit 4(UI)로 승인된 계획이 있습니다. G2는 G1, G3는 G2에 의존합니다. 각 중간 상태 검사는 제공되어 있습니다.",
-      "expected_output": "계획된 세 그룹의 전체 Unit 소유 관계, 의존성, shared creator와 gate 및 중간 상태 검사를 발행 계획과 각 layer 검증에 유지한다. 하나의 PR로 합치거나 gate와 API를 나누지 않으며 exact layer 승인과 원본 tree 불변식을 유지한다.",
+      "prompt": "`$tk-pr-open` 준비만 해 주세요. 검증된 구현은 `PR` `G1`=`Unit` 1(공유 타입), `G2`=`Unit` 2와 3(접근 `gate`+`API`), `G3`=`Unit` 4(`UI`)로 승인된 계획이 있습니다. `G2`는 `G1`, `G3`는 `G2`에 의존합니다. 각 중간 상태 검사는 제공되어 있습니다.",
+      "expected_output": "계획된 세 그룹의 전체 `Unit` 소유 관계, 의존성, `shared` `creator`와 `gate` 및 중간 상태 검사를 발행 계획과 각 `layer` 검증에 유지한다. 하나의 `PR`로 합치거나 `gate`와 `API`를 나누지 않으며 `exact` `layer` 승인과 원본 `tree` 불변식을 유지한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "계획된 세 그룹의 전체 Unit 소유 관계, 의존성, shared creator와 gate 및 중간 상태 검사를 발행 계획과 각 layer 검증에 유지한다. 하나의 PR로 합치거나 gate와 API를 나누지 않으며 exact layer 승인과 원본 tree 불변식을 유지한다."
+          "criterion": "계획된 세 그룹의 전체 `Unit` 소유 관계, 의존성, `shared` `creator`와 `gate` 및 중간 상태 검사를 발행 계획과 각 `layer` 검증에 유지한다. 하나의 `PR`로 합치거나 `gate`와 `API`를 나누지 않으며 `exact` `layer` 승인과 원본 `tree` 불변식을 유지한다."
         },
         {
           "type": "git_head_unchanged"
@@ -882,12 +882,12 @@
     {
       "id": "planned-multi-pr-mismatch-blocks-publication",
       "path": "boundary",
-      "prompt": "$tk-pr-open G1=Unit 1, G2=Unit 2(API+권한 검사) 두 그룹으로 승인된 구현을 발행 준비해 주세요. 실제 경로 검토에서 권한 검사는 G3로 따로 이동했고 G2만 병합하면 노출됩니다.",
-      "expected_output": "그룹 유실과 위험한 중간 상태를 식별하여 발행을 보류한다. 발행 담당자가 새 gate 코드를 작성하거나 그룹을 조용히 변경하지 않고 기존 계획·구현 담당자에게 정합성 회복을 요청한다. 재승인 전 원격 수정하지 않는다.",
+      "prompt": "`$tk-pr-open` `G1`=`Unit` 1, `G2`=`Unit` 2(`API`+권한 검사) 두 그룹으로 승인된 구현을 발행 준비해 주세요. 실제 경로 검토에서 권한 검사는 `G3`로 따로 이동했고 `G2`만 병합하면 노출됩니다.",
+      "expected_output": "그룹 유실과 위험한 중간 상태를 식별하여 발행을 보류한다. 발행 담당자가 새 `gate` 코드를 작성하거나 그룹을 조용히 변경하지 않고 기존 계획·구현 담당자에게 정합성 회복을 요청한다. 재승인 전 원격 수정하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "그룹 유실과 위험한 중간 상태를 식별하여 발행을 보류한다. 발행 담당자가 새 gate 코드를 작성하거나 그룹을 조용히 변경하지 않고 기존 계획·구현 담당자에게 정합성 회복을 요청한다. 재승인 전 원격 수정하지 않는다."
+          "criterion": "그룹 유실과 위험한 중간 상태를 식별하여 발행을 보류한다. 발행 담당자가 새 `gate` 코드를 작성하거나 그룹을 조용히 변경하지 않고 기존 계획·구현 담당자에게 정합성 회복을 요청한다. 재승인 전 원격 수정하지 않는다."
         },
         {
           "type": "git_head_unchanged"
