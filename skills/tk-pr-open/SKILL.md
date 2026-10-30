@@ -61,6 +61,8 @@ single | stacked
 
 Do not use a hard LOC threshold. A large diff is only a signal. Prefer `stacked` when the already-verified branch contains two or more independently reviewable concerns that form one coherent linear dependency story, especially when concerns have different reviewer audiences or clear foundation → implementation → integration boundaries.
 
+If the handoff already plans multiple PR groups, read [multi-PR delivery safety](references/multi-pr-delivery.md) before choosing publication shape. Preserve that grouping and its intermediate-state safety checks; a missing or changed mapping is not permission to invent a new split or publish one combined PR.
+
 Generated output, lockfiles, snapshots, vendored artifacts, or mechanical churn do not justify a stack by themselves. Keep one coherent change as `single` even when its raw diff is large.
 
 Retrospective splitting is eligible only for a new publication before a same-`head` PR exists. Do not silently replace or restructure an existing PR with review comments or remote state. If a stack is a credible candidate or the user explicitly requests one, read [retrospective stack split](references/split-to-stack.md) before preparing the publication plan.

@@ -60,8 +60,7 @@ assertion screenshots unchanged and independent from the movie. Use H.264 MP4 at
 frame rate capped at 30fps, with optional mono 48kbps AAC; GIF and explainer stills default to
 10fps. Animation MP4 instead retains its measured source rate, dimensions and duration, including
 rates above 30; existing embedded audio is retained. Its captions default to selectable tracks
-and sidecars; burn them only on explicit selection. A hard-caption `band` appends caption-only space
-below animation pixels; report its added height. MP4 defaults to CRF 18; use the assembler's quality/rate overrides and preserve source
+and sidecars; burn them only on explicit selection. Hard captions alone do not select a letterbox or appended band: preserve the animation canvas with an in-frame overlay unless the user separately selects a band. Protect moving diagrams and labels across each caption interval; shorten/split captions or reauthor a safe region rather than silently adding padding. An explicitly selected `band` adds height; report it. MP4 defaults to CRF 18; use the assembler's quality/rate overrides and preserve source
 resolution. Follow prerequisite recovery for unavailable tools.
 If hard-caption support is missing after installed-tool discovery, present the `tk-wizard`
 installation-guidance question before returning the blocked result. Do not implement a frame-compositing workaround.

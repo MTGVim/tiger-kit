@@ -24,7 +24,7 @@ except ImportError:
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "skills/tk-prep/references"
 TARGET = ROOT / "skills/tk-pr-respond/references"
-FILES = ("testing.md", "sdd.md", "sdd-interaction.md", "sdd-recovery.md", "sdd-transport.md", "diagnosis.md", "test-doubles.md")
+FILES = ("testing.md", "sdd.md", "sdd-interaction.md", "sdd-recovery.md", "sdd-transport.md", "diagnosis.md", "test-doubles.md", "multi-pr-delivery.md")
 REVIEW_SOURCE = ROOT / "skills/tk-review/references"
 REVIEW_TARGETS = (
     ROOT / "skills/tk-prep/references",
@@ -364,6 +364,7 @@ def main() -> int:
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     pairs = [(SOURCE / name, TARGET / name) for name in FILES]
+    pairs.append((SOURCE / "multi-pr-delivery.md", ROOT / "skills/tk-pr-open/references/multi-pr-delivery.md"))
     pairs.extend((SOURCE / "domain-context.md", target) for target in DOMAIN_CONTEXT_TARGETS)
     pairs.extend(
         (REVIEW_SOURCE / name, target / name)

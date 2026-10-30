@@ -114,6 +114,10 @@ player UI is added. Explicit hard delivery uses selected style and the existing 
 contract; missing support stays blocked. Differing sidecars, movies and contact sheets are
 never overwritten.
 
+Animation hard captions without an explicit style use `overlay-rounded` and keep the source canvas.
+Hard delivery does not authorize a letterbox, appended band or aspect-ratio change. Select `band`
+only when the user separately requests that placement; when overlays collide, shorten/split captions
+or reauthor the diagram's safe region rather than silently switching to a band.
 For animation's explicit hard `band`, preserve the full source rectangle and append a black
 caption-only band, sized for up to three lines plus breathing room. Width, FPS and timing stay
 unchanged; report the added output height. Inspect every cue, especially the longest and transitions:

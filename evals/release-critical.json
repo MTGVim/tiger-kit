@@ -756,7 +756,30 @@
     "tk-prep:behavior:prep-timing-local-only-safe-probe",
     "tk-prep:behavior:prep-probe-output-filter-failure-no-repeat-mutation",
     "tk-prep:behavior:prep-timing-no-access-preserves-uncertainty",
-    "tk-research:behavior:research-archify-missing-no-legacy-fallback"
+    "tk-research:behavior:research-archify-missing-no-legacy-fallback",
+    "tk-prep:behavior:multi-pr-guard-ships-later",
+    "tk-prep:behavior:multi-pr-deferred-guard",
+    "tk-prep:behavior:multi-pr-shared-creator",
+    "tk-prep:behavior:multi-pr-independent-order",
+    "tk-prep:behavior:single-pr-skips-delivery-grouping",
+    "tk-pr-open:behavior:planned-multi-pr-grouping-survives-handoff",
+    "tk-pr-open:behavior:planned-multi-pr-mismatch-blocks-publication",
+    "tk-rewrite:behavior:korean-unintended-ending-flattening",
+    "tk-rewrite:behavior:korean-explicit-register-normalization",
+    "tk-rewrite:behavior:korean-friendly-notice-preserves-register",
+    "tk-rewrite:behavior:korean-uniform-source-no-forced-variety",
+    "tk-skill-vet:behavior:vet-hidden-comment",
+    "tk-skill-vet:behavior:vet-cross-file-exfil",
+    "tk-skill-vet:behavior:vet-unsafe-bootstrap",
+    "tk-skill-vet:behavior:vet-undeclared-network",
+    "tk-skill-vet:behavior:vet-undeclared-destruction",
+    "tk-skill-vet:behavior:vet-benign-local-helper",
+    "tk-skill-vet:behavior:vet-benign-security-example",
+    "tk-skill-vet:behavior:vet-unicode-context",
+    "tk-skill-vet:behavior:vet-scope-escape",
+    "tk-skill-vet:behavior:vet-opaque-payload",
+    "tk-skill-vet:behavior:vet-update-new-endpoint",
+    "tk-video:behavior:hard-animation-does-not-imply-letterbox"
   ],
   "catalog_cases": [
     "catalog:behavior:native-app-runtime-verify",
@@ -837,6 +860,9 @@
     "catalog:behavior:tts-local-audio",
     "catalog:behavior:tts-options",
     "catalog:behavior:tts-not-browser-speech",
-    "catalog:behavior:unified-teach-personal-course-explain"
+    "catalog:behavior:unified-teach-personal-course-explain",
+    "catalog:behavior:vet-before-install",
+    "catalog:behavior:vet-update",
+    "catalog:behavior:grooming-not-vetting"
   ]
 }

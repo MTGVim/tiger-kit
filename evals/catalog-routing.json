@@ -1155,6 +1155,30 @@
       "focus_skill": "tk-blind-comparison",
       "expected_selected_skill": null,
       "critical": true
+    },
+    {
+      "id": "vet-before-install",
+      "boundary": "외부 패키지 설치 전 보안 검토와 기존 지속 지침 감사를 구분합니다.",
+      "prompt": "이 외부 skill을 설치하기 전에 악성 지침과 동봉 스크립트를 보안 검토해 주세요.",
+      "focus_skill": "tk-skill-vet",
+      "expected_selected_skill": "tk-skill-vet",
+      "critical": true
+    },
+    {
+      "id": "vet-update",
+      "boundary": "외부 패키지 설치 전 보안 검토와 기존 지속 지침 감사를 구분합니다.",
+      "prompt": "이 plugin 업데이트에서 추가된 hook과 외부 전송을 설치 전에 검토해 주세요.",
+      "focus_skill": "tk-skill-vet",
+      "expected_selected_skill": "tk-skill-vet",
+      "critical": true
+    },
+    {
+      "id": "grooming-not-vetting",
+      "boundary": "외부 패키지 설치 전 보안 검토와 기존 지속 지침 감사를 구분합니다.",
+      "prompt": "이미 설치된 스킬들의 중복과 낡은 지침을 감사해 주세요.",
+      "focus_skill": "tk-skill-vet",
+      "expected_selected_skill": "tk-grooming",
+      "critical": true
     }
   ]
 }

@@ -3,6 +3,9 @@
 Choose only after repository investigation establishes a concrete implementation topology; tell the user the practical consequence, not a classification report.
 Ticket length, raw file count, or the presence of both UI and API work never decides the shape.
 
+Only for planned multi-PR delivery, read [merge safety](multi-pr-delivery.md) before approval.
+Bind whole Units to PR groups, verify intermediate merge states and retain the grouping for publication.
+
 - durable context `none`: same-session task is small/clear and conversation + repository state are sufficient;
 - durable context `seed`: new-session handoff, compaction recovery, lower-capability execution, SDD, or complex
   verification benefits from a self-contained contract;

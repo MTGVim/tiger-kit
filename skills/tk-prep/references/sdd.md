@@ -121,6 +121,10 @@ ignored under `.tigerkit/`, with no secrets or external temporary fallback; tran
 
 ## Evidence-backed preflight
 
+For a multi-PR Seed, read [multi-PR delivery safety](multi-pr-delivery.md), recheck its
+Global constraints group mapping and intermediate-state checks, and preserve them in
+Unit dispatch and the publication handoff. Single-PR execution skips this branch.
+
 Before `Unit` 1, read the Seed once and check:
 
 - every producer/consumer `Unit` pair sharing files or interfaces, and whether they agree;

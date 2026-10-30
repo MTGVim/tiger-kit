@@ -75,6 +75,7 @@ npx skills update --global --yes
 | [tk-retro](skills/tk-retro/SKILL.md) | `hybrid` | 세션을 회고하고 개선안을 제안합니다. |
 | [tk-compound](skills/tk-compound/SKILL.md) | `user` | 완료 PR에서 반복 문제와 예방책을 찾습니다. |
 | [tk-grooming](skills/tk-grooming/SKILL.md) | `hybrid` | 스킬과 지속 규칙의 중복·충돌을 감사합니다. |
+| [tk-skill-vet](skills/tk-skill-vet/SKILL.md) | `hybrid` | 외부 스킬의 설치 전 보안 위험과 업데이트 동작을 정적으로 검토합니다. |
 | [tk-handoff](skills/tk-handoff/SKILL.md) | `hybrid` | 세션 현황을 확인하고 인수인계를 작성합니다. |
 | [tk-wizard](skills/tk-wizard/SKILL.md) | `hybrid` | 설정·인증·이관 절차를 안내합니다. |
 

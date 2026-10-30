@@ -615,6 +615,21 @@
         }
       ],
       "safety": false
+    },
+    {
+      "id": "hard-animation-does-not-imply-letterbox",
+      "path": "boundary",
+      "prompt": "$tk-video 기존 Manim 애니메이션에 항상 보이는 자막을 넣어 주세요. 원래 16:9 화면은 유지하고, 검은 레터박스나 하단 띠는 추가하지 마세요. 그래프와 자막이 겹치지 않게 해 주세요. 음성은 이미 제공했습니다.",
+      "expected_output": "hard delivery와 배치 선택을 분리한다. 기존 overlay 또는 overlay-rounded로 source canvas를 유지하며 moving geometry를 보호한다. 충돌 시 자막을 나누거나 안전 영역을 재저작하고 임의로 band/letterbox를 추가하지 않는다. 명시적 선택형·무자막과 별도 band 선택은 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "hard delivery와 배치 선택을 분리한다. 기존 overlay 또는 overlay-rounded로 source canvas를 유지하며 moving geometry를 보호한다. 충돌 시 자막을 나누거나 안전 영역을 재저작하고 임의로 band/letterbox를 추가하지 않는다. 명시적 선택형·무자막과 별도 band 선택은 유지한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "migrations": [

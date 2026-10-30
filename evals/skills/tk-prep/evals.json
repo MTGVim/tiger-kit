@@ -4327,6 +4327,81 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "multi-pr-guard-ships-later",
+      "path": "boundary",
+      "prompt": "$tk-prep 두 PR로 계획해 주세요. PR A는 지원팀의 크레딧 지급 API를 노출하고, PR B는 지급 한도 검사를 추가합니다. 최종 상태는 안전하니 A부터 병합하려고 합니다. 구현·발행은 아직 승인하지 않았습니다.",
+      "expected_output": "A만 병합된 상태를 Needs gating 또는 Must merge together로 판정한다. 권한 없는 무제한 지급이 먼저 노출되지 않도록 A에 최소 gate를 포함하거나 그룹을 재구성하고, 각 PR의 전체 Unit 소유·의존성과 병합 직후 확인을 계획한다. 최종 상태의 테스트만으로 안전하다고 판단하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "A만 병합된 상태를 Needs gating 또는 Must merge together로 판정한다. 권한 없는 무제한 지급이 먼저 노출되지 않도록 A에 최소 gate를 포함하거나 그룹을 재구성하고, 각 PR의 전체 Unit 소유·의존성과 병합 직후 확인을 계획한다. 최종 상태의 테스트만으로 안전하다고 판단하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "multi-pr-deferred-guard",
+      "path": "boundary",
+      "prompt": "$tk-prep 관리자와 지원팀이 쓰는 환불 API를 두 PR로 나누어 계획해 주세요. 지급 한도는 이번 범위 밖 후속 작업입니다. 현재 관리자는 제한 대상이 아니고 지원팀은 한도 제한이 필요합니다.",
+      "expected_output": "범위 밖으로 미룬 한도가 현재 지원팀 접근을 보호하지 못함을 밝힌다. 한도가 생기기 전에는 관리자로 접근을 제한하거나 기능을 비노출로 유지하고, 이를 앞 PR의 수용·중간 상태 검사에 포함한다. 한도 기능 자체를 승인 없이 추가하거나 나중 작업이 보호한다고 주장하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "범위 밖으로 미룬 한도가 현재 지원팀 접근을 보호하지 못함을 밝힌다. 한도가 생기기 전에는 관리자로 접근을 제한하거나 기능을 비노출로 유지하고, 이를 앞 PR의 수용·중간 상태 검사에 포함한다. 한도 기능 자체를 승인 없이 추가하거나 나중 작업이 보호한다고 주장하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "multi-pr-shared-creator",
+      "path": "boundary",
+      "prompt": "$tk-prep PR A의 Unit 1과 PR B의 Unit 2가 같은 PaymentState 타입과 설정 키를 각각 생성하고 PR C에서 사용하도록 SDD 계획해 주세요.",
+      "expected_output": "공유 타입·설정의 생성 책임을 한 Unit/PR에 둔다. 소비자 PR은 생성자에 의존하고 Global constraints에 whole Unit별 유일 PR 그룹을 기록한다. 기존 연속 Unit 헤더 문법은 유지하며 중복 생성이나 별도 상충 그룹을 만들지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "공유 타입·설정의 생성 책임을 한 Unit/PR에 둔다. 소비자 PR은 생성자에 의존하고 Global constraints에 whole Unit별 유일 PR 그룹을 기록한다. 기존 연속 Unit 헤더 문법은 유지하며 중복 생성이나 별도 상충 그룹을 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "multi-pr-independent-order",
+      "path": "boundary",
+      "prompt": "$tk-prep 두 독립 PR로 계획해 주세요. A는 보고서 다운로드 권한을, B는 알림 수신 권한을 추가합니다. 서로 다른 파일이지만 공용 권한 기본값을 공유합니다.",
+      "expected_output": "파일이 다르다는 이유로 독립 안전을 단정하지 않는다. 공유 기본값과 두 PR의 A→B 및 B→A 병합 결과, 각 중간 노출 상태를 확인하고 필요시 의존성을 추가한다. 안전한 독립 작업은 억지로 stack으로 묶지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "파일이 다르다는 이유로 독립 안전을 단정하지 않는다. 공유 기본값과 두 PR의 A→B 및 B→A 병합 결과, 각 중간 노출 상태를 확인하고 필요시 의존성을 추가한다. 안전한 독립 작업은 억지로 stack으로 묶지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "single-pr-skips-delivery-grouping",
+      "path": "boundary",
+      "prompt": "$tk-prep 오타 한 곳을 수정하는 단일 PR 작업을 준비해 주세요. 별도 PR 분리는 필요 없습니다.",
+      "expected_output": "다중 PR 그룹·중간 병합 행렬·새 ledger·SDD 문법을 추가하지 않고 기존 단일 작업 준비를 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "다중 PR 그룹·중간 병합 행렬·새 ledger·SDD 문법을 추가하지 않고 기존 단일 작업 준비를 유지한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "migrations": [

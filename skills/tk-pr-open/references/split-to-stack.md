@@ -84,6 +84,7 @@ Prefer intact existing commits only when they already map cleanly to the approve
 
 For every layer, record before approval:
 
+- planned PR group and whole Unit ownership, dependencies, sole shared-artifact creators, gates and intermediate-state checks when a multi-PR plan exists; reconcile with [multi-PR delivery safety](multi-pr-delivery.md), never silently regroup;
 - exact branch name and parent;
 - one-sentence review concern;
 - exact owned paths or intact source commits;
@@ -106,6 +107,7 @@ Layers bottom → top:
 - Title convention basis
 - Template/evidence ownership
 - Layer verification
+- Planned PR group/Units, dependencies, shared creators and merge-state safety checks (when supplied)
 Expected stack-tip tree: <original tree>
 ```
 

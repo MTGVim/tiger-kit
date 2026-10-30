@@ -95,6 +95,22 @@ class AnimationTests(unittest.TestCase):
             self.assertEqual(result['prerequisite'], 'ffmpeg-subtitles-filter')
             self.assertEqual(result['subtitles'], 'soft')
 
+    def test_hard_animation_captions_preserve_canvas_without_band_selection(self):
+        if not movie.subtitle_filter():
+            self.skipTest('subtitles filter unavailable')
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            _, manifest, data = self.fixture(root)
+            data.pop('caption_style')
+            data.update(caption_delivery='hard', captions=[
+                {'start_ms': 0, 'end_ms': 1000, 'text': 'CC'}])
+            manifest.write_text(json.dumps(data))
+            result = movie.build(manifest, root / 'cc.mp4', caption_size=8)
+            self.assertEqual(result['media_status'], 'ready')
+            self.assertEqual((result['width'], result['height'], result['caption_band_px']), (128, 96, 0))
+            self.assertEqual(result['presentation']['caption_style'], 'overlay-rounded')
+            self.assertEqual(len(result['presentation']['caption_boxes']), 1)
+
     def test_hard_caption_band_keeps_animation_content_clear(self):
         if not movie.subtitle_filter():
             self.skipTest('subtitles filter unavailable')

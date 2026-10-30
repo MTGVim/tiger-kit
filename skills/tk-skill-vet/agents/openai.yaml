@@ -1,0 +1,2 @@
+interface:
+  short_description: "[user/auto] 외부 스킬의 설치 전 보안 위험과 업데이트 동작을 정적으로 검토합니다."

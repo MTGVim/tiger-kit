@@ -303,6 +303,8 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
         data = {**data, "caption_style": "none"}
     elif data.get("caption_style") == "none":
         raise ValueError("caption_delivery conflicts with caption_style none")
+    elif animation and delivery == "hard" and "caption_style" not in data:
+        data = {**data, "caption_style": "overlay-rounded"}
     ffmpeg, ffprobe, caption_support = media_tools(
         ffmpeg, (delivery == "hard" and data.get("caption_style", "band") != "none") or bool(data.get("callouts")))
     root = manifest.parent
