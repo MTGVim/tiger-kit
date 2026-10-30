@@ -10,7 +10,7 @@ ignore setup when coverage is missing. If checks still fail, do not write or use
 fallback; return `Unverifiable`.
 
 Binary evidence may be stored in run-owned `.tigerkit/evidence/tk-browser-verify/<run-id>/`. Baseline comparisons use
-`baseline/`, `after/`, and immutable `failed-<attempt>/` subdirectories. A bounded `README.md` may map each
+`baseline/`, `after/`, and immutable `failed-<attempt>/` subdirectories. The required bounded `README.md` maps each
 AC to its screenshot, exact publication-safe `display_route`, replay procedure, and disclosed capture-only or
 nondeterministic exclusions; it is an evidence index, not a lifecycle ledger.
 Do not place other Markdown files there.
@@ -48,6 +48,8 @@ Require these contract fields in nested and standalone results; keep nested resu
 - one ordered row per inspected screenshot with its path, exact origin-free `display_route` or explicit omission,
   criterion, state/region, `capture_method`, effective viewport, role, and comparison result; otherwise the direct trace/a11y/DOM/runtime/request evidence
 - the same per-capture method/effective viewport in the evidence index, including reason and effect for exceptions
+- per visual capture, `annotation: visible (pixel-checked) | none (remain unchanged) | none (target absent by intent)`
+  for the target outline, and `target in frame: yes | no`; an absent target needs its appear/disappear intent and visible surrounding context
 - for sensitive screens, the capture plan's sensitive region and pre-capture clip/mask; never retain a full-page/raw original
 - limitation
 - cleanup fact, including exact run-owned server/browser shutdown, recorded launch PID/handle and confirmed exit and any verified residue; no baseline-to-final-head process hold
@@ -56,6 +58,22 @@ Require these contract fields in nested and standalone results; keep nested resu
 Use the parent-provided or discovered inventory row ID verbatim as `criterion_id`. For direct calls without IDs, assign `BV-001`, `BV-002`, ... once in inventory order and preserve that mapping across retries and phases. A standalone no-argument or scope-only call discovers and reconciles the full same-task inventory before runtime startup; explicit narrowing records excluded rows as `out-of-scope`. `tk-prep` assigns IDs before handoff. Keep the same ID in the QA sheet's `criterionId`; map `evidence_ref` to the sheet's `evidence.ref`, and copy `head` unchanged. Never create a second criterion for a failed part of one row.
 
 When runtime evidence exists, maintain one bounded run-owned `README.md` as the evidence index and canonical full row map. Include each row's full fields above, detailed facts, capture mapping and any non-executed-row details. A standalone chat result may show only the compact row summary below and substitute the README's complete absolute path for the full map. Do not add other Markdown files to the evidence directory.
+
+For a baseline/after comparison, use one compact row per scene:
+`scene | baseline observed value | after observed value | verdict`. Read observed values from
+the DOM/runtime at capture time; use exactly that phase's observed-value text as its capture
+label, preserving required redaction. Use `match`, `intended change` or `pre-existing issue` only
+when supported; report `regression` or `unverifiable` for an unexpected change or missing evidence.
+These scene descriptions never replace criterion statuses or turn a pre-existing issue into `Pass`.
+Pixel-check labels even when the intent requires no target outline; disclose labels in
+`capture_only_mutation`. A capture whose criterion target is out of frame cannot support that
+visual criterion, even when DOM evidence exists. For appear/disappear's absent side, prove the
+expected absence in the visible surrounding context rather than inventing an off-screen target.
+
+An optional HTML gallery or contact sheet is a derived view and never replaces the required
+`README.md` or inspection of originals. Return absolute evidence paths; do not open files,
+galleries or pages in the user's own browser or through a desktop opener unless the user
+explicitly asks. This does not prevent the run-owned headless capture/replay required by verification.
 
 A successful baseline is intermediate evidence, never acceptance. The verifier must release
 its owned server, context and browser before returning phase evidence to the parent. A later

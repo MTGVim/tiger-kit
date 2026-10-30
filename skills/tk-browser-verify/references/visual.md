@@ -49,6 +49,11 @@ container. Record uncovered known contexts as limitations; do not generalize a s
 Prefer the smallest readable evidence that proves the AC while retaining enough surrounding
 layout context. Default to a normal viewport screenshot containing the criterion and its
 necessary context. If the criterion is below the fold, scroll to it and capture that viewport.
+When outlined targets and their labels exceed one viewport, consider the qualified `content-height`
+method below: temporarily grow the emulated height to fit their union, scroll it into view and take
+a normal viewport capture. Prefer this over `captureBeyondViewport` with `clip`, which can paint
+fixed navigation over the content. This preference never waives the resize prerequisites below;
+otherwise use multiple bounded captures. Record the effective height and restore the viewport.
 When one AC requires separated regions or states, use multiple ordered viewport captures and
 map every file to its AC, region/state, and order. Do not default to a context-destroying
 element-only crop or reuse undifferentiated captures for unrelated criteria.
@@ -109,10 +114,20 @@ preserve the complete failing evidence in a new unique immutable `failed-<attemp
 Before capture, inspect whether an empty off-screen alert, toast, or similar framework
 container expands or contaminates the image. Remove only a verified empty, non-criterion
 container at runtime and disclose it in the evidence index. For annotations, attach an
-`outline` directly to the target element. Place the label as an absolute child of `body`
+`outline` directly to an ordinary target element. If a framework-managed subtree reverts external
+edits, such as a contenteditable rich-text editor, do not mutate the target: inject a run-owned
+`<style>` into `head` with a selector verified to match exactly the intended target, and apply the
+outline through that rule. Revalidate the selector after rerender; do not add target attributes
+merely to select it. For a table clipped by an overflow wrapper, use a negative `outline-offset`
+so its outline stays inside the visible boundary. Remove the owned rule after capture and restore
+any ordinary target's prior inline style. Place the label as an absolute child of `body`
 and clamp its position to the page width so target `overflow: hidden` cannot clip it.
 Do not calculate a detached overlay from coordinates that may change during scrolling,
 `fullPage` layout, or capture.
+Inspect the decoded final image and confirm each required outline and label is actually visible
+and each criterion target is in frame. A missing/clipped outline or label is a failed capture,
+not a limitation that permits acceptance. Preserve it under `failed-<attempt>/` and recapture;
+DOM/computed-style evidence alone cannot satisfy this check.
 
 If fixed navigation obscures the criterion, first prefer bounded captures; for a page-wide AC,
 consider the qualified `content-height` method above before hiding navigation. Otherwise use the

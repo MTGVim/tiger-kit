@@ -592,6 +592,46 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "app-scene-report-label-and-pixel-check",
+      "path": "success",
+      "prompt": "네이티브 설정 창의 수정 전 `Accessibility` 관찰값은 `Scale: 100%`, 수정 후는 승인된 `Scale: 125%`입니다. 둘 다 같은 창 크기와 배율에서 촬영했고 실제 이미지에도 해당 텍스트가 보입니다. 결과 표와 캡처 라벨 규칙을 적용하세요.",
+      "expected_output": "장면별 전후 관찰값·판정을 표로 보여 주고 같은 문구의 라벨과 실제 강조선 확인을 기록합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "장면별 수정 전 관찰값·수정 후 관찰값·판정 표를 만들고 각 단계의 관찰값 문구를 그대로 라벨에 씁니다. 네이티브에서 존재하지 않는 `DOM/CSS` 값을 꾸미지 않습니다. 선택 제공자의 기능에 맞춘 주석 파생본과 원본 대응을 보존하며 선·라벨을 실제 이미지에서 확인합니다."
+        },
+        {
+          "type": "judge",
+          "criterion": "캡처 행에 `annotation`과 `target in frame`을 기록하고 필수 `README.md`에 전체 결과와 촬영 대응을 둡니다. 단계별 상태와 원래 `capture_only_mutation` 및 좌표·배율 변환 기록은 유지합니다."
+        },
+        {
+          "type": "output_contains",
+          "text": "Scale: 125%"
+        }
+      ]
+    },
+    {
+      "id": "app-missing-outline-and-derived-gallery-boundary",
+      "path": "boundary",
+      "prompt": "[하위 검증 절차 감사] 네이티브 편집기의 표가 캡처 밖이고 다른 문단의 강조선도 최종 이미지에 없습니다. 접근성 값은 맞습니다. 검증기가 `gallery.html`은 있으니 `README.md`를 생략하고 일반 브라우저로 자동 열어 전달하려 합니다. 부모 승인과 사용자 요청에는 파일 열기가 없습니다. 이 절차의 판정을 답하세요.",
+      "expected_output": "누락된 강조 촬영과 화면 밖 기준은 통과시키지 않고 인덱스를 작성하며 자동 열지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "선이나 라벨이 빠진 촬영은 실패로 보존하고 재촬영해야 합니다. 화면 밖 표 이미지를 해당 시각 기준의 근거로 쓰거나 접근성 값만으로 통과시키지 않습니다."
+        },
+        {
+          "type": "judge",
+          "criterion": "유일한 Markdown 근거 인덱스 `README.md`를 유지하며 갤러리는 파생 보기로만 취급합니다. 사용자 브라우저나 데스크톱 열기를 실행하지 않고 경로를 반환합니다. 명시적인 후속 열기 요청은 기존 포커스·권한 경계에서 허용합니다."
+        },
+        {
+          "type": "output_contains",
+          "text": "README.md"
+        }
+      ]
     }
   ]
 }

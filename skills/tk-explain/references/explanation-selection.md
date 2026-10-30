@@ -42,15 +42,37 @@ Respect an explicit format (for example `이미지로`) and skip this question. 
 conflicts, explain the lost requirement and ask only which bound requirement to change. Never
 silently flatten interaction or rasterize exact code. With just one feasible format, announce it.
 
+Use these stable format IDs in every format question: show both ID and concrete name and accept
+the ID alone (for example `F1`). Filter to compatible choices without renumbering. `F` IDs are
+format choices, independent of the unchanged technique/principle IDs `01`-`30`, `A`, `P1`-`P4`.
+
+| Format ID | Concrete format |
+| --- | --- |
+| F1 | Offline HTML, interactive when the technique requires it |
+| F2 | Precise static PNG |
+| F3 | AI illustration (raster) |
+| F4 | #17 Infographic Poster |
+| F5 | #29 Slide Deck |
+| F6 | Standalone SVG, animated only when explicitly selected |
+| F7 | Video, only when explicitly selected |
+| F8 | #27 Terminal Replay |
+| F9 | #30 Social Thread (request-only) |
+
+An ID resolves only its format axis; retain the selected technique and remaining style/aspect
+question. Reject an incompatible ID with its lost requirement instead of silently remapping it.
+Explicit legacy IDs #17/#27/#29/#30 and format names remain accepted aliases. F9 enables #30 only
+when explicitly requested; do not offer it unsolicited. F4/F5 are compositions rather than a
+request to replace their facts with AI-generated text; infer their compatible rendering route.
+
 | Selected requirement | Compatible formats / exclusions |
 | --- | --- |
-| Participation (#02, #09, #12, #19-#24, including request-only #23) | Interactive offline HTML only; native disclosure/links and a static no-JS reading path. No still image/video/slide replacement. |
-| A Archify Panel Board or #05 Scrollytelling | Offline HTML preserving the actual board or scroll behavior; do not replace the defining form with a still image. |
-| P4 Independent hand-drawn SVG | Standalone SVG or HTML containing the actual vector sketch; an AI raster is a different treatment, not this SVG execution. |
-| Exact code or command output (#26, #27, or another technique whose claim needs exact source bytes) | Selectable-text HTML, or the explicit #27 terminal replay format. Exclude AI raster illustration. |
-| General static explanation | Offline HTML, precise static PNG, AI illustration (raster), and fitting explicit #17 poster/#29 slide formats; choose only options that preserve the needed facts. |
-| Motion essential (#18) | Live HTML or an explicitly selected standalone animated SVG/video, with static equivalent. A still image cannot satisfy motion. |
-| #30 Social Thread | Request-only separate sharing summary, retaining a link/reference to the full explanation; never auto-select it. |
+| Participation (#02, #09, #12, #19-#24, including request-only #23) | F1 only, interactive offline HTML; native disclosure/links and a static no-JS reading path. No still image/video/slide replacement. |
+| A Archify Panel Board or #05 Scrollytelling | F1 preserving the actual board or scroll behavior; do not replace the defining form with a still image. |
+| P4 Independent hand-drawn SVG | F6 or F1 containing the actual vector sketch; an AI raster is a different treatment, not this SVG execution. |
+| Exact code or command output (#26, #27, or another technique whose claim needs exact source bytes) | F1 selectable-text HTML, or explicit F8 terminal replay. Exclude F3 AI raster illustration. |
+| General static explanation | F1, F2, F3 and fitting explicit F4/F5; choose only options that preserve the needed facts. |
+| Motion essential (#18) | F1 live HTML or explicitly selected F6 animated SVG/F7 video, with static equivalent. A still image cannot satisfy motion. |
+| #30 Social Thread | F9 request-only separate sharing summary, retaining a link/reference to the full explanation; never auto-select it. |
 
 For an unspecified single HTML without a technique-specific form, archify remains the page
 renderer. A choice of HTML is not a choice of image style; do not ask a third question for HTML.

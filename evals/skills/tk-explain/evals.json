@@ -2316,6 +2316,42 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "explain-format-stable-id-answer",
+      "path": "success",
+      "prompt": "기법은 `11 Illustrated Intuition`으로 확정했습니다. 호환 형식만 고르게 질문한 뒤 제가 `F3`이라고 답했다고 가정하고 다음 선택 단계만 보여 주세요. 스타일과 비율은 아직 정하지 않았습니다.",
+      "expected_output": "고정 형식 번호와 이름으로 질문하며 `F3` 응답을 실제 래스터 일러스트로 해석합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "형식 질문에 `F1` 오프라인 `HTML`, `F2` 정밀 정적 `PNG`, `F3` 실제 래스터 일러스트 등 호환 형식의 고정 번호와 이름을 함께 표시하고 `F3`만으로 답할 수 있습니다. 번호는 필터링 후 재배정하지 않으며 이 답변 뒤 기법을 다시 묻지 않고 래스터의 미정 스타일·비율로 진행합니다."
+        },
+        {
+          "type": "judge",
+          "criterion": "기존 `01-30/A/P1-P4`를 바꾸지 않습니다. 기존 형식 17/27/29/30과 명칭도 입력 별칭으로 유지하고 요청 전용 지위와 외부 선호 저장 동의는 유지합니다."
+        },
+        {
+          "type": "output_contains",
+          "text": "F3"
+        }
+      ]
+    },
+    {
+      "id": "explain-format-id-incompatible-not-remapped",
+      "path": "boundary",
+      "prompt": "기법은 `19 Predict First`입니다. 형식 질문에서 이미지도 보고 싶어서 `F2`라고 답했습니다. 정답 공개 기능은 유지해 주세요.",
+      "expected_output": "참여형에서 `F2`를 다른 번호로 조용히 바꾸지 않고 충돌하는 요구를 설명합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "참여형에는 호환 형식 `F1`만 알리며 정지 이미지를 호환 선택지로 내놓지 않습니다. 후속 `F2`는 정밀 정적 `PNG`로 일관되게 해석해 정답 공개와의 충돌을 설명하고 변경할 요구만 확인합니다. 필터링해 남은 첫 형식을 `F2`로 바꾸거나 상호작용을 삭제하지 않습니다."
+        },
+        {
+          "type": "output_contains",
+          "text": "F2"
+        }
+      ]
     }
   ],
   "renamed_from": {

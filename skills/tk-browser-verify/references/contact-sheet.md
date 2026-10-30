@@ -38,7 +38,7 @@ Pillow, invalid input or composition failure skips this optional view. Record th
 existing README, preserve originals and verdicts, and continue ordinary verification. Do not
 automatically install a tool, switch provider, rerun the browser or invent an acceptance failure.
 
-Open the generated sheet to navigate, then inspect each required original through the existing
+Inspect the generated sheet through the image tool to navigate, then inspect each required original through the existing
 image tool. Preserve `reread-image`, ordered capture/criterion rows, immutable failure evidence
 and per-AC verdicts. A sheet is not a PR acceptance image or proof of readable text, exact geometry,
 interaction or regression absence. Do not infer a Pass from thumbnails. Report only measured

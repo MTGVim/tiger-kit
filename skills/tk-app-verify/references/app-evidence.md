@@ -4,7 +4,7 @@ Read before capture, evidence write or executed phase return. Apply the [shared 
 contract](verification.md) and [artifact paths](artifact-paths.md). Native evidence is window-
 bound rather than URL/DOM-bound. Store run-owned evidence under
 `.tigerkit/evidence/tk-app-verify/<run-id>/` with `baseline/`, `after/` and immutable
-`failed-<attempt>/` captures when applicable; a bounded `README.md` is an AC/evidence index,
+`failed-<attempt>/` captures when applicable; the required bounded `README.md` is the sole Markdown AC/evidence index,
 not a lifecycle ledger.
 
 ## Capture and annotations
@@ -22,7 +22,11 @@ produce a labeled annotated derivative using target bounds from that same captur
 raw-to-annotated mapping and coordinate/scale transform. Never redraw UI, erase defects or pass
 an annotation as original pixels. If accurate bounds or an annotation tool are unavailable,
 return `Unverifiable` for the required visual contract rather than omitting outlines.
-Inspect raw and annotated images; `capture_only_mutation` identifies each outline/label and
+Inspect decoded raw and annotated images and confirm every required outline and label is visible.
+A missing or clipped annotation is a failed capture: preserve it and recapture, rather than
+accepting it with a limitation. Use the selected provider's supported capture/annotation route;
+browser DOM mutation is not a native annotation mechanism.
+`capture_only_mutation` identifies each outline/label and
 redaction. A target beyond the captured window/scroll position is not evidence of its criterion.
 
 Judge intended changes and preserved regions separately. Record all applicable shared visual
@@ -43,9 +47,27 @@ An executed result includes:
 - `capture_only_mutation: <description> | none` and redaction facts;
 - ordered capture rows: absolute raw/annotated paths, criterion, window/state/region, capture method,
   effective dimensions/scale and actually inspected result, or the direct nonvisual evidence;
+- per visual capture, `annotation: visible (pixel-checked) | none (remain unchanged) | none (target absent by intent)`
+  for the target outline and `target in frame: yes | no`; absent sides require appear/disappear intent and visible context;
 - comparable baseline provenance, per-axis verdicts/measurements and failures when a pair applies;
 - `verification_complete`, exact `next_required`, limitations, focus effects and cleanup/residue;
 - `automated_regression: protected | N/A | exception | unknown` from the parent/verified disposition.
+
+For baseline/after comparisons, include one compact row per scene:
+`scene | baseline observed value | after observed value | verdict`. Read each value from current
+app/accessibility/runtime evidence at capture time and confirm visible claims in the image;
+never invent a DOM measurement for a native surface. Use the same phase-specific observed-value
+text as the capture label, with required redaction. Use `match`, `intended change` or
+`pre-existing issue` only when supported; use `regression` or `unverifiable` for an unexpected
+change or missing evidence. Preserve actual criterion statuses; a scene description is not a
+waiver. Pixel-check labels even when no target outline is required. An out-of-frame target cannot
+support its visual criterion; an absent appear/disappear side must show the surrounding context.
+
+Keep full result fields, comparison rows and capture mapping in the evidence `README.md`.
+An optional HTML gallery/contact sheet is a derived view, never a replacement for that index
+or original-image inspection. Return absolute paths without opening evidence in the user's own
+browser or through a desktop opener; open only on explicit user request. Preserve the selected
+provider's focus and authorization requirements even for a requested open.
 
 A preflight stop returns only the real status, missing prerequisites and next input; invent no
 captures or completion fields. A baseline is capture-only with `baseline_capture: Pass`,
