@@ -21,6 +21,9 @@ a flow; it does not establish application correctness, latency, performance or r
 Resolve the audience, claim, selected format and available scene sources. Prefer stills when
 motion itself is not the claim. A short flow around ten seconds often fits GIF; longer explanation
 fits MP4. Reuse supplied material and approved choices without another routine question.
+For authored explainers, answer an opening question immediately with the main claim/reason and
+necessary condition in both screen copy and narration, then demonstrate why with changing visuals.
+Keep an explicitly selected discovery-led structure instead; do not infer improved learning from style alone.
 Only when Manim is selected, read [Manim dependency and rendering](references/manim.md), verify
 and load the external `manim-composer` and `manimce-best-practices` skills unchanged. Native
 ManimCE and an existing Docker runtime are alternatives, never universal prerequisites. Keep
@@ -57,7 +60,8 @@ assertion screenshots unchanged and independent from the movie. Use H.264 MP4 at
 frame rate capped at 30fps, with optional mono 48kbps AAC; GIF and explainer stills default to
 10fps. Animation MP4 instead retains its measured source rate, dimensions and duration, including
 rates above 30; existing embedded audio is retained. Its captions default to selectable tracks
-and sidecars; burn them only on explicit selection. MP4 defaults to CRF 18; use the assembler's quality/rate overrides and preserve source
+and sidecars; burn them only on explicit selection. A hard-caption `band` appends caption-only space
+below animation pixels; report its added height. MP4 defaults to CRF 18; use the assembler's quality/rate overrides and preserve source
 resolution. Follow prerequisite recovery for unavailable tools.
 If hard-caption support is missing after installed-tool discovery, present the `tk-wizard`
 installation-guidance question before returning the blocked result. Do not implement a frame-compositing workaround.

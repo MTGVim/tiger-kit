@@ -267,19 +267,25 @@ def scene_audio(scenes: list, root: Path, stage: Path, env: dict, ffmpeg: str) -
     return output, speech_end
 
 
-def caption_layout(height: int, evidence: bool, size: float | None) -> dict:
+def caption_layout(height: int, evidence: bool, size: float | None, lines: int = 1) -> dict:
     """Keep UI pixels intact and convert output-pixel text geometry to libass's 288 units."""
     height = math.ceil(height / 2) * 2
     if size is not None and not 0 < number(size) <= height / 2:
         raise ValueError("caption size must be positive and at most half the source height")
-    # Default text is 5% of the final height; reserve two text heights for its band.
-    desired = max(height + 48, height / .9 if size is None else height + 2 * size)
+    # Reserve the caption block plus one text height of breathing room.
+    band_scale = lines + 1
+    desired = max(height + 48, height / (1 - .05 * band_scale) if size is None else height + band_scale * size)
     final = math.ceil(desired / 2) * 2 if evidence else height
     pixels = final * .05 if size is None else size
     band = final - height
-    margin = (band - pixels) / 2 if evidence else pixels / 2
+    margin = (band - lines * pixels) / 2 if evidence else pixels / 2
     return {"size_px": pixels, "band_px": band, "height": final,
             "font_size": pixels * 288 / final, "margin_v": margin * 288 / final}
+
+
+def caption_text(value: str) -> str:
+    # Keep authored line breaks without allowing blank lines to split subtitle cues.
+    return html.escape("\n".join(line.strip() for line in value.splitlines() if line.strip()), quote=False)
 
 
 def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str | None = None,
@@ -347,7 +353,8 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
     if animation and (width, height) != (source_width, source_height):
         warnings.append("odd source dimensions padded to even dimensions for yuv420p")
     caption_style, callouts, highlights = presentation.validate(data, source_width, source_height, end)
-    layout = caption_layout(source_height, mode == "evidence" and caption_style == "band", caption_size)
+    band = caption_style == "band" and (mode == "evidence" or (animation and burn))
+    layout = caption_layout(source_height, band, caption_size, lines=3 if animation and burn else 1)
     enhanced = (burn and caption_style not in {"band", "none"}) or bool(callouts) or bool(highlights)
     if enhanced:
         for image, _ in frames[1:]:
@@ -432,7 +439,7 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
             (stage / "frames.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
         if captions:
             text = "\n\n".join(f"{i+1}\n{srt_time(c['start_ms'])} --> {srt_time(c['end_ms'])}\n" +
-                                  html.escape(c["text"].replace("\r", " ").replace("\n", " "), quote=False)
+                                  caption_text(c["text"])
                                   for i, c in enumerate(captions))
             (stage / "captions.srt").write_text(text + "\n", encoding="utf-8")
             if sidecar.exists() and sidecar.read_bytes() != (stage / "captions.srt").read_bytes():
@@ -440,7 +447,7 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
             if vtt_sidecar:
                 vtt = "WEBVTT\n\n" + "\n\n".join(
                     f"{i + 1}\n{srt_time(c['start_ms']).replace(',', '.')} --> {srt_time(c['end_ms']).replace(',', '.')}\n" +
-                    html.escape(c["text"].replace("\r", " ").replace("\n", " "), quote=False)
+                    caption_text(c["text"])
                     for i, c in enumerate(captions)) + "\n"
                 (stage / "captions.vtt").write_text(vtt, encoding="utf-8")
                 if vtt_sidecar.exists() and vtt_sidecar.read_bytes() != (stage / "captions.vtt").read_bytes():
@@ -461,13 +468,13 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
                 end, layout["size_px"], float(rate), ffmpeg, stage, env, warnings)
             if extra_filters: filters += "," + ",".join(extra_filters)
         if burn:
-            # Evidence frames preserve the complete UI; captions live in an appended band.
-            if mode == "evidence" and caption_style == "band":
+            # Keep source pixels intact; visible captions live in an appended band.
+            if band:
                 filters += f",pad=iw:ih+{layout['band_px']}:0:0:black"
             if caption_style == "band":
                 filters += (",subtitles=filename=captions.srt:force_style='FontName=Noto Sans CJK KR,"
                             f"FontSize={layout['font_size']:.6f},MarginV={layout['margin_v']:.6f},"
-                            f"Alignment=2,Outline={0 if mode == 'evidence' else 1},Bold=1'")
+                            f"Alignment=2,Outline={0 if band else 1},Bold=1'")
             else:
                 filters += ",subtitles=filename=overlay-captions.ass"
         if kind == ".mp4":

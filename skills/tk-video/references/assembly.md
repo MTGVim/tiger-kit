@@ -114,6 +114,14 @@ player UI is added. Explicit hard delivery uses selected style and the existing 
 contract; missing support stays blocked. Differing sidecars, movies and contact sheets are
 never overwritten.
 
+For animation's explicit hard `band`, preserve the full source rectangle and append a black
+caption-only band, sized for up to three lines plus breathing room. Width, FPS and timing stay
+unchanged; report the added output height. Inspect every cue, especially the longest and transitions:
+shorten/split authored text or adjust `--caption-size` if glyphs leave the band. Author readable
+word-boundary line breaks; SRT/WebVTT retain them while discarding blank lines that would split a cue.
+A geometry receipt does not prove no overlap. Soft/off animation keeps its original dimensions; this does not change
+the default delivery or the user's selected style.
+
 ## Optional captions, callouts and zoom
 
 Resolve these fields before production through [media choices](media-preferences.md), including

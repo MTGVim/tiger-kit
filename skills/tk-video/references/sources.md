@@ -78,3 +78,18 @@ retiming. Inspect emitted default disposition: clearing it does not guarantee th
 leaves the first subtitle initially disabled. Report actual browser/player checks separately
 from encoding, source inspection, synthetic audio and human listening. Upstream's full example
 test suite was not run; use bounded real-render and regression evidence for this integration.
+
+
+## Answer-first opening and visible CC (issue 490)
+
+The supplied React/Dijkstra viewer feedback in [#490](https://github.com/MTGVim/tiger-kit/issues/490)
+is a concrete correction to those delivered cuts, not evidence of universal learning gains.
+The external composer's narrative patterns at the verified revision above retain mystery/payoff
+examples. Keep its short question hook and progressive object motion; adapt the caller's accepted
+question → immediate answer/reason → worked-example order. Omit an external-skill rewrite, a
+mandatory suspense arc and a new global caption preference.
+
+FFmpeg's [pad filter](https://ffmpeg.org/ffmpeg-filters.html#pad-1) and decoded regression frames
+support extending the existing UI-preserving band to explicitly selected hard animation captions.
+Keep source pixels, rate and timing, disclose added height, and inspect longest/multiline cues.
+Soft/off defaults and independent listening remain unchanged.

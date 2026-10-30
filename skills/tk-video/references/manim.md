@@ -52,8 +52,10 @@ round, reusing answered choices and captions-off. Pass manifest `caption_deliver
 preference key. Slide-only theme/emphasis defaults do not recolor or retime continuous video.
 
 Pass accepted audience/claim, scene facts, media choices and owned output paths to the external
-composer, then load the external ManimCE guidance. Reuse answered questions; neither external
-skill expands installation, preview, publication or filesystem authority. Keep scene code and
+composer, then load the external ManimCE guidance. Reuse answered questions. The external
+composer's mystery/payoff examples do not override the accepted opening order: pass the immediate answer
+and focus point before the worked example. Retain progressive object motion when adding captions.
+Neither external skill expands installation, preview, publication or filesystem authority. Keep scene code and
 caches in the calling run, outside either skill. Render headlessly without preview/auto-open,
 using actual installed CLI syntax. Preserve selected theme, resolution, FPS and timeline rather
 than applying light-slide/10fps defaults. Compare performance only with identical scene/rate/audio

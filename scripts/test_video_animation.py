@@ -80,6 +80,9 @@ class AnimationTests(unittest.TestCase):
             round_trip = subprocess.check_output(['ffmpeg', '-v', 'error', '-i', result['path'], '-map', '0:s:0', '-f', 'srt', '-']).decode()
             self.assertIn('버전 2와 <DOM>', html.unescape(round_trip))
 
+    def test_authored_caption_lines_preserve_literals_without_blank_cues(self):
+        self.assertEqual(movie.caption_text('첫 문장 <DOM>\r\n\r\n다음 문장'), '첫 문장 &lt;DOM&gt;\n다음 문장')
+
     def test_explicit_hard_captions_keep_missing_filter_blocked(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve()
@@ -91,6 +94,36 @@ class AnimationTests(unittest.TestCase):
             self.assertEqual(result['media_status'], 'blocked')
             self.assertEqual(result['prerequisite'], 'ffmpeg-subtitles-filter')
             self.assertEqual(result['subtitles'], 'soft')
+
+    def test_hard_caption_band_keeps_animation_content_clear(self):
+        if not movie.subtitle_filter():
+            self.skipTest('subtitles filter unavailable')
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            source = root / 'source.mp4'
+            subprocess.run(['ffmpeg', '-v', 'error', '-f', 'lavfi', '-i',
+                'color=c=0x102040:s=640x360:r=30:d=1', '-c:v', 'libx264',
+                '-threads', '1', '-pix_fmt', 'yuv420p', str(source)],
+                check=True, capture_output=True)
+            digest = hashlib.sha256(source.read_bytes()).hexdigest()
+            data = {'mode': 'animation', 'video_path': str(source),
+                'caption_delivery': 'hard', 'caption_style': 'band',
+                'captions': [{'start_ms': 0, 'end_ms': 1000,
+                    'text': 'The answer comes first.\nMoving shapes explain why, while captions remain below the diagram.'}]}
+            manifest = root / 'manifest.json'
+            manifest.write_text(json.dumps(data))
+            result = movie.build(manifest, root / 'cc.mp4', caption_size=26)
+            self.assertEqual(result['media_status'], 'ready')
+            self.assertEqual((result['width'], result['height'], result['caption_band_px']), (640, 464, 104))
+            self.assertEqual(result['fps'], 30)
+            self.assertEqual(result['source_video']['height'], 360)
+            raw = subprocess.check_output(['ffmpeg', '-v', 'error', '-i', result['path'],
+                '-frames:v', '1', '-pix_fmt', 'gray', '-f', 'rawvideo', '-'])
+            self.assertEqual(len(raw), 640 * 464)
+            self.assertLess(max(raw[:640 * 360]), 100)
+            self.assertGreater(max(raw[640 * 360:]), 160)
+            self.assertEqual(hashlib.sha256(source.read_bytes()).hexdigest(), digest)
+            self.assertIn('comes first.\nMoving shapes', Path(result['captions_path']).read_text())
 
     def test_embedded_stereo_audio_is_retained_and_conflicting_audio_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
