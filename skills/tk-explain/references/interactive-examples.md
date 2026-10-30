@@ -1,6 +1,9 @@
 # Interaction in archify pages
 
-Read for an explicit interaction request. Keep the complete explanation in archify, with
+Read for an explicit interaction request in the selected archify branch. A technique-specific
+HTML form instead follows the common renderer contract (native disclosure, inline enhancements,
+all steps readable without JS); do not apply archify limitations to that branch.
+Keep the complete archify explanation in archify, with
 prerequisites, causal steps, sources and material caveats outside controls. Read the installed
 `references/explainer-authoring.md` and, for viewer-specific behavior, `references/viewer-runtime.md`.
 Use supported directives and native diagrams; do not insert a TigerKit document shell,

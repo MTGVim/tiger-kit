@@ -10,18 +10,23 @@ consented external memory owner, not browser comparison state.
 ## Interaction and replay
 
 Each item starts in its existing deterministic, seeded opaque-card order. Adjacent surviving
-cards form a pair. `왼쪽 진출` or `오른쪽 진출` keeps only that side; `양쪽 진출` keeps both
-in the same order. A final odd card is shown alone: acknowledge it with `왼쪽 진출` before
+cards form a pair. Each card's `이 설명 선택` keeps that side (`left`/`right` events); `둘 다 진출` keeps both
+in the same order. A final odd card is shown alone: acknowledge it with `다음 라운드로` (`left` only) before
 its bye advances. There is no automatic tie breaker, loop that silently reduces ties, or
 forced single winner. Repeated both-advance rounds remain pending until a human chooses.
 
 `남은 후보 공동 1위` is available only at the start of a later round after every survivor
 has appeared in an acknowledged pair or bye. It requires explicit confirmation and selects
 all survivors. After a legitimate round leaves one survivor, that item is complete.
-`선택 취소` removes the current item's last event, including final or co-winner selection.
-`이전 항목` / `다음 항목` navigate independent transcripts. Both sample cards have bounded,
-keyboard-focusable independent scrolling in the remaining viewport height; shared context
-remains above them. Guidance is collapsible and progress is not repeated in storage status.
+`되돌리기` removes the current item's last event, including final or co-winner selection.
+`이전 항목` / `다음 항목` navigate independent transcripts. The large round heading uses bracket names (`16강 · 3/8`, `8강`, `4강`, `결승`) and a visible
+VS separates the current pair. Card selection buttons stay below each scrolling preview.
+Both sample cards have bounded, keyboard-focusable inner scrolling in the remaining viewport height; shared context
+remains above them. Long screenshots retain their aspect ratio at card width; the outer rounded card clips its
+inner scrollbar. Copy/export/import, key loading/reveal, item navigation, guidance and co-winner
+selection live inside the collapsed `관리` menu. Completion shows a winner message with result
+copy and a separate reveal action; undo remains available after completion. Progress is not
+repeated in storage status. HTML previews use the on-demand sandbox contract in the manifest.
 At viewport heights of 560 CSS pixels or less, including zoom/landscape, page scrolling is
 an accessibility fallback so controls remain reachable.
 

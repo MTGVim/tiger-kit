@@ -6,7 +6,8 @@ Start from the reader's question, prerequisites, evidence and explicit destinati
 Consider the existing [30 techniques](explanation-techniques.md) and all four principles below;
 read individual legacy entries only when requested or needed. Prose and semantic tables need
 no named technique. Keep request-only techniques request-only. These are presentation choices,
-not learning-style diagnoses, new skill dependencies or alternative document renderers.
+not learning-style diagnoses or new skill dependencies. Rendering follows the selected
+technique's defining form, not a shared mandatory panel shell.
 
 Show the user a shortlist of up to five suitable choices with each name, the concrete reason
 it fits this question, and a material limitation. Recommend fewer when fewer fit, explaining
@@ -14,6 +15,14 @@ the shortfall rather than padding with poor fits. Identify the selected choice a
 one explanation without a routine approval round. An explicit fitting format wins over a saved
 preference; factual accuracy, accessibility and the requested behavior still constrain feasibility.
 If authorized remembered preferences change the order, distinguish that influence from topic fit.
+
+## Archify panel board
+
+Include one additional choice alongside the 30 techniques and four principles: **archify panel
+board** (conclusion first, native diagrams, table panels). Use it for an ordinary single page
+without a technique-specific form or when explicitly selected. Its fixed panel grammar cannot
+express arbitrary HTML treatments. A request for a particular form takes precedence; requested
+variant sets include at most one archify panel board, not repeated boards with different wording.
 
 ## Four available distilled principles
 
@@ -32,8 +41,9 @@ Each is a partial adaptation, not the original skill's formal execution or a rep
 Sources, exact revisions, keep/adapt/omit decisions, license and evidence limits are recorded in
 [selection provenance](sources.md#explanation-selection-and-four-principles-2026-10-30).
 Do not fetch upstream at explanation runtime. Reuse the current renderer and figure contracts:
-Archify owns explanation pages and supported native diagrams/interactions; independent SVG
-figures use scene-figure restrictions and PNG conversion for `@image`. The PR/issue summary
+Archify owns only the selected panel-board branch and its native diagrams/interactions.
+Technique-specific HTML follows the common renderer contract and may embed original inline SVG;
+figures entering archify still use scene-figure restrictions and PNG conversion for `@image`. The PR/issue summary
 PNG route stays the default for that destination, and explicit standalone SVG/video keeps its
 own route. No principle skips source, author, accuracy, accessibility or offline checks.
 Use an available image tool only when raster generation is actually selected and authorized;
@@ -56,6 +66,16 @@ causal/spatial relationships and all rendered text against that evidence. Check 
 conditions even when another variant is correct. Keep the same necessary facts while varying
 presentation; do not fill source gaps for visual symmetry. Perform the applicable author check,
 renderer/static gates and accuracy review on each candidate's final bytes, not one representative.
+
+Before comparison, inspect each variant's **form fidelity**, not just its facts. Name its
+core form (for example dialogue bubbles, crossed-out misconception, a `<details>` answer,
+fixed figure, scroll-linked step emphasis or inline SVG) and verify that it actually exists
+and remains usable in the chosen renderer. Different panel order or prose alone is not a
+technique distinction. If the renderer cannot express that form, mark the variant `limited`,
+name the lost behavior and notify the user before starting comparison. Keep it out of a
+fully implemented technique set; do not silently substitute a list/next panel or claim success.
+A disclosed limited candidate may enter evaluation only when the user explicitly accepts it.
+Keep factual and form checks separate; all steps and core facts must remain readable without JS.
 
 Before evaluation, show the technique names/reasons/limits but keep the mapping to anonymous
 samples private. Explain that visual style may still allow guessing. Hand generated candidates,

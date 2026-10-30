@@ -206,6 +206,49 @@ class BlindComparisonTests(unittest.TestCase):
         card = lambda p: next(c for c in p['items'][0]['cards'] if not c['failed'])
         self.assertNotEqual(card(public)['fingerprint'], card(public2)['fingerprint'])
 
+    def test_versus_html_previews_copy_blind_bytes_and_bind_revisions(self):
+        import zipfile
+        from PIL import Image
+        Image.new('RGB', (800, 3400), 'white').save(self.root / 'capture.png')
+        original = '<!doctype html><title>문서</title><details><summary>정답</summary>설명</details>'
+        (self.root / 'prepared.html').write_text(original)
+        self.data = fixture(3, 1, 'image')
+        for row in self.data['outputs']:
+            row.pop('error', None)
+            row['path'] = 'capture.png'
+            row['links'] = [{'label': '상호작용 문서', 'path': 'prepared.html'}]
+        self.data['outputs'][0] = {k:v for k,v in self.data['outputs'][0].items() if k != 'links'}
+        self.data['outputs'][0].update(kind='html', path='prepared.html')
+        self.manifest.write_text(json.dumps(self.data))
+        public, key = builder.build(self.manifest, self.root / 'html-versus', mode='versus')
+        page = (self.root / 'html-versus/gallery.html').read_text()
+        parser = Parser(); parser.feed(page)
+        self.assertEqual(len(parser.ids), len(set(parser.ids)))
+        self.assertEqual(page.count('data-html-src='), 3)
+        self.assertNotIn('<iframe', page)  # Frames are mounted on demand, never all in initial HTML.
+        self.assertIn('class="sample-content"', page)
+        self.assertIn('class="sample-choice"', page)
+        for card in public['items'][0]['cards']:
+            name = card.get('html_src') or card['links'][0]['href']
+            self.assertRegex(name, r'^item-0001-slot-\d{4}-link-\d{4}\.html$')
+            self.assertEqual((self.root / 'html-versus' / name).read_text(), original)
+        previous = self.root / 'html-versus/answer-key.json'
+        split, _ = builder.build(self.manifest, self.root / 'html-split', previous, mode='versus', delivery='split')
+        self.assertEqual(public['revision'], split['revision'])
+        with zipfile.ZipFile(self.root / 'html-split/comparison.zip') as archive:
+            self.assertNotIn('answer-key.json', archive.namelist())
+            for card in split['items'][0]['cards']:
+                name = card.get('html_src') or card['links'][0]['href']
+                self.assertTrue(name.startswith('assets/item-'))
+                self.assertEqual(archive.read(name).decode(), original)
+        (self.root / 'prepared.html').write_text(original + '<p>추가 조건</p>')
+        changed, _ = builder.build(self.manifest, self.root / 'html-changed', previous, mode='versus')
+        self.assertNotEqual(public['revision'], changed['revision'])
+        self.assertEqual((self.root / 'html-versus' / next(c['html_src'] for c in public['items'][0]['cards'] if c['kind'] == 'html')).read_text(), original)
+        with self.assertRaises(ValueError): builder.build(self.manifest, self.root / 'html-gallery')
+        (self.root / 'prepared.html').write_text('<title>Model&#32;0</title>')
+        with self.assertRaises(ValueError): builder.build(self.manifest, self.root / 'html-identity', mode='versus')
+
     def test_runtime_import_export_regressions(self):
         for script in ('test_blind_comparison_runtime.cjs', 'test_blind_comparison_versus.cjs'):
             result=subprocess.run(['node','--test',str(ROOT/'scripts'/script)],capture_output=True,text=True)

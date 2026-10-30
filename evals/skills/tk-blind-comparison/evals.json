@@ -319,6 +319,51 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "versus-tournament-choice-surface",
+      "path": "success",
+      "prompt": "`$tk-blind-comparison` 준비된 설명 후보 15개를 이상형 월드컵처럼 `versus`로 비교해줘.",
+      "expected_output": "상단의 큰 16강 · 1/8 표시와 두 카드, `VS` 및 카드 아래 이 설명 선택 버튼을 제공한다. 둘 다 진출과 되돌리기는 보조 동작으로 두고 관리 도구는 접힌 관리 메뉴에 둔다. 부전승은 다음 라운드로 버튼으로 확인하며 `left` 이벤트만 기록한다. 8강, 4강, 결승과 우승 안내 및 결과 복사/정답 공개 흐름을 제공한다. 기존 `events`·리비전·가져오기 검증·공동 1위 확인을 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "상단의 큰 16강 · 1/8 표시와 두 카드, `VS` 및 카드 아래 이 설명 선택 버튼을 제공한다. 둘 다 진출과 되돌리기는 보조 동작으로 두고 관리 도구는 접힌 관리 메뉴에 둔다. 부전승은 다음 라운드로 버튼으로 확인하며 `left` 이벤트만 기록한다. 8강, 4강, 결승과 우승 안내 및 결과 복사/정답 공개 흐름을 제공한다. 기존 `events`·리비전·가져오기 검증·공동 1위 확인을 유지한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "versus-interactive-html-current-pair",
+      "path": "success",
+      "prompt": "`$tk-blind-comparison` 익명화된 `HTML` 설명 15개를 `versus`로 비교해줘. `details` 정답과 스크롤 강조를 직접 조작하고 싶어.",
+      "expected_output": "준비된 `kind:html` 또는 이미지에 연결한 `HTML`을 중립 이름의 사본으로 보존하고 이름·`ID` 검사 및 바이트 지문을 유지한다. 현재 쌍만 `sandbox` `allow-scripts` `allow-popups` `iframe`으로 로드하며 지난 `iframe`은 `DOM`에서 제거한다. 같은 출처 권한을 추가하지 않는다. 캡처 전환 또는 원본 링크 대안을 유지하고 원본은 수정하지 않는다. 공개 전 정답표는 분리한다. 실제 조작·`iframe` 내부 오류·외부 요청·새로고침 및 내보내기/가져오기 확인 여부를 정직하게 보고한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "준비된 `kind:html` 또는 이미지에 연결한 `HTML`을 중립 이름의 사본으로 보존하고 이름·`ID` 검사 및 바이트 지문을 유지한다. 현재 쌍만 `sandbox` `allow-scripts` `allow-popups` `iframe`으로 로드하며 지난 `iframe`은 `DOM`에서 제거한다. 같은 출처 권한을 추가하지 않는다. 캡처 전환 또는 원본 링크 대안을 유지하고 원본은 수정하지 않는다. 공개 전 정답표는 분리한다. 실제 조작·`iframe` 내부 오류·외부 요청·새로고침 및 내보내기/가져오기 확인 여부를 정직하게 보고한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "versus-long-capture-readable-inner-scroll",
+      "path": "success",
+      "prompt": "`$tk-blind-comparison` 세로 3400`px` 캡처를 `versus` 화면 두 카드에서 읽고 싶어.",
+      "expected_output": "`versus`에서 이미지를 카드 폭에 맞춘 원래 비율로 표시하고 260`px` 썸네일 규칙을 해제한다. `main` 최대 폭을 해제하며 섹션 위 간격을 둔다. 테두리가 있는 바깥 카드는 `overflow:hidden`, 안쪽은 키보드로도 조작할 수 있는 얇은 스크롤바를 가진 `overflow:auto`로 구성한다. `gallery` 점수 화면과 `schema1` 형식은 보존한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`versus`에서 이미지를 카드 폭에 맞춘 원래 비율로 표시하고 260`px` 썸네일 규칙을 해제한다. `main` 최대 폭을 해제하며 섹션 위 간격을 둔다. 테두리가 있는 바깥 카드는 `overflow:hidden`, 안쪽은 키보드로도 조작할 수 있는 얇은 스크롤바를 가진 `overflow:auto`로 구성한다. `gallery` 점수 화면과 `schema1` 형식은 보존한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

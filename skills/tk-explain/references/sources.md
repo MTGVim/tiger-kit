@@ -295,3 +295,20 @@ no bundled fonts, screenshots, artwork or third-party images are redistributed h
 reuse needs the actual asset's terms and required attribution checked independently, not an
 assumption that the repository license covers every asset. Existing package notices remain intact.
 The four principle descriptions are selective independent adaptations, not copied source files.
+
+
+## Technique-specific forms and versus previews (2026-10-30)
+
+Freshly inspected `tt-a1i/archify@e3920894b0f30db7d5fc7d7d4ece57b304c17015`
+(stable metadata still 3.2.0): `archify/references/explainer-authoring.md`,
+`archify/explainer/inline.mjs`, `test/explainer-inline.test.mjs` and
+`test/explainer-validation.test.mjs`. Authoring and validation intentionally reject raw HTML
+and strikethrough; panel structure is part of its explainer contract. Keep its conclusion-first
+board, native diagrams and finalize for the selected archify branch. Adapt routing so explicit
+technique forms can use independently authored offline HTML; omit upstream code, custom patches,
+new dependencies and any claim of upstream runtime efficacy. The 15-treatment incident supplied
+with this request is supporting case evidence, not independently reproduced model evaluation.
+This scoped decision supersedes the earlier universal-layout rule for `tk-explain`; research
+pages keep archify. Common source/author/static/accuracy obligations remain in both branches.
+The blind-comparison preview is original TigerKit code using standard sandboxed iframes; it
+reuses existing neutral-copy/fingerprint contracts rather than copying an upstream renderer.

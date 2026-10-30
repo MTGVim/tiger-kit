@@ -45,17 +45,20 @@ Choose the deliverable from the stated destination before laying it out. For an 
 or summary visual for a PR body or issue, default to one compact PNG without another format
 question; read [summary image](references/summary-image.md). For that destination, create an
 explanation page only when requested. An explicit page/HTML request retains the page route even for a PR destination.
-Use the archify explainer page layout for every explanation page. For components, calls, states and data
-flow, use its native diagrams. For scenes, spatial relationships or physical placement,
-read [scene figures](references/scene-figures.md), draw SVG and embed converted PNG with
-`@image`, alt text and a caption. Show two to four comparable states when input changes
+Use the archify explainer page layout when the selected technique is the archify panel board
+or when a single explanation has no technique-specific form. Requested variants each use
+their own defining form under the renderer contract; include at most one archify variant.
+In the archify branch, use native diagrams for components, calls, states and data flow. For
+scenes, spatial relationships or physical placement, read [scene figures](references/scene-figures.md);
+archify embeds converted PNG with `@image`, alt text and a caption, while technique-specific
+HTML may retain original inline SVG under the common contract. Show two to four comparable states when input changes
 explain a mechanism; do not substitute a flowchart for an actual spatial scene.
 Keep labels, state transitions and prose consistent; preserve supplied geometry and inputs.
 
 For an explicit request for live interaction, read
-[interactive examples](references/interactive-examples.md). Use archify's supported native
-interactions in the same page; an interaction request never selects the legacy document
-renderer. Image helpers produce figures for `@image`, not a second explanation shell.
+[interactive examples](references/interactive-examples.md). For archify, use its supported
+native interactions. A selected technique-specific HTML form may use inline enhancements under the common contract; neither branch selects the
+legacy document renderer. Image helpers produce figures, not a mandatory page shell.
 For an explicitly requested standalone looping SVG, use [animated SVG](references/animated-svg.md).
 For selected video, read [video output](references/video-output.md) and hand off to `tk-video`.
 Neither selected output changes the evidence obligation or authorizes publication.
@@ -65,13 +68,14 @@ Neither selected output changes the evidence obligation or authorizes publicatio
 For explanation pages, read [renderer contract](references/renderer-contract.md).
 Selected summary PNG, standalone SVG/video and chat-only feedback use their own checks and do not
 require archify. The rest of this step applies only to explanation pages.
-Verify the installed package and minimum version; absent, old or unverifiable installation means
+Only for archify, verify the installed package and minimum version; absent, old or unverifiable installation means
 `Blocked` with an exact `tk-wizard` installation/update handoff, never automatic installation.
-Write the candidate in the run's temporary directory. Before `finalize`, for both `change`
-and `concept` regardless of independent review, perform an author check: render a temporary
-HTML with `node <archify>/bin/archify.mjs deliver explainer candidate.archify.md author-check.html --json`
-(add the same `--repo-root <repo>` when needed), extract it with `scripts/visible_text.py`,
-and compare it with the authored candidate (including badge tones and diagram relationships):
+Write the candidate in the run's temporary directory. For both `change` and `concept`,
+regardless of renderer or independent review, perform an author check. For archify, render
+a temporary HTML with `node <archify>/bin/archify.mjs deliver explainer candidate.archify.md author-check.html --json`
+(add the same `--repo-root <repo>` when needed). For technique-specific HTML, use the saved
+candidate directly. Extract either with `scripts/visible_text.py` and compare it with the
+authored candidate (including badge tones and diagram relationships):
 - Read [clear writing](references/clear-writing.md), "Content-led headings and labels": check
   every heading, table row name/cell, callout title, scope note and diagram label. Name content
   in the stated reader's vocabulary, make comparison subjects explicit, and keep one attribute
@@ -88,8 +92,9 @@ Fix the authored candidate, regenerate temporary HTML and repeat the check for c
 Record checked candidate identity, findings/fixes or no-change result in the run evidence and
 mention completion in the execution report. Renderer-owned UI wording/tooltips remain P/R
 limitations, outside this check. This is authoring, not independent review or a Korean polishing pass.
-Then run archify's complete explainer `finalize` command on the checked candidate. Retain its
-validation/delivery/check receipt and truthful browser status.
+Run the common static checks in the renderer contract on each final HTML. Only for archify,
+also run its complete explainer `finalize` command and retain the validation/delivery/check
+receipt and truthful browser status.
 A failing command is not success. Honor the user's voice and existing language preferences
 from initial drafting; do not add a separate Korean polishing pass or change register to
 silence renderer warnings. Keep qualifications even when a writing warning suggests removal.
@@ -101,7 +106,7 @@ live interaction and an explicit review request. Other `concept` pages use sourc
 checks without independent review by default. State which ran; do not imply review occurred.
 For summary PNG review, give a fresh reviewer the final image, source content,
 `evidence.md` and reader constraints; apply the same factual correction/recheck obligations below.
-For archify review, give a fresh reviewer the entire [review rubric](references/review-rubric.md),
+For every explanation-page review, give a fresh reviewer the entire [review rubric](references/review-rubric.md),
 exact saved HTML, `evidence.md`, reader goal/constraints, extracted text and scene/capture
 images. Use `scripts/visible_text.py`; use `scripts/capture_page.mjs` when local Chrome is
 available. A missing capture is a disclosed visual-evidence gap; inability to inspect a

@@ -8,7 +8,7 @@ const sourcePath = path.join(__dirname, '../skills/tk-blind-comparison/assets/ve
 function runtime(count = 5, options = {}) {
   const handlers = {}, nodes = {}, cards = Array.from({length: count}, (_, i) => ({candidate: String(i + 1).repeat(32), fingerprint: String(i + 1).repeat(64), failed: options.failed?.includes(i) || false}));
   const data = {schema:1, mode:'versus', study:'study', version:'1', revision:'revision', items:Array.from({length:options.itemCount || 1},(_,i)=>({id:String.fromCharCode(97+i).repeat(32),cards}))};
-  const node = name => nodes[name] ||= {hidden:true, disabled:false, textContent:'', value:'', setAttribute() {}, click() {}, remove() {},
+  const node = name => nodes[name] ||= {hidden:true, disabled:false, textContent:'', value:'', setAttribute() {}, append() {}, click() {handlers[name + ':click']?.();}, remove() {},
     addEventListener: (event, callback) => {handlers[name + ':' + event] = callback;}};
   node('comparison-data').textContent = JSON.stringify(data);
   const samples = data.items.flatMap(item => cards.map((card,index) => ({
@@ -16,13 +16,13 @@ function runtime(count = 5, options = {}) {
     media:options.media ? [{tagName:index % 2 ? 'VIDEO' : 'AUDIO', paused:true, currentTime:7,
       pause(){this.paused=true;}}] : [],
     querySelectorAll(selector){return selector === 'audio, video' ? this.media : [];},
-    querySelector: () => node(item.id + card.candidate + ':identity')
+    querySelector: selector => selector === '.sample-content' ? null : node(item.id + card.candidate + ':' + selector)
   })));
   const sections = data.items.map(item => ({hidden:false,querySelectorAll:()=>samples.filter(s=>s.dataset.item===item.id)}));
   let stored = options.raw || null, download, copied, writes = 0;
   const confirms = [];
   vm.runInNewContext(fs.existsSync(sourcePath) ? fs.readFileSync(sourcePath, 'utf8') : '', {
-    document:{getElementById:node, querySelectorAll: selector => selector === 'section' ? sections : samples, createElement:()=>node('download'), body:{append(){}}},
+    document:{getElementById:node, querySelectorAll: selector => selector === 'section' ? sections : selector === '.sample' ? samples : [], createElement:()=>node('download'), body:{append(){}}},
     localStorage:{getItem:()=>{if(options.storageDenied) throw Error(); return stored;},setItem:(_, value)=>{if(options.storageDenied) throw Error(); stored=value; writes++;}},
     crypto:{randomUUID:()=>options.evaluator || 'human'}, Blob, URL:{createObjectURL:blob=>{download=blob;return 'blob:test';},revokeObjectURL(){}}, setTimeout(){},
     navigator:{clipboard:{writeText:async value=>{if(options.clipboardDenied) throw Error();copied=value;}}},
@@ -69,7 +69,7 @@ test('repeated both is finite per click, never forces a winner, and single choic
   assert.equal((await app.export()).items[0].events.length, 20);
   app.click('choose-left');
   const finished = await app.export();
-  assert.match(app.status, /선정/);
+  assert.match(app.status, /우승/);
   app.click('undo');
   assert.equal(app.visible().length, 2);
   assert.equal((await app.export()).items[0].events.length, finished.items[0].events.length-1);
@@ -154,7 +154,7 @@ test('reveal requires a loaded key, partial confirmation and never resets exposu
 test('normal progress is announced once, without repeating it in the storage status', () => {
   const app=runtime(3);
   assert.equal(app.nodes.status.textContent,'');
-  assert.match(app.nodes['versus-progress'].textContent,/라운드/);
+  assert.match(app.nodes['versus-progress'].textContent,/4강/);
 });
 
 
@@ -187,4 +187,53 @@ test('item switch pauses media in the hidden item and does not resume it automat
   app.click('previous-item');
   assert.equal(app.samples[0].hidden,false);assert.equal(audio.paused,true);assert.equal(video.paused,true);
   assert.equal(audio.currentTime,7);assert.equal(video.currentTime,7);
+});
+
+
+test('fifteen candidates display 16, 8, 4 and final rounds, explicit bye and undoable winner', async () => {
+  const app = runtime(15);
+  const headings = [];
+  for(let i=0;i<16;i++) {
+    headings.push(app.nodes['versus-progress'].textContent);
+    if(app.nodes['versus-completion'].hidden === false) break;
+    if(app.nodes.bye.hidden === false) app.click('bye'); else app.click('choose-left');
+  }
+  assert.equal(headings[0],'16강 · 1/8');
+  for(const title of ['16강 · 8/8 · 부전승','8강 · 1/4','4강 · 1/2','결승','우승']) assert.ok(headings.includes(title),title);
+  const final=await app.export(); assert.equal(final.items[0].events.length,15);
+  app.click('undo'); assert.equal(app.nodes['versus-progress'].textContent,'결승');
+  assert.equal(app.nodes['versus-completion'].hidden,true);
+});
+
+test('HTML previews mount only the current pair, keep sandbox restrictions and unload on advance/undo', () => {
+  const handlers = {}, nodes = {}, frames = new Set(), previews = [];
+  const node = id => nodes[id] ||= {id,hidden:true,disabled:false,textContent:'',setAttribute(){},append(){},
+    addEventListener(event, callback){handlers[id+':'+event]=callback;}};
+  const cards = Array.from({length:15},(_,i)=>({candidate:`opaque-${i}`,fingerprint:`bytes-${i}`,failed:false}));
+  const data={study:'study',version:'1',revision:'revision',items:[{id:'item',cards}]};
+  node('comparison-data').textContent=JSON.stringify(data);
+  const samples=cards.map((card,i)=>{
+    const toggle={textContent:'캡처로 보기',hidden:true,addEventListener(event,callback){this.toggle=callback;}};
+    const content={dataset:{htmlSrc:`item-0001-slot-${String(i).padStart(4,'0')}-link-0001.html`},
+      querySelector(selector){return selector==='.toggle-preview'?toggle:this.fallback;},fallback:{hidden:false},
+      prepend(frame){frames.add(frame);}};
+    previews.push(content);
+    return {dataset:{item:'item',candidate:card.candidate},hidden:false,setAttribute(){},querySelectorAll(){return [];},
+      querySelector(selector){return selector==='.sample-content'?content:selector==='.sample-choice'?{append(){}}:{textContent:''};}};
+  });
+  vm.runInNewContext(fs.readFileSync(sourcePath,'utf8'),{
+    document:{getElementById:node,querySelectorAll(selector){return selector==='.sample'?samples:selector==='section'?[{}]:[];},
+      createElement(tag){assert.equal(tag,'iframe');return {attrs:{},setAttribute(k,v){this.attrs[k]=v;},remove(){frames.delete(this);}};}},
+    localStorage:{getItem(){return null;},setItem(){}},answerCode:'',crypto:{randomUUID(){return 'human';}}});
+  const click = id => handlers[id+':click']();
+  assert.equal(frames.size,2);
+  for(const frame of frames){assert.equal(frame.attrs.sandbox,'allow-scripts allow-popups');assert.ok(!frame.attrs.sandbox.includes('same-origin'));}
+  const first=[...frames];
+  click('choose-left'); assert.equal(frames.size,2); assert.ok(first.every(frame=>!frames.has(frame)));
+  click('undo'); assert.equal(frames.size,2);assert.ok(first.every(frame=>!frames.has(frame)));
+  previews[0].querySelector('.toggle-preview').toggle(); assert.equal(frames.size,1);assert.equal(previews[0].fallback.hidden,false);
+  previews[0].querySelector('.toggle-preview').toggle(); assert.equal(frames.size,2);
+  for(let i=0;i<7;i++) click('choose-left');
+  assert.equal(frames.size,1);assert.equal(node('bye').hidden,false);
+  click('bye');assert.equal(frames.size,2);
 });

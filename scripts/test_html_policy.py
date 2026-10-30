@@ -137,8 +137,10 @@ class HTMLPolicyTest(unittest.TestCase):
     def test_renderer_routing_keeps_explicit_interaction_in_archify(self):
         source = (ROOT / 'skills/tk-explain/SKILL.md').read_text()
         self.assertIn('explicit request for live interaction', source)
-        self.assertIn('archify explainer page layout for every explanation page', source)
-        self.assertIn('interaction request never selects the legacy document', source)
+        self.assertIn('when the selected technique is the archify panel board', source)
+        self.assertIn('Requested variants each use', source)
+        self.assertIn('at most one archify variant', source)
+        self.assertIn('neither branch selects the', source)
         self.assertNotIn('scripts/build_html.py', source)
         self.assertIn('(references/interactive-examples.md)', source)
 

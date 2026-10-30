@@ -73,7 +73,7 @@ def neutral(value, candidates):
     return value
 
 
-def prepare(manifest, source, previous=None):
+def prepare(manifest, source, previous=None, mode="gallery"):
     require(isinstance(manifest, dict), "manifest must be an object")
     study = text(manifest.get("study_id"))
     version = text(manifest.get("version"))
@@ -130,7 +130,7 @@ def prepare(manifest, source, previous=None):
         for slot, candidate in enumerate(order, 1):
             raw = pairs[item_id, candidate]
             kind = raw.get("kind")
-            require(kind in {*MIME, "text"}, "unsupported output kind")
+            require(kind in {*MIME, "text"} or kind == "html" and mode == "versus", "unsupported output kind")
             failed = "error" in raw
             diagnostic = text(raw["error"]) if failed else ""
             for attempt in range(1000):
@@ -146,6 +146,18 @@ def prepare(manifest, source, previous=None):
                 content = neutral(raw.get("text"), candidates)
                 card["text"] = content
                 fingerprint_bytes = content.encode()
+            elif not failed and kind == "html":
+                path = (source.parent / text(raw.get("path"))).resolve()
+                require(path.is_file() and path.suffix.lower() == ".html", "missing or unsupported prepared HTML")
+                data = path.read_bytes()
+                require(bool(data), "empty prepared HTML")
+                neutral(data.decode("utf-8"), candidates)
+                neutral(html.unescape(data.decode("utf-8")), candidates)
+                used_inputs.append(path)
+                filename = f"item-{i:04d}-slot-{slot:04d}-link-0000.html"
+                files.append((filename, data))
+                card["html_src"] = filename
+                fingerprint_bytes = data
             elif not failed:
                 path = (source.parent / text(raw.get("path"))).resolve()
                 require(path.is_file() and path.suffix.lower() in MIME[kind], "missing or unsupported prepared media")
@@ -215,13 +227,22 @@ def render(public, key, theme, mode="gallery", external_key=False):
         for slot, card in enumerate(item["cards"], 1):
             content = '<p class="failure">생성 실패</p>'
             if not card["failed"]:
-                if card["kind"] == "text":
+                if card["kind"] == "html":
+                    content = '<p>HTML을 표시할 수 없으면 아래 원본 문서 링크를 이용해 주세요.</p>'
+                elif card["kind"] == "text":
                     content = '<pre class="sample-text">' + html.escape(card["text"]) + '</pre>'
                 elif card["kind"] == "image":
                     content = f'<img src="{card["src"]}" alt="{card["label"]} 비교 이미지">'
                 else:
                     tag = card["kind"]
                     content = f'<{tag} controls preload="metadata" src="{card["src"]}" aria-label="{card["label"]} 재생"></{tag}>'
+            html_src = card.get("html_src") if mode == "versus" else None
+            if mode == "versus" and not card["failed"] and not html_src:
+                html_src = next((link["href"] for link in card.get("links", []) if link["href"].endswith(".html")), None)
+            if html_src:
+                content = '<div class="sample-fallback">' + content + '</div>'
+                fallback_label = '캡처로 보기' if card['kind'] == 'image' else '대체 안내 보기'
+                content += f'<p class="html-tools"><button type="button" class="toggle-preview" hidden>{fallback_label}</button> <a href="{html_src}" target="_blank" rel="noopener noreferrer">원본 문서</a></p>'
             if card.get("display_file"):
                 content += f'<p><a href="{card["display_file"]}" target="_blank" rel="noopener noreferrer">원본 크기로 보기</a></p>'
             if card.get("links"):
@@ -235,6 +256,9 @@ def render(public, key, theme, mode="gallery", external_key=False):
                 options = '<option value="">미평가</option>' + ''.join(f'<option value="{n}">{n}점</option>' for n in range(1, 6))
                 favorite = '<label><input type="checkbox" data-favorite> 가장 나은 후보</label>' if public["favorite"] else ''
                 controls = f'<div class="rating-controls" hidden><label>점수 <select data-score>{options}</select></label><label>메모 <textarea data-note rows="2"></textarea></label>{favorite}</div>'
+            if mode == "versus":
+                preview = f' data-html-src="{html.escape(html_src, quote=True)}"' if html_src else ''
+                content = f'<div class="sample-content" tabindex="0" aria-label="{card["label"]} 내용"{preview}>' + content + '</div><div class="sample-choice"></div>'
             cards.append(f'<article class="sample" data-item="{item["id"]}" data-candidate="{card["candidate"]}" data-fingerprint="{card["fingerprint"]}"><h3>{card["label"]}<span class="identity"></span></h3>{content}{controls}</article>')
         title = html.escape(item.get("title", f"항목 {number}"))
         script = '<p class="shared-script">' + html.escape(item["script"]) + '</p>' if "script" in item else ''
@@ -245,17 +269,28 @@ def render(public, key, theme, mode="gallery", external_key=False):
         if mode == "versus":
             failed_cards = [card for card in item["cards"] if card["failed"]]
             failures = ('<details class="versus-failures"><summary>생성 실패 ' + str(len(failed_cards)) + '개</summary><ul>' + ''.join('<li>' + html.escape(card["label"]) + ': 생성 실패</li>' for card in failed_cards) + '</ul></details>') if failed_cards else ''
-        sections.append(f'<section id="item-{number:04d}">{context}<div class="sample-grid">' + ''.join(cards) + '</div>' + failures + '</section>')
+        if mode == "versus":
+            grid = '<div class="versus-stage"><div class="sample-grid">' + ''.join(cards) + '</div><span class="versus-mark" aria-hidden="true">VS</span></div>'
+        else:
+            grid = '<div class="sample-grid">' + ''.join(cards) + '</div>'
+        sections.append(f'<section id="item-{number:04d}">{context}' + grid + failures + '</section>')
     template = (PACKAGE / 'assets/gallery.html').read_text(encoding="utf-8")
     if external_key:
         template = template.replace('<script>const answerCode = "@@ANSWER@@";</script>', '<script>let answerCode = "";</script><script>@@KEY_JS@@</script>')
         template = template.replace('<button id="reveal"', '<button id="load-key" type="button">정답표 선택</button><input id="key-file" type="file" accept="application/json,.json" hidden><button id="reveal" disabled')
     if mode == "versus":
         template = template.replace('각 항목의 후보를 비교하고 1-5점과 메모를 남겨 주세요. 라벨은 항목마다 달라집니다.', '두 표본을 비교하고 한쪽 또는 양쪽을 진출시켜 주세요. 스타일로 기법을 짐작할 수 있습니다.')
-        template = template.replace('<div id="summary"', '<div id="versus-controls" class="gallery-toolbar" hidden><button id="previous-item" type="button">이전 항목</button><button id="next-item" type="button">다음 항목</button><button id="choose-left" type="button">왼쪽 진출</button><button id="choose-both" type="button">양쪽 진출</button><button id="choose-right" type="button">오른쪽 진출</button><button id="undo" type="button">선택 취소</button><button id="co-winners" type="button">남은 후보 공동 1위</button></div><p id="versus-progress" role="status" aria-live="polite"></p><div id="summary"')
-        template = template.replace('<main><p>', '<main><details class="versus-help"><summary>비교 안내와 가공 내역</summary><p>', 1)
+        template = template.replace('<div id="summary"', '<div id="versus-progress" role="status" aria-live="polite"></div><div id="versus-controls" class="versus-actions" hidden><button id="choose-left" type="button">이 설명 선택</button><button id="choose-right" type="button">이 설명 선택</button><button id="bye" type="button" hidden>다음 라운드로</button><button id="choose-both" type="button">둘 다 진출</button><button id="undo" type="button">되돌리기</button></div><div id="versus-completion" hidden><p id="winner-message"></p><button id="result-copy" type="button">결과 복사</button><button id="result-reveal" type="button">정답 공개</button></div><div id="summary"')
+        # Move maintenance tools out of the primary decision surface. Gallery markup stays unchanged.
+        toolbar = re.search(r'<div id="toolbar".*?</div>', template, re.S)[0]
+        template = template.replace(toolbar, '')
         footer = re.search(r'<footer>.*?</footer>', template, re.S)[0]
-        template = template.replace(footer, '').replace('<div id="toolbar"', footer + '</details><div id="toolbar"', 1)
+        template = template.replace(footer, '')
+        help_start = template.index('<main>') + len('<main>')
+        help_end = template.index('<p id="status"')
+        help_text = template[help_start:help_end]
+        navigation = '<div class="gallery-toolbar"><button id="previous-item" type="button">이전 항목</button><button id="next-item" type="button">다음 항목</button><button id="co-winners" type="button">남은 후보 공동 1위</button></div>'
+        template = template[:help_start] + '<details class="versus-management"><summary>관리</summary>' + toolbar + navigation + help_text + footer + '</details>' + template[help_end:]
         template = template.replace('</style></head>', (PACKAGE / 'assets/versus.css').read_text(encoding='utf-8') + '\n</style></head>')
         template = template.replace('점수·메모·저장·결과 공개', '대결·저장·결과 공개').replace('평가 복사', '선택 복사').replace('평가 JSON', '선택 JSON')
     theme_attr = f'data-default-theme="{theme}"' + (f' data-theme="{theme}"' if theme != 'system' else '')
@@ -275,7 +310,7 @@ def build(manifest_path, output, previous_key=None, theme="system", mode="galler
     require(mode in {"gallery", "versus"} and delivery in {"single", "split"}, "invalid mode/delivery")
     require(theme in {"system", "light", "dark"}, "invalid theme")
     source = Path(manifest_path).resolve()
-    public, key, files, inputs = prepare(read_json(source), source, read_json(previous_key) if previous_key else None)
+    public, key, files, inputs = prepare(read_json(source), source, read_json(previous_key) if previous_key else None, mode)
     if previous_key:
         inputs.append(previous_key)
     if mode == "versus":
@@ -291,6 +326,8 @@ def build(manifest_path, output, previous_key=None, theme="system", mode="galler
                     card["src"] = "assets/" + media_files[f"item-{i:04d}-slot-{slot:04d}"]
                 if "display_file" in card:
                     card["display_file"] = "assets/" + card["display_file"]
+                if "html_src" in card:
+                    card["html_src"] = "assets/" + card["html_src"]
                 for link in card.get("links", []):
                     link["href"] = "assets/" + link["href"]
     rendered = render(public, key, theme, mode, mode == "versus" or delivery == "split")

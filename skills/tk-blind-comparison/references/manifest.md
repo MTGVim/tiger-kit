@@ -82,10 +82,23 @@ changed evaluation surface. Rebuilding unchanged evidence preserves it.
 `build --mode gallery|versus --delivery single|split` defaults to `gallery` and `single`.
 The options are independent. Versus uses the same prepared media/text manifest, opaque
 identities, per-item seeded shuffle and evidence fingerprints. Read [versus](versus.md)
-for interaction, export and replay rules. Do not create primary `kind: html` outputs:
-use normalized screenshots plus explicitly prepared, identity-neutral, self-contained
-HTML `links` for original inspection. The builder does not sandbox or recursively collect
-HTML dependencies, execute producer pages, or traverse arbitrary linked files.
+for interaction, export and replay rules. Gallery keeps media/text primary outputs. Versus
+also accepts `kind: html` with a prepared self-contained HTML `path`, or an image screenshot
+with prepared HTML `links`. The first HTML link becomes the live preview; put alternatives
+in explicit links. Use an image plus HTML link when a screenshot fallback is needed.
+
+The builder checks literal names/IDs (including decoded entities), copies bytes to neutral
+`item-NNNN-slot-NNNN-link-NNNN.html` names and fingerprints them. It never modifies originals,
+normalizes raw producer HTML, recursively collects dependencies or traverses linked files.
+Manually inspect scripts, metadata, encoded and semantic cues and confirm no external requests.
+Only current-pair previews are mounted as `sandbox="allow-scripts allow-popups"` iframes;
+no `allow-same-origin`, parent DOM access, forms or top navigation is granted. Hidden frames
+are removed, not merely hidden; a single winner may keep one preview, co-winner lists do not
+load all winners. Revisited previews start fresh; candidate interaction state is not comparison
+storage. This sandbox is a containment measure, not a sanitizer or cryptographic anonymity.
+Use the card's capture toggle or neutral original link if local iframe execution is unavailable.
+Keep HTML and copied assets together even for single delivery; moving only `gallery.html`
+retains embedded screenshots/media but cannot retain linked interactive documents.
 
 ```bash
 python3 <package>/scripts/build_gallery.py build manifest.json --output <new-run-directory> --mode versus --theme system

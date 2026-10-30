@@ -55,27 +55,76 @@
     catch {notice = '브라우저 저장이 차단되거나 용량이 부족합니다. 선택 JSON을 내보내 주세요.';}
   };
   const names = () => JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(answerCode), c=>c.charCodeAt(0)))).candidates;
+  const previews = new Map();
+  for (const sample of document.querySelectorAll('.sample')) {
+    const content = sample.querySelector('.sample-content');
+    if (!content?.dataset.htmlSrc) continue;
+    const toggle = content.querySelector('.toggle-preview');
+    const preview = {content, fallback:content.querySelector('.sample-fallback'), toggle,
+      fallbackLabel:toggle.textContent, frame:null, active:false, useFallback:false};
+    previews.set(sample, preview);
+    toggle.hidden = false;
+    toggle.addEventListener('click', () => {preview.useFallback = !preview.useFallback; updatePreview(preview);});
+  }
+  const updatePreview = preview => {
+    const showFrame = preview.active && !preview.useFallback;
+    if (!showFrame && preview.frame) {preview.frame.remove(); preview.frame = null;}
+    if (showFrame && !preview.frame) {
+      const frame = document.createElement('iframe');
+      frame.title = '익명 설명 문서';
+      frame.setAttribute('sandbox', 'allow-scripts allow-popups');
+      frame.setAttribute('referrerpolicy', 'no-referrer');
+      frame.src = preview.content.dataset.htmlSrc;
+      preview.content.prepend(frame); preview.frame = frame;
+    }
+    preview.fallback.hidden = showFrame;
+    preview.toggle.hidden = !preview.active;
+    preview.toggle.textContent = preview.useFallback ? 'HTML로 보기' : preview.fallbackLabel;
+  };
   const render = () => {
+    const focused = document.activeElement;
     const item = state.items[state.active], current = replay(item,item.events);
     const activeIds = new Set(current.done ? current.survivors : current.incomparable ? item.cards.map(c=>c.candidate) : current.pair);
     document.querySelectorAll('section').forEach((section,index) => {section.hidden = index !== state.active;});
+    // Return the primary buttons before moving them into the current pair's card footers.
+    node('versus-controls').append(node('choose-left'), node('choose-right'));
     for (const sample of document.querySelectorAll('.sample')) {
       const hidden = sample.dataset.item !== item.id || !activeIds.has(sample.dataset.candidate);
       if (hidden && !sample.hidden) for (const media of sample.querySelectorAll('audio, video')) media.pause();
       sample.hidden = hidden;
       sample.setAttribute('tabindex','0');
+      const preview = previews.get(sample);
+      if (preview) {preview.active = !hidden && (current.pair.includes(sample.dataset.candidate) || current.done && current.survivors.length === 1); updatePreview(preview);}
+      const side = current.pair.indexOf(sample.dataset.candidate);
+      if (!hidden && side >= 0 && current.pair.length === 2) {
+        sample.querySelector('.sample-choice').append(node(side === 0 ? 'choose-left' : 'choose-right'));
+      }
       sample.querySelector('.identity').textContent = showing ? names()[sample.dataset.candidate].name : '';
     }
+    node('choose-left').hidden = node('choose-right').hidden = current.pair.length !== 2;
     node('choose-left').disabled = current.done || current.incomparable;
     node('choose-right').disabled = current.pair.length !== 2;
     node('choose-both').disabled = current.pair.length !== 2;
+    node('choose-both').hidden = current.pair.length !== 2;
+    node('bye').hidden = current.pair.length !== 1;
+    node('versus-completion').hidden = !current.done;
+    node('winner-message').textContent = current.survivors.length > 1 ? '공동 우승입니다. 결과를 복사하거나 정답을 공개해 주세요.' : '우승이 정해졌습니다. 결과를 복사하거나 정답을 공개해 주세요.';
     node('co-winners').disabled = !current.canCoWin;
     node('undo').disabled = !item.events.length;
     node('previous-item').disabled = state.active === 0;
     node('next-item').disabled = state.active === roster.length-1;
     const failures = item.cards.filter(c=>c.failed).length;
-    const result = current.incomparable ? '성공 표본이 2개 미만이므로 비교 불가입니다. 선정하지 않았습니다.' : current.done ? `${current.survivors.length > 1 ? '공동 ' : ''}1위 ${current.survivors.length}개를 선정했습니다.` : `${current.round}라운드 · ${current.cursor+1}-${current.cursor+current.pair.length} / ${current.survivors.length}개${current.pair.length === 1 ? ' · 부전승 표본을 확인한 뒤 왼쪽 진출을 눌러 주세요.' : ''}`;
-    node('versus-progress').textContent = `항목 ${state.active+1}/${roster.length} · ${result}${failures ? ` · 생성 실패 ${failures}개` : ''}`;
+    const size = 2 ** Math.ceil(Math.log2(current.survivors.length));
+    const roundTitle = size === 2 ? '결승' : `${size}강`;
+    const match = Math.floor(current.cursor / 2) + 1, total = Math.ceil(current.survivors.length / 2);
+    const result = current.incomparable ? '비교 불가 · 성공 표본이 2개 미만입니다.' : current.done ?
+      (current.survivors.length > 1 ? '공동 우승' : '우승') :
+      `${roundTitle}${size === 2 ? '' : ` · ${match}/${total}`}${current.pair.length === 1 ? ' · 부전승' : ''}`;
+    node('versus-progress').textContent = `${roster.length > 1 ? `항목 ${state.active+1}/${roster.length} · ` : ''}${result}${failures ? ` · 생성 실패 ${failures}개` : ''}`;
+    for (const mark of document.querySelectorAll('.versus-mark')) mark.hidden = current.pair.length !== 2;
+    if (focused && ['choose-left','choose-right'].includes(focused.id)) {
+      (current.pair.length === 1 ? node('bye') : current.done ? node('undo') : focused).focus();
+    }
     status.textContent = notice; status.hidden = !notice;
     node('reveal').setAttribute('aria-pressed',String(showing)); node('reveal').textContent = showing ? '결과 가리기' : '결과 공개';
   };
@@ -87,6 +136,12 @@
     item.events.push(event);save();render();
   };
   for(const [id,event] of [['choose-left','left'],['choose-right','right'],['choose-both','both'],['co-winners','co-winners']]) node(id).addEventListener('click',()=>choose(event));
+  node('bye').addEventListener('click',()=>choose('left'));
+  node('result-copy').addEventListener('click',()=>node('copy').click());
+  node('result-reveal').addEventListener('click',()=>{
+    if (!answerCode) {document.querySelector('.versus-management').open = true; node('load-key').click();}
+    else node('reveal').click();
+  });
   node('undo').addEventListener('click',()=>{state.items[state.active].events.pop();save();render();});
   for(const [id,offset] of [['previous-item',-1],['next-item',1]]) node(id).addEventListener('click',()=>{const next=state.active+offset;if(next>=0 && next<roster.length){state.active=next;save();render();}});
   node('copy').addEventListener('click',async()=>{

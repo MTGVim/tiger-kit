@@ -31,7 +31,8 @@ to `tk-grill`; candidate creation to `tk-prototype`, `tk-tts` or the relevant pr
    the package theme assets. Keep the gallery interface rather than adding document navigation.
 3. Prepare identity-neutral display copies. Read only the applicable
    [audio](references/audio.md), [images and UI captures](references/images.md),
-   [text](references/text.md), or [video](references/video.md) reference.
+   [text](references/text.md), or [video](references/video.md) reference. For versus HTML,
+   prepare identity-neutral self-contained copies under the manifest preview contract.
    Include optional neutral original/mobile links and public annotations under the manifest contract.
    Strip surface identifiers and metadata without erasing the dimension being compared.
    Record transformations and residual cues visibly. A failed normalization remains a
@@ -57,7 +58,8 @@ to `tk-grill`; candidate creation to `tk-prototype`, `tk-tts` or the relevant pr
    partial-reveal confirmation/cancellation, reveal-only averages and storage refusal.
    Copy uses the same blind-key payload as
    export; if clipboard access fails, retain ratings and offer file export.
-   For versus also verify both-side independent scrolling, odd byes, repeated both-advance,
+   For versus also verify round/VS/card-choice layout, long-image inner scrolling, live HTML
+   disclosure/step controls and current-pair-only iframe cleanup, odd byes, repeated both-advance,
    later-round co-winner confirmation/cancellation, undo after completion and cross-item replay.
    Open via `file://` without hosting. Single delivery embeds primary media; split delivery must
    work after extracting the ZIP with all neutral assets, without external requests or missing links. Browser `localStorage` on
