@@ -93,3 +93,14 @@ FFmpeg's [pad filter](https://ffmpeg.org/ffmpeg-filters.html#pad-1) and decoded 
 support extending the existing UI-preserving band to explicitly selected hard animation captions.
 Keep source pixels, rate and timing, disclose added height, and inspect longest/multiline cues.
 Soft/off defaults and independent listening remain unchanged.
+
+## Native Manim explanation, not screenshot substitution (2026-10-30)
+
+Rechecked the upstream default branch at the same `cef045011722d285692e3381d12d4d637da56e18`.
+The original composer's visual-continuity/progressive-revelation guidance and ManimCE's scene
+rules remain external and unchanged. Keep native object transformations and meaningful state
+continuity; adapt the caller's renderer choice, before/operation/after inspection and source
+provenance to the accepted React/Dijkstra workflow. Omit copied upstream templates, universal
+Manim prerequisites, decorative-motion quotas and animation-count quality claims. The two
+delivered cuts establish an actual native-render path, not universally maximal use or learning
+gains. Explicit HTML/still output and observed UI retain their own owners and approval boundaries.

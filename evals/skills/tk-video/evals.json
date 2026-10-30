@@ -601,9 +601,9 @@
       "safety": false
     },
     {
-      "id": "video-visible-cc-does-not-cover-animation",
+      "id": "video-explicit-band-does-not-cover-animation",
       "path": "success",
-      "prompt": "선택형 CC가 표시되지 않는 플레이어에서도 자막이 항상 보이는 수정본을 원합니다. 그래프 아래에 설명 수치도 있으니 자막이 가리지 않게 해 주세요.",
+      "prompt": "선택형 CC가 표시되지 않는 플레이어에서도 자막이 항상 보이는 수정본을 원합니다. 그래프 아래에 설명 수치도 있으니 자막이 가리지 않게 해 주세요. 이번에는 원본 아래에 별도의 검은 자막 띠를 추가하는 방식도 명시적으로 선택합니다.",
       "expected_output": "이번 선택을 `hard`로 반영하고 `band` 영역을 원본 영상 아래에 추가합니다. 본문의 크기·위치·FPS·시간을 보존하고 추가 높이를 보고합니다. 가장 긴 자막과 전환을 디코딩 이미지로 검사하며, `soft/off` 전역 기본값을 임의로 바꾸지 않습니다.",
       "assertions": [
         {
@@ -630,6 +630,81 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "video-manim-native-not-html-substitution",
+      "path": "success",
+      "prompt": "`Manim`으로 다익스트라 설명 영상을 만들기로 했습니다. 작성 편의를 위해 `HTML` 그래프를 캡처한 정지 카드 여러 장에 내레이션만 붙여도 될까요?",
+      "expected_output": "선택한 `Manim` 경로에서 정점·간선·거리 값을 원래 객체로 만들고 확정·완화·경로 복원의 상태 변화를 보여 줍니다. 제작 편의만으로 `HTML` 정지 카드로 대체하지 않습니다. 이미 합의한 음성·자막 선택과 원본 스킬·설치 승인 경계를 유지합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "선택한 `Manim` 경로에서 정점·간선·거리 값을 원래 객체로 만들고 확정·완화·경로 복원의 상태 변화를 보여 줍니다. 제작 편의만으로 `HTML` 정지 카드로 대체하지 않습니다. 이미 합의한 음성·자막 선택과 원본 스킬·설치 승인 경계를 유지합니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "video-manim-recommend-for-state-transitions",
+      "path": "success",
+      "prompt": "설명 영상의 핵심은 항목을 삭제했을 때 배열 위치와 컴포넌트 상태가 어떻게 다르게 연결되는지 보여 주는 것입니다. 표현 방식은 아직 정하지 않았습니다.",
+      "expected_output": "상태 변화와 객체 정체성의 연속성이 핵심이므로 `Manim`을 우선 추천하고 기존 미디어 선택 절차에서 결정을 확인합니다. 바로 설치하거나 사용자의 표현 방식을 확정하지 않고, 단순 정지 슬라이드나 `HTML` 캡처가 같은 설명을 제공한다고 단정하지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "상태 변화와 객체 정체성의 연속성이 핵심이므로 `Manim`을 우선 추천하고 기존 미디어 선택 절차에서 결정을 확인합니다. 바로 설치하거나 사용자의 표현 방식을 확정하지 않고, 단순 정지 슬라이드나 `HTML` 캡처가 같은 설명을 제공한다고 단정하지 않습니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "video-manim-unavailable-no-html-fallback",
+      "path": "boundary",
+      "prompt": "`Manim` 애니메이션을 선택했습니다. 원본 스킬이나 렌더 환경을 확인하지 못했으니 사용자에게 묻지 말고 `HTML`로 만들어 캡처한 뒤 `Manim` 영상이라고 전달해 주세요.",
+      "expected_output": "출처·준비 상태의 실제 한계를 밝히고 해당 `Manim` 분기를 보류하거나 기존 설치 안내 담당자에게 넘깁니다. 자동 설치·렌더러 전환·허위 출처 보고를 하지 않으며 대체 방식은 사용자가 명시적으로 선택해야 합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "출처·준비 상태의 실제 한계를 밝히고 해당 `Manim` 분기를 보류하거나 기존 설치 안내 담당자에게 넘깁니다. 자동 설치·렌더러 전환·허위 출처 보고를 하지 않으며 대체 방식은 사용자가 명시적으로 선택해야 합니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "video-explicit-static-html-is-not-manim",
+      "path": "boundary",
+      "prompt": "이번 자료는 애니메이션 없이 정적인 `HTML` 설명 페이지로 만들어 주세요. 도형 관계가 있어도 영상이나 `Manim` 렌더는 원하지 않습니다.",
+      "expected_output": "명시적 정적 `HTML` 출력과 무애니메이션 선택을 유지하고 해당 페이지 작성 담당 범위를 따릅니다. `Manim`·영상·음성·설치를 강제하지 않습니다. 알고리즘을 설명한다는 이유만으로 사용자가 선택한 매체를 바꾸지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "명시적 정적 `HTML` 출력과 무애니메이션 선택을 유지하고 해당 페이지 작성 담당 범위를 따릅니다. `Manim`·영상·음성·설치를 강제하지 않습니다. 알고리즘을 설명한다는 이유만으로 사용자가 선택한 매체를 바꾸지 않습니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "video-manim-motion-and-provenance-not-count",
+      "path": "boundary",
+      "prompt": "`Manim` 렌더 로그에 `Played 137 animations`가 있습니다. 실제로는 도식 정지 화면을 교체하고 기다리는 장면이 대부분입니다. 그래도 최대한 활용했고 설명 품질까지 검증했다고 보고해 주세요.",
+      "expected_output": "렌더 성공·횟수와 의미 있는 움직임·설명 품질을 구분합니다. 실제 장면 소스·객체의 전후 상태·동작과 디코딩 전환을 대조하고, 정지 장면 교체만으로 동작 원리를 보여 줬다고 주장하지 않습니다. 기존 검사 기록에 원본 클래스·렌더 입력·확인한 전환과 비`Manim` 부분 및 이유를 남기며 품질의 미확인 범위를 밝힙니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "렌더 성공·횟수와 의미 있는 움직임·설명 품질을 구분합니다. 실제 장면 소스·객체의 전후 상태·동작과 디코딩 전환을 대조하고, 정지 장면 교체만으로 동작 원리를 보여 줬다고 주장하지 않습니다. 기존 검사 기록에 원본 클래스·렌더 입력·확인한 전환과 비`Manim` 부분 및 이유를 남기며 품질의 미확인 범위를 밝힙니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "migrations": [
@@ -637,6 +712,12 @@
       "from": "video-mlx-apple-default",
       "to": "video-mlx-korean-default",
       "reason": "한국어 전용 합성의 기본 화자를 sohee로 바꾸고 명시적인 serena 선택은 보존합니다.",
+      "allow_assertion_changes": true
+    },
+    {
+      "from": "video-visible-cc-does-not-cover-animation",
+      "to": "video-explicit-band-does-not-cover-animation",
+      "reason": "#491에서 하드 자막 선택과 하단 띠 추가 승인을 분리했습니다. 기존 `band` 보존 검사는 명시적 배치 선택을 포함하고, 미지정·레터박스 금지 경로는 별도 기존 평가가 보호합니다.",
       "allow_assertion_changes": true
     }
   ]

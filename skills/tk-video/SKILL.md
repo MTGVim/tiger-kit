@@ -24,6 +24,8 @@ fits MP4. Reuse supplied material and approved choices without another routine q
 For authored explainers, answer an opening question immediately with the main claim/reason and
 necessary condition in both screen copy and narration, then demonstrate why with changing visuals.
 Keep an explicitly selected discovery-led structure instead; do not infer improved learning from style alone.
+When authored geometry or algorithm/state transitions carry the explanation, recommend Manim
+over HTML-to-image slides; preserve explicitly selected stills, HTML and observed-UI routes.
 Only when Manim is selected, read [Manim dependency and rendering](references/manim.md), verify
 and load the external `manim-composer` and `manimce-best-practices` skills unchanged. Native
 ManimCE and an existing Docker runtime are alternatives, never universal prerequisites. Keep

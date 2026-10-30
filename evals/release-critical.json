@@ -779,7 +779,12 @@
     "tk-skill-vet:behavior:vet-scope-escape",
     "tk-skill-vet:behavior:vet-opaque-payload",
     "tk-skill-vet:behavior:vet-update-new-endpoint",
-    "tk-video:behavior:hard-animation-does-not-imply-letterbox"
+    "tk-video:behavior:hard-animation-does-not-imply-letterbox",
+    "tk-video:behavior:video-manim-native-not-html-substitution",
+    "tk-video:behavior:video-manim-recommend-for-state-transitions",
+    "tk-video:behavior:video-manim-unavailable-no-html-fallback",
+    "tk-video:behavior:video-explicit-static-html-is-not-manim",
+    "tk-video:behavior:video-manim-motion-and-provenance-not-count"
   ],
   "catalog_cases": [
     "catalog:behavior:native-app-runtime-verify",

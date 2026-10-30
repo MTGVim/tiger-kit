@@ -47,6 +47,22 @@ after that action, then resume. Routine authorized CLI work stays with the imple
 
 ## Author and render
 
+Use Manim-native objects and meaningful transitions for the selected explanation's geometry,
+graph traversal, algorithm state and relationships. Preserve object identity across an operation
+so the viewer can see what moved or changed. Do not replace a Manim-capable explanation with
+HTML screenshots, flattened diagram cards or a static slide deck merely for authoring convenience.
+Use static titles, labels and pauses where motion adds no meaning; do not animate every element
+or add decorative motion just to increase an animation count. Actual UI and cited images may
+remain supplied assets with their provenance, not a fabricated Manim reenactment.
+
+Plan the relevant before/operation/after states and narration anchors, then inspect decoded
+transition frames to confirm the mechanism is visible, not just a sequence of fades or holds.
+In the existing inspection evidence, identify scene source/classes, the actual rendered movie,
+sampled transitions and any non-Manim portions with their reasons. A successful render or
+`Played N animations` log does not prove meaningful motion, maximal use or explanatory quality.
+Keep explicit static/HTML choices outside this route and retain the existing no-silent-renderer-
+switch and setup/approval boundaries when Manim is unavailable.
+
 Resolve enabled captions' `soft`/explicit `hard` delivery in the existing initial media-choice
 round, reusing answered choices and captions-off. Pass manifest `caption_delivery`; add no saved
 preference key. Slide-only theme/emphasis defaults do not recolor or retime continuous video.
