@@ -25,7 +25,7 @@ Both sample cards have bounded, keyboard-focusable inner scrolling in the remain
 remains above them. Long screenshots retain their aspect ratio at card width; the outer rounded card clips its
 inner scrollbar. Copy/export/import, key loading/reveal, item navigation, guidance and co-winner
 selection live inside the collapsed `관리` menu. Completion shows a winner message with result
-copy and a separate reveal action; undo remains available after completion. Progress is not
+copy and an explicit `결과 보기` action; undo remains available after completion. Progress is not
 repeated in storage status. HTML previews use the on-demand sandbox contract in the manifest.
 At viewport heights of 560 CSS pixels or less, including zoom/landscape, page scrolling is
 an accessibility fallback so controls remain reachable.
@@ -101,3 +101,28 @@ Statuses are `complete`, `pending` and `incomparable`. `totals` contains `items`
 `pending`, `incomparable`, `failures`, `outputs`; the three item statuses sum to `items`.
 A co-win also counts as a win. These counts summarize human actions, not statistical superiority.
 Do not compare them as means or pool repeated exports as independent evaluators.
+
+
+## Result disclosure
+
+Single delivery defaults to an encoded embedded minimal key under the manifest contract;
+`--answer-key separate` and split delivery keep the key outside evaluator files. Both paths
+use the same study/version/revision/roster/fingerprint validator. Embedded names never enter
+the visible DOM, table, exports or browser storage before explicit disclosure. Encoding does
+not protect against source analysis. Keep separate keys private for external evaluators.
+
+`결과 보기` on a completed item is one explicit action: validate the embedded key and render
+the table, or explain and open the separate-key picker. A matching file chosen from this action
+continues disclosure without another click. Key-file cancellation/validation failure is not
+consent to reveal. An unfinished study still requires the existing partial-reveal confirmation.
+Manual `정답표 선택` in management prepares a key without revealing; reload/import exposure
+history does not auto-reveal. Retain the hide-results toggle and sticky `revealed` history.
+
+Show one row per active-item candidate (including failures), with anonymous sample label,
+revealed technique/name and reached round. Derive reached rounds during the same `replay`
+walk as live choices: an acknowledged pair/bye records its current bracket size, subsequent
+rounds replace that candidate's stage, and final/co-winner events produce winner labels.
+Unplayed, failed and incomparable candidates are marked honestly. Do not infer missing
+choices, force a winner or translate these stages into scores. Repeated both-advance rounds
+retain the existing rules. Undo/import/navigation recompute the table from the transcript;
+no new persistent score/ranking field is introduced. Clear/hide the table when names are hidden.

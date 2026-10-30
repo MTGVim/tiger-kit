@@ -79,6 +79,33 @@ class ExplainTools(unittest.TestCase):
                 self.assertEqual(result.stderr, '')
                 self.assertFalse(output.exists())
 
+    def test_capture_rejects_invalid_explicit_height_before_browser_launch(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            page, dest = Path(tmp) / 'source.html', Path(tmp) / 'output.png'
+            page.write_text('<!doctype html><title>Capture</title>')
+            for height in ('0', '-1', 'NaN', '100001'):
+                result = subprocess.run(['node', str(SCRIPTS / 'capture_page.mjs'), str(page), str(dest), '1200', height],
+                    capture_output=True, text=True, timeout=10)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn('Height must be', result.stderr)
+                self.assertFalse(dest.exists())
+
+    @unittest.skipUnless(os.environ.get('TK_CHROMIUM_EXECUTABLE'), 'Local Chrome not configured')
+    def test_short_document_capture_has_no_viewport_floor_and_explicit_height_works(self):
+        from PIL import Image
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            page = root / 'short.html'
+            page.write_text('<!doctype html><style>html,body{margin:0;width:1200px;height:580px;background:#fff}h1{margin:0}</style><h1>Short canvas</h1>')
+            env = {**os.environ, 'CHROME_PATH': os.environ['TK_CHROMIUM_EXECUTABLE']}
+            for suffix, args in [('auto', []), ('explicit', ['580'])]:
+                dest = root / (suffix + '.png')
+                result = subprocess.run(['node', str(SCRIPTS / 'capture_page.mjs'), str(page), str(dest), '1200', *args],
+                    env=env, capture_output=True, text=True, timeout=40)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                with Image.open(dest) as image:
+                    self.assertEqual(image.size, (1200, 580))
+
     @unittest.skipUnless(os.environ.get('TK_CHROMIUM_EXECUTABLE'), 'Local Chrome not configured')
     def test_svg_image_is_inert_transparent_double_resolution_and_page_capture_is_full(self):
         from PIL import Image

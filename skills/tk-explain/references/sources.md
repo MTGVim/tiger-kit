@@ -272,12 +272,12 @@ principles, not runtime dependencies. The selection reference and eval prompts a
 authored; no donor instruction block, renderer code, template, image or font is incorporated.
 Original license notices are retained in this package's `LICENSE.txt` for provenance.
 
-| Upstream / pinned revision | Inspected implementation and rationale | Keep / adapt / omit |
-| --- | --- | --- |
-| [JimLiu/baoyu-skills](https://github.com/JimLiu/baoyu-skills/tree/1567581c26ec29f4216c6e6835415bf30343b0e3), `1567581c26ec29f4216c6e6835415bf30343b0e3`, MIT | `skills/baoyu-infographic/SKILL.md` (layout/style, learning objectives and backend boundaries), `references/analysis-framework.md` under that skill, `docs/testing.md`, root `LICENSE` | Keep separate information structure and visual style; adapt source-faithful ordering to current explanation evidence and renderer; omit backend routing, EXTEND settings, quotas, default combinations and verbatim-only source constraints. |
-| [anthropics/skills canvas-design](https://github.com/anthropics/skills/tree/ca45fc496a3436251f191354091d557da31c15b5/skills/canvas-design), `ca45fc496a3436251f191354091d557da31c15b5`, Apache-2.0 | `skills/canvas-design/SKILL.md` (philosophy, hierarchy and contained readable text), package `LICENSE.txt`, repository tree for eval/NOTICE discovery | Keep intentional spatial hierarchy; adapt a brief design intent without deleting necessary explanatory text; omit art-only output, philosophy-document quotas, craft rhetoric, mandatory font downloads and bundled fonts. |
-| [OrRon/EpicInfographics](https://github.com/OrRon/EpicInfographics/tree/bf97e589df21302aacb24d9c7631393e81b9a015), `bf97e589df21302aacb24d9c7631393e81b9a015`, MIT | `skills/epic-infographics/SKILL.md`, its `references/composition.md`, `docs/PLAN.md` (composition and manual-eval rationale), root `LICENSE` and tree | Keep a meaningful focal subject and reading path; adapt a source-bound central scene only where fitting; omit blanket minimalism bans, claimed audience superiority, area/type ratios, Google Fonts, donor renderer, installation and motion machinery. |
-| [excalidraw/excalidraw](https://github.com/excalidraw/excalidraw/tree/e7b534668a60add7f725531f3c9abf32508c7b4e), `e7b534668a60add7f725531f3c9abf32508c7b4e`, MIT | `README.md` (hand-drawn editor and SVG export), `packages/element/src/renderElement.ts` (RoughJS canvas drawing), `packages/excalidraw/tests/export.test.tsx` (scale, metadata and transformed-image export), root `LICENSE` | Keep an approachable sketch idiom; adapt it as independent inert SVG under scene geometry/label checks; omit RoughJS/editor code, export metadata, collaboration, runtime, assets and fidelity claims. This treatment is contrasted with Excalidraw, not produced by it. |
+| Upstream / pinned revision | Inspected implementation and rationale | Output-defining behavior: keep or explicit replacement | Keep / adapt / omit |
+| --- | --- | --- | --- |
+| [JimLiu/baoyu-skills](https://github.com/JimLiu/baoyu-skills/tree/1567581c26ec29f4216c6e6835415bf30343b0e3), `1567581c26ec29f4216c6e6835415bf30343b0e3`, MIT | `skills/baoyu-infographic/SKILL.md` (layout/style, learning objectives and backend boundaries), `references/analysis-framework.md` under that skill, `docs/testing.md`, root `LICENSE` | AI-generated raster; structure then layout×style/aspect confirmation; persist the full prompt before generation; no code-drawn substitute or text overlays. Keep these through the runtime-native raster route. | Keep separate information structure and visual style; adapt source-faithful ordering to current explanation evidence and renderer; adapt provider discovery to the available native image tool; keep the prompt/confirmation/text-correction contracts; omit vendor-specific backend routing, EXTEND settings, quotas, fixed default combinations and verbatim-only prose constraints (exact data remains preserved). |
+| [anthropics/skills canvas-design](https://github.com/anthropics/skills/tree/ca45fc496a3436251f191354091d557da31c15b5/skills/canvas-design), `ca45fc496a3436251f191354091d557da31c15b5`, Apache-2.0 | `skills/canvas-design/SKILL.md` (philosophy, hierarchy and contained readable text), package `LICENSE.txt`, repository tree for eval/NOTICE discovery | Design philosophy expressed as a visual PNG/PDF artifact with essential text. Replace with an explicitly selected illustrated raster or precise static visual; an HTML principle-only adaptation is a different output, never a formal upstream execution. | Keep intentional spatial hierarchy; adapt a brief design intent without deleting necessary explanatory text; adapt the visual artifact route without deleting explanation prerequisites; omit philosophy-document quotas, craft rhetoric, mandatory font downloads and bundled fonts. |
+| [OrRon/EpicInfographics](https://github.com/OrRon/EpicInfographics/tree/bf97e589df21302aacb24d9c7631393e81b9a015), `bf97e589df21302aacb24d9c7631393e81b9a015`, MIT | `skills/epic-infographics/SKILL.md`, its `references/composition.md`, `docs/PLAN.md` (composition and manual-eval rationale), root `LICENSE` and tree | Self-contained HTML/CSS/SVG rendered to inspected PNG, with a check-render-review loop. Keep via the precise summary PNG/capture route; AI illustration is an explicitly different optional treatment, not the original renderer. | Keep a meaningful focal subject and reading path; adapt a source-bound central scene only where fitting; omit blanket minimalism bans, claimed audience superiority, area/type ratios, Google Fonts, donor renderer implementation (replace with the existing inspected PNG capture), installation and optional motion machinery. |
+| [excalidraw/excalidraw](https://github.com/excalidraw/excalidraw/tree/e7b534668a60add7f725531f3c9abf32508c7b4e), `e7b534668a60add7f725531f3c9abf32508c7b4e`, MIT | `README.md` (hand-drawn editor and SVG export), `packages/element/src/renderElement.ts` (RoughJS canvas drawing), `packages/excalidraw/tests/export.test.tsx` (scale, metadata and transformed-image export), root `LICENSE` | Editable hand-drawn canvas with PNG/SVG export. Keep the output alternatives through an explicit independent SVG sketch or raster illustration; neither is an editable Excalidraw canvas/export without that actual tool. | Keep an approachable sketch idiom; adapt it as independent inert SVG under scene geometry/label checks; omit RoughJS/editor code, export metadata, collaboration, runtime, assets and fidelity claims. This treatment is contrasted with Excalidraw, not produced by it. |
 
 Evaluation limits: baoyu's testing document describes library/CLI coverage, not demonstrated
 infographic comprehension. Epic's plan describes manual brief/render assessment; no separately
@@ -312,3 +312,28 @@ This scoped decision supersedes the earlier universal-layout rule for `tk-explai
 pages keep archify. Common source/author/static/accuracy obligations remain in both branches.
 The blind-comparison preview is original TigerKit code using standard sandboxed iframes; it
 reuses existing neutral-copy/fingerprint contracts rather than copying an upstream renderer.
+
+
+## Output identity, ordered selection and reveal follow-up (2026-10-30)
+
+Fresh source HEADs still match the baoyu `1567581c`, canvas-design `ca45fc49` and Epic
+`bf97e589` pinned rows above; earlier Excalidraw export evidence remains pinned. Re-read
+baoyu's complete `skills/baoyu-infographic/SKILL.md`, `references/base-prompt.md` and analysis
+framework, plus canvas-design's output/philosophy instructions and Epic's PNG production
+workflow. The output-defining column cannot be omitted: retain its behavior or name a
+replacement route and its limitation. Omit only incidental machinery outside that column.
+
+Keep baoyu's generated raster, prompt-before-tool, exact data, confirmation and regenerate-text
+boundaries. Adapt Step 4 to the user's staged technique→format→image-style/aspect flow: infer
+layout, show it with style choices, and skip axes already explicit or delegated. Omit only
+vendor backend routing/settings; preserve native image-tool use and fail honestly if absent.
+The new prompt skeleton follows its specifications/guidelines/content/label structure with
+independently authored evidence constraints; existing MIT attribution remains in LICENSE.txt.
+Canvas and Epic are not both AI image generators; preserve their documented visual/static
+artifact identity rather than claiming a raster backend was part of every donor. Independent
+SVG remains a disclosed treatment, not a claim of Excalidraw integration.
+
+The full visible catalog, stable-ID relocation and scoped preference ordering are adaptations
+of the supplied first-hand selection trials, not an upstream learning-style claim. A single
+19-candidate PR tournament with one evaluator cannot supply missing per-technique identities
+or a general ranking. Preference persistence still requires the exact consented external owner.

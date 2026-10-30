@@ -7,6 +7,9 @@ shell rules remain in html-output.md; diagram relationships and layout belong to
 Treat this personal collection's user's first-hand feedback as evidence for that user, without
 generalizing it to other readers. Honor an explicit fitting format preference; do not infer learning
 styles. Sketch comedy, Feynman and social-thread formats remain request-only.
+The selection owner separates technique, output format and diagram detail. Stable IDs remain
+addressable after relocation: #13/#14 are diagram details; #17/#27/#29/#30 are formats, not
+first-round technique recommendations. Explicit requests for these entries remain supported.
 
 ## 01. Five-Step Ladder
 - Use when beginners and practitioners need the same document at different depths.
@@ -82,12 +85,14 @@ styles. Sketch comedy, Feynman and social-thread formats remain request-only.
 - Avoid if there is no genuine choice or if branches imply unsupported facts.
 
 ## 13. Sequence Diagram
+- Axis: Diagram detail; choose automatically unless explicitly requested.
 - Use when three or four actors exchange messages in a known order.
 - Give each actor a lane, put messages in reading order, and split materially different situations
   into separate scenes.
 - Vertical distance does not represent time unless a scale says so; state wait duration separately.
 
 ## 14. Waterfall Timeline
+- Axis: Diagram detail; choose automatically unless explicitly requested.
 - Use when elapsed time, overlap, or waiting is central.
 - Put units and one sentence on how to read the axis above the figure.
 - Explain the notation for readers who may not know waterfall charts.
@@ -105,6 +110,7 @@ styles. Sketch comedy, Feynman and social-thread formats remain request-only.
 - Avoid for time-ordered processes.
 
 ## 17. Infographic Poster
+- Axis: Output format.
 - Use as a whole-document structure only when the user asks for a one-page summary.
 - Put the conclusion first and include a small set of key points.
 - Preserve links to evidence; avoid compressing every reason into an unreadable poster.
@@ -160,6 +166,7 @@ styles. Sketch comedy, Feynman and social-thread formats remain request-only.
 - Use another view for timing and concurrent activity that code alone cannot show.
 
 ## 27. Terminal Replay
+- Axis: Output format with exact source output.
 - Use when commands provide the clearest way to observe and diagnose a system.
 - Show only real documented or captured output, with its source and context.
 - Do not invent terminal output or replace a materially important output with an unsupported summary.
@@ -170,11 +177,13 @@ styles. Sketch comedy, Feynman and social-thread formats remain request-only.
 - Do not supply a fix that the available evidence does not support.
 
 ## 29. Slide Deck
+- Axis: Output format.
 - Use as a whole-document structure when the user requests a presentation.
 - Support keyboard navigation and leave all slides readable in document order without JavaScript.
 - Retain the connecting explanation needed for a standalone reader.
 
 ## 30. Social Thread
+- Axis: Output format; request-only.
 - On request only.
 - Make it a separate sharing summary, not a substitute for the full explanation.
 - Do not imitate a named platform or account. Keep technical mechanisms in the full document.

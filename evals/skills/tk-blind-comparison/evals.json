@@ -364,6 +364,36 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "versus-embedded-key-one-click-result-table",
+      "path": "success",
+      "prompt": "`$tk-blind-comparison` 후보 15개의 기본 단일 `versus` 파일을 만들어줘. 혼자 평가하고 우승 후 결과 보기 한 번으로 기법과 도달 라운드를 볼게.",
+      "expected_output": "기본 `single`에 진단 정보 없는 최소 정답표를 인코딩해 내장한다. 명시적 결과 보기 전에는 `DOM`·결과표·저장·내보내기에 후보 이름이 나타나지 않는다. 한 번의 결과 보기에서 동일 `loader`의 `revision/roster` 검증을 거친 뒤 15행 표본·기법·도달 라운드 결과표를 만든다. 도달 라운드는 같은 `replay`에서 계산하고 이벤트 형식은 바꾸지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "기본 `single`에 진단 정보 없는 최소 정답표를 인코딩해 내장한다. 명시적 결과 보기 전에는 `DOM`·결과표·저장·내보내기에 후보 이름이 나타나지 않는다. 한 번의 결과 보기에서 동일 `loader`의 `revision/roster` 검증을 거친 뒤 15행 표본·기법·도달 라운드 결과표를 만든다. 도달 라운드는 같은 `replay`에서 계산하고 이벤트 형식은 바꾸지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "versus-separate-key-guided-reveal",
+      "path": "boundary",
+      "prompt": "`$tk-blind-comparison` 다른 평가자에게 보낼 `split` `versus`와 정답표 분리 `single`을 만들어줘. 정답표 없이 결과 보기를 눌러도 무반응이면 안 돼.",
+      "expected_output": "`split`은 정답표를 분리하고 `single`에는 --`answer-key` `separate`를 사용한다. 결과 보기 버튼은 활성 상태로 정답표의 의미와 분리 이유를 한 줄 안내하고 파일 선택을 연다. 이 공개 동작에서 일치하는 파일을 한 번 고르면 같은 결과표로 이어진다. 취소·잘못된 표·다른 `revision`은 기록과 비공개 상태를 유지한다. 수동 정답표 선택만으로는 공개하지 않는다. 부분 공개 확인을 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`split`은 정답표를 분리하고 `single`에는 --`answer-key` `separate`를 사용한다. 결과 보기 버튼은 활성 상태로 정답표의 의미와 분리 이유를 한 줄 안내하고 파일 선택을 연다. 이 공개 동작에서 일치하는 파일을 한 번 고르면 같은 결과표로 이어진다. 취소·잘못된 표·다른 `revision`은 기록과 비공개 상태를 유지한다. 수동 정답표 선택만으로는 공개하지 않는다. 부분 공개 확인을 유지한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

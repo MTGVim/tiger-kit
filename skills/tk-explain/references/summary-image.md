@@ -12,8 +12,13 @@ or crop away qualifications. Do not invent measurements to complete a layout.
 
 Author a static self-contained SVG or HTML in the run's temporary directory. SVG follows
 [scene figures](scene-figures.md)'s inert asset restrictions; use explicit dimensions and
-`scripts/svg_to_png.mjs`. For bounded HTML use `scripts/capture_page.mjs` at the chosen width;
-constrain the document to the intended canvas and check the actual PNG dimensions. These
+`scripts/svg_to_png.mjs`. For bounded HTML use
+`node scripts/capture_page.mjs input.html new-output.png [width] [height]`, for example
+`node scripts/capture_page.mjs input.html new-output.png 1200 580`. Height is optional:
+without it the viewport fits the document, including documents shorter than 900px; explicit
+height fixes the viewport while capture still includes the whole document. Give a height for
+viewport-dependent layouts that cannot converge. Constrain the document to the intended
+canvas and check the actual PNG dimensions. These
 image paths do not require archify, its author-check HTML or its finalize command.
 
 Inspect the final decoded PNG for clipping, readable text at PR display size, contrast and

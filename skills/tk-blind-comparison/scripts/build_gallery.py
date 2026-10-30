@@ -275,12 +275,14 @@ def render(public, key, theme, mode="gallery", external_key=False):
             grid = '<div class="sample-grid">' + ''.join(cards) + '</div>'
         sections.append(f'<section id="item-{number:04d}">{context}' + grid + failures + '</section>')
     template = (PACKAGE / 'assets/gallery.html').read_text(encoding="utf-8")
-    if external_key:
-        template = template.replace('<script>const answerCode = "@@ANSWER@@";</script>', '<script>let answerCode = "";</script><script>@@KEY_JS@@</script>')
-        template = template.replace('<button id="reveal"', '<button id="load-key" type="button">정답표 선택</button><input id="key-file" type="file" accept="application/json,.json" hidden><button id="reveal" disabled')
+    if external_key or mode == "versus":
+        template = template.replace('<script>const answerCode = "@@ANSWER@@";</script>', '<script>let answerCode = ""; const embeddedAnswerKeyCode = "@@EMBEDDED_KEY@@";</script><script>@@KEY_JS@@</script>')
+        disabled = ' disabled' if external_key and mode != 'versus' else ''
+        template = template.replace('<button id="reveal"', '<button id="load-key" type="button">정답표 선택</button><input id="key-file" type="file" accept="application/json,.json" hidden><button id="reveal"' + disabled)
     if mode == "versus":
+        template = template.replace('<div id="summary" class="summary-scroll"', '<div id="summary" class="summary-scroll" tabindex="0" role="region" aria-label="비교 결과표"')
         template = template.replace('각 항목의 후보를 비교하고 1-5점과 메모를 남겨 주세요. 라벨은 항목마다 달라집니다.', '두 표본을 비교하고 한쪽 또는 양쪽을 진출시켜 주세요. 스타일로 기법을 짐작할 수 있습니다.')
-        template = template.replace('<div id="summary"', '<div id="versus-progress" role="status" aria-live="polite"></div><div id="versus-controls" class="versus-actions" hidden><button id="choose-left" type="button">이 설명 선택</button><button id="choose-right" type="button">이 설명 선택</button><button id="bye" type="button" hidden>다음 라운드로</button><button id="choose-both" type="button">둘 다 진출</button><button id="undo" type="button">되돌리기</button></div><div id="versus-completion" hidden><p id="winner-message"></p><button id="result-copy" type="button">결과 복사</button><button id="result-reveal" type="button">정답 공개</button></div><div id="summary"')
+        template = template.replace('<div id="summary"', '<div id="versus-progress" role="status" aria-live="polite"></div><div id="versus-controls" class="versus-actions" hidden><button id="choose-left" type="button">이 설명 선택</button><button id="choose-right" type="button">이 설명 선택</button><button id="bye" type="button" hidden>다음 라운드로</button><button id="choose-both" type="button">둘 다 진출</button><button id="undo" type="button">되돌리기</button></div><div id="versus-completion" hidden><p id="winner-message"></p><button id="result-copy" type="button">결과 복사</button><button id="result-reveal" type="button">결과 보기</button></div><div id="summary"')
         # Move maintenance tools out of the primary decision surface. Gallery markup stays unchanged.
         toolbar = re.search(r'<div id="toolbar".*?</div>', template, re.S)[0]
         template = template.replace(toolbar, '')
@@ -298,17 +300,23 @@ def render(public, key, theme, mode="gallery", external_key=False):
               "VERSION": html.escape(public["version"]), "COUNT": str(public["candidate_count"]),
               "TRANSFORMS": ''.join('<li>' + html.escape(x) + '</li>' for x in public['transformations']),
               "SECTIONS": ''.join(sections), "DATA": safe_json(public),
-              "KEY_JS": (PACKAGE / "assets/key-loader.js").read_text(encoding="utf-8") if external_key else "",
-              "ANSWER": "" if external_key else base64.b64encode(json.dumps({"candidates": key["candidates"]}, ensure_ascii=False).encode()).decode(),
+              "KEY_JS": (PACKAGE / "assets/key-loader.js").read_text(encoding="utf-8") if external_key or mode == "versus" else "",
+              "EMBEDDED_KEY": base64.b64encode(json.dumps({"schema": 1, "study": key["study"], "version": key["version"],
+                  "comparison": key.get("comparison"), "candidates": {token: {"name": row["name"]} for token, row in key["candidates"].items()},
+                  "outputs": [{field: row[field] for field in ("item", "candidate", "fingerprint", "failed")} for row in key["outputs"]]}, ensure_ascii=False).encode()).decode() if mode == "versus" and not external_key else "",
+              "ANSWER": "" if external_key or mode == "versus" else base64.b64encode(json.dumps({"candidates": key["candidates"]}, ensure_ascii=False).encode()).decode(),
               "CSS": (PACKAGE / 'assets/html-theme.css').read_text(encoding='utf-8'),
               "THEME_JS": (PACKAGE / 'assets/html-theme.js').read_text(encoding='utf-8'),
               "APP_JS": (PACKAGE / ('assets/versus.js' if mode == 'versus' else 'assets/gallery.js')).read_text(encoding='utf-8')}
     return re.sub(r'@@([A-Z_]+)@@', lambda match: values[match[1]], template)
 
 
-def build(manifest_path, output, previous_key=None, theme="system", mode="gallery", delivery="single"):
+def build(manifest_path, output, previous_key=None, theme="system", mode="gallery", delivery="single", answer_key=None):
     require(mode in {"gallery", "versus"} and delivery in {"single", "split"}, "invalid mode/delivery")
     require(theme in {"system", "light", "dark"}, "invalid theme")
+    require(answer_key in {None, "embedded", "separate"}, "invalid answer key delivery")
+    require(not (delivery == "split" and answer_key == "embedded"), "split delivery requires a separate answer key")
+    external_key = delivery == "split" or answer_key == "separate"
     source = Path(manifest_path).resolve()
     public, key, files, inputs = prepare(read_json(source), source, read_json(previous_key) if previous_key else None, mode)
     if previous_key:
@@ -330,7 +338,7 @@ def build(manifest_path, output, previous_key=None, theme="system", mode="galler
                     card["html_src"] = "assets/" + card["html_src"]
                 for link in card.get("links", []):
                     link["href"] = "assets/" + link["href"]
-    rendered = render(public, key, theme, mode, mode == "versus" or delivery == "split")
+    rendered = render(public, key, theme, mode, external_key)
     dest = destination(output, inputs)
     asset_dir = dest / 'assets' if delivery == "split" else dest
     if delivery == "split":
@@ -493,6 +501,7 @@ def main():
     b.add_argument('--theme', choices=('system', 'light', 'dark'), default='system')
     b.add_argument('--mode', choices=('gallery', 'versus'), default='gallery')
     b.add_argument('--delivery', choices=('single', 'split'), default='single')
+    b.add_argument('--answer-key', choices=('embedded', 'separate'), help='single defaults to embedded; split keeps a separate key')
     s = commands.add_parser('summarize')
     s.add_argument('ratings', help='rating JSON path, or - for stdin'); s.add_argument('--key', required=True)
     s.add_argument('--output', help='new directory for summary files; omit to print JSON without saving')
@@ -500,7 +509,7 @@ def main():
     args = parser.parse_args()
     try:
         if args.command == 'build':
-            build(args.manifest, args.output, args.previous_key, args.theme, args.mode, args.delivery)
+            build(args.manifest, args.output, args.previous_key, args.theme, args.mode, args.delivery, args.answer_key)
         else:
             summary = summarize(read_json(args.ratings), read_json(args.key), blind=args.blind)
             if args.output:

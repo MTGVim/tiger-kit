@@ -21,15 +21,20 @@ function runtime(count = 5, options = {}) {
   const sections = data.items.map(item => ({hidden:false,querySelectorAll:()=>samples.filter(s=>s.dataset.item===item.id)}));
   let stored = options.raw || null, download, copied, writes = 0;
   const confirms = [];
-  vm.runInNewContext(fs.existsSync(sourcePath) ? fs.readFileSync(sourcePath, 'utf8') : '', {
+  const context = {
     document:{getElementById:node, querySelectorAll: selector => selector === 'section' ? sections : selector === '.sample' ? samples : [], createElement:()=>node('download'), body:{append(){}}},
     localStorage:{getItem:()=>{if(options.storageDenied) throw Error(); return stored;},setItem:(_, value)=>{if(options.storageDenied) throw Error(); stored=value; writes++;}},
     crypto:{randomUUID:()=>options.evaluator || 'human'}, Blob, URL:{createObjectURL:blob=>{download=blob;return 'blob:test';},revokeObjectURL(){}}, setTimeout(){},
     navigator:{clipboard:{writeText:async value=>{if(options.clipboardDenied) throw Error();copied=value;}}},
     confirm: message=>{confirms.push(message);return options.confirm !== false;}, answerCode:options.answerCode || '',
-    atob:value=>Buffer.from(value,'base64').toString('binary'), TextDecoder, Uint8Array
-  });
-  return {data,cards,samples,nodes,confirms,
+    atob:value=>Buffer.from(value,'base64').toString('binary'), btoa:value=>Buffer.from(value,'binary').toString('base64'), TextEncoder, TextDecoder, Uint8Array
+  };
+  const key={schema:1,study:data.study,version:data.version,comparison:{revision:data.revision},candidates:Object.fromEntries(cards.map((card,i)=>[card.candidate,{name:options.unsafeName && i===0 ? '<img onerror=bad()>' : `Technique ${i+1}`} ])),outputs:data.items.flatMap(item=>item.cards.map(card=>({item:item.id,...card})))};
+  if(options.loader){context.embeddedAnswerKeyCode=options.embedded ? Buffer.from(JSON.stringify(options.badKey?{...key,comparison:{revision:'stale'}}:key)).toString('base64') : '';vm.createContext(context);vm.runInContext(fs.readFileSync(path.join(__dirname,'../skills/tk-blind-comparison/assets/key-loader.js'),'utf8'),context);vm.runInContext(fs.readFileSync(sourcePath,'utf8'),context);}
+  else vm.runInNewContext(fs.readFileSync(sourcePath,'utf8'),context);
+  return {data,cards,samples,nodes,confirms,key,
+    async keyFile(value){node('key-file').files=[{text:async()=>JSON.stringify(value)}];await handlers['key-file:change']();},
+    cancelKey(){handlers['key-file:cancel']();},
     click(name){assert.equal(typeof handlers[name+':click'], 'function', `missing ${name} action`);handlers[name+':click']();},
     async export(){this.click('export');return JSON.parse(await download.text());},
     async copy(){await handlers['copy:click']();return copied && JSON.parse(copied);},
@@ -236,4 +241,39 @@ test('HTML previews mount only the current pair, keep sandbox restrictions and u
   for(let i=0;i<7;i++) click('choose-left');
   assert.equal(frames.size,1);assert.equal(node('bye').hidden,false);
   click('bye');assert.equal(frames.size,2);
+});
+
+
+test('one explicit result action validates embedded key and shows all fifteen replayed stages', async () => {
+  const app=runtime(15,{loader:true,embedded:true,unsafeName:true});
+  assert.equal(app.nodes.summary.innerHTML,'');
+  for(let i=0;i<15;i++) app.click(app.nodes.bye.hidden?'choose-left':'bye');
+  assert.equal(app.nodes.summary.innerHTML,'');
+  app.click('result-reveal');
+  const html=app.nodes.summary.innerHTML;
+  assert.equal((html.match(/<tr><th scope="row">/g)||[]).length,15);
+  for(const [stage,count] of [['16강',7],['8강',4],['4강',2],['결승',1],['우승',1]])
+    assert.equal((html.match(new RegExp(`<td>${stage}</td>`,'g'))||[]).length,count,stage);
+  assert.ok(html.includes('&lt;img onerror=bad()&gt;'));assert.ok(!html.includes('<img'));
+  assert.equal((await app.export()).revealed,true);
+  app.click('reveal');assert.equal(app.nodes.summary.innerHTML,'');
+  assert.equal((await app.export()).revealed,true);
+});
+
+test('separate result action explains key, rejects stale revision, and continues only the pending explicit reveal', async () => {
+  const app=runtime(2,{loader:true});app.click('choose-left');const before=await app.export();
+  app.click('result-reveal');assert.match(app.nodes.status.textContent,/정답표.*분리/);
+  await app.keyFile({...app.key,comparison:{revision:'stale'}});assert.equal((await app.export()).revealed,false);assert.equal(app.nodes.summary.innerHTML,'');
+  app.click('result-reveal');app.cancelKey();await app.keyFile(app.key);assert.equal((await app.export()).revealed,false);
+  app.click('result-reveal');assert.equal((await app.export()).revealed,true);assert.equal((app.nodes.summary.innerHTML.match(/<tr><th scope="row">/g)||[]).length,2);
+  assert.deepEqual((await app.export()).items,before.items);
+  const corrupt=runtime(2,{loader:true,embedded:true,badKey:true});corrupt.click('choose-left');corrupt.click('result-reveal');
+  assert.equal((await corrupt.export()).revealed,false);assert.match(corrupt.nodes.status.textContent,/검증하지 못했습니다/);
+});
+
+test('result stages recompute after co-winner undo without resetting exposure or adding persisted ranking fields', async () => {
+  const app=runtime(2,{loader:true,embedded:true});app.click('choose-both');app.click('co-winners');app.click('result-reveal');
+  assert.equal((app.nodes.summary.innerHTML.match(/<td>공동 우승<\/td>/g)||[]).length,2);
+  app.click('undo');assert.equal((app.nodes.summary.innerHTML.match(/<td>결승<\/td>/g)||[]).length,2);
+  const state=await app.export();assert.equal(state.revealed,true);assert.ok(!('ranking' in state));assert.ok(!JSON.stringify(state).includes('Technique'));
 });

@@ -25,3 +25,5 @@ main>section{flex:1;min-height:0;padding:16px 0 0;display:flex;flex-direction:co
 @media(max-width:600px){main{padding:8px}.gallery-header{padding:8px;gap:2px}.gallery-header .ht-theme-control{margin-top:2px}.sample-grid{gap:26px}.sample h3,.sample-content,.sample-choice{padding:8px}.sample-choice button{padding:6px;font-size:14px}.versus-mark{font-size:12px}.item-context h2{font-size:16px}}
 /* Low-height windows and zoom retain reachable controls through page scrolling. */
 @media(max-height:560px){html,body{height:auto;min-height:100%;overflow:visible}body,main{display:block;overflow:visible}main>section{height:65dvh;min-height:300px}.item-context{max-height:30dvh}.sample{height:100%}}
+
+#summary{flex:1;min-height:0;order:3;overflow:auto;scrollbar-width:thin}#summary h2{font-size:20px}#summary caption{text-align:left;padding:8px 0;color:var(--muted)}#summary th[scope="row"]{color:var(--text);font-weight:500}

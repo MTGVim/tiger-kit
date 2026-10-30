@@ -34,17 +34,22 @@ source set needs an inspected/partial/unavailable/omitted-with-reason account.
 ## 2. Select figures
 
 Read [explanation selection](references/explanation-selection.md) before selecting a presentation.
-Show up to five fitting recommendations with a reason and limitation for each; do not fill a quota.
+Show the complete themed technique catalog and wait for unresolved choices in order:
+technique, compatible format, then image style/aspect only when relevant. Skip already specified
+axes; never ask internal diagram/layout types. The reference owns exact catalog IDs and fit rules.
 Normally produce one explanation. Explicit technique comparison permits up to five variants;
 explicit broad exploration permits up to fifteen. Comparing subjects alone does not request variants.
 Keep the four distilled principles in the available choice set, not behind another evaluation gate.
 The reference owns shared-evidence variant checks, blind-comparison handoff and consent-based
 external preference use; selecting a technique grants neither comparison nor memory-write consent.
 
-Choose the deliverable from the stated destination before laying it out. For an infographic
+Choose the deliverable from the stated destination before laying it out. For a precise infographic
 or summary visual for a PR body or issue, default to one compact PNG without another format
 question; read [summary image](references/summary-image.md). For that destination, create an
 explanation page only when requested. An explicit page/HTML request retains the page route even for a PR destination.
+For an AI illustration, `baoyu`-like output or character/hand-drawn illustration request, read
+[raster illustration](references/raster-illustration.md); use raster generation, never a code-drawn
+substitute. This resolves the format axis and keeps only its unresolved technique/style questions.
 Use the archify explainer page layout when the selected technique is the archify panel board
 or when a single explanation has no technique-specific form. Requested variants each use
 their own defining form under the renderer contract; include at most one archify variant.
@@ -66,7 +71,7 @@ Neither selected output changes the evidence obligation or authorizes publicatio
 ## 3. Render
 
 For explanation pages, read [renderer contract](references/renderer-contract.md).
-Selected summary PNG, standalone SVG/video and chat-only feedback use their own checks and do not
+Selected summary PNG, raster illustration, standalone SVG/video and chat-only feedback use their own checks and do not
 require archify. The rest of this step applies only to explanation pages.
 Only for archify, verify the installed package and minimum version; absent, old or unverifiable installation means
 `Blocked` with an exact `tk-wizard` installation/update handoff, never automatic installation.
@@ -101,10 +106,10 @@ silence renderer warnings. Keep qualifications even when a writing warning sugge
 
 ## 4. Check accuracy
 
-Independent review is on by default for `change` (including summary PNG), pages containing scene figures, explicit
+Independent review is on by default for `change` (including summary PNG and raster illustration), pages containing scene figures, explicit
 live interaction and an explicit review request. Other `concept` pages use source/static
 checks without independent review by default. State which ran; do not imply review occurred.
-For summary PNG review, give a fresh reviewer the final image, source content,
+For summary PNG or raster illustration review, give a fresh reviewer the final image, source content,
 `evidence.md` and reader constraints; apply the same factual correction/recheck obligations below.
 For every explanation-page review, give a fresh reviewer the entire [review rubric](references/review-rubric.md),
 exact saved HTML, `evidence.md`, reader goal/constraints, extracted text and scene/capture

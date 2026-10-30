@@ -108,8 +108,19 @@ python3 <package>/scripts/build_gallery.py build manifest.json --output <new-run
 
 Single delivery retains `gallery.html`, neutral display/link files and `answer-key.json`.
 Default single-gallery rendering and rating schema are unchanged, including its legacy
-encoded reveal mapping. Versus single delivery has no embedded mapping and requires a
-separately selected matching key, like split delivery.
+encoded reveal mapping. Default single-versus delivery embeds an encoded minimal answer key
+(names and the validation roster/revision, never private diagnostics). It remains outside visible
+DOM/content before explicit reveal; offline encoding is not secrecy against source inspection.
+The winner screen's `결과 보기` validates that embedded key through the same loader as selected
+files, then reveals the result table in one action. It never auto-reveals after completion/reload.
+
+Use `--answer-key separate` for other evaluators or a separate-key single HTML. Split delivery
+always uses a separate key and rejects `--answer-key embedded`. The result button stays active:
+without a loaded key it explains the separation and opens a file picker. Selecting a matching key
+from that reveal action continues to the result table (with partial-comparison confirmation when
+needed). Manual key selection from management alone still does not reveal names. Cancelled or
+invalid file selection preserves records and exposure state. Never distribute a separate key with
+the evaluator ZIP; an explicit self-evaluation delivery may use the embedded path.
 
 Split delivery writes `index.html`, `assets/item-NNNN-slot-NNNN.ext` and optional
 `assets/item-NNNN-slot-NNNN-link-NNNN.ext`, `comparison.zip`, and separate `answer-key.json`.
@@ -122,9 +133,9 @@ material. The builder validates prepared inputs but does not continuously hash e
 
 Distribute only `comparison.zip`, not the enclosing output directory. Keep the key private
 until disclosure is authorized. `정답표 선택` reads an explicitly chosen key in memory and
-checks study, version, every opaque output identity/fingerprint and failure state. It does
-not reveal names by itself or save key contents to storage/exports. `결과 공개` is a separate
-explicit action; partial comparison still asks for confirmation. A prior `revealed` flag is
+checks study, version, versus revision, every opaque output identity/fingerprint and failure state.
+Manual selection does not reveal names by itself or save key contents to storage/exports.
+`결과 보기` is the explicit disclosure action; partial comparison still asks for confirmation. A prior `revealed` flag is
 history, never permission for the agent to disclose identities.
 
 Choose split delivery on request or actual environment evidence, without a media-size cutoff

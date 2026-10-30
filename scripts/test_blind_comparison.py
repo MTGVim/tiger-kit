@@ -249,6 +249,31 @@ class BlindComparisonTests(unittest.TestCase):
         (self.root / 'prepared.html').write_text('<title>Model&#32;0</title>')
         with self.assertRaises(ValueError): builder.build(self.manifest, self.root / 'html-identity', mode='versus')
 
+    def test_single_versus_embeds_minimal_validatable_key_and_separate_option(self):
+        import base64
+        import re
+        self.data = fixture(3, 1, 'text')
+        self.manifest.write_text(json.dumps(self.data))
+        public, key = builder.build(self.manifest, self.root / 'embedded', mode='versus')
+        page = (self.root / 'embedded/gallery.html').read_text()
+        code = re.search(r'const embeddedAnswerKeyCode = "([^"]+)"', page)[1]
+        embedded = json.loads(base64.b64decode(code))
+        self.assertEqual(embedded['comparison']['revision'], public['revision'])
+        self.assertEqual(len(embedded['outputs']), 3)
+        self.assertTrue(all(set(row) == {'item', 'candidate', 'fingerprint', 'failed'} for row in embedded['outputs']))
+        self.assertTrue(all(set(row) == {'name'} for row in embedded['candidates'].values()))
+        self.assertNotIn('engine-0 failed', json.dumps(embedded))
+        self.assertNotIn('<button id="reveal" disabled', page)
+        previous = self.root / 'embedded/answer-key.json'
+        separate, _ = builder.build(self.manifest, self.root / 'separate', previous, mode='versus', answer_key='separate')
+        self.assertEqual(public['revision'], separate['revision'])
+        page = (self.root / 'separate/gallery.html').read_text()
+        self.assertIn('const embeddedAnswerKeyCode = ""', page)
+        self.assertNotIn(code, page)
+        self.assertNotIn('<button id="reveal" disabled', page)
+        with self.assertRaises(ValueError):
+            builder.build(self.manifest, self.root / 'unsafe-split', mode='versus', delivery='split', answer_key='embedded')
+
     def test_runtime_import_export_regressions(self):
         for script in ('test_blind_comparison_runtime.cjs', 'test_blind_comparison_versus.cjs'):
             result=subprocess.run(['node','--test',str(ROOT/'scripts'/script)],capture_output=True,text=True)

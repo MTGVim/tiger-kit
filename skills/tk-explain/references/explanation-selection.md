@@ -1,24 +1,88 @@
 # Explanation selection
 
-## Fit before preference
+## Select known axes in order
 
-Start from the reader's question, prerequisites, evidence and explicit destination/format.
-Consider the existing [30 techniques](explanation-techniques.md) and all four principles below;
-read individual legacy entries only when requested or needed. Prose and semantic tables need
-no named technique. Keep request-only techniques request-only. These are presentation choices,
-not learning-style diagnoses or new skill dependencies. Rendering follows the selected
-technique's defining form, not a shared mandatory panel shell.
+Resolve three axes: technique, compatible format, then image style/aspect when relevant.
+Reuse the current request and confirmed choices; skip every resolved axis. When all axes are
+specified, announce the concrete treatment and generate without another question. Keep source,
+feasibility and artifact checks. A request to compare subjects is not a request for variants.
+Ordinary unspecified requests now wait for these selections rather than auto-picking a shortlist.
+Do not ask abstract questions about learning style or intended use instead of naming techniques.
 
-Show the user a shortlist of up to five suitable choices with each name, the concrete reason
-it fits this question, and a material limitation. Recommend fewer when fewer fit, explaining
-the shortfall rather than padding with poor fits. Identify the selected choice and proceed with
-one explanation without a routine approval round. An explicit fitting format wins over a saved
-preference; factual accuracy, accessibility and the requested behavior still constrain feasibility.
-If authorized remembered preferences change the order, distinguish that influence from topic fit.
+### 1. Show the whole catalog by theme
+
+Show every technique below, including low-ranked and request-only choices, with stable IDs and
+concrete names in the user's language. Mark one fitting recommendation per theme, with a short
+reason and limitation; if none fits, state why and leave that theme without a recommendation.
+Never hide/remove a technique because it lost an earlier comparison. Keep the full numbered menu
+in readable chat; put theme recommendations in the input tool up to its actual choice capacity,
+and explicitly accept any catalog ID typed in free text. Tool limits never truncate the catalog.
+Do not dump internal renderer/schema names or ask which archify diagram grammar to use.
+
+| Theme | Technique IDs and concrete names |
+| --- | --- |
+| Diagrams and evidence | 03 Real Output; 15 Before/After Comparison; 16 Concept Map; 26 Annotated Code; A Archify Panel Board |
+| Stories and actors | 04 Zine Comic; 07 Group Chat; 08 Sketch Comedy (request-only); 10 Incident Postmortem |
+| Participation | 02 Hands-on Simulator or Calculator; 09 Socratic Questions; 12 Choose-Your-Own Path; 19 Predict First; 20 Quiz; 21 Flashcards; 22 Invent Before Reveal; 23 Feynman Technique (request-only); 24 Hint Ladder |
+| Correction and reference | 01 Five-Step Ladder; 06 Misconception Correction; 25 Cheat Sheet; 28 Failure Modes |
+| Scenes and visual treatments | 05 Scrollytelling; 11 Illustrated Intuition; 18 Animated Metaphor; P1 Layout/style separation; P2 Design philosophy and restrained hierarchy; P3 Central scene; P4 Independent hand-drawn SVG |
+
+Keep all original [30 entries](explanation-techniques.md) addressable. The six entries below
+belong to another axis; show this compact relocation list with the catalog so none disappears:
+13 Sequence Diagram and 14 Waterfall Timeline are diagram details, chosen from the content;
+17 Infographic Poster, 27 Terminal Replay, 29 Slide Deck and 30 Social Thread are formats.
+Accept an explicit ID at any axis and carry it forward; #30 stays request-only. Selecting #08,
+#23 or #30 explicitly is the request that enables it; do not recommend them unsolicited.
+A diagram-detail request constrains the automatic figure choice, not a second technique prompt.
+
+### 2. Offer only compatible formats
+
+Ask this after the technique is settled; never send technique and format questions concurrently.
+Respect an explicit format (for example `이미지로`) and skip this question. If an explicit pair
+conflicts, explain the lost requirement and ask only which bound requirement to change. Never
+silently flatten interaction or rasterize exact code. With just one feasible format, announce it.
+
+| Selected requirement | Compatible formats / exclusions |
+| --- | --- |
+| Participation (#02, #09, #12, #19-#24, including request-only #23) | Interactive offline HTML only; native disclosure/links and a static no-JS reading path. No still image/video/slide replacement. |
+| A Archify Panel Board or #05 Scrollytelling | Offline HTML preserving the actual board or scroll behavior; do not replace the defining form with a still image. |
+| P4 Independent hand-drawn SVG | Standalone SVG or HTML containing the actual vector sketch; an AI raster is a different treatment, not this SVG execution. |
+| Exact code or command output (#26, #27, or another technique whose claim needs exact source bytes) | Selectable-text HTML, or the explicit #27 terminal replay format. Exclude AI raster illustration. |
+| General static explanation | Offline HTML, precise static PNG, AI illustration (raster), and fitting explicit #17 poster/#29 slide formats; choose only options that preserve the needed facts. |
+| Motion essential (#18) | Live HTML or an explicitly selected standalone animated SVG/video, with static equivalent. A still image cannot satisfy motion. |
+| #30 Social Thread | Request-only separate sharing summary, retaining a link/reference to the full explanation; never auto-select it. |
+
+For an unspecified single HTML without a technique-specific form, archify remains the page
+renderer. A choice of HTML is not a choice of image style; do not ask a third question for HTML.
+#13/#14 diagram detail, archify type, chart type and layout are inferred from evidence, not user
+menu axes. Preserve an explicit correct detail without requiring another selection.
+The PR/issue summary PNG destination remains a resolved format under its own contract.
+
+### 3. Confirm image style and aspect only when needed
+
+For AI illustration, read [raster illustration](raster-illustration.md). Show the automatically
+chosen information layout as a concrete composition alongside 3-4 suitable style treatments and
+`알아서`, plus only unresolved aspect choices. This confirms layout×style/aspect without asking
+users to choose an internal layout taxonomy. Existing explicit choices win. If an axis has zero
+or one feasible choice, report the decision/limit instead of asking; with multiple choices, wait
+for the answer. If the input tool has fewer slots, keep the full numbered options in chat and
+accept typed IDs; never silently pick a missing answer. “Choose for me” delegates only that axis.
+Precise static PNG/SVG uses applicable style/aspect choices without invoking AI raster generation;
+HTML has no third-round image question. The raster reference owns prompt persistence and checks.
+
+### Context-bound evaluation influence
+
+Only authorized, relevant external preference evidence may reorder choices inside a theme.
+When used, show topic type, number of evaluated comparisons/topics and evaluator count alongside
+the observed result; distinguish match wins/reached round from a cardinal score. Unknown counts
+stay unknown. The supplied 19-candidate, one-PR, one-evaluator tournament is one comparison,
+not 19 independent ratings and not general superiority. Its unidentified first-round losers do
+not justify inventing a per-technique ranking. Keep all entries visible and request-only status.
+Use the consent rules below before saving any result or reason; this menu creates no memory store.
 
 ## Archify panel board
 
-Include one additional choice alongside the 30 techniques and four principles: **archify panel
+Include one additional choice alongside the original 30-entry catalog and four principles: **archify panel
 board** (conclusion first, native diagrams, table panels). Use it for an ordinary single page
 without a technique-specific form or when explicitly selected. Its fixed panel grammar cannot
 express arbitrary HTML treatments. A request for a particular form takes precedence; requested
@@ -29,11 +93,14 @@ variant sets include at most one archify panel board, not repeated boards with d
 Always include these in the selection pool. No further trial or favorable evaluation is a
 condition of availability. When combined with an existing technique, retain the principle's name
 and source as a separately selectable treatment; do not collapse all four into “infographic.”
-Each is a partial adaptation, not the original skill's formal execution or a replacement for it.
+Each is a partial adaptation, not the original skill's formal execution or a replacement for it. An HTML/SVG treatment
+using one of these principles is not an original upstream output. For an original-like AI
+illustration, select the raster route; the independent SVG option remains explicitly a sketch,
+never an Excalidraw export or a substitute for requested raster art.
 
 | Choice / source | Apply when | Limitation |
 | --- | --- | --- |
-| Layout/style separation, from `baoyu-infographic` | First map the information order and relationships, then choose a visual treatment independently. Useful for a process whose structure must survive style changes. | A style cannot establish sequence, causality or a measurement; do not import the donor's fixed defaults or image backend. |
+| Layout/style separation, from `baoyu-infographic` | First map the information order and relationships, then choose a visual treatment independently. Useful for a process whose structure must survive style changes. | A style cannot establish sequence, causality or a measurement; use raster generation for an original-like illustrated output; HTML/SVG-only adaptation is a different output. |
 | Design philosophy and restrained hierarchy, from `canvas-design` | State a brief visual intent for emphasis, spacing and grouping, then use a few clear levels to expose the main relationship. | Restraint cannot delete prerequisites, qualifications or causal steps; this is explanation, not an art-only text quota. |
 | Central scene, from `Epic Infographics` | Put a concrete subject or mechanism at the center and attach verified facts to the relevant parts, with a legible reading path. | Decorative atmosphere must not imply unsupported dimensions, magnitude or causality; a scene is not mandatory for every subject. |
 | Independent hand-drawn SVG, contrasted with `Excalidraw` | Use original slightly irregular strokes, simple shapes and legible labels for an approachable spatial or conceptual sketch. | This is independently authored SVG, not an Excalidraw export, editor integration or fidelity claim; rough strokes must not distort geometry or arrows. |
@@ -56,8 +123,8 @@ An explicit request to compare explanation techniques/treatments permits up to f
 variants. An explicit request for broad exploration, including a request for fifteen treatments,
 permits up to fifteen. These are ceilings, not quotas. A request to compare two subjects in one
 explanation does not select either branch. Ordinary explanation never starts a gallery.
-For exploration, extend the fitting shortlist up to the requested ceiling and show the additional
-choices' reasons and limitations before generation. Preserve an explicit smaller requested count.
+For exploration, select the requested suitable treatments from the complete catalog and show
+each choice's reason and limitation before generation; do not reopen already specified axes. Preserve an explicit smaller requested count.
 Disclose fewer fitting choices, tool/cost limits and failed variants without inventing coverage.
 
 Use the same run `evidence.md` for all variants: essential facts, source bindings, inputs,
@@ -82,8 +149,9 @@ samples private. Explain that visual style may still allow guessing. Hand genera
 their actual success/failure states and the private mapping to `tk-blind-comparison`; read its
 current invocation/manifest contract rather than inventing flags or copying its protocol here.
 That owner evaluates existing candidates and owns gallery/versus/delivery/privacy contracts;
-it does not generate variants. Keep the answer key separate from evaluator delivery and disclose
-sample identity only through that owner's explicit reveal flow. Do not leak it through filenames,
+it does not generate variants. Use that owner's embedded-self-evaluation or separate-distribution key contract and disclose
+sample identity only through its explicit reveal flow. Keep a separate key private when that
+delivery mode is selected; an embedded key is encoded and validated, not visible before reveal. Do not leak it through filenames,
 captions, metadata or recommendation ordering. If the owner is unavailable, report the blocked
 evaluation instead of claiming a blind gallery or constructing a replacement evaluation UI.
 

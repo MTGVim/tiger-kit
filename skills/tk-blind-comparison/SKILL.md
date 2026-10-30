@@ -45,15 +45,19 @@ to `tk-grill`; candidate creation to `tk-prototype`, `tk-tts` or the relevant pr
    Choose split delivery when requested or justified by the actual transfer/opening environment,
    not an invented size threshold or unverified browser-failure diagnosis. Read the split contract
    in [manifest and commands](references/manifest.md). Distribute only `comparison.zip`, never its
-   enclosing output directory: the separate answer key stays private. Versus and split require
-   explicitly selecting the matching key before reveal; legacy single gallery keeps its behavior.
-   Keep a separate answer key and an explicit reveal toggle; offline blinding prevents casual
+   enclosing output directory: the separate answer key stays private. Default single-versus
+   self-evaluation embeds an encoded minimal key; separate-key single and split delivery require
+   a matching selected key. Both versus key paths use the same validator and explicit reveal;
+   read the manifest contract. Legacy single gallery keeps its behavior.
+   Keep an explicit reveal toggle and the selected delivery
+   mode's answer-key boundary; offline blinding prevents casual
    cues, not source inspection. Never claim cryptographic or exam security.
    Keep the comparison topic, item title, shared script and evaluation guide visible within
    the active item's sticky context; bound long context height so scoring stays reachable.
 5. Verify the saved local HTML through `tk-browser-verify`: desktop/mobile and both themes,
    media decode, original-size/additional links, escaped annotations, all failure cards, keyboard controls,
-   and the selected mode's controls. Gallery checks include native 1-5 scores, notes and optional favorite;
+   and the selected mode's controls. Verify embedded one-click versus results, separate-key
+   guidance/file selection, key validation failures and the full replay-derived result table. Gallery checks include native 1-5 scores, notes and optional favorite;
    reload, candidate addition, JSON import/export, rating copy and clipboard refusal,
    partial-reveal confirmation/cancellation, reveal-only averages and storage refusal.
    Copy uses the same blind-key payload as
