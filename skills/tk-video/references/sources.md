@@ -59,3 +59,22 @@ consistent register, caption/narration semantics and comparison visibility. Keep
 listening checks separate; omit a sibling-package runtime import or full prose-review pipeline.
 Light slides and in-slide emphasis are authoring fallbacks for this workflow, not empirical claims
 of universally better learning. Explicit/saved choices take precedence.
+
+## External Manim and selectable captions (issue 486)
+
+Inspected [adithya-s-k/manim_skill](https://github.com/adithya-s-k/manim_skill/tree/cef045011722d285692e3381d12d4d637da56e18)
+at its verified current HEAD: composer and ManimCE skill entrypoints, CLI/config/text rules,
+test guidance/utilities and MIT license. Keep these as unchanged external dependencies, not
+vendored guidance or templates. Adapt only the caller's source/readiness contract, selected
+runtime handoff and continuous-media boundary; omit ManimGL, automatic setup and preview.
+The upstream lacks verified SemVer release metadata; installer folder hashes are not commits.
+
+The installed ManimCE 0.20.1 Docker runtime's actual render help owns tested CLI syntax; it is
+not claimed to be latest. FFmpeg's [stream selection/streamcopy](https://ffmpeg.org/ffmpeg.html)
+and [HTML track element](https://html.spec.whatwg.org/multipage/media.html#the-track-element)
+inform explicit audio mapping and browser WebVTT delivery. Keep fractional source rates and
+native audio, adapt selectable mov_text plus sidecars, and omit a universal player or silent
+retiming. Inspect emitted default disposition: clearing it does not guarantee the MP4 muxer
+leaves the first subtitle initially disabled. Report actual browser/player checks separately
+from encoding, source inspection, synthetic audio and human listening. Upstream's full example
+test suite was not run; use bounded real-render and regression evidence for this integration.

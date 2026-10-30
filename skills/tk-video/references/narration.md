@@ -46,6 +46,12 @@ See [assembly](assembly.md) for optional presentation fields and collision check
 
 ## Teaching handoff
 
+For continuous `animation`, keep the measured render timeline. Reuse `scenes` offsets or a full
+WAV only when no embedded audio exists; ambiguous mixed audio fails instead of silently replacing
+the render's sound. Prepare screen/caption literals separately from pronunciation-corrected
+spoken text, preserving numeric values and technical identity. A script review is not listening.
+If speech exceeds a scene, re-author/rerender that scene; never stretch the video or truncate audio.
+
 When a teaching caller supplies a sequence, retain its accepted scene point, observed start
 state, action/change, deciding visual and explanation. Reuse its already-refined script and
 settled audio choice. Missing causal steps return to the teaching author before assembly; a

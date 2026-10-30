@@ -12,8 +12,8 @@ metadata:
 
 # Explain Through Video
 
-Produce the selected MP4 or GIF from observed software states or explicitly labeled explanatory
-cards. Existing-video editing and unrelated filmmaking are outside this skill. A movie communicates
+Produce the selected MP4 or GIF from observed software states, labeled explanatory cards or
+authored Manim renders. Arbitrary existing-video editing and unrelated filmmaking are outside this skill. A movie communicates
 a flow; it does not establish application correctness, latency, performance or reader understanding.
 
 ## Plan and collect
@@ -21,6 +21,10 @@ a flow; it does not establish application correctness, latency, performance or r
 Resolve the audience, claim, selected format and available scene sources. Prefer stills when
 motion itself is not the claim. A short flow around ten seconds often fits GIF; longer explanation
 fits MP4. Reuse supplied material and approved choices without another routine question.
+Only when Manim is selected, read [Manim dependency and rendering](references/manim.md), verify
+and load the external `manim-composer` and `manimce-best-practices` skills unchanged. Native
+ManimCE and an existing Docker runtime are alternatives, never universal prerequisites. Keep
+their continuous render as video, not extracted stills; slide theme and 10fps defaults do not apply.
 Before production, read [media choices](references/media-preferences.md): resolve saved fields,
 ask unresolved narration/presentation and the default-save offer in one ordinary-chat round,
 and pass answered choices through parent/child phases. Reuse selections; save only explicitly
@@ -51,7 +55,9 @@ Read [assembly](references/assembly.md) for the scene/capture manifest, owned pa
 Use `explainer` holds for presentation and preserve actual timestamps in `evidence` mode. Keep
 assertion screenshots unchanged and independent from the movie. Use H.264 MP4 at the capture's
 frame rate capped at 30fps, with optional mono 48kbps AAC; GIF and explainer stills default to
-10fps. MP4 defaults to CRF 18; use the assembler's quality/rate overrides and preserve source
+10fps. Animation MP4 instead retains its measured source rate, dimensions and duration, including
+rates above 30; existing embedded audio is retained. Its captions default to selectable tracks
+and sidecars; burn them only on explicit selection. MP4 defaults to CRF 18; use the assembler's quality/rate overrides and preserve source
 resolution. Follow prerequisite recovery for unavailable tools.
 If hard-caption support is missing after installed-tool discovery, present the `tk-wizard`
 installation-guidance question before returning the blocked result. Do not implement a frame-compositing workaround.

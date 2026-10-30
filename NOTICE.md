@@ -985,6 +985,13 @@ cognitive-debt 장부나 merge/edit 강제는 `tk-explain-diff`의 단일 변경
 모델의 `Attachment A(e)`에 따른 AI 합성 고지 필요성을 사용자에게 안내하고 합성 결과에도 반환합니다.
 영상에 고지를 자동 삽입하거나 최종 게시물의 고지 여부를 검증하지는 않습니다. 상류는 개발·지원을 종료한 상태입니다.
 
+`tk-video`의 선택형 `Manim` 경로는 MIT 라이선스인
+[`adithya-s-k/manim_skill`](https://github.com/adithya-s-k/manim_skill/tree/cef045011722d285692e3381d12d4d637da56e18)의
+`manim-composer`와 `manimce-best-practices`를 변경하지 않은 외부 의존성으로 연계합니다.
+해당 스킬의 지침·템플릿·코드를 TigerKit에 복제하지 않으며 원본의 출처와 고지는 외부 패키지에서 유지합니다.
+`ManimCE` 런타임은 별도로 검증하고 네이티브 환경 또는 기존 `Docker` 환경 중 선택한 경로만 사용합니다.
+검토한 원본과 연속 영상·선택형 자막 경계는 `tk-video/references/sources.md`에 기록합니다.
+
 
 ## 2026-10-25: 수업별 HTML과 실제 답변의 피드백
 

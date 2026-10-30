@@ -1,6 +1,7 @@
 # Video assembly
 
 - [Inputs and timing](#inputs-and-timing)
+- [Continuous rendered video](#continuous-rendered-video)
 - [Optional captions, callouts and zoom](#optional-captions-callouts-and-zoom)
 - [Quality and recovery](#quality-and-recovery)
 
@@ -72,6 +73,46 @@ selected, an installed Homebrew `ffmpeg-full` keg via `brew --prefix ffmpeg-full
 a package or changes PATH. Receipts report `ffmpeg_path` and `ffprobe_path`.
 A mismatched or too-long optional track is omitted with a warning; retain any selected-but-missing
 narration limitation. Retain original sources independently of output and screenshot manifests.
+
+## Continuous rendered video
+
+After the selected [Manim route](manim.md), use a regular MP4 inside this run instead of
+extracting PNG frames. This route consumes one complete constant-frame-rate render; compose
+multiple beats there. Mixed frame/video manifests and authored `end_ms` are rejected. Variable
+or ambiguous rates need an explicitly selected conversion, not guessing. This is rendered
+animation, never observed application timing.
+
+```json
+{"mode":"animation","video_path":"/absolute/run/render.mp4","caption_delivery":"soft","captions":[{"start_ms":0,"end_ms":2000,"text":"Version 2 and DOM"}]}
+```
+
+Default MP4 FPS comes from the stream, including fractional rates and rates above 30. Preserve
+duration/resolution; H.264/yuv420p pads odd dimensions to even pixels and reports it. Explicit
+`--fps` conversion and GIF's 10fps/audio omission are reported too. Video re-encodes at selected
+CRF: this is not byte-identical/lossless output. Receipts separate `source_video`, actual output
+geometry/rate/duration and rendered timing.
+
+Embedded audio uses stream copy, retaining channels rather than silently downmixing/replacing
+it. Additional `scenes` narration or `--audio` conflicts and fails; select one audio source.
+Without embedded audio, reuse measured scene offsets or a full track. Too-long/unavailable
+animation audio fails rather than being silently omitted. Silent selected narration and short
+subtitle coverage remain failures. No TTS engine is imported.
+
+Resolve `caption_delivery: none | soft | hard` in the existing media-choice round. Animation
+defaults enabled captions to `soft`; frame routes retain their hard-caption default.
+`caption_style: none` or delivery `none` disables tracks/sidecars, not narration guards. Do not
+combine enabled delivery with style `none`. Animation captions are ordered, nonoverlapping and
+inside measured duration. Screen text keeps notation, not TTS spelling.
+
+Soft MP4 has an unforced `mov_text` track and SRT/WebVTT sidecars, needs no libass and does not
+burn text into pixels. Deliver selected sidecars with the movie. Muxers/players can mark a track
+default; report measured `subtitle_default`, not promised initial hiding. Browsers generally
+need a same-origin WebVTT `<track>`, not only embedded MP4 text. Verify cue loading and actual
+on/off controls in the selected player. Use an owned local HTTP origin when file-origin rules
+block WebVTT; otherwise report that player unsupported and retain separate files. No universal
+player UI is added. Explicit hard delivery uses selected style and the existing libass/fallback
+contract; missing support stays blocked. Differing sidecars, movies and contact sheets are
+never overwritten.
 
 ## Optional captions, callouts and zoom
 

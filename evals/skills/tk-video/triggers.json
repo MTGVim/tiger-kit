@@ -193,6 +193,15 @@
       "facets": [
         "ko-en"
       ]
+    },
+    {
+      "id": "validation-positive-manim-continuous",
+      "split": "validation",
+      "query": "`Manim`으로 개념을 설명하는 연속 동영상과 선택형 자막을 만들어 주세요",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
     }
   ]
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Assemble captioned media from observed timestamps or explanatory still holds.
+"""Assemble observed frames, explanatory stills or continuous rendered MP4 media.
 
 No downloads, recorder, browser control or narration-engine imports occur here.
 """
@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 from fractions import Fraction
 import hashlib
+import html
 import importlib.util
 import json
 import math
@@ -66,6 +67,19 @@ def timeline(data: dict, root: Path, ffprobe: str = "ffprobe") -> tuple[list[tup
     narration_requested = data.get("narration_requested", False)
     if not isinstance(narration_requested, bool):
         raise ValueError("narration_requested must be boolean")
+    if mode == "animation":
+        source = animation_source(data, root, ffprobe)
+        end = source["duration_ms"]
+        captions = data.get("captions", [])
+        if not isinstance(captions, list):
+            raise ValueError("captions must be an ordered list")
+        previous = 0.0
+        for row in captions:
+            start, stop = number(row["start_ms"]), number(row["end_ms"])
+            if not previous <= start < stop <= end or not isinstance(row["text"], str):
+                raise ValueError("invalid or overlapping animation caption interval/text")
+            previous = stop
+        return [(Path(source["path"]), 0.0)], end, [] if data.get("caption_style") == "none" else captions
     if mode not in {"evidence", "explainer"}:
         raise ValueError("mode must be evidence or explainer")
     frames = []
@@ -110,6 +124,39 @@ def timeline(data: dict, root: Path, ffprobe: str = "ffprobe") -> tuple[list[tup
         if not 0 <= start < stop <= end or not isinstance(row["text"], str):
             raise ValueError("invalid caption interval/text")
     return frames, end, [] if data.get("caption_style") == "none" else captions
+
+
+def animation_source(data: dict, root: Path, ffprobe: str) -> dict:
+    if "frames" in data or "end_ms" in data:
+        raise ValueError("animation uses video_path and measured duration, not frames/end_ms")
+    path = regular(Path(data["video_path"]), root)
+    if path.suffix.lower() != ".mp4":
+        raise ValueError("animation requires a rendered MP4")
+    info = probe(path, ffprobe)
+    streams = [s for s in info["streams"] if s.get("codec_type") == "video"]
+    if len(streams) != 1:
+        raise ValueError("animation requires exactly one video stream")
+    stream = streams[0]
+    try:
+        rate = Fraction(stream["avg_frame_rate"])
+        nominal = Fraction(stream["r_frame_rate"])
+    except (ValueError, ZeroDivisionError, KeyError) as exc:
+        raise ValueError("animation requires a verified constant frame rate") from exc
+    duration = number(float(stream["duration"]))
+    width, height = int(stream["width"]), int(stream["height"])
+    if rate <= 0 or rate != nominal or duration <= 0 or width <= 0 or height <= 0:
+        raise ValueError("animation requires positive duration/geometry and a constant frame rate")
+    audio = [s for s in info["streams"] if s.get("codec_type") == "audio"]
+    if len(audio) > 1:
+        raise ValueError("select a rendered source with at most one embedded audio stream")
+    audio_duration = number(float(audio[0]["duration"])) if audio else 0.0
+    if audio and not 0 < audio_duration <= duration + .000001:
+        raise ValueError("embedded audio exceeds the rendered video duration")
+    return {"path": str(path), "duration_ms": duration * 1000, "fps": float(rate),
+            "fps_ratio": str(rate), "width": width, "height": height,
+            "audio_codec": audio[0]["codec_name"] if audio else None,
+            "audio_channels": audio[0]["channels"] if audio else None,
+            "audio_duration_ms": audio_duration * 1000}
 
 
 def load_manifest(path: Path) -> tuple[list[tuple[Path, float]], float, list[dict]]:
@@ -169,7 +216,7 @@ def audio_scenes(data: dict, frames: list, end: float, root: Path, ffprobe: str)
             raise ValueError("explainer uses frame audio_path, not evidence scenes")
         rows = [{"start_ms": frame[1], "audio_path": row.get("audio_path")} for row, frame in zip(data["frames"], frames)]
     else:
-        if any(row.get("audio_path") is not None for row in data["frames"]):
+        if any(row.get("audio_path") is not None for row in data.get("frames", [])):
             raise ValueError("evidence audio belongs in scenes with observed start_ms")
         rows = data.get("scenes", [])
         if not isinstance(rows, list):
@@ -239,11 +286,23 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
           fps: float | None = None, crf: int | None = None, caption_size: float | None = None) -> dict:
     manifest = regular(manifest)
     data = json.loads(manifest.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError("movie manifest must be an object")
+    animation = data.get("mode") == "animation"
+    default_delivery = "soft" if animation else "hard"
+    delivery = data.get("caption_delivery", "none" if data.get("caption_style") == "none" else default_delivery)
+    if not isinstance(delivery, str) or delivery not in {"none", "soft", "hard"}:
+        raise ValueError("caption_delivery must be none, soft or hard")
+    if delivery == "none":
+        data = {**data, "caption_style": "none"}
+    elif data.get("caption_style") == "none":
+        raise ValueError("caption_delivery conflicts with caption_style none")
     ffmpeg, ffprobe, caption_support = media_tools(
-        ffmpeg, data.get("caption_style", "band") != "none" or bool(data.get("callouts")))
+        ffmpeg, (delivery == "hard" and data.get("caption_style", "band") != "none") or bool(data.get("callouts")))
     root = manifest.parent
     frames, end, captions = timeline(data, root, ffprobe)
     mode = data.get("mode", "evidence")
+    source_video = animation_source(data, root, ffprobe) if animation else None
     narration_requested = data.get("narration_requested", False)
     scenes = audio_scenes(data, frames, end, root, ffprobe)
     scene_voices = any(row[2] is not None for row in scenes)
@@ -258,10 +317,20 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
     if crf is not None and (kind != ".mp4" or isinstance(crf, bool) or not isinstance(crf, int) or not 0 <= crf <= 51):
         raise ValueError("crf must be an integer from 0 to 51 and applies only to MP4")
     selected_crf = (18 if crf is None else crf) if kind == ".mp4" else None
-    selected_fps, fps_source = frame_rate(data, frames, kind, fps)
+    if animation and kind == ".mp4":
+        selected_fps = source_video["fps"] if fps is None else number(fps)
+        if selected_fps <= 0:
+            raise ValueError("fps must be positive")
+        fps_source = "video_stream" if fps is None else "override"
+    else:
+        selected_fps, fps_source = frame_rate(data, frames, kind, fps)
     rate = Fraction(selected_fps).limit_denominator(100000)
     rate_text = f"{rate.numerator}/{rate.denominator}"
     warnings = []
+    if animation:
+        warnings.append("rendered video is re-encoded; it is not observed application evidence")
+        if not math.isclose(selected_fps, source_video["fps"], rel_tol=1e-9):
+            warnings.append(f"frame rate explicitly converted from {source_video['fps_ratio']} to {rate_text}")
     if fps_source == "timestamps":
         warnings.append("source fps estimated from median capture intervals; idle/event-driven captures may not expose the original rate")
     elif fps_source == "fallback":
@@ -270,13 +339,16 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
     contact = output.with_name(output.name + ".contact.png")
     if contact.resolve() != contact or contact.exists():
         raise ValueError("contact sheet must be a new run-owned path")
-    burn = bool(captions) and caption_support
+    burn = bool(captions) and delivery == "hard" and caption_support
+    captions_blocked = bool(captions) and delivery == "hard" and not caption_support
     image_stream = next(s for s in probe(frames[0][0], ffprobe)["streams"] if s["codec_type"] == "video")
     source_width, source_height = int(image_stream["width"]), int(image_stream["height"])
     width, height = math.ceil(source_width/2)*2, math.ceil(source_height/2)*2
+    if animation and (width, height) != (source_width, source_height):
+        warnings.append("odd source dimensions padded to even dimensions for yuv420p")
     caption_style, callouts, highlights = presentation.validate(data, source_width, source_height, end)
     layout = caption_layout(source_height, mode == "evidence" and caption_style == "band", caption_size)
-    enhanced = caption_style not in {"band", "none"} or bool(callouts) or bool(highlights)
+    enhanced = (burn and caption_style not in {"band", "none"}) or bool(callouts) or bool(highlights)
     if enhanced:
         for image, _ in frames[1:]:
             geometry = next(s for s in probe(image, ffprobe)["streams"] if s["codec_type"] == "video")
@@ -288,12 +360,15 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
     capacity = int(int(image_stream["width"]) * .85 / layout["size_px"] * 2)
     for index, caption in enumerate(captions, 1):
         units = sum(2 if unicodedata.east_asian_width(c) in "WF" else 1 for c in caption["text"])
-        if caption_style == "band" and units > capacity:
+        if burn and caption_style == "band" and units > capacity:
             warnings.append(f"caption {index} may wrap or clip; inspect decoded frames and split or resize it")
     sidecar = output.with_suffix(".srt") if captions else None
+    vtt_sidecar = output.with_suffix(".vtt") if captions and delivery == "soft" else None
     if sidecar and (sidecar.resolve() != sidecar or (sidecar.exists() and not sidecar.is_file())):
         raise ValueError("caption sidecar must be a regular run-owned file")
-    if captions and not burn:
+    if vtt_sidecar and (vtt_sidecar.resolve() != vtt_sidecar or (vtt_sidecar.exists() and not vtt_sidecar.is_file())):
+        raise ValueError("WebVTT sidecar must be a regular run-owned file")
+    if captions_blocked:
         warnings.append("ffmpeg lacks the subtitles filter; hard captions blocked, soft captions retained")
     if presentation_blocked:
         warnings.append("ffmpeg lacks the subtitles filter; callouts and dependent zooms blocked")
@@ -308,9 +383,20 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
             if not any(s.get("codec_type") == "audio" for s in info["streams"]) or not 0 < duration <= end / 1000:
                 raise ValueError("audio does not fit the observed movie duration")
         except (ValueError, KeyError, OSError, subprocess.SubprocessError):
+            if animation:
+                raise ValueError("animation audio must be available and fit the rendered video duration") from None
             warnings.append("audio omitted: invalid, unavailable or longer than movie; captions retained")
             audio = None
     audio_duration = duration * 1000 if audio is not None else 0
+    native_audio = bool(animation and source_video["audio_codec"] and kind == ".mp4")
+    if animation and source_video["audio_codec"]:
+        if audio is not None or scene_voices:
+            raise ValueError("embedded audio cannot be combined with another narration track; select one source")
+        if native_audio:
+            audio = frames[0][0]
+            audio_duration = source_video["audio_duration_ms"]
+        else:
+            warnings.append("GIF has no audio; embedded source audio omitted")
     with tempfile.TemporaryDirectory(prefix="movie-", dir=output.parent) as directory:
         stage = Path(directory)
         env = dict(os.environ, TMPDIR=directory, XDG_CACHE_HOME=str(stage / "cache"))
@@ -324,40 +410,52 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
                 errors.append("narration-subtitles-short")
         if caption_style != "none" and audio is not None and captions and max(row["end_ms"] for row in captions) < audio_duration:
             errors.append("narration-subtitles-short")
-        lines = ["ffconcat version 1.0"]
-        hashes = []
-        for i, (image, stamp) in enumerate(frames):
-            name = f"frame-{i:06}{image.suffix.lower()}"
-            shutil.copyfile(image, stage / name)
-            hashes.append(hashlib.sha256((stage / name).read_bytes()).digest())
-            stop = frames[i + 1][1] if i + 1 < len(frames) else end
-            lines.extend([f"file '{name}'", "option framerate 1000000", f"duration {(stop - stamp) / 1000:.9f}"])
-        lines.append(f"file 'frame-{len(frames)-1:06}{frames[-1][0].suffix.lower()}'")
-        lines.append("option framerate 1000000")
-        if mode == "evidence":
-            longest = current = 0.0
-            for i, digest in enumerate(hashes):
+        if not animation:
+            lines = ["ffconcat version 1.0"]
+            hashes = []
+            for i, (image, stamp) in enumerate(frames):
+                name = f"frame-{i:06}{image.suffix.lower()}"
+                shutil.copyfile(image, stage / name)
+                hashes.append(hashlib.sha256((stage / name).read_bytes()).digest())
                 stop = frames[i + 1][1] if i + 1 < len(frames) else end
-                current = current + stop - frames[i][1] if i and digest == hashes[i - 1] else stop - frames[i][1]
-                longest = max(longest, current)
-            if len(set(hashes)) == 1 or longest / end >= .8:
-                warnings.append("repeated evidence frames dominate the timeline; inspect stable or missing motion")
-        (stage / "frames.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
+                lines.extend([f"file '{name}'", "option framerate 1000000", f"duration {(stop - stamp) / 1000:.9f}"])
+            lines.append(f"file 'frame-{len(frames)-1:06}{frames[-1][0].suffix.lower()}'")
+            lines.append("option framerate 1000000")
+            if mode == "evidence":
+                longest = current = 0.0
+                for i, digest in enumerate(hashes):
+                    stop = frames[i + 1][1] if i + 1 < len(frames) else end
+                    current = current + stop - frames[i][1] if i and digest == hashes[i - 1] else stop - frames[i][1]
+                    longest = max(longest, current)
+                if len(set(hashes)) == 1 or longest / end >= .8:
+                    warnings.append("repeated evidence frames dominate the timeline; inspect stable or missing motion")
+            (stage / "frames.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
         if captions:
             text = "\n\n".join(f"{i+1}\n{srt_time(c['start_ms'])} --> {srt_time(c['end_ms'])}\n" +
-                                  c["text"].replace("\r", " ").replace("\n", " ")
+                                  html.escape(c["text"].replace("\r", " ").replace("\n", " "), quote=False)
                                   for i, c in enumerate(captions))
             (stage / "captions.srt").write_text(text + "\n", encoding="utf-8")
             if sidecar.exists() and sidecar.read_bytes() != (stage / "captions.srt").read_bytes():
                 raise ValueError("existing caption sidecar differs; it was preserved")
+            if vtt_sidecar:
+                vtt = "WEBVTT\n\n" + "\n\n".join(
+                    f"{i + 1}\n{srt_time(c['start_ms']).replace(',', '.')} --> {srt_time(c['end_ms']).replace(',', '.')}\n" +
+                    html.escape(c["text"].replace("\r", " ").replace("\n", " "), quote=False)
+                    for i, c in enumerate(captions)) + "\n"
+                (stage / "captions.vtt").write_text(vtt, encoding="utf-8")
+                if vtt_sidecar.exists() and vtt_sidecar.read_bytes() != (stage / "captions.vtt").read_bytes():
+                    raise ValueError("existing WebVTT sidecar differs; it was preserved")
         # Only generated relative frame names/options enter this private concat file.
-        cmd = [ffmpeg, "-v", "error", "-nostdin", "-n", "-threads", "1", "-f", "concat", "-safe", "0", "-i", "frames.txt"]
+        cmd = [ffmpeg, "-v", "error", "-nostdin", "-n", "-threads", "1"]
+        cmd += ["-i", str(frames[0][0])] if animation else ["-f", "concat", "-safe", "0", "-i", "frames.txt"]
         if audio is not None:
             cmd += ["-i", str(audio)]
         soft = bool(captions) and not burn and kind == ".mp4"
         if soft:
             cmd += ["-i", "captions.srt"]
-        filters = f"fps={rate_text},pad=ceil(iw/2)*2:ceil(ih/2)*2"
+        filters = "pad=ceil(iw/2)*2:ceil(ih/2)*2"
+        if not animation or fps is not None or kind == ".gif":
+            filters = f"fps={rate_text}," + filters
         if enhanced and not presentation_blocked:
             extra_filters, presentation_receipt = presentation.prepare(data, captions if burn else [], width, height,
                 end, layout["size_px"], float(rate), ffmpeg, stage, env, warnings)
@@ -375,10 +473,20 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
         if kind == ".mp4":
             cmd += ["-map", "0:v:0"]
             if audio is not None: cmd += ["-map", "1:a:0"]
-            if soft: cmd += ["-map", f"{2 if audio is not None else 1}:0", "-c:s", "mov_text"]
+            if soft:
+                cmd += ["-map", f"{2 if audio is not None else 1}:0", "-c:s", "mov_text"]
+                if delivery == "soft":
+                    cmd += ["-disposition:s:0", "0"]
+            if animation:
+                cmd += ["-fps_mode", "passthrough"]
             cmd += ["-vf", filters, "-t", str(end / 1000), "-c:v", "libx264", "-crf", str(selected_crf),
                     "-threads", "1", "-pix_fmt", "yuv420p", "-movflags", "+faststart"]
-            cmd += ["-af", "apad", "-c:a", "aac", "-ac", "1", "-b:a", "48k"] if audio is not None else ["-an"]
+            if native_audio:
+                cmd += ["-c:a", "copy"]
+            elif audio is not None:
+                cmd += ["-af", "apad", "-c:a", "aac", "-ac", "1", "-b:a", "48k"]
+            else:
+                cmd += ["-an"]
         else:
             cmd += ["-filter_complex", filters + ",split[a][b];[a]palettegen[p];[b][p]paletteuse",
                     "-t", str(end / 1000), "-loop", "0", "-an"]
@@ -397,10 +505,14 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
         subprocess.run([ffmpeg, "-v", "error", "-nostdin", "-i", str(movie), "-f", "null", "-"],
                        env=env, capture_output=True, check=True)
         audio_streams = [s for s in info["streams"] if s["codec_type"] == "audio"]
+        subtitle_streams = [s for s in info["streams"] if s["codec_type"] == "subtitle"]
         if audio is not None:
-            if not audio_streams or audio_streams[0].get("codec_name") != "aac" or audio_streams[0].get("channels") != 1:
+            expected_codec = source_video["audio_codec"] if native_audio else "aac"
+            expected_channels = source_video["audio_channels"] if native_audio else 1
+            expected_duration = source_video["audio_duration_ms"] / 1000 if native_audio else end / 1000
+            if not audio_streams or audio_streams[0].get("codec_name") != expected_codec or audio_streams[0].get("channels") != expected_channels:
                 errors.append("audio-stream-mismatch")
-            elif abs(float(audio_streams[0].get("duration", 0)) - end / 1000) > .15:
+            elif abs(float(audio_streams[0].get("duration", 0)) - expected_duration) > .15:
                 errors.append("audio-duration-mismatch")
         if narration_requested and audio_streams:
             measured = subprocess.run([ffmpeg, "-v", "info", "-nostdin", "-i", str(movie),
@@ -421,6 +533,12 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
             except FileExistsError:
                 if sidecar.resolve() != sidecar or not sidecar.is_file() or sidecar.read_bytes() != (stage / "captions.srt").read_bytes():
                     raise ValueError("caption sidecar appeared during encoding; it was preserved") from None
+        if vtt_sidecar:
+            try:
+                os.link(stage / "captions.vtt", vtt_sidecar)
+            except FileExistsError:
+                if vtt_sidecar.resolve() != vtt_sidecar or not vtt_sidecar.is_file() or vtt_sidecar.read_bytes() != (stage / "captions.vtt").read_bytes():
+                    raise ValueError("WebVTT sidecar appeared during encoding; it was preserved") from None
         # Exclusive create preserves unrelated files even if output appeared during encoding.
         try:
             os.link(movie, output)
@@ -429,22 +547,25 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
     if kind == ".gif" and output.stat().st_size > 5 * 1024 * 1024:
         warnings.append("GIF exceeds the 5MiB target; retained locally with an oversize warning")
     return {"path": str(output), "media_type": "video/mp4" if kind == ".mp4" else "image/gif", "duration_ms": end,
-            "mode": mode, "timing": "observed" if mode == "evidence" else "presentation",
+            "mode": mode, "timing": "rendered" if animation else "observed" if mode == "evidence" else "presentation",
             "fps": actual_fps, "selected_fps": float(rate), "fps_source": fps_source,
             "encoder": "libx264" if kind == ".mp4" else "gif", "crf": selected_crf,
             "width": int(stream["width"]), "height": int(stream["height"]), "pixel_format": stream["pix_fmt"],
             "encoded_duration_ms": float(info["format"]["duration"]) * 1000,
             "audio": audio is not None, "warnings": warnings,
+            "source_video": source_video, "source_audio_preserved": native_audio,
             "ffmpeg_path": ffmpeg, "ffprobe_path": ffprobe,
-            "media_status": "failed" if errors else "blocked" if (captions and not burn) or presentation_blocked else "ready",
+            "media_status": "failed" if errors else "blocked" if captions_blocked or presentation_blocked else "ready",
             "media_validation": {"status": "fail" if errors else "pass", "errors": errors},
             "contact_sheet": str(contact),
-            "prerequisite": "ffmpeg-subtitles-filter" if (captions and not burn) or presentation_blocked else None,
+            "prerequisite": "ffmpeg-subtitles-filter" if captions_blocked or presentation_blocked else None,
             "subtitles": "hard" if burn else "soft" if soft else "sidecar" if captions else "none",
+            "subtitle_default": bool(subtitle_streams[0].get("disposition", {}).get("default")) if subtitle_streams else None,
             "subtitles_reason": "user-disabled" if caption_style == "none" else None,
             "caption_size_px": layout["size_px"] if burn else None,
             "caption_band_px": layout["band_px"] if burn else 0,
             "captions_path": str(sidecar) if sidecar else None,
+            "captions_vtt_path": str(vtt_sidecar) if vtt_sidecar else None,
             "verification_status": "not-assessed", "source_frames_preserved": True,
             "presentation": presentation_receipt}
 
@@ -455,7 +576,7 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--audio", type=Path)
     parser.add_argument("--ffmpeg", help="Use this installed ffmpeg; overrides TIGERKIT_FFMPEG and discovery")
-    parser.add_argument("--fps", type=float, help="Override output fps (positive, at most 30); scene times stay unchanged")
+    parser.add_argument("--fps", type=float, help="Override output fps (positive; capture/stills at most 30); scene times stay unchanged")
     parser.add_argument("--crf", type=int, help="MP4 H.264 quality, 0-51 (default 18); lower values retain more detail and may increase size")
     parser.add_argument("--caption-size", type=float, help="Nominal hard-caption size in output pixels (default 5%% of final height)")
     args = parser.parse_args()
