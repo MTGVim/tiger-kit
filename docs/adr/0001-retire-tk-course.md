@@ -10,4 +10,4 @@
 
 대안은 분리 배포를 적용한 코스 계층을 계속 보수하는 것이었다. 폐기를 선택하면 완결 코스 전용 재생·진도·카탈로그 기능의 신규 제작 경로를 잃지만, 그 계층을 유지하고 검증할 부담을 줄인다. 복구에는 전용 구현과 평가 계약의 재도입이 필요하므로 단순한 이름 변경이나 `tk-teach`로의 통합으로 취급하지 않는다. `tk-teach`의 세부 재구성은 공개 구현을 조사한 뒤 별도로 검토하며 이 기록에서 확정하지 않는다.
 
-근거: 이번 대화의 명시적인 폐기 결정과 매체 유지 요청, [분리 배포 수정 기록](../../evals/changes/course-portable-media.md), [폐기 직전 구현](https://github.com/MTGVim/tiger-kit/tree/5eecdd788bb38c59f1fe1b96f7ac50abacd574c2/skills/tk-course).
+근거: 이번 대화의 명시적인 폐기 결정과 매체 유지 요청, [분리 배포 수정 기록](https://github.com/MTGVim/tiger-kit/blob/cbd9b064056ce536e9f733bb50b91e52046d42ec/evals/changes/course-portable-media.md), [폐기 직전 구현](https://github.com/MTGVim/tiger-kit/tree/5eecdd788bb38c59f1fe1b96f7ac50abacd574c2/skills/tk-course).

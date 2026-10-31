@@ -30,4 +30,4 @@ TigerKit의 `skills/tk-*`는 각각 독립적으로 설치·실행할 수 있어
 
 별도 설치 산출물 생성 과정을 도입한다면 macOS, Linux, Windows(특히 `core.symlinks=false`), 스킬 선택 설치, ZIP 등 실제 지원 설치 경로에서 패키지가 **실제 파일만으로 자체 완결**되는지 증명해야 합니다. 상대 링크, 실행 도우미의 `__file__` 경로, 라이선스 고지, 오프라인 HTML 자산과 기존 검사 통과까지 확인한 후 이 결정을 새 ADR로 대체합니다. 현재는 해당 배포 체계를 도입하지 않습니다.
 
-근거: [현재 동기화 계약](../../scripts/sync_execution_protocol.py), [스킬 유효성 검증](../../scripts/validate_skills.py), [릴리즈 설치 검사](../../scripts/run_release_checklist.py), [현재 Diátaxis 정본](../../skills/tk-writing/references/diataxis.md), [중복 조사 이슈 #468](https://github.com/MTGVim/tiger-kit/issues/468).
+근거: [현재 동기화 계약](https://github.com/MTGVim/tiger-kit/blob/cbd9b064056ce536e9f733bb50b91e52046d42ec/scripts/sync_execution_protocol.py), [스킬 유효성 검증](https://github.com/MTGVim/tiger-kit/blob/cbd9b064056ce536e9f733bb50b91e52046d42ec/scripts/validate_skills.py), [릴리즈 설치 검사](https://github.com/MTGVim/tiger-kit/blob/cbd9b064056ce536e9f733bb50b91e52046d42ec/scripts/run_release_checklist.py), [현재 Diátaxis 정본](../../skills/tk-writing/references/diataxis.md), [중복 조사 이슈 #468](https://github.com/MTGVim/tiger-kit/issues/468).
