@@ -19,7 +19,10 @@ installation, mutation, secret, Git or publication authority.
 Resolve owners in the current installed skill collection (`dependencies.json`), not memory,
 another installation, hardcoded homes or a source-checkout fallback. A missing/mismatched
 owner or resource blocks the affected action: guide to `tk-setup-skills`, never silently install.
-`<package>`, "package-local" and "this package" mean the caller's installed package unless a link names another owner.
+Resource links here resolve from `tk-writing`; `<tk-writing>` in commands is its current installed
+package path. It owns the shared HTML assets and assembly, code highlighting, export and Chrome
+capture helpers, not a runtime workflow. Call only the selected helper after caller-owned approval
+and path checks; keep inputs, outputs, scratch and cleanup outside the installed package.
 
 ## Conditional references
 

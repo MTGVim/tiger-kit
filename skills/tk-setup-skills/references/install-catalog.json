@@ -193,7 +193,9 @@
       ]
     },
     "tk-questioning": {
-      "requires": []
+      "requires": [
+        "tk-writing"
+      ]
     },
     "tk-repository-guidance": {
       "requires": [
@@ -258,9 +260,7 @@
       "requires": []
     },
     "tk-verification-guidance": {
-      "requires": [
-        "tk-app-verify"
-      ]
+      "requires": []
     },
     "tk-video": {
       "requires": [
@@ -280,8 +280,7 @@
     },
     "tk-writing": {
       "requires": [
-        "tk-artifacts",
-        "tk-explain"
+        "tk-artifacts"
       ]
     }
   },

@@ -4,9 +4,9 @@ Use only for the components present in the artifact; HTML Output owns the shared
 
 ## Code excerpts
 
-Generate static code markup with [the code helper](../../tk-explain/scripts/highlight_code.py):
-`python3 <package>/scripts/highlight_code.py source.kt --language kotlin --line-start 1`.
-Use `.ht-code` with unchanged shared CSS/script.
+Generate static code markup with [the code helper](../scripts/highlight_code.py):
+`python3 <tk-writing>/scripts/highlight_code.py source.kt --language kotlin --line-start 1`.
+Resolve `<tk-writing>` to that owner in the current installed collection. Use `.ht-code` with unchanged shared CSS/script.
 Color known Kotlin, JavaScript/TypeScript, Python and JSON tokens; mark `diff` additions/deletions.
 Leave unknown languages plain. This lexical aid does not validate syntax. Line numbers are CSS
 metadata. Compare parsed code `textContent` with the exact source before/after generation and

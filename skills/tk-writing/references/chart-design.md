@@ -1,7 +1,7 @@
 # Chart design and interaction
 
 Read only when the artifact needs a numeric chart or an inspectable relationship graph.
-Use [chart examples](../../tk-explain/assets/chart-examples.html) as working, offline recipes: bar, line,
+Use [chart examples](../assets/chart-examples.html) as working, offline recipes: bar, line,
 area, scatter and a small directed relationship graph. The example data is synthetic.
 Reuse a relevant figure, scoped CSS and progressive enhancement, not the full gallery or its
 sample conclusions. This is a design reference, not a general chart framework or extraction tool.

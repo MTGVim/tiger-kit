@@ -71,8 +71,8 @@ Reviewed `EveryInc/compound-engineering-plugin@142dbabc23c86884f2e353502eb20a5fd
 `docs/plans/2026-05-11-001-feat-output-html-mode-plan.md` (single-file and package-local
 copy rationale). Adapt semantic sections, sticky/compact native navigation, hashes and details;
 omit donor templates/styles, CDN fonts, default tracked commits and orchestration. Runtime
-efficacy was not reproduced. The canonical contract is `tk-explain/references/html-output.md`;
-installed copies are synchronized and the MIT notice is in this package's `LICENSE.txt`.
+efficacy was not reproduced. The current canonical contract is `tk-writing/references/html-output.md`;
+consumers read that installed owner, and the MIT notice remains in this package's `LICENSE.txt`.
 
 ## HTML quality extension (2026-10-07)
 
@@ -162,7 +162,7 @@ A separate upstream evaluation was not established.
 - **keep:** concrete causal explanation, independent content review, exact identifiers when needed,
   public source provenance, required warnings/verification structures and offline output.
 - **adapt:** sparse emphasis, sentence breaks, category headings, visible figure boundaries,
-  package-local synchronized reference copies, safe grid shrinkage and two logical reference rows.
+  single-owner installed references, safe grid shrinkage and two logical reference rows.
   Shortness applies to sentences: retain needed scenarios, early figures, causal steps, selected
   summaries/checks and exact comparison values. Put a motivating situation before the mechanism
   with the main figure nearby in reading order; preserve responsive layout and optional checks.
@@ -235,7 +235,7 @@ Fresh source still resolves to `tt-a1i/archify@d6059331abbddb49bca380ff46dca8ce3
 (3.2.0). Inspected its release manifest, SKILL.md, explainer authoring and viewer-runtime
 contracts, explainer renderer, and CLI/packaging tests before removing the legacy-document
 route. Keep native guided steps, node/route exploration, source bindings and offline finalize
-gates. Adapt shared package-local renderer/scene helpers to both explanation and research
+gates. Use `tk-writing`'s shared renderer/scene helpers for both explanation and research
 output. Omit automatic installs, vendored runtime and custom script injection. Arbitrary
 parameter-driven simulation is not part of this version's explainer grammar; preserve the
 requested behavior as unmet instead of claiming a static picture implements it. Specialized

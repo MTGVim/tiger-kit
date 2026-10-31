@@ -12,6 +12,8 @@ npx skills update --global --yes
 선택 설치는 `tk-setup-skills`로 필요한 업무 스킬과 공통 의존성을 함께 준비합니다. 설치기는 의존성을 자동 해결하지 않습니다.
 `Claude Code`·`Hermes`는 `/tk-setup-skills`, `Codex`는 `$tk-setup-skills`로 호출합니다. 설치는 대상·범위를 승인한 뒤 실행합니다. 소스·설치본 검사에는 `Python 3.9+`·`PyYAML`이 필요하며, 파서가 없으면 자동 설치하지 않고 중단합니다. 빈 대상의 카탈로그 계획은 표준 라이브러리만 사용합니다.
 
+공통 기준·HTML 자원과 도우미는 `tk-writing` 등 참조 전용 소유 스킬에, 검증 registry·설정 도우미는 `tk-verification-guidance`에 한 번 둡니다. 선택한 스킬의 `dependencies.json` 전체 closure를 같은 설치 컬렉션에 준비해야 하며, 업무 패키지 하나만 복사하면 충분하다고 가정하지 않습니다. 소유자가 없으면 해당 단계를 중단하고 setup을 안내하며, 출력·임시 파일은 호출한 업무가 설치 패키지 밖에서 관리합니다.
+
 ## 스킬 구성
 
 `user`는 직접 호출하며, `hybrid`는 작업에 맞게 자동 선택할 수도 있습니다. 상세한 동작과 권한은 각 스킬 문서에 있습니다.
@@ -87,11 +89,11 @@ npx skills update --global --yes
 | [tk-questioning](skills/tk-questioning/SKILL.md) | `hybrid` | 질문·승인 라운드와 시각적 질문 기준을 제공합니다. |
 | [tk-artifacts](skills/tk-artifacts/SKILL.md) | `hybrid` | 파일 경로·비밀 입력·인증 보존 기준을 제공합니다. |
 | [tk-ui-evidence](skills/tk-ui-evidence/SKILL.md) | `hybrid` | UI 문구와 진입 경로의 근거 기준을 제공합니다. |
-| [tk-writing](skills/tk-writing/SKILL.md) | `hybrid` | 글쓰기·설명·HTML 표현 기준을 제공합니다. |
+| [tk-writing](skills/tk-writing/SKILL.md) | `hybrid` | 글쓰기·설명·HTML 기준과 공통 자원·도우미를 제공합니다. |
 | [tk-engineering](skills/tk-engineering/SKILL.md) | `hybrid` | 테스트·진단·리뷰·SDD 기준을 제공합니다. |
 | [tk-repository-guidance](skills/tk-repository-guidance/SKILL.md) | `hybrid` | 저장소 맥락·도메인 문서·외부 계약 기준을 제공합니다. |
 | [tk-pr-guidance](skills/tk-pr-guidance/SKILL.md) | `hybrid` | PR 전달·시각 자료·리베이스 준비 기준을 제공합니다. |
-| [tk-verification-guidance](skills/tk-verification-guidance/SKILL.md) | `hybrid` | 검증 제공자 선택과 근거·설정 기준을 제공합니다. |
+| [tk-verification-guidance](skills/tk-verification-guidance/SKILL.md) | `hybrid` | 검증 제공자 선택·근거 기준과 registry·설정 도우미를 제공합니다. |
 
 ## 참고
 

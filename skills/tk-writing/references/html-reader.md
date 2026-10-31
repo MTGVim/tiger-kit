@@ -17,8 +17,8 @@ shared `.ht-document`, `.ht-doc-content`, `.ht-doc-nav`, `.ht-doc-toc` and `.ht-
 styles in the theme assets. The left rail and mobile disclosure must work without JavaScript.
 Use the target heading's full text in each TOC link. Shorten an overlong heading itself,
 or put a short label above the full heading in a `<small>` line inside the same link.
-For selected shared-reader documents, use [document assembly](html-assembly.md) to insert the package's
-[document shell](../../tk-explain/assets/document-shell.html); specialized interfaces retain their generators.
+For selected shared-reader documents, use [document assembly](html-assembly.md) to insert `tk-writing`'s
+[document shell](../assets/document-shell.html); specialized interfaces retain their generators.
 
 Place the footer directly under `.ht-document`, after `main`; shared CSS centers it.
 Separate source/version and date into paragraphs when present.
@@ -60,7 +60,7 @@ one-off theme tokens, or substitute class names. Add document-specific styles an
 and controls to the shared rules. If a default needs overriding or removal, report a shared-shell
 defect rather than patching it per document. Rebuild and rerun class, anchor and external-request
 checks after postprocessing. For a density/interaction example, assemble the optional
-[reader example](../../tk-explain/assets/reader-example.html) through the same builder; it is a content fragment,
+[reader example](../assets/reader-example.html) through the same builder; it is a content fragment,
 not another shell or a mandatory section template. During user-led revisions, retain the
 request count in the active conversation as an observational cost signal, not a quality verdict
 or a new persistent ledger. The theme control's `data-ht-theme-control`

@@ -59,7 +59,7 @@ native dialog, focus or accessibility criteria belong here.
 Read [provider selection](../tk-verification-guidance/references/provider-selection.md) and
 [shared verification](../tk-verification-guidance/references/verification.md) before discovery or interaction. Read only the
 selected provider's [integration knowledge](../tk-verification-guidance/references/provider-knowledge.md) and canonical URL
-from [the registry](references/providers.json); inspect current host/tool/version/OS/permissions.
+from [the registry](../tk-verification-guidance/references/providers.json); inspect current host/tool/version/OS/permissions.
 Use an explicit parent/session/saved selection. With no choice, show detected capabilities,
 limitations and interruption effects together, then ask the final question frontier before acting.
 Do not silently switch providers, enable disabled native APIs or infer support from branding.

@@ -3,6 +3,7 @@
 
 import argparse
 import html
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -10,9 +11,6 @@ import re
 import sys
 import tempfile
 from urllib.parse import urlparse
-
-from package_html import package
-
 
 PACKAGE = Path(__file__).resolve().parents[1]
 TEMPLATE = PACKAGE / "assets" / "report.html"
@@ -286,12 +284,26 @@ def main(argv=None):
         if output_path in {input_path, TEMPLATE.resolve()}:
             raise InputError("output must not overwrite the JSON input or the offline template")
         payload = validate_payload(json.loads(input_path.read_text(encoding="utf-8")))
+        # Load the explicit installed owner, never a sys.path/source-checkout fallback.
+        writing = PACKAGE.parent / 'tk-writing'
+        packager = writing / 'scripts/package_html.py'
+        metadata = writing / 'SKILL.md'
+        if any(p.is_symlink() for resource in (packager, metadata) for p in (resource, *resource.parents)):
+            raise InputError('unsafe tk-writing resource; use tk-setup-skills')
+        header = metadata.read_text(encoding='utf-8').split('---', 2)
+        if len(header) != 3 or header[0] or re.findall(r'^name:[ \t]*([^\n]+)', header[1], re.M) != ['tk-writing']:
+            raise InputError('mismatched tk-writing owner; use tk-setup-skills')
+        spec = importlib.util.spec_from_file_location('tk_writing_package_html', packager)
+        if spec is None or spec.loader is None:
+            raise InputError('tk-writing packager unavailable; use tk-setup-skills')
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
         theme, warnings = resolve_theme(args.theme)
         source = TEMPLATE.read_text(encoding="utf-8")
         output = render(source, payload, theme)
         atomic_write(output_path, output)
         download_name = output_path.name if output_path.name.isascii() else 'document.html'
-        package(output_path.parent, [output_path.name], download_name)
+        module.package(output_path.parent, [output_path.name], download_name)
     except (OSError, UnicodeError, ValueError) as error:
         print(f"FAIL {args.output}: {error}", file=sys.stderr)
         return 1

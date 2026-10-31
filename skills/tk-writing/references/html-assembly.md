@@ -3,7 +3,7 @@
 Use this legacy shared document builder only when the owning workflow selects the shared
 reader shell. It is not the default renderer for explanation/research pages or a fallback for
 selected archify; independently authored technique HTML does not inherit its shell requirement.
-For selected shared-reader documents, author fragments and run the package-local builder.
+For selected shared-reader documents, author fragments and run the installed `tk-writing` builder.
 Reuse generators for edits; specialized prototype/QA/gallery interfaces keep their generators.
 
 Put fragments in authorized run scratch. The body contains the opening explanation and
@@ -13,11 +13,11 @@ and unchanged theme assets. Do not read/reproduce these assets merely to inline 
 inspect implementations only for a concrete defect/change.
 
 ```bash
-python3 <package>/scripts/build_html.py --body <scratch>/body.html --title '<subject>' --output <final>.html
-python3 <package>/scripts/package_html.py --root <final-directory> --name <filename>.html <filename>.html
+python3 <tk-writing>/scripts/build_html.py --body <scratch>/body.html --title '<subject>' --output <final>.html
+python3 <tk-writing>/scripts/package_html.py --root <final-directory> --name <filename>.html <filename>.html
 ```
 
-Use resolved paths and an existing output directory. `--replace` requires overwrite authority.
+Resolve `<tk-writing>` to that owner in the current installed collection, not the caller or a source checkout. Keep scratch and final output outside installed packages, and use an existing output directory. `--replace` requires overwrite authority.
 Optional UTF-8 `--css`, `--script`, `--footer` files supply content-scoped styles, reviewed offline
 figure code and provenance markup. Escape source/code and closing script/style sequences.
 `--lang` changes language; `--theme` honors an explicit theme, otherwise settings resolve/bootstrap
@@ -32,15 +32,9 @@ browser verification for explanation/lesson production. When screen/action check
 requested, finalize content first, batch compatible checks and preserve existing replay rules.
 Edit fragments and rebuild affected outputs.
 
-## Presentation profiles
+## Reader compatibility
 
-`--profile reader` is the default and preserves the existing reader. The closed choices
-`lesson` and `change` use only the corresponding package-local shell, CSS and JS. Missing
-assets fail before theme settings or output are changed; there is no reader fallback.
-Only top-level sections marked `data-ht-nav-unit` become lesson/change navigation units;
-at least one is required and markers cannot be nested. Reader navigation remains hierarchical.
-Profile assets are injected after shared theme assets and before optional authored code.
-The resulting `data-ht-profile` identifies presentation, not an in-page mode switch.
-Specialized shells use `data-ht-document`, `data-ht-content`, `data-ht-section-nav`,
-`data-ht-section-disclosure` and `data-ht-section-links` for shared behavior without
-reusing reader geometry classes.
+`--profile reader` is the only supported profile and remains the default; navigation stays
+hierarchical. The former `lesson` and `change` builder choices had no bundled assets and
+could not build documents; they are removed, not replaced by a fallback. This does not
+change `tk-explain`'s workflow modes or its selected renderer.

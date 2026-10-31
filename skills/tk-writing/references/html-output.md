@@ -98,7 +98,7 @@ Omit the list when no such term precedes its explanation; do not use a fixed ter
 
 ## Shared theme
 
-Inline package [theme CSS](../../tk-explain/assets/html-theme.css) and [theme control](../../tk-explain/assets/html-theme.js)
+Inline `tk-writing` [theme CSS](../assets/html-theme.css) and [theme control](../assets/html-theme.js)
 in the self-contained HTML. Keep canonical tokens, fonts, scale, spacing and component styles together. Existing product/design-reference tokens
 remain authoritative for a prototype comparison; use this neutral default for standalone output
 without such a basis. Add an initially hidden `fieldset[data-ht-theme-control]` with a `legend`
@@ -164,7 +164,8 @@ break reading or controls.
 ## Download and file sharing
 
 Place download left of themes in `.ht-document-actions`. Run after final edits:
-`python3 <package>/scripts/package_html.py --root <artifact-directory> --name document.html document.html`.
+`python3 <tk-writing>/scripts/package_html.py --root <artifact-directory> --name document.html document.html`.
+Resolve `<tk-writing>` to that owner in the current installed collection, not the caller.
 For linked pages use `--name course.zip index.html lessons/one.html`; allowlist all local dependencies. Preserve relative paths; exclude unrelated files and secrets.
 Embed sources after edits: one file downloads as HTML, multiple files as ZIP with working export
 controls after extraction. Source duplication and STORE increase size; deliver large collections

@@ -8,7 +8,7 @@ template and theme assets; these rules apply to content figures.
 
 When numeric data or an evidence-backed relationship graph benefits from a visual, read
 [chart design](chart-design.md) and inspect the matching section of the standalone
-[chart examples](../../tk-explain/assets/chart-examples.html). Adapt one relevant example and its scoped
+[chart examples](../assets/chart-examples.html). Adapt one relevant example and its scoped
 styles/interaction, not the whole gallery. Keep the final HTML self-contained; do not require
 the installed package, a CDN, or a chart runtime to remain available to its reader.
 

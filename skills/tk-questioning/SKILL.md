@@ -19,7 +19,7 @@ installation, mutation, secret, Git or publication authority.
 Resolve owners in the current installed skill collection (`dependencies.json`), not memory,
 another installation, hardcoded homes or a source-checkout fallback. A missing/mismatched
 owner or resource blocks the affected action: guide to `tk-setup-skills`, never silently install.
-`<package>`, "package-local" and "this package" mean the caller's installed package unless a link names another owner.
+Resource links name the installed owner; visual-question theme assets belong to `tk-writing`.
 
 ## Conditional references
 

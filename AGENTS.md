@@ -5,7 +5,7 @@
 TigerKit은 조합 가능한 Agent Skills 저장소입니다. workflow runner, plugin, scheduler, shared-state framework를 만들지 않습니다.
 
 - `skills/tk-*/SKILL.md`가 현재 동작·권한·완료 조건의 정본입니다. `references/`는 조건부 지식, `scripts/`는 실제 실행 도우미, `assets/`는 표현 자원입니다.
-- 공통 기준과 자원은 해당 참조 전용 스킬에 한 번 둡니다. 업무 스킬은 필요한 조건에서만 읽고, 설치 의존성은 각 `dependencies.json`에 명시합니다. [ADR 0004](docs/adr/0004-shared-reference-skills.md)를 따릅니다.
+- 공통 기준과 자원은 해당 참조 전용 스킬에 한 번 둡니다. HTML 공통 자원·도우미는 `tk-writing`, 검증 registry·설정 도우미는 `tk-verification-guidance`가 소유합니다. 업무 스킬은 필요한 조건에서만 읽고, 설치 의존성은 각 `dependencies.json`에 명시합니다. [ADR 0004](docs/adr/0004-shared-reference-skills.md)를 따릅니다.
 - 참조 읽기는 업무 실행·파일 변경·설치·비밀 접근·원격 발행 권한을 부여하지 않습니다. 소유 스킬이나 자원이 없거나 식별이 다르면 해당 단계만 중단하고 `tk-setup-skills`를 안내합니다. 기억, 다른 설치본, 저장소 전역 경로, 하드코딩한 홈이나 배포 심볼릭 링크로 우회하지 않습니다.
 - `tk-setup-skills`는 대상과 범위가 명시된 설치 계획과 점검을 담당합니다. 설치·업데이트 실행은 별도 승인이 필요하며, 설치기 자체의 자동 의존성 해결을 가정하지 않습니다.
 - 공통 도우미를 실행해도 결과·임시 경로·승인·정리 책임은 호출한 업무에 있습니다. 공통 패키지 안에 실행 결과를 쓰지 않습니다.

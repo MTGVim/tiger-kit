@@ -12,9 +12,10 @@ or crop away qualifications. Do not invent measurements to complete a layout.
 
 Author a static self-contained SVG or HTML in the run's temporary directory. SVG follows
 [scene figures](../../tk-writing/references/scene-figures.md)'s inert asset restrictions; use explicit dimensions and
-`scripts/svg_to_png.mjs`. For bounded HTML use
-`node scripts/capture_page.mjs input.html new-output.png [width] [height]`, for example
-`node scripts/capture_page.mjs input.html new-output.png 1200 580`. Height is optional:
+installed `tk-writing`'s [SVG rasterizer](../../tk-writing/scripts/svg_to_png.mjs). For bounded HTML use
+`node <tk-writing>/scripts/capture_page.mjs input.html new-output.png [width] [height]`, for example
+`node <tk-writing>/scripts/capture_page.mjs input.html new-output.png 1200 580`. Resolve `<tk-writing>`
+to that owner in the current installed collection. Height is optional:
 without it the viewport fits the document, including documents shorter than 900px; explicit
 height fixes the viewport while capture still includes the whole document. Give a height for
 viewport-dependent layouts that cannot converge. Constrain the document to the intended

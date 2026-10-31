@@ -11,11 +11,18 @@
 자동 삭제·이동·덮어쓰지 않습니다. 이 저장소의 로컬 변경만으로 사용자 설치본이 갱신되지는 않습니다.
 
 모든 공통 기준을 한 번에 읽지 않습니다. 기존 분기에 도달했을 때 요청한 참조만 읽습니다.
-공통 참조 문서에서 `<package>`와 패키지 로컬 도우미는 별도 링크가 없다면 호출한 업무 스킬을 뜻합니다.
-일부 예제·자산의 명시적 링크는 기존 소유 패키지를 가리키므로 해당 의존성도 함께 준비합니다.
-프로젝트별 정책은 기존 `tigerkit.config.json`과 `.tigerkit/repository.json`을 재사용합니다. 새 범용 상태
-저장소나 전역 실행기를 만들지 않습니다. CSS·JS·실행 도우미와 필요한 라이선스 사본은 이번 문서 전환과
-구분하며, 모든 파일의 중복이 사라졌다고 해석하지 않습니다.
+공통 HTML theme CSS·JS, document shell·예제와 assembly/highlight/package/Chrome capture/SVG 도우미는
+`tk-writing`이 소유합니다. app/browser 공통 `verify_preferences.py`와 `providers.json`은
+`tk-verification-guidance`가 소유합니다. 구 업무 패키지의 자원 사본·wrapper·symlink는 제공하지 않습니다.
+문서의 `<tk-writing>`·`<tk-verification-guidance>`는 같은 현재 설치 컬렉션에서 확인한 정확한 소유 패키지
+경로이며 호출자 별칭이 아닙니다. 기존 명령·자동화도 새 소유 경로로 바꿔야 합니다. 공유 도우미의 출력·
+임시 파일·승인·정리 책임은 호출한 업무에 남고 설치 패키지 안에 결과를 쓰지 않습니다.
+
+공통 builder의 기본 reader 출력은 유지합니다. 자산이 없어 이미 실패하던 `--profile lesson`과
+`--profile change`만 제거했습니다. `tk-explain`의 업무 모드와 `archify` 렌더러는 바꾸지 않습니다.
+프로젝트별 정책은 기존 `tigerkit.config.json`과 `.tigerkit/repository.json`을 재사용하며 새 범용 상태
+저장소나 전역 실행기를 만들지 않습니다. 한 LICENSE 안의 byte-identical 완전 MIT notice만 중복을 줄이고
+고유 완전 고지·저작권·attribution은 보존합니다. 독립 배포 패키지 사이의 필요한 LICENSE 반복은 유지합니다.
 
 설계 근거는 [ADR 0004](docs/adr/0004-shared-reference-skills.md)에 있습니다. 기존 ADR 0003의 독립 설치·
 문서 사본 계약은 이 전환 범위에서 대체되며, 전환 전 설치는 과거 동작입니다.
@@ -186,7 +193,7 @@ $tk-prep <request / issue / bug / review>
 ```
 
 인터뷰 중 `Pending Seed`를 쓰지 않습니다. 지속 가능한 맥락이 필요할 때만 표시된 현재 작업의 Ready `Seed`를 쓰고,
-SDD는 `tk-prep`/`tk-pr-respond`의 생성된 패키지 로컬 공유 절차를 사용합니다. 제공자와 `model` 값 및 원격
+SDD는 `tk-engineering`이 소유한 참조 절차를 필요한 분기에서 읽습니다. 제공자와 `model` 값 및 원격
 발행 권한은 지속되는 산출물이나 로컬 실행에서 확장하지 않습니다.
 
 ## 이전 `.tigerkit` `artifact`

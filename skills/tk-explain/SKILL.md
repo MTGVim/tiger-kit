@@ -122,7 +122,7 @@ For summary PNG or raster illustration review, give a fresh reviewer the final i
 `evidence.md` and reader constraints; apply the same factual correction/recheck obligations below.
 For every explanation-page review, give a fresh reviewer the entire [review rubric](references/review-rubric.md),
 exact saved HTML, `evidence.md`, reader goal/constraints, extracted text and scene/capture
-images. Use `scripts/visible_text.py`; use `scripts/capture_page.mjs` when local Chrome is
+images. Use `scripts/visible_text.py`; use installed `tk-writing`'s [capture helper](../tk-writing/scripts/capture_page.mjs) when local Chrome is
 available. A missing capture is a disclosed visual-evidence gap; inability to inspect a
 material figure or obtain required independent review prevents `Pass`.
 Fix every supported H/B/O/N/V content error, including low severity. After high/medium/suspect

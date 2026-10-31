@@ -19,7 +19,9 @@ installation, mutation, secret, Git or publication authority.
 Resolve owners in the current installed skill collection (`dependencies.json`), not memory,
 another installation, hardcoded homes or a source-checkout fallback. A missing/mismatched
 owner or resource blocks the affected action: guide to `tk-setup-skills`, never silently install.
-`<package>`, "package-local" and "this package" mean the caller's installed package unless a link names another owner.
+[Provider registry](references/providers.json) and [preference helper](scripts/verify_preferences.py)
+are owned here. `<tk-verification-guidance>` in commands is this current installed package path.
+The helper reads/saves only caller-authorized preferences; it never selects or launches a workflow.
 
 ## Conditional references
 

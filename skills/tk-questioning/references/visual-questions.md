@@ -2,7 +2,7 @@
 
 Read only when spatial alternatives can change an unresolved user-owned choice. Keep the numbered plain-chat question, a short description of every option and the recommendation complete without opening a file. Add the complete absolute HTML link in that question; users can answer by number or paste the copied selections.
 
-After Artifact Paths checks, create one external-resource-free HTML file in `.tigerkit/tmp/<calling-skill>/<run-id>/questions.html`. Inline this package's `assets/html-theme.css` and `assets/html-theme.js` unchanged,
+After Artifact Paths checks, create one external-resource-free HTML file in `.tigerkit/tmp/<calling-skill>/<run-id>/questions.html`. Inline installed `tk-writing`'s [theme CSS](../../tk-writing/assets/html-theme.css) and [theme script](../../tk-writing/assets/html-theme.js) unchanged,
 using their `ht-*` components and tokens; add only question-specific wireframe styles.
 Set `<html data-default-theme="system">`. Put the title in `.ht-topbar-title` and a
 `.ht-theme-control[data-ht-theme-control]` fieldset inside `.ht-topbar`. Initially hide the fieldset;

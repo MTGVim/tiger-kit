@@ -221,6 +221,14 @@ def safe_json(value):
 
 
 def render(public, key, theme, mode="gallery", external_key=False):
+    # Shared theme belongs to tk-writing in this installed collection only.
+    writing = PACKAGE.parent / 'tk-writing'
+    resources = [writing / 'SKILL.md', writing / 'assets/html-theme.css', writing / 'assets/html-theme.js']
+    if any(p.is_symlink() for resource in resources for p in (resource, *resource.parents)):
+        raise ValueError('Unsafe tk-writing resource; use tk-setup-skills')
+    header = resources[0].read_text(encoding='utf-8').split('---', 2)
+    if len(header) != 3 or header[0] or re.findall(r'^name:[ \t]*([^\n]+)', header[1], re.M) != ['tk-writing']:
+        raise ValueError('Mismatched tk-writing owner; use tk-setup-skills')
     sections = []
     for number, item in enumerate(public["items"], 1):
         cards = []
@@ -305,8 +313,8 @@ def render(public, key, theme, mode="gallery", external_key=False):
                   "comparison": key.get("comparison"), "candidates": {token: {"name": row["name"]} for token, row in key["candidates"].items()},
                   "outputs": [{field: row[field] for field in ("item", "candidate", "fingerprint", "failed")} for row in key["outputs"]]}, ensure_ascii=False).encode()).decode() if mode == "versus" and not external_key else "",
               "ANSWER": "" if external_key or mode == "versus" else base64.b64encode(json.dumps({"candidates": key["candidates"]}, ensure_ascii=False).encode()).decode(),
-              "CSS": (PACKAGE / 'assets/html-theme.css').read_text(encoding='utf-8'),
-              "THEME_JS": (PACKAGE / 'assets/html-theme.js').read_text(encoding='utf-8'),
+              "CSS": (writing / 'assets/html-theme.css').read_text(encoding='utf-8'),
+              "THEME_JS": (writing / 'assets/html-theme.js').read_text(encoding='utf-8'),
               "APP_JS": (PACKAGE / ('assets/versus.js' if mode == 'versus' else 'assets/gallery.js')).read_text(encoding='utf-8')}
     return re.sub(r'@@([A-Z_]+)@@', lambda match: values[match[1]], template)
 

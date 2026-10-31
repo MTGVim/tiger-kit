@@ -37,7 +37,7 @@ to `tk-grill`; candidate creation to `tk-prototype`, `tk-tts` or the relevant pr
    for HTML, display copies and the separate answer key; use
    `.tigerkit/evidence/tk-blind-comparison/<run-id>/` for returned ratings and summaries.
    Honor an explicit destination. Read [HTML output](../tk-writing/references/html-output.md) and inline
-   the package theme assets. Keep the gallery interface rather than adding document navigation.
+   the installed `tk-writing` theme assets. Keep the gallery interface rather than adding document navigation.
 3. Prepare identity-neutral display copies. Read only the applicable
    [audio](references/audio.md), [images and UI captures](references/images.md),
    [text](references/text.md), or [video](references/video.md) reference. For versus HTML,

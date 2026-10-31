@@ -8,8 +8,8 @@ For two to four states, label their order visibly and show changed positions, no
 A schematic is not evidence of exact speed, distance or collision behavior.
 
 Use static SVG with no scripts, event handlers, foreign objects, external resources or fonts.
-Rasterize at 2x using `node <package>/scripts/svg_to_png.mjs input.svg output.png`.
-The helper loads SVG as an image, with network blocked, so SVG scripts cannot execute.
+Rasterize at 2x using `node <tk-writing>/scripts/svg_to_png.mjs input.svg output.png`.
+Resolve `<tk-writing>` to its current installed package, not the caller. The helper loads SVG as an image, with network blocked, so SVG scripts cannot execute.
 It requires installed Chrome/Chromium and Node 18+; set `CHROME_PATH` to an existing executable
 when discovery cannot find it. Missing Chrome is `Blocked`, not permission to install it.
 Inspect the result; embed each PNG with meaningful `@image alt=... caption=...`. Keep searchable

@@ -1,7 +1,7 @@
 # Verification Provider Selection
 
 Read before browser/app runtime discovery or interaction. This is a preference and evidence
-contract, not an automation runner. [Provider registry](../../tk-app-verify/references/providers.json) owns identities, potential
+contract, not an automation runner. [Provider registry](providers.json) owns identities, potential
 capabilities, detection hints and canonical usage URLs; [provider knowledge](provider-knowledge.md)
 owns integration limits. Registry metadata never proves current availability or safe delivery.
 
@@ -17,7 +17,7 @@ hyphenated slug in prose or reload the whole file after a literal-search miss.
    app/window identity, current observation, the required input/capture paths and focus safety.
 2. Read `${XDG_CONFIG_HOME:-~/.config}/tigerkit/verify.json` if present; use a supplied session-only
    override ahead of that scope's saved preference. Read no unrelated host/account configuration.
-   The package's `scripts/verify_preferences.py` can read or atomically save this bounded config;
+   The `tk-verification-guidance` [preference helper](../scripts/verify_preferences.py) can read or atomically save this bounded config;
    it never launches a provider or performs interaction. Invalid/unreadable config is a reported
    `Blocked` setup problem, not a reason to erase it or choose another provider.
 3. Discover exposed callable host/MCP tools and already installed binaries/repository adapters.
@@ -55,8 +55,8 @@ hyphenated slug in prose or reload the whole file after a literal-search miss.
 }
 ```
 
-Resolve this package's script path from its installed location. For example, after an explicit
-persistence request run `python3 <package>/scripts/verify_preferences.py select --scope app --provider
+Resolve `<tk-verification-guidance>` from that owner in the current installed collection. After an explicit
+persistence request run `python3 <tk-verification-guidance>/scripts/verify_preferences.py select --scope app --provider
 cua-driver`; the browser command uses `--scope browser --provider chrome-devtools-mcp`. `show`
 reads the preference without writing; `--config <explicit-path>` supports a deliberate alternate
 config. Save only that scope and preserve unrelated values. Config save failure blocks persistence;
