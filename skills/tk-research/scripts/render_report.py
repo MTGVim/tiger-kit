@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render report content into the package's checked offline HTML shell."""
+"""Legacy offline report renderer; shared-owner validation requires installed setup and PyYAML."""
 
 import argparse
 import html
@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path
 import re
+import runpy
 import sys
 import tempfile
 from urllib.parse import urlparse
@@ -290,9 +291,15 @@ def main(argv=None):
         metadata = writing / 'SKILL.md'
         if any(p.is_symlink() for resource in (packager, metadata) for p in (resource, *resource.parents)):
             raise InputError('unsafe tk-writing resource; use tk-setup-skills')
-        header = metadata.read_text(encoding='utf-8').split('---', 2)
-        if len(header) != 3 or header[0] or re.findall(r'^name:[ \t]*([^\n]+)', header[1], re.M) != ['tk-writing']:
-            raise InputError('mismatched tk-writing owner; use tk-setup-skills')
+        validator = PACKAGE.parent / 'tk-setup-skills/scripts/skill_dependencies.py'
+        if not validator.is_file() or any(p.is_symlink() for p in (validator, *validator.parents)):
+            raise InputError('tk-setup-skills validator unavailable or unsafe; use tk-setup-skills')
+        try:
+            owner = runpy.run_path(str(validator), run_name='tk_setup_metadata')
+            owner['read_package'](PACKAGE.parent, 'tk-setup-skills')
+            owner['read_package'](PACKAGE.parent, 'tk-writing')
+        except (OSError, ValueError):
+            raise InputError('Shared owner validation failed; use tk-setup-skills with an approved Python/PyYAML environment') from None
         spec = importlib.util.spec_from_file_location('tk_writing_package_html', packager)
         if spec is None or spec.loader is None:
             raise InputError('tk-writing packager unavailable; use tk-setup-skills')

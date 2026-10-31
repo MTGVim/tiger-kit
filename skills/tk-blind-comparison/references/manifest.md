@@ -1,5 +1,10 @@
 # Manifest and commands
 
+HTML builds require the same installed collection's `tk-setup-skills` validator and
+Python 3.9+ with PyYAML. Read its [metadata API contract](../../tk-setup-skills/references/planner-cli.md)
+before invoking the build helper. Missing parser/owner support stops the build; prepare an
+environment only under separate applicable approval. Chat-only summarization does not load this validator.
+
 Use UTF-8 JSON. Paths resolve relative to the manifest. Build from identity-neutral,
 normalized copies, never raw producer HTML. All item/candidate pairs must be present;
 represent missing/failed generation explicitly. Keep study/item/candidate IDs stable.
@@ -43,7 +48,7 @@ python3 <package>/scripts/build_gallery.py summarize - --key <matching-run-direc
 Resolve `--theme` using HTML Output preferences before building. Output directories must be
 new, under the checked ignored run path or an explicit destination. The executable refuses
 symlink ancestors, existing destinations, and destinations containing an input file.
-It relies on the preceding package-local Git exclusion checks, not a sibling import.
+Owner metadata validation does not replace the caller's preceding Git exclusion and output checks.
 It embeds prepared files as data URLs in one offline HTML and also keeps neutral ASCII
 `item-0001-slot-0001.ext` display copies. The answer key maps opaque tokens to original IDs,
 names, item content fingerprints, private failures and seeded label order.

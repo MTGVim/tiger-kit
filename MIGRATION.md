@@ -7,6 +7,15 @@
 
 처음에는 전체 묶음을 설치하거나 `tk-setup-skills`를 먼저 설치합니다. 선택 설치는 이 스킬로 필요한
 업무 스킬과 공통 의존성을 함께 계획합니다. `npx skills` 자체의 자동 의존성 해결을 전제하지 않습니다.
+지원하는 설치기는 `skills@1.7.4`이며 `add --copy`로 물리 사본을 설치합니다. 선택 설치를 시작할 때
+필요하면 다음 bootstrap만 명시적으로 승인해 실행한 뒤, 아래 이름 변경의 현재 ID를 setup에 전달합니다.
+
+```bash
+npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex hermes-agent --skill tk-setup-skills --copy
+```
+
+선택한 ID와 전이 의존성 전체를 같은 컬렉션에 설치한 뒤 아래 확인·제거 절차를 진행합니다. 기존 symlink
+설치의 전환은 내용·대상·범위를 확인한 별도 승인 대상이며 자동 삭제하거나 안전 검사를 완화하지 않습니다.
 기존 프로젝트·전역 범위와 호스트 대상을 확인하고 승인한 명령만 실행하며, 기존 설치와 프로젝트 정책을
 자동 삭제·이동·덮어쓰지 않습니다. 이 저장소의 로컬 변경만으로 사용자 설치본이 갱신되지는 않습니다.
 
@@ -38,7 +47,7 @@
 `tk-pr-image`는 GIF와 MP4 첨부를 지원하는 `tk-pr-media`로 바뀌었습니다. 이전 호출명 별칭은 없습니다. 새 패키지를 설치한 뒤 이전 패키지를 제거하고 문서·자동화의 호출명을 갱신합니다. 기존 이미지·비교 쌍과 선택된 게시 대상은 유지됩니다.
 
 ```bash
-npx skills add MTGVim/tiger-kit --global --agent claude-code codex hermes-agent --skill tk-pr-media --yes
+# setup으로 tk-pr-media와 의존성의 설치를 완료한 뒤 확인합니다.
 npx skills remove tk-pr-image --global --agent claude-code codex hermes-agent
 ```
 
@@ -66,7 +75,7 @@ npx skills remove tk-pr-image --global --agent claude-code codex hermes-agent
 전역 설치에서 새 이름을 확인한 뒤 이전 패키지를 제거합니다.
 
 ```bash
-npx skills add MTGVim/tiger-kit --global --agent claude-code codex hermes-agent --skill tk-inquiry --yes
+# setup으로 tk-inquiry와 의존성의 설치를 완료한 뒤 확인합니다.
 npx skills list --global
 npx skills remove tk-to-questionnaire --global --agent claude-code codex hermes-agent
 ```
@@ -101,7 +110,7 @@ README는 짧은 프로젝트 소개, 설치 방법, 간결한 스킬 카탈로�
 `tk-learn`과 `tk-skill-diagnose`를 `tk-retro` 하나로 통합했습니다. 세션 회고·스킬 장애 원인 조사·개선안 제안은 `tk-retro`가 맡고, 기존 `tk-learn`의 스킬 생성·수정/적용 권한은 폐기했습니다. 구현은 별도 승인된 변경 담당자가 수행합니다.
 
 ```bash
-npx skills add MTGVim/tiger-kit --global --agent claude-code codex hermes-agent --skill tk-retro --yes
+# setup으로 tk-retro와 의존성의 설치를 완료한 뒤 확인합니다.
 npx skills list --global
 npx skills remove tk-learn tk-skill-diagnose --global --agent claude-code codex hermes-agent
 ```
@@ -115,7 +124,7 @@ npx skills remove tk-learn tk-skill-diagnose --global --agent claude-code codex 
 전역 설치 예시는 다음과 같습니다. 프로젝트 설치는 기존과 같은 범위에서 처리합니다. 새 스킬이 발견되는지 확인한 뒤 구버전을 제거하세요.
 
 ```bash
-npx skills add MTGVim/tiger-kit --global --agent claude-code codex hermes-agent --skill tk-research --yes
+# setup으로 tk-research와 의존성의 설치를 완료한 뒤 확인합니다.
 npx skills list --global
 npx skills remove tk-autoresearch tk-discover --global --agent claude-code codex hermes-agent
 ```
@@ -128,15 +137,15 @@ npx skills remove tk-autoresearch tk-discover --global --agent claude-code codex
 
 ## 설치 갱신
 
-```bash
-npx skills update --global --yes
-```
+기존 source·호스트·설치 범위·선택 ID와 전이 의존성을 확인하고 승인한 pinned `add --copy`를 다시
+실행합니다. 전체 설치는 README의 전체 설치 명령을 재사용하고, 선택 설치는 setup의 명시적 closure를
+유지합니다. `skills@1.7.4 update`는 copy 모드를 보존하지 않으며 `update --copy`도 지원하지 않습니다.
+기존 내용 확인과 덮어쓰기 프롬프트를 건너뛰지 않고, 완료 후 실제 설치 컬렉션을 검사합니다.
 
 `checkout` `catalog` 확인:
 
 ```bash
-npx --yes skills@1.5.9 add . --list
-npx --yes skills add . --list
+npx --yes skills@1.7.4 add . --list
 ```
 
 ## 글 재작성과 시각 설명 스킬 개편
@@ -151,7 +160,7 @@ npx --yes skills add . --list
 남은 `tk-plain-writing`, `tk-humanizer-kr`, `tk-eli5` 설치를 제거합니다. 전역 설치 예시는 다음과 같습니다.
 
 ```bash
-npx skills add MTGVim/tiger-kit --global --agent claude-code codex hermes-agent --skill tk-rewrite tk-explain --yes
+# setup으로 tk-rewrite tk-explain과 의존성의 설치를 완료한 뒤 확인합니다.
 npx skills list --global
 npx skills remove tk-plain-writing tk-humanizer-kr tk-eli5 --global --agent claude-code codex hermes-agent
 ```

@@ -5,12 +5,11 @@
 ## 설치
 
 ```bash
-npx skills add MTGVim/tiger-kit --global --agent claude-code codex hermes-agent --skill '*'
-npx skills update --global --yes
+npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex hermes-agent --skill '*' --copy
 ```
 
-선택 설치는 `tk-setup-skills`로 필요한 업무 스킬과 공통 의존성을 함께 준비합니다. 설치기는 의존성을 자동 해결하지 않습니다.
-`Claude Code`·`Hermes`는 `/tk-setup-skills`, `Codex`는 `$tk-setup-skills`로 호출합니다. 설치는 대상·범위를 승인한 뒤 실행합니다. 소스·설치본 검사에는 `Python 3.9+`·`PyYAML`이 필요하며, 파서가 없으면 자동 설치하지 않고 중단합니다. 빈 대상의 카탈로그 계획은 표준 라이브러리만 사용합니다.
+전체 설치의 갱신에도 위 명령을 사용하고, 기존 내용과 덮어쓰기 대상을 먼저 확인합니다. 지원 버전의 `skills update`는 복사 모드를 보존하지 않습니다. 선택 설치의 갱신은 기존 선택·호스트·범위를 유지하며 `tk-setup-skills`로 필요한 업무 스킬과 공통 의존성을 함께 준비합니다. 설치기는 의존성을 자동 해결하지 않습니다.
+`Claude Code`·`Hermes`는 `/tk-setup-skills`, `Codex`는 `$tk-setup-skills`로 호출합니다. 설치는 대상·범위를 승인한 뒤 실행합니다. 소스·설치본 검사와 gallery·legacy report CLI의 소유자 검사에는 `Python 3.9+`·`PyYAML`이 필요하며, 파서가 없으면 자동 설치하지 않고 중단합니다. 빈 대상의 카탈로그 계획은 표준 라이브러리만 사용합니다.
 
 공통 기준·HTML 자원과 도우미는 `tk-writing` 등 참조 전용 소유 스킬에, 검증 registry·설정 도우미는 `tk-verification-guidance`에 한 번 둡니다. 선택한 스킬의 `dependencies.json` 전체 closure를 같은 설치 컬렉션에 준비해야 하며, 업무 패키지 하나만 복사하면 충분하다고 가정하지 않습니다. 소유자가 없으면 해당 단계를 중단하고 setup을 안내하며, 출력·임시 파일은 호출한 업무가 설치 패키지 밖에서 관리합니다.
 

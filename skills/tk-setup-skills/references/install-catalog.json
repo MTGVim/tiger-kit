@@ -42,6 +42,7 @@
       "requires": [
         "tk-artifacts",
         "tk-questioning",
+        "tk-setup-skills",
         "tk-writing"
       ]
     },
@@ -207,6 +208,7 @@
         "tk-artifacts",
         "tk-questioning",
         "tk-repository-guidance",
+        "tk-setup-skills",
         "tk-writing"
       ]
     },

@@ -9,10 +9,15 @@ import html
 import json
 import random
 import re
+import runpy
 import secrets
 import sys
 import zipfile
 from pathlib import Path
+
+class SharedOwnerError(ValueError):
+    """Safe installation guidance, never private comparison input."""
+
 
 PACKAGE = Path(__file__).resolve().parents[1]
 MIME = {"audio": {".wav": "audio/wav", ".mp3": "audio/mpeg"},
@@ -225,10 +230,16 @@ def render(public, key, theme, mode="gallery", external_key=False):
     writing = PACKAGE.parent / 'tk-writing'
     resources = [writing / 'SKILL.md', writing / 'assets/html-theme.css', writing / 'assets/html-theme.js']
     if any(p.is_symlink() for resource in resources for p in (resource, *resource.parents)):
-        raise ValueError('Unsafe tk-writing resource; use tk-setup-skills')
-    header = resources[0].read_text(encoding='utf-8').split('---', 2)
-    if len(header) != 3 or header[0] or re.findall(r'^name:[ \t]*([^\n]+)', header[1], re.M) != ['tk-writing']:
-        raise ValueError('Mismatched tk-writing owner; use tk-setup-skills')
+        raise SharedOwnerError('Unsafe tk-writing resource; use tk-setup-skills')
+    validator = PACKAGE.parent / 'tk-setup-skills/scripts/skill_dependencies.py'
+    if not validator.is_file() or any(p.is_symlink() for p in (validator, *validator.parents)):
+        raise SharedOwnerError('tk-setup-skills validator unavailable or unsafe; use tk-setup-skills')
+    try:
+        metadata = runpy.run_path(str(validator), run_name='tk_setup_metadata')
+        metadata['read_package'](PACKAGE.parent, 'tk-setup-skills')
+        metadata['read_package'](PACKAGE.parent, 'tk-writing')
+    except (OSError, ValueError):
+        raise SharedOwnerError('Shared owner validation failed; use tk-setup-skills with an approved Python/PyYAML environment') from None
     sections = []
     for number, item in enumerate(public["items"], 1):
         cards = []
@@ -526,6 +537,8 @@ def main():
                 (dest / 'summary.md').write_text(markdown(summary), encoding='utf-8')
             else:
                 print(json.dumps(summary, ensure_ascii=False, indent=2))
+    except SharedOwnerError as error:
+        parser.exit(2, str(error) + '\n')
     except (ValueError, KeyError, TypeError, OSError):
         parser.exit(2, 'Invalid comparison input or unsafe output; preserve inputs and check the manifest contract.\n')
 

@@ -35,6 +35,14 @@ Directory basename and the single plain/quoted `name:` frontmatter value in `SKI
 JSON duplicate keys, duplicate edges, unknown IDs, malformed schemas, traversal and symlinks are rejected.
 Cycles and shared dependencies are valid; the closure includes each package once in sorted order.
 
+The trusted installed implementation also exports `read_package(base: Path, name: str) -> list[str]`.
+It validates one exact package's metadata, declaration and symlink boundaries, returning its direct
+requirements; it does not validate the whole installed closure or authorize installation. The gallery
+and legacy report helpers load this explicit same-collection file with `runpy.run_path` (no installed
+bytecode writes) before using `tk-writing`. They declare the setup package as a direct dependency and
+need PyYAML in their executing Python environment. Parser loading remains lazy; empty-target catalog
+planning still requires only the standard library. This API is not a code-authenticity attestation.
+
 ## Exact Destination and Installer Guidance
 
 Supported pinned `skills@1.7.4` agent IDs are `codex`, `claude-code`, and `hermes-agent`.
