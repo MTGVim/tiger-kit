@@ -4,8 +4,8 @@
 
 TigerKit은 `workflow` `runner`, `plugin`, `scheduler`, `shared-state` `framework`가 아닌 `Agent Skills` 저장소입니다.
 
-- 각 `skills/tk-*` `package`는 `self-contained`합니다.
-- 여러 스킬에서 사용하는 동일한 정적 참조와 자산은 각 패키지에 독립된 일반 파일로 유지합니다. 소유 스킬의 정본과 `scripts/sync_execution_protocol.py` 등 기존 동기화 도구로 사본을 일치시키고 검증합니다. 자세한 결정과 재검토 조건은 [ADR 0003](docs/adr/0003-keep-package-local-shared-copies.md)에 기록합니다. 심볼릭 링크, 다른 스킬이나 저장소 전역 파일을 향한 실행 시점 참조로 대체하지 않습니다.
+- 각 `skills/tk-*` `package`는 자기 업무와 권한을 소유합니다. 설치에 필요한 공통 스킬은 패키지별 `dependencies.json`에 명시하며, `tk-setup-skills`가 선택 설치와 공통 의존성 준비를 지원합니다.
+- 여러 스킬이 공유하는 Markdown 기준은 참조 전용 스킬에 한 번 두고, 기존 조건부 분기에서 필요한 자원만 읽습니다. 참조 호출은 다른 업무 실행이나 변경·비밀 접근·게시 권한을 부여하지 않습니다. 선언된 소유 스킬이나 자원이 없으면 해당 단계를 중단하고 setup을 안내합니다. 저장소 전역 문서·하드코딩한 사용자 홈·배포용 심볼릭 링크로 대체하지 않습니다. 정적 자산·실행 도우미·라이선스 사본은 별도 유지·검증합니다. 계약과 ADR 0003의 대체 범위는 [ADR 0004](docs/adr/0004-shared-reference-skills.md)에 기록합니다.
 - `SKILL.md`가 현재 실행 `behavior`를 소유합니다.
 - `package-local` `references/`는 조건부 `readable knowledge`만 소유합니다.
 - `package-local` `scripts/`는 `executable helper`를, `agents/`는 실행 메타데이터를 소유합니다. 검증용 `eval`은 `evals/skills/<skill>/`에서 저장소 전용 증거를 소유합니다.
@@ -58,8 +58,8 @@ request
 ```
 
 Ready `Seed`는 지속 가능한 맥락이 실제로 필요할 때만 만듭니다. `direct/no-Seed`는 SDD 상세 문서를 읽지 않습니다.
-SDD가 선택되면 `tk-prep`과 `tk-pr-respond`의 패키지 로컬 생성 참조가 하나의 행동 원천을
-공유하고, 실제 자식 `model`/`reasoning_effort`는 현재 호스트 기능과 허용 목록에서 실행 중에만 결정합니다.
+SDD가 선택되면 `tk-prep`과 `tk-pr-respond`는 명시적 의존성인 `tk-engineering`의
+SDD 정본을 읽고, 실제 자식 `model`/`reasoning_effort`는 현재 호스트 기능과 허용 목록에서 실행 중에만 결정합니다.
 
 TigerKit은 다음 `runtime` `mapping`을 소유하지 않습니다.
 
@@ -90,7 +90,7 @@ Ready `Seed`는 `fresh` `lower-capability` `executor`가 원 대화 없이 다�
 - `known` `traps`/`do-not-change`
 - `execution` `recommendation`
 
-`Seed`는 `transcript`, `progress ledger`, `provider routing`, `secret store`가 아닙니다. `SDD`의 선택적 `recovery state`와 `lifecycle`은 `package-local shared SDD protocol`이 소유하며, `SDD`라는 이유만으로 `progress ledger`를 만들지 않습니다.
+`Seed`는 `transcript`, `progress ledger`, `provider routing`, `secret store`가 아닙니다. `SDD`의 선택적 `recovery state`와 `lifecycle`은 `tk-engineering`의 공통 SDD 프로토콜이 소유하며, `SDD`라는 이유만으로 `progress ledger`를 만들지 않습니다.
 
 실행 중 `material` `evidence`가 `Seed` `contract`를 깨면 임의 해석 변경 대신 `tk-prep`으로 돌아가
 `revision` + `user` `reapproval`을 거칩니다.
@@ -120,9 +120,14 @@ Ready `Seed`는 `fresh` `lower-capability` `executor`가 원 대화 없이 다�
 - `objective` `completion`/`boundary`
 - `owned` `artifact`, `mutation`, `authority` 또는 `safety` `boundary`
 
-약한 후보는 `inline`/`merge`/`reference`/`delete`를 우선합니다.
+공통 지식만 제공하는 참조 전용 스킬도 허용합니다. 좁은 참조 조건, 단일 정본과 독립적인 완료·권한 경계를 소유하고, 다른 스킬이 필요한 기준만 호출해 읽을 수 있어야 합니다. 해당 호출은 업무 실행이나 변경 권한을 부여하지 않습니다.
+
+그 외 약한 후보는 `inline`/`merge`/`reference`/`delete`를 우선합니다.
 
 ## 핵심 `authority`
+
+- `tk-setup-skills`: 스킬과 공통 의존성의 설치 계획·점검·초기 설정 지원. 설치·업데이트 실행은 정확한 대상과 범위의 별도 승인 필요.
+- 공통 참조 스킬: 요청한 기준만 반환하며 다른 업무의 실행·변경·비밀 접근·원격 발행 권한 없음.
 
 - `tk-prep`: 준비, 최종 승인, 승인된 격리 로컬 구현/검증/`commit`. `push`/발행 금지.
 - `tk-ask-repo`: `read-only` `repository` `investigation`.
@@ -201,8 +206,8 @@ $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 추가합니다. 기존 바이트와 줄바꿈을 보존하고, 다시 무시 판정을 확인한 뒤 산출물 작성을 계속합니다.
 이 한정된 설정은 요청된 산출물 작성에 포함되며 별도 확인을 요구하지 않습니다. 추적 파일이나 안전하지 않은
 경로는 자동 수정하지 않고, 쓰기 실패나 재확인 실패 시 파일 분기만 `Blocked | Unverifiable`로 보류합니다.
-전제조건 복구는 `skills/tk-grill/references/questions.md`, 저장소 없음의 구체 절차는
-`scripts/artifact_policy.py`가 소유합니다. 기존 승인 범위의 해결은 수행하고 추가 결정·권한만
+전제조건 복구는 `skills/tk-questioning/references/questions.md`, 저장소 없음의 구체 절차는
+`skills/tk-artifacts/scripts/artifact_policy.py`가 소유합니다. 기존 승인 범위의 해결은 수행하고 추가 결정·권한만
 구체적인 대상·변경·영향과 함께 묻습니다. 저장소 초기화는 같은 대상의 명시적 승인이 있어야 하며,
 복구 후 제외·안전 검사를 다시 거쳐 원래 파일 산출물 작성까지 재개합니다.
 설정만을 위해 스테이징·커밋하지 않고 변경 사실을 간단히 알립니다. 비밀 입력은 디렉터리 `0700`,
@@ -215,13 +220,13 @@ $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 비밀번호는 같은 범위의 보호 파일에 보존합니다. 실제 운영 자격증명, OTP, 복구 코드와 승인된 개발·QA
 범위 밖의 비밀번호는 기존 일회성 수명주기를 유지합니다. 보존은 새로운 로그인이나 자동 입력 권한을
 부여하지 않습니다. 설치 동작의 정본은
-`scripts/artifact_policy.py`와 패키지 로컬 참조이며 전역 인증 캐시나 백그라운드 갱신기를 만들지 않습니다.
+`skills/tk-artifacts/scripts/artifact_policy.py`와 같은 소유 스킬의 참조이며 전역 인증 캐시나 백그라운드 갱신기를 만들지 않습니다.
 
 새 임시 파일을 통해 사용자에게 값을 입력받을 때에는 UTF-8 `input.json`에 필요한 키와 빈 문자열을 담은
 일반 JSON 객체 템플릿을 미리 만듭니다. 단일 토큰의 예시는 `{"token": ""}`이며, 설명과 필수 필드 안내는
 파일 밖에 둡니다. JSON-LD나 빈 파일, 원시 텍스트를 사용하지 않고 기존 문서·설정·사용자 파일에는 이 형식을
-강제하지 않습니다. 공통 `Output Notation`이 형식을, `scripts/artifact_policy.py`와 각 패키지의
-`references/artifact-paths.md`가 입력·소비 계약을 소유합니다.
+강제하지 않습니다. 공통 `Output Notation`이 형식을, `skills/tk-artifacts/scripts/artifact_policy.py`와
+`skills/tk-artifacts/references/artifact-paths.md`가 입력·소비 계약을 소유합니다.
 
 비밀 값을 포함하는 객체는 `.tigerkit/secret-input/<skill>-<run-id>/input.json`에 제한된 권한으로 둡니다.
 저장소 상대 경로와 절대 경로, 비밀 값이 없는 초기 템플릿과 입력할 필드를 안내합니다. 클립보드 입력 명령은
@@ -246,14 +251,14 @@ $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 원자적 교체에 필요한 동일 디렉터리의 임시 파일은 같은 파일시스템에서 실행 소유권을 확인하고 성공 후 정리합니다.
 설명 자료는 설정된 `artifacts.durableRoot`를 우선하고, 설정이 없으면
 `.tigerkit/explanations/`를 사용합니다. 기존 학습 공간은 이동하거나 삭제하지 않습니다. 저장한 조사는 `.tigerkit/research/`를
-기본으로 사용합니다. 명시한 최종 목적지는 존중합니다. `scripts/artifact_policy.py`가 공통 정책을 소유하며
-파일을 쓰지 않는 스킬의 쓰기 금지 경계, 파일을 쓰는 스킬의 조건부 본문·패키지 로컬 참조와 실행 도구를 릴리즈 체크리스트의 자동 검사에서 확인합니다.
+기본으로 사용합니다. 명시한 최종 목적지는 존중합니다. `skills/tk-artifacts/scripts/artifact_policy.py`가 공통 정책을 소유하며
+파일을 쓰지 않는 스킬의 쓰기 금지 경계, 파일을 쓰는 스킬의 조건부 본문·선언된 공통 참조와 실행 도구를 릴리즈 체크리스트의 자동 검사에서 확인합니다.
 
 ## 반복 발견
 
 TigerKit은 `persistent` `pitfall` `corpus`나 `memory` `backend`를 소유하지 않습니다.
 검증 `provider`의 제한된 로컬 문제 해결 메모는 예외이며, 진단·해결·재검증을 거친 사례만
-`provider`당 최대 20건으로 관리합니다. 실제 행동 계약은 각 검증 패키지의 공통 참조가 소유합니다.
+`provider`당 최대 20건으로 관리합니다. 실제 공통 검증 기준은 `tk-verification-guidance`가 소유하며, 실행 권한과 승인 조건은 호출한 검증 스킬에 남습니다.
 
 - 현재 `Seed`를 바꾸는 발견 → `Seed` `revision`
 - `repository` `reusable` `invariant` → `repo-native` `owner` 개선 후보
