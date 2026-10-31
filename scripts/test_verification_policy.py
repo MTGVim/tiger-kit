@@ -23,7 +23,7 @@ class VerificationPreferencesTests(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)
-        self.config = Path(self.temporary.name) / "config/tigerkit/verify.json"
+        self.config = Path(self.temporary.name).resolve() / "config/tigerkit/verify.json"
         self.providers = preferences.registry()
 
     def run_cli(self, *args, success=True):

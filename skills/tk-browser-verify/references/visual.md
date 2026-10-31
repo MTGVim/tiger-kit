@@ -81,7 +81,7 @@ height and recheck prerequisites; do not compare independently auto-fitted heigh
 failure evidence and restore viewport/state after capture. Store a bounded `README.md` beside the images with an
 AC-to-file/state table, capture order when relevant, source provenance, and a replay procedure.
 For each paired capture, record the safe replay target and the exact origin-free `display_route` from
-[publication evidence](publication-evidence.md), ordered navigation/input with stable selectors or
+[publication evidence](../../tk-verification-guidance/references/publication-evidence.md), ordered navigation/input with stable selectors or
 verified element identity, scroll anchor and offset, capture boundary, viewport, DPR, zoom,
 completed font-loading state, browser, and UI state. Declare carousel slides, relative-time text,
 random ordering, animation, or other intrinsically nondeterministic regions before comparison and
@@ -204,5 +204,5 @@ A causal regression claim requires comparable baseline runtime evidence; otherwi
 report only the currently observed failure.
 
 When the pair materially supports acceptance or regression preservation, return the producer-neutral
-PR evidence manifest from [publication evidence](publication-evidence.md). A `remain unchanged` result
+PR evidence manifest from [publication evidence](../../tk-verification-guidance/references/publication-evidence.md). A `remain unchanged` result
 requires a labeled baseline/after pair even when it is byte-identical or all inspected axes pass.

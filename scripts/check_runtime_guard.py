@@ -5,6 +5,11 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+try:
+    from .shared_references import reference_errors
+except ImportError:
+    from shared_references import reference_errors
+
 ROOT = Path(__file__).resolve().parents[1]
 RUNTIME_GUARD_CONSUMERS = (
     "tk-qa-sheet",
@@ -73,7 +78,7 @@ UI_EVIDENCE_BLOCK = """<!-- tigerkit:ui-evidence -->
 
 Quote existing UI labels verbatim, including language, case, punctuation and spacing. Navigation instructions need evidence for every menu/breadcrumb label and connection; a title, route, identifier, enum, schema, glossary or ticket wording alone does not prove the entry path. Keep proposed copy separate. Bind claims to target/environment/locale/role and actual rendering evidence; preserve conflicting or missing provenance rather than guessing.
 
-Before collecting or verifying UI labels/paths within this skill's investigation authority, read [UI evidence collection](references/ui-evidence.md). Skip collection guidance for non-UI work and propagation-only tasks. A handoff or publication-only phase carries supplied evidence and pending requests without starting a new investigation.
+Before collecting or verifying UI labels/paths within this skill's investigation authority, read [UI evidence collection](../tk-ui-evidence/references/ui-evidence.md). Skip collection guidance for non-UI work and propagation-only tasks. A handoff or publication-only phase carries supplied evidence and pending requests without starting a new investigation.
 
 In reports and publication preparation, preserve exact verified literals and explicitly list required unverified labels/connections, available evidence, the concrete limitation and smallest missing input. User-supplied text is user-provided, not independently observed; it resolves only the supported claim. Never turn an unverified path into navigation instructions or hide uncertainty in PR/QA/handoff output.
 """
@@ -122,9 +127,11 @@ def validate_runtime_guard(root: Path = ROOT) -> list[str]:
         if text.count(UI_EVIDENCE_BLOCK) != 1 or text.count(UI_EVIDENCE_MARKER) != 1:
             errors.append(f"skills/{name}/SKILL.md: UI evidence guard must match exactly once")
 
-        reference = path.parent / "references/ui-evidence.md"
-        if not reference.is_file() or reference.read_text(encoding="utf-8") != UI_EVIDENCE_REFERENCE:
-            errors.append(f"skills/{name}/references/ui-evidence.md: UI evidence collection reference must match")
+        errors.extend(reference_errors(root, path, "../tk-ui-evidence/references/ui-evidence.md"))
+
+    reference = root / "skills/tk-ui-evidence/references/ui-evidence.md"
+    if not reference.is_file() or reference.read_text(encoding="utf-8") != UI_EVIDENCE_REFERENCE:
+        errors.append("skills/tk-ui-evidence/references/ui-evidence.md: UI evidence collection reference must match")
 
     agents = root / "AGENTS.md"
     if agents.is_file() and RUNTIME_GUARD_MARKER in agents.read_text(encoding="utf-8"):

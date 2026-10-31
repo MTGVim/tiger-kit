@@ -14,12 +14,17 @@ metadata:
 
 # Audit
 
+## Shared References
+
+Load the named skill and criteria. If missing, stop: use `tk-setup-skills`; no memory or unapproved installs. Reading grants no authority.
+
+
 <!-- tigerkit:ui-evidence -->
 ## UI Evidence
 
 Quote existing UI labels verbatim, including language, case, punctuation and spacing. Navigation instructions need evidence for every menu/breadcrumb label and connection; a title, route, identifier, enum, schema, glossary or ticket wording alone does not prove the entry path. Keep proposed copy separate. Bind claims to target/environment/locale/role and actual rendering evidence; preserve conflicting or missing provenance rather than guessing.
 
-Before collecting or verifying UI labels/paths within this skill's investigation authority, read [UI evidence collection](references/ui-evidence.md). Skip collection guidance for non-UI work and propagation-only tasks. A handoff or publication-only phase carries supplied evidence and pending requests without starting a new investigation.
+Before collecting or verifying UI labels/paths within this skill's investigation authority, read [UI evidence collection](../tk-ui-evidence/references/ui-evidence.md). Skip collection guidance for non-UI work and propagation-only tasks. A handoff or publication-only phase carries supplied evidence and pending requests without starting a new investigation.
 
 In reports and publication preparation, preserve exact verified literals and explicitly list required unverified labels/connections, available evidence, the concrete limitation and smallest missing input. User-supplied text is user-provided, not independently observed; it resolves only the supported claim. Never turn an unverified path into navigation instructions or hide uncertainty in PR/QA/handoff output.
 
@@ -49,11 +54,11 @@ Modifiers may be combined. Do not implement, write Seeds, publish issues, or cre
 
 1. Read repository instructions, root configuration, verification commands, structure, and relevant Git history.
    Before judging behavior, requirements, ownership, impact, or domain meaning, lazy-load
-   [domain context](references/domain-context.md) when repository-owned context exists. Read only the relevant mapped
+   [domain context](../tk-repository-guidance/references/domain-context.md) when repository-owned context exists. Read only the relevant mapped
    context and surface conflicts with fresher code or runtime evidence instead of silently choosing.
 2. Check the selected categories using [audit-playbook.md](references/audit-playbook.md).
    For `next` when a tracker matters and its policy/source is unknown,
-   read [repository configuration](references/repository-context.md) and
+   read [repository configuration](../tk-repository-guidance/references/repository-context.md) and
    establish user-owned scope by a minimal interview before claiming
    full duplicate coverage. Ordinary technical audits need no config.
    Read [policy-refactoring.md](references/policy-refactoring.md) only for explicit `policy` scope or when a
@@ -132,7 +137,7 @@ At completion, concisely summarize the key `finding`s and any unaudited scope.
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
+Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](../tk-artifacts/references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
 
 <!-- tigerkit:result-summary -->
 ## Reader-facing Result Summary
@@ -169,7 +174,7 @@ consumption; a prefilled template is not completed input. This grants no write a
 ## User Questions
 
 Investigate facts; reuse authorization. For user-owned decisions read
-[question rounds](references/questions.md); otherwise proceed.
+[question rounds](../tk-questioning/references/questions.md); otherwise proceed.
 Plain chat, even one approval: standalone `---`, then
 `❓ **Q<n> · <title>**: <question>` and `➡️ <recommendation>` per item.
 Ask only settled-prerequisite questions; separate approval.

@@ -155,6 +155,44 @@ class RequiredReadBudgetTest(unittest.TestCase):
         errors, _, _ = static_errors(self.root)
         self.assertTrue(any("always_read must be an object" in error for error in errors))
 
+    def add_shared_required(self):
+        from installed_skill_fixture import add_package
+        shared = add_package(self.root, "tk-shared", role="reference")
+        target = shared.parent / "references/shared.md"
+        target.parent.mkdir()
+        target.write_text("Shared evidence.\n")
+        (self.skill.parent / "dependencies.json").write_text('{"version":1,"requires":["tk-shared"]}')
+        self.skill.write_text(self.skill.read_text() + "\nRead [shared](../tk-shared/references/shared.md#evidence).\n")
+        self.include_required()
+        return target
+
+    def test_declared_sibling_required_read_omission_is_detected(self):
+        target = self.add_shared_required()
+        self.save()
+        self.assertTrue(any('required read missing' in error and 'tk-shared' in error for error in static_errors(self.root)[0]))
+        self.manifest['limits']['always_read']['example']['paths'].append(target.relative_to(self.root).as_posix())
+        self.save()
+        errors, metrics, _ = static_errors(self.root)
+        self.assertEqual(errors, [])
+        self.assertEqual(metrics['always_read:example'], self.skill.stat().st_size + len(b'Required evidence.\nShared evidence.\n'))
+
+    def test_shared_required_read_without_declaration_or_owner_is_unsafe(self):
+        target = self.add_shared_required()
+        self.manifest['limits']['always_read']['example']['paths'].append(target.relative_to(self.root).as_posix())
+        self.save()
+        declaration = self.skill.parent / 'dependencies.json'
+        declaration.unlink()
+        self.assertTrue(any('unsafe required read' in error for error in static_errors(self.root)[0]))
+        declaration.write_text('{"version":1,"requires":["tk-shared"]}')
+        (target.parent.parent / 'SKILL.md').unlink()
+        self.assertTrue(any('unsafe required read' in error for error in static_errors(self.root)[0]))
+
+    def test_required_read_cannot_traverse_out_and_back_into_skills(self):
+        self.include_required()
+        self.skill.write_text(self.skill.read_text() + '\nRead [escape](../../skills/tk-example/references/required.md).\n')
+        self.save()
+        self.assertTrue(any('unsafe required read' in error for error in static_errors(self.root)[0]))
+
 
 if __name__ == "__main__":
     unittest.main()

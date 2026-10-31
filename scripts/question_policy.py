@@ -1,6 +1,11 @@
-"""Keep the installed user-question contract self-contained and synchronized."""
+"""Keep inline question behavior synchronized and shared guidance reachable."""
 import re
 from pathlib import Path
+
+try:
+    from .shared_references import reference_only, reference_errors
+except ImportError:
+    from shared_references import reference_only, reference_errors
 
 MARKER = "<!-- tigerkit:questions -->"
 END = "<!-- /tigerkit:questions -->"
@@ -30,7 +35,7 @@ BLOCK = MARKER + """
 ## User Questions
 
 Investigate facts; reuse authorization. For user-owned decisions read
-[question rounds](references/questions.md); otherwise proceed.
+[question rounds](../tk-questioning/references/questions.md); otherwise proceed.
 Plain chat, even one approval: standalone `---`, then
 `❓ **Q<n> · <title>**: <question>` and `➡️ <recommendation>` per item.
 Ask only settled-prerequisite questions; separate approval.
@@ -58,37 +63,30 @@ def question_template_errors(text: str, label: str) -> list[str]:
 
 
 def question_errors(root: Path) -> list[str]:
-    source = root / "skills/tk-grill/references/questions.md"
+    source = root / "skills/tk-questioning/references/questions.md"
     if not source.is_file():
-        return ["missing canonical tk-grill question rounds reference"]
+        return ["missing canonical tk-questioning question rounds reference"]
     errors = question_template_errors(source.read_text(encoding="utf-8"), "canonical question rounds")
-    notice = root / "skills/tk-grill/LICENSE.txt"
-    notice_text = QUESTION_NOTICE.strip()
-    if not notice.is_file():
-        errors.append("missing canonical tk-grill question rounds license notice")
-    else:
-        if notice_text not in notice.read_text(encoding="utf-8"):
-            errors.append("invalid canonical tk-grill question rounds license notice")
+    notice = root / "skills/tk-questioning/LICENSE.txt"
+    if not notice.is_file() or QUESTION_NOTICE.strip() not in notice.read_text(encoding="utf-8"):
+        errors.append("missing or invalid canonical tk-questioning question rounds license notice")
     for path in sorted((root / "skills").glob("tk-*/SKILL.md")):
+        if reference_only(path):
+            continue
         text = path.read_text(encoding="utf-8")
-        reference = path.parent / "references/questions.md"
         if text.count(MARKER) != 1 or text.count(END) != 1 or BLOCK not in text:
             errors.append(f"{path.parent.name}: question rounds guard must match exactly once")
         if re.search(r"AskUserQuestion|request_user_input|`clarify`|Hermes:\s*clarify", text):
             errors.append(f"{path.parent.name}: question tool policy belongs only in the canonical reference")
-        if not reference.is_file() or reference.read_bytes() != source.read_bytes():
-            errors.append(f"{path.parent.name}: question rounds reference drift")
-        package_notice = path.parent / "LICENSE.txt"
-        if not package_notice.is_file() or notice_text not in package_notice.read_text(encoding="utf-8"):
-            errors.append(f"{path.parent.name}: installed question rounds license notice is missing or incomplete")
+        errors.extend(reference_errors(root, path, "../tk-questioning/references/questions.md"))
     return errors
 
 
 def sync_questions(root: Path) -> None:
-    source = root / "skills/tk-grill/references/questions.md"
-    content = source.read_bytes()
-    notice_text = QUESTION_NOTICE.strip()
+    # Sync only inline behavior; shared content and attribution have one owner.
     for path in sorted((root / "skills").glob("tk-*/SKILL.md")):
+        if reference_only(path):
+            continue
         text = path.read_text(encoding="utf-8")
         if MARKER in text:
             if text.count(MARKER) != 1 or text.count(END) != 1:
@@ -98,10 +96,3 @@ def sync_questions(root: Path) -> None:
         else:
             text = text.rstrip() + "\n\n" + BLOCK
         path.write_text(text, encoding="utf-8")
-        reference = path.parent / "references/questions.md"
-        reference.parent.mkdir(exist_ok=True)
-        reference.write_bytes(content)
-        package_notice = path.parent / "LICENSE.txt"
-        existing = package_notice.read_text(encoding="utf-8") if package_notice.is_file() else ""
-        if notice_text not in existing:
-            package_notice.write_text(existing.rstrip() + ("\n\n" if existing else "") + notice_text + "\n", encoding="utf-8")

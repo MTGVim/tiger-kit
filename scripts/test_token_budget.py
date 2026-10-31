@@ -58,7 +58,8 @@ class TokenBudgetTest(unittest.TestCase):
         temporary, base, candidate = self.roots()
         with temporary:
             sentence = 'This unique sentence measures whether duplicated skill prose remains visible to the budget guard.'
-            for name in ('tk-explain', 'tk-qa-sheet'):
+            # Keep this duplicate probe outside always-read groups so an unrelated size cap cannot mask it.
+            for name in ('tk-audit', 'tk-grooming'):
                 path = candidate / f'skills/{name}/SKILL.md'
                 path.write_text(path.read_text() + '\n\n' + sentence + '\n', encoding='utf-8')
             errors = compare_token_budget(base, candidate)

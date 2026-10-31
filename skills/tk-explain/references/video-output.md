@@ -1,6 +1,6 @@
 # Video explanation
 
-Before handing off, read [media choices](media-preferences.md) and resolve missing narration,
+Before handing off, read [media choices](../../tk-writing/references/media-preferences.md) and resolve missing narration,
 presentation and the default-save offer in one round, or delegate that whole round to `tk-video`
 before any production. Pass resolved values, their sources and save-offer disposition; reuse
 answered/saved choices. Selecting video or a preferred voice is not narration consent.

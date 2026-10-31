@@ -14,28 +14,23 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class HTMLPolicyTest(unittest.TestCase):
-    def test_diataxis_has_installable_package_local_copies(self):
-        canonical = ROOT / 'skills/tk-explain/references/diataxis.md'
+    def test_diataxis_has_one_declared_reachable_owner(self):
+        from shared_references import link_error
+        canonical = ROOT / 'skills/tk-writing/references/diataxis.md'
         content = canonical.read_text(encoding='utf-8')
         for form in ('Tutorial (learning)', 'How-to (task)',
                      'Reference (lookup)', 'Explanation (understanding)'):
             self.assertIn(form, content)
-        owners = {
-            'tk-explain': ('SKILL.md', '(references/diataxis.md)'),
-            'tk-research': ('references/report.md', '(diataxis.md)'),
-        }
-        for owner, (relative, pointer) in owners.items():
-            with self.subTest(owner=owner):
-                package = ROOT / 'skills' / owner
-                source = package / 'references/diataxis.md'
-                self.assertTrue(source.is_file())
-                self.assertFalse(source.is_symlink())
-                self.assertEqual(source.read_bytes(), canonical.read_bytes())
-                self.assertIn(pointer, (package / relative).read_text(encoding='utf-8'))
+        for owner, relative, pointer in (
+            ('tk-explain', 'SKILL.md', '../tk-writing/references/diataxis.md'),
+            ('tk-research', 'references/report.md', '../../tk-writing/references/diataxis.md'),
+        ):
+            package = ROOT / 'skills' / owner
+            source = package / relative
+            self.assertIn('(' + pointer + ')', source.read_text())
+            self.assertIsNone(link_error(source, pointer, ROOT / 'skills'))
+            self.assertFalse((package / 'references/diataxis.md').exists())
         self.assertFalse((ROOT / 'docs/diataxis.md').exists())
-        sync = (ROOT / 'scripts/sync_execution_protocol.py').read_text(encoding='utf-8')
-        self.assertIn('DOCUMENT_PURPOSE_CONSUMERS', sync)
-        self.assertIn('shared Diataxis guidance drift', sync)
 
     @unittest.skipUnless(os.environ.get('TK_PLAYWRIGHT_MODULE') and os.environ.get('TK_CHROMIUM_EXECUTABLE'),
                          'Document render regression requires an explicitly configured local browser')
@@ -99,8 +94,8 @@ class HTMLPolicyTest(unittest.TestCase):
         self.assertNotRegex(css, r'border(?:-(?!radius)[\w-]+)?\s*:\s*[2-9]px')
 
     def test_document_static_checks_and_conditional_browser_verification_contract(self):
-        text = (ROOT / 'skills/tk-explain/references/html-output.md').read_text()
-        reader = (ROOT / 'skills/tk-explain/references/html-reader.md').read_text()
+        text = (ROOT / 'skills/tk-writing/references/html-output.md').read_text()
+        reader = (ROOT / 'skills/tk-writing/references/html-reader.md').read_text()
         normalized = ' '.join((text + reader).split())
         for requirement in (
             'Every local fragment `href` resolves',
@@ -142,7 +137,7 @@ class HTMLPolicyTest(unittest.TestCase):
         self.assertIn('at most one archify variant', source)
         self.assertIn('neither branch selects the', source)
         self.assertNotIn('scripts/build_html.py', source)
-        self.assertIn('(references/interactive-examples.md)', source)
+        self.assertIn('(../tk-writing/references/interactive-examples.md)', source)
 
     def test_archify_contracts_are_package_local_and_drift_is_rejected(self):
         from sync_execution_protocol import html_policy_errors, ARCHIFY_FILES
@@ -161,7 +156,7 @@ class HTMLPolicyTest(unittest.TestCase):
 
     def test_explanations_default_to_natural_conversation(self):
         skill = (ROOT / 'skills/tk-explain/SKILL.md').read_text()
-        contract = (ROOT / 'skills/tk-explain/references/html-output.md').read_text()
+        contract = (ROOT / 'skills/tk-writing/references/html-output.md').read_text()
         self.assertIn("Honor the user's voice", skill)
         self.assertIn('only when the user has explicitly requested them', contract)
         self.assertIn('Do not add visible `질문:` or `답변:`', contract)
@@ -278,6 +273,9 @@ class HTMLPolicyTest(unittest.TestCase):
             root = Path(directory)
             for name in ('skills', 'scripts'):
                 shutil.copytree(ROOT / name, root / name, ignore=shutil.ignore_patterns('__pycache__'))
+            baseline = subprocess.run([sys.executable, 'scripts/sync_execution_protocol.py', '--check'],
+                                      cwd=root, text=True, capture_output=True, timeout=30)
+            self.assertEqual(baseline.returncode, 0, baseline.stdout + baseline.stderr)
             mutate(root)
             result = subprocess.run([sys.executable, 'scripts/sync_execution_protocol.py', '--check'],
                                     cwd=root, text=True, capture_output=True, timeout=30)
@@ -338,10 +336,10 @@ class HTMLPolicyTest(unittest.TestCase):
         self.assertIn('class="only-open-filter"', qa)
 
     def test_shared_contract_contains_render_safe_authoring_rules(self):
-        text = (ROOT / 'skills/tk-explain/references/html-output.md').read_text()
-        text += (ROOT / 'skills/tk-explain/references/html-figures.md').read_text()
+        text = (ROOT / 'skills/tk-writing/references/html-output.md').read_text()
+        text += (ROOT / 'skills/tk-writing/references/html-figures.md').read_text()
         self.assertIn('html-render.md', text)
-        text += (ROOT / 'skills/tk-explain/references/html-render.md').read_text()
+        text += (ROOT / 'skills/tk-writing/references/html-render.md').read_text()
         self.assertIn('## Render-safe authoring', text)
         self.assertIn('11 CSS px after scaling', text)
         self.assertIn('emulated mobile CSS viewport width matching `innerWidth`', text)
@@ -389,7 +387,7 @@ class HTMLPolicyTest(unittest.TestCase):
             path.write_text(':root { --bg: red; }\n')
         self.check_mutation(mutate)
 
-    def test_clear_writing_drift_blocks_release_check(self):
+    def test_clear_writing_reintroduced_copy_blocks_release_check(self):
         def mutate(root):
             path = root / 'skills/tk-qa-sheet/references/clear-writing.md'
             path.write_text('# drift\n')

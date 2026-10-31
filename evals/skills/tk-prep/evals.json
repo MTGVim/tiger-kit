@@ -299,8 +299,8 @@
     {
       "id": "prep-multifile-same-shape-stays-direct",
       "path": "boundary",
-      "prompt": "/tk-prep `skills/tk-prep/references/sdd.md`와 `skills/tk-pr-respond/references/sdd.md`에서 같은 `self-review` 문구를 더 명확하게 바꿔야 한다. 저장소를 조사해서 아직 수정하지 말고 실행 방식을 추천해줘.",
-      "expected_output": "`scripts/sync_execution_protocol.py`와 공유 `protocol` 표식을 조사해 하나의 정본이 두 복사본을 동기화하고 하나의 검사·검토 판단을 공유함을 확인한다. `raw file count`에 따라 실행 방식을 키우지 않고 작은 `same-shape` 변경을 `direct` 실행으로 추천한다.",
+      "prompt": "/tk-prep `skills/tk-prep/SKILL.md`와 `skills/tk-pr-respond/SKILL.md`에 공통으로 들어가는 `Output Notation` 문구를 더 명확하게 바꿔야 한다. 저장소를 조사해서 아직 수정하지 말고 실행 방식을 추천해줘.",
+      "expected_output": "`scripts/sync_execution_protocol.py`의 출력 표기 정본과 공유 표식을 조사해 하나의 정본이 두 업무 스킬의 인라인 문구를 동기화하고 같은 검사·검토 판단을 공유함을 확인한다. 파일 수에 따라 실행 방식을 키우지 않고 작은 `same-shape` 변경을 `direct` 실행으로 추천한다. 공통 참조 문서 사본은 이미 제거됐으므로 존재하지 않는 사본을 수정 대상으로 삼지 않는다.",
       "assertions": [
         {
           "type": "judge",
@@ -379,7 +379,7 @@
         },
         {
           "type": "path_not_read",
-          "path": "skills/tk-prep/references/sdd.md"
+          "path": "skills/tk-engineering/references/sdd.md"
         },
         {
           "type": "git_head_unchanged"
@@ -541,7 +541,7 @@
         },
         {
           "type": "path_not_read",
-          "path": "skills/tk-prep/references/sdd.md"
+          "path": "skills/tk-engineering/references/sdd.md"
         },
         {
           "type": "git_head_unchanged"
@@ -1754,7 +1754,7 @@
         },
         {
           "type": "path_not_read",
-          "path": "skills/tk-prep/references/sdd.md"
+          "path": "skills/tk-engineering/references/sdd.md"
         }
       ],
       "safety": true

@@ -20,7 +20,7 @@ Authorship never changes whether a finding must be investigated or addressed. It
 `CHANGES_REQUESTED`, approval, and review-request capability belong to accounts, so those paths use account identity only.
 
 When a reviewer reply or current-head summary must explain a nontrivial architecture, flow,
-dependency or state change, read [GitHub-native PR visuals](github-visuals.md). Use
+dependency or state change, read [GitHub-native PR visuals](../../tk-pr-guidance/references/github-visuals.md). Use
 Mermaid only when it reduces review effort and every relationship is verified; keep exact values
 and compact comparisons in GFM tables.
 

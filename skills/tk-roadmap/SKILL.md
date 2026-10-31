@@ -12,6 +12,11 @@ metadata:
 
 # Constraint-aware Roadmap
 
+## Shared References
+
+Load the named skill and criteria. If missing, stop: use `tk-setup-skills`; no memory or unapproved installs. Reading grants no authority.
+
+
 Start through explicit `/tk-roadmap`, `$tk-roadmap`, or host selection. Own planning from
 an unclear situation to a reviewable roadmap, including nontechnical initiatives without
 a repository. Think across beneficiary value, organizational viability, feasibility,
@@ -19,7 +24,7 @@ and operating burden; a role perspective grants no organizational decision autho
 
 ## Visual questions
 
-If roadmap choices require comparing screen arrangements, read [visual questions](references/visual-questions.md) for an HTML question aid without a separate save request. Keep planning complete in conversation; that aid may also collect the same round's nonvisual choices. Preserve the prohibition on implementation or publication.
+If roadmap choices require comparing screen arrangements, read [visual questions](../tk-questioning/references/visual-questions.md) for an HTML question aid without a separate save request. Keep planning complete in conversation; that aid may also collect the same round's nonvisual choices. Preserve the prohibition on implementation or publication.
 
 ## Adaptive interview
 
@@ -93,7 +98,7 @@ For provenance review, see [source dispositions](references/sources.md).
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
+Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](../tk-artifacts/references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
 
 <!-- tigerkit:result-summary -->
 ## Reader-facing Result Summary
@@ -130,7 +135,7 @@ consumption; a prefilled template is not completed input. This grants no write a
 ## User Questions
 
 Investigate facts; reuse authorization. For user-owned decisions read
-[question rounds](references/questions.md); otherwise proceed.
+[question rounds](../tk-questioning/references/questions.md); otherwise proceed.
 Plain chat, even one approval: standalone `---`, then
 `❓ **Q<n> · <title>**: <question>` and `➡️ <recommendation>` per item.
 Ask only settled-prerequisite questions; separate approval.

@@ -11,7 +11,7 @@ claims. Preserve conditions that change the conclusion; reduce scope rather than
 or crop away qualifications. Do not invent measurements to complete a layout.
 
 Author a static self-contained SVG or HTML in the run's temporary directory. SVG follows
-[scene figures](scene-figures.md)'s inert asset restrictions; use explicit dimensions and
+[scene figures](../../tk-writing/references/scene-figures.md)'s inert asset restrictions; use explicit dimensions and
 `scripts/svg_to_png.mjs`. For bounded HTML use
 `node scripts/capture_page.mjs input.html new-output.png [width] [height]`, for example
 `node scripts/capture_page.mjs input.html new-output.png 1200 580`. Height is optional:

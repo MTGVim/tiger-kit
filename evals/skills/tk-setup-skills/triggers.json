@@ -1,0 +1,36 @@
+{
+  "skill": "tk-setup-skills",
+  "kind": "user-invoked",
+  "queries": [
+    {
+      "id": "shared-train-positive",
+      "split": "train",
+      "query": "`tk-setup-skills`를 명시적으로 호출합니다. 스킬 설치 계획만 작성해 주세요.",
+      "should_trigger": true
+    },
+    {
+      "id": "shared-train-negative",
+      "split": "train",
+      "query": "오늘 점심 메뉴를 추천해 주세요.",
+      "should_trigger": false
+    },
+    {
+      "id": "shared-validation-positive-1",
+      "split": "validation",
+      "query": "`tk-setup-skills`로 필요한 스킬과 공통 의존성의 설치 계획을 만들어 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "shared-validation-negative-1",
+      "split": "validation",
+      "query": "제품 코드를 수정하고 테스트해 주세요.",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    }
+  ]
+}

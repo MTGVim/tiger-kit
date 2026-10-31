@@ -1,0 +1,4 @@
+interface:
+  short_description: "[user/auto] 파일 산출물 경로·비밀 입력·인증 보존 기준을 참조할 때 사용합니다."
+policy:
+  allow_implicit_invocation: true

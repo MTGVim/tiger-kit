@@ -1,7 +1,7 @@
 # Optional capture for video
 
 Read when a demo capture is requested or the current request, accepted runtime-plan summary or
-approved opt-in selects a GIF/MP4 supplement. Read [media choices](media-preferences.md) for
+approved opt-in selects a GIF/MP4 supplement. Read [media choices](../../tk-writing/references/media-preferences.md) for
 all `evidenceMedia` field types, precedence, defaults and malformed-object handling. Pass the
 resolved format/narration/voice and presentation values, their sources and current choice/save
 disposition to `tk-video`; it resolves any still-missing presentation choices before production.

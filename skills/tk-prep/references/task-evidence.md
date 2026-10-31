@@ -1,24 +1,24 @@
 # Task evidence
 
-Read the task source, instructions, code/callers, tests, commands, and Git state. When the task carries a prototype comparison or selection, read [selected prototype handoff](selection-handoff.md) before translating it into requirements or implementation decisions. If the task source is a child work item,
+Read the task source, instructions, code/callers, tests, commands, and Git state. When the task carries a prototype comparison or selection, read [selected prototype handoff](../../tk-engineering/references/selection-handoff.md) before translating it into requirements or implementation decisions. If the task source is a child work item,
 read its parent work item's body and comments as the next source lookup, before opening linked documents or asking the
 user. The parent's explicit shared rules, including fallback and unresolved-decision instructions, govern the child; do
 not replace them with a conflicting child-level suggestion or linked document. Read parent comments for clarifications
 and prior answers, and investigate any conflict that could change behavior before asking or proposing.
 Before interpreting repository behavior, requirements, ownership, impact, or domain meaning, or writing
-implementation/review prose that depends on them, lazy-load [domain context](domain-context.md) when
+implementation/review prose that depends on them, lazy-load [domain context](../../tk-repository-guidance/references/domain-context.md) when
 repository-owned context exists. Read only the
 relevant mapped context; purely mechanical Git/ref/formatting work may skip it.
 When issue-tracker identity, project selection or discovery scope is material to
 this request and not confirmed by source or active instructions, read
-[repository configuration](repository-context.md) even if no
+[repository configuration](../../tk-repository-guidance/references/repository-context.md) even if no
 settings file exists. Inspect available facts first, then ask only the
 remaining project-owned decisions and offer an exact approved settings
 draft. Never select a guessed issue source as an implementation contract.
 Ordinary local fixes require no tracker onboarding.
 
 When repository instructions or the task explicitly declare local rule bundles, read
-[project rule selection](project-rules.md) and carry applicable constraints and citations
+[project rule selection](../../tk-engineering/references/project-rules.md) and carry applicable constraints and citations
 into the current plan, executor handoff and review obligations.
 
 Follow repository-defined documentation discovery/update procedures and verification commands within the approved scope;
@@ -42,7 +42,7 @@ legacy records where relevant. Record each path's accept, reject, migrate or pre
 Bring policies unstated by the task source to the frontier before approval; include a behavior
 test for each relevant path in the testing plan. Skip this inventory for unrelated changes.
 
-If user-visible text or navigation is in scope, read [UI evidence collection](ui-evidence.md) before accepting or restating a label or path.
+If user-visible text or navigation is in scope, read [UI evidence collection](../../tk-ui-evidence/references/ui-evidence.md) before accepting or restating a label or path.
 A text-locator match may normalize whitespace and does not prove a verbatim quote; trace the rendered literal.
 When no visible label exists, use a verified structural description or exact verified destination title,
 without inventing intervening navigation. Resolve material provenance conflicts during preparation
@@ -51,9 +51,9 @@ If implementation adds or changes a factual code comment/JSDoc claim or models a
 external response contract, read [committed assertion evidence](artifact-claims.md)
 before approval and apply it again to the final candidate.
 When a version-sensitive external library/API/OAuth/provider contract cannot be established from the repository alone,
-read [external contract evidence](external-contracts.md) before accepting its fields, nullability, UI steps,
+read [external contract evidence](../../tk-repository-guidance/references/external-contracts.md) before accepting its fields, nullability, UI steps,
 or setup commands.
 Use the current repository and explicitly supplied task sources. Do not list or investigate other open PRs as a background collision preflight. Read another PR only when the user explicitly requests that comparison or supplies it as necessary task evidence; keep that read bounded to the stated question.
 
-For tracker-backed work, repository discovery, or verification-data policy, read [repository context](repository-context.md) when configuration or a work source is supplied. Recheck the actual source; only its validated structured `verificationDataPolicy` field can grant the narrow standing authority defined there. Other context never grants mutation authority.
+For tracker-backed work, repository discovery, or verification-data policy, read [repository context](../../tk-repository-guidance/references/repository-context.md) when configuration or a work source is supplied. Recheck the actual source; only its validated structured `verificationDataPolicy` field can grant the narrow standing authority defined there. Other context never grants mutation authority.
 

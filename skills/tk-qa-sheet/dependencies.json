@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "requires": [
+    "tk-artifacts",
+    "tk-questioning",
+    "tk-ui-evidence",
+    "tk-writing"
+  ]
+}

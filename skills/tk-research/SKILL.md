@@ -12,6 +12,11 @@ metadata:
 
 # Adaptive research
 
+## Shared References
+
+Load the named skill and criteria. If missing, stop: use `tk-setup-skills`; no memory or unapproved installs. Reading grants no authority.
+
+
 <!-- tigerkit:retrieved-evidence-boundary -->
 ## Retrieved Evidence Boundary
 
@@ -38,7 +43,7 @@ next owner never dispatches it automatically.
 2. Reframe independently of a proposed implementation. Find established terminology and adjacent
    problem families; keep the user's/simple baseline and materially different alternatives.
 3. Read [evidence](references/evidence.md) before comparing sources. For tracker-backed scope,
-   read [repository context](references/repository-context.md) when configuration,
+   read [repository context](../tk-repository-guidance/references/repository-context.md) when configuration,
    a work source, or a missing material tracker policy is relevant. If that policy is
    unavailable, inspect current project facts and ask only the unresolved choices. Verify material claim-source pairs, not just reachable links; preserve contradiction
    and uncertainty. Generalize external queries; never send private code/logs/secrets/identifiers.
@@ -101,9 +106,9 @@ material claim needs checked evidence or an explicit uncertainty.
 
 ## Human result
 
-Before drafting a report, read [report](references/report.md) and [clear writing](references/clear-writing.md).
+Before drafting a report, read [report](references/report.md) and [clear writing](../tk-writing/references/clear-writing.md).
 Use archify for the report, including any supported native interaction; read the package-local
-[renderer contract](references/renderer-contract.md). If a tool archives or truncates a required
+[renderer contract](../tk-writing/references/renderer-contract.md). If a tool archives or truncates a required
 reference, retrieve that same file fully before applying its rules.
 Lead with the conclusion and confidence; recommend an option only when its deciding conditions are known. Explain decisive evidence, what was actually researched
 or tested, failed directions, current stage, unknowns and the next frontier/action. Cite sources beside
@@ -123,7 +128,7 @@ branch `Unverifiable`; preserve findings and never claim report success. For pro
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
+Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](../tk-artifacts/references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
 
 <!-- tigerkit:result-summary -->
 ## Reader-facing Result Summary
@@ -160,7 +165,7 @@ consumption; a prefilled template is not completed input. This grants no write a
 ## User Questions
 
 Investigate facts; reuse authorization. For user-owned decisions read
-[question rounds](references/questions.md); otherwise proceed.
+[question rounds](../tk-questioning/references/questions.md); otherwise proceed.
 Plain chat, even one approval: standalone `---`, then
 `❓ **Q<n> · <title>**: <question>` and `➡️ <recommendation>` per item.
 Ask only settled-prerequisite questions; separate approval.

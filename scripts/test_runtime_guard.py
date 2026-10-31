@@ -6,6 +6,7 @@ import unittest
 from pathlib import Path
 
 import check_runtime_guard
+from installed_skill_fixture import add_package
 
 
 class RuntimeGuardTest(unittest.TestCase):
@@ -15,9 +16,11 @@ class RuntimeGuardTest(unittest.TestCase):
             path.parent.mkdir(parents=True, exist_ok=True)
             prior = path.read_text() if path.exists() else ""
             path.write_text(prior + check_runtime_guard.UI_EVIDENCE_BLOCK)
-            reference = path.parent / "references/ui-evidence.md"
-            reference.parent.mkdir(exist_ok=True)
+            (path.parent / "dependencies.json").write_text('{"version":1,"requires":["tk-ui-evidence"]}')
+            reference = root / "skills/tk-ui-evidence/references/ui-evidence.md"
+            reference.parent.mkdir(parents=True, exist_ok=True)
             reference.write_text(check_runtime_guard.UI_EVIDENCE_REFERENCE)
+        add_package(root, "tk-ui-evidence", role="reference")
 
     def test_current_repository_runtime_guards_are_synchronized(self) -> None:
         self.assertEqual(check_runtime_guard.validate_runtime_guard(), [])
@@ -103,7 +106,7 @@ class RuntimeGuardTest(unittest.TestCase):
             root = Path(directory)
             self.add_ui_guards(root)
             for name in check_runtime_guard.UI_EVIDENCE_CONSUMERS:
-                reference = root / "skills" / name / "references/ui-evidence.md"
+                reference = root / "skills/tk-ui-evidence/references/ui-evidence.md"
                 for content in (None, "# UI Evidence Collection\nIncomplete\n"):
                     with self.subTest(consumer=name, content=content):
                         if content is None:
@@ -111,7 +114,7 @@ class RuntimeGuardTest(unittest.TestCase):
                         else:
                             reference.write_text(content)
                         errors = check_runtime_guard.validate_runtime_guard(root)
-                        self.assertTrue(any(name in error and "reference" in error for error in errors), errors)
+                        self.assertTrue(any("tk-ui-evidence" in error and "reference" in error for error in errors), errors)
                         reference.write_text(check_runtime_guard.UI_EVIDENCE_REFERENCE)
 
     def test_agents_cannot_own_runtime_guard_block(self) -> None:

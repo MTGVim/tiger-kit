@@ -48,7 +48,7 @@ commit rationale, `references/patterns.md`, `detector/patterns.js` and
 `detector/patterns.test.js` true-positive/false-positive fixtures. Tests were inspected,
 not rerun. `keep`: existing contextual editing and valid zero-edit results. `adapt`:
 paired literal/rhetorical regression cases into repository evals only. `omit`: detector
-regexes, word lists, severity/density taxonomy and runtime. `clear-writing.md` is unchanged.
+regexes, word lists, severity/density taxonomy and runtime. `../../tk-writing/references/clear-writing.md` is unchanged.
 
 - `toss/frontend-fundamentals`, `161d3d6a0d6d372eacd75036de567511643f6265`, `fundamentals/code-quality/code/examples/magic-number-readability.md`: keep the concrete example, missing reader context and resulting improvement; adapt that order to actors/actions/outcomes before abstract distinctions; omit fixed sections, emojis and site runtime.
 - `reactjs/ko.react.dev`, `89f79e9e971e9ad424ea5ebabdf8d5fa66c87375`, `src/content/learn/state-as-a-snapshot.md` and `wiki/best-practices-for-translation.md`: keep sequential explanation of expected/actual behavior and natural Korean; adapt stable actors and changed conditions across prose/figures; omit blanket register/punctuation replacement and educational runtime.

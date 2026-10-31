@@ -66,19 +66,22 @@ class EvalSotValidatorTest(unittest.TestCase):
         from question_policy import question_errors
         self.assertEqual(question_errors(validate_skills.ROOT), [])
 
-    def test_question_reference_drift_is_rejected(self) -> None:
-        from question_policy import BLOCK, question_errors
+    def test_question_reference_missing_owner_or_declaration_is_rejected(self) -> None:
+        from question_policy import BLOCK, QUESTION_NOTICE, question_errors
+        from installed_skill_fixture import add_package
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            source = root / "skills/tk-grill/references/questions.md"
-            source.parent.mkdir(parents=True)
-            source.write_text("Canonical frontier protocol\n", encoding="utf-8")
-            (source.parent.parent / "SKILL.md").write_text(BLOCK, encoding="utf-8")
-            target = root / "skills/tk-example"
-            (target / "references").mkdir(parents=True)
-            (target / "SKILL.md").write_text(BLOCK, encoding="utf-8")
-            (target / "references/questions.md").write_text("Ask one question by tool\n", encoding="utf-8")
-            self.assertTrue(any("tk-example: question rounds reference drift" in e for e in question_errors(root)))
+            owner = add_package(root, "tk-questioning", role="reference")
+            source = owner.parent / "references/questions.md"
+            source.parent.mkdir()
+            source.write_text((validate_skills.ROOT / "skills/tk-questioning/references/questions.md").read_text())
+            (owner.parent / "LICENSE.txt").write_text(QUESTION_NOTICE)
+            target = add_package(root, "tk-example", requires=("tk-questioning",), body=BLOCK)
+            self.assertEqual(question_errors(root), [])
+            (target.parent / "dependencies.json").unlink()
+            self.assertTrue(any("tk-example" in e and "declaration" in e for e in question_errors(root)))
+            source.unlink()
+            self.assertTrue(any("missing canonical" in e for e in question_errors(root)))
 
     def test_skill_body_requires_english_narrative(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -462,110 +465,9 @@ class EvalSotValidatorTest(unittest.TestCase):
                 errors = validate_skills.validate_repository_contract(set())
             self.assertFalse(any("CHANGELOG.md" in error for error in errors))
 
-    def test_shared_execution_protocol_copies_must_match(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            skills = Path(directory)
-            canonical = skills / "tk-prep/references"
-            consumer = skills / "tk-pr-respond/references"
-            canonical.mkdir(parents=True)
-            consumer.mkdir(parents=True)
-            for name in validate_skills.SHARED_EXECUTION_PROTOCOLS:
-                (canonical / name).write_text(f"canonical {name}\n", encoding="utf-8")
-                (consumer / name).write_text(f"canonical {name}\n", encoding="utf-8")
 
-            self.assertEqual(validate_skills.validate_shared_execution_protocols(skills), [])
-            (consumer / "sdd.md").write_text("drift\n", encoding="utf-8")
-            self.assertTrue(
-                any(
-                    "sdd.md" in error and "sync_execution_protocol.py" in error
-                    for error in validate_skills.validate_shared_execution_protocols(skills)
-                )
-            )
 
-    def test_shared_domain_context_copies_must_match(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            skills = Path(directory)
-            canonical = skills / "tk-prep/references/domain-context.md"
-            canonical.parent.mkdir(parents=True)
-            canonical.write_text("canonical domain context\n", encoding="utf-8")
-            for skill_name in validate_skills.SHARED_DOMAIN_CONTEXT_CONSUMERS:
-                consumer = skills / skill_name / "references/domain-context.md"
-                consumer.parent.mkdir(parents=True)
-                consumer.write_text("canonical domain context\n", encoding="utf-8")
 
-            self.assertEqual(validate_skills.validate_shared_domain_context(skills), [])
-            drifted = skills / "tk-pr-open/references/domain-context.md"
-            drifted.write_text("drift\n", encoding="utf-8")
-            self.assertTrue(
-                any(
-                    "tk-pr-open" in error and "sync_execution_protocol.py" in error
-                    for error in validate_skills.validate_shared_domain_context(skills)
-                )
-            )
-
-    def test_shared_review_reference_copies_must_match(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            skills = Path(directory)
-            canonical_root = skills / "tk-review/references"
-            canonical_root.mkdir(parents=True)
-            for name in validate_skills.SHARED_REVIEW_REFERENCES:
-                (canonical_root / name).write_text(f"canonical {name}\n", encoding="utf-8")
-                for skill_name in validate_skills.SHARED_REVIEW_CONSUMERS:
-                    consumer = skills / skill_name / "references" / name
-                    consumer.parent.mkdir(parents=True, exist_ok=True)
-                    consumer.write_text(f"canonical {name}\n", encoding="utf-8")
-
-            self.assertEqual(validate_skills.validate_shared_review_references(skills), [])
-            drifted = skills / "tk-prep/references/security.md"
-            drifted.write_text("drift\n", encoding="utf-8")
-            self.assertTrue(
-                any(
-                    "security.md" in error and "sync_execution_protocol.py" in error
-                    for error in validate_skills.validate_shared_review_references(skills)
-                )
-            )
-
-    def test_shared_external_contract_copy_must_match(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            skills = Path(directory)
-            canonical = skills / "tk-prep/references/external-contracts.md"
-            consumer = skills / "tk-wizard/references/external-contracts.md"
-            canonical.parent.mkdir(parents=True)
-            consumer.parent.mkdir(parents=True)
-            canonical.write_text("canonical external contract\n", encoding="utf-8")
-            consumer.write_text("canonical external contract\n", encoding="utf-8")
-            self.assertEqual(validate_skills.validate_shared_external_contracts(skills), [])
-            consumer.write_text("drift\n", encoding="utf-8")
-            self.assertTrue(
-                any(
-                    "sync_execution_protocol.py" in error
-                    for error in validate_skills.validate_shared_external_contracts(skills)
-                )
-            )
-
-    def test_clear_writing_validation_rejects_drift_and_missing_copies(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            skills = Path(directory)
-            canonical = skills / "tk-rewrite/references/clear-writing.md"
-            consumer = skills / "tk-explain/references/clear-writing.md"
-            canonical.parent.mkdir(parents=True)
-            consumer.parent.mkdir(parents=True)
-            expected = "Preserve context. 한국어 예시.\n".encode("utf-8")
-            for changed in (canonical, consumer):
-                for mutation in ("content", "line-endings", "missing"):
-                    with self.subTest(path=str(changed), mutation=mutation):
-                        canonical.write_bytes(expected)
-                        consumer.write_bytes(expected)
-                        self.assertEqual(validate_skills.validate_shared_clear_writing(skills), [])
-                        if mutation == "missing":
-                            changed.unlink()
-                        else:
-                            changed.write_bytes(
-                                expected.replace(b"\n", b"\r\n") if mutation == "line-endings" else b"drift\n"
-                            )
-                        errors = validate_skills.validate_shared_clear_writing(skills)
-                        self.assertTrue(errors)
-                        self.assertIn("clear-writing", errors[0])
 
 
 if __name__ == "__main__":

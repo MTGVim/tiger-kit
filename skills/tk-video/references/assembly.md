@@ -128,7 +128,7 @@ the default delivery or the user's selected style.
 
 ## Optional captions, callouts and zoom
 
-Resolve these fields before production through [media choices](media-preferences.md), including
+Resolve these fields before production through [media choices](../../tk-writing/references/media-preferences.md), including
 saved values and the first-round save offer. Use them only for the selected presentation treatment. Defaults retain the existing
 `band` captions and untransformed frames. A single evaluator's variant preferences support that
 creator's choice, not a universal default or evidence of improved learning.

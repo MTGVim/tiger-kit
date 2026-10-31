@@ -12,6 +12,11 @@ metadata:
 
 # Actionable output
 
+## Shared References
+
+Load the named skill and criteria. If missing, stop: use `tk-setup-skills`; no memory or unapproved installs. Reading grants no authority.
+
+
 Shape the requested answer or the active owner's progress/result so the reader can find
 what matters and act on it. This is presentation assistance, not a workflow, task executor,
 medical inference or a session-status owner. Apply it to this response only; it neither stays
@@ -83,7 +88,7 @@ consumption; a prefilled template is not completed input. This grants no write a
 ## User Questions
 
 Investigate facts; reuse authorization. For user-owned decisions read
-[question rounds](references/questions.md); otherwise proceed.
+[question rounds](../tk-questioning/references/questions.md); otherwise proceed.
 Plain chat, even one approval: standalone `---`, then
 `❓ **Q<n> · <title>**: <question>` and `➡️ <recommendation>` per item.
 Ask only settled-prerequisite questions; separate approval.

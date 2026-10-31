@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 from collections import defaultdict
 import json
+import os
 from pathlib import Path
 import re
 import sys
@@ -13,6 +14,12 @@ try:
     from .validate_skills import frontmatter
 except ImportError:
     from validate_skills import frontmatter
+
+
+try:
+    from .shared_references import link_error, SHARED_BOUNDARY_BLOCKS
+except ImportError:
+    from shared_references import link_error, SHARED_BOUNDARY_BLOCKS
 
 
 MANIFEST = "evals/token-budget.json"
@@ -47,7 +54,7 @@ def _description_chars(path: Path) -> int:
 
 def _shared_block_bytes(path: Path) -> int:
     text = path.read_text(encoding="utf-8")
-    total = 0
+    total = sum(len(block.encode("utf-8")) for block in SHARED_BOUNDARY_BLOCKS if block in text)
     for name in SYNC_BLOCKS:
         match = re.search(
             rf"<!-- tigerkit:{re.escape(name)} -->.*?<!-- /tigerkit:{re.escape(name)} -->",
@@ -112,6 +119,17 @@ def collect_metrics(
                 errors.append(f"{MANIFEST}: unsafe always-read path in {group}: {relative!r}")
                 continue
             path = root / relative
+            if not path.resolve().is_relative_to(root.resolve()) or any((root / Path(relative).parts[0]).joinpath(*Path(relative).parts[1:i]).is_symlink() for i in range(1, len(Path(relative).parts) + 1)):
+                errors.append(f"{MANIFEST}: unsafe always-read path in {group}: {relative!r}")
+                continue
+            entrypoint = spec.get("entrypoint")
+            if not allow_missing_always_read and isinstance(entrypoint, str) and path.parts[:len(root.parts)] == root.parts:
+                source = root / entrypoint
+                relative_link = os.path.relpath(path, source.parent)
+                error = link_error(source, relative_link, root / "skills")
+                if error:
+                    errors.append(f"{MANIFEST}: unsafe always-read path in {group}: {relative!r} ({error})")
+                    continue
             try:
                 total += path.stat().st_size
             except OSError:
@@ -169,9 +187,9 @@ def required_read_errors(root: Path, group: str, spec: dict) -> list[str]:
             directives.append(directive)
     errors = []
     for directive in directives:
-        for relative in re.findall(r"\[[^\]]+\]\((references/[^)#]+\.md)(?:#[^)]*)?\)", directive):
+        for relative in re.findall(r"\[[^\]]+\]\(([^)#]+\.md)(?:#[^)]*)?\)", directive):
             target = (source.parent / relative).resolve()
-            if not target.is_relative_to(root.resolve()):
+            if link_error(source, relative, root / "skills") is not None:
                 errors.append(f"{MANIFEST}: unsafe required read in {group}: {relative}")
                 continue
             required = target.relative_to(root.resolve()).as_posix()
@@ -233,6 +251,8 @@ def _normalized_sentences(root: Path):
     for path in sorted((root / "skills").glob("tk-*/SKILL.md")):
         text = path.read_text(encoding="utf-8")
         text = re.sub(r"\A---\s*\n.*?\n---\s*\n", "", text, count=1, flags=re.DOTALL)
+        for block in SHARED_BOUNDARY_BLOCKS:
+            text = text.replace(block, " ")
         sync_names = "|".join(map(re.escape, SYNC_BLOCKS))
         text = re.sub(
             rf"<!-- tigerkit:(?!(?:{sync_names}) -->)[\w-]+ -->.*?(?=<!-- /?tigerkit:|\Z)",
@@ -286,7 +306,7 @@ def compare_token_budget(baseline_root: Path, candidate_root: Path) -> list[str]
         baseline_manifest = {}
     baseline_metrics, metric_errors = collect_metrics(
         baseline_root,
-        candidate_manifest,
+        baseline_manifest if baseline_has_manifest else candidate_manifest,
         allow_missing_always_read=True,
         use_before_paths=not baseline_has_manifest,
     )

@@ -1,0 +1,4 @@
+interface:
+  short_description: "[user/auto] 질문·승인 라운드와 시각적 질문 기준을 다른 스킬에서 참조할 때 사용합니다."
+policy:
+  allow_implicit_invocation: true

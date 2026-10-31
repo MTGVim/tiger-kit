@@ -1,0 +1,268 @@
+{
+  "packages": {
+    "tk-adhd": {
+      "requires": [
+        "tk-questioning"
+      ]
+    },
+    "tk-app-verify": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning",
+        "tk-ui-evidence",
+        "tk-verification-guidance"
+      ]
+    },
+    "tk-artifacts": {
+      "requires": [
+        "tk-questioning"
+      ]
+    },
+    "tk-ask-repo": {
+      "requires": [
+        "tk-questioning",
+        "tk-repository-guidance",
+        "tk-ui-evidence"
+      ]
+    },
+    "tk-audit": {
+      "requires": [
+        "tk-artifacts",
+        "tk-engineering",
+        "tk-questioning",
+        "tk-repository-guidance",
+        "tk-ui-evidence"
+      ]
+    },
+    "tk-blind-comparison": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning",
+        "tk-writing"
+      ]
+    },
+    "tk-browser-verify": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning",
+        "tk-ui-evidence",
+        "tk-verification-guidance",
+        "tk-writing"
+      ]
+    },
+    "tk-compound": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning"
+      ]
+    },
+    "tk-domain": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning"
+      ]
+    },
+    "tk-engineering": {
+      "requires": [
+        "tk-artifacts",
+        "tk-pr-guidance"
+      ]
+    },
+    "tk-explain": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning",
+        "tk-writing"
+      ]
+    },
+    "tk-grill": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning"
+      ]
+    },
+    "tk-grooming": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning"
+      ]
+    },
+    "tk-handoff": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning",
+        "tk-ui-evidence"
+      ]
+    },
+    "tk-inquiry": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning"
+      ]
+    },
+    "tk-merge-conflict": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning"
+      ]
+    },
+    "tk-pr-guidance": {
+      "requires": []
+    },
+    "tk-pr-media": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning"
+      ]
+    },
+    "tk-pr-open": {
+      "requires": [
+        "tk-artifacts",
+        "tk-pr-guidance",
+        "tk-questioning",
+        "tk-repository-guidance",
+        "tk-ui-evidence"
+      ]
+    },
+    "tk-pr-rebase": {
+      "requires": [
+        "tk-artifacts",
+        "tk-pr-guidance",
+        "tk-questioning"
+      ]
+    },
+    "tk-pr-respond": {
+      "requires": [
+        "tk-artifacts",
+        "tk-engineering",
+        "tk-pr-guidance",
+        "tk-questioning",
+        "tk-repository-guidance",
+        "tk-ui-evidence"
+      ]
+    },
+    "tk-pr-sweep": {
+      "requires": [
+        "tk-artifacts",
+        "tk-pr-guidance",
+        "tk-questioning",
+        "tk-ui-evidence"
+      ]
+    },
+    "tk-prep": {
+      "requires": [
+        "tk-artifacts",
+        "tk-engineering",
+        "tk-pr-guidance",
+        "tk-questioning",
+        "tk-repository-guidance",
+        "tk-ui-evidence",
+        "tk-writing"
+      ]
+    },
+    "tk-prototype": {
+      "requires": [
+        "tk-artifacts",
+        "tk-engineering",
+        "tk-questioning",
+        "tk-writing"
+      ]
+    },
+    "tk-qa-sheet": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning",
+        "tk-ui-evidence",
+        "tk-writing"
+      ]
+    },
+    "tk-questioning": {
+      "requires": []
+    },
+    "tk-repository-guidance": {
+      "requires": [
+        "tk-writing"
+      ]
+    },
+    "tk-research": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning",
+        "tk-repository-guidance",
+        "tk-writing"
+      ]
+    },
+    "tk-retro": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning"
+      ]
+    },
+    "tk-review": {
+      "requires": [
+        "tk-engineering",
+        "tk-questioning",
+        "tk-repository-guidance",
+        "tk-ui-evidence"
+      ]
+    },
+    "tk-rewrite": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning",
+        "tk-writing"
+      ]
+    },
+    "tk-roadmap": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning"
+      ]
+    },
+    "tk-setup-skills": {
+      "requires": []
+    },
+    "tk-skill-vet": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning"
+      ]
+    },
+    "tk-tts": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning"
+      ]
+    },
+    "tk-ui-evidence": {
+      "requires": []
+    },
+    "tk-verification-guidance": {
+      "requires": [
+        "tk-app-verify"
+      ]
+    },
+    "tk-video": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning",
+        "tk-writing"
+      ]
+    },
+    "tk-wizard": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning",
+        "tk-repository-guidance",
+        "tk-ui-evidence"
+      ]
+    },
+    "tk-writing": {
+      "requires": [
+        "tk-artifacts",
+        "tk-explain"
+      ]
+    }
+  },
+  "version": 1
+}

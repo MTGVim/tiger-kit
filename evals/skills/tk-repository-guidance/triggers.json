@@ -1,0 +1,162 @@
+{
+  "skill": "tk-repository-guidance",
+  "kind": "hybrid",
+  "queries": [
+    {
+      "id": "shared-train-positive",
+      "split": "train",
+      "query": "`tk-repository-guidance`를 명시적으로 호출합니다. 공통 참조 기준만 읽어 주세요.",
+      "should_trigger": true
+    },
+    {
+      "id": "shared-train-negative",
+      "split": "train",
+      "query": "오늘 점심 메뉴를 추천해 주세요.",
+      "should_trigger": false
+    },
+    {
+      "id": "shared-validation-positive-1",
+      "split": "validation",
+      "query": "`tk-repository-guidance`의 `domain-context.md` 기준만 읽고 호출한 스킬에 전달해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "shared-validation-positive-2",
+      "split": "validation",
+      "query": "`tk-repository-guidance`에서 `domain-context.md` 기준만 알려줘.",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "shared-validation-positive-3",
+      "split": "validation",
+      "query": "`tk-repository-guidance`의 `domain-context.md` 기준좀 읽어죠. 다른 작업은 하지마.",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "shared-validation-positive-4",
+      "split": "validation",
+      "query": "호출한 스킬이 `tk-repository-guidance`의 `domain-context.md` 기준을 요구합니다. 해당 참조만 로드해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "shared-validation-positive-5",
+      "split": "validation",
+      "query": "`tk-repository-guidance` 참조만.",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "shared-validation-positive-6",
+      "split": "validation",
+      "query": "`tk-repository-guidance`의 `domain-context.md` 기준을 읽고 현재 근거가 부족한 부분도 구분해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "shared-validation-positive-7",
+      "split": "validation",
+      "query": "`tk-repository-guidance` 기준을 호출한 담당자에게 반환하되 구현과 게시 권한은 넘기지 마세요.",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "shared-validation-positive-8",
+      "split": "validation",
+      "query": "`tk-repository-guidance`에서 필요한 기준 하나만 봐줘. 전체 워크플로는 시작하지 마.",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "shared-validation-negative-1",
+      "split": "validation",
+      "query": "제품 코드를 수정하고 테스트해 주세요.",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "shared-validation-negative-2",
+      "split": "validation",
+      "query": "이미 승인된 PR을 실제로 발행해줘.",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "shared-validation-negative-3",
+      "split": "validation",
+      "query": "이 버그 바로고처죠.",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "shared-validation-negative-4",
+      "split": "validation",
+      "query": "문서 기준 말고 `runtime` 오류를 재현해줘.",
+      "should_trigger": false,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "shared-validation-negative-5",
+      "split": "validation",
+      "query": "현재 시각은?",
+      "should_trigger": false,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "shared-validation-negative-6",
+      "split": "validation",
+      "query": "다른 담당자에게 보낼 질문 초안을 작성해줘.",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "shared-validation-negative-7",
+      "split": "validation",
+      "query": "기준을 읽지 말고 이 문서 전체를 재작성해줘.",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "shared-validation-negative-8",
+      "split": "validation",
+      "query": "음원 만들어줘.",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    }
+  ]
+}

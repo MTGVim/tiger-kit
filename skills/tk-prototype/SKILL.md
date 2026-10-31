@@ -12,6 +12,11 @@ metadata:
 
 # Comparison Prototype
 
+## Shared References
+
+Load the named skill and criteria. If missing, stop: use `tk-setup-skills`; no memory or unapproved installs. Reading grants no authority.
+
+
 <!-- tigerkit:approval-continuity -->
 ## Approval Continuity
 
@@ -62,7 +67,7 @@ Screenshot: <absolute path | N/A>; actual inspection: yes | no | N/A
    `Fail | Blocked | Unverifiable`, preserve owned failure artifacts and return the real status, but
    do not emit a `verification_status: Pass` publication manifest. If required image publication
    cannot be satisfied, report that publication requirement as blocked or unverifiable.
-6. When a comparison informs follow-up implementation, read [selected prototype handoff](references/selection-handoff.md) and return its selection record in the existing result.
+6. When a comparison informs follow-up implementation, read [selected prototype handoff](../tk-engineering/references/selection-handoff.md) and return its selection record in the existing result.
 7. `terminal summary`: Render the applicable sections under the output contract below;
    do not add a separate provenance/status block.
 
@@ -71,7 +76,7 @@ and a minimal adapter.
 
 For a web prototype, inspect the repository's run command, installed UI stack, components,
 and design tokens. Reuse a safe isolated route/harness without adding dependencies or
-changing manifest/lockfiles. For standalone HTML without repository/reference design tokens, read [HTML output](references/html-output.md)
+changing manifest/lockfiles. For standalone HTML without repository/reference design tokens, read [HTML output](../tk-writing/references/html-output.md)
 for the shared theme assets and readability/render requirements. Preserve comparison-specific design
 tokens and the prototype navigation exemption. If no safe route/harness exists, use a small
 `.tigerkit/prototypes/<slug>/index.html`, `styles.css`, and `app.js`.
@@ -143,7 +148,7 @@ that owns the rest.
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
+Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](../tk-artifacts/references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
 
 <!-- tigerkit:result-summary -->
 ## Reader-facing Result Summary
@@ -180,7 +185,7 @@ consumption; a prefilled template is not completed input. This grants no write a
 ## User Questions
 
 Investigate facts; reuse authorization. For user-owned decisions read
-[question rounds](references/questions.md); otherwise proceed.
+[question rounds](../tk-questioning/references/questions.md); otherwise proceed.
 Plain chat, even one approval: standalone `---`, then
 `❓ **Q<n> · <title>**: <question>` and `➡️ <recommendation>` per item.
 Ask only settled-prerequisite questions; separate approval.

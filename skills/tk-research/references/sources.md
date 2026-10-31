@@ -152,7 +152,7 @@ not current operating authority. Original license texts are in [upstream license
 
 ## Shared clear writing
 
-`references/clear-writing.md` is an exact package-local copy of the `tk-rewrite` canonical
+`../../tk-writing/references/clear-writing.md` is an exact package-local copy of the `tk-rewrite` canonical
 contract, with source lineage recorded in `tk-explain/references/sources.md`. Its original
 MIT notices are preserved in this package's `LICENSE.txt`; no separate writing invocation
 or output-state owner is introduced.

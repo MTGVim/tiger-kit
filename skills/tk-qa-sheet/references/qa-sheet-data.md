@@ -184,7 +184,7 @@ identity: the canonical shared theme control stores the raw `system | light | da
 under `tigerkit-html-theme`, independent of `storageKey`. This lets the reader's explicit
 browser preference carry to other TigerKit HTML outputs that share the same browser/localStorage
 origin. The generated default comes separately from the shared user `settings.json` contract in
-`html-output.md`; a stored reader preference overrides that default at runtime. Do not
+`../../tk-writing/references/html-output.md`; a stored reader preference overrides that default at runtime. Do not
 promise cross-file persistence for `file:` URLs or across browsers because storage scoping is
 browser-defined there. Missing, invalid or unreadable theme storage starts in `system`;
 changing theme can still update the current page if a write is refused, but a reload may
@@ -208,7 +208,7 @@ not presented as functional. Persistence remains a JavaScript-only capability, d
 the static view. Compare static coverage with the final JSON, not the bundled example.
 
 Use `tk-browser-verify` with the exact generated file, no auth/server, a disposable
-headless profile, and all mandatory [HTML output](html-output.md) render checks, plus any
+headless profile, and all mandatory [HTML output](../../tk-writing/references/html-output.md) render checks, plus any
 requested layout criteria. Every short sheet still needs desktop/mobile and light/dark coverage
 with numerical readability checks and inspected/missing-check reporting. Verify the visible
 segmented theme radios are ordered `system / light / dark`: `system` leaves `data-theme` unset and

@@ -3,7 +3,7 @@
 Read only when drafting an outbound question set for a real recipient/channel.
 Use current user-requested style first, then locally ignored
 `.tigerkit/repository.json` and tracked `tigerkit.config.json`. See
-`skills/tk-audit/references/repository-context.md` for shared precedence
+`skills/tk-repository-guidance/references/repository-context.md` for shared precedence
 and save authority when available; the rules below stand alone in an installed
 package.
 

@@ -5,6 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from installed_skill_fixture import add_package
 from question_policy import BLOCK, question_errors, question_template_errors, sync_questions
 
 
@@ -15,7 +16,7 @@ MULTIPLE = SINGLE.replace("\n```", "\n\n❓ **Q2 · Approval**: Approve?\n```")
 
 class QuestionTemplateTests(unittest.TestCase):
     def test_single_and_multiple_rounds_start_with_a_divider(self):
-        for text in (SINGLE, MULTIPLE, (ROOT / "skills/tk-grill/references/questions.md").read_text()):
+        for text in (SINGLE, MULTIPLE, (ROOT / "skills/tk-questioning/references/questions.md").read_text()):
             with self.subTest(text=text):
                 self.assertEqual(question_template_errors(text, "example"), [])
 
@@ -37,23 +38,24 @@ class QuestionTemplateTests(unittest.TestCase):
                         MULTIPLE.replace("❓ **Q2", "---\n\n❓ **Q2")):
             with self.subTest(invalid=invalid), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
-                source = root / "skills/tk-grill/references/questions.md"
+                source = root / "skills/tk-questioning/references/questions.md"
                 source.parent.mkdir(parents=True)
                 source.write_text(invalid, encoding="utf-8")
-                shutil.copyfile(ROOT / "skills/tk-grill/LICENSE.txt", source.parent.parent / "LICENSE.txt")
-                (source.parent.parent / "SKILL.md").write_text("# Grill\n", encoding="utf-8")
+                shutil.copyfile(ROOT / "skills/tk-questioning/LICENSE.txt", source.parent.parent / "LICENSE.txt")
+                add_package(root, "tk-questioning", role="reference")
                 sync_questions(root)
                 self.assertTrue(any("canonical question rounds" in error for error in question_errors(root)))
 
     def test_sync_updates_every_package_without_losing_surrounding_content(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            source = root / "skills/tk-grill/references/questions.md"
+            source = root / "skills/tk-questioning/references/questions.md"
             source.parent.mkdir(parents=True)
             source.write_text(MULTIPLE, encoding="utf-8")
-            shutil.copyfile(ROOT / "skills/tk-grill/LICENSE.txt", source.parent.parent / "LICENSE.txt")
+            shutil.copyfile(ROOT / "skills/tk-questioning/LICENSE.txt", source.parent.parent / "LICENSE.txt")
+            add_package(root, "tk-questioning", role="reference")
             for name in ("tk-grill", "tk-example"):
-                path = root / "skills" / name / "SKILL.md"
+                path = add_package(root, name, requires=("tk-questioning",))
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_text("# Existing owner\n\n" + BLOCK + "\n## Next guard\nKeep it.\n", encoding="utf-8")
             sync_questions(root)
@@ -65,7 +67,7 @@ class QuestionTemplateTests(unittest.TestCase):
                 path = root / "skills" / name / "SKILL.md"
                 self.assertTrue(path.read_text().startswith("# Existing owner\n\n"))
                 self.assertIn("## Next guard\nKeep it.", path.read_text())
-                self.assertEqual((path.parent / "references/questions.md").read_bytes(), source.read_bytes())
+                self.assertFalse((path.parent / "references/questions.md").exists())
 
 
 if __name__ == "__main__":

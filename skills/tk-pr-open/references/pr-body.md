@@ -22,7 +22,7 @@ inform tone and section use, not commit-by-commit structure. When updating an ex
 commits, re-derive the affected sections from the current `base...HEAD` instead of appending per-commit lines.
 
 Before finalizing a body whose architecture, flow, state transition, dependency or migration
-relationship is materially easier to review visually, read [GitHub-native PR visuals](github-visuals.md).
+relationship is materially easier to review visually, read [GitHub-native PR visuals](../../tk-pr-guidance/references/github-visuals.md).
 Use Mermaid selectively and evidence-first; prefer a table for exact numeric comparisons and keep
 material meaning available in prose.
 
@@ -33,7 +33,7 @@ Apply UI Evidence to PR bodies and QA steps. Before publication, reconcile each 
 Use an entry path only when every step is verified; breadcrumb-only evidence permits a hierarchy description, not click instructions. If a required QA step or publication evidence depends on an unresolved item, stop publication as `Blocked | Unverifiable` and return the concrete input request. Optional gaps may remain only as explicit limitations, without invented labels or executable path guidance.
 
 When a title or body summarizes or interprets repository behavior, requirements, ownership, impact, or domain meaning,
-lazy-load [domain context](domain-context.md) when repository-owned context exists. Read only the relevant
+lazy-load [domain context](../../tk-repository-guidance/references/domain-context.md) when repository-owned context exists. Read only the relevant
 mapped context, preserve canonical vocabulary, and never replace verified UI literals with glossary terms.
 
 For a stack, apply the same title/template rules to every layer. Each layer body must explain only that layer's review surface and, when useful, its dependency on the preceding layer rather than duplicating the full feature summary into every PR.

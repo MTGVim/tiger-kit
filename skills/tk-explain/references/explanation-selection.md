@@ -27,7 +27,7 @@ Do not dump internal renderer/schema names or ask which archify diagram grammar 
 | Correction and reference | 01 Five-Step Ladder; 06 Misconception Correction; 25 Cheat Sheet; 28 Failure Modes |
 | Scenes and visual treatments | 05 Scrollytelling; 11 Illustrated Intuition; 18 Animated Metaphor; P1 Layout/style separation; P2 Design philosophy and restrained hierarchy; P3 Central scene; P4 Independent hand-drawn SVG |
 
-Keep all original [30 entries](explanation-techniques.md) addressable. The six entries below
+Keep all original [30 entries](../../tk-writing/references/explanation-techniques.md) addressable. The six entries below
 belong to another axis; show this compact relocation list with the catalog so none disappears:
 13 Sequence Diagram and 14 Waterfall Timeline are diagram details, chosen from the content;
 17 Infographic Poster, 27 Terminal Replay, 29 Slide Deck and 30 Social Thread are formats.

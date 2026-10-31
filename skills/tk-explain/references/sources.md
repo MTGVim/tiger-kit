@@ -54,7 +54,7 @@ Sources inform behavior; their runtime and stylistic instructions are not depend
   (figure selection), `references/motion.md` (Live figure), and `eval/` methodology,
   prompts and judge. Keep parameter-driven consequences; adapt selection examples
   to the existing static/step-through boundary. Shared calculation, small controls,
-  assumptions and static fallback already belong to `html-output.md` and existing
+  assumptions and static fallback already belong to `../../tk-writing/references/html-output.md` and existing
   evals; do not duplicate them. Omit kit, renderer, templates and figure-first
   defaults. No live-figure-specific upstream behavior eval or efficacy result was
   found; upstream runtime efficacy was not reproduced. Existing MIT notice applies.
@@ -225,7 +225,7 @@ Use the external `tt-a1i/archify` 3.2.0 explainer contract verified at
 `d6059331abbddb49bca380ff46dca8ce33158b04`; do not vendor its runtime. Keep conclusion-first
 layout, native diagrams, contained images and finalize gates; adapt evidence/review scope
 and scene PNG conversion; omit automatic updates and a separate Korean rewrite stage.
-See [renderer contract](renderer-contract.md) for compatibility and known limitations.
+See [renderer contract](../../tk-writing/references/renderer-contract.md) for compatibility and known limitations.
 Retained [change provenance](change-provenance.md) and [teaching provenance](teaching-provenance.md)
 record earlier design sources; they are provenance, not current runtime instructions.
 

@@ -21,7 +21,7 @@ logic, type or conflict. Keep long evidence below the table instead of inside ce
 For every code-changing route, keep the semantic Review Plan from the code-change reference in the approved current
 interaction even when no Seed is needed. Do not expose reviewer/model/worker routing as part of the user plan.
 
-For a code-changing plan, inspect the actual repository test surface and use [behavior-first testing](testing.md)
+For a code-changing plan, inspect the actual repository test surface and use [behavior-first testing](../../tk-engineering/references/testing.md)
 to resolve RED feasibility or pre-edit GREEN for behavior-preserving refactoring, the focused command, required suite,
 realistic mutation, and any `N/A` or engineering exception.
 Explain the practical route among reply-only, direct+TDD, and SDD+TDD without exposing an internal classification form.
@@ -29,7 +29,7 @@ Once a code-changing route is selected, read [code-change execution](code-change
 use its workspace and Seed sections for the plan, but perform no mutation until approval.
 
 Send feedback/CI failures with an obvious cause and exact regression seam directly through the existing testing path.
-Lazy-load [shared diagnosis](diagnosis.md) only for unknown-cause, intermittent/flaky, performance, or
+Lazy-load [shared diagnosis](../../tk-engineering/references/diagnosis.md) only for unknown-cause, intermittent/flaky, performance, or
 difficult-to-reproduce hard CI/regression cases, and establish a red-capable feedback loop before a fix hypothesis.
 Do not lock the first guess into a change without evidence that such a loop cannot be established.
 

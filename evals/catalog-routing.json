@@ -1179,6 +1179,78 @@
       "focus_skill": "tk-skill-vet",
       "expected_selected_skill": "tk-grooming",
       "critical": true
+    },
+    {
+      "id": "shared-reference-tk-artifacts",
+      "boundary": "공통 기준 참조와 실제 업무 실행 또는 설치 실행의 권한을 구분합니다.",
+      "prompt": "`tk-artifacts`의 `artifact-paths.md` 기준만 읽고 호출한 스킬에 전달해 주세요.",
+      "focus_skill": "tk-artifacts",
+      "expected_selected_skill": "tk-artifacts",
+      "critical": true
+    },
+    {
+      "id": "shared-reference-tk-engineering",
+      "boundary": "공통 기준 참조와 실제 업무 실행 또는 설치 실행의 권한을 구분합니다.",
+      "prompt": "`tk-engineering`의 `security-boundaries.md` 기준만 읽고 호출한 스킬에 전달해 주세요.",
+      "focus_skill": "tk-engineering",
+      "expected_selected_skill": "tk-engineering",
+      "critical": true
+    },
+    {
+      "id": "shared-reference-tk-pr-guidance",
+      "boundary": "공통 기준 참조와 실제 업무 실행 또는 설치 실행의 권한을 구분합니다.",
+      "prompt": "`tk-pr-guidance`의 `github-visuals.md` 기준만 읽고 호출한 스킬에 전달해 주세요.",
+      "focus_skill": "tk-pr-guidance",
+      "expected_selected_skill": "tk-pr-guidance",
+      "critical": true
+    },
+    {
+      "id": "shared-reference-tk-questioning",
+      "boundary": "공통 기준 참조와 실제 업무 실행 또는 설치 실행의 권한을 구분합니다.",
+      "prompt": "`tk-questioning`의 `questions.md` 기준만 읽고 호출한 스킬에 전달해 주세요.",
+      "focus_skill": "tk-questioning",
+      "expected_selected_skill": "tk-questioning",
+      "critical": true
+    },
+    {
+      "id": "shared-reference-tk-repository-guidance",
+      "boundary": "공통 기준 참조와 실제 업무 실행 또는 설치 실행의 권한을 구분합니다.",
+      "prompt": "`tk-repository-guidance`의 `domain-context.md` 기준만 읽고 호출한 스킬에 전달해 주세요.",
+      "focus_skill": "tk-repository-guidance",
+      "expected_selected_skill": "tk-repository-guidance",
+      "critical": true
+    },
+    {
+      "id": "shared-reference-tk-ui-evidence",
+      "boundary": "공통 기준 참조와 실제 업무 실행 또는 설치 실행의 권한을 구분합니다.",
+      "prompt": "`tk-ui-evidence`의 `ui-evidence.md` 기준만 읽고 호출한 스킬에 전달해 주세요.",
+      "focus_skill": "tk-ui-evidence",
+      "expected_selected_skill": "tk-ui-evidence",
+      "critical": true
+    },
+    {
+      "id": "shared-reference-tk-verification-guidance",
+      "boundary": "공통 기준 참조와 실제 업무 실행 또는 설치 실행의 권한을 구분합니다.",
+      "prompt": "`tk-verification-guidance`의 `provider-knowledge.md` 기준만 읽고 호출한 스킬에 전달해 주세요.",
+      "focus_skill": "tk-verification-guidance",
+      "expected_selected_skill": "tk-verification-guidance",
+      "critical": true
+    },
+    {
+      "id": "shared-reference-tk-writing",
+      "boundary": "공통 기준 참조와 실제 업무 실행 또는 설치 실행의 권한을 구분합니다.",
+      "prompt": "`tk-writing`의 `media-preferences.md` 기준만 읽고 호출한 스킬에 전달해 주세요.",
+      "focus_skill": "tk-writing",
+      "expected_selected_skill": "tk-writing",
+      "critical": true
+    },
+    {
+      "id": "shared-reference-tk-setup-skills",
+      "boundary": "공통 기준 참조와 실제 업무 실행 또는 설치 실행의 권한을 구분합니다.",
+      "prompt": "`tk-setup-skills`로 필요한 스킬과 공통 의존성의 설치 계획을 만들어 주세요.",
+      "focus_skill": "tk-setup-skills",
+      "expected_selected_skill": "tk-setup-skills",
+      "critical": true
     }
   ]
 }

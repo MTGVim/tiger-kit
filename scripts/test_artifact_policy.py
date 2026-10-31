@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import subprocess
 import tempfile
 import unittest
@@ -13,7 +14,11 @@ class ArtifactPolicyTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
-        self.root = Path(self.temp.name) / 'repo'
+        self.root = Path(self.temp.name).resolve() / 'repo'
+        self.env = patch.dict(os.environ, {'GIT_CONFIG_GLOBAL': os.devnull,
+            'GIT_CONFIG_NOSYSTEM': '1', 'XDG_CONFIG_HOME': str(self.root.parent / 'config')})
+        self.env.start()
+        self.addCleanup(self.env.stop)
         self.root.mkdir()
         self.git('init', '-q')
         (self.root / '.gitignore').write_text('.tigerkit/\n')
@@ -22,7 +27,7 @@ class ArtifactPolicyTests(unittest.TestCase):
         return subprocess.run(['git', *args], cwd=self.root, check=True, capture_output=True)
 
     def test_no_repository_preserves_files_until_explicit_setup_then_resumes(self):
-        folder = Path(self.temp.name) / 'lesson-folder'
+        folder = Path(self.temp.name).resolve() / 'lesson-folder'
         folder.mkdir()
         original = folder / 'existing.txt'
         original.write_bytes(b'preserve\r\n')
@@ -52,7 +57,7 @@ class ArtifactPolicyTests(unittest.TestCase):
     def test_default_evidence_and_explicit_final_destination(self):
         default = policy.output_directory(None, 'release-checklist', self.root)
         self.assertTrue(default.is_relative_to(self.root / '.tigerkit/evidence/release-checklist'))
-        external = Path(self.temp.name) / 'chosen-final'
+        external = Path(self.temp.name).resolve() / 'chosen-final'
         self.assertEqual(policy.output_directory(str(external), 'release-checklist', self.root), external)
         local = self.root / '.tigerkit/evidence/chosen'
         self.assertEqual(policy.output_directory(str(local), 'release-checklist', self.root), local)
@@ -185,6 +190,8 @@ class ArtifactPolicyTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             policy.output_directory(str(self.root / 'docs'), 'release-checklist', self.root)
 
+from installed_skill_fixture import add_package, add_shared_artifacts
+
 class InstalledArtifactGuardTests(unittest.TestCase):
     def test_shared_reference_keeps_shell_at_repository_root_during_cleanup(self):
         text = policy.ARTIFACT_REFERENCE
@@ -199,26 +206,27 @@ class InstalledArtifactGuardTests(unittest.TestCase):
             for name in ('tk-research', 'tk-adhd', 'tk-retro'):
                 path = root / 'skills' / name / 'SKILL.md'
                 path.parent.mkdir(parents=True)
-                path.write_text('---\nname: ' + name + '\n---\n')
+                add_package(root, name, requires=('tk-artifacts',) if name != 'tk-adhd' else ())
+            add_shared_artifacts(root)
             policy.sync_artifact_guards(root)
             self.assertEqual(policy.validate_artifact_guards(root), [])
-            reference = root / 'skills/tk-research/references/artifact-paths.md'
+            reference = root / 'skills/tk-artifacts/references/artifact-paths.md'
             original = reference.read_text()
             reference.unlink()
             self.assertTrue(policy.validate_artifact_guards(root))
             reference.write_text(original.replace('Only exit 1', 'Any exit'))
             self.assertTrue(policy.validate_artifact_guards(root))
             reference.write_text(original)
-            authentication = root / 'skills/tk-research/references/authentication.md'
+            authentication = root / 'skills/tk-artifacts/references/authentication.md'
             self.assertTrue(authentication.is_file())
             auth_original = authentication.read_text()
             authentication.unlink()
             self.assertTrue(policy.validate_artifact_guards(root))
             authentication.write_text(auth_original)
             self.assertEqual(policy.validate_artifact_guards(root), [])
-            retro_reference = root / 'skills/tk-retro/references/artifact-paths.md'
-            retro_reference.write_text((policy.ARTIFACT_REFERENCE + policy.USER_INPUT_REFERENCE).replace('Only exit 1', 'Any exit'))
-            self.assertTrue(policy.validate_artifact_guards(root))
+            declaration = root / 'skills/tk-retro/dependencies.json'
+            declaration.write_text('{"version":1,"requires":[]}')
+            self.assertTrue(any('tk-retro' in error for error in policy.validate_artifact_guards(root)))
 
     def test_no_artifact_skill_cannot_gain_writer_guard(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -227,6 +235,7 @@ class InstalledArtifactGuardTests(unittest.TestCase):
             path.parent.mkdir(parents=True)
             path.write_text(policy.ARTIFACT_BLOCK)
             self.assertTrue(policy.validate_artifact_guards(root))
+            add_shared_artifacts(root)
             policy.sync_artifact_guards(root)
             self.assertEqual(policy.validate_artifact_guards(root), [])
             self.assertFalse((path.parent / 'references/artifact-paths.md').exists())

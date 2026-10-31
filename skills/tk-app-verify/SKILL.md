@@ -11,12 +11,17 @@ metadata:
 
 # Desktop App Verification
 
+## Shared References
+
+Load the named skill and criteria. If missing, stop: use `tk-setup-skills`; no memory or unapproved installs. Reading grants no authority.
+
+
 <!-- tigerkit:ui-evidence -->
 ## UI Evidence
 
 Quote existing UI labels verbatim, including language, case, punctuation and spacing. Navigation instructions need evidence for every menu/breadcrumb label and connection; a title, route, identifier, enum, schema, glossary or ticket wording alone does not prove the entry path. Keep proposed copy separate. Bind claims to target/environment/locale/role and actual rendering evidence; preserve conflicting or missing provenance rather than guessing.
 
-Before collecting or verifying UI labels/paths within this skill's investigation authority, read [UI evidence collection](references/ui-evidence.md). Skip collection guidance for non-UI work and propagation-only tasks. A handoff or publication-only phase carries supplied evidence and pending requests without starting a new investigation.
+Before collecting or verifying UI labels/paths within this skill's investigation authority, read [UI evidence collection](../tk-ui-evidence/references/ui-evidence.md). Skip collection guidance for non-UI work and propagation-only tasks. A handoff or publication-only phase carries supplied evidence and pending requests without starting a new investigation.
 
 In reports and publication preparation, preserve exact verified literals and explicitly list required unverified labels/connections, available evidence, the concrete limitation and smallest missing input. User-supplied text is user-provided, not independently observed; it resolves only the supported claim. Never turn an unverified path into navigation instructions or hide uncertainty in PR/QA/handoff output.
 
@@ -39,9 +44,9 @@ native dialog, focus or accessibility criteria belong here.
 
 ## Preparation and authority
 
-Read [provider selection](references/provider-selection.md) and
-[shared verification](references/verification.md) before discovery or interaction. Read only the
-selected provider's [integration knowledge](references/provider-knowledge.md) and canonical URL
+Read [provider selection](../tk-verification-guidance/references/provider-selection.md) and
+[shared verification](../tk-verification-guidance/references/verification.md) before discovery or interaction. Read only the
+selected provider's [integration knowledge](../tk-verification-guidance/references/provider-knowledge.md) and canonical URL
 from [the registry](references/providers.json); inspect current host/tool/version/OS/permissions.
 Use an explicit parent/session/saved selection. With no choice, show detected capabilities,
 limitations and interruption effects together, then ask the final question frontier before acting.
@@ -66,7 +71,7 @@ approved secret channel or return `Unverifiable` for a required unavailable auth
    and focus must remain unchanged. Before launch, inspect all applicable routes in the selected
    provider's exposed schemas, version-matched docs and bundled skill pack, not just the repository
    command. Background input support does not prove background launch; a self-activating dev
-   command is not an acceptable default. Apply the selected [provider knowledge](references/provider-knowledge.md)
+   command is not an acceptable default. Apply the selected [provider knowledge](../tk-verification-guidance/references/provider-knowledge.md)
    launch branch; a run-owned bundle wrapper for an already compiled executable is allowed only
    when it preserves candidate/runtime identity, dependencies and the provider's supported route.
    Do not rebuild merely to obtain a bundle. If no non-activating route can be established, do not
@@ -82,7 +87,7 @@ approved secret channel or return `Unverifiable` for a required unavailable auth
    be established safely, report the limitation instead of claiming visual preservation. Read
    [native evidence](references/app-evidence.md) before capture; return baseline phase evidence
    and resume the approved parent implementation.
-4. **Interaction**: Before acting, apply the [shared-state safety contract](references/verification.md#user-shared-state): list user shared-state writes, choose side-effect-free diagnostic controls, and bind necessary clipboard/file/notification actions to exact authority and verified preservation/restoration. A prefix clipboard read is not a backup; preserve the full contents/type coverage before a necessary write and report verified restoration afterward.
+4. **Interaction**: Before acting, apply the [shared-state safety contract](../tk-verification-guidance/references/verification.md#user-shared-state): list user shared-state writes, choose side-effect-free diagnostic controls, and bind necessary clipboard/file/notification actions to exact authority and verified preservation/restoration. A prefix clipboard read is not a backup; preserve the full contents/type coverage before a necessary write and report verified restoration afterward.
    Use fresh accessibility tokens/indices from this exact app/window snapshot.
    Refresh after navigation, resize, focus, scroll or rerender. Prefer semantic press/set-value;
    coordinates require the same window's current screenshot, capture origin, dimensions and scale.
@@ -108,13 +113,13 @@ never convert partial runtime evidence into `Pass`.
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
+Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](../tk-artifacts/references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
 
 <!-- tigerkit:questions -->
 ## User Questions
 
 Investigate facts; reuse authorization. For user-owned decisions read
-[question rounds](references/questions.md); otherwise proceed.
+[question rounds](../tk-questioning/references/questions.md); otherwise proceed.
 Plain chat, even one approval: standalone `---`, then
 `❓ **Q<n> · <title>**: <question>` and `➡️ <recommendation>` per item.
 Ask only settled-prerequisite questions; separate approval.

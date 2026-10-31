@@ -2,7 +2,7 @@
 
 현재 설명·후속 수업 담당자는 `tk-explain`입니다. 아래는 결정 당시의 기록이며 폐기된 스킬의 현재 설치 안내가 아닙니다.
 
-상태: 확정 · 2026-10-26
+상태: 공통 Markdown 문서는 [ADR 0004](0004-shared-reference-skills.md)로 대체됨. 정적 자산·실행 도우미·라이선스 사본은 별도 유지합니다. 원 결정 확정일: 2026-10-26.
 
 ## 상황
 
@@ -30,4 +30,4 @@ TigerKit의 `skills/tk-*`는 각각 독립적으로 설치·실행할 수 있어
 
 별도 설치 산출물 생성 과정을 도입한다면 macOS, Linux, Windows(특히 `core.symlinks=false`), 스킬 선택 설치, ZIP 등 실제 지원 설치 경로에서 패키지가 **실제 파일만으로 자체 완결**되는지 증명해야 합니다. 상대 링크, 실행 도우미의 `__file__` 경로, 라이선스 고지, 오프라인 HTML 자산과 기존 검사 통과까지 확인한 후 이 결정을 새 ADR로 대체합니다. 현재는 해당 배포 체계를 도입하지 않습니다.
 
-근거: [현재 동기화 계약](../../scripts/sync_execution_protocol.py), [스킬 유효성 검증](../../scripts/validate_skills.py), [릴리즈 설치 검사](../../scripts/run_release_checklist.py), [Diátaxis 정본](../../skills/tk-explain/references/diataxis.md), [중복 조사 이슈 #468](https://github.com/MTGVim/tiger-kit/issues/468).
+근거: [현재 동기화 계약](../../scripts/sync_execution_protocol.py), [스킬 유효성 검증](../../scripts/validate_skills.py), [릴리즈 설치 검사](../../scripts/run_release_checklist.py), [현재 Diátaxis 정본](../../skills/tk-writing/references/diataxis.md), [중복 조사 이슈 #468](https://github.com/MTGVim/tiger-kit/issues/468).

@@ -5,7 +5,7 @@ Read before storing runtime evidence or returning an executed verification phase
 Before the first write under `.tigerkit/evidence/`, verify that
 `git ls-files -- .tigerkit/` returns no tracked path and
 `git check-ignore -q -- .tigerkit/` succeeds. Record only the matching source class and
-pattern from `git check-ignore -v`, redacting an absolute user-level path. Apply [artifact paths](artifact-paths.md)
+pattern from `git check-ignore -v`, redacting an absolute user-level path. Apply [artifact paths](../../tk-artifacts/references/artifact-paths.md)
 ignore setup when coverage is missing. If checks still fail, do not write or use an external
 fallback; return `Unverifiable`.
 
@@ -94,7 +94,7 @@ criterion is covered. An after result binds the same `run_id`, `baseline_provena
 baseline-only result cannot satisfy final acceptance or authorize product edits, commits, or publication by itself.
 
 When an inspected image is required for PR publication and its represented criterion is `Pass`, return the
-producer-neutral manifest from [publication evidence](publication-evidence.md); do not upload it. Direct
+producer-neutral manifest from [publication evidence](../../tk-verification-guidance/references/publication-evidence.md); do not upload it. Direct
 trace, accessibility-tree, DOM/runtime, and request/response evidence remains in the ordinary verifier result and does
 not trigger the image uploader. If a parent specifically requires an image that cannot directly prove the criterion, do
 not create a ceremonial screenshot; return the image-publication requirement as `Blocked | Unverifiable`. For any

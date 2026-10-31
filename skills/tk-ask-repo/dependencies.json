@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "requires": [
+    "tk-questioning",
+    "tk-repository-guidance",
+    "tk-ui-evidence"
+  ]
+}

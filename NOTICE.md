@@ -302,7 +302,7 @@ TigerKit 평가는 배경 누락, 전체 문서의 조건 보존, 결정 권한,
 
 2026-10-07에 다음 고정 원본의 구현과 관련 설계·평가 기준을 확인했습니다.
 
-- `cathrynlavery/diagram-design@d1376371965f513d99cc9ec388835d255c5c88d5`: 독자의 질문에 맞는 표현 선택, 선·라벨 검증과 전후 대응을 증류했습니다. `tk-explain` 정본을 네 소비 패키지에 동기화하며 원본 MIT 고지를 각각 포함합니다. 세부 `keep | adapt | omit` 판단은 [공통 참조](skills/tk-explain/references/visual-grammar.md#distillation-provenance)에 있습니다.
+- `cathrynlavery/diagram-design@d1376371965f513d99cc9ec388835d255c5c88d5`: 독자의 질문에 맞는 표현 선택, 선·라벨 검증과 전후 대응을 증류했습니다. 당시 `tk-explain` 정본을 소비 패키지에 동기화했습니다. 현재는 `tk-writing`에 공통 참조를 두며 원본 MIT 고지를 보존합니다. 세부 `keep | adapt | omit` 판단은 [공통 참조](skills/tk-writing/references/visual-grammar.md#distillation-provenance)에 있습니다.
 - `ayghri/i-have-adhd@723af7d9afaf43eb871dbcce6129e2bf80de90d5`: 본문·`README.md`·`evals/rubric.md`·라이선스를 읽었습니다. 출력 구조를 정리하는 `tk-adhd`의 역할을 복구하고 현황 확인 절차와 기존 회귀 평가는 `tk-handoff`로 옮깁니다. [출처 기록](skills/tk-adhd/references/distillation.md)이 이전의 현황 전용 해석을 대체합니다. 두 패키지에 원본 MIT 고지를 보존합니다.
 - `mattpocock/skills@6fd947921b935b7e1e69293a200400f0fdd5c15f`: `teach` 본문의 수업과 참조 자료 구분을 읽고, 반복 조회 가치가 있는 배운 내용만 기존 과정 안에 선택적으로 제공합니다. [출처 기록](https://github.com/MTGVim/tiger-kit/blob/cc53e4a490fc849af1785cb706b113293762ef4e/skills/tk-teach/references/distillation.md#optional-revisit-reference-artifacts-425)에 판단을 기록했습니다.
 

@@ -36,7 +36,7 @@ verifier capability gaps; do not silently reduce the inventory.
 ## Test-data authority
 
 When an affected row requires creating, updating, or deleting test data, first read the structured
-user-managed `verificationDataPolicy` in [repository context](repository-context.md).
+user-managed `verificationDataPolicy` in [repository context](../../tk-repository-guidance/references/repository-context.md).
 Validate its schema and the exact known non-production environment and operation. If they match,
 plan the saved-result row as `execute`, cite `policy-file authority`, and do not ask for that
 permission again. For any absent, invalid, uncovered, or ambiguous scope, include in the first answerable
@@ -94,7 +94,7 @@ Accepting media in that summary, a direct request or approved `evidenceMedia` op
 selection grants installation or publication authority. Preserve timing assertions and screenshot
 pairs. Narration is optional; its absence cannot block prep or verification.
 
-Before that media choice, read [media choices](media-preferences.md) for the complete optional
+Before that media choice, read [media choices](../../tk-writing/references/media-preferences.md) for the complete optional
 `evidenceMedia` schema, per-field precedence, safe defaults and malformed-object handling.
 Resolve missing narration and presentation fields plus `이 선택을 기본값으로 저장할까요?` in
 that same ordinary-chat round; reuse answered/saved values. Pass values, their sources and the

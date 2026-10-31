@@ -1,7 +1,7 @@
 # Human research report
 
-Before drafting, read [clear writing](clear-writing.md), [documentation purpose](diataxis.md)
-and [renderer contract](renderer-contract.md). The report informs a concrete decision, not
+Before drafting, read [clear writing](../../tk-writing/references/clear-writing.md), [documentation purpose](../../tk-writing/references/diataxis.md)
+and [renderer contract](../../tk-writing/references/renderer-contract.md). The report informs a concrete decision, not
 an obligatory tutorial. Use archify for every new or materially updated report, including
 supported native interactions. Do not use `render_report.py`, `build_html.py` or the legacy
 `assets/report.html`; shared specialized UI assets do not select a research renderer.
@@ -34,8 +34,8 @@ report content. Preserve negative results and contradictions.
 
 Use native diagrams and `@steps` when relationships or event order explain the conclusion;
 use comparisons for alternatives. For requested live behavior, read
-[interactive examples](interactive-examples.md) and verify actual archify support. For a
-spatial figure that native diagrams cannot express, read [scene figures](scene-figures.md)
+[interactive examples](../../tk-writing/references/interactive-examples.md) and verify actual archify support. For a
+spatial figure that native diagrams cannot express, read [scene figures](../../tk-writing/references/scene-figures.md)
 and embed its converted PNG with `@image`, alt text and a caption. Do not turn native
 interactive diagrams into pictures or use image generation to invent measured evidence.
 

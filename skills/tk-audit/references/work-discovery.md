@@ -1,6 +1,6 @@
 # Repository work discovery
 
-Use this only for `next`. First read [repository context](repository-context.md) when configuration,
+Use this only for `next`. First read [repository context](../../tk-repository-guidance/references/repository-context.md) when configuration,
 a work source, or unresolved tracker-backed deduplication changes the actual
 requested result. Missing material tracker decisions call for scoped
 onboarding after facts are checked; do not default to a presumed team source. Default to technical improvement: reproduced

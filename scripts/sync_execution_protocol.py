@@ -21,51 +21,17 @@ try:
 except ImportError:
     from narration_policy import errors as narration_errors, sync as sync_narration
 
-ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "skills/tk-prep/references"
-TARGET = ROOT / "skills/tk-pr-respond/references"
-FILES = ("testing.md", "sdd.md", "sdd-interaction.md", "sdd-recovery.md", "sdd-transport.md", "diagnosis.md", "test-doubles.md", "multi-pr-delivery.md")
-REVIEW_SOURCE = ROOT / "skills/tk-review/references"
-REVIEW_TARGETS = (
-    ROOT / "skills/tk-prep/references",
-    ROOT / "skills/tk-pr-respond/references",
-)
-REVIEW_FILES = (
-    "project-rules.md",
-    "review-protocol.md",
-    "finding-quality.md",
-    "typescript.md",
-    "react.md",
-    "security.md",
-)
-EXTERNAL_CONTRACT_SOURCE = ROOT / "skills/tk-prep/references/external-contracts.md"
-EXTERNAL_CONTRACT_TARGET = ROOT / "skills/tk-wizard/references/external-contracts.md"
-CLEAR_WRITING_SOURCE = ROOT / "skills/tk-rewrite/references/clear-writing.md"
-CLEAR_WRITING_TARGET = ROOT / "skills/tk-explain/references/clear-writing.md"
-PR_VISUAL_SOURCE = ROOT / "skills/tk-pr-open/references/github-visuals.md"
-PR_VISUAL_TARGETS = (
-    ROOT / "skills/tk-pr-respond/references/github-visuals.md",
-    ROOT / "skills/tk-pr-sweep/references/github-visuals.md",
-)
-REBASE_READINESS_SOURCE = ROOT / "skills/tk-pr-rebase/references/rebase-readiness.md"
-REBASE_READINESS_TARGETS = (
-    ROOT / "skills/tk-pr-respond/references/rebase-readiness.md",
-    ROOT / "skills/tk-pr-sweep/references/rebase-readiness.md",
-)
-DOMAIN_CONTEXT_TARGETS = (
-    ROOT / "skills/tk-ask-repo/references/domain-context.md",
-    ROOT / "skills/tk-audit/references/domain-context.md",
-    ROOT / "skills/tk-pr-open/references/domain-context.md",
-    ROOT / "skills/tk-pr-respond/references/domain-context.md",
-    ROOT / "skills/tk-review/references/domain-context.md",
-)
+try:
+    from .shared_references import reference_only, validate_shared_references
+except ImportError:
+    from shared_references import reference_only, validate_shared_references
 
+ROOT = Path(__file__).resolve().parents[1]
 HTML_CONSUMERS = ("tk-explain", "tk-research", "tk-qa-sheet", "tk-prototype", "tk-blind-comparison")
 # Legacy shared assets remain package-local for specialized UIs and regression coverage;
 # current explanation/research pages use the external renderer contract below.
 ARCHIFY_CONSUMERS = ("tk-explain", "tk-research")
-ARCHIFY_FILES = ("references/renderer-contract.md", "references/interactive-examples.md",
-                 "references/scene-figures.md", "scripts/svg_to_png.mjs", "scripts/chrome_capture.mjs")
+ARCHIFY_FILES = ("scripts/svg_to_png.mjs", "scripts/chrome_capture.mjs")
 DURABLE_CONSUMERS = ("tk-explain",)
 QUESTION_HTML_CONSUMERS = ("tk-prep", "tk-grill", "tk-roadmap")
 HTML_THEME_CONSUMERS = HTML_CONSUMERS + QUESTION_HTML_CONSUMERS
@@ -73,9 +39,9 @@ VISUAL_CONSUMERS = ("tk-explain", "tk-research")
 DOCUMENT_PURPOSE_CONSUMERS = ("tk-explain", "tk-research")
 CONTENT_REVIEW_CONSUMERS = ("tk-explain",)
 HTML_ASSETS = ("html-theme.css", "html-theme.js")
-CHART_FILES = ("references/chart-design.md", "assets/chart-examples.html", "references/html-figures.md")
-ASSEMBLY_FILES = ("scripts/build_html.py", "assets/document-shell.html", "assets/reader-example.html", "references/html-assembly.md")
-READER_FILES = ("references/reader-formatting.md", "references/html-components.md", "references/html-reader.md")
+CHART_FILES = ("assets/chart-examples.html",)
+ASSEMBLY_FILES = ("scripts/build_html.py", "assets/document-shell.html", "assets/reader-example.html")
+READER_FILES = ()
 HTML_TEMPLATES = ("skills/tk-research/assets/report.html", "skills/tk-qa-sheet/assets/qa-sheet-template.html")
 FEEDBACK_MARKER = "<!-- tigerkit:skill-feedback -->"
 FEEDBACK_END = "<!-- /tigerkit:skill-feedback -->"
@@ -92,13 +58,16 @@ authorization through the owning workflow; this pointer grants none.
 def feedback_errors(root: Path) -> list[str]:
     return [f"{path.relative_to(root)}: skill feedback guard must match exactly once"
             for path in sorted((root / "skills").glob("tk-*/SKILL.md"))
-            if path.read_text(encoding="utf-8").count(FEEDBACK_MARKER) != 1
-            or path.read_text(encoding="utf-8").count(FEEDBACK_END) != 1
-            or path.read_text(encoding="utf-8").count(FEEDBACK_BLOCK) != 1]
+            if not reference_only(path) and (
+                path.read_text(encoding="utf-8").count(FEEDBACK_MARKER) != 1
+                or path.read_text(encoding="utf-8").count(FEEDBACK_END) != 1
+                or path.read_text(encoding="utf-8").count(FEEDBACK_BLOCK) != 1)]
 
 
 def sync_feedback(root: Path) -> None:
     for path in sorted((root / "skills").glob("tk-*/SKILL.md")):
+        if reference_only(path):
+            continue
         text = path.read_text(encoding="utf-8")
         if FEEDBACK_MARKER in text:
             if text.count(FEEDBACK_MARKER) != 1 or text.count(FEEDBACK_END) != 1:
@@ -174,30 +143,12 @@ def html_policy_errors(root: Path) -> list[str]:
         target = root / "skills" / name / "references/content-review.md"
         if not canonical.is_file() or not target.is_file() or target.read_bytes() != canonical.read_bytes():
             errors.append(f"{target.relative_to(root)}: shared content review drift")
-    for name in DOCUMENT_PURPOSE_CONSUMERS:
-        canonical = source / "references/diataxis.md"
-        target = root / "skills" / name / "references/diataxis.md"
-        if not canonical.is_file() or not target.is_file() or target.read_bytes() != canonical.read_bytes():
-            errors.append(f"{target.relative_to(root)}: shared Diataxis guidance drift")
-    for name in VISUAL_CONSUMERS:
-        canonical = source / "references/visual-grammar.md"
-        target = root / "skills" / name / "references/visual-grammar.md"
-        if not canonical.is_file() or not target.is_file() or target.read_bytes() != canonical.read_bytes():
-            errors.append(f"{target.relative_to(root)}: shared visual grammar drift")
     for name in HTML_CONSUMERS:
-        for relative in ("references/html-output.md", "scripts/package_html.py", "scripts/highlight_code.py", *CHART_FILES, *ASSEMBLY_FILES, *READER_FILES):
+        for relative in ("scripts/package_html.py", "scripts/highlight_code.py", *CHART_FILES, *ASSEMBLY_FILES):
             canonical = source / relative
             target = root / "skills" / name / relative
             if not canonical.is_file() or not target.is_file() or target.read_bytes() != canonical.read_bytes():
-                errors.append(f"{target.relative_to(root)}: shared HTML contract/asset drift")
-        for relative in ("references/explanation-techniques.md", "references/html-render.md"):
-            canonical = source / relative
-            target = root / "skills" / name / relative
-            if not canonical.is_file() or not target.is_file() or target.read_bytes() != canonical.read_bytes():
-                errors.append(f"{target.relative_to(root)}: shared explanation routing drift")
-        clear_target = root / "skills" / name / "references/clear-writing.md"
-        if not CLEAR_WRITING_SOURCE.is_file() or not clear_target.is_file() or clear_target.read_bytes() != CLEAR_WRITING_SOURCE.read_bytes():
-            errors.append(f"{clear_target.relative_to(root)}: shared clear-writing drift")
+                errors.append(f"{target.relative_to(root)}: shared HTML helper/asset drift")
     for name in DURABLE_CONSUMERS:
         canonical = source / "scripts/durable_artifacts.py"
         target = root / "skills" / name / "scripts/durable_artifacts.py"
@@ -250,6 +201,8 @@ consumption; a prefilled template is not completed input. This grants no write a
 def output_notation_errors(skills_root: Path) -> list[str]:
     errors = []
     for path in sorted(skills_root.glob("tk-*/SKILL.md")):
+        if reference_only(path):
+            continue
         text = path.read_text(encoding="utf-8")
         if text.count(OUTPUT_NOTATION_MARKER) != 1 or text.count(OUTPUT_NOTATION_END) != 1 or OUTPUT_NOTATION_BLOCK not in text:
             errors.append(f"{path.parent.name}: sync the exact output notation block with scripts/sync_execution_protocol.py")
@@ -273,6 +226,8 @@ question block; keep nested returns compact and omit empty sections.
 def result_summary_errors(skills_root: Path) -> list[str]:
     errors = []
     for path in sorted(skills_root.glob("tk-*/SKILL.md")):
+        if reference_only(path):
+            continue
         text = path.read_text(encoding="utf-8")
         if text.count(RESULT_SUMMARY_MARKER) != 1 or text.count(RESULT_SUMMARY_END) != 1 or RESULT_SUMMARY_BLOCK not in text:
             errors.append(f"{path.parent.name}: sync the exact result summary block with scripts/sync_execution_protocol.py")
@@ -337,12 +292,16 @@ def sync_marked_block(path: Path, marker: str, end_marker: str, block: str, anch
 
 def sync_result_summary(skills_root: Path) -> None:
     for path in sorted(skills_root.glob("tk-*/SKILL.md")):
+        if reference_only(path):
+            continue
         sync_marked_block(path, RESULT_SUMMARY_MARKER, RESULT_SUMMARY_END, RESULT_SUMMARY_BLOCK,
                           OUTPUT_NOTATION_MARKER)
 
 
 def sync_output_notation(skills_root: Path) -> None:
     for path in sorted(skills_root.glob("tk-*/SKILL.md")):
+        if reference_only(path):
+            continue
         text = path.read_text(encoding="utf-8")
         if OUTPUT_NOTATION_MARKER in text:
             start = text.index(OUTPUT_NOTATION_MARKER)
@@ -363,75 +322,20 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    pairs = [(SOURCE / name, TARGET / name) for name in FILES]
-    pairs.append((SOURCE / "multi-pr-delivery.md", ROOT / "skills/tk-pr-open/references/multi-pr-delivery.md"))
-    pairs.extend((SOURCE / "domain-context.md", target) for target in DOMAIN_CONTEXT_TARGETS)
-    pairs.extend(
-        (REVIEW_SOURCE / name, target / name)
-        for target in REVIEW_TARGETS
-        for name in REVIEW_FILES
-    )
-    visual_questions = ROOT / "skills/tk-grill/references/visual-questions.md"
-    if visual_questions.is_file():
-        pairs.extend((visual_questions, ROOT / "skills" / name / "references/visual-questions.md")
-                     for name in ("tk-prep", "tk-roadmap") if (ROOT / "skills" / name).is_dir())
-    pairs.append((ROOT / "skills/tk-prototype/references/selection-handoff.md",
-                  SOURCE / "selection-handoff.md"))
-    pairs.append((EXTERNAL_CONTRACT_SOURCE, EXTERNAL_CONTRACT_TARGET))
-    pairs.extend((PR_VISUAL_SOURCE, target) for target in PR_VISUAL_TARGETS)
-    pairs.extend((REBASE_READINESS_SOURCE, target) for target in REBASE_READINESS_TARGETS)
-    boundaries = ROOT / "skills/tk-audit/references/security-boundaries.md"
-    pairs.extend((boundaries, ROOT / "skills" / name / "references/security-boundaries.md")
-                 for name in ("tk-review", "tk-prep", "tk-pr-respond"))
-    media_preferences = ROOT / "skills/tk-video/references/media-preferences.md"
-    if media_preferences.is_file():
-        pairs.extend((media_preferences, ROOT / "skills" / name / "references/media-preferences.md")
-                     for name in ("tk-prep", "tk-explain", "tk-browser-verify", "tk-audit", "tk-research")
-                     if (ROOT / "skills" / name).is_dir())
-    context = ROOT / "skills/tk-audit/references/repository-context.md"
-    if context.is_file():
-        pairs.extend((context, ROOT / "skills" / name / "references/repository-context.md")
-                     for name in ("tk-prep", "tk-research"))
+    pairs = []
+    source = ROOT / "skills/tk-explain"
     for name in HTML_CONSUMERS:
-        if (ROOT / "skills" / name).is_dir():
-            pairs.append((CLEAR_WRITING_SOURCE, ROOT / "skills" / name / "references/clear-writing.md"))
-            if name != "tk-explain":
-                pairs.append((ROOT / "skills/tk-explain/references/html-output.md", ROOT / "skills" / name / "references/html-output.md"))
-                for relative in ("references/explanation-techniques.md", "references/html-render.md"):
-                    pairs.append((ROOT / "skills/tk-explain" / relative, ROOT / "skills" / name / relative))
-                for relative in (*CHART_FILES, *ASSEMBLY_FILES, *READER_FILES, "scripts/package_html.py", "scripts/highlight_code.py"):
-                    pairs.append((ROOT / "skills/tk-explain" / relative, ROOT / "skills" / name / relative))
+        if name != "tk-explain" and (ROOT / "skills" / name).is_dir():
+            for relative in (*CHART_FILES, *ASSEMBLY_FILES, "scripts/package_html.py", "scripts/highlight_code.py"):
+                pairs.append((source / relative, ROOT / "skills" / name / relative))
     for name in ARCHIFY_CONSUMERS:
         if name != "tk-explain" and (ROOT / "skills" / name).is_dir():
             for relative in ARCHIFY_FILES:
-                pairs.append((ROOT / "skills/tk-explain" / relative, ROOT / "skills" / name / relative))
-    for name in DURABLE_CONSUMERS:
-        if name != "tk-explain" and (ROOT / "skills" / name).is_dir():
-            pairs.append((ROOT / "skills/tk-explain/scripts/durable_artifacts.py",
-                          ROOT / "skills" / name / "scripts/durable_artifacts.py"))
+                pairs.append((source / relative, ROOT / "skills" / name / relative))
     for name in HTML_THEME_CONSUMERS:
         if (ROOT / "skills" / name).is_dir():
             for asset in HTML_ASSETS:
-                source = ROOT / "skills/tk-explain/assets" / asset
-                if source.is_file():
-                    pairs.append((source, ROOT / "skills" / name / "assets" / asset))
-    for name in DOCUMENT_PURPOSE_CONSUMERS:
-        source = ROOT / "skills/tk-explain/references/diataxis.md"
-        if name != "tk-explain":
-            pairs.append((source, ROOT / "skills" / name / "references/diataxis.md"))
-    for name in VISUAL_CONSUMERS:
-        source = ROOT / "skills/tk-explain/references/visual-grammar.md"
-        if name != "tk-explain" and source.is_file():
-            pairs.append((source, ROOT / "skills" / name / "references/visual-grammar.md"))
-    for name in CONTENT_REVIEW_CONSUMERS:
-        if name != "tk-explain":
-            pairs.append((ROOT / "skills/tk-explain/references/content-review.md",
-                          ROOT / "skills" / name / "references/content-review.md"))
-    for name in UI_EVIDENCE_CONSUMERS:
-        path = ROOT / "skills" / name / "references/ui-evidence.md"
-        if not args.check:
-            path.parent.mkdir(exist_ok=True)
-            path.write_text(UI_EVIDENCE_REFERENCE, encoding="utf-8")
+                pairs.append((source / "assets" / asset, ROOT / "skills" / name / "assets" / asset))
     if not args.check:
         sync_narration(ROOT)
         sync_verification(ROOT)
@@ -443,24 +347,30 @@ def main() -> int:
     drift = [
         (source, target)
         for source, target in pairs
-        if not target.is_file() or target.read_bytes() != source.read_bytes()
+        if not source.is_file() or not target.is_file() or target.read_bytes() != source.read_bytes()
     ]
     if args.check:
         notation_errors = output_notation_errors(ROOT / "skills") + result_summary_errors(ROOT / "skills") + validate_artifact_guards(ROOT) + validate_runtime_guard(ROOT) + question_errors(ROOT) + verification_errors(ROOT) + feedback_errors(ROOT)
         notation_errors.extend(summary_body_errors(ROOT / "skills"))
         notation_errors.extend(html_policy_errors(ROOT))
         notation_errors.extend(narration_errors(ROOT))
+        notation_errors.extend(validate_shared_references(ROOT / "skills"))
+        try:
+            from .skill_dependencies import validate_dependencies
+        except ImportError:
+            from skill_dependencies import validate_dependencies
+        notation_errors.extend(validate_dependencies(ROOT))
         if notation_errors:
             print("\n".join(notation_errors))
         if drift:
             print(
-                "Out-of-sync shared reference copies: "
+                "Out-of-sync package-local helpers/assets: "
                 + ", ".join(str(target.relative_to(ROOT)) for _, target in drift)
             )
             return 1
         if notation_errors:
             return 1
-        print("Shared reference copies are synchronized.")
+        print("Shared guards, installed references and package-local helpers/assets are valid.")
         return 0
     sync_output_notation(ROOT / "skills")
     for source, target in drift:

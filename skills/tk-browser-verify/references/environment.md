@@ -1,6 +1,6 @@
 # Headless environment
 
-Use the provider selected under [provider selection](provider-selection.md).
+Use the provider selected under [provider selection](../../tk-verification-guidance/references/provider-selection.md).
 Discover native, Playwright-compatible, MCP and installed CLI/CDP paths without silently routing
 between them. When a required capability is missing, present the deficit and eligible alternatives
 in the final question frontier. Do not install a browser dependency for one run. Classify the
@@ -94,7 +94,7 @@ product mutation.
 ## Worktree-local authentication reuse and renewal
 
 Establish readiness during prep before baseline. Public targets and safe existing sessions need
-no token input. Apply [worktree-local authentication](authentication.md)'s contract for every related consumer. Keep the same protected
+no token input. Apply [worktree-local authentication](../../tk-artifacts/references/authentication.md)'s contract for every related consumer. Keep the same protected
 `.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json` across baseline, after and revisions,
 including access expiry, capture failure and interruption; preserve the non-secret path/target
 binding in active-task handoffs. Reuse is limited to the verified application/login origin,
@@ -148,7 +148,7 @@ browser/dev-server resources after capture. Authentication-file retention never 
 or a user browser profile alive. Never print tokens/claims or store them in evidence, Git,
 parent/child receipts, another worktree or a global cache. Explicitly authorized development/QA
 passwords follow the same scoped protected-file retention contract in
-[worktree-local authentication](authentication.md); retention does not authorize password entry
+[worktree-local authentication](../../tk-artifacts/references/authentication.md); retention does not authorize password entry
 or bypass human-only login. Actual production credentials, OTPs, recovery codes and passwords
 outside that approved development/QA scope keep their transient lifecycle. This procedure creates no background
 refresher or cross-process lock and cannot guarantee continuation after a host session ends.
@@ -159,7 +159,7 @@ When no safer temporary secret-input channel exists, first prove that
 whether it comes from a per-directory `.gitignore`, `.git/info/exclude`, or the configured
 user-level excludes file. Then create
 `.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json` with directory mode `0700` and
-file mode `0600`. Apply the user-editable input branch in [artifact paths](artifact-paths.md):
+file mode `0600`. Apply the user-editable input branch in [artifact paths](../../tk-artifacts/references/artifact-paths.md):
 seed a plain JSON object using the bootstrap and renewal fields identified above, with empty strings.
 When the verified route requires both, use the app's exact field names, for example
 `{"accessToken": "", "refreshToken": ""}`. Use access-only input such as `{"token": ""}`
@@ -186,7 +186,7 @@ return `Unverifiable`.
 
 Before showing the paths, start bounded metadata-change polling in the background
 when supported; the path message is the final text message of the turn, with no tool
-calls after it (see [artifact paths](artifact-paths.md), including the unsupported-host fallback).
+calls after it (see [artifact paths](../../tk-artifacts/references/artifact-paths.md), including the unsupported-host fallback).
 Release this run's server/browser resources before waiting;
 do not launch replacements until input is ready. Never report content, size or
 modification time. The initial JSON is non-empty and must remain `Pending`.

@@ -5,7 +5,7 @@ communication, irreversible deletion, production-data mutation, account changes,
 permission changes, or equivalent side effects. For an approved UI state, prefer an
 exact repository-evidence-based response mock over sending, saving, or paying.
 
-Protect local user shared state as well: apply [user shared-state safety](verification.md#user-shared-state)
+Protect local user shared state as well: apply [user shared-state safety](../../tk-verification-guidance/references/verification.md#user-shared-state)
 before clipboard, file or notification writes. Do not use those actions as default diagnostic
 controls. Necessary clipboard mutation requires a complete protected backup before execution,
 restoration and independent verification afterward, and disclosure of unsupported type coverage.

@@ -100,24 +100,24 @@ scope or unrelated work, stop for a changed plan instead of publishing it.
 - Index-only remains direct: use the guards above with testing `N/A` for provably non-executable text, exact-tree/range
   independent review, and post-push current-head CI. The checkout/TDD/local-commit steps below apply to workspace routes.
 - `direct+TDD`: one coherent change and review surface; use the testing reference and the proven safe checkout.
-- `SDD+TDD`: multiple material Units; read [private SDD](sdd.md) and follow its grammar, recovery, role gates, model and
+- `SDD+TDD`: multiple material Units; read [private SDD](../../tk-engineering/references/sdd.md) and follow its grammar, recovery, role gates, model and
   effort contract, fix loop, and final review.
 
-Direct execution follows [behavior-first testing](testing.md): changed behavior requires RED → verified failure →
+Direct execution follows [behavior-first testing](../../tk-engineering/references/testing.md): changed behavior requires RED → verified failure →
 minimal GREEN; behavior-preserving refactoring requires pre-edit GREEN → refactor → matching GREEN. Run required checks.
 SDD Unit reports retain the applicable RED/GREEN or pre/post GREEN evidence. If fan-out is unavailable, preserve the same role and range gates sequentially; do not
 downgrade to unreviewed direct work or persist provider routing.
 
 After implementation, construct the untrusted implementation retro required by
-[independent review protocol](review-protocol.md). Apply that protocol to direct exact-change and SDD Unit/whole-change
+[independent review protocol](../../tk-engineering/references/review-protocol.md). Apply that protocol to direct exact-change and SDD Unit/whole-change
 reviews: use its risk-based direct seat count; SDD whole-change final still uses two context-isolated discovery seats,
 while each SDD Unit uses one fresh seat. Every seat judges both `Spec/AC` and `Quality/Standards` and completes both walks; withhold the retro until its
 blind pass, aggregate candidate unions, and separately verify every reportable candidate. Finish with AC review, required gap correction,
 verified local commits, and `tk-browser-verify` for browser-visible changes. Provide the verifier with exact
 command/cwd/URL/auth/readiness; it owns server lifecycle. Do not repeat SDD's whole-change review with another generic review.
 
-Apply [finding quality](finding-quality.md) to every code review. Read [TypeScript](typescript.md),
-[React](react.md), and [security](security.md) only when the reviewed scope meets those references' conditions. These
+Apply [finding quality](../../tk-engineering/references/finding-quality.md) to every code review. Read [TypeScript](../../tk-engineering/references/typescript.md),
+[React](../../tk-engineering/references/react.md), and [security](../../tk-engineering/references/security.md) only when the reviewed scope meets those references' conditions. These
 lenses do not change finding disposition, response-delta, re-review targets, or publication order.
 
 Handle direct review remediation for at most five rounds, using the original open findings, exact fix diff, and only

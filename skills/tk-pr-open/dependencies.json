@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "requires": [
+    "tk-artifacts",
+    "tk-pr-guidance",
+    "tk-questioning",
+    "tk-repository-guidance",
+    "tk-ui-evidence"
+  ]
+}

@@ -7,6 +7,11 @@ import subprocess
 import tempfile
 from pathlib import Path
 
+try:
+    from .shared_references import reference_only, reference_errors
+except ImportError:
+    from shared_references import reference_only, reference_errors
+
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACT_MARKER = '<!-- tigerkit:artifact-paths -->'
 NO_ARTIFACT_SKILLS = frozenset(("tk-adhd", "tk-ask-repo", "tk-review"))
@@ -14,7 +19,7 @@ ARTIFACT_CLEANUP_GUARD = "Prefer fresh directories and supported trash for autho
 ARTIFACT_BLOCK = """<!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority.
+Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](../tk-artifacts/references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority.
 """.rstrip() + " " + ARTIFACT_CLEANUP_GUARD + "\n"
 NO_ARTIFACT_BLOCK = """<!-- tigerkit:artifact-paths -->
 ## Artifact Paths
@@ -178,6 +183,8 @@ def artifact_reference(name: str) -> str:
 
 def sync_artifact_guards(root: Path = ROOT) -> None:
     for path in sorted((root / 'skills').glob('tk-*/SKILL.md')):
+        if reference_only(path):
+            continue
         text = path.read_text(encoding='utf-8')
         start = text.find(ARTIFACT_MARKER)
         if start >= 0:
@@ -187,26 +194,23 @@ def sync_artifact_guards(root: Path = ROOT) -> None:
         else:
             text = text.rstrip() + '\n\n' + artifact_block(path.parent.name)
         path.write_text(text, encoding='utf-8')
-        if path.parent.name not in NO_ARTIFACT_SKILLS:
-            reference = path.parent / 'references/artifact-paths.md'
-            reference.parent.mkdir(exist_ok=True)
-            reference.write_text(artifact_reference(path.parent.name), encoding='utf-8')
-            (reference.parent / 'authentication.md').write_text(AUTHENTICATION_REFERENCE, encoding='utf-8')
 
 
 def validate_artifact_guards(root: Path = ROOT) -> list[str]:
     errors = []
     for path in sorted((root / 'skills').glob('tk-*/SKILL.md')):
+        if reference_only(path):
+            continue
         text = path.read_text(encoding='utf-8')
         if text.count(artifact_block(path.parent.name)) != 1 or text.count(ARTIFACT_MARKER) != 1:
             errors.append(f'{path.relative_to(root)}: artifact guard must match exactly once')
-        reference = path.parent / 'references/artifact-paths.md'
         if path.parent.name not in NO_ARTIFACT_SKILLS:
-            if not reference.is_file() or reference.read_text(encoding='utf-8') != artifact_reference(path.parent.name):
-                errors.append(f'{reference.relative_to(root)}: artifact reference must match canonical checks')
-            authentication = reference.parent / 'authentication.md'
-            if not authentication.is_file() or authentication.read_text(encoding='utf-8') != AUTHENTICATION_REFERENCE:
-                errors.append(f'{authentication.relative_to(root)}: authentication reference must match canonical checks')
-        elif reference.exists():
-            errors.append(f'{reference.relative_to(root)}: non-writing skill must not carry a writer reference')
+            errors.extend(reference_errors(root, path, "../tk-artifacts/references/artifact-paths.md"))
+    reference = root / "skills/tk-artifacts/references/artifact-paths.md"
+    expected = artifact_reference("tk-artifacts").replace("(questions.md#", "(../../tk-questioning/references/questions.md#")
+    if not reference.is_file() or reference.read_text(encoding="utf-8") != expected:
+        errors.append("skills/tk-artifacts/references/artifact-paths.md: artifact reference must match canonical checks")
+    authentication = reference.parent / "authentication.md"
+    if not authentication.is_file() or authentication.read_text(encoding="utf-8") != AUTHENTICATION_REFERENCE:
+        errors.append("skills/tk-artifacts/references/authentication.md: authentication reference must match canonical checks")
     return errors

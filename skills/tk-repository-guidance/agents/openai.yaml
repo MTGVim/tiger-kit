@@ -1,0 +1,4 @@
+interface:
+  short_description: "[user/auto] 저장소 맥락·도메인 문서·외부 계약의 조사 기준을 참조할 때 사용합니다."
+policy:
+  allow_implicit_invocation: true

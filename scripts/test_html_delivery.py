@@ -14,11 +14,14 @@ class HtmlDeliveryTests(unittest.TestCase):
             self.assertIn('_🤖 본 코멘트는 AI가 작성했습니다._',(ROOT/f'skills/{name}/SKILL.md').read_text())
 
     def test_all_shared_html_consumers_keep_delivery_boundary_and_chart_notice_removed(self):
-        references=list((ROOT/'skills').glob('*/references/html-output.md'))
-        self.assertEqual(len(references),5)
-        for path in references:
-            with self.subTest(package=path.parts[-3]):
-                self.assertIn('omit automatic AI-authorship notices',path.read_text())
-                chart=path.parents[1]/'assets/chart-examples.html'
-                self.assertNotIn('🤖',chart.read_text())
-                self.assertNotIn('AI가 작성',chart.read_text())
+        from shared_references import link_error
+        reference = ROOT / 'skills/tk-writing/references/html-output.md'
+        self.assertIn('omit automatic AI-authorship notices', reference.read_text())
+        self.assertFalse(reference.is_symlink())
+        for owner in ('tk-explain', 'tk-research', 'tk-prototype', 'tk-qa-sheet', 'tk-blind-comparison'):
+            package = ROOT / 'skills' / owner
+            self.assertFalse((package / 'references/html-output.md').exists())
+            self.assertIsNone(link_error(package / 'SKILL.md', '../tk-writing/references/html-output.md', ROOT / 'skills'))
+            chart = package / 'assets/chart-examples.html'
+            self.assertNotIn('🤖', chart.read_text())
+            self.assertNotIn('AI가 작성', chart.read_text())

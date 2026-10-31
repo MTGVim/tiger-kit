@@ -12,12 +12,17 @@ metadata:
 
 # Adaptive Task Preparation
 
+## Shared References
+
+Load the named skill and criteria. If missing, stop: use `tk-setup-skills`; no memory or unapproved installs. Reading grants no authority.
+
+
 <!-- tigerkit:ui-evidence -->
 ## UI Evidence
 
 Quote existing UI labels verbatim, including language, case, punctuation and spacing. Navigation instructions need evidence for every menu/breadcrumb label and connection; a title, route, identifier, enum, schema, glossary or ticket wording alone does not prove the entry path. Keep proposed copy separate. Bind claims to target/environment/locale/role and actual rendering evidence; preserve conflicting or missing provenance rather than guessing.
 
-Before collecting or verifying UI labels/paths within this skill's investigation authority, read [UI evidence collection](references/ui-evidence.md). Skip collection guidance for non-UI work and propagation-only tasks. A handoff or publication-only phase carries supplied evidence and pending requests without starting a new investigation.
+Before collecting or verifying UI labels/paths within this skill's investigation authority, read [UI evidence collection](../tk-ui-evidence/references/ui-evidence.md). Skip collection guidance for non-UI work and propagation-only tasks. A handoff or publication-only phase carries supplied evidence and pending requests without starting a new investigation.
 
 In reports and publication preparation, preserve exact verified literals and explicitly list required unverified labels/connections, available evidence, the concrete limitation and smallest missing input. User-supplied text is user-provided, not independently observed; it resolves only the supported claim. Never turn an unverified path into navigation instructions or hide uncertainty in PR/QA/handoff output.
 
@@ -43,9 +48,9 @@ execution routing as a form/report. Explain important judgments with recommendat
 
 ## Visual questions
 
-When an unresolved UX choice changes layout or navigation, read [visual questions](references/visual-questions.md). Before implementation approval, only that HTML question aid and canonical ignore setup may be written; product and Seed remain unchanged.
+When an unresolved UX choice changes layout or navigation, read [visual questions](../tk-questioning/references/visual-questions.md). Before implementation approval, only that HTML question aid and canonical ignore setup may be written; product and Seed remain unchanged.
 
-Before interpreting repository behavior or domain meaning, read relevant repository-owned [domain context](references/domain-context.md) when it exists.
+Before interpreting repository behavior or domain meaning, read relevant repository-owned [domain context](../tk-repository-guidance/references/domain-context.md) when it exists.
 
 ## Evidence and questions
 
@@ -108,15 +113,15 @@ status matrix when an axis is plainly ready or irrelevant. Surface only a materi
 the plan. For a surfaced axis use `보완 필요 | 개선 한계 | 예외 승인`; investigate → improve → reassess before presenting
 `개선 한계`, then explain gap/risk/mitigation and obtain an exception when one is actually required.
 
-For every code-changing path, inspect real tests and load [behavior-first testing](references/testing.md) before approval. Close
+For every code-changing path, inspect real tests and load [behavior-first testing](../tk-engineering/references/testing.md) before approval. Close
 observable behavior, regression/RED or pre-edit GREEN for behavior-preserving refactoring, focused command, required
 suite, mutation risk, and `N/A` versus engineering exception.
 Do not add ceremonial tests for trivial/prose-only work; runtime verification never substitutes for automated protection.
-For every direct or SDD code review, load [independent review protocol](references/review-protocol.md) and
-[finding quality](references/finding-quality.md). Load
-[TypeScript](references/typescript.md), [React](references/react.md), and [security](references/security.md) only when the
+For every direct or SDD code review, load [independent review protocol](../tk-engineering/references/review-protocol.md) and
+[finding quality](../tk-engineering/references/finding-quality.md). Load
+[TypeScript](../tk-engineering/references/typescript.md), [React](../tk-engineering/references/react.md), and [security](../tk-engineering/references/security.md) only when the
 review scope meets those references' stated conditions. Conditional lenses do not change the protocol's review seats.
-With a clear cause and exact RED seam, proceed directly. Read [diagnosis](references/diagnosis.md)
+With a clear cause and exact RED seam, proceed directly. Read [diagnosis](../tk-engineering/references/diagnosis.md)
 for hard/flaky/performance bugs and on the first attempt missing the reported symptom, before
 concluding or reporting non-reproduction. Establish a red-capable loop before a fix hypothesis;
 if impossible, record why without speculative fixes.
@@ -134,9 +139,8 @@ it owns provider interaction and resource lifecycle. Do not use provider tools d
 
 ## Review plan
 
-Before approval, keep a semantic review plan covering the change intent, original incident or expected scenario, expected changed outcome, `must-not-change` behavior or visual regions, change-owned risk edges, required automated/runtime/browser evidence, and known pre-implementation uncertainty. Preserve it in every code-changing Ready Seed; a direct/no-Seed path keeps the same approved obligations in the current interaction.
-
-Do not store reviewer count, provider/model identity, worker routing, or review transcripts in the Seed. The execution shape and [independent review protocol](references/review-protocol.md) determine the seats after the exact diff exists.
+Before the final local approval, read [semantic review planning](../tk-engineering/references/review-planning.md).
+Preserve its obligations in every code-changing Ready Seed or the current direct/no-Seed task.
 
 ## Adaptive execution shape
 
@@ -144,7 +148,7 @@ After repository investigation establishes a concrete implementation topology, r
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Approval and local mutation
 
-Before frontier/approval questions, read [question rounds](references/questions.md). Put missing approval in its own final `Q`; preserve prior authority and resolve scope first. While approval is pending, follow [pending replies](references/pending-approval.md).
+Before frontier/approval questions, read [question rounds](../tk-questioning/references/questions.md). Put missing approval in its own final `Q`; preserve prior authority and resolve scope first. While approval is pending, follow [pending replies](references/pending-approval.md).
 
 First check whether the active request or an earlier decision already authorizes the concrete scope. If not, perform no source/test/config/Seed/Git mutation and present one natural summary covering goal, scope,
 decisions, approach, testing/TDD, runtime verification plan (verifier, baseline, evidence location), semantic review obligations, execution shape, workspace setup, and local
@@ -194,7 +198,7 @@ Installation/download/publication require their own authority; playback mute/fal
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
+Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](../tk-artifacts/references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
 
 <!-- tigerkit:result-summary -->
 ## Reader-facing Result Summary
@@ -231,7 +235,7 @@ consumption; a prefilled template is not completed input. This grants no write a
 ## User Questions
 
 Investigate facts; reuse authorization. For user-owned decisions read
-[question rounds](references/questions.md); otherwise proceed.
+[question rounds](../tk-questioning/references/questions.md); otherwise proceed.
 Plain chat, even one approval: standalone `---`, then
 `❓ **Q<n> · <title>**: <question>` and `➡️ <recommendation>` per item.
 Ask only settled-prerequisite questions; separate approval.

@@ -84,7 +84,7 @@ Prefer intact existing commits only when they already map cleanly to the approve
 
 For every layer, record before approval:
 
-- planned PR group and whole Unit ownership, dependencies, sole shared-artifact creators, gates and intermediate-state checks when a multi-PR plan exists; reconcile with [multi-PR delivery safety](multi-pr-delivery.md), never silently regroup;
+- planned PR group and whole Unit ownership, dependencies, sole shared-artifact creators, gates and intermediate-state checks when a multi-PR plan exists; reconcile with [multi-PR delivery safety](../../tk-pr-guidance/references/multi-pr-delivery.md), never silently regroup;
 - exact branch name and parent;
 - one-sentence review concern;
 - exact owned paths or intact source commits;

@@ -3,7 +3,7 @@
 Choose only after repository investigation establishes a concrete implementation topology; tell the user the practical consequence, not a classification report.
 Ticket length, raw file count, or the presence of both UI and API work never decides the shape.
 
-Only for planned multi-PR delivery, read [merge safety](multi-pr-delivery.md) before approval.
+Only for planned multi-PR delivery, read [merge safety](../../tk-pr-guidance/references/multi-pr-delivery.md) before approval.
 Bind whole Units to PR groups, verify intermediate merge states and retain the grouping for publication.
 
 - durable context `none`: same-session task is small/clear and conversation + repository state are sufficient;
@@ -14,7 +14,7 @@ Bind whole Units to PR groups, verify intermediate merge states and retain the g
 - execution `handoff`: prepare a Ready Seed and stop for another session/executor.
 
 Complexity may raise safeguards only: inline direct → Seed direct → SDD/re-prep. Never silently downgrade for convenience.
-Direct/no-Seed never loads SDD guidance. Load [private SDD](sdd.md) only after SDD is selected.
+Direct/no-Seed never loads SDD guidance. Load [private SDD](../../tk-engineering/references/sdd.md) only after SDD is selected.
 
 When durable context is `seed`, execution is `sdd`, or the outcome is `handoff`, read the [Ready Seed contract](seed.md)
 before approval. Preserve any existing Seed before approval; direct/no-Seed does not load the Seed contract merely to create ceremony.

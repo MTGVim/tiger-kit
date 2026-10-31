@@ -12,6 +12,11 @@ metadata:
 
 # Visual Explanation
 
+## Shared References
+
+Load the named skill and criteria. If missing, stop: use `tk-setup-skills`; no memory or unapproved installs. Reading grants no authority.
+
+
 Create one self-contained explanation of a concept, situation or concrete change, or multiple
 variants only when the user explicitly requests technique comparison or broad exploration. Ordinary
 text questions, defect reviews, implementation and product prototypes are outside this owner.
@@ -26,7 +31,7 @@ Select `change` for a PR, branch, commit range or worktree; otherwise select `co
 Read [evidence](references/evidence.md) and record the exact sources in `evidence.md` under
 the run's evidence directory. Keep base/head, comparison meaning, version-qualified
 `path:line`, web URL/access date/supporting passage, and measurement kind as applicable.
-Read [documentation purpose](references/diataxis.md) for a substantive artifact. Build from
+Read [documentation purpose](../tk-writing/references/diataxis.md) for a substantive artifact. Build from
 the reader's question, necessary prerequisites and a concrete mechanism; preserve material
 conditions and causal steps. Separate observations, inference and examples. A finite supplied
 source set needs an inspected/partial/unavailable/omitted-with-reason account.
@@ -54,14 +59,14 @@ Use the archify explainer page layout when the selected technique is the archify
 or when a single explanation has no technique-specific form. Requested variants each use
 their own defining form under the renderer contract; include at most one archify variant.
 In the archify branch, use native diagrams for components, calls, states and data flow. For
-scenes, spatial relationships or physical placement, read [scene figures](references/scene-figures.md);
+scenes, spatial relationships or physical placement, read [scene figures](../tk-writing/references/scene-figures.md);
 archify embeds converted PNG with `@image`, alt text and a caption, while technique-specific
 HTML may retain original inline SVG under the common contract. Show two to four comparable states when input changes
 explain a mechanism; do not substitute a flowchart for an actual spatial scene.
 Keep labels, state transitions and prose consistent; preserve supplied geometry and inputs.
 
 For an explicit request for live interaction, read
-[interactive examples](references/interactive-examples.md). For archify, use its supported
+[interactive examples](../tk-writing/references/interactive-examples.md). For archify, use its supported
 native interactions. A selected technique-specific HTML form may use inline enhancements under the common contract; neither branch selects the
 legacy document renderer. Image helpers produce figures, not a mandatory page shell.
 For an explicitly requested standalone looping SVG, use [animated SVG](references/animated-svg.md).
@@ -70,7 +75,7 @@ Neither selected output changes the evidence obligation or authorizes publicatio
 
 ## 3. Render
 
-For explanation pages, read [renderer contract](references/renderer-contract.md).
+For explanation pages, read [renderer contract](../tk-writing/references/renderer-contract.md).
 Selected summary PNG, raster illustration, standalone SVG/video and chat-only feedback use their own checks and do not
 require archify. The rest of this step applies only to explanation pages.
 Only for archify, verify the installed package and minimum version; absent, old or unverifiable installation means
@@ -81,17 +86,17 @@ a temporary HTML with `node <archify>/bin/archify.mjs deliver explainer candidat
 (add the same `--repo-root <repo>` when needed). For technique-specific HTML, use the saved
 candidate directly. Extract either with `scripts/visible_text.py` and compare it with the
 authored candidate (including badge tones and diagram relationships):
-- Read [clear writing](references/clear-writing.md), "Content-led headings and labels": check
+- Read [clear writing](../tk-writing/references/clear-writing.md), "Content-led headings and labels": check
   every heading, table row name/cell, callout title, scope note and diagram label. Name content
   in the stated reader's vocabulary, make comparison subjects explicit, and keep one attribute
   per comparison row rather than inventing categories.
-- Read [reader formatting](references/reader-formatting.md): each badge adds information and
+- Read [reader formatting](../tk-writing/references/reader-formatting.md): each badge adds information and
   its tone matches the fact; remove redundant badges and positive tones on neutral facts.
 - Match sentence-form headings, callout titles and table cells to the body's register; use
   complete sentences for scope notes. For a Korean formal-polite body, use `~만듭니다` and
   question headings like `~ㄹ까요?`. Explicit user voice takes precedence. Allow meaningful
   short phrases in cells/labels and varied endings within one register; keep valid text unchanged.
-- Read [visual grammar](references/visual-grammar.md): a tree needs real parent/child relations;
+- Read [visual grammar](../tk-writing/references/visual-grammar.md): a tree needs real parent/child relations;
   keep parts or ingredients as a list/table when hierarchy adds no meaning.
 Fix the authored candidate, regenerate temporary HTML and repeat the check for changed content.
 Record checked candidate identity, findings/fixes or no-change result in the run evidence and
@@ -137,7 +142,7 @@ skip or stop; ordinary answer feedback alone need not produce another file.
 ## 6. Deliver
 
 Resolve an explicit destination first, then `artifacts.durableRoot`, then
-`.tigerkit/explanations/<slug>.html` (or `<slug>.png` for a summary image) using [artifact paths](references/artifact-paths.md).
+`.tigerkit/explanations/<slug>.html` (or `<slug>.png` for a summary image) using [artifact paths](../tk-artifacts/references/artifact-paths.md).
 Preserve overwrite authority and choose a numeric suffix for an occupied default.
 Keep archify working files in `.tigerkit/tmp/tk-explain/<run-id>/`; keep `evidence.md`, receipts,
 review records and captures in `.tigerkit/evidence/tk-explain/<run-id>/`. Reuse the same evidence
@@ -163,7 +168,7 @@ Installation/download/publication require their own authority; playback mute/fal
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
+Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](../tk-artifacts/references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
 
 <!-- tigerkit:result-summary -->
 ## Reader-facing Result Summary
@@ -200,7 +205,7 @@ consumption; a prefilled template is not completed input. This grants no write a
 ## User Questions
 
 Investigate facts; reuse authorization. For user-owned decisions read
-[question rounds](references/questions.md); otherwise proceed.
+[question rounds](../tk-questioning/references/questions.md); otherwise proceed.
 Plain chat, even one approval: standalone `---`, then
 `❓ **Q<n> · <title>**: <question>` and `➡️ <recommendation>` per item.
 Ask only settled-prerequisite questions; separate approval.

@@ -47,6 +47,6 @@ return to preparation with the exact missing evidence instead of guessing.
 ## Verification boundary
 
 This gate changes the evidence needed for durable assertions; it does not create a new test
-ceremony. Follow `testing.md` only when observable code behavior changes. Before completion,
+ceremony. Follow `../../tk-engineering/references/testing.md` only when observable code behavior changes. Before completion,
 recheck every changed qualifying assertion against the final candidate and report any
 remaining unverified contract rather than converting it into a success claim.

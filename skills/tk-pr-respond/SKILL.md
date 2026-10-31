@@ -12,12 +12,17 @@ metadata:
 
 # Respond to a single PR review
 
+## Shared References
+
+Load the named skill and criteria. If missing, stop: use `tk-setup-skills`; no memory or unapproved installs. Reading grants no authority.
+
+
 <!-- tigerkit:ui-evidence -->
 ## UI Evidence
 
 Quote existing UI labels verbatim, including language, case, punctuation and spacing. Navigation instructions need evidence for every menu/breadcrumb label and connection; a title, route, identifier, enum, schema, glossary or ticket wording alone does not prove the entry path. Keep proposed copy separate. Bind claims to target/environment/locale/role and actual rendering evidence; preserve conflicting or missing provenance rather than guessing.
 
-Before collecting or verifying UI labels/paths within this skill's investigation authority, read [UI evidence collection](references/ui-evidence.md). Skip collection guidance for non-UI work and propagation-only tasks. A handoff or publication-only phase carries supplied evidence and pending requests without starting a new investigation.
+Before collecting or verifying UI labels/paths within this skill's investigation authority, read [UI evidence collection](../tk-ui-evidence/references/ui-evidence.md). Skip collection guidance for non-UI work and propagation-only tasks. A handoff or publication-only phase carries supplied evidence and pending requests without starting a new investigation.
 
 In reports and publication preparation, preserve exact verified literals and explicitly list required unverified labels/connections, available evidence, the concrete limitation and smallest missing input. User-supplied text is user-provided, not independently observed; it resolves only the supported claim. Never turn an unverified path into navigation instructions or hide uncertainty in PR/QA/handoff output.
 
@@ -58,7 +63,7 @@ At the start, fresh-read exactly one open PR.
 
 Complete all required pagination. Do not treat cached lists or previous Markdown ledgers as current truth.
 If identity, the exact PR/head, or remote authority is ambiguous, stop as `Blocked` before mutation.
-Before building the response plan, read [PR base and rebase readiness](references/rebase-readiness.md) and assess the exact open PR's current mergeability, base SHA, and head SHA. This is a single-PR read; do not run the multi-PR Sweep inventory here.
+Before building the response plan, read [PR base and rebase readiness](../tk-pr-guidance/references/rebase-readiness.md) and assess the exact open PR's current mergeability, base SHA, and head SHA. This is a single-PR read; do not run the multi-PR Sweep inventory here.
 
 Include the rebase outcome and its evidence in the plan when the base is conflicted, behind, current, or unverifiable. A failed check, review request, or `blocked` state alone is not a rebase signal. A reply-only response may proceed without rebasing when the reply is otherwise valid. Do not add a history rewrite silently. If an approved code-changing response also needs an update, include the exact base/head, target branch, rebase route, and bounded force-with-lease publication in the same user approval, then hand off to `tk-pr-rebase` instead of duplicating its procedure.
 
@@ -95,7 +100,7 @@ A `follow-up` changes no code for that finding. Create a separate issue only whe
 Apply UI Evidence to review replies as well as implementation claims; never repeat unsupported feedback wording as current UI text.
 
 Before interpreting feedback through repository behavior, requirements, ownership, impact, or domain meaning, lazy-load
-[domain context](references/domain-context.md) when repository-owned context exists. Read only the relevant mapped
+[domain context](../tk-repository-guidance/references/domain-context.md) when repository-owned context exists. Read only the relevant mapped
 context, preserve canonical vocabulary, and never override verified user-visible UI literals.
 
 When feedback directly concerns architecture, compatibility, or a boundary decision, combine the current diff with
@@ -134,7 +139,7 @@ use, direct/SDD execution, review, and browser handoff.
 
 ## Comment authorship
 
-Before preparing replies, read [comment authorship](references/comment-authorship.md). Classify per comment for communication approval; use account identity for re-review. Existing exact-substance approval satisfies the confirmation boundary.
+Before replies, read [comment authorship](references/comment-authorship.md). Classify each comment for communication approval; account identity controls re-review. Reuse exact-substance approval.
 
 ## Publication
 
@@ -182,21 +187,18 @@ Do not merge, close, tag, release, plain force push, or resolve unrelated thread
 
 ## Execution under Sweep
 
-For an exact PR handed off by an active `tk-pr-sweep`, read [Sweep handoff](references/sweep-handoff.md) before mutation. Reuse matching parent approval, verify fresh PR/head and workspace provenance, and return material drift to the parent. Do not start another PR controller.
+For an exact PR from active `tk-pr-sweep`, read [Sweep handoff](references/sweep-handoff.md) before mutation. Verify fresh PR/head, workspace provenance and matching parent approval; return material drift to the parent. Do not start another PR controller.
 
 ## Completion response
 
-Do not output a normal protocol receipt.
-
-When authorship changed the reply-confirmation boundary, state its basis in one concise sentence: name the configured
-marker match, account-bot evidence, or absence of marker configuration without dumping the triage record.
-Only when an issue remains, explain the blocker and next action in detail.
-Use exactly one final state matching the actual result: `Status: Pass | Pending | Blocked | Unverifiable | Fail`.
+No protocol receipt. If authorship changes reply confirmation, give one sentence on its marker,
+bot-account or missing-config basis without raw triage data. Detail only remaining blockers and
+next actions. Return one actual `Status: Pass | Pending | Blocked | Unverifiable | Fail`.
 
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
+Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](../tk-artifacts/references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
 
 <!-- tigerkit:result-summary -->
 ## Reader-facing Result Summary
@@ -233,7 +235,7 @@ consumption; a prefilled template is not completed input. This grants no write a
 ## User Questions
 
 Investigate facts; reuse authorization. For user-owned decisions read
-[question rounds](references/questions.md); otherwise proceed.
+[question rounds](../tk-questioning/references/questions.md); otherwise proceed.
 Plain chat, even one approval: standalone `---`, then
 `❓ **Q<n> · <title>**: <question>` and `➡️ <recommendation>` per item.
 Ask only settled-prerequisite questions; separate approval.

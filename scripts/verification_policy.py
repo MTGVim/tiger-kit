@@ -1,10 +1,15 @@
-"""Validate package-local copies of the provider/evidence contract."""
+"""Validate local executable/registry copies and shared provider knowledge."""
 from __future__ import annotations
 
 import importlib.util
 from pathlib import Path
 
-REFERENCES = ("verification.md", "provider-selection.md", "providers.json", "provider-knowledge.md", "publication-evidence.md")
+try:
+    from .shared_references import reference_errors
+except ImportError:
+    from shared_references import reference_errors
+
+REFERENCES = ("providers.json",)
 SCRIPT = "verify_preferences.py"
 
 
@@ -26,8 +31,12 @@ def verification_errors(root: Path) -> list[str]:
             providers = module.registry(source / "references/providers.json")
             for row in providers.values():
                 note = row["notes"].split("#", 1)[0]
-                if Path(note).name != note or not (source / "references" / note).is_file():
-                    errors.append(f"provider {row['id']}: missing package-local integration knowledge")
+                if Path(note).name != note:
+                    errors.append(f"provider {row['id']}: unsafe integration knowledge filename")
+                else:
+                    for package in (source, target):
+                        errors.extend(reference_errors(root, package / "references/providers.json",
+                            "../../tk-verification-guidance/references/" + note))
                 detection, safety = row["detection"], row["safety"]
                 if not all(detection.get(k) for k in ("surface", "hosts", "platforms")):
                     errors.append(f"provider {row['id']}: incomplete detection metadata")

@@ -5,8 +5,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PREP = ROOT / "skills/tk-prep/references"
-RESPOND = ROOT / "skills/tk-pr-respond/references"
+PREP = ROOT / "skills/tk-engineering/references"
 
 
 class SddUpstreamBoundaryTest(unittest.TestCase):
@@ -31,9 +30,13 @@ class SddUpstreamBoundaryTest(unittest.TestCase):
         self.assertIn("before any product remediation", text)
         self.assertIn("controller owns routing back to the current `Unit`", text)
 
-    def test_shared_sdd_and_diagnosis_copies_remain_exact(self) -> None:
-        for name in ("sdd.md", "sdd-interaction.md", "sdd-recovery.md", "sdd-transport.md", "diagnosis.md"):
-            self.assertEqual((PREP / name).read_bytes(), (RESPOND / name).read_bytes(), name)
+    def test_sdd_and_diagnosis_have_single_reachable_owner(self) -> None:
+        from test_shared_references import reachable_references
+        for consumer in ("tk-prep", "tk-pr-respond"):
+            reached = reachable_references(ROOT / 'skills' / consumer / 'SKILL.md', ROOT / 'skills')
+            for name in ("sdd.md", "sdd-interaction.md", "sdd-recovery.md", "sdd-transport.md", "diagnosis.md"):
+                self.assertIn((PREP / name).resolve(), reached, (consumer, name))
+                self.assertFalse((ROOT / 'skills' / consumer / 'references' / name).exists())
 
 
 if __name__ == "__main__":

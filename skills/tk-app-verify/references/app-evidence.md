@@ -1,7 +1,7 @@
 # Native App Evidence
 
 Read before capture, evidence write or executed phase return. Apply the [shared verification
-contract](verification.md) and [artifact paths](artifact-paths.md). Native evidence is window-
+contract](../../tk-verification-guidance/references/verification.md) and [artifact paths](../../tk-artifacts/references/artifact-paths.md). Native evidence is window-
 bound rather than URL/DOM-bound. Store run-owned evidence under
 `.tigerkit/evidence/tk-app-verify/<run-id>/` with `baseline/`, `after/` and immutable
 `failed-<attempt>/` captures when applicable; the required bounded `README.md` is the sole Markdown AC/evidence index,
@@ -77,7 +77,7 @@ For standalone output lead with the exact `Status: <token>` and concise facts/li
 for nested execution return phase-local evidence and resume the owner without a final user reply.
 
 When images materially support publication, use the [producer-neutral publication
-manifest](publication-evidence.md), returning required baseline/after pairs for unchanged
+manifest](../../tk-verification-guidance/references/publication-evidence.md), returning required baseline/after pairs for unchanged
 regions too. Use a non-sensitive origin-free `display_route` only when the represented surface
 actually has one; for native windows record an explicit native-surface omission and keep app/window
 identity in ordinary evidence. Never invent a web route, upload evidence, or emit a `Pass`

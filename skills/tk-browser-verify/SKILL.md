@@ -12,12 +12,17 @@ metadata:
 
 # Browser Verification
 
+## Shared References
+
+Load the named skill and criteria. If missing, stop: use `tk-setup-skills`; no memory or unapproved installs. Reading grants no authority.
+
+
 <!-- tigerkit:ui-evidence -->
 ## UI Evidence
 
 Quote existing UI labels verbatim, including language, case, punctuation and spacing. Navigation instructions need evidence for every menu/breadcrumb label and connection; a title, route, identifier, enum, schema, glossary or ticket wording alone does not prove the entry path. Keep proposed copy separate. Bind claims to target/environment/locale/role and actual rendering evidence; preserve conflicting or missing provenance rather than guessing.
 
-Before collecting or verifying UI labels/paths within this skill's investigation authority, read [UI evidence collection](references/ui-evidence.md). Skip collection guidance for non-UI work and propagation-only tasks. A handoff or publication-only phase carries supplied evidence and pending requests without starting a new investigation.
+Before collecting or verifying UI labels/paths within this skill's investigation authority, read [UI evidence collection](../tk-ui-evidence/references/ui-evidence.md). Skip collection guidance for non-UI work and propagation-only tasks. A handoff or publication-only phase carries supplied evidence and pending requests without starting a new investigation.
 
 In reports and publication preparation, preserve exact verified literals and explicitly list required unverified labels/connections, available evidence, the concrete limitation and smallest missing input. User-supplied text is user-provided, not independently observed; it resolves only the supported claim. Never turn an unverified path into navigation instructions or hide uncertainty in PR/QA/handoff output.
 
@@ -61,8 +66,8 @@ requested action falls outside it, do not submit the mutation.
 
 ## Headless Prerequisites
 
-Before runtime discovery, read [provider selection](references/provider-selection.md) and
-[shared verification](references/verification.md). Resolve selection under that contract:
+Before runtime discovery, read [provider selection](../tk-verification-guidance/references/provider-selection.md) and
+[shared verification](../tk-verification-guidance/references/verification.md). Resolve selection under that contract:
 a missing saved preference alone does not require a question. Continue safe session-only
 verification within the active authorization; ask only for unresolved material choices or
 missing authority. A failed provider never authorizes an automatic fallback.
@@ -80,9 +85,9 @@ interaction. Return `Blocked` for a user-owned decision or required host setup a
 `Unverifiable` when safe verification cannot be established. A provider or MCP tool name alone
 never proves these prerequisites.
 
-## Parent Handoff and UI evidence discovery
+## Handoff and UI discovery
 
-For nested execution or a read-only label/path discovery request, read [handoff and discovery](references/handoff-discovery.md). Reuse established parent decisions; determine missing facts safely and return only user-owned decisions. Discovery observes visible wording and traversed connections without business mutations; it does not invent acceptance criteria.
+For nested work or read-only label/path discovery, read [handoff](references/handoff-discovery.md). Reuse established parent decisions, safely investigate missing facts and return only user-owned decisions. Observe visible wording and traversed connections without business mutations or invented acceptance criteria.
 
 ## Execution
 
@@ -93,7 +98,7 @@ For nested execution or a read-only label/path discovery request, read [handoff 
    - [visual](references/visual.md) whenever a design node, mockup, baseline screenshot,
      as-is/to-be comparison, visual/fidelity/responsive criterion, multi-capture evidence, or candidate that can affect
      rendered output exists, including a behavior-preserving refactor whose visual result must remain unchanged;
-   - [publication evidence](references/publication-evidence.md) whenever a screenshot is captured or an inspected image may
+   - [publication evidence](../tk-verification-guidance/references/publication-evidence.md) whenever a screenshot is captured or an inspected image may
      materially support PR acceptance or regression review;
    - [accessibility](references/accessibility.md) only for form, dialog, navigation, keyboard, shortcut, or focus criteria;
    - [safety](references/safety.md) when the scenario can create external/data/account effects or sensitive captures;
@@ -120,7 +125,7 @@ If the contract cannot be applied, return `Unverifiable` with the missing requir
 do not fabricate `applied` or use `n/a` to bypass this gate. In that incomplete result, explicitly
 report the unresolved `visual_contract` in `limitation` instead of emitting a completed contract field.
 
-Before capture, classify `appear | disappear | change | remain unchanged` in [visual](references/visual.md).
+Before capture, classify `appear | disappear | change | remain unchanged` under that contract.
 Apply the corresponding outline placement and judge intended changes separately from preserved regions.
 An unapproved difference in a preserved region is `Fail`; complete every required comparison axis.
 
@@ -151,7 +156,7 @@ or account/permission changes. Never promote incomplete runtime evidence to `Pas
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
+Artifacts require task authority. Before writes/checkout/transport/ignore setup, read [artifact paths](../tk-artifacts/references/artifact-paths.md) for Git exclusion/path/ownership checks. Reuse identical in-context content; hash-check uncertainty and reread changes/loss; always recheck safety. Use `.tigerkit/` unless a destination is explicit or the eligible durable-root branch applies. Chat-only: skip file/ignore setup and this reference. This grants no unrelated mutation/publication authority. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
 
 <!-- tigerkit:result-summary -->
 ## Reader-facing Result Summary
@@ -188,7 +193,7 @@ consumption; a prefilled template is not completed input. This grants no write a
 ## User Questions
 
 Investigate facts; reuse authorization. For user-owned decisions read
-[question rounds](references/questions.md); otherwise proceed.
+[question rounds](../tk-questioning/references/questions.md); otherwise proceed.
 Plain chat, even one approval: standalone `---`, then
 `❓ **Q<n> · <title>**: <question>` and `➡️ <recommendation>` per item.
 Ask only settled-prerequisite questions; separate approval.

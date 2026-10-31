@@ -3,7 +3,7 @@
   "limits": {
     "max_skill_md_bytes": 36000,
     "max_total_skill_md_bytes": 500000,
-    "max_total_description_chars": 4143,
+    "max_total_description_chars": 4654,
     "max_single_description_chars": 210,
     "max_shared_block_bytes": 165000,
     "max_shared_block_ratio_ppm": 360000,
@@ -20,10 +20,11 @@
         "paths": [
           "skills/tk-research/SKILL.md",
           "skills/tk-research/references/report.md",
-          "skills/tk-research/references/clear-writing.md",
-          "skills/tk-research/references/renderer-contract.md"
+          "skills/tk-writing/references/clear-writing.md",
+          "skills/tk-writing/references/renderer-contract.md",
+          "skills/tk-writing/SKILL.md"
         ],
-        "max_bytes": 46000
+        "max_bytes": 47872
       },
       "tk-explain-html": {
         "entrypoint": "skills/tk-explain/SKILL.md",
@@ -37,32 +38,49 @@
         "paths": [
           "skills/tk-explain/SKILL.md",
           "skills/tk-explain/references/evidence.md",
-          "skills/tk-explain/references/renderer-contract.md",
-          "skills/tk-explain/references/diataxis.md",
-          "skills/tk-explain/references/artifact-paths.md",
-          "skills/tk-explain/references/clear-writing.md",
-          "skills/tk-explain/references/reader-formatting.md",
-          "skills/tk-explain/references/visual-grammar.md",
-          "skills/tk-explain/references/explanation-selection.md"
+          "skills/tk-writing/references/renderer-contract.md",
+          "skills/tk-writing/references/diataxis.md",
+          "skills/tk-artifacts/references/artifact-paths.md",
+          "skills/tk-writing/references/clear-writing.md",
+          "skills/tk-writing/references/reader-formatting.md",
+          "skills/tk-writing/references/visual-grammar.md",
+          "skills/tk-explain/references/explanation-selection.md",
+          "skills/tk-artifacts/SKILL.md",
+          "skills/tk-writing/SKILL.md"
         ],
-        "max_bytes": 96000
+        "max_bytes": 100096
       }
     },
     "max_skill_md_chars": 19999
   },
   "max_growth_ratio": 0.1,
   "rationales": {
-    "budget_increase:always_read:tk-explain-html": "Correct undercounted package-local page preparation/author-check reads: selection, clear writing, reader formatting and visual grammar. The reconciled baseline is 94,737 bytes, not the declared 39,889; explicitly accept the existing load under a bounded 96,000 ceiling without removing safety/author checks. Entry-point imperative Read links are checked for omissions; conditional/transitive/installed-host reads still need semantic review and are not inferred as universal load. No other ceiling changes.",
+    "budget_increase:always_read:tk-explain-html": "명시적인 공통 소유 스킬의 SKILL.md 로드도 정적 읽기 측정에 포함합니다. 측정한 현재 바이트에 가장 가까운 256바이트 상한만 허용합니다. 실제 토큰·전체 조건부 실행 비용 또는 중복 제거에 따른 비용 절감의 증거는 아닙니다.",
     "skill_md:skills/tk-grill/SKILL.md": "조건부 와이어프레임 산출물에 필요한 canonical artifact guard로 전환하고 시각적 질문 참조만 추가합니다. 비시각적 실행은 새 참조를 읽지 않습니다.",
     "skill_md:skills/tk-pr-media/SKILL.md": "tk-pr-image 이름 변경으로 기존 본문을 이전하며 선택형 GIF와 MP4의 분기 포인터를 추가합니다. 새 검증 절차는 해당 조건부 참조에서만 읽습니다.",
     "skill_md:skills/tk-video/SKILL.md": "선택한 영상의 독립 호출과 캡처·앱 판정·게시 담당자 사이 경계, 조립·완성본 확인만 추가합니다. 상세 매니페스트·복구·음성은 조건부 참조로 두며 기존 스킬의 조립·내레이션 코드는 이동합니다.",
     "skill_md:skills/tk-tts/SKILL.md": "기존 영상 음성 구현을 독립 합성 소유자로 이동하며 엔진 선택·설치 승인·고정 해시·합성 전후 검증과 중단 조건을 둡니다. 모델별 설치와 합성 절차는 조건부 참조로 읽습니다.",
-    "budget_increase:max_total_description_chars": "기존 32개 스킬 설명은 바꾸지 않고 독립 비교 담당 tk-blind-comparison의 143자 트리거만 추가합니다. 명시 블라인드 실행과 취향 비교 제안, QA·공개 설계·자동 지표 제외를 구분하는 데 필요하며 총 한도는 실제 증가량만큼만 올립니다.",
+    "budget_increase:max_total_description_chars": "기존 업무 스킬의 트리거는 유지하고 공통 참조 8개와 설치 담당 1개의 좁은 트리거를 추가합니다. 실제 측정한 설명 문자 합계만 허용하며, 본문 19,999자 상한은 유지합니다.",
     "skill_md:skills/tk-blind-comparison/SKILL.md": "독립적인 사람 평가 담당자로 제안/실행·원본 불변·안정적 식별자/내용 버전·실패/공개·저장/집계 경계만 본문에 둡니다. 매체별 가공과 manifest·결과 상세는 조건부 참조로 읽습니다.",
     "skill_md:skills/tk-retro/SKILL.md": "소유 계층별 초안과 직접 수정 제안, 같은 세션 초안 재사용 및 고정 대화 요약을 추가하되 제안 전용·익명화·저장 경계를 보존합니다.",
     "skill_md:skills/tk-inquiry/SKILL.md": "요청자 말투 출처와 원문 보존, 반박 시 단일 근거 및 복사 승인 경계를 모든 초안에 적용합니다.",
     "always_read:tk-explain-html": "Reconcile the existing page preparation and author-check reads: the measured profile rises from 39,889 to 94,737 bytes because four required local references were omitted, not because this change adds new execution instructions. Conditional/transitive/installed-host reads remain outside this bounded explicit-read check. Static bytes are not measured tokens or complete per-call runtime load.",
     "skill_md:skills/tk-explain/SKILL.md": "모든 설명 페이지에서 기존 문구·서식·그림 규칙을 실행하는 작성자 점검을 연결합니다. 추출용 임시 HTML, 무수정·사용자 문체·렌더러 경계와 결과 기록은 독립 검토와 구별하기 위해 필요합니다.",
-    "skill_md:skills/tk-skill-vet/SKILL.md": "외부 패키지를 신뢰하지 않는 정적 검토의 독립 호출을 추가합니다. 실행·설치·실제 비밀 접근·외부 분석 전송 금지, 복합 위협과 정상 대조, 범위 누락 및 업데이트 재검토는 모든 실행에서 필요한 경계이며 새 엔진이나 런타임 의존성은 추가하지 않습니다."
+    "skill_md:skills/tk-skill-vet/SKILL.md": "외부 패키지를 신뢰하지 않는 정적 검토의 독립 호출을 추가합니다. 실행·설치·실제 비밀 접근·외부 분석 전송 금지, 복합 위협과 정상 대조, 범위 누락 및 업데이트 재검토는 모든 실행에서 필요한 경계이며 새 엔진이나 런타임 의존성은 추가하지 않습니다.",
+    "shared_reference_owner_reads": "공통 참조를 소유한 스킬을 로드하는 비용도 명시적 읽기에 포함합니다. 중복 파일 감소를 토큰 절감으로 해석하지 않습니다. before_paths는 전환 전 주소를 보존합니다.",
+    "description_total_chars": "공통 참조 8개와 명시적 설치 담당의 발견성을 위한 설명이 추가됩니다. 설치된 공통 문서 사본 감소가 토큰 절감을 뜻하지 않습니다.",
+    "skill_md_total_bytes": "공통 참조 8개와 설치 담당의 진입점 및 업무 스킬의 누락 시 중단 경계를 추가합니다. 공통 상세 문서를 다시 복제하지 않으며 각 본문의 호스트 문자 상한과 조건부 읽기를 유지합니다.",
+    "budget_increase:always_read:tk-research-report": "명시적인 공통 소유 스킬의 SKILL.md 로드도 정적 읽기 측정에 포함합니다. 측정한 현재 바이트에 가장 가까운 256바이트 상한만 허용합니다. 실제 토큰·전체 조건부 실행 비용 또는 중복 제거에 따른 비용 절감의 증거는 아닙니다.",
+    "skill_md:skills/tk-artifacts/SKILL.md": "새 소유 스킬의 조건부 진입점입니다. 참조 전용 스킬은 요청한 기준만 읽고 업무·변경 권한을 획득하지 않으며, 설치 담당은 명시적 범위의 계획과 재확인만 수행합니다.",
+    "skill_md:skills/tk-engineering/SKILL.md": "새 소유 스킬의 조건부 진입점입니다. 참조 전용 스킬은 요청한 기준만 읽고 업무·변경 권한을 획득하지 않으며, 설치 담당은 명시적 범위의 계획과 재확인만 수행합니다.",
+    "skill_md:skills/tk-pr-guidance/SKILL.md": "새 소유 스킬의 조건부 진입점입니다. 참조 전용 스킬은 요청한 기준만 읽고 업무·변경 권한을 획득하지 않으며, 설치 담당은 명시적 범위의 계획과 재확인만 수행합니다.",
+    "skill_md:skills/tk-questioning/SKILL.md": "새 소유 스킬의 조건부 진입점입니다. 참조 전용 스킬은 요청한 기준만 읽고 업무·변경 권한을 획득하지 않으며, 설치 담당은 명시적 범위의 계획과 재확인만 수행합니다.",
+    "skill_md:skills/tk-repository-guidance/SKILL.md": "새 소유 스킬의 조건부 진입점입니다. 참조 전용 스킬은 요청한 기준만 읽고 업무·변경 권한을 획득하지 않으며, 설치 담당은 명시적 범위의 계획과 재확인만 수행합니다.",
+    "skill_md:skills/tk-setup-skills/SKILL.md": "새 소유 스킬의 조건부 진입점입니다. 참조 전용 스킬은 요청한 기준만 읽고 업무·변경 권한을 획득하지 않으며, 설치 담당은 명시적 범위의 계획과 재확인만 수행합니다.",
+    "skill_md:skills/tk-ui-evidence/SKILL.md": "새 소유 스킬의 조건부 진입점입니다. 참조 전용 스킬은 요청한 기준만 읽고 업무·변경 권한을 획득하지 않으며, 설치 담당은 명시적 범위의 계획과 재확인만 수행합니다.",
+    "skill_md:skills/tk-verification-guidance/SKILL.md": "새 소유 스킬의 조건부 진입점입니다. 참조 전용 스킬은 요청한 기준만 읽고 업무·변경 권한을 획득하지 않으며, 설치 담당은 명시적 범위의 계획과 재확인만 수행합니다.",
+    "skill_md:skills/tk-writing/SKILL.md": "새 소유 스킬의 조건부 진입점입니다. 참조 전용 스킬은 요청한 기준만 읽고 업무·변경 권한을 획득하지 않으며, 설치 담당은 명시적 범위의 계획과 재확인만 수행합니다.",
+    "shared_block_bytes": "공통 참조의 가용성과 읽기 전용 권한 경계는 압박 상황에서도 유지해야 하는 정본 인라인 가드입니다. 정본과 일치할 때만 공유 블록으로 측정하고, 누락·문구 드리프트는 별도 검사에서 실패합니다. 상세 공통 지식의 사본은 되살리지 않습니다.",
+    "shared_block_ratio_ppm": "새 공통 참조의 가용성·권한 중단 가드는 정본과 정확히 일치해야 하며 실제 읽기량에 포함합니다. 공유 지식의 사본은 제거하되 필수 인라인 안전 경계는 보존합니다."
   }
 }

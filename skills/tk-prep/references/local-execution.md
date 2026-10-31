@@ -29,7 +29,7 @@ the lifecycle of host-managed workspaces; do not remove, prune, relocate, or cle
 
 ## Direct execution and completion
 
-Direct changes follow the applicable path in [behavior-first testing](testing.md): RED → verified failure → minimal
+Direct changes follow the applicable path in [behavior-first testing](../../tk-engineering/references/testing.md): RED → verified failure → minimal
 GREEN for changed behavior, or pre-edit GREEN → behavior-preserving refactor → matching GREEN. Then self-simplify →
 exact-change read-only review → scoped remediation/re-review → binding verification → commit. Remove unnecessary indirection,
 speculative flexibility, dead branches, custom replacements for repository-native helpers, and production APIs added
@@ -75,17 +75,17 @@ After candidate implementation and before final review, construct an implementat
 changed, deviations from approved decisions and reasons, newly discovered risks, verification observations, and unresolved
 limitations. It is an untrusted claim bundle, not review proof.
 
-Every exact-change review applies [independent review protocol](review-protocol.md) and
-[finding quality](finding-quality.md). Use the protocol's risk-based direct seat count, established from the exact diff
+Every exact-change review applies [independent review protocol](../../tk-engineering/references/review-protocol.md) and
+[finding quality](../../tk-engineering/references/finding-quality.md). Use the protocol's risk-based direct seat count, established from the exact diff
 and evidence. Each eligible seat records `Spec/AC` and `Quality/Standards` verdicts and completes both required walks. Withhold the implementation
 retro until each seat records its blind pass, aggregate the union, and separately verify every reportable candidate.
 If the required fresh contexts are unavailable, disclose the missing independent coverage as `Unverifiable`; repeated
-serial passes in one context do not satisfy it. Read [TypeScript](typescript.md),
-[React](react.md), and [security](security.md) only when the review scope meets those references' conditions. These lenses
+serial passes in one context do not satisfy it. Read [TypeScript](../../tk-engineering/references/typescript.md),
+[React](../../tk-engineering/references/react.md), and [security](../../tk-engineering/references/security.md) only when the review scope meets those references' conditions. These lenses
 change review judgment, not the target, commit, remediation, or authority protocol.
 
 Handle verified `Critical | Important` findings for at most five remediation rounds. Before requiring a fix diff,
-apply the [evidence-only response](review-protocol.md#evidence-only-response-to-a-reported-finding) branch when the reviewed
+apply the [evidence-only response](../../tk-engineering/references/review-protocol.md#evidence-only-response-to-a-reported-finding) branch when the reviewed
 target is unchanged and concrete counter-evidence exists; only the fresh verifier may disprove that finding. Recheck the original open findings
 and exact fix diff rather than rerunning broad discovery after every edit, and admit only new qualifying breakage caused
 by that fix. Stop with the exact unresolved result after round five; do not continue until a stochastic review happens to

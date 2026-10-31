@@ -17,6 +17,11 @@ try:
 except ImportError:
     from sync_execution_protocol import output_notation_errors, result_summary_errors, feedback_errors, html_policy_errors
 
+try:
+    from .shared_references import link_error, validate_shared_references
+except ImportError:
+    from shared_references import link_error, validate_shared_references
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -89,16 +94,6 @@ DIRECT_MODEL_ROUTING = re.compile(
     r"strategy\s*=\s*direct.*(?:model(?:_class)?|tier)\s*=\s*(?:cheapest|standard|strongest)",
     re.IGNORECASE,
 )
-SHARED_EXECUTION_PROTOCOLS = ("testing.md", "sdd.md")
-SHARED_DOMAIN_CONTEXT_CONSUMERS = ("tk-ask-repo", "tk-audit", "tk-pr-open", "tk-pr-respond", "tk-review")
-SHARED_REVIEW_REFERENCES = (
-    "review-protocol.md",
-    "finding-quality.md",
-    "typescript.md",
-    "react.md",
-    "security.md",
-)
-SHARED_REVIEW_CONSUMERS = ("tk-prep", "tk-pr-respond")
 HANGUL = re.compile(r"[가-힣]")
 INLINE_CODE = re.compile(r"`+[^`]*`+")
 
@@ -272,6 +267,16 @@ def validate_frontmatter_and_body(
     declared_name = data.get("name")
     description = data.get("description")
     kind = nested(data, "metadata", "tigerkit", "kind")
+    role = nested(data, "metadata", "tigerkit", "role")
+    if role is not None and role not in {"reference", "setup"}:
+        errors.append(f"{label}: invalid metadata.tigerkit.role")
+    if role == "reference":
+        if kind != "hybrid":
+            errors.append(f"{label}: reference role requires hybrid kind")
+        if (skill_dir / "scripts").exists():
+            errors.append(f"{label}: reference role must not ship executable scripts")
+    if role == "setup" and name != "tk-setup-skills":
+        errors.append(f"{label}: setup role is reserved for tk-setup-skills")
     origin = nested(data, "metadata", "tigerkit", "origin")
     relationship = nested(data, "metadata", "tigerkit", "relationship")
     version = nested(data, "metadata", "tigerkit", "version")
@@ -366,11 +371,9 @@ def validate_frontmatter_and_body(
         target = target.split("#", 1)[0]
         if not target or re.match(r"^[a-z]+://", target) or target.startswith("#"):
             continue
-        resolved = (skill_dir / target).resolve()
-        if resolved != skill_dir.resolve() and skill_dir.resolve() not in resolved.parents:
-            errors.append(f"{label}: keep links inside the skill package: {target!r}")
-        elif not resolved.exists():
-            errors.append(f"{label}: broken skill-local link {target!r}")
+        error = link_error(skill_dir / "SKILL.md", target, SKILLS)
+        if error:
+            errors.append(f"{label}: {error}")
 
     non_empty = sum(bool(line.strip()) for line in text.splitlines())
     limit = 160 if kind == "hybrid" else 120
@@ -718,7 +721,11 @@ def validate_repo_links() -> list[str]:
             target = target.split("#", 1)[0]
             if not target or re.match(r"^(?:[a-z]+:)?//", target) or target.startswith("#"):
                 continue
-            if not (path.parent / target).resolve().exists():
+            if relative.parts[0] == "skills":
+                error = link_error(path, target, SKILLS)
+                if error:
+                    errors.append(f"{relative}: {error}")
+            elif not (path.parent / target).resolve().exists():
                 errors.append(f"{relative}: broken relative link {target!r}")
     return errors
 
@@ -769,106 +776,6 @@ def validate_reference_resources(skills_root: Path = SKILLS) -> list[str]:
             errors.append(f"{_display_path(path)}: references must not contain NUL bytes")
         errors.extend(_validate_model_facing_language(text, _display_path(path)))
     return errors
-
-
-def validate_shared_execution_protocols(skills_root: Path = SKILLS) -> list[str]:
-    errors: list[str] = []
-    canonical_root = skills_root / "tk-prep/references"
-    consumer_root = skills_root / "tk-pr-respond/references"
-    for name in SHARED_EXECUTION_PROTOCOLS:
-        canonical = canonical_root / name
-        consumer = consumer_root / name
-        try:
-            canonical_text = canonical.read_text(encoding="utf-8")
-            consumer_text = consumer.read_text(encoding="utf-8")
-        except (OSError, UnicodeError) as exc:
-            errors.append(f"shared execution protocol {name}: unreadable copy: {exc}")
-            continue
-        if consumer_text != canonical_text:
-            errors.append(
-                f"{_display_path(consumer)}: sync from {_display_path(canonical)} "
-                "with scripts/sync_execution_protocol.py"
-            )
-    return errors
-
-
-def validate_shared_domain_context(skills_root: Path = SKILLS) -> list[str]:
-    errors: list[str] = []
-    canonical = skills_root / "tk-prep/references/domain-context.md"
-    try:
-        canonical_text = canonical.read_text(encoding="utf-8")
-    except (OSError, UnicodeError) as exc:
-        return [f"shared domain context: unreadable canonical copy: {exc}"]
-    for skill_name in SHARED_DOMAIN_CONTEXT_CONSUMERS:
-        consumer = skills_root / skill_name / "references/domain-context.md"
-        try:
-            consumer_text = consumer.read_text(encoding="utf-8")
-        except (OSError, UnicodeError) as exc:
-            errors.append(f"shared domain context: unreadable copy: {exc}")
-            continue
-        if consumer_text != canonical_text:
-            errors.append(
-                f"{_display_path(consumer)}: sync from {_display_path(canonical)} "
-                "with scripts/sync_execution_protocol.py"
-            )
-    return errors
-
-
-def validate_shared_review_references(skills_root: Path = SKILLS) -> list[str]:
-    errors: list[str] = []
-    canonical_root = skills_root / "tk-review/references"
-    for name in SHARED_REVIEW_REFERENCES:
-        canonical = canonical_root / name
-        try:
-            canonical_text = canonical.read_text(encoding="utf-8")
-        except (OSError, UnicodeError) as exc:
-            errors.append(f"shared review reference {name}: unreadable canonical: {exc}")
-            continue
-        for skill_name in SHARED_REVIEW_CONSUMERS:
-            consumer = skills_root / skill_name / f"references/{name}"
-            try:
-                consumer_text = consumer.read_text(encoding="utf-8")
-            except (OSError, UnicodeError) as exc:
-                errors.append(f"shared review reference {name}: unreadable copy: {exc}")
-                continue
-            if consumer_text != canonical_text:
-                errors.append(
-                    f"{_display_path(consumer)}: sync from {_display_path(canonical)} "
-                    "with scripts/sync_execution_protocol.py"
-                )
-    return errors
-
-
-def validate_shared_external_contracts(skills_root: Path = SKILLS) -> list[str]:
-    canonical = skills_root / "tk-prep/references/external-contracts.md"
-    consumer = skills_root / "tk-wizard/references/external-contracts.md"
-    try:
-        canonical_text = canonical.read_text(encoding="utf-8")
-        consumer_text = consumer.read_text(encoding="utf-8")
-    except (OSError, UnicodeError) as exc:
-        return [f"shared external contract reference: unreadable copy: {exc}"]
-    if consumer_text != canonical_text:
-        return [
-            f"{_display_path(consumer)}: sync from {_display_path(canonical)} "
-            "with scripts/sync_execution_protocol.py"
-        ]
-    return []
-
-
-def validate_shared_clear_writing(skills_root: Path = SKILLS) -> list[str]:
-    canonical = skills_root / "tk-rewrite/references/clear-writing.md"
-    consumer = skills_root / "tk-explain/references/clear-writing.md"
-    try:
-        canonical_bytes = canonical.read_bytes()
-        consumer_bytes = consumer.read_bytes()
-    except OSError as exc:
-        return [f"shared clear-writing reference: unreadable copy: {exc}"]
-    if consumer_bytes != canonical_bytes:
-        return [
-            f"{_display_path(consumer)}: sync from {_display_path(canonical)} "
-            "with scripts/sync_execution_protocol.py"
-        ]
-    return []
 
 
 def validate_repository_contract(skill_names: set[str]) -> list[str]:
@@ -938,11 +845,7 @@ def validate_repository_contract(skill_names: set[str]) -> list[str]:
         if directory.is_dir() and directory.name in {"references", "scripts", "agents"} and not any(directory.iterdir()):
             errors.append(f"{directory.relative_to(ROOT)}: remove empty optional directory")
     errors.extend(validate_reference_resources(SKILLS))
-    errors.extend(validate_shared_execution_protocols(SKILLS))
-    errors.extend(validate_shared_domain_context(SKILLS))
-    errors.extend(validate_shared_review_references(SKILLS))
-    errors.extend(validate_shared_external_contracts(SKILLS))
-    errors.extend(validate_shared_clear_writing(SKILLS))
+    errors.extend(validate_shared_references(SKILLS))
     errors.extend(output_notation_errors(SKILLS))
     errors.extend(result_summary_errors(SKILLS))
     errors.extend(feedback_errors(ROOT))
@@ -991,6 +894,11 @@ def validate_all() -> tuple[list[str], list[str]]:
     errors.extend(catalog_errors)
     errors.extend(validate_invocation_graph(skills))
     errors.extend(validate_release_critical(behavior_ids, catalog_ids))
+    try:
+        from .skill_dependencies import validate_dependencies
+    except ImportError:
+        from skill_dependencies import validate_dependencies
+    errors.extend(validate_dependencies(ROOT))
     errors.extend(validate_routing_invariants())
     errors.extend(validate_repository_contract(set(skills)))
     errors.extend(validate_repo_links())
