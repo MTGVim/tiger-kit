@@ -207,7 +207,7 @@ $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 이 한정된 설정은 요청된 산출물 작성에 포함되며 별도 확인을 요구하지 않습니다. 추적 파일이나 안전하지 않은
 경로는 자동 수정하지 않고, 쓰기 실패나 재확인 실패 시 파일 분기만 `Blocked | Unverifiable`로 보류합니다.
 전제조건 복구는 `skills/tk-questioning/references/questions.md`, 저장소 없음의 구체 절차는
-`skills/tk-artifacts/scripts/artifact_policy.py`가 소유합니다. 기존 승인 범위의 해결은 수행하고 추가 결정·권한만
+`scripts/artifact_policy.py`가 소유합니다. 기존 승인 범위의 해결은 수행하고 추가 결정·권한만
 구체적인 대상·변경·영향과 함께 묻습니다. 저장소 초기화는 같은 대상의 명시적 승인이 있어야 하며,
 복구 후 제외·안전 검사를 다시 거쳐 원래 파일 산출물 작성까지 재개합니다.
 설정만을 위해 스테이징·커밋하지 않고 변경 사실을 간단히 알립니다. 비밀 입력은 디렉터리 `0700`,
@@ -220,12 +220,12 @@ $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 비밀번호는 같은 범위의 보호 파일에 보존합니다. 실제 운영 자격증명, OTP, 복구 코드와 승인된 개발·QA
 범위 밖의 비밀번호는 기존 일회성 수명주기를 유지합니다. 보존은 새로운 로그인이나 자동 입력 권한을
 부여하지 않습니다. 설치 동작의 정본은
-`skills/tk-artifacts/scripts/artifact_policy.py`와 같은 소유 스킬의 참조이며 전역 인증 캐시나 백그라운드 갱신기를 만들지 않습니다.
+`scripts/artifact_policy.py`와 `tk-artifacts`의 공통 참조이며 전역 인증 캐시나 백그라운드 갱신기를 만들지 않습니다.
 
 새 임시 파일을 통해 사용자에게 값을 입력받을 때에는 UTF-8 `input.json`에 필요한 키와 빈 문자열을 담은
 일반 JSON 객체 템플릿을 미리 만듭니다. 단일 토큰의 예시는 `{"token": ""}`이며, 설명과 필수 필드 안내는
 파일 밖에 둡니다. JSON-LD나 빈 파일, 원시 텍스트를 사용하지 않고 기존 문서·설정·사용자 파일에는 이 형식을
-강제하지 않습니다. 공통 `Output Notation`이 형식을, `skills/tk-artifacts/scripts/artifact_policy.py`와
+강제하지 않습니다. 공통 `Output Notation`이 형식을, `scripts/artifact_policy.py`와
 `skills/tk-artifacts/references/artifact-paths.md`가 입력·소비 계약을 소유합니다.
 
 비밀 값을 포함하는 객체는 `.tigerkit/secret-input/<skill>-<run-id>/input.json`에 제한된 권한으로 둡니다.
@@ -251,7 +251,7 @@ $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 원자적 교체에 필요한 동일 디렉터리의 임시 파일은 같은 파일시스템에서 실행 소유권을 확인하고 성공 후 정리합니다.
 설명 자료는 설정된 `artifacts.durableRoot`를 우선하고, 설정이 없으면
 `.tigerkit/explanations/`를 사용합니다. 기존 학습 공간은 이동하거나 삭제하지 않습니다. 저장한 조사는 `.tigerkit/research/`를
-기본으로 사용합니다. 명시한 최종 목적지는 존중합니다. `skills/tk-artifacts/scripts/artifact_policy.py`가 공통 정책을 소유하며
+기본으로 사용합니다. 명시한 최종 목적지는 존중합니다. `scripts/artifact_policy.py`가 공통 정책을 소유하며
 파일을 쓰지 않는 스킬의 쓰기 금지 경계, 파일을 쓰는 스킬의 조건부 본문·선언된 공통 참조와 실행 도구를 릴리즈 체크리스트의 자동 검사에서 확인합니다.
 
 ## 반복 발견
