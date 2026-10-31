@@ -105,8 +105,9 @@ def read_package(base, name):
 
     try:
         metadata = yaml.load(match[1], Loader=UniqueSafeLoader)
-    except (yaml.YAMLError, ValueError, TypeError, OverflowError, RecursionError):
-        # Parser/constructor exceptions may contain input snippets; never echo them.
+    except Exception:
+        # SafeLoader constructors can raise non-YAMLError exceptions too.
+        # Normalize only this parser boundary; never expose input or traceback.
         raise DependencyError(f'{name}: SKILL.md identity mismatch (invalid YAML frontmatter)') from None
     if not isinstance(metadata, dict) or metadata.get('name') != name:
         raise DependencyError(f'{name}: SKILL.md identity mismatch (exact name required)')

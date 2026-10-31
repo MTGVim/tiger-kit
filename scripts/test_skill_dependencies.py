@@ -234,13 +234,22 @@ class DependencyTests(unittest.TestCase):
         spec.loader.exec_module(module)
         package = self.package('tk-a')
         for metadata in ['metadata: {updated: 2026-99-99}',
-                         'metadata: {[unhashable]: value}']:
+                         'metadata: {[unhashable]: value}',
+                         'metadata: {flag: !!bool private-marker}',
+                         'metadata: {number: !!int ""}',
+                         'metadata: {updated: !!timestamp private-marker}']:
             with self.subTest(metadata=metadata):
                 (package / 'SKILL.md').write_text(
                     f'---\nname: tk-a\ndescription: test\n{metadata}\n---\nbody\n')
-                result = self.cli('validate', '--root', self.root)
-                self.assert_rejected(result, 'YAML')
-                self.assertNotIn(metadata, result.stdout + result.stderr)
+                for command in [('validate', '--root', self.root),
+                                ('check', '--installed-root', self.root / 'skills', '--skill', 'tk-a'),
+                                ('plan', '--root', self.root, '--skill', 'tk-a',
+                                 '--target', self.root, '--agent', 'codex',
+                                 '--scope', 'project', '--source', 'owner/repo')]:
+                    result = self.cli(*command)
+                    self.assert_rejected(result, 'YAML')
+                    self.assertNotIn(metadata, result.stdout + result.stderr)
+                    self.assertNotIn('private-marker', result.stdout + result.stderr)
                 errors = module.validate_dependencies(self.root)
                 self.assertIsInstance(errors, list)
                 self.assertTrue(errors)
@@ -259,7 +268,9 @@ class DependencyTests(unittest.TestCase):
         (package / 'SKILL.md').write_text(
             '---\n"name": tk-a\ndescription: >-\n  A valid description.\n'
             'defaults: &defaults\n  owner: original\n'
-            'metadata:\n  <<: *defaults\n  owner: override\n---\nbody\n')
+            'metadata:\n  <<: *defaults\n  owner: override\n'
+            '  flag: !!bool true\n  number: !!int 42\n'
+            '  updated: !!timestamp 2026-10-31\n---\nbody\n')
         result = self.cli('validate', '--root', self.root)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
