@@ -1,6 +1,7 @@
 {
   "version": 1,
   "requires": [
-    "tk-questioning"
+    "tk-questioning",
+    "tk-writing"
   ]
 }

@@ -14,8 +14,12 @@ metadata:
 
 ## Shared References
 
-Load the named skill and criteria. If missing, stop: use `tk-setup-skills`; no memory or unapproved installs. Reading grants no authority.
+Read branch-triggered criteria from the current installed owners. A missing/mismatched
+owner or resource blocks that action: use `tk-setup-skills`, not memory, another installation
+or unapproved installs. Reading grants no workflow or mutation authority.
 
+- For a user-owned decision, missing approval or unmet prerequisite, read [question rounds](../tk-questioning/references/questions.md).
+- Before a user-facing completion report, artifact-path handoff or multi-attribute chat comparison, read [chat delivery](../tk-writing/references/delivery.md). The task's specific output contract wins.
 
 Shape the requested answer or the active owner's progress/result so the reader can find
 what matters and act on it. This is presentation assistance, not a workflow, task executor,
@@ -48,57 +52,6 @@ and its authorized implementation owner, not this output-shaping invocation.
 
 For maintenance provenance, see [distillation](references/distillation.md).
 
-<!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-This skill creates no artifacts. Do not create temporary files, write reports, or edit ignore rules for this invocation; return the result in the conversation. Prefer fresh directories and supported trash for authorized non-secret cleanup; target only recorded literal resolved absolute run-owned paths, never `cd` plus glob/relative deletion.
-
-<!-- tigerkit:result-summary -->
-## Reader-facing Result Summary
-
-Return a brief result with the outcome, actual verification, material limitations
-and direct deliverable links. Distinguish plans/skipped checks from executed work;
-retain outstanding manual checks and real cleanup, blocker or human-action details.
-Never claim unverified completion or cleanup. Preserve the owner's required artifact,
-publication preview, approval boundary, machine return, exact status/footer and final
-question block; keep nested returns compact and omit empty sections.
-<!-- /tigerkit:result-summary -->
-
-<!-- tigerkit:output-notation -->
-## Output Notation
-
-Use ASCII numbering (`1. Item`, `(1) Item`) and `- Item`, not enclosed/keycap numerals.
-Show complete absolute clickable file paths, including examples, without ellipses.
-Preserve exact code, commands, identifiers, URLs, quotations and verified UI labels
-unless their edit is authorized.
-
-For chat comparisons with multiple shared attributes, use narrow GFM pipe tables
-(about four columns, header, short cells); otherwise use lists. No box-drawing,
-fenced or empty tables. Owner-specific previews take precedence; publication bodies
-and file artifacts retain their own table formats.
-
-In rendered Markdown prose, use hyphens for ranges and escape literal tildes as `\~`;
-preserve exact code, quotations and identifiers.
-
-For authorized temporary input files, follow Artifact Paths before creation and
-consumption; a prefilled template is not completed input. This grants no write authority.
-<!-- /tigerkit:output-notation -->
-
-<!-- tigerkit:questions -->
-## User Questions
-
-Investigate facts; reuse authorization. For user-owned decisions read
-[question rounds](../tk-questioning/references/questions.md); otherwise proceed.
-Plain chat, even one approval: standalone `---`, then
-`❓ **Q<n> · <title>**: <question>` and `➡️ <recommendation>` per item.
-Ask only settled-prerequisite questions; separate approval.
-Questions come last; put status, risks and plans before them.
-<!-- /tigerkit:questions -->
-<!-- tigerkit:skill-feedback -->
-## Skill Feedback
-
-For a reusable incident, retain minimal non-secret evidence in the current conversation
-and suggest `tk-retro`; do not write it to persistent memory unless the user asks.
-Invocation, feedback artifacts, installed-skill edits and publication require separate
-authorization through the owning workflow; this pointer grants none.
-<!-- /tigerkit:skill-feedback -->
+This skill creates no artifacts. Do not create temporary files, write reports, or edit ignore rules for this invocation; return the result in the conversation.

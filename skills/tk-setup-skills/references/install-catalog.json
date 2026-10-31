@@ -2,7 +2,8 @@
   "packages": {
     "tk-adhd": {
       "requires": [
-        "tk-questioning"
+        "tk-questioning",
+        "tk-writing"
       ]
     },
     "tk-app-verify": {
@@ -10,7 +11,8 @@
         "tk-artifacts",
         "tk-questioning",
         "tk-ui-evidence",
-        "tk-verification-guidance"
+        "tk-verification-guidance",
+        "tk-writing"
       ]
     },
     "tk-artifacts": {
@@ -22,7 +24,8 @@
       "requires": [
         "tk-questioning",
         "tk-repository-guidance",
-        "tk-ui-evidence"
+        "tk-ui-evidence",
+        "tk-writing"
       ]
     },
     "tk-audit": {
@@ -31,7 +34,8 @@
         "tk-engineering",
         "tk-questioning",
         "tk-repository-guidance",
-        "tk-ui-evidence"
+        "tk-ui-evidence",
+        "tk-writing"
       ]
     },
     "tk-blind-comparison": {
@@ -53,13 +57,15 @@
     "tk-compound": {
       "requires": [
         "tk-artifacts",
-        "tk-questioning"
+        "tk-questioning",
+        "tk-writing"
       ]
     },
     "tk-domain": {
       "requires": [
         "tk-artifacts",
-        "tk-questioning"
+        "tk-questioning",
+        "tk-writing"
       ]
     },
     "tk-engineering": {
@@ -78,32 +84,37 @@
     "tk-grill": {
       "requires": [
         "tk-artifacts",
-        "tk-questioning"
+        "tk-questioning",
+        "tk-writing"
       ]
     },
     "tk-grooming": {
       "requires": [
         "tk-artifacts",
-        "tk-questioning"
+        "tk-questioning",
+        "tk-writing"
       ]
     },
     "tk-handoff": {
       "requires": [
         "tk-artifacts",
         "tk-questioning",
-        "tk-ui-evidence"
+        "tk-ui-evidence",
+        "tk-writing"
       ]
     },
     "tk-inquiry": {
       "requires": [
         "tk-artifacts",
-        "tk-questioning"
+        "tk-questioning",
+        "tk-writing"
       ]
     },
     "tk-merge-conflict": {
       "requires": [
         "tk-artifacts",
-        "tk-questioning"
+        "tk-questioning",
+        "tk-writing"
       ]
     },
     "tk-pr-guidance": {
@@ -112,7 +123,8 @@
     "tk-pr-media": {
       "requires": [
         "tk-artifacts",
-        "tk-questioning"
+        "tk-questioning",
+        "tk-writing"
       ]
     },
     "tk-pr-open": {
@@ -121,14 +133,16 @@
         "tk-pr-guidance",
         "tk-questioning",
         "tk-repository-guidance",
-        "tk-ui-evidence"
+        "tk-ui-evidence",
+        "tk-writing"
       ]
     },
     "tk-pr-rebase": {
       "requires": [
         "tk-artifacts",
         "tk-pr-guidance",
-        "tk-questioning"
+        "tk-questioning",
+        "tk-writing"
       ]
     },
     "tk-pr-respond": {
@@ -138,7 +152,8 @@
         "tk-pr-guidance",
         "tk-questioning",
         "tk-repository-guidance",
-        "tk-ui-evidence"
+        "tk-ui-evidence",
+        "tk-writing"
       ]
     },
     "tk-pr-sweep": {
@@ -146,7 +161,8 @@
         "tk-artifacts",
         "tk-pr-guidance",
         "tk-questioning",
-        "tk-ui-evidence"
+        "tk-ui-evidence",
+        "tk-writing"
       ]
     },
     "tk-prep": {
@@ -195,7 +211,8 @@
     "tk-retro": {
       "requires": [
         "tk-artifacts",
-        "tk-questioning"
+        "tk-questioning",
+        "tk-writing"
       ]
     },
     "tk-review": {
@@ -203,7 +220,8 @@
         "tk-engineering",
         "tk-questioning",
         "tk-repository-guidance",
-        "tk-ui-evidence"
+        "tk-ui-evidence",
+        "tk-writing"
       ]
     },
     "tk-rewrite": {
@@ -216,7 +234,8 @@
     "tk-roadmap": {
       "requires": [
         "tk-artifacts",
-        "tk-questioning"
+        "tk-questioning",
+        "tk-writing"
       ]
     },
     "tk-setup-skills": {
@@ -224,14 +243,15 @@
     },
     "tk-skill-vet": {
       "requires": [
-        "tk-artifacts",
-        "tk-questioning"
+        "tk-questioning",
+        "tk-writing"
       ]
     },
     "tk-tts": {
       "requires": [
         "tk-artifacts",
-        "tk-questioning"
+        "tk-questioning",
+        "tk-writing"
       ]
     },
     "tk-ui-evidence": {
@@ -254,7 +274,8 @@
         "tk-artifacts",
         "tk-questioning",
         "tk-repository-guidance",
-        "tk-ui-evidence"
+        "tk-ui-evidence",
+        "tk-writing"
       ]
     },
     "tk-writing": {

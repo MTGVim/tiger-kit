@@ -12,24 +12,19 @@ metadata:
 
 # Shared Writing and Presentation
 
-Use this reference-only skill when the caller needs one of the criteria below. Read only the
-requested reference under its stated condition; do not preload the whole collection. Return
-the relevant criteria and unresolved evidence to the calling workflow. This invocation does
-not start that workflow or grant installation, file mutation, secret access, Git or publication
-authority. The caller retains its approval gates, authority, evidence and completion duties.
+Read only references whose conditions below hold; return criteria and gaps to the caller,
+which retains scope, approvals and completion. References invoke no workflow and grant no
+installation, mutation, secret, Git or publication authority.
 
-If this skill or a requested resource is missing, stop the affected action and guide the user
-to `tk-setup-skills`. Do not substitute remembered guidance or silently install dependencies.
-Resolve linked sibling packages in the current host's installed skill collection, never from
-a hardcoded home directory. Dependencies are declared in `dependencies.json`.
-
-In moved references, `<package>`, "package-local" and "this package" mean the invoking
-workflow's installed package unless an explicit resource link identifies another owner.
-Following a resource link reads that resource only; it does not invoke the owner's workflow.
+Resolve owners in the current installed skill collection (`dependencies.json`), not memory,
+another installation, hardcoded homes or a source-checkout fallback. A missing/mismatched
+owner or resource blocks the affected action: guide to `tk-setup-skills`, never silently install.
+`<package>`, "package-local" and "this package" mean the caller's installed package unless a link names another owner.
 
 ## Conditional references
 
 - [chart design](references/chart-design.md): data needs a chart or chart representation must be chosen.
+- [chat delivery](references/delivery.md): returning user-facing results, artifact links or multi-attribute chat comparisons.
 - [clear writing](references/clear-writing.md): authoring prose rather than preserving exact supplied text.
 - [diataxis](references/diataxis.md): choosing tutorial, how-to, explanation or reference framing.
 - [explanation techniques](references/explanation-techniques.md): planning a teaching explanation or its representations.

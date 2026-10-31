@@ -1,7 +1,7 @@
 {
   "version": 1,
   "requires": [
-    "tk-artifacts",
-    "tk-questioning"
+    "tk-questioning",
+    "tk-writing"
   ]
 }
