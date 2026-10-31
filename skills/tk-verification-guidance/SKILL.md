@@ -29,7 +29,7 @@ Following a resource link reads that resource only; it does not invoke the owner
 
 ## Conditional references
 
-- [provider knowledge](references/provider-knowledge.md): a diagnosed and reverified provider limitation may need a bounded troubleshooting note.
+- [provider knowledge](references/provider-knowledge.md): the caller requires selected-provider integration knowledge before discovery/interaction, or a diagnosed and reverified provider limitation may need a bounded troubleshooting note.
 - [provider selection](references/provider-selection.md): selecting a verification provider or interpreting its supported preferences.
 - [publication evidence](references/publication-evidence.md): preparing verification evidence for an authorized publication owner.
 - [verification](references/verification.md): establishing verification scope, evidence and result status.

@@ -1,4 +1,4 @@
 interface:
-  short_description: "[user/auto] PR 시각 자료·다중 PR 전달·rebase 준비 기준을 참조할 때 사용합니다."
+  short_description: "[user/auto] PR 시각 자료·다중 PR 전달·리베이스 준비 기준을 참조할 때 사용합니다."
 policy:
   allow_implicit_invocation: true

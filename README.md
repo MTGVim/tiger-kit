@@ -1,6 +1,6 @@
 # TigerKit
 
-Claude Code, Codex, Hermes Agent에서 골라 쓰는 작고 조합 가능한 에이전트 스킬 모음입니다.
+`Claude Code`, `Codex`, `Hermes Agent`에서 골라 쓰는 작고 조합 가능한 에이전트 스킬 모음입니다.
 
 ## 설치
 
@@ -11,6 +11,7 @@ npx skills update --global --yes
 
 선택 설치는 `tk-setup-skills`로 필요한 업무 스킬과 공통 의존성을 함께 준비합니다. 설치기는 의존성을 자동 해결하지 않습니다.
 `Claude Code`·`Hermes`에서는 `/tk-setup-skills`, `Codex`에서는 `$tk-setup-skills`로 호출합니다. 설치 실행은 대상·범위를 확인하고 승인한 뒤 진행합니다.
+설치 도우미의 소스·설치본 검사에는 `Python 3.9+`와 `PyYAML`이 필요합니다. 빈 대상에 동봉 카탈로그로 계획만 만들 때는 표준 라이브러리만 사용합니다. 파서가 없으면 검사를 중단하며 자동 설치하지 않습니다.
 
 ## 스킬 구성
 
@@ -90,7 +91,7 @@ npx skills update --global --yes
 | [tk-writing](skills/tk-writing/SKILL.md) | `hybrid` | 글쓰기·설명·HTML 표현 기준을 제공합니다. |
 | [tk-engineering](skills/tk-engineering/SKILL.md) | `hybrid` | 테스트·진단·리뷰·SDD 기준을 제공합니다. |
 | [tk-repository-guidance](skills/tk-repository-guidance/SKILL.md) | `hybrid` | 저장소 맥락·도메인 문서·외부 계약 기준을 제공합니다. |
-| [tk-pr-guidance](skills/tk-pr-guidance/SKILL.md) | `hybrid` | PR 전달·시각 자료·rebase 준비 기준을 제공합니다. |
+| [tk-pr-guidance](skills/tk-pr-guidance/SKILL.md) | `hybrid` | PR 전달·시각 자료·리베이스 준비 기준을 제공합니다. |
 | [tk-verification-guidance](skills/tk-verification-guidance/SKILL.md) | `hybrid` | 검증 제공자 선택과 근거·설정 기준을 제공합니다. |
 
 ## 참고

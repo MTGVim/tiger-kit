@@ -73,9 +73,35 @@ def read_package(base, name):
     except OSError as exc:
         raise DependencyError(f'{name}: missing/unreadable SKILL.md: {exc}') from None
     match = re.match(r'\A---\r?\n(.*?)\r?\n---(?:\r?\n|\Z)', text, re.S)
-    names = re.findall(r'^name:\s*([^\r\n]+)', match[1] if match else '', re.M)
-    if len(names) != 1 or names[0].strip() not in (name, f'"{name}"', f"'{name}'"):
+    if not match:
+        raise DependencyError(f'{name}: SKILL.md identity mismatch (missing frontmatter)')
+    try:
+        import yaml
+    except ImportError:
+        raise DependencyError(
+            'PyYAML is required to validate SKILL.md; provision it only in an approved Python environment'
+        ) from None
+    class UniqueSafeLoader(yaml.SafeLoader):
+        def construct_mapping(self, node, deep=False):
+            # Keep explicit keys before SafeLoader expands legal YAML merges.
+            pairs = list(node.value) if isinstance(node, yaml.MappingNode) else []
+            result = super().construct_mapping(node, deep=deep)
+            keys = [self.construct_object(key, deep=deep) for key, _ in pairs
+                    if key.tag != 'tag:yaml.org,2002:merge']
+            if len(set(keys)) != len(keys):
+                raise yaml.YAMLError('duplicate YAML mapping key')
+            return result
+
+    try:
+        metadata = yaml.load(match[1], Loader=UniqueSafeLoader)
+    except yaml.YAMLError:
+        # Parser exceptions may include input snippets; do not echo package contents.
+        raise DependencyError(f'{name}: SKILL.md identity mismatch (invalid YAML frontmatter)') from None
+    if not isinstance(metadata, dict) or metadata.get('name') != name:
         raise DependencyError(f'{name}: SKILL.md identity mismatch (exact name required)')
+    description = metadata.get('description')
+    if not isinstance(description, str) or not description.strip() or len(description) > 1024:
+        raise DependencyError(f'{name}: SKILL.md description must be non-empty and at most 1024 characters')
     for entry in package.rglob('*'):
         if entry.is_symlink():
             raise DependencyError(f'symlink boundary is not supported: {entry}')

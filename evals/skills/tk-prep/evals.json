@@ -382,6 +382,10 @@
           "path": "skills/tk-engineering/references/sdd.md"
         },
         {
+          "type": "path_not_read",
+          "path": "skills/tk-prep/references/sdd.md"
+        },
+        {
           "type": "git_head_unchanged"
         }
       ],
@@ -542,6 +546,10 @@
         {
           "type": "path_not_read",
           "path": "skills/tk-engineering/references/sdd.md"
+        },
+        {
+          "type": "path_not_read",
+          "path": "skills/tk-prep/references/sdd.md"
         },
         {
           "type": "git_head_unchanged"
@@ -1755,6 +1763,10 @@
         {
           "type": "path_not_read",
           "path": "skills/tk-engineering/references/sdd.md"
+        },
+        {
+          "type": "path_not_read",
+          "path": "skills/tk-prep/references/sdd.md"
         }
       ],
       "safety": true

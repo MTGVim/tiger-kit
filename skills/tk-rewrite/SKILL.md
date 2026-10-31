@@ -20,7 +20,7 @@ Load the named skill and criteria. If missing, stop: use `tk-setup-skills`; no m
 
 Rewrite existing prose for its reader. Use the supplied text or named document; otherwise use the immediately preceding substantive answer. `deslopify` is a synonym for rewriting that target. If no target is identifiable, ask for it. Default to a capable reader unfamiliar with the project, not a child. This is not automatically a summary: preserve the coverage needed to understand the whole document.
 
-Before editing prose, read [clear writing](../tk-writing/references/clear-writing.md). Apply its language-neutral criteria in any language, and its Korean criteria only to Korean prose. Use this package's copy; no other skill or global fluent-korean installation is required.
+Before editing prose, read [clear writing](../tk-writing/references/clear-writing.md). Apply its language-neutral criteria in any language, and its Korean criteria only to Korean prose. Use the declared `tk-writing` reference; no global fluent-korean installation or separate writing-workflow execution is required.
 
 ## Two Internal Passes
 

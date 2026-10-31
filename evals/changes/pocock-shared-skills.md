@@ -6,7 +6,7 @@
 기존 작업 트리와 사용자 설치본은 보존하며 `push`·PR·`merge`·릴리즈·전역 설치는 제외합니다.
 `AGENTS.md`는 직접 변경하지 않고 적용 가능한 수정안을 실행 근거와 함께 별도 제공합니다.
 
-README: public catalog and installation contract updated in `README.md`.
+공개 카탈로그와 설치 계약을 `README.md`에서 갱신했습니다.
 
 ## 동작과 출처
 
@@ -24,8 +24,8 @@ README: public catalog and installation contract updated in `README.md`.
 `evals/migrations/pocock-shared-references.json`은 원문 해시, 원래 소비 경로, 새 정본을 기록합니다.
 기존 행동·트리거·카탈로그·릴리즈 중요 평가의 ID나 보호 의도를 포괄 예외로 폐기하지 않습니다.
 
-- `evals/skills/tk-ask-repo/evals.json`: 기존 비UI 조건의 `path_not_read` 대상만 새 UI 근거 소유 경로로 이동합니다.
-- `evals/skills/tk-prep/evals.json`: 기존 `direct/no-Seed` 경로의 `path_not_read` 대상을 새 `SDD` 정본으로 이동합니다.
+- `evals/skills/tk-ask-repo/evals.json`: 기존 비UI 조건의 구 경로 `path_not_read` 단언을 유지하고 새 UI 근거 소유 경로의 금지 단언도 추가합니다.
+- `evals/skills/tk-prep/evals.json`: 기존 `direct/no-Seed` 경로의 구 경로 `path_not_read` 단언을 유지하고 새 `SDD` 정본의 금지 단언도 추가합니다.
 - `prep-multifile-same-shape-stays-direct`: 제거된 두 `SDD` 문서 사본 대신 실제로 남아 있는 두 업무 스킬의 인라인 `Output Notation` 동기화를 사용합니다. 정본·동기화 검사와 하나의 판단 면을 근거로 `direct`를 선택해야 한다는 의도, 판정·무커밋·`Pending` 검증은 유지합니다.
 - 새 참조 스킬마다 필요한 기준 읽기, 권한 확대 거부, 누락 시 중단 시나리오를 추가합니다. 설치 담당에는 명령 계획·범위 확대 거부·누락 진단 시나리오를 추가합니다.
 - 새 카탈로그·트리거·릴리즈 중요 평가를 명시적으로 추가합니다. 전체 모델 행동 평가를 실행한 것으로 해석하지 않습니다.
@@ -37,3 +37,11 @@ README: public catalog and installation contract updated in `README.md`.
 - 참조 전용 스킬의 본문도 읽기 비용에 포함합니다. 파일 사본 감소를 모델 토큰 절감이나 호스트별 자동 호출의 검증으로 표현하지 않습니다.
 - 본문은 기존 `19,999`자·UTF-16 단위 상한을 유지합니다. 좁은 진입점의 설명과 명시적 소유 스킬 읽기 증가는 실제 측정량과 별도 근거로 예산에 반영합니다.
 - 최종 검사·설치·모델 참조 적용·리뷰 결과와 실제 실행하지 못한 항목은 해당 정확한 로컬 후보에 묶인 실행 근거에서 보고합니다. 정의 수, 실행한 자동 검사 수, 모델을 사용한 시나리오 수는 구분합니다.
+
+## 독립 리뷰 보정
+
+- 운영 문구의 언어 회귀와 기존 금지 경로 단언 누락을 검증기 완화 없이 보정했습니다.
+- 설치 도우미는 실제 안전한 YAML 파서와 중복 키 거부로 설치본을 확인합니다. 소스·설치본 검사에는 `PyYAML`이 필요하며 없으면 중단합니다. 빈 대상의 동봉 카탈로그 계획은 표준 라이브러리만으로 유지합니다. 파서나 환경을 자동 설치하지 않습니다.
+- 깨진 YAML의 계획·점검 오판과 중복 키 허용을 실제 실패로 재현한 뒤 집중 테스트 `17`개가 통과했습니다. 파서 부재, 위험한 태그, 입력 원문 비노출과 정상 병합도 검사합니다.
+- 제공자 지식 메뉴에 호출자가 요구하는 첫 사용 전 읽기 조건을 복원하고 별도 평가 사례를 추가했습니다. 평가 정의 추가를 실제 모델 실행으로 보고하지 않습니다.
+- 쓰기 기준의 이전 패키지 로컬 사본·소유권 설명을 현재 참조 의존성과 일치시켰습니다.

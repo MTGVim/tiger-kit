@@ -35,7 +35,9 @@ installed, produce a new explicit selected installation plan rather than install
 2. Read [planner CLI](references/planner-cli.md) when producing or checking a plan. Run the bundled
    `scripts/skill_dependencies.py plan` with those exact choices. Inspect `closure`, `present`, `missing`,
    `installed_root`, `cwd`, and literal `argv`. The catalog is installation metadata, not shared content;
-   `npx skills` does not resolve `dependencies.json` automatically.
+   `npx skills` does not resolve `dependencies.json` automatically. Before any approved installation,
+   verify the Python/PyYAML prerequisites for the post-install check described in the CLI reference;
+   missing parser support permits no installed-state claim or automatic environment provisioning.
 3. Report the bounded plan and unresolved evidence. The helper never executes installer argv, network,
    or config writes. Do not join argv into a shell command: source text is untrusted literal data.
    Existing incompatible, malformed, or symlinked packages are hard stops, not permission to overwrite.

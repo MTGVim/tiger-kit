@@ -172,7 +172,7 @@ class DependencyTests(unittest.TestCase):
         (consumer / 'config.json').write_text('{"preserve":true}')
         before = {str(p.relative_to(self.root)): (p.read_bytes(), p.stat().st_mtime_ns)
                   for p in self.root.rglob('*') if p.is_file()}
-        result = subprocess.run([sys.executable, str(copy / 'scripts/skill_dependencies.py'),
+        result = subprocess.run([sys.executable, '-I', '-S', '-B', str(copy / 'scripts/skill_dependencies.py'),
                                  'plan', '--skill', 'tk-setup-skills', '--source', 'trusted/repository',
                                  '--target', str(consumer), '--agent', 'codex', '--scope', 'project'],
                                 capture_output=True, text=True)
@@ -193,6 +193,70 @@ class DependencyTests(unittest.TestCase):
             with self.subTest(value=value):
                 catalog.write_text(value)
                 self.assert_rejected(self.cli(*base), text)
+
+    def test_malformed_installed_yaml_is_not_present_or_complete(self):
+        import shutil
+        package = self.package('tk-a')
+        target = self.root / 'consumer'
+        installed = target / '.agents/skills'
+        installed.mkdir(parents=True)
+        shutil.copytree(package, installed / 'tk-a')
+        (installed / 'tk-a/SKILL.md').write_text(
+            '---\nname: tk-a\ndescription: [\n---\nbody\n')
+        commands = [
+            ('check', '--installed-root', installed, '--skill', 'tk-a'),
+            ('plan', '--root', self.root, '--source', 'trusted/repository',
+             '--target', target, '--agent', 'codex', '--scope', 'project', '--skill', 'tk-a'),
+        ]
+        for command in commands:
+            with self.subTest(command=command[0]):
+                self.assert_rejected(self.cli(*command), 'YAML')
+
+    def test_duplicate_yaml_keys_rejected(self):
+        package = self.package('tk-a')
+        cases = [
+            'name: tk-a\n"name": tk-a\ndescription: test',
+            'name: tk-a\ndescription: first\ndescription: second',
+            'name: tk-a\ndescription: test\nmetadata:\n  owner: first\n  owner: second',
+        ]
+        for frontmatter in cases:
+            with self.subTest(frontmatter=frontmatter):
+                (package / 'SKILL.md').write_text(f'---\n{frontmatter}\n---\nbody\n')
+                self.assert_rejected(self.cli('validate', '--root', self.root), 'YAML')
+
+    def test_missing_yaml_parser_is_a_closed_failure_without_traceback(self):
+        self.package('tk-a')
+        result = subprocess.run(
+            [sys.executable, '-I', '-S', '-B', str(SCRIPT), 'check',
+             '--installed-root', str(self.root / 'skills'), '--skill', 'tk-a'],
+            capture_output=True, text=True)
+        self.assert_rejected(result, 'PyYAML')
+
+    def test_valid_yaml_quoted_keys_and_merge_overrides_remain_supported(self):
+        package = self.package('tk-a')
+        (package / 'SKILL.md').write_text(
+            '---\n"name": tk-a\ndescription: >-\n  A valid description.\n'
+            'defaults: &defaults\n  owner: original\n'
+            'metadata:\n  <<: *defaults\n  owner: override\n---\nbody\n')
+        result = self.cli('validate', '--root', self.root)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_unsafe_yaml_tags_are_rejected_without_input_echo(self):
+        package = self.package('tk-a')
+        marker = 'private-frontmatter-marker'
+        (package / 'SKILL.md').write_text(
+            f'---\nname: tk-a\ndescription: !!python/name:{marker}\n---\nbody\n')
+        result = self.cli('validate', '--root', self.root)
+        self.assert_rejected(result, 'YAML')
+        self.assertNotIn(marker, result.stdout + result.stderr)
+
+    def test_required_description_schema_rejected(self):
+        package = self.package('tk-a')
+        for description in ['', "description: ''", 'description: []',
+                            'description: ' + json.dumps('x' * 1025)]:
+            with self.subTest(description=description):
+                (package / 'SKILL.md').write_text(f'---\nname: tk-a\n{description}\n---\nbody\n')
+                self.assert_rejected(self.cli('validate', '--root', self.root), 'description')
 
     def test_identity_unbalanced_quotes_rejected(self):
         package = self.package('tk-a')

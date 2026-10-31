@@ -1,6 +1,12 @@
 # Dependency Planner CLI
 
-Requires Python 3.9+ (stdlib only). Execute the installed package's `scripts/skill_dependencies.py`;
+Requires Python 3.9+. Reading any source or installed `SKILL.md` additionally requires PyYAML
+(verified with 6.0.3); missing parser support is a hard stop, never a successful package check.
+A bundled-catalog plan for an empty destination needs only the standard library. Before an approved
+installation, verify parser availability in the Python environment that will perform the post-install
+check. Any environment/package provisioning needs its own applicable approval; this helper never
+installs a parser or falls back to regex-based YAML validation.
+Execute the installed package's `scripts/skill_dependencies.py`;
 repository maintainers may use the public shim `scripts/skill_dependencies.py` at the repository root.
 The examples use that repository shim. Replace all example values with verified user choices.
 

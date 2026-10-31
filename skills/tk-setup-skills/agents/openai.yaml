@@ -1,6 +1,6 @@
 interface:
   short_description: "[user] 선택한 TigerKit 스킬과 공통 의존성의 설치 계획을 읽기 전용으로 확인합니다."
-  default_prompt: "tk-setup-skills로 선택 skill IDs, 신뢰할 source, 정확한 target·agent·scope를 확인하고 의존성 closure와 literal argv만 계획하세요. 별도 승인 없이 설치·네트워크·설정 변경을 실행하지 마세요."
+  default_prompt: "`tk-setup-skills`로 선택할 스킬 ID, 신뢰할 원천, 정확한 대상·에이전트·범위를 확인하고 의존성 집합과 명령 인자만 계획하세요. 별도 승인 없이 설치·네트워크·설정 변경을 실행하지 마세요."
 
 policy:
   allow_implicit_invocation: false

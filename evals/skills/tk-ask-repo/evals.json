@@ -297,6 +297,10 @@
           "path": "skills/tk-ui-evidence/references/ui-evidence.md"
         },
         {
+          "type": "path_not_read",
+          "path": "skills/tk-ask-repo/references/ui-evidence.md"
+        },
+        {
           "type": "changed_paths_equal",
           "paths": []
         },
