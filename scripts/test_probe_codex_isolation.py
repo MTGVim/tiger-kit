@@ -22,10 +22,13 @@ class CodexIsolationProbeTest(unittest.TestCase):
             cli.write_text('''#!/usr/bin/env python3
 import subprocess, sys, time
 from pathlib import Path
+# Exercise interpreter startup slower than the invocation's execution budget.
+time.sleep(0.3)
 child = subprocess.Popen([sys.executable, '-c',
- 'import signal,time; signal.signal(signal.SIGTERM, signal.SIG_IGN); time.sleep(30)'],
+ 'import os,signal,time; from pathlib import Path; '
+ 'signal.signal(signal.SIGTERM, signal.SIG_IGN); '
+ 'Path("child.pid").write_text(str(os.getpid())); time.sleep(30)'],
  stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-Path('child.pid').write_text(str(child.pid))
 if sys.argv[1] != 'completed': time.sleep(30)
 ''', encoding="utf-8")
             cli.chmod(0o700)
@@ -34,20 +37,32 @@ if sys.argv[1] != 'completed': time.sleep(30)
                     home = root / mode
                     (home / ".codex").mkdir(parents=True)
                     original = subprocess.Popen.communicate
-                    def interrupt(process, *args, **kwargs):
+                    def communicate_when_ready(process, *args, **kwargs):
+                        # Keep real Popen/communicate/cleanup: only fixture setup is
+                        # outside the unchanged 0.2-second execution budget. The
+                        # child publishes its PID after installing SIGTERM ignore.
+                        deadline = time.monotonic() + 3
+                        path = home / "child.pid"
+                        while not path.exists() or not path.read_text().strip():
+                            self.assertLess(time.monotonic(), deadline,
+                                            "owned child did not become ready")
+                            time.sleep(0.01)
+                        self.assertGreater(int(path.read_text()), 0)
                         try:
-                            original(process, timeout=0.2)
+                            return original(process, *args, **kwargs)
                         except subprocess.TimeoutExpired:
-                            raise KeyboardInterrupt
+                            if mode == "interrupted":
+                                raise KeyboardInterrupt
+                            raise
                     try:
-                        if mode == "interrupted":
-                            with patch.object(subprocess.Popen, "communicate", interrupt):
+                        with patch.object(subprocess.Popen, "communicate", communicate_when_ready):
+                            if mode == "interrupted":
                                 with self.assertRaises(KeyboardInterrupt):
                                     invoke(str(cli), [mode], home, home, timeout=0.2)
-                        else:
-                            status, _, clean = invoke(str(cli), [mode], home, home, timeout=0.2)
-                            self.assertEqual(status, mode)
-                            self.assertTrue(clean)
+                            else:
+                                status, _, clean = invoke(str(cli), [mode], home, home, timeout=0.2)
+                                self.assertEqual(status, mode)
+                                self.assertTrue(clean)
                         pid = int((home / "child.pid").read_text())
                         deadline = time.monotonic() + 1
                         while time.monotonic() < deadline:

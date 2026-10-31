@@ -2,7 +2,9 @@ from __future__ import annotations
 import copy
 import importlib.util
 import json
+import struct
 import subprocess
+import zlib
 import tempfile
 import unittest
 import wave
@@ -14,6 +16,37 @@ PACKAGE = ROOT / 'skills/tk-blind-comparison'
 spec = importlib.util.spec_from_file_location('blind_gallery', PACKAGE / 'scripts/build_gallery.py')
 builder = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(builder)
+
+
+def png_fixture(path, width, height, pixels=None, metadata=None):
+    # RGB/filter-0 PNG, matching the stdlib fixtures in test_optional_media.py.
+    def chunk(kind, value):
+        return (struct.pack('>I', len(value)) + kind + value +
+                struct.pack('>I', zlib.crc32(kind + value)))
+    if pixels is None:
+        pixels = b'\xff\xff\xff' * width * height
+    assert len(pixels) == width * height * 3
+    rows = b''.join(b'\0' + pixels[y * width * 3:(y + 1) * width * 3]
+                    for y in range(height))
+    text = b''.join(chunk(b'tEXt', key.encode() + b'\0' + value.encode())
+                    for key, value in (metadata or {}).items())
+    path.write_bytes(b'\x89PNG\r\n\x1a\n' +
+                     chunk(b'IHDR', struct.pack('>IIBBBBB', width, height, 8, 2, 0, 0, 0)) +
+                     text + chunk(b'IDAT', zlib.compress(rows)) + chunk(b'IEND', b''))
+
+
+def png_chunks(path):
+    data = path.read_bytes()
+    assert data[:8] == b'\x89PNG\r\n\x1a\n'
+    offset = 8
+    while offset < len(data):
+        size = struct.unpack('>I', data[offset:offset + 4])[0]
+        kind = data[offset + 4:offset + 8]
+        value = data[offset + 8:offset + 8 + size]
+        assert struct.unpack('>I', data[offset + 8 + size:offset + 12 + size])[0] == zlib.crc32(kind + value)
+        yield kind, value
+        offset += 12 + size
+    assert offset == len(data)
 
 
 def fixture(candidates=5, items=9, kind='audio'):
@@ -146,8 +179,7 @@ class BlindComparisonTests(unittest.TestCase):
             self.assertIn('id="key-file"', page)
 
     def test_long_image_original_link_annotation_and_legacy_fingerprint(self):
-        from PIL import Image
-        Image.new('RGB', (600, 11000), 'white').save(self.root / 'tall.png')
+        png_fixture(self.root / 'tall.png', 600, 11000)
         self.data = fixture(2, 1, kind='image')
         row = self.data['outputs'][1]
         row['path'] = 'tall.png'
@@ -186,14 +218,12 @@ class BlindComparisonTests(unittest.TestCase):
         with self.assertRaises(ValueError): self.build()
 
     def test_binary_links_allow_short_ids_and_format_changes_reset_rating(self):
-        from PIL import Image
         import random
         self.data = fixture(2, 1, kind='text')
         for i, candidate in enumerate(self.data['candidates']):
             candidate['id'] = ('a', 'b')[i]
             self.data['outputs'][i]['candidate_id'] = candidate['id']
-        image = Image.frombytes('RGB', (64, 64), random.Random(7).randbytes(64 * 64 * 3))
-        image.save(self.root / 'mobile.png')
+        png_fixture(self.root / 'mobile.png', 64, 64, random.Random(7).randbytes(64 * 64 * 3))
         row = self.data['outputs'][1]
         row['links'] = [{'label': '모바일', 'path': 'mobile.png'}]
         self.build('binary')
@@ -208,8 +238,7 @@ class BlindComparisonTests(unittest.TestCase):
 
     def test_versus_html_previews_copy_blind_bytes_and_bind_revisions(self):
         import zipfile
-        from PIL import Image
-        Image.new('RGB', (800, 3400), 'white').save(self.root / 'capture.png')
+        png_fixture(self.root / 'capture.png', 800, 3400)
         original = '<!doctype html><title>문서</title><details><summary>정답</summary>설명</details>'
         (self.root / 'prepared.html').write_text(original)
         self.data = fixture(3, 1, 'image')
@@ -387,17 +416,28 @@ class BlindComparisonTests(unittest.TestCase):
                                input=duplicate,text=True,capture_output=True)
         self.assertNotEqual(invalid.returncode,0);self.assertEqual(invalid.stdout,'')
     def test_normalized_image_canvas_and_metadata_stay_anonymous(self):
-        from PIL import Image, PngImagePlugin
-        raw=self.root/'raw.png';info=PngImagePlugin.PngInfo();info.add_text('producer','Model 0');Image.new('RGB',(120,80),'blue').save(raw,pnginfo=info)
+        raw = self.root / 'raw.png'
+        blue = b'\0\0\xff' * 120 * 80
+        png_fixture(raw, 120, 80, blue, {'producer': 'Model 0'})
         # The author follows images.md to create common-canvas clean display copies.
-        with Image.open(raw) as im:
-            clean=Image.new('RGB',(160,100),'white');clean.paste(im,(20,10));clean.save(self.root/'display.png')
+        row = b'\xff\xff\xff' * 20 + b'\0\0\xff' * 120 + b'\xff\xff\xff' * 20
+        pixels = b'\xff\xff\xff' * 160 * 10 + row * 80 + b'\xff\xff\xff' * 160 * 10
+        png_fixture(self.root / 'display.png', 160, 100, pixels)
         self.data=fixture(4,1,'image')
         for r in self.data['outputs']:
             r.pop('error',None);r['path']='display.png'
         self.build()
-        with Image.open(raw) as im:self.assertIn('producer',im.info)
-        for path in (self.root/'built').glob('item-*.png'):
-            with Image.open(path) as im:self.assertEqual(im.size,(160,100));self.assertNotIn('producer',im.info)
+        self.assertIn((b'tEXt', b'producer\0Model 0'), list(png_chunks(raw)))
+        paths = list((self.root/'built').glob('item-*.png'))
+        self.assertEqual(len(paths), 4)
+        for path in paths:
+            chunks = list(png_chunks(path))
+            header = dict(chunks)[b'IHDR']
+            self.assertEqual(struct.unpack('>II', header[:8]), (160, 100))
+            self.assertFalse(any(kind == b'tEXt' and value.split(b'\0')[0] == b'producer'
+                                 for kind, value in chunks))
+            decoded = zlib.decompress(b''.join(value for kind, value in chunks if kind == b'IDAT'))
+            expected = b''.join(b'\0' + pixels[y * 480:(y + 1) * 480] for y in range(100))
+            self.assertEqual(decoded, expected)
 
 if __name__=='__main__': unittest.main()
