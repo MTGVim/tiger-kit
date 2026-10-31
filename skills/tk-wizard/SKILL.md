@@ -90,7 +90,10 @@ Guide the next step only after observing the previous step's `completion`.
 ## Secrets and Authentication
 
 Never `echo` a `secret` or store it in `chat`, Markdown, `log`, or `eval`.
-When necessary, use only `hidden`/`ephemeral` `input` at execution time.
+Use hidden input for one-time secrets. For explicitly authorized development/QA application
+credentials, including passwords, read [worktree-local authentication](references/authentication.md)
+before reuse or cleanup and use only the scoped protected file; retention does not authorize
+new login or automated secret entry.
 
 Do not prompt users to paste OTP, `password`, `token`, `session` `value`, or `recovery` `code`
 into the conversation. Do not retain even non-secret `identifier` values unless needed for the task.
@@ -99,7 +102,12 @@ For file-mediated input in a repository task, first prove that `git ls-files -- 
 returns no tracked paths and `git check-ignore -q -- .tigerkit/` succeeds. Accept Git's
 effective per-directory, local-exclude, or user-level-exclude decision. Read the user-editable
 input branch in [artifact paths](references/artifact-paths.md) before creation or consumption.
-Create `.tigerkit/secret-input/tk-wizard-<run-id>/input.json` with directory mode `0700`
+If a parent already created and showed an input file, reuse that exact path under its
+established owner, lifecycle and target binding; do not create a second wizard file.
+If that boundary is missing, conflicts or belongs to a different task/worktree, application,
+verified origin, environment or account/role, hold reuse, overwrite and deletion until the
+parent resolves it. For a new wizard-owned input, create
+`.tigerkit/secret-input/tk-wizard-<run-id>/input.json` with directory mode `0700`
 and file mode `0600`, seeded with a plain JSON object such as `{"token": ""}` or the exact
 required credential fields. Before waiting for input, verify the exact file still exists
 at the reported path, then visibly show both the repository-relative and absolute paths
@@ -117,12 +125,16 @@ is still `Pending`. On change, a trusted local reader validates JSON and all req
 without returning content or parser excerpts. Blank, missing or partly saved values stay
 `Pending` without rewriting the file. Before use, recheck safe path, ownership and mode
 `0600`, validate and consume the same snapshot, then continue the exact pending step without
-a completion message. Remove the secret input and its run directory immediately after use
-on success, failure or exception, and verify no residue.
+a completion message. Apply the established lifecycle: immediately remove consumed one-time
+secret input and its run directory on success, failure or exception only within the owner's
+cleanup authority, and verify no residue. For authorized scoped application authentication,
+including development/QA passwords, preserve the protected file under
+[worktree-local authentication](references/authentication.md); phase completion, failure,
+interruption and access expiry are not deletion triggers. Actual production credentials,
+OTPs, recovery codes and passwords outside that approved scope remain one-time input.
 Never return a user-input `Pending` state unless both actual paths have appeared in the
 user-visible answer; absence of an actual created file is `Blocked | Unverifiable`,
-not an instruction to guess a path. If a parent verifier has already created and shown
-its run-owned input file, reuse its path and do not silently create a second wizard file.
+not an instruction to guess a path.
 Renew an expired wait window while the task remains active. Only when the runtime can no
 longer wait, preserve the run-owned input path and explain how to resume monitoring.
 

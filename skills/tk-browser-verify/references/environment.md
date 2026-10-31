@@ -136,8 +136,11 @@ under the owning mutation authority.
 Stop the run-owned loopback secret server immediately after every injection; close owned
 browser/dev-server resources after capture. Authentication-file retention never keeps processes
 or a user browser profile alive. Never print tokens/claims or store them in evidence, Git,
-parent/child receipts, another worktree or a global cache. Production credentials, passwords,
-OTPs and recovery codes keep their transient lifecycle. This procedure creates no background
+parent/child receipts, another worktree or a global cache. Explicitly authorized development/QA
+passwords follow the same scoped protected-file retention contract in
+[worktree-local authentication](authentication.md); retention does not authorize password entry
+or bypass human-only login. Actual production credentials, OTPs, recovery codes and passwords
+outside that approved development/QA scope keep their transient lifecycle. This procedure creates no background
 refresher or cross-process lock and cannot guarantee continuation after a host session ends.
 
 When no safer temporary secret-input channel exists, first prove that
