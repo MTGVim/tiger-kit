@@ -25,7 +25,7 @@ async function geometry(page, width) {
       controls: {left: controls.left, right: controls.right, top: controls.top, bottom: controls.bottom},
       panel: {left: panel.left, right: panel.right, top: panel.top, bottom: panel.bottom},
       contentLeft: content.left, height: innerHeight,
-      themeInBar: theme.top >= bar.top && theme.bottom <= bar.bottom,
+      themeInBar: !themeVisible || (theme.top >= bar.top && theme.bottom <= bar.bottom),
       headerFits: title.width > 0 && title.left >= bar.left && title.right <= bar.right &&
         (!themeVisible || (theme.width > 0 && theme.left >= bar.left && theme.right <= bar.right &&
          (title.right <= theme.left || theme.right <= title.left ||
@@ -134,6 +134,7 @@ async function atHash(page, id) {
     const parentStart = nestedHTML.indexOf('<section id="context">');
     const parentEnd = nestedHTML.indexOf('</section>', parentStart);
     nestedHTML = nestedHTML.slice(0, parentEnd) + '<section id="conditions" style="min-height:1000px"><h3>판단 조건</h3><p>상위 섹션 안에서 읽는 하위 섹션입니다.</p></section>' + nestedHTML.slice(parentEnd);
+    fs.mkdirSync(path.dirname(nested), {recursive:true});
     fs.writeFileSync(nested, nestedHTML);
     for (const width of [1280, 390]) {
       const context = await browser.newContext({viewport:{width, height:900}, reducedMotion:'reduce'});

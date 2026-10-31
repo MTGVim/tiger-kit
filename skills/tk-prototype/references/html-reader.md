@@ -1,5 +1,9 @@
 # Reader Presentation
 
+Apply these navigation and geometry rules only to shared-reader document portions selected by
+the owning workflow. Explanation/research pages follow their renderer contract, not this legacy
+shell; neither selected archify nor independently authored technique HTML inherits this builder.
+
 ## Document navigation
 
 For long document-like artifacts, preserve meaningful stable `<section id="...">` elements and
@@ -13,7 +17,7 @@ shared `.ht-document`, `.ht-doc-content`, `.ht-doc-nav`, `.ht-doc-toc` and `.ht-
 styles in the theme assets. The left rail and mobile disclosure must work without JavaScript.
 Use the target heading's full text in each TOC link. Shorten an overlong heading itself,
 or put a short label above the full heading in a `<small>` line inside the same link.
-For new ordinary documents, use [document assembly](html-assembly.md) to insert the package's
+For selected shared-reader documents, use [document assembly](html-assembly.md) to insert the package's
 [document shell](../assets/document-shell.html); specialized interfaces retain their generators.
 
 Place the footer directly under `.ht-document`, after `main`; shared CSS centers it.
@@ -44,7 +48,7 @@ keyboard, no-JS, reduced motion and unobscured control/target geometry.
 Keep the native disclosure open in the HTML so the left rail remains available without JavaScript;
 the theme script may collapse it by default on narrow screens.
 
-For document-like artifacts and document portions of QA sheets, use the shared document shell as a
+For selected shared-reader portions, including document portions of QA sheets, use the shared document shell as a
 component contract, not a visual suggestion. Build the header
 with `.ht-topbar` and `.ht-topbar-title`; put the theme fieldset inside it with
 `.ht-theme-control`, `.ht-theme-label`, `.ht-theme-buttons` and `.ht-theme-option` around the native

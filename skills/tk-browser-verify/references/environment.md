@@ -29,11 +29,21 @@ configuration claim, or tool name is not sufficient attach evidence. If an attac
 is headed, belongs to another run or the user, or has unknown ownership, return
 `Unverifiable` without creating a page.
 
+## Provider readiness
+
+Use the selected provider's current official usage guidance without installing dependencies or silently switching.
+For a new adapter or hand-authored verifier, check syntax, one DOM observation, required
+trusted pointer/keyboard behavior on a safe native control, and owned-resource cleanup before
+a broad viewport/theme capture matrix. Reuse an already verified path when available; no new
+framework is required. Isolate and repair verifier defects before replaying broad captures.
+Do not infer a product defect from an unverified input path or guess event options while
+repeating the full matrix. See [trusted input](behavior.md#exact-target-and-trusted-input).
+
 ## Missing provider setup
 
 If no compatible route exists, do not install a provider or edit host configuration. Make no
 browser call. Invoke `tk-wizard` with the consumer `tk-browser-verify`, the exact blocked
-criterion, detected host/client and provider state, the missing capability, required
+criterion (which remains `Blocked`), detected host/client and provider state, the missing capability, required
 effective headless mode, recommended provider isolation, completion signal, and exact resume
 action.
 
@@ -218,6 +228,8 @@ successful cleanup or a broad process termination. Do not stop user-owned or oth
 
 ## Server and serving source
 
+For a `standalone` run, use one canonical safe command without another question when repository
+scripts, documentation, and tooling identify it unambiguously.
 In a `standalone` run with multiple viable `dev-server` commands, present the candidates
 and selection to the user and obtain confirmation before starting one. In a `nested`
 run where the `parent` supplied the exact command, do not ask for the same decision

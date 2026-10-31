@@ -42,7 +42,11 @@ legacy records where relevant. Record each path's accept, reject, migrate or pre
 Bring policies unstated by the task source to the frontier before approval; include a behavior
 test for each relevant path in the testing plan. Skip this inventory for unrelated changes.
 
-If user-visible text or navigation is in scope, read [UI text evidence](ui-text.md) before accepting or restating a label or path.
+If user-visible text or navigation is in scope, read [UI evidence collection](ui-evidence.md) before accepting or restating a label or path.
+A text-locator match may normalize whitespace and does not prove a verbatim quote; trace the rendered literal.
+When no visible label exists, use a verified structural description or exact verified destination title,
+without inventing intervening navigation. Resolve material provenance conflicts during preparation
+rather than choosing a source silently.
 If implementation adds or changes a factual code comment/JSDoc claim or models an
 external response contract, read [committed assertion evidence](artifact-claims.md)
 before approval and apply it again to the final candidate.

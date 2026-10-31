@@ -113,11 +113,8 @@ Never copy a `secret` value; record only its location and credential type.
 
 ## Next-Executor Handoff
 
-Apply [executor-handoff.md](references/executor-handoff.md) to every persisted or downstream finding.
-Include the `audited HEAD`, exact paths/`symbol`s, current evidence, repository rules, `in/out` boundaries,
-assumptions, verification commands, and `drift handling` so the next executor can proceed without the audit conversation.
-
-The quality criteria in [plan-template.md](references/plan-template.md) supplement this contract, but
+Apply [finding handoff](references/executor-handoff.md) to every persisted or downstream finding;
+its self-contained evidence, verification, drift and safety contract is the single handoff owner.
 `tk-audit` does not create a separate plan lifecycle.
 
 To prepare actual work, the user may provide the current `finding` as a source, such as `$tk-prep AUD-003`.

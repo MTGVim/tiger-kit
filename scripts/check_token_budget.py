@@ -121,6 +121,65 @@ def collect_metrics(
     return metrics, errors
 
 
+def required_read_errors(root: Path, group: str, spec: dict) -> list[str]:
+    """Cover explicit entrypoint Read links, not conditional/transitive host reads."""
+    entrypoint = spec.get("entrypoint")
+    if not isinstance(entrypoint, str) or Path(entrypoint).is_absolute() or ".." in Path(entrypoint).parts:
+        return [f"{MANIFEST}: always_read.{group} must declare a safe entrypoint"]
+    parts = Path(entrypoint).parts
+    if len(parts) != 3 or parts[0] != "skills" or not parts[1].startswith("tk-") or parts[2] != "SKILL.md":
+        return [f"{MANIFEST}: entrypoint must be a skills/tk-*/SKILL.md path in {group}"]
+    source = root / entrypoint
+    if not source.resolve().is_relative_to(root.resolve()):
+        return [f"{MANIFEST}: unsafe entrypoint in {group}: {entrypoint}"]
+    if entrypoint not in spec.get("paths", []):
+        return [f"{MANIFEST}: required read entrypoint missing from {group}: {entrypoint}"]
+    try:
+        text = source.read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as error:
+        return [f"{MANIFEST}: cannot read entrypoint for {group} ({error})"]
+    # Explicit imperatives only: do not turn every linked conditional branch into load.
+    visible_lines = []
+    fence = None
+    for line in text.splitlines():
+        if fence is not None:
+            char, length = fence
+            if re.fullmatch(r" {0,3}" + re.escape(char) + "{" + str(length) + r",}[ \t]*", line):
+                fence = None
+            visible_lines.append("")
+            continue
+        opener = re.match(r"^ {0,3}(`{3,}|~{3,})(.*)$", line)
+        if opener and not (opener[1][0] == "`" and "`" in opener[2]):
+            fence = (opener[1][0], len(opener[1]))
+            visible_lines.append("")
+        else:
+            visible_lines.append(line)
+    text = "\n".join(visible_lines)
+    directives = []
+    for paragraph in re.split(r"\n[ \t]*\n", text):
+        for match in re.finditer(
+            r"(?m)^[ \t]*(?:[-*][ \t]+)?(?:Read|For explanation pages, read)\b[ \t]*", paragraph
+        ):
+            continuation = paragraph[match.end():]
+            # A new block or conditional instruction is not a soft-wrapped read.
+            directive = re.split(
+                r"\n[ \t]*(?:[-*][ \t]|#{1,6}[ \t]|(?:Read|For|If|When)\b)",
+                continuation, maxsplit=1,
+            )[0]
+            directives.append(directive)
+    errors = []
+    for directive in directives:
+        for relative in re.findall(r"\[[^\]]+\]\((references/[^)#]+\.md)(?:#[^)]*)?\)", directive):
+            target = (source.parent / relative).resolve()
+            if not target.is_relative_to(root.resolve()):
+                errors.append(f"{MANIFEST}: unsafe required read in {group}: {relative}")
+                continue
+            required = target.relative_to(root.resolve()).as_posix()
+            if required not in spec.get("paths", []):
+                errors.append(f"{MANIFEST}: required read missing from {group}: {required}")
+    return errors
+
+
 def static_errors(root: Path):
     manifest, errors = load_manifest(root)
     if errors:
@@ -128,6 +187,11 @@ def static_errors(root: Path):
     metrics, metric_errors = collect_metrics(root, manifest)
     errors.extend(metric_errors)
     limits = manifest["limits"]
+    profiles = limits.get("always_read", {})
+    if isinstance(profiles, dict):
+        for group, spec in profiles.items():
+            if isinstance(spec, dict) and isinstance(spec.get("paths"), list):
+                errors.extend(required_read_errors(root, group, spec))
     expected = {
         "max_skill_md_bytes": ("skill_md_max_bytes", max(
             (value for key, value in metrics.items() if key.startswith("skill_md:")), default=0)),

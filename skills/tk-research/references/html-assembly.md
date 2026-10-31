@@ -1,6 +1,9 @@
 # Document Assembly
 
-For new document-like HTML, author content fragments and run the package-local builder.
+Use this legacy shared document builder only when the owning workflow selects the shared
+reader shell. It is not the default renderer for explanation/research pages or a fallback for
+selected archify; independently authored technique HTML does not inherit its shell requirement.
+For selected shared-reader documents, author fragments and run the package-local builder.
 Reuse generators for edits; specialized prototype/QA/gallery interfaces keep their generators.
 
 Put fragments in authorized run scratch. The body contains the opening explanation and
