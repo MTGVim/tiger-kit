@@ -81,21 +81,32 @@ def read_package(base, name):
         raise DependencyError(
             'PyYAML is required to validate SKILL.md; provision it only in an approved Python environment'
         ) from None
+    checked_nodes = set()
+
     class UniqueSafeLoader(yaml.SafeLoader):
-        def construct_mapping(self, node, deep=False):
-            # Keep explicit keys before SafeLoader expands legal YAML merges.
-            pairs = list(node.value) if isinstance(node, yaml.MappingNode) else []
-            result = super().construct_mapping(node, deep=deep)
-            keys = [self.construct_object(key, deep=deep) for key, _ in pairs
-                    if key.tag != 'tag:yaml.org,2002:merge']
-            if len(set(keys)) != len(keys):
-                raise yaml.YAMLError('duplicate YAML mapping key')
-            return result
+        def flatten_mapping(self, node):
+            # Validate each original mapping before merge expansion mutates it.
+            # Merged/aliased nodes can be visited again after valid overrides.
+            if id(node) not in checked_nodes:
+                checked_nodes.add(id(node))
+                keys = set()
+                merge_key = object()
+                for key, _ in node.value:
+                    if key.tag == 'tag:yaml.org,2002:merge':
+                        value = merge_key
+                    elif key.tag == 'tag:yaml.org,2002:value':
+                        value = key.value
+                    else:
+                        value = self.construct_object(key)
+                    if value in keys:
+                        raise yaml.YAMLError('duplicate YAML mapping key')
+                    keys.add(value)
+            return super().flatten_mapping(node)
 
     try:
         metadata = yaml.load(match[1], Loader=UniqueSafeLoader)
-    except yaml.YAMLError:
-        # Parser exceptions may include input snippets; do not echo package contents.
+    except (yaml.YAMLError, ValueError, TypeError, OverflowError, RecursionError):
+        # Parser/constructor exceptions may contain input snippets; never echo them.
         raise DependencyError(f'{name}: SKILL.md identity mismatch (invalid YAML frontmatter)') from None
     if not isinstance(metadata, dict) or metadata.get('name') != name:
         raise DependencyError(f'{name}: SKILL.md identity mismatch (exact name required)')

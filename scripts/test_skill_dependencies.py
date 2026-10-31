@@ -1,4 +1,4 @@
-"""Focused dependency CLI contract tests (stdlib only)."""
+"""Dependency CLI contract tests; package inspection requires PyYAML."""
 import importlib.util
 import json
 from pathlib import Path
@@ -218,11 +218,33 @@ class DependencyTests(unittest.TestCase):
             'name: tk-a\n"name": tk-a\ndescription: test',
             'name: tk-a\ndescription: first\ndescription: second',
             'name: tk-a\ndescription: test\nmetadata:\n  owner: first\n  owner: second',
+            'name: tk-a\ndescription: test\nmetadata: {<<: {owner: first, owner: second}}',
+            'name: tk-a\ndescription: test\nmetadata:\n  <<: {owner: first}\n  <<: {owner: second}',
+            'name: tk-a\ndescription: test\nmetadata: {<<: [{owner: first, owner: second}]}',
         ]
         for frontmatter in cases:
             with self.subTest(frontmatter=frontmatter):
                 (package / 'SKILL.md').write_text(f'---\n{frontmatter}\n---\nbody\n')
                 self.assert_rejected(self.cli('validate', '--root', self.root), 'YAML')
+
+    def test_yaml_constructor_failures_are_structured(self):
+        spec = importlib.util.spec_from_file_location('dependency_error_shim', SCRIPT)
+        assert spec is not None and spec.loader is not None
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        package = self.package('tk-a')
+        for metadata in ['metadata: {updated: 2026-99-99}',
+                         'metadata: {[unhashable]: value}']:
+            with self.subTest(metadata=metadata):
+                (package / 'SKILL.md').write_text(
+                    f'---\nname: tk-a\ndescription: test\n{metadata}\n---\nbody\n')
+                result = self.cli('validate', '--root', self.root)
+                self.assert_rejected(result, 'YAML')
+                self.assertNotIn(metadata, result.stdout + result.stderr)
+                errors = module.validate_dependencies(self.root)
+                self.assertIsInstance(errors, list)
+                self.assertTrue(errors)
+                self.assertIn('YAML', errors[0])
 
     def test_missing_yaml_parser_is_a_closed_failure_without_traceback(self):
         self.package('tk-a')

@@ -10,8 +10,7 @@ npx skills update --global --yes
 ```
 
 선택 설치는 `tk-setup-skills`로 필요한 업무 스킬과 공통 의존성을 함께 준비합니다. 설치기는 의존성을 자동 해결하지 않습니다.
-`Claude Code`·`Hermes`에서는 `/tk-setup-skills`, `Codex`에서는 `$tk-setup-skills`로 호출합니다. 설치 실행은 대상·범위를 확인하고 승인한 뒤 진행합니다.
-설치 도우미의 소스·설치본 검사에는 `Python 3.9+`와 `PyYAML`이 필요합니다. 빈 대상에 동봉 카탈로그로 계획만 만들 때는 표준 라이브러리만 사용합니다. 파서가 없으면 검사를 중단하며 자동 설치하지 않습니다.
+`Claude Code`·`Hermes`는 `/tk-setup-skills`, `Codex`는 `$tk-setup-skills`로 호출합니다. 설치는 대상·범위를 승인한 뒤 실행합니다. 소스·설치본 검사에는 `Python 3.9+`·`PyYAML`이 필요하며, 파서가 없으면 자동 설치하지 않고 중단합니다. 빈 대상의 카탈로그 계획은 표준 라이브러리만 사용합니다.
 
 ## 스킬 구성
 
