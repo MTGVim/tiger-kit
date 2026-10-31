@@ -1,286 +1,51 @@
 # TigerKit 저장소 지침
 
-## 제품 경계
-
-TigerKit은 `workflow` `runner`, `plugin`, `scheduler`, `shared-state` `framework`가 아닌 `Agent Skills` 저장소입니다.
-
-- 각 `skills/tk-*` `package`는 자기 업무와 권한을 소유합니다. 설치에 필요한 공통 스킬은 패키지별 `dependencies.json`에 명시하며, `tk-setup-skills`가 선택 설치와 공통 의존성 준비를 지원합니다.
-- 여러 스킬이 공유하는 Markdown 기준은 참조 전용 스킬에 한 번 두고, 기존 조건부 분기에서 필요한 자원만 읽습니다. 참조 호출은 다른 업무 실행이나 변경·비밀 접근·게시 권한을 부여하지 않습니다. 선언된 소유 스킬이나 자원이 없으면 해당 단계를 중단하고 setup을 안내합니다. 저장소 전역 문서·하드코딩한 사용자 홈·배포용 심볼릭 링크로 대체하지 않습니다. 정적 자산·실행 도우미·라이선스 사본은 별도 유지·검증합니다. 계약과 ADR 0003의 대체 범위는 [ADR 0004](docs/adr/0004-shared-reference-skills.md)에 기록합니다.
-- `SKILL.md`가 현재 실행 `behavior`를 소유합니다.
-- `package-local` `references/`는 조건부 `readable knowledge`만 소유합니다.
-- `package-local` `scripts/`는 `executable helper`를, `agents/`는 실행 메타데이터를 소유합니다. 검증용 `eval`은 `evals/skills/<skill>/`에서 저장소 전용 증거를 소유합니다.
-- 이 저장소는 CI를 사용하지 않습니다. `.github/workflows/`를 만들지 않고 원격 자동 검증을 운영하지 않습니다.
-- 로컬 검증 환경에 필요한 명령이나 도구가 없더라도 GitHub Actions에 임시·일회성 워크플로를 생성·푸시·실행·삭제하여 우회하지 않습니다. 원격 Runner는 임시 검증 수단도 아닙니다. 허용된 로컬 또는 간접 검증만 수행하고 실행하지 못한 항목은 `Unverifiable`로 보고합니다.
-- 중복 `protocol`보다 삭제와 `progressive` `disclosure`를 우선합니다.
-- 사용자-`facing`/운영 `prose`는 한국어를 기본으로 하고 `exact` ID/`path`/`status`/`command`/`technical` `literal`은 원문을 유지합니다.
-- `SKILL.md`와 `package-local` `references/`의 `model-facing` 제목과 지시문은 영어로 고정합니다. 한국어는 `SKILL.md`의 `frontmatter` `description`과 정확한 사용자 발화·출력 `literal`에만 두고 `inline code` 또는 `fenced block`으로 표시합니다.
-
-## `Upstream-first` `distillation`
-
-`SDD`, `skill`, `review`처럼 구현 품질에 영향을 주는 변경은 설계 전에 검증된 최신 `upstream`을 먼저 조사합니다.
-
-- `SDD`와 `subagent-development` 변경은 최신 `obra/superpowers`를 `primary upstream`으로 삼고, 다른 자료보다 먼저 현재 구현과 관련 설계 근거·`eval`을 확인합니다.
-- 고정된 `revision`에서 현재 구현, 설계 근거, 관련 `eval`을 함께 확인하고, 읽지 못한 근거는 `unverified`로 남깁니다.
-- 기존 TigerKit `owner`와 경계를 비교하여 출처와 `keep | adapt | omit` 판단을 기록합니다.
-- `behavior contract`와 `failure mode`만 증류하고, `runtime`, 제공자 선택, 작업 공간, `framework`는 복사하지 않습니다.
-- 충분한 근거는 성숙한 `upstream`과 구체적인 TigerKit `gap`, 강하게 검증된 재사용 가능 단일 사례, 충분한 자료가 있는 명시적 재사용 `workflow`, 또는 실제로 반복 검증된 사례 중 하나면 됩니다.
-- 출처 없는 일화, 원시 `log`, 재사용 가능한 교정 근거가 없는 일회성 실수는 승격하지 않습니다. 구체적인 차이가 입증되지 않으면 기존의 더 단순한 TigerKit 계약을 유지합니다.
-
-## `Agent-facing` instruction economy
-
-Agent가 읽는 문서는 길이가 아니라 **행동 대비 load**로 판단합니다.
-
-- `description`과 `reference` pointer는 본문을 요약하지 않고, 어떤 distinct branch/condition에서 그 내용을 읽어야 하는지 encode합니다.
-- 모든 실행 경로가 필요한 step/guard는 inline으로 두고, 일부 branch만 필요한 reference는 정확한 pointer 뒤로 `progressive disclosure`합니다. Reference로 내리는 것 자체가 목표는 아닙니다.
-- `package.json`, config, directory layout, 현재 host/tool capability처럼 한 번의 cheap fresh lookup으로 알 수 있는 사실은 environment를 source of truth로 둡니다. 문서가 canonical contract이거나 lookup이 expensive/unreliable한 경우에만 의도적인 cache를 유지합니다.
-- 문장·블록 삭제는 미학적 축약이 아니라 no-skill/prior behavior 비교로 판단합니다. Pressure에서 실제 행동을 지키는 rationale/guard는 짧아진다는 이유로 제거하지 않습니다.
-- `Skill body` 크기는 정합성 관문이 아니라 검토 신호입니다. 새롭거나 단순한 `skill`은 가능하면 수백 `token` 안에 두고, 큰 본문은 `progressive disclosure`와 `instruction load`를 검토하되 필요한 행동·안전·권한 `guard`를 예산 때문에 제거하지 않습니다. 스킬 개선 후보의 적합성과 검증 기준은 `skills/tk-retro/references/skill-candidates.md`를 참고합니다.
-- 최종 변경이 사용자에게 공개된 동작, 명령어, 경로, 설정, 계약, 설치·운영 절차를 바꾸고 기존 `README.md` 또는 저장소 문서가 그 사실을 소유한다면 같은 작업 단위에서 최신화합니다. 공개 사실이 바뀌지 않았거나 정확한 소유 문서가 없다면 의례적인 문서 수정, 광범위한 문서 검색, 새 문서 생성을 수행하지 않습니다.
-- 일반 steering은 해야 할 행동을 직접 쓰는 positive form을 선호하되, publication authority, destructive mutation, secret, freshness, cross-scope safety boundary의 hard stop은 약화하지 않습니다.
-- 설치된 `skill`의 `runtime behavior`나 `safety boundary`를 이 `AGENTS.md`에만 두지 않습니다. 설치 사용자에게 필요한 규칙은 `owning SKILL.md` 또는 `package-local reference`에 있어야 하며, 여러 `package`가 같은 `runtime guard`를 공유하면 `exact canonical block`과 릴리즈 체크리스트 검사로 누락·`drift`를 실패시킵니다.
-
-## `Adaptive prep` `product` `work`
-
-TigerKit의 `product-work` `owner`는 `tk-prep`입니다.
-
-`tk-prep`은 중앙 `runtime`이 아니라 **대화형 준비 + 승인된 로컬 실행 담당자**입니다. 작업 크기에 따라
-`direct/no-Seed | Ready Seed direct | SDD | handoff`를 선택합니다.
-
-```text
-request
-→ conversational prep
-→ final local-mutation approval
-→ direct/no-Seed | Ready Seed | SDD | handoff
-→ local implementation
-→ review/verification
-→ commit
-→ tk-pr-open
-```
-
-Ready `Seed`는 지속 가능한 맥락이 실제로 필요할 때만 만듭니다. `direct/no-Seed`는 SDD 상세 문서를 읽지 않습니다.
-SDD가 선택되면 `tk-prep`과 `tk-pr-respond`는 명시적 의존성인 `tk-engineering`의
-SDD 정본을 읽고, 실제 자식 `model`/`reasoning_effort`는 현재 호스트 기능과 허용 목록에서 실행 중에만 결정합니다.
-
-TigerKit은 다음 `runtime` `mapping`을 소유하지 않습니다.
-
-- `cheapest | standard | strongest`
-- 모델 및 에이전트 제공자의 자동 선택·`routing`
-- `reasoning` `effort` `mapping`
-- `.tigerkit/session.md`
-- `durable` `worker`/`wave` `cursor`
-
-모델 수준과 `fan-out`은 `Seed`에서 사람 친화적인 추천으로만 표현할 수 있습니다.
-승인된 `execution shape`, `acceptance`, `verification`은 구속력이 있으며 제공자 값은 지속되는 산출물에 넣지 않습니다.
-
-## `Seed` 계약
-
-`.tigerkit/seed.md`는 **존재할 때만** 현재 작업으로 표시되고 식별자에 묶인 `self-contained` `context`입니다.
-인터뷰 중 `Pending Seed`를 만들지 않고 최종 승인 전 기존 Ready `Seed`를 보존합니다.
-
-Ready `Seed`는 `fresh` `lower-capability` `executor`가 원 대화 없이 다음을 이해할 수 있어야 합니다.
-
-- `goal`/`background`
-- `current` `evidence`/`entry` `points`
-- `scope`/`exclusions`
-- `confirmed` `material` `decisions`
-- `implementation` `direction`
-- `engineering` `readiness`
-- AC와 `per-AC` `verification`
-- `runtime verification plan` (`verifier`, `baseline/replay`, `evidence location`)
-- `known` `traps`/`do-not-change`
-- `execution` `recommendation`
-
-`Seed`는 `transcript`, `progress ledger`, `provider routing`, `secret store`가 아닙니다. `SDD`의 선택적 `recovery state`와 `lifecycle`은 `tk-engineering`의 공통 SDD 프로토콜이 소유하며, `SDD`라는 이유만으로 `progress ledger`를 만들지 않습니다.
-
-실행 중 `material` `evidence`가 `Seed` `contract`를 깨면 임의 해석 변경 대신 `tk-prep`으로 돌아가
-`revision` + `user` `reapproval`을 거칩니다.
-
-## `Conversational` UX
-
-`tk-prep`, `tk-wizard`, `tk-ask-repo`, `tk-pr-respond`, `tk-pr-sweep`의 공통 원칙:
-
-> **대화는 자연스럽게, 상태는 엄격하게.**
-
-`structured` `state`/`safety` `gate`를 사용자에게 `form`/`report`로 그대로 노출하지 않습니다.
-이미 확인된 내용을 반복 질문하지 않고, 사용자가 실제로 결정하거나 행동해야 하는 것만 요청합니다.
-`engineering` 판단은 숨기지 않고 추천과 이유를 자연어로 설명합니다.
-
-공통 `Output Notation`의 정본은 `scripts/sync_execution_protocol.py`이며, 각 `SKILL.md`에는
-동기화 도구로 생성합니다. 기존 ASCII 번호 규칙과 함께, 일반 채팅에서 여러 항목의 속성을
-두 가지 이상 비교할 때는 원문으로도 읽기 쉬운 좁은 GFM 표를, 단순 나열에는 목록을 사용합니다.
-박스 문자·코드 펜스 표는 생성하지 않으며, 소유 스킬의 미리보기 규칙을 우선합니다.
-이 표 형식 제한은 게시 본문과 파일 산출물 안의 표에는 적용하지 않습니다.
-
-## `Skill` 존재 규율
-
-`Skill` 유지 조건:
-
-- 독립 `invocation` 또는 좁은 `trigger`
-- 일반 모델보다 실질적으로 다른 `procedure`
-- `objective` `completion`/`boundary`
-- `owned` `artifact`, `mutation`, `authority` 또는 `safety` `boundary`
-
-공통 지식만 제공하는 참조 전용 스킬도 허용합니다. 좁은 참조 조건, 단일 정본과 독립적인 완료·권한 경계를 소유하고, 다른 스킬이 필요한 기준만 호출해 읽을 수 있어야 합니다. 해당 호출은 업무 실행이나 변경 권한을 부여하지 않습니다.
-
-그 외 약한 후보는 `inline`/`merge`/`reference`/`delete`를 우선합니다.
-
-## 핵심 `authority`
-
-- `tk-setup-skills`: 스킬과 공통 의존성의 설치 계획·점검·초기 설정 지원. 설치·업데이트 실행은 정확한 대상과 범위의 별도 승인 필요.
-- 공통 참조 스킬: 요청한 기준만 반환하며 다른 업무의 실행·변경·비밀 접근·원격 발행 권한 없음.
-
-- `tk-prep`: 준비, 최종 승인, 승인된 격리 로컬 구현/검증/`commit`. `push`/발행 금지.
-- `tk-ask-repo`: `read-only` `repository` `investigation`.
-- `tk-audit`: `read-only` AUD `finding`, 조건부 `policy` 구조 분석.
-- `tk-research`: 사내·외 스킬과 워크플로의 근거 기반 증류 제안, 외부 `prior art`와 접근법 비교부터 조건부 지속 상태·`frontier`·승인된 연구 `workspace` 실험과 수렴. 기본 조사는 `read-only`이며 제품 적용·원격 발행 금지.
-- `tk-review`: 명시된 `exact committed range/PR/current worktree` 하나의 `read-only` `Spec/AC` + `Quality/Standards` 판정.
-- `tk-browser-verify`: `browser-visible` `runtime` `evidence`와 `dev-server` `lifecycle`.
-- `tk-app-verify`: 데스크톱 앱의 창과 입력 방식, 포커스 영향, 실행 근거 및 실행 소유 자원 정리.
-- `tk-pr-open`: `exact` `single-PR` `create`/`update` 또는 승인된 `retrospective stacked-PR publication`.
-- `tk-pr-respond`: `exact` `one-PR` `feedback`/지원 CI `resolution`과 `bounded` `publication`.
-- `tk-pr-rebase`: `exact` `rebase` + `force-with-lease`.
-- `tk-pr-sweep`: `deterministic` `multi-PR` `triage`와 승인된 `child` `maintenance`.
-- `tk-inquiry`: 외부 담당자에게 보낼 질문 초안 작성만 담당하며 게시·전송 권한 없음.
-- `tk-explain`: 개념·변경 설명과 실제 답변에 따른 후속 자료. 기존 학습 공간은 보존.
-- `tk-retro`: 세션 회고, 관찰된 Agent Skill 사고 진단과 재발 방지 제안 전용. 실제 수정은 별도 구현 담당자가 맡습니다.
-- `tk-compound`: 여러 완료 PR과 연결된 세션 이력의 반복 문제를 읽기 전용으로 진단하고 최소 예방책을 제안합니다. 기본 결과는 채팅이며 지식 문서·메모리·규칙을 작성하거나 자동 승격하지 않습니다.
-- `tk-adhd`: 현재 답변·결과의 출력 구조 정리. 실행과 지속 상태의 담당자는 아닙니다.
-- `tk-handoff`: 현재 대화의 현황 확인과 지속 인수인계 작성·재개.
-- `tk-domain`: `repository` 고유 `canonical domain vocabulary`의 `CONTEXT.md`와 `sparse durable decision/ADR context` 작성·정제 담당자.
-
-`Push`/PR/`merge`/`publish`는 각각 해당 `owner`의 명시 `authority` 없이는 확장하지 않습니다.
-TigerKit 저장소는 새 `tag`나 별도 `release`를 발행하지 않으며 기존 태그는 과거 이력으로만 보존합니다.
-
-## PR `fresh-state` 원칙
-
-PR `state`의 `truth`는 GitHub `fresh` `state`입니다.
-
-`tk-pr-respond`와 `tk-pr-sweep`은 `lifecycle` Markdown `snapshot`을 `authority`로 사용하지 않습니다.
-각 `remote` `mutation` 전에 `exact` PR/`head`/`thread`/`check`/`identity`를 필요한 수준으로 다시 확인합니다.
-
-`Sweep`의 `deterministic` `triage` `script`와 `user-level` `repository` 범위 및 선택적인 댓글별
-`toolAuthoredCommentMarkers`와 `informationalCommentMarkers` `config`는 유지합니다. 작성자 마커는 답글
-컨펌에만 사용하고, 정보성 마커는 답글 대상에서 해당 댓글만 제외합니다. 재리뷰 대상은 계속 계정 상태로
-판정합니다.
-
-```text
-$XDG_CONFIG_HOME/tigerkit/pr-triage.json
-```
-
-두 댓글 마커 설정은 HTML 주석 접두어만 저장합니다. `model`/`worker`/`session`/`pitfall` 설정은
-`user-level` `config`로 만들지 않습니다. 검증에 한정된 명시적 `provider` 선택과 문서 URL 및 재검증한
-환경별 문제 해결 메모는 `verify.json`에 저장할 수 있습니다. 이 예외는 모델 선택, 세션 상태,
-원시 로그, 자동 실행이나 범용 기억 저장소를 허용하지 않습니다.
-
-## `Browser`
-
-`browser-visible` AC는 계획 단계에서 `target`/`headless`/`auth`/`viewport`/`evidence`/`server` `readiness`를 정합니다.
-실제 검증과 `dev-server` `lifecycle`은 `tk-browser-verify`가 소유합니다.
-
-`password`/`token`/OTP/`cookie`/`session` `secret`을 `chat`, `Seed`, `logs`, `receipt`에 저장하지 않습니다.
-
-## 프로젝트 정책과 설정
-
-프로젝트마다 달라지는 분류·메시지·워크트리 규칙은 먼저 증거를 확인하고, 모르는 결정만 사용자 인터뷰로 확정합니다. Git 추적형 `tigerkit.config.json`과 무시된 `.tigerkit/repository.json`에서 기계적으로 소비하는 필드는 엄격한 타입을 유지하고 모델만 해석하는 항목은 `key: string`을 허용합니다. 공개 정책 작성 승인은 원격 수정·스크립트 실행·발행 권한이 아닙니다. `orca.yaml`은 Orca 콜백과 UI/환경 설정의 정본입니다. 실제 런타임 판단과 안전 조건은 설치 패키지 참조에 둡니다.
-
-## 저장소 로컬 임시 공간
-
-사용자가 직접 열거나 값을 입력해야 하는 파일과 현재 저장소에 귀속되는 실행 산출물은 운영체제 임시 경로가
-아니라 무시된 `.tigerkit/` 아래에 둡니다.
-
-- 일반 실행 파일: `.tigerkit/tmp/<skill>/<run-id>/`
-- 비밀 입력: `.tigerkit/secret-input/<skill>-<run-id>/`
-- 검증 근거: `.tigerkit/evidence/<skill>/<run-id>/`
-- 복구·인계·승인 상태에 실제로 필요한 소유자 산출물: `.tigerkit/<owner>.md`, `.tigerkit/prototypes/`, `.tigerkit/sdd-tmp/`
-
-`tk-retro`는 회고와 사용자 쪽 개선안을 대화로 반환하고 보고서 파일을 만들지 않습니다. 외부 패키지 개선안이 있을 때만 익명화한 `.tigerkit/retro/<YYYY-MM-DD>-<topic-slug>-issue.md` 초안을 저장합니다. 대화 전용 요청이나 산출물 경로 검사 실패 시에는 파일 작성을 생략합니다. 요청받은 재사용 첨부물이 있으면 검증 수준과 근거를 기록한 매니페스트 및 ZIP을 이슈 초안과 함께 만듭니다. 모든 파일과 예시는 식별자 검색·원문 대조·독립 익명화 검토를 통과한 뒤 전달합니다. 구현·설치본 수정·GitHub 게시를 직접 수행하지 않습니다.
-
-`Owner`별 `singleton Markdown`은 모든 실행의 선행조건이 아닙니다. 현재 대화와 `Git/GitHub` 상태로 정확히 복원되는
-단순 실행에는 만들지 않고, `explicit save`, `multi-turn handoff/recovery` 또는 정확한 승인 상태 보존이 필요할 때만
-사용합니다. `Artifact`가 필요한 경로의 `freshness`, `atomic write`, `secret/privacy`와 `no-accumulation` 경계는 유지합니다.
-
-새 임시파일을 쓰기 전에 `git ls-files -- .tigerkit/`에 추적 파일이 없고
-`git check-ignore -q -- .tigerkit/`가 성공하는지 확인합니다. `git check-ignore -v`의 출처가 작업 트리의
-상위 `.gitignore`, `.git/info/exclude`, 사용자 전역 `exclude` 중 어디인지는 제한하지 않고 현재 `Git`의
-최종 판정을 따릅니다. 실제로 무시되지 않으면 저장소 루트 `.gitignore`를 생성하거나 끝에 `/.tigerkit/`를
-추가합니다. 기존 바이트와 줄바꿈을 보존하고, 다시 무시 판정을 확인한 뒤 산출물 작성을 계속합니다.
-이 한정된 설정은 요청된 산출물 작성에 포함되며 별도 확인을 요구하지 않습니다. 추적 파일이나 안전하지 않은
-경로는 자동 수정하지 않고, 쓰기 실패나 재확인 실패 시 파일 분기만 `Blocked | Unverifiable`로 보류합니다.
-전제조건 복구는 `skills/tk-questioning/references/questions.md`, 저장소 없음의 구체 절차는
-`scripts/artifact_policy.py`가 소유합니다. 기존 승인 범위의 해결은 수행하고 추가 결정·권한만
-구체적인 대상·변경·영향과 함께 묻습니다. 저장소 초기화는 같은 대상의 명시적 승인이 있어야 하며,
-복구 후 제외·안전 검사를 다시 거쳐 원래 파일 산출물 작성까지 재개합니다.
-설정만을 위해 스테이징·커밋하지 않고 변경 사실을 간단히 알립니다. 비밀 입력은 디렉터리 `0700`,
-파일 `0600`을 사용합니다. 일회성 비밀 입력은 소비 후 삭제하고 잔여가 없는지 확인합니다.
-승인된 비운영 앱 인증 입력은 예외로, 관련 스킬이 같은 작업·작업 트리·앱·환경·계정에서
-재사용하며 사용자의 삭제 지시나 승인된 작업 트리 정리까지 보존합니다. 단계 종료, 실패,
-중단, `access` 토큰 만료만으로 파일을 삭제하지 않습니다. 만료되거나 거부된 `access` 값은
-사용하지 않고 프로젝트가 지원하는 갱신 경로로 복구하며, 교체된 `refresh` 값도 보호 파일에 반영합니다.
-자동 복구가 불가능하거나 재로그인이 필요할 때만 최소 입력을 요청합니다. 명시적으로 승인된 개발·QA
-비밀번호는 같은 범위의 보호 파일에 보존합니다. 실제 운영 자격증명, OTP, 복구 코드와 승인된 개발·QA
-범위 밖의 비밀번호는 기존 일회성 수명주기를 유지합니다. 보존은 새로운 로그인이나 자동 입력 권한을
-부여하지 않습니다. 설치 동작의 정본은
-`scripts/artifact_policy.py`와 `tk-artifacts`의 공통 참조이며 전역 인증 캐시나 백그라운드 갱신기를 만들지 않습니다.
-
-새 임시 파일을 통해 사용자에게 값을 입력받을 때에는 UTF-8 `input.json`에 필요한 키와 빈 문자열을 담은
-일반 JSON 객체 템플릿을 미리 만듭니다. 단일 토큰의 예시는 `{"token": ""}`이며, 설명과 필수 필드 안내는
-파일 밖에 둡니다. JSON-LD나 빈 파일, 원시 텍스트를 사용하지 않고 기존 문서·설정·사용자 파일에는 이 형식을
-강제하지 않습니다. 공통 `Output Notation`이 형식을, `scripts/artifact_policy.py`와
-`skills/tk-artifacts/references/artifact-paths.md`가 입력·소비 계약을 소유합니다.
-
-비밀 값을 포함하는 객체는 `.tigerkit/secret-input/<skill>-<run-id>/input.json`에 제한된 권한으로 둡니다.
-저장소 상대 경로와 절대 경로, 비밀 값이 없는 초기 템플릿과 입력할 필드를 안내합니다. 클립보드 입력 명령은
-비밀 값을 명령줄에 직접 포함하지 않고 해당 필드에 JSON 직렬화하여 넣으며 다른 필드는 보존합니다.
-편집기, 파일 열기 명령, `GUI`, `terminal UI`를 자동으로 실행하거나
-포커스를 이동하지 않습니다. 사용자가 경로를 확인한 뒤 명시적으로 요청한 경우에만 파일을 엽니다.
-입력을 기다리기 전에 실행 소유 서버·브라우저 자원과 개발 자원을 정리합니다. 다른 실행이나 사용자 소유 자원은 종료하지 않습니다.
-호스트가 지원하면 제한된 백그라운드 변경 감시를 먼저 시작하고, 경로 안내는 턴의 마지막 일반 텍스트 메시지로 보냅니다.
-상대·절대 경로는 각각 독립된 줄에 축약이나 뒤따르는 조사·문장부호 없이 표시하며, 안내 뒤에는 같은 턴에서 도구를 호출하지 않습니다.
-턴 종료 후 감시나 자동 재개를 지원하지 않으면 그 한계와 재개 방법을 알리고 기존 입력 파일을 유지합니다.
-감시는 크기·수정 시각의 변화만 확인하며 그 값도 출력하지 않습니다. 초기 JSON은 이미
-내용이 있으므로 파일 존재·크기·수정만으로 완료 처리하지 않습니다. 변경을 감지하면 신뢰할 수 있는 로컬
-소비자가 값을 노출하지 않고 JSON과 필수 필드를 검사합니다. 미완성 JSON이나 빈 필드는 대기 상태로 보존하고,
-유효한 값은 경로·소유권·권한을 재확인한 뒤 같은 스냅샷에서 검증·소비합니다. 별도 완료 메시지를 요구하지
-않으며 사용자 입력을 덮어쓰지 않습니다. 한 감시 구간이 만료되어도
-현재 작업이 활성 상태라면 자동으로 갱신합니다. 실행 환경이 더 이상 대기할 수 없을 때에만 파일을 다시 만들지
-않고 중단 사실과 재개 방법을 안내합니다.
-
-격리 `checkout`, 설치 검사, `release`/`eval` 실행 중간 파일도 `.tigerkit/tmp/`에 둡니다.
-`release`/`eval` 결과는 `.tigerkit/evidence/`를 기본으로 사용합니다. 외부 도구 자체 캐시와
-격리 단위 테스트용 데이터는 저장소를 흉내 내거나 손상시켜 검증해야 하므로 도구의 임시 공간을 유지합니다.
-원자적 교체에 필요한 동일 디렉터리의 임시 파일은 같은 파일시스템에서 실행 소유권을 확인하고 성공 후 정리합니다.
-설명 자료는 설정된 `artifacts.durableRoot`를 우선하고, 설정이 없으면
-`.tigerkit/explanations/`를 사용합니다. 기존 학습 공간은 이동하거나 삭제하지 않습니다. 저장한 조사는 `.tigerkit/research/`를
-기본으로 사용합니다. 명시한 최종 목적지는 존중합니다. `scripts/artifact_policy.py`가 공통 정책을 소유하며
-파일을 쓰지 않는 스킬의 쓰기 금지 경계, 파일을 쓰는 스킬의 조건부 본문·선언된 공통 참조와 실행 도구를 릴리즈 체크리스트의 자동 검사에서 확인합니다.
-
-## 반복 발견
-
-TigerKit은 `persistent` `pitfall` `corpus`나 `memory` `backend`를 소유하지 않습니다.
-검증 `provider`의 제한된 로컬 문제 해결 메모는 예외이며, 진단·해결·재검증을 거친 사례만
-`provider`당 최대 20건으로 관리합니다. 실제 공통 검증 기준은 `tk-verification-guidance`가 소유하며, 실행 권한과 승인 조건은 호출한 검증 스킬에 남습니다.
-
-- 현재 `Seed`를 바꾸는 발견 → `Seed` `revision`
-- `repository` `reusable` `invariant` → `repo-native` `owner` 개선 후보
-- TigerKit `skill` 사고·세션 비효율 → `tk-retro` 근거 진단·개선안 제안
-- 개인 `cross-repo` `memory` → 외부 `memory`
-
-자동 승격하지 않습니다.
-
-## `Eval` 정본
-
-```text
-evals/skills/<skill>/triggers.json
-evals/skills/<skill>/evals.json
-evals/catalog-routing.json
-evals/release-critical.json
-```
-
-`run_seed_release_checklist.py`는 모든 활성 `skill`과 `catalog`의 `baseline` 계약을 보존합니다. README는 소개·설치·짧은 스킬 카탈로그만 소유합니다. 스킬 동작 본문만 바뀌면 README 갱신을 요구하지 않으며, 공개 카탈로그 메타데이터가 바뀌면 README를 갱신하거나 해당 릴리즈의 `evals/changes/*.md`에 `README: no public change`와 정확한 대상 경로·이유를 기록해야 합니다.
-과거의 `replaced_skill_eval_contracts`와 `replace_catalog_contract` 포괄 예외는 허용하지 않습니다.
-식별자 변경은 해당 평가의 명시적 `migration`으로 처리하고, 실제 폐기만 폐기 목록에 기록합니다.
-
-## 릴리즈 체크리스트
-
-`main` 반영 전에 릴리즈 체크리스트 문서의 로컬 검사와 확인 항목을 모두 통과합니다.
-체크리스트가 이 저장소의 필수 명령과 README 작성 기준을 소유합니다. 원격 CI는 사용하지 않습니다.
+## 제품과 소유권
+
+TigerKit은 조합 가능한 Agent Skills 저장소입니다. workflow runner, plugin, scheduler, shared-state framework를 만들지 않습니다.
+
+- `skills/tk-*/SKILL.md`가 현재 동작·권한·완료 조건의 정본입니다. `references/`는 조건부 지식, `scripts/`는 실제 실행 도우미, `assets/`는 표현 자원입니다.
+- 공통 기준과 자원은 해당 참조 전용 스킬에 한 번 둡니다. 업무 스킬은 필요한 조건에서만 읽고, 설치 의존성은 각 `dependencies.json`에 명시합니다. [ADR 0004](docs/adr/0004-shared-reference-skills.md)를 따릅니다.
+- 참조 읽기는 업무 실행·파일 변경·설치·비밀 접근·원격 발행 권한을 부여하지 않습니다. 소유 스킬이나 자원이 없거나 식별이 다르면 해당 단계만 중단하고 `tk-setup-skills`를 안내합니다. 기억, 다른 설치본, 저장소 전역 경로, 하드코딩한 홈이나 배포 심볼릭 링크로 우회하지 않습니다.
+- `tk-setup-skills`는 대상과 범위가 명시된 설치 계획과 점검을 담당합니다. 설치·업데이트 실행은 별도 승인이 필요하며, 설치기 자체의 자동 의존성 해결을 가정하지 않습니다.
+- 공통 도우미를 실행해도 결과·임시 경로·승인·정리 책임은 호출한 업무에 있습니다. 공통 패키지 안에 실행 결과를 쓰지 않습니다.
+- 업무 스킬을 합치거나 삭제하려면 독립 호출·특별한 절차·완료 조건·소유 권한이 실제로 필요한지 확인합니다. 참조 전용 스킬은 좁은 읽기 조건과 독립적인 기준을 소유해야 합니다. 범용 `tk-common`이나 중앙 router를 만들지 않습니다.
+
+## 조사와 지침 경제성
+
+- skill·SDD·review 품질에 영향을 주는 변경은 먼저 최신 upstream을 고정 revision으로 조사합니다. SDD는 `obra/superpowers`를 primary upstream으로 삼습니다. 현재 구현·설계 근거·관련 검증을 함께 확인하고 읽지 못한 것은 `unverified`로 남깁니다.
+- TigerKit의 구체적인 차이와 `keep | adapt | omit` 판단을 기록합니다. 행동 계약과 실패 조건만 증류하고 제공자·모델 선택, 실행 framework, workspace나 전역 상태를 복사하지 않습니다. 차이가 입증되지 않으면 더 단순한 기존 계약을 유지합니다.
+- 항상 필요한 안전·권한 조건은 짧게 본문에 둡니다. 일부 분기만 필요한 기준은 그 분기의 정확한 pointer 뒤로 내립니다. description과 pointer는 본문을 요약하지 않고 읽을 조건을 명시합니다.
+- 환경·설정·명령을 한 번의 저렴한 fresh lookup으로 알 수 있으면 문서에 목록을 복제하지 않습니다. 줄 수나 토큰 목표를 맞추려고 필요한 실패·승인 guard를 없애지 않습니다.
+- 사용자-facing 문서는 한국어를 기본으로 하되 exact ID/path/status/command는 유지합니다. `SKILL.md`와 패키지 참조의 model-facing 제목·지시문은 영어로 씁니다. frontmatter description과 정확한 사용자 발화·출력 literal만 한국어를 허용합니다.
+- 공개 동작·명령·경로·설치 계약을 바꾸면 그 사실을 소유한 기존 문서만 같은 변경에서 갱신합니다. 의례적인 변경 문서·상태표·새 lifecycle을 만들지 않습니다.
+- 대화 형식과 결과 전달 기준은 `tk-writing`, 질문·승인 기준은 `tk-questioning`이 소유합니다. 실제 업무의 더 구체적인 미리보기·출력 계약이 우선합니다.
+
+## 실행·승인 경계
+
+- `tk-prep`은 대화형 준비와 승인된 격리 로컬 구현·검증·commit을 담당합니다. `direct/no-Seed | Ready Seed direct | SDD | handoff`는 실제 작업 구조에 맞게 선택합니다. `direct/no-Seed`에서는 SDD 상세 문서를 읽지 않습니다.
+- Ready Seed는 실제 지속 맥락이 필요할 때만 `.tigerkit/seed.md`에 만듭니다. 최종 승인 전 기존 Ready Seed를 보존합니다. 대화 없이 목표·근거·범위·확정 결정·AC/검증·함정·실행 방향을 복원할 수 있어야 하며, transcript·progress ledger·secret store로 쓰지 않습니다.
+- SDD 행동 정본은 `tk-engineering`이 소유합니다. 실제 자식 기능은 현재 호스트에서 확인합니다. provider/model/effort routing, durable worker cursor, `.tigerkit/session.md`를 제품에 추가하지 않습니다.
+- 승인은 같은 작업의 필요한 후속 단계까지 보존하되 새 범위·보안·권한·발행을 추론하지 않습니다. 근거가 승인된 계약을 깨면 임의로 재해석하지 않고 준비·재승인으로 돌아갑니다.
+- 로컬 구현 승인은 push·PR·merge·publish·release 승인이 아닙니다. 원격 변경은 정확한 대상·행동의 사용자 승인과 해당 담당 절차를 거칩니다. 강제 push나 보호 규칙 우회를 가정하지 않습니다. 새 tag나 별도 release는 발행하지 않습니다.
+- PR 상태의 정본은 필요한 시점에 다시 읽은 GitHub state입니다. Markdown snapshot으로 PR/head/thread/check/identity를 대신하지 않습니다.
+- 사용자-facing 상태는 간결하게 전달하고 이미 확인한 내용을 반복 질문하지 않습니다. 승인된 가역적 엔지니어링 판단은 이유와 영향을 설명하고 자율 처리하되 권한을 확대하지 않습니다.
+
+## 산출물과 비밀
+
+- 저장소 귀속 임시 실행 파일은 `.tigerkit/tmp/<skill>/<run-id>/`, 검증 근거는 `.tigerkit/evidence/<skill>/<run-id>/`에 둡니다. 설명과 조사는 해당 소유 스킬의 durable-root/default 정책을 따르며 기존 학습 공간과 명시한 최종 목적지를 보존합니다.
+- 쓰기 전 저장소·소유권·nonsymlink 경계와 Git 제외를 확인합니다. `git ls-files -- .tigerkit/`에 추적 파일이 없어야 하며 `git check-ignore -q -- .tigerkit/`가 성공해야 합니다. Git의 최종 판정이 정본이며 전역 exclude도 유효합니다.
+- 제외가 없을 때만 안전한 루트 `.gitignore`에 기존 바이트/줄바꿈을 보존해 `/.tigerkit/`를 추가하고 재확인합니다. 실패·추적 파일·안전하지 않은 경로는 파일 분기만 중단하며 자동 untrack이나 다른 임시 경로로 우회하지 않습니다. 설정만을 위한 stage/commit은 하지 않습니다.
+- 비밀은 chat·Seed·logs·receipt·Git에 넣지 않습니다. 보호 입력은 `.tigerkit/secret-input/` 아래 디렉터리 `0700`, 파일 `0600`으로 둡니다. 값 수집·감시·소비·정리는 `tk-artifacts`의 입력/인증 정본을 따릅니다.
+- 승인된 비운영 앱 인증 입력은 같은 작업·worktree·앱·환경·계정에 묶어 보존할 수 있습니다. 보존은 로그인·주입·갱신 권한이 아닙니다. 만료/거부된 access 값을 사용하지 않고 지원된 복구 경로를 확인합니다. 일회성 비밀의 소비 후 삭제와 잔여 확인은 유지합니다.
+- 사용자 입력 파일은 필요한 키와 빈 문자열을 담은 UTF-8 일반 `input.json` 객체로 준비합니다. 값을 명령줄에 넣거나 편집기·GUI를 자동으로 열지 않습니다. 사용자 대기 전 실행 소유 자원을 정리하고 해당 소유 스킬의 최종 경로 안내/재개 계약을 따릅니다.
+- 외부 도구 자체 캐시와 격리 단위 검증 데이터는 해당 도구의 임시 공간을 사용할 수 있습니다. 실행 소유권이 확인된 자원만 정리하며 다른 worktree·사용자 파일·인증 입력을 임의 삭제하지 않습니다.
+
+## 설정과 검증
+
+- 저장소 정책은 `tigerkit.config.json`과 무시된 `.tigerkit/repository.json`, Orca 설정은 `orca.yaml`, PR triage 사용자 범위는 `$XDG_CONFIG_HOME/tigerkit/pr-triage.json`이 소유합니다. 설정 작성 승인은 원격 변경이나 실행 승인이 아닙니다.
+- 기계가 소비하는 필드는 엄격한 타입을 유지합니다. 검증 제공자의 제한된 재검증 문제 해결 메모 외에 pitfall corpus, 범용 memory backend, 원시 로그·세션·모델 routing 설정을 추가하지 않습니다. 관찰만으로 규칙이나 메모리를 자동 승격하지 않습니다.
+- 이 저장소는 상시 테스트 suite, eval catalog, 문구 잠금 검사나 릴리즈 비교 framework를 유지하지 않습니다. 필요한 검증은 변경한 실제 기능·설치 경계에 맞추어 실행하고 근거를 ignored evidence에 둡니다. 삭제된 검증 코드는 Git 이력에 남습니다.
+- 이 결정은 업무 스킬이 다른 프로젝트에서 적용하는 TDD·리뷰·검증 의무를 완화하지 않습니다. 계속 배포할 실행 코드의 실제 실패 조건을 확인하고, 실행하지 못한 것은 `Unverifiable`로 보고합니다.
+- CI를 사용하지 않습니다. `.github/workflows/`나 임시 원격 Runner로 로컬 검증을 우회하지 않습니다.
+- `main` 반영 전 필수 확인과 실행 명령은 [릴리즈 체크리스트](RELEASE_CHECKLIST.md)를 따릅니다. README는 소개·설치·짧은 카탈로그만 소유합니다.

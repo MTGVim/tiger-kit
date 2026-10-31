@@ -194,8 +194,8 @@ Adapt semantic emphasis and accessible icon/status behavior, using independently
 wording and code. Omit page templates, visual branding, fonts, orchestrators and mandatory
 style passes. The Impeccable source-path lookup returned 404; its public catalog was read
 instead. No donor runtime or behavior eval was executed; no measured improvement in user
-revision count, comprehension or token cost is claimed. Local regression checks are listed in
-`evals/changes/html-reader-corrections.md` at the repository level.
+revision count, comprehension or token cost is claimed. Historical local regression checks are recorded in Git history at
+`cbd9b064:evals/changes/html-reader-corrections.md`; the repository eval framework is retired.
 
 ## Repeated-link return navigation (2026-10-26)
 

@@ -72,9 +72,9 @@ npx skills remove tk-to-questionnaire --global --agent claude-code codex hermes-
 
 README는 짧은 프로젝트 소개, 설치 방법, 간결한 스킬 카탈로그와 참고 링크를 소유합니다. 스킬의 상세 동작은 각 `SKILL.md`와 패키지 참조에 둡니다.
 
-스킬 동작 본문만 바뀌면 README를 갱신하지 않습니다. 스킬 추가·삭제·이름 변경이나 공개 카탈로그 메타데이터(호출 방식·한 줄 역할)가 바뀌면 카탈로그와 링크를 갱신합니다. README를 바꾸지 않는 경우에는 변경된 `evals/changes/*.md`에 `README: no public change`, 영향받는 스킬 경로와 이유를 기록합니다.
+스킬 동작 본문만 바뀌면 README를 갱신하지 않습니다. 스킬 추가·삭제·이름 변경이나 공개 카탈로그 메타데이터(호출 방식·한 줄 역할)가 바뀌면 카탈로그와 링크를 갱신합니다. 별도 변경 manifest는 만들지 않습니다.
 
-`scripts/check_docs.py`는 README의 섹션·소개 길이·카탈로그 목록·호출 방식·링크를 검사합니다. 게시 전 필수 검사는 [릴리즈 체크리스트](RELEASE_CHECKLIST.md)를 따릅니다.
+게시 전 실제 기능·설치·문서 확인은 [릴리즈 체크리스트](RELEASE_CHECKLIST.md)를 따릅니다. 저장소 전용 테스트·eval·문구 검사 framework는 제거했으며 과거 파일은 Git 이력에서 확인합니다.
 
 ---
 
@@ -87,8 +87,7 @@ README는 짧은 프로젝트 소개, 설치 방법, 간결한 스킬 카탈로�
 
 1. `README.md`
 2. 현재 `skills/tk-*/SKILL.md`
-3. `evals/skills/<skill>/`의 저장소 전용 `eval` + `evals/catalog-routing.json`
-4. `AGENTS.md`
+3. `AGENTS.md`와 [릴리즈 체크리스트](RELEASE_CHECKLIST.md)
 
 ## 세션 회고 통합 (`tk-retro`)
 
@@ -264,12 +263,6 @@ session.md routing
 
 ## 릴리즈 체크리스트
 
-평가·카탈로그 계약을 바꾸는 경우에도 [릴리즈 체크리스트](RELEASE_CHECKLIST.md)의 필수 검사를 수행합니다. 기준 비교 명령은 다음과 같습니다.
-
-```bash
-python3 scripts/run_seed_release_checklist.py \
-  --baseline "<previous-tag-or-commit>" \
-  --candidate HEAD
-```
+현재 [릴리즈 체크리스트](RELEASE_CHECKLIST.md)에 따라 실제 기능·설치·문서와 최종 변경을 확인합니다. 이전 eval/기준 비교 runner는 폐기했으며 저장소의 현재 실행 계약이 아닙니다.
 
 🤖 본 문서는 AI가 작성했습니다.

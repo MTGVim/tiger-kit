@@ -87,8 +87,8 @@ comparisons, not reproduced runtime performance or copied implementations.
   the lineage and replication principles without importing this runtime or its licence terms.
 
 Installed behavior is owned by SKILL.md, `experiments.md`, `state.md` and `persistence.md`.
-Pressure scenarios are in `evals/skills/tk-research/evals.json`; donor tests were inspected as design
-evidence, not executed or claimed as TigerKit validation. Original donor licences are retained below.
+Historical pressure scenarios are available in Git history; the repository eval framework is retired.
+Donor tests were inspected as design evidence, not executed or claimed as TigerKit validation. Original donor licences are retained below.
 The user's loop-invocation correction changes the package to `hybrid` with model invocation enabled;
 selection requires a concrete continuing-research/resume request and never grants authority by itself.
 

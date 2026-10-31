@@ -496,7 +496,7 @@ active upstream이 아니라 역사적 provenance이며, 현재 관계 메타데
 
 원본의 안과 블로그 55편 중 40편 복원 보고와 모델별 실증 수치는 자체 재현하지 않았으므로
 `unverified`입니다. 기존 MIT 고지는 유지합니다. 세부 근거와 평가 범위는
-[변경 기록](evals/changes/issue-377.md)에 남깁니다.
+[과거 변경 기록](https://github.com/MTGVim/tiger-kit/blob/cbd9b064056ce536e9f733bb50b91e52046d42ec/evals/changes/issue-377.md)에 남깁니다.
 
 ## 재작성의 순위와 동시성 보존 (#378)
 

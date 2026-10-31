@@ -1,62 +1,42 @@
-# 릴리즈 체크리스트
+# main 반영 전 확인
 
-`main`에 변경을 반영하기 전에 이 문서의 필수 검사를 통과합니다. 모든 검사는 로컬에서 실행합니다. 아래 명령은
-릴리즈 검사기가 실행하는 내용을 보여 줍니다. 기준 버전 비교를 실행하면 이 명령들을
-별도로 반복할 필요가 없습니다.
+이 저장소는 Agent Skills와 실제 설치 도우미를 배포합니다. 저장소 전용 테스트 suite, eval catalog,
+문구 잠금 검사와 릴리즈 비교 framework는 유지하지 않습니다. 제거한 파일과 과거 검증 근거는 Git 이력에서
+확인할 수 있습니다. 이 정책은 스킬이 사용자의 다른 프로젝트에서 요구하는 TDD·리뷰·검증을 면제하지 않습니다.
 
-## README 기준
+## 기본 명령
 
-저장소 `README.md`에는 짧은 프로젝트 소개, 설치 방법, 간결한 스킬 카탈로그, 참고 링크만 둡니다.
-스킬의 동작·권한·예외·사용 절차는 각 `SKILL.md`와 패키지 참조가 소유합니다. README에 상세 설명을 복제하지 않습니다.
-
-- 스킬을 추가·삭제·이름 변경하거나 호출 방식·카탈로그 설명이 바뀌면 목록과 링크를 갱신합니다.
-- 스킬 내부 동작이나 설명 자료만 바뀌면 README를 갱신하지 않습니다.
-- 카탈로그 설명은 한 줄로 유지하고, 문서 검사에서 100자를 넘는 항목은 실패합니다.
-- `scripts/check_docs.py`는 README 섹션, 간결한 소개, 스킬 호출 방식·링크·카탈로그 일치 여부를 검사합니다.
-
-## 필수 검사
+저장소 루트에서 승인된 Python 환경을 사용합니다. 메타데이터 검사는 `Python 3.9+`와 `PyYAML`이 필요하며
+없으면 자동 설치하지 않고 중단합니다.
 
 ```bash
-python3 scripts/sync_execution_protocol.py --check
-python3 scripts/check_token_budget.py --check
-python3 scripts/validate_skills.py
-python3 -B -m unittest discover -s scripts -p 'test_*.py'
-python3 scripts/audit_catalog.py --check
-python3 scripts/check_docs.py
-node --test skills/tk-pr-sweep/scripts/triage.test.mjs
+python3 skills/tk-setup-skills/scripts/skill_dependencies.py validate \
+  --root . --catalog skills/tk-setup-skills/references/install-catalog.json
+PYTHONPYCACHEPREFIX=.tigerkit/tmp/compile-cache python3 -m compileall -q skills
+for f in skills/*/scripts/*.mjs; do node --check "$f" || exit; done
 git diff --check
 ```
 
-`scripts/check_token_budget.py`는 스킬 본문의 글자 수(20,000자 미만), 문서 바이트 수, 설명 글자 수, 상시 참조 파일의 크기,
-동기화 블록의 크기와 비율, 새로 중복된 문장을 측정합니다. 글자 수 제한은 유니코드 코드 포인트와 UTF-16 코드 단위를 모두 보수적으로 검사해
-압축 후 재주입 시 잘림을 예방하는 별도 기준이며, 기존 36KB 제한은 바이트 부하를 검사합니다.
-실제 호스트의 압축 동작을 실행했다는 증거는 아닙니다. 상시 참조 프로필은 `entrypoint`와 `paths`를 명시하며,
-진입 문서의 명시적 `Read` 링크(설명 페이지의 `renderer` 지시 포함)가 목록에서 빠지면 실패합니다.
-이 대조는 코드 펜스 예시를 제외하며 조건부·전이 참조·설치된 외부 스킬의 읽기까지 자동 추론하지 않습니다.
-나머지 값은 컨텍스트 크기의 근사
-지표이며 모델 토큰 수, 이미지 비용, 평가별 실행 비용을 직접 측정하지 않습니다.
-
-실제 설치 검사는 기준 버전 비교에서 격리된 소비자 디렉터리에 패키지를 설치하고
-설치 파일을 원본과 비교합니다. 전체 스킬 검사가 링크도 확인하고, `Node` 테스트가
-대상 모듈을 불러오므로 링크 전용 검사와 구문 검사도 반복하지 않습니다.
-
-## 기준 버전 비교
-
-후보는 최신 `origin/main` 기준으로 비교합니다.
+`dependencies.json`을 바꿨으면 동일한 실제 설치 도우미로 bundled catalog를 갱신한 후 위 검사를 실행합니다.
 
 ```bash
-python3 scripts/run_seed_release_checklist.py \
-  --baseline "$(git rev-parse origin/main)" \
-  --candidate HEAD
+python3 skills/tk-setup-skills/scripts/skill_dependencies.py build-catalog \
+  --root . --output skills/tk-setup-skills/references/install-catalog.json
 ```
 
-## `main` 반영 전
+## 변경에 맞는 실행 확인
 
-- [ ] `origin/main`을 다시 확인하고 기준 버전이 최신인지 확인합니다.
-- [ ] 후보 변경을 커밋하고 작업 트리가 깨끗한지 확인합니다.
-- [ ] 위의 필수 검사를 모두 통과합니다.
-- [ ] 문서 표·링크·스킬 목록·호출 방식·공유 정책을 검사하고, 공개 동작 설명은 독립 검수와 대조합니다.
-- [ ] 새로 추가한 상시 참조 문장은 하나씩 삭제 전후로 동작을 비교합니다. 삭제해도 변화가 없는 문장은 추가하지 않습니다.
-- [ ] 기준 버전 비교 결과가 `Pass`이며 `blocking_reasons`, `contract_errors`, `Unverifiable` 상태가 없습니다.
-- [ ] 검증 뒤 `origin/main`이 이동하면 새 기준으로 검사를 다시 실행합니다.
-- [ ] 모든 항목을 만족한 뒤에만 `main`을 갱신합니다.
+- 지침 변경: 바뀐 본문 전체와 참조 진입 조건을 읽고, 이전 동작·필요한 분기·건너뛸 분기·승인/실패 경계를 비교합니다.
+- 설치·공통 자원 변경: 격리된 대상에 실제 dependency closure를 복사 설치하고 source checkout 없이 명령·자원 읽기를 확인합니다. 소유자 누락·식별 불일치·안전하지 않은 경로는 해당 작업을 중단해야 합니다. 사용자 설치본은 검증 대상으로 덮어쓰지 않습니다.
+- 실행 도우미 변경: 실제 CLI의 정상 출력·상태 변화와 바뀐 실패 조건을 재현합니다. HTML 등 표현 자원 이동은 이전/이후 출력 바이트를 비교하고, 표현 동작이 달라지면 해당 browser/app verifier를 사용합니다.
+- 근거는 실행 위치·revision·명령·실제 exit·관찰 결과와 함께 `.tigerkit/evidence/`에 둡니다. 구문 검사나 reviewer 의견을 런타임 실행 증거로 바꾸지 않습니다. 수행하지 못한 것은 `Unverifiable`로 남깁니다.
+
+## 문서와 반영
+
+- 공개 스킬 추가·삭제·이름·호출 방식·역할이 달라지면 README 카탈로그와 설치 문서를 함께 갱신합니다. 내부 구현만 바뀌면 의례적인 README 수정이나 변경 manifest를 만들지 않습니다.
+- README에는 짧은 소개·설치·스킬 카탈로그·참고 링크만 둡니다. 상세 동작과 권한의 정본은 각 `SKILL.md`와 해당 참조입니다.
+- 정확한 전체 변경 범위에 대한 독립 리뷰, 필요한 보정과 최종 기능 확인을 마칩니다.
+- `origin/main`을 fresh fetch하여 최신 변경을 보존하고, 최종 통합본에 영향을 주는 검증을 다시 실행합니다.
+- 승인된 범위만 commit하고 작업 트리 상태를 확인합니다. 원격 발행은 정확한 사용자 승인 범위에서만 수행하며, 이 체크리스트는 push/merge/force 권한을 부여하지 않습니다.
+
+모든 확인은 로컬에서 수행합니다. CI나 임시 GitHub Actions로 우회하지 않습니다.
