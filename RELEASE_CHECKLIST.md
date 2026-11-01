@@ -27,6 +27,7 @@ python3 skills/tk-setup-skills/scripts/skill_dependencies.py build-catalog \
 ## 변경에 맞는 실행 확인
 
 - 지침 변경: 바뀐 본문 전체와 참조 진입 조건을 읽고, 이전 동작·필요한 분기·건너뛸 분기·승인/실패 경계를 비교합니다.
+- 한국어 명세: `SKILL.md` 본문과 패키지 참조 Markdown의 자연어 제목·실행 지침이 한국어 정본인지 확인합니다. ID·경로·명령·코드·기계 판독 문자열·직접 인용·라이선스 등은 [ADR 0005](docs/adr/0005-korean-skill-instructions.md)의 원문 유지 예외를 따릅니다. 지침 작성 언어와 사용자가 지정한 출력 언어를 혼동하지 않습니다.
 - 설치·공통 자원 변경: 격리된 대상에 실제 dependency closure를 복사 설치하고 source checkout 없이 명령·자원 읽기를 확인합니다. 소유자 누락·식별 불일치·안전하지 않은 경로는 해당 작업을 중단해야 합니다. 사용자 설치본은 검증 대상으로 덮어쓰지 않습니다.
 - 공통 자원 경로: `tk-writing`의 HTML assets/scripts와 `tk-verification-guidance`의 registry/설정 helper를 정확한 설치 소유자에서 읽고, 문서 링크·CLI 예제·직접 의존성·bundled catalog를 함께 확인합니다. 구 소비자 사본이나 wrapper로 누락을 가리지 않습니다.
 - 라이선스 중복 정리: 파일별 고유 완전 고지, 저작권·attribution과 다른 법적 본문을 전후 비교합니다. 독립 배포 패키지 사이의 필요한 고지는 제거하지 않습니다.

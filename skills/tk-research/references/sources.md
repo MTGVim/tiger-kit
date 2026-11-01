@@ -1,6 +1,8 @@
 <a id="research-source-dispositions"></a>
 # 조사 출처별 처리 판단
 
+아래는 도입 당시의 출처·적응 결정 이력입니다. 과거 HTML 기본값을 현행 의무로 사용하지 않습니다. 현재 출력·완료 계약은 `SKILL.md`가 소유하며 기본은 대화, HTML·시각자료는 요청한 산출물 분기입니다.
+
 2026-10-01에 `rohankgeorge/the-researcher`의 `1184d246c290a4ff772ea669ac6b9f9914d3f7da`(MIT)를 검토했습니다. README, LICENSE와 네 개의 `plugins/researcher/skills/` 패키지인 `deep-research-prompt-builder`, `primary-source-chaser`, `research-log`, `research-verification`을 확인했습니다.
 
 - `keep/adapt`: 결정에 관련된 이차 주장을 접근 가능한 일차 권위 출처로 추적합니다. 출처 접근 가능성과 주장 충실도를 분리합니다. 가져온 내용과 중요한 주장·출처 쌍을 대조하여 검증합니다. 모순, 검증 불가 상태와 정정을 조용히 삭제하지 않고 보존합니다.

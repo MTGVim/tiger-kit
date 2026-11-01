@@ -50,7 +50,7 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 
 ### 이해·연구·학습
 
-개념·상황·코드 변경 설명과 실제 답변에 맞춘 후속 수업은 `tk-explain`을 사용합니다.
+개념·상황·코드 변경 설명과 실제 답변에 맞춘 후속 수업은 `tk-explain`을 사용합니다. `tk-explain`과 `tk-research`는 대화에서 필요한 배경·근거·한계까지 설명하며, HTML 등 별도 산출물은 요청한 경우에 만듭니다.
 
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |

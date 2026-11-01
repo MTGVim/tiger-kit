@@ -1,6 +1,6 @@
 interface:
-  short_description: "[user/auto] 개념·상황·코드 변경을 시각 자료로 설명하고 실제 답변에 맞춰 후속 수업을 제공합니다."
-  default_prompt: "$tk-explain을 사용해 필요한 배경지식과 실제 작동 방식을 자체 완결형 HTML로 설명해 주세요."
+  short_description: "[user/auto] 개념·상황·코드 변경을 배경부터 대화로 설명하고 요청한 시각자료와 실제 답변에 맞는 후속 수업을 제공합니다."
+  default_prompt: "$tk-explain을 사용해 필요한 배경지식과 실제 작동 방식을 현재 대화에서 쉽게 설명해 주세요. HTML·시각자료 등 별도 산출물은 요청한 경우에 만드세요."
 
 policy:
   allow_implicit_invocation: true

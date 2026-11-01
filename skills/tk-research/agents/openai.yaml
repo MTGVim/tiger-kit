@@ -1,5 +1,5 @@
 interface:
   short_description: "[user/auto] 외부 비교부터 지속 연구·실험·재개까지 필요한 단계만 수행합니다."
-  default_prompt: "$tk-research로 현재 목표와 제약을 확인하고 근거를 비교하여 결론을 제시하세요. 필요할 때만 지속 상태와 실험으로 승격하고 검증된 결과를 오프라인 HTML로 제공하세요."
+  default_prompt: "$tk-research로 현재 목표와 제약을 확인하고 근거를 비교하여 결론을 제시하세요. 필요할 때만 지속 상태와 실험으로 승격하고 검증된 결과의 배경·선택 이유·한계를 현재 대화에서 설명하고 HTML 등 별도 산출물은 요청한 경우에 만드세요."
 policy:
   allow_implicit_invocation: true
