@@ -1,13 +1,10 @@
-# TypeScript review
+<a id="typescript-review"></a>
+# TypeScript 리뷰
 
-Read this only when JavaScript or TypeScript semantics are in review scope.
+JavaScript 또는 TypeScript 의미가 리뷰 범위에 있을 때만 읽습니다.
 
-- At external request/response boundaries, verify field shape, nullability, conditional omission, and any runtime
-  validation; declaration shape alone is not runtime proof.
-- Check whether `any`, type assertions, non-null assertions, unchecked indexing, or optional access hides an invariant
-  that callers can violate. Do not flag a value already narrowed by reachable control flow.
-- Trace promises for floating rejection, `async forEach`, ordering, race, cancellation, and swallowed error behavior.
-  Intentional fire-and-forget needs an explicit error owner.
-- When compiler configuration changes, report only a demonstrated loss of safety in the touched build path.
-- Use the repository's typecheck/lint command when safe and relevant. A missing tool or one command failure does not
-  authorize a new dependency or end the rest of the review.
+- 외부 요청·응답 경계에서 필드 형태, null 허용 여부, 조건부 생략과 런타임 검증을 확인합니다. 선언 형태만으로는 런타임 증거가 되지 않습니다.
+- `any`, 타입 단언, non-null 단언, 검사하지 않은 인덱싱이나 선택적 접근이 호출자가 위반할 수 있는 불변식을 숨기는지 확인합니다. 도달 가능한 제어 흐름으로 이미 좁혀진 값은 지적하지 않습니다.
+- promise에서 처리되지 않은 거부, `async forEach`, 순서, 경쟁, 취소와 오류를 삼키는 동작을 추적합니다. 의도적인 fire-and-forget에는 명시적 오류 담당자가 필요합니다.
+- 컴파일러 설정이 바뀌면 변경한 빌드 경로에서 입증된 안전성 상실만 보고합니다.
+- 안전하고 관련성이 있으면 저장소의 typecheck/lint 명령을 사용합니다. 도구가 없거나 명령 하나가 실패했다고 새 의존성을 도입하거나 나머지 리뷰를 끝낼 권한이 생기지는 않습니다.

@@ -1,52 +1,37 @@
-# Committed Assertion Evidence
+<a id="committed-assertion-evidence"></a>
+# 커밋에 남기는 단정의 근거
 
-Read this reference only when implementation adds or changes either:
+구현에서 다음 중 하나를 추가하거나 변경할 때만 이 참조를 읽습니다.
 
-- a code comment or JSDoc statement that asserts a measurable count, exhaustive scope,
-  exclusivity, or current behavior; or
-- a hand-written type/schema that models an external API, SDK, persisted payload, or
-  another input outside the current implementation's control.
+- 측정 가능한 수, 빠짐없는 범위, 배타성 또는 현재 동작을 단정하는 코드 주석이나 JSDoc 문장입니다.
+- 외부 API, SDK, 저장된 payload 또는 현재 구현이 통제하지 못하는 다른 입력을 모델링하는 수작업 타입/스키마입니다.
 
-Do not load it for ordinary local intent comments, names, internal types derived entirely
-from current code, documentation/wording-only work, or generated contracts.
+일반적인 로컬 의도 주석, 이름, 현재 코드에서 전적으로 도출한 내부 타입, 문서/문구만 다루는 작업이나 생성된 계약에는 이 참조를 읽지 않습니다.
 
-## Factual comments
+<a id="factual-comments"></a>
+## 사실을 서술하는 주석
 
-Back a measurable or exhaustive statement with fresh evidence from the same candidate.
-For claims such as “used by N components” or “reads only X,” inspect the complete applicable
-surface and retain the command/query output that proves the count or boundary. Rerun the
-evidence after the candidate changes; evidence from before the diff is stale when the diff
-can change the result.
+측정 가능하거나 빠짐없음을 주장하는 문장은 같은 후보에서 얻은 최신 근거로 뒷받침합니다.
+“N개 컴포넌트에서 사용한다” 또는 “X만 읽는다” 같은 주장은 적용 가능한 전체 범위를 조사하고 수나 경계를 입증하는 명령/쿼리 출력을 보존합니다. 후보가 바뀌면 근거를 다시 실행합니다. diff가 결과를 바꿀 수 있으면 diff 이전의 근거는 오래된 것입니다.
 
-If the claim cannot be proved, do not write it as fact. Prefer a stable rationale or
-invariant that the code establishes, or omit the comment. Do not replace one unverified
-exact claim with vague certainty such as “all,” “always,” or “never.”
+주장을 입증할 수 없으면 사실로 쓰지 않습니다. 코드가 확립하는 안정적인 이유나 불변 조건을 우선하거나 주석을 생략합니다. 검증되지 않은 정확한 주장을 “모두”, “항상”, “절대” 같은 모호한 확신으로 바꾸지 않습니다.
 
-## External input contracts
+<a id="external-input-contracts"></a>
+## 외부 입력 계약
 
-Verify field presence, omission, explicit `null`, container shape, and value type
-independently. Use the first applicable evidence:
+필드 존재, 생략, 명시적 `null`, 컨테이너 형태와 값 타입을 각각 독립적으로 검증합니다. 다음 중 처음 적용할 수 있는 근거를 사용합니다.
 
-1. a current authoritative schema or generated contract;
-2. server DTO/serializer/handler code, including permission, feature, version, and error branches;
-3. fresh runtime responses that cover each relevant variant;
-4. supplied versioned API documentation or specification with provenance;
-5. one happy-path payload, local call-site assumptions, names, or analogous fields, which
-   do not prove required presence, non-nullability, or shape.
+1. 현재의 권위 있는 스키마나 생성된 계약입니다.
+2. 권한, 기능, 버전, 오류 분기를 포함한 서버 DTO/serializer/handler 코드입니다.
+3. 관련된 각 변형을 포괄하는 최신 런타임 응답입니다.
+4. 출처가 있는 제공된 버전별 API 문서나 명세입니다.
+5. 정상 경로 payload 하나, 로컬 호출 지점의 가정, 이름 또는 유사한 필드입니다. 이들은 필수 존재 여부, non-null 여부나 형태를 입증하지 못합니다.
 
-A field appearing once does not prove that it is required or non-null. A `null` observation
-does not prove that omission is impossible, and omission does not prove that `null` is
-impossible. Do not declare a field required/non-null or collapse `T[]`, record/map, and `T`
-without evidence that covers the applicable variants.
+필드가 한 번 나타났다고 필수이거나 non-null임이 입증되는 것은 아닙니다. `null` 관찰은 생략이 불가능함을 입증하지 않으며, 생략도 `null`이 불가능함을 입증하지 않습니다. 적용 가능한 변형을 포괄하는 근거 없이 필드를 필수/non-null로 선언하거나 `T[]`, record/map과 `T`를 하나로 합치지 않습니다.
 
-When the contract remains unverified, preserve that uncertainty at the boundary using the
-repository's existing validation or conservative typing convention; do not invent a precise
-contract. If no safe representation exists without changing product behavior or compatibility,
-return to preparation with the exact missing evidence instead of guessing.
+계약이 여전히 검증되지 않았다면 저장소의 기존 검증 방식이나 보수적인 타입 관례를 사용하여 경계에 그 불확실성을 유지합니다. 정밀한 계약을 만들어 내지 않습니다. 제품 동작이나 호환성을 바꾸지 않고 안전하게 표현할 방법이 없으면 추측하지 말고 정확히 누락된 근거를 가지고 준비 단계로 돌아갑니다.
 
-## Verification boundary
+<a id="verification-boundary"></a>
+## 검증 경계
 
-This gate changes the evidence needed for durable assertions; it does not create a new test
-ceremony. Follow `../../tk-engineering/references/testing.md` only when observable code behavior changes. Before completion,
-recheck every changed qualifying assertion against the final candidate and report any
-remaining unverified contract rather than converting it into a success claim.
+이 관문은 지속적으로 남는 단정에 필요한 근거를 바꾸며 새로운 형식적 테스트 절차를 만들지 않습니다. 관찰 가능한 코드 동작이 바뀔 때만 `../../tk-engineering/references/testing.md`를 따릅니다. 완료 전에 변경된 모든 해당 단정을 최종 후보와 다시 대조하고, 남은 미검증 계약은 성공 주장으로 바꾸지 말고 보고합니다.

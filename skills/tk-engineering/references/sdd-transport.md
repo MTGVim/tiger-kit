@@ -1,23 +1,12 @@
-# SDD Artifact Transport
+<a id="sdd-artifact-transport"></a>
+# SDD 산출물 전달
 
-Read only when exact content cannot be transported directly and a child needs file-backed material.
+정확한 콘텐츠를 직접 전달할 수 없고 자식에게 파일 기반 자료가 필요할 때만 읽습니다.
 
 
-Prefer direct host payloads and child return values for Unit summaries, reports, and
-exact diffs. Do not materialize an artifact merely to pass information that the active
-host can transport faithfully.
+Unit 요약, 보고서와 정확한 diff에는 직접 호스트 payload와 자식 반환값을 우선합니다. 현재 호스트가 정보를 충실히 전달할 수 있다면 정보를 넘기기 위해 산출물을 파일로 만들지 않습니다.
 
-Use a flat `.tigerkit/sdd-tmp/` only when a child requires a file path, an exact bundle
-cannot be transported reliably through the host surface, or bounded context size makes
-file transport necessary. Before the first write, read [artifact paths](../../tk-artifacts/references/artifact-paths.md) and prove with `git check-ignore -q -- .tigerkit/` that
-Git's effective ignore rules cover `.tigerkit/` and verify that `git ls-files -- .tigerkit/`
-returns no tracked paths. Per-directory `.gitignore`, `.git/info/exclude`, and configured
-user-level exclude sources are all valid. Apply the owning SKILL.md Artifact Paths setup
-when ignore coverage is missing, then recheck. If required file transport remains
-unignored, unwritable, or invisible to the child, use no operating-system temporary
-fallback; return `Blocked | Unverifiable` before dispatch.
+자식에게 파일 경로가 필요하거나, 호스트 인터페이스로 정확한 묶음을 안정적으로 전달할 수 없거나, 제한된 맥락 크기로 파일 전달이 필요할 때만 평면적인 `.tigerkit/sdd-tmp/`를 사용합니다. 첫 쓰기 전에 [산출물 경로](../../tk-artifacts/references/artifact-paths.md)를 읽고 `git check-ignore -q -- .tigerkit/`로 Git의 실제 ignore 규칙이 `.tigerkit/`를 포함함을 입증하며 `git ls-files -- .tigerkit/`가 추적 경로를 반환하지 않는지 검증합니다. 디렉터리별 `.gitignore`, `.git/info/exclude`와 설정된 사용자 수준 제외 소스는 모두 유효합니다. 제외 범위가 부족하면 담당 SKILL.md의 Artifact Paths 설정을 적용한 뒤 다시 확인합니다. 필요한 파일 전달이 여전히 제외되지 않거나, 쓰기 불가능하거나, 자식에게 보이지 않으면 운영체제 임시 경로로 대체하지 않습니다. 디스패치 전에 `Blocked | Unverifiable`을 반환합니다.
 
-Do not create per-run or per-plan hierarchies. Use unique filenames containing the
-Seed identifier, `Unit`, and scope. Clean up only run-owned files and never delete
-unrelated files. Do not put secrets in artifacts.
+실행별 또는 계획별 계층을 만들지 않습니다. Seed 식별자, `Unit`과 범위를 포함한 고유 파일명을 사용합니다. 실행 소유 파일만 정리하고 무관한 파일은 삭제하지 않습니다. 산출물에 비밀을 넣지 않습니다.
 

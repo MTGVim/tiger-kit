@@ -1,36 +1,37 @@
-# Document Render Checks
+<a id="document-render-checks"></a>
+# 문서 렌더링 점검
 
-Run only within the owning skill's screen/action verification scope. Explanation and lesson
-production requires an explicit user request for these checks; reading this reference or
-having a browser available grants no automatic browser run.
+실행 담당 스킬의 화면·동작 검증 범위 안에서만 실행합니다. 설명과 수업을
+제작할 때 이 점검을 실행하려면 사용자의 명시적인 요청이 필요합니다. 이 참조를 읽거나
+브라우저를 사용할 수 있다는 사실만으로 브라우저 실행 권한이 자동으로 부여되지는 않습니다.
 
-Finalize prose, figure coverage and labels; run HTML output's cheap static checks before
-the render matrix. Smoke-test a new direct-input path's required trusted action and observed
-postcondition before full captures. After failure, identify affected criteria and dependencies;
-reuse evidence only with independently proven unchanged candidate scope/replay conditions.
-Run required viewport/theme checks on the finalized artifact.
+본문, 그림의 내용 범위와 레이블을 확정하고, 렌더링 조합을 점검하기 전에 HTML 출력에 대한 간단한 정적 검사를 실행합니다.
+전체 화면을 캡처하기 전에 새 직접 입력 경로에서 필요한 신뢰된 동작과 관찰된
+사후 조건을 스모크 테스트합니다. 실패한 뒤에는 영향을 받는 기준과 의존성을 식별합니다.
+후보 범위와 재실행 조건이 바뀌지 않았음을 독립적으로 입증한 경우에만 근거를 재사용합니다.
+확정된 산출물에 필요한 뷰포트·테마 점검을 실행합니다.
 
-When browser verification is required, inspect desktop (at least 1280px) and mobile (390–500px), in light and dark.
-Delegate browser-visible checks to `tk-browser-verify` within its provider, headless and evidence
-boundaries. Do not launch the user's browser or silently install/switch verification providers.
-Check actual keyboard use, hashes, static/no-JS core reading and reduced motion. Required numerical
-checks include desktop content left/right margin differences of at most 1 CSS px and no
-intersection between the footer and `.ht-doc-nav` rectangles at widths above 960px. Check header actions stay at the right padding edge with long export-status text at 1280px,
-900px and below 760px. Required numerical checks also include the emulated mobile CSS viewport width matching `innerWidth` and
-`document.documentElement.scrollWidth <= innerWidth`; a wider `innerWidth` under mobile
-emulation means content widened the layout viewport and fails the check. Table overflow is confined to a
-`position:relative` scrolling wrapper; body/table/definition-list non-heading sizes at most body
-size (KPI/hero exceptions only); and row headers retaining readable multi-character widths.
-Off-screen absolute helper text and measurement elements must not widen the document. Fix failed
-checks in the generator/template and replay. Completion reports name inspected viewports/themes
-and results, or `Unverifiable` with the unavailable renderer/check. Saving HTML alone is not proof
-of readability; unreadable output is a functional defect and cannot pass the affected acceptance.
+브라우저 검증이 필요하면 데스크톱(최소 1280px)과 모바일(390–500px)을 밝은 테마와 어두운 테마에서 검사합니다.
+브라우저에 표시되는 내용의 점검은 `tk-browser-verify`에 위임하고, 해당 스킬의 제공자, headless와 근거
+경계를 따릅니다. 사용자 브라우저를 실행하거나 검증 제공자를 알리지 않고 설치·교체하지 않습니다.
+실제 키보드 사용, hash, 정적·no-JS 핵심 읽기와 동작 줄이기를 점검합니다. 필수 수치
+점검에는 데스크톱 콘텐츠의 좌우 여백 차이가 최대 1 CSS px인지, 너비가 960px를 넘을 때
+footer와 `.ht-doc-nav` 사각형이 교차하지 않는지 확인하는 작업이 포함됩니다. 1280px,
+900px와 760px 미만에서 내보내기 상태 문구가 길어도 헤더 동작 요소가 오른쪽 패딩 경계에 유지되는지 점검합니다. 필수 수치 점검에는 에뮬레이션한 모바일 CSS 뷰포트 너비가 `innerWidth`와 일치하는지,
+`document.documentElement.scrollWidth <= innerWidth`인지 확인하는 작업도 포함됩니다. 모바일
+에뮬레이션에서 `innerWidth`가 더 넓으면 콘텐츠가 레이아웃 뷰포트를 넓힌 것이므로 점검에 실패합니다. 표의 넘침은
+`position:relative` 스크롤 래퍼 안에 한정되어야 합니다. 본문·표·정의 목록에서 제목이 아닌 텍스트 크기는 본문
+크기 이하여야 하며(KPI·hero만 예외), 행 머리글은 여러 글자를 읽을 수 있는 너비를 유지해야 합니다.
+화면 밖에 절대 위치로 배치한 도움말 텍스트와 측정 요소가 문서를 넓혀서는 안 됩니다. 실패한
+점검은 생성기·템플릿에서 수정하고 재실행합니다. 완료 보고서에는 검사한 뷰포트·테마와
+결과를 명시하거나, 사용할 수 없는 렌더러·점검과 함께 `Unverifiable`을 명시합니다. HTML을 저장한 것만으로 가독성이 입증되지는 않습니다.
+읽을 수 없는 출력은 기능 결함이며 해당 인수 조건을 통과할 수 없습니다.
 
-For document-like artifacts, verify that the theme control is inside the top bar and visible in
-the initial viewport. On desktop, its `getBoundingClientRect().top` must fall within the top bar's
-vertical bounds. Inspect the title and control together at the affected desktop breakpoint:
-both must have positive rendered width, stay inside the header and not overlap. Page-level overflow
-checks alone cannot establish this. Check text for replacement characters or suspicious runs of
-question marks against its source; warn and inspect rather than banning or replacing normal question
-sentences and code operators. Check that the title still identifies the subject without ticket keys or generic
-labels, and that any required term list follows the opening conclusion, expanded with working links.
+문서 형태의 산출물에서는 테마 컨트롤이 상단 표시줄 안에 있고 초기 뷰포트에서 보이는지 검증합니다.
+데스크톱에서는 해당 컨트롤의 `getBoundingClientRect().top`이 상단 표시줄의
+수직 경계 안에 있어야 합니다. 영향을 받는 데스크톱 breakpoint에서 제목과 컨트롤을 함께 검사합니다.
+둘 다 렌더링 너비가 양수여야 하고, 헤더 안에 머물며 서로 겹치지 않아야 합니다. 페이지 수준의 넘침
+점검만으로는 이를 입증할 수 없습니다. 텍스트에 대체 문자나 의심스러운 물음표 연속이 있는지
+원문과 대조합니다. 정상적인 의문문과 코드 연산자를 금지하거나 치환하지 말고 경고한 뒤 검사합니다.
+제목이 티켓 키나 일반적인 레이블 없이도 여전히 주제를 식별하는지, 필요한 용어 목록이 있다면 도입 결론 뒤에
+작동하는 링크를 포함하여 펼쳐진 상태로 나오는지 점검합니다.

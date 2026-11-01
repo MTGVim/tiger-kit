@@ -10,120 +10,54 @@ metadata:
     relationship: native
 ---
 
-# Explain Through Video
+<a id="explain-through-video"></a>
+# 영상으로 설명하기
 
-## Shared References
+<a id="shared-references"></a>
+## 공통 참조
 
-Read branch-triggered criteria from the current installed owners. A missing/mismatched
-owner or resource blocks that action: use `tk-setup-skills`, not memory, another installation
-or unapproved installs. Reading grants no workflow or mutation authority.
+현재 설치된 소유 스킬에서 해당 분기의 조건에 따라 기준을 읽습니다. 소유 스킬이나 자원이 없거나 식별이 다르면 해당 행동을 중단합니다. 기억, 다른 설치본이나 승인되지 않은 설치로 대신하지 말고 `tk-setup-skills`를 사용합니다. 참조 읽기는 워크플로 실행이나 변경 권한을 부여하지 않습니다.
 
-- For a user-owned decision, missing approval or unmet prerequisite, read [question rounds](../tk-questioning/references/questions.md).
-- Before a user-facing completion report, artifact-path handoff or multi-attribute chat comparison, read [chat delivery](../tk-writing/references/delivery.md). The task's specific output contract wins.
+- 사용자가 결정해야 하거나 승인이 없거나 선행 조건이 충족되지 않았다면 [질문 라운드](../tk-questioning/references/questions.md)를 읽습니다.
+- 사용자에게 완료 보고를 하거나 산출물 경로를 인계하거나 채팅에서 여러 속성을 비교하기 전에 [채팅 전달](../tk-writing/references/delivery.md)을 읽습니다. 해당 작업의 구체적인 출력 계약이 우선합니다.
 
-Produce the selected MP4 or GIF from observed software states, labeled explanatory cards or
-authored Manim renders. Arbitrary existing-video editing and unrelated filmmaking are outside this skill. A movie communicates
-a flow; it does not establish application correctness, latency, performance or reader understanding.
+관찰한 소프트웨어 상태, label이 있는 설명 카드 또는 직접 작성한 Manim render에서 선택한 MP4나 GIF를 제작합니다. 임의의 기존 영상 편집과 무관한 영화 제작은 이 스킬 범위 밖입니다. 영상은 흐름을 전달하며 애플리케이션 정확성, 지연 시간, 성능이나 독자의 이해를 입증하지 않습니다.
 
-## Plan and collect
+<a id="plan-and-collect"></a>
+## 계획과 수집
 
-Resolve the audience, claim, selected format and available scene sources. Prefer stills when
-motion itself is not the claim. A short flow around ten seconds often fits GIF; longer explanation
-fits MP4. Reuse supplied material and approved choices without another routine question.
-For authored explainers, answer an opening question immediately with the main claim/reason and
-necessary condition in both screen copy and narration, then demonstrate why with changing visuals.
-Keep an explicitly selected discovery-led structure instead; do not infer improved learning from style alone.
-When authored geometry or algorithm/state transitions carry the explanation, recommend Manim
-over HTML-to-image slides; preserve explicitly selected stills, HTML and observed-UI routes.
-Only when Manim is selected, read [Manim dependency and rendering](references/manim.md), verify
-and load the external `manim-composer` and `manimce-best-practices` skills unchanged. Native
-ManimCE and an existing Docker runtime are alternatives, never universal prerequisites. Keep
-their continuous render as video, not extracted stills; slide theme and 10fps defaults do not apply.
-Before production, read [media choices](../tk-writing/references/media-preferences.md): resolve saved fields,
-ask unresolved narration/presentation and the default-save offer in one ordinary-chat round,
-and pass answered choices through parent/child phases. Reuse selections; save only explicitly
-approved fields through that reference's atomic merge/readback contract. Give captions reading time and measured narration
-at least 800ms of breathing room. For captures, plan each selected crop and highlight its region before zooming in.
+독자, 주장, 선택한 format과 사용 가능한 장면 출처를 확정합니다. 움직임 자체가 주장이 아니면 정지 이미지를 우선합니다. 약 10초의 짧은 흐름에는 GIF가 적합한 경우가 많고 긴 설명에는 MP4가 적합합니다. 제공된 자료와 승인된 선택을 별도의 일상적 재질문 없이 재사용합니다. 직접 작성하는 설명 영상은 화면 문구와 내레이션 모두에서 핵심 주장/이유와 필요한 조건으로 도입 질문에 즉시 답한 뒤, 변화하는 시각 자료로 그 이유를 보여 줍니다. 발견을 이끄는 구조가 명시적으로 선택되었다면 그 구조를 유지합니다. Style만으로 학습 개선을 추론하지 않습니다. 작성한 기하 구조나 알고리즘/상태 전이가 설명을 전달한다면 HTML-to-image slide보다 Manim을 권고합니다. 명시적으로 선택한 정지 이미지, HTML과 관찰된 UI 경로는 보존합니다. Manim을 선택한 경우에만 [Manim 의존성과 렌더링](references/manim.md)을 읽고 외부 `manim-composer` 및 `manimce-best-practices` 스킬을 검증하여 변경 없이 로드합니다. Native ManimCE와 기존 Docker 런타임은 대안이며 보편적인 선행 조건이 아닙니다. 연속 render를 추출한 정지 이미지가 아니라 영상으로 유지합니다. Slide theme와 10fps 기본값은 적용되지 않습니다. 제작 전에 [미디어 선택](../tk-writing/references/media-preferences.md)을 읽습니다. 저장된 필드를 확인하고, 미확정 내레이션/표현 방식과 기본값 저장 제안을 일반 채팅 한 라운드에서 질문하며, 답한 선택을 부모/자식 단계에 전달합니다. 선택을 재사용합니다. 해당 참조의 atomic merge/readback 계약으로 명시적으로 승인된 필드만 저장합니다. 자막에는 읽을 시간을 주고 측정된 내레이션에는 최소 800ms의 여유를 줍니다. 캡처에서는 선택한 각 crop을 계획하고 확대 전에 해당 영역을 강조합니다.
 
-List each scene's source, caption, optional narration and hold or observed timestamp. Label rendered
-cards with a corner source tag in the audience's language and declare `source_in_picture: true`
-in each tagged frame; otherwise retain a localized caption label. Never reenact unavailable
-software behavior or present a diagram as a capture. Keep claims, source versions and unverified intervals explicit. For real browser states,
-invoke `tk-browser-verify` with `phase: media-capture` for a demo or explanation without acceptance
-criteria; an explicitly requested acceptance check retains its verification contract and optional
-motion-evidence supplement. For native windows invoke `tk-app-verify`. Those owners retain provider,
-authentication, test data, actual input/capture and resource lifecycle. Return to this skill with
-ordered, publication-safe frame paths and provenance. Do not import a sibling skill's script path.
-If that owner is unavailable, report the missing capture; do not invent a replacement.
+각 장면의 출처, 자막, 선택적 내레이션과 hold 또는 관찰 timestamp를 나열합니다. Render된 카드에는 독자 언어의 모서리 출처 tag를 붙이고 tag가 있는 각 frame에 `source_in_picture: true`를 선언합니다. 그렇지 않으면 현지화된 자막 label을 유지합니다. 확인할 수 없는 소프트웨어 동작을 재연하거나 diagram을 캡처로 제시하지 않습니다. 주장, 소스 버전과 미검증 구간을 명시적으로 유지합니다. 실제 브라우저 상태의 경우 수용 기준 없는 데모나 설명에는 `phase: media-capture`로 `tk-browser-verify`를 호출합니다. 명시적으로 요청된 수용 점검은 검증 계약과 선택적 움직임 근거 보충을 유지합니다. Native 창에는 `tk-app-verify`를 호출합니다. 해당 담당자는 제공자, 인증, 테스트 데이터, 실제 입력/캡처와 자원 수명주기를 계속 담당합니다. 발행에 안전한 순서 있는 frame 경로와 출처를 가지고 이 스킬로 돌아옵니다. 형제 스킬의 script 경로를 import하지 않습니다. 해당 담당자를 사용할 수 없다면 누락된 캡처를 보고합니다. 대체 자료를 만들어 내지 않습니다.
 
-For authored cards, read [slide authoring](references/slide-authoring.md) before rendering;
-retain the full scene-copy list and author-check result in inspection evidence. Use the resolved
-slide theme (light fallback), in-slide emphasis unless another treatment was selected, and keep
-assembler zoom off by default. Create cards with an already available renderer, retaining their authored source. HTML cards may
-use an already approved headless rendering boundary; installed plotting/rendering tools are also
-eligible. No dependency installation or user-profile attachment follows from choosing video.
+직접 작성하는 카드는 rendering 전에 [slide 작성](references/slide-authoring.md)을 읽습니다. 전체 장면 문구 목록과 작성 점검 결과를 검사 근거에 보존합니다. 확정한 slide theme(대체값은 light)와 다른 처리가 선택되지 않았다면 slide 내부 강조를 사용하고, assembler zoom은 기본적으로 끕니다. 이미 사용 가능한 renderer로 카드를 만들고 작성 원본을 보존합니다. HTML 카드는 이미 승인된 headless rendering 경계를 사용할 수 있으며 설치된 plotting/rendering 도구도 사용할 수 있습니다. 영상 선택은 의존성 설치나 사용자 profile 연결을 허용하지 않습니다.
 
-## Assemble and inspect
+<a id="assemble-and-inspect"></a>
+## 조립과 검사
 
-Read [assembly](references/assembly.md) for the scene/capture manifest, owned paths and command.
-Use `explainer` holds for presentation and preserve actual timestamps in `evidence` mode. Keep
-assertion screenshots unchanged and independent from the movie. Use H.264 MP4 at the capture's
-frame rate capped at 30fps, with optional mono 48kbps AAC; GIF and explainer stills default to
-10fps. Animation MP4 instead retains its measured source rate, dimensions and duration, including
-rates above 30; existing embedded audio is retained. Its captions default to selectable tracks
-and sidecars; burn them only on explicit selection. Hard captions alone do not select a letterbox or appended band: preserve the animation canvas with an in-frame overlay unless the user separately selects a band. Protect moving diagrams and labels across each caption interval; shorten/split captions or reauthor a safe region rather than silently adding padding. An explicitly selected `band` adds height; report it. MP4 defaults to CRF 18; use the assembler's quality/rate overrides and preserve source
-resolution. Follow prerequisite recovery for unavailable tools.
-If hard-caption support is missing after installed-tool discovery, present the `tk-wizard`
-installation-guidance question before returning the blocked result. Do not implement a frame-compositing workaround.
+장면/캡처 manifest, 실행 소유 경로와 명령은 [조립](references/assembly.md)을 읽습니다. 표현에는 `explainer` hold를 사용하고 `evidence` 모드에서는 실제 timestamp를 보존합니다. 판정용 screenshot은 변경하지 않고 영상과 독립적으로 유지합니다. 캡처 frame rate를 최대 30fps로 제한한 H.264 MP4를 사용하며 선택적으로 mono 48kbps AAC를 사용합니다. GIF와 explainer 정지 이미지는 기본 10fps입니다. Animation MP4는 대신 30을 초과하는 rate를 포함하여 측정한 원본 rate, 치수와 길이를 유지하며 기존 내장 오디오도 유지합니다. 자막은 기본적으로 선택 가능한 track과 sidecar로 제공하며 명시적 선택이 있을 때만 화면에 입힙니다. Hard 자막만으로 letterbox나 추가 band가 선택되지 않습니다. 사용자가 band를 별도로 선택하지 않는 한 frame 내부 overlay로 animation canvas를 보존합니다. 각 자막 구간 전체에서 움직이는 diagram과 label을 보호합니다. 몰래 padding을 추가하는 대신 자막을 줄이거나 나누거나 안전 영역을 다시 작성합니다. 명시적으로 선택한 `band`는 높이를 늘리므로 이를 보고합니다. MP4 기본값은 CRF 18입니다. Assembler의 품질/rate override를 사용하고 원본 해상도를 보존합니다. 도구를 사용할 수 없으면 선행 조건 복구 절차를 따릅니다. 설치된 도구를 탐색한 후 hard 자막 지원이 없다면 blocked 결과를 반환하기 전에 `tk-wizard` 설치 안내 질문을 제시합니다. Frame 합성 우회책을 구현하지 않습니다.
 
-For selected generated narration, invoke `tk-tts` through supported skill loading/handoff;
-read [narration](references/narration.md) for measured audio-to-scene alignment. Reuse supplied
-audio when selected. Assembly consumes ordinary WAV files and imports no TTS engine. Selecting
-TTS requires actual accepted non-silent audio; missing synthesis is not a voiced silent preview.
+생성 내레이션을 선택했다면 지원되는 스킬 로딩/인계를 통해 `tk-tts`를 호출합니다. 측정 오디오와 장면의 정렬에는 [내레이션](references/narration.md)을 읽습니다. 제공 오디오를 선택했다면 재사용합니다. 조립은 일반 WAV 파일을 소비하며 TTS 엔진을 import하지 않습니다. TTS를 선택하면 실제 수용된 무음이 아닌 오디오가 필요합니다. 합성 누락은 음성이 있는 무음 preview가 아닙니다.
 
-Run the finished-media checks and inspect the generated contact sheet plus representative decoded
-frames, including the initial/final state and every material caption or scene transition.
-For narrated video also inspect interval samples (for example every two seconds) and beat
-boundaries, including just before each beat ends. Review intervals with narration and prolonged
-unchanged or irrelevant visuals; record sample count, candidate intervals and disposition in the
-inspection receipt. The assembler's capped contact sheet alone may not provide this coverage. Return
-`human_action: listen` with the names/numbers/terms to check and relevant sample paths for selected
-narration; retain it as pending until the user confirms meaning, pronunciation and clipping.
-A decode pass is not visual or pronunciation
-inspection. Distinguish uninspected intervals and report real limitations. Repair a defective cut
-and rerun affected checks; never edit the receipt to make the movie pass.
+완성 미디어 점검을 실행하고 생성된 contact sheet와 대표 디코딩 frame을 검사합니다. 초기/최종 상태와 중요한 모든 자막 또는 장면 전환을 포함합니다. 내레이션 영상은 구간 표본(예: 2초마다)과 beat 경계도 검사하며 각 beat 종료 직전도 포함합니다. 내레이션이 있지만 시각 자료가 오래 바뀌지 않거나 무관한 구간을 검토합니다. 검사 receipt에 표본 수, 후보 구간과 처리 결과를 기록합니다. Assembler의 개수 제한 contact sheet만으로는 이 범위를 충족하지 못할 수 있습니다. 선택한 내레이션에는 확인할 이름/숫자/용어와 관련 표본 경로를 담아 `human_action: listen`을 반환합니다. 사용자가 의미, 발음과 clipping을 확인할 때까지 대기로 유지합니다. 디코딩 통과는 시각 검사나 발음 검사가 아닙니다. 검사하지 않은 구간을 구별하고 실제 한계를 보고합니다. 결함 있는 편집본을 수정하고 영향을 받은 점검을 다시 실행합니다. 영상을 통과시키려고 receipt를 편집하지 않습니다.
 
-## Return
+<a id="return"></a>
+## 반환
 
-Return ready media with its absolute path, mode/timing, sources, caption/audio state, media checks,
-inspection limits and publication selection. Report blocked or failed quality separately from
-application verification. Missing hard-caption support retains the soft-caption fallback, not a
-claim of completed burned captions. Preserve inputs and failure evidence; clean only known owned
-transients only after the user confirms the selected result and its decode/inspection completes.
-Until then preserve reusable frames/audio/manifests and report retained frame bytes.
-Release capture resources through their owning verifier.
+준비된 미디어를 절대 경로, 모드/타이밍, 출처, 자막/오디오 상태, 미디어 점검, 검사 한계와 발행 선택과 함께 반환합니다. 차단되거나 실패한 품질을 애플리케이션 검증과 별도로 보고합니다. Hard 자막 지원이 없으면 soft 자막 fallback을 유지하며 화면에 입힌 자막을 완료했다고 주장하지 않습니다. 입력과 실패 근거를 보존합니다. 사용자가 선택한 결과를 확인하고 그 디코딩/검사가 완료된 뒤에만 알려진 실행 소유 임시 자료를 정리합니다. 그전까지 재사용 가능한 frame/오디오/manifest를 보존하고 보존한 frame 바이트를 보고합니다. 캡처 자원은 소유 검증 담당자를 통해 해제합니다.
 
-Generation authorizes no publication. Hand selected attachments to `tk-pr-media` only when upload
-is separately authorized. This skill changes no application source, Git state or credentials; its only settings write
-is the explicitly approved media-preference merge. It creates only the requested movie, scene sources and run-owned evidence, plus the
-selected audio artifacts. `tk-tts` owns its separately approved installation and model cache.
+생성은 발행을 허용하지 않습니다. 업로드가 별도로 승인된 경우에만 선택한 첨부물을 `tk-pr-media`에 인계합니다. 이 스킬은 애플리케이션 소스, Git 상태나 자격 증명을 변경하지 않습니다. 유일한 설정 쓰기는 명시적으로 승인된 미디어 선호 설정 merge입니다. 요청한 영상, 장면 원본과 실행 소유 근거 및 선택한 오디오 산출물만 생성합니다. `tk-tts`는 별도로 승인된 설치와 모델 캐시를 소유합니다.
 
-Design sources and deliberate omissions are recorded in [sources](references/sources.md).
+설계 출처와 의도적으로 제외한 사항은 [출처](references/sources.md)에 기록되어 있습니다.
 
 <!-- tigerkit:narration-choice -->
-## Narration Choice
+<a id="narration-choice"></a>
+## 내레이션 선택
 
-Ask the creator to choose TTS, supplied audio or no narration before any video or spoken-slide
-production. Reuse an answered parent/user choice; video or a voice preference is not TTS consent.
-Show current tk-tts model/voice/device/setup options before synthesis/assembly. Preserve no
-narration; offer MP4 for GIF sound. Static HTML/text needs no unrelated voice interview.
-Installation/download/publication require their own authority; playback mute/fallback are separate.
+영상이나 음성 slide를 제작하기 전에 제작자에게 TTS, 제공 오디오 또는 내레이션 없음 중에서 선택하도록 질문합니다. 이미 답한 부모/사용자 선택은 재사용합니다. 영상이나 목소리 선호는 TTS 동의가 아닙니다. 합성/조립 전에 현재 tk-tts 모델/목소리/장치/설정 선택지를 제시합니다. 내레이션 없음을 보존합니다. GIF에 소리가 필요하면 MP4를 제안합니다. 정적 HTML/텍스트에는 무관한 목소리 문답이 필요하지 않습니다. 설치/다운로드/발행에는 각각의 권한이 필요하며 playback mute/fallback은 별개입니다.
 <!-- /tigerkit:narration-choice -->
 
-## Artifact Paths
+<a id="artifact-paths"></a>
+## 산출물 경로
 
-Before authorized artifact writes, checkout/transport/ignore setup or temporary-input consumption,
-read [artifact paths](../tk-artifacts/references/artifact-paths.md). Use safe owned nonsymlink paths
-and proven Git exclusion for repository scratch; failed checks stop that file branch. Preserve
-explicit final destinations and owner-specific defaults. Prefilled input is not completed input.
-Cleanup targets only recorded literal resolved absolute run-owned paths, never cwd-relative paths or globs.
+승인된 산출물 쓰기, checkout/전송/제외 설정 또는 임시 입력 소비 전에 [산출물 경로](../tk-artifacts/references/artifact-paths.md)를 읽습니다. 저장소 임시 자료에는 소유권이 확인된 안전한 nonsymlink 경로와 입증된 Git 제외를 사용합니다. 점검 실패 시 해당 파일 분기를 중단합니다. 명시한 최종 목적지와 소유자별 기본값을 보존합니다. 미리 채운 입력은 입력 완료가 아닙니다. 정리 대상은 기록된 literal 형태의 해석된 절대 경로 중 실행 소유 경로로만 제한하며, cwd 상대 경로나 glob을 사용하지 않습니다.

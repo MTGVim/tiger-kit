@@ -1,126 +1,128 @@
-# Local Execution
+<a id="local-execution"></a>
+# 로컬 실행
 
-Read this reference only when the approved outcome may include local implementation. Handoff-only preparation does not
-need workspace setup or completion mechanics.
+승인된 결과에 로컬 구현이 포함될 수 있을 때만 이 참조를 읽습니다. 인계만 하는 준비에는
+작업 공간 설정이나 완료 절차가 필요하지 않습니다.
 
-## Workspace safety
+<a id="workspace-safety"></a>
+## 작업 공간 안전
 
-Before final approval, establish the repository root, current branch/HEAD, default branch, linked-worktree state,
-submodule status, staged/unstaged/untracked paths, unrelated user work, and required test/browser/server readiness.
-Never absorb, stage, commit, clean, stash, review, or overwrite unrelated work.
+최종 승인 전에 저장소 루트, 현재 브랜치·HEAD, 기본 브랜치, 연결된 worktree 상태,
+서브모듈 상태, 스테이징된 경로·스테이징되지 않은 경로·미추적 경로, 무관한 사용자 작업, 필요한 테스트·브라우저·서버의 준비 상태를 확인합니다.
+무관한 작업을 이 작업에 포함하거나 스테이징·커밋·정리·stash·리뷰·덮어쓰지 않습니다.
 
-Reuse a non-default task checkout only when its task identity and HEAD are proven. Treat `GIT_DIR != GIT_COMMON` as a
-linked-worktree signal only after excluding submodules with `git rev-parse --show-superproject-working-tree` or equivalent
-evidence. If execution would start from the default branch, final approval must cover creating or using a fresh isolated
-task checkout.
+기본 브랜치가 아닌 작업 체크아웃은 작업 식별과 HEAD가 입증된 경우에만 재사용합니다. `GIT_DIR != GIT_COMMON`은
+`git rev-parse --show-superproject-working-tree`나 동등한 근거로 서브모듈을 제외한 뒤에만
+연결된 worktree의 신호로 취급합니다. 기본 브랜치에서 실행을 시작하게 된다면, 최종 승인에는 새로 격리된
+작업 체크아웃을 만들거나 사용하는 일이 포함되어야 합니다.
 
-When isolation is required, detect existing isolation first. Prefer an available agent-callable native mechanism such as
-`EnterWorktree`, `WorktreeCreate`, `/worktree`, or `--worktree`, then fresh-read its path, branch or detached state, and
-HEAD. Approval for the exact plan and isolated checkout also authorizes that native mechanism; do not ask again solely
-because the tool has its own name.
+격리가 필요하면 기존 격리 여부를 먼저 확인합니다. `EnterWorktree`, `WorktreeCreate`, `/worktree`, `--worktree`처럼
+에이전트가 호출할 수 있는 사용 가능한 호스트 기본 기능을 우선한 다음, 그 경로, 브랜치나 detached 상태,
+HEAD를 새로 조회합니다. 정확한 계획과 격리 체크아웃에 대한 승인은 해당 호스트 기본 기능의 사용도 승인합니다.
+도구에 별도 이름이 있다는 이유만으로 다시 묻지 않습니다.
 
-Use manual `git worktree` only when no safe native mechanism exists. Start from the approved source HEAD, avoid unrelated
-work and path/branch collisions, and verify the result. When creating a task branch from any ref other than current HEAD,
-prevent inherited upstream tracking (for example, `git worktree add ... -b <branch> --no-track <base-ref>`). Before product
-mutation, verify the task branch does not track a shared integration branch such as `origin/main`, `origin/dev`, or
-`origin/production`; unset that upstream or return `Blocked` if safe isolation cannot be proven. Use the owning SKILL.md Artifact Paths setup only for missing `.tigerkit/` coverage;
-do not make unrelated ignore edits or create a setup commit for isolation. If isolation cannot be proven, return `Blocked` before product mutation. Preserve
-the lifecycle of host-managed workspaces; do not remove, prune, relocate, or clean them on completion.
+안전한 호스트 기본 기능이 없을 때만 수동 `git worktree`를 사용합니다. 승인된 원천 HEAD에서 시작하고, 무관한
+작업과 경로·브랜치 충돌을 피하며 결과를 검증합니다. 현재 HEAD가 아닌 ref에서 작업 브랜치를 만들 때는
+상위 브랜치 추적이 상속되지 않게 합니다. 예를 들어 `git worktree add ... -b <branch> --no-track <base-ref>`를 사용합니다. 제품
+변경 전에 작업 브랜치가 `origin/main`, `origin/dev`, `origin/production` 같은 공유 통합 브랜치를 추적하지 않는지
+검증합니다. 해당 upstream 설정을 해제하거나, 안전한 격리를 입증할 수 없으면 `Blocked`를 반환합니다. `.tigerkit/` 제외가 누락된 경우에만 담당 SKILL.md의 산출물 경로 설정을 사용합니다.
+무관한 ignore 수정이나 격리 설정용 커밋을 만들지 않습니다. 격리를 입증할 수 없으면 제품 변경 전에 `Blocked`를 반환합니다.
+호스트가 관리하는 작업 공간의 수명주기를 보존합니다. 완료 시 제거·prune·이동·정리하지 않습니다.
 
-## Direct execution and completion
+<a id="direct-execution-and-completion"></a>
+## 직접 실행과 완료
 
-Direct changes follow the applicable path in [behavior-first testing](../../tk-engineering/references/testing.md): RED → verified failure → minimal
-GREEN for changed behavior, or pre-edit GREEN → behavior-preserving refactor → matching GREEN. Then self-simplify →
-exact-change read-only review → scoped remediation/re-review → binding verification → commit. Remove unnecessary indirection,
-speculative flexibility, dead branches, custom replacements for repository-native helpers, and production APIs added
-only for tests.
-For meaningful abstractions introduced by this change, align names with existing
-repository vocabulary for the same concept; use a plain, accurate name when the
-concept is genuinely new. Limit this pass to shared domain-like objects, workflow,
-service and data/request/result concepts, not ordinary local variables. Rename a
-clearly equivalent internal symbol within approved scope without a new checkpoint.
-Before renaming, check public APIs, serialized values, schema names, URLs/paths,
-config/environment keys and externally consumed event fields; preserve those
-contracts unless their change is already approved, and use a symbol-aware refactor
-rather than blind text replacement. Raise a naming choice through the existing
-question contract only when its meaning requires a product/domain decision.
+직접 변경은 [행동 우선 테스트](../../tk-engineering/references/testing.md)의 해당 경로를 따릅니다. 동작 변경은 RED → 실패 확인 → 최소
+GREEN으로 진행하고, 동작 보존 리팩터링은 편집 전 GREEN → 동작 보존 리팩터링 → 대응하는 GREEN으로 진행합니다. 그런 다음 자체 단순화 →
+정확한 변경 범위의 읽기 전용 리뷰 → 범위 내 수정·재리뷰 → 최종 후보에 결부한 검증 → 커밋 순서로 진행합니다. 불필요한 간접 계층,
+추측에 기반한 유연성, 죽은 분기, 저장소 기본 도우미를 대신하는 자체 구현, 테스트만을 위해 추가된 프로덕션 API를 제거합니다.
+이번 변경에서 도입한 의미 있는 추상화의 이름은 같은 개념에 대해 기존
+저장소가 쓰는 용어에 맞춥니다. 개념이 실제로 새롭다면 평이하고 정확한 이름을
+사용합니다. 이 점검은 공통 도메인 성격의 객체, 워크플로,
+서비스, 데이터·요청·결과 개념에 한정하고 일반적인 지역 변수에는 적용하지 않습니다. 명백히
+동등한 내부 심벌은 새 확인 지점 없이 승인된 범위 안에서 이름을 바꿉니다.
+이름을 바꾸기 전에 공개 API, 직렬화 값, 스키마 이름, URL·경로,
+설정·환경 키와 외부에서 소비하는 이벤트 필드를 확인합니다. 변경이 이미 승인된 경우가
+아니면 해당 계약을 보존하고, 무차별 문자열 치환 대신 심벌을 인식하는 리팩터링을
+사용합니다. 이름의 의미에 제품·도메인 결정이 필요한 경우에만 기존
+질문 계약을 통해 이름 선택을 올립니다.
 
-When the approved runtime verification plan says the candidate can affect rendered output, invoke its planned verifier
-(`tk-browser-verify` or `tk-app-verify`) to capture the
-planned pre-change baseline before the first product edit. Preserve its exact source and replay metadata for the after
-call. If the baseline call is `Blocked | Unverifiable`, continue only within the approved limitation and never convert
-candidate-only acceptance evidence into an absence-of-regression claim.
+승인된 런타임 검증 계획에서 후보가 렌더링 결과에 영향을 줄 수 있다고 판단했다면, 첫 제품 편집 전에
+계획된 검증자(`tk-browser-verify` 또는 `tk-app-verify`)를 호출해
+계획된 변경 전 기준을 수집합니다. 변경 후 호출을 위해 정확한 원천과 재현 메타데이터를
+보존합니다. 기준 수집 호출이 `Blocked | Unverifiable`이면 승인된 제약 안에서만 계속하고,
+후보만의 인수 근거를 회귀가 없다는 주장으로 바꾸지 않습니다.
 
-For an approved execution that includes implementation, require a successful baseline child to return `phase: baseline`,
-`baseline_capture: Pass`, `verification_complete: false`, `resume_parent: required`, the run/evidence identity and replay
-metadata, and `next_required: implement candidate, then start fresh runtime resources and capture after with the saved baseline/replay`. Treat this as an
-intermediate result and apply the owning SKILL.md's baseline continuation and final-response gate, including for
-direct/no-Seed and same-agent Skill loading. After baseline evidence is saved, confirm owned headless browser and development server
-cleanup before implementation; keep the evidence identity and replay recipe only. Do not keep a
-server running while implementation, review, or a paused human step proceeds. After implementation,
-invoke the matching after capture/comparison with freshly owned runtime resources. Baseline-only evidence cannot
-satisfy final runtime acceptance, independent review, binding verification, or commit.
+구현을 포함하는 승인된 실행에서는, 성공한 기준 수집 자식이 `phase: baseline`,
+`baseline_capture: Pass`, `verification_complete: false`, `resume_parent: required`, 실행·근거 식별과 재현
+메타데이터, `next_required: implement candidate, then start fresh runtime resources and capture after with the saved baseline/replay`를 반환하도록 요구합니다. 이를
+중간 결과로 취급하고, direct/no-Seed와 같은 에이전트의 Skill 로딩을 포함하여 담당 SKILL.md의 변경 전 기준 수집 후 계속 진행과 최종 응답 관문을
+적용합니다. 기준 근거를 저장한 뒤에는 구현 전에 소유한 headless 브라우저와 개발 서버의
+정리를 확인합니다. 근거 식별과 재현 절차만 유지합니다.
+구현, 리뷰나 일시 중지된 사용자 단계가 진행되는 동안 서버를 켜 두지 않습니다. 구현 후에는
+새로 소유한 런타임 자원으로 짝이 맞는 변경 후 수집·비교를 호출합니다. 변경 전 기준만의 근거는
+최종 런타임 인수, 독립 리뷰, 최종 후보에 결부한 검증이나 커밋을 충족할 수 없습니다.
 
-When after evidence uses a short-lived authentication input, prioritize its validity window: after the focused change
-tests pass, invoke the matching after capture immediately, before the full test suite, build, or review. Run every
-required gate afterward; this order does not waive or weaken them. If later review remediation touches the verified
-screen's render or request path, apply the existing final-head replay rule before completion.
+변경 후 근거 수집에서 수명이 짧은 인증 입력을 사용하면, 유효 시간대를 우선합니다. 집중 변경
+테스트를 통과한 뒤 전체 테스트 모음, 빌드나 리뷰보다 먼저 즉시 짝이 맞는 변경 후 수집을 호출합니다. 이후 모든
+필수 관문을 실행합니다. 이 순서는 관문을 면제하거나 약화하지 않습니다. 나중의 리뷰 수정이 검증된
+화면의 렌더링 경로나 요청 경로를 건드리면, 완료 전에 기존의 최종 HEAD 재현 규칙을 적용합니다.
 
-When direct execution needs multiple commits, prefer a stronger repository convention; otherwise split by independently
-understandable, verifiable, and revertible work units rather than file type or layer. Keep each behavior with the tests
-that prove it and factual documentation that must change with it when practical. Keep one coherent judgment surface in
-one commit, and do not perform fragile retrospective hunk surgery merely to increase the commit count.
+직접 실행에 여러 커밋이 필요하면, 더 구속력 있는 저장소 관례를 우선합니다. 그런 관례가 없으면 파일 유형이나 계층이 아니라 독립적으로
+이해·검증·되돌리기가 가능한 작업 단위로 나눕니다. 가능한 경우 각 동작은 이를 증명하는 테스트와
+함께 바뀌어야 하는 사실 설명 문서와 묶습니다. 일관된 판단 범위 하나를
+커밋 하나에 담고, 커밋 수를 늘리기 위해서만 취약한 사후 hunk 분할 작업을 하지 않습니다.
 
-After candidate implementation and before final review, construct an implementation retro that records actual behavior
-changed, deviations from approved decisions and reasons, newly discovered risks, verification observations, and unresolved
-limitations. It is an untrusted claim bundle, not review proof.
+후보 구현을 마친 뒤 최종 리뷰 전에는 실제로 바뀐 동작,
+승인된 결정에서 벗어난 점과 이유, 새로 발견한 위험, 검증 관찰과 미해결
+제약을 기록한 구현 회고를 작성합니다. 이는 신뢰되지 않은 주장 묶음이며 리뷰의 증거가 아닙니다.
 
-Every exact-change review applies [independent review protocol](../../tk-engineering/references/review-protocol.md) and
-[finding quality](../../tk-engineering/references/finding-quality.md). Use the protocol's risk-based direct seat count, established from the exact diff
-and evidence. Each eligible seat records `Spec/AC` and `Quality/Standards` verdicts and completes both required walks. Withhold the implementation
-retro until each seat records its blind pass, aggregate the union, and separately verify every reportable candidate.
-If the required fresh contexts are unavailable, disclose the missing independent coverage as `Unverifiable`; repeated
-serial passes in one context do not satisfy it. Read [TypeScript](../../tk-engineering/references/typescript.md),
-[React](../../tk-engineering/references/react.md), and [security](../../tk-engineering/references/security.md) only when the review scope meets those references' conditions. These lenses
-change review judgment, not the target, commit, remediation, or authority protocol.
+정확한 변경 범위의 모든 리뷰에 [독립 리뷰 프로토콜](../../tk-engineering/references/review-protocol.md)과
+[발견 사항 품질](../../tk-engineering/references/finding-quality.md)을 적용합니다. 정확한 diff와 근거에 따라 정한 프로토콜의 위험 기반 직접 실행 리뷰어 수를
+사용합니다. 적격한 각 리뷰어는 `Spec/AC`와 `Quality/Standards` 판정을 기록하고 필수 검토 경로 두 가지를 모두 완료합니다. 각 리뷰어가 블라인드 검토를 기록할
+때까지 구현 회고를 제공하지 않습니다. 전체 발견 사항의 합집합을 모으고 보고 가능한 각 후보를 별도로 검증합니다.
+필요한 새 맥락을 확보할 수 없으면 누락된 독립 검토 범위를 `Unverifiable`로 밝힙니다. 하나의 맥락에서
+여러 번 순차 검토해도 이를 충족하지 않습니다. 리뷰 범위가 각 참조의 조건에 해당할 때만 [TypeScript](../../tk-engineering/references/typescript.md),
+[React](../../tk-engineering/references/react.md), [보안](../../tk-engineering/references/security.md)을 읽습니다. 이 관점들은
+리뷰 판단을 바꾸지만, 대상·커밋·수정·권한 프로토콜은 바꾸지 않습니다.
 
-Handle verified `Critical | Important` findings for at most five remediation rounds. Before requiring a fix diff,
-apply the [evidence-only response](../../tk-engineering/references/review-protocol.md#evidence-only-response-to-a-reported-finding) branch when the reviewed
-target is unchanged and concrete counter-evidence exists; only the fresh verifier may disprove that finding. Recheck the original open findings
-and exact fix diff rather than rerunning broad discovery after every edit, and admit only new qualifying breakage caused
-by that fix. Stop with the exact unresolved result after round five; do not continue until a stochastic review happens to
-return no findings.
+검증된 `Critical | Important` 발견 사항은 최대 다섯 차례의 수정 라운드로 처리합니다. 수정 diff를 요구하기 전에,
+리뷰한 대상이 바뀌지 않았고 구체적인 반증이 있으면 [근거만으로 응답](../../tk-engineering/references/review-protocol.md#evidence-only-response-to-a-reported-finding) 분기를
+적용합니다. 새로운 검증자만 해당 발견 사항을 반증할 수 있습니다. 매번 편집 후 광범위한 탐색을 다시 실행하지 말고 원래 미해결 발견 사항과
+정확한 수정 diff를 재확인합니다. 그 수정으로 생긴 새로운 적격 결함만
+받아들입니다. 다섯 번째 라운드 뒤에는 정확한 미해결 결과와 함께 중단합니다. 우연히 발견 사항이 없는
+리뷰가 나올 때까지 계속하지 않습니다.
 
-After review remediation settles, compare every runtime-evidence head with the final candidate head before binding
-verification. If the intervening diff touches a runtime-verified screen's render path or request path, replay the same
-run's after procedure on the final head before reporting completion or creating the final completion commit. Reuse the
-existing replay metadata and launch a fresh run-owned browser/server using recorded launch PID/handle ownership; never hold live server or browser processes across phases. If the intervening diff does not
-touch those paths, keep the earlier runtime evidence and record the path-based carry-forward reason instead of recapturing
-it. A commit that only records already-verified content does not require replay merely because the commit SHA changed.
+리뷰 수정이 정리되면 최종 후보에 결부한 검증 전에 모든 런타임 근거의 HEAD를 최종 후보 HEAD와
+비교합니다. 그 사이 diff가 런타임으로 검증한 화면의 렌더링 경로나 요청 경로를 건드리면, 완료를 보고하거나
+최종 완료 커밋을 만들기 전에 같은 실행의 변경 후 절차를 최종 HEAD에서 재현합니다. 기존
+재현 메타데이터를 재사용하고, 기록된 실행 PID·핸들 소유권을 사용하여 실행 소유의 새 브라우저·서버를 시작합니다. 단계 사이에 살아 있는 서버나 브라우저 프로세스를 유지하지 않습니다. 그 사이 diff가
+해당 경로를 건드리지 않으면, 다시 수집하는 대신 이전 런타임 근거를 유지하고 경로에 기반한
+계속 유효한 이유를 기록합니다. 이미 검증한 내용만 기록하는 커밋은 커밋 SHA가 바뀌었다는 이유만으로 재현할 필요가 없습니다.
 
-When a nested browser verifier returns successful after evidence before the parent has finished review/remediation,
-tell it that the verified path may still receive commits and preserve its replay metadata only until the parent establishes
-the final head. The verifier releases its run-owned browser/server and one-shot secret server after each capture. It retains protected worktree-local non-production authentication input and uses supported renewal under tk-browser-verify's authentication contract; phase cleanup and access expiry do not delete that file. If authentication
-expires before a required final-head replay, use the verifier's supported renewal path first. Request only missing
-input when autonomous recovery is unavailable or fresh login is required, and explain the concrete limitation.
+중첩 브라우저 검증자가 부모의 리뷰·수정 완료 전에 성공한 변경 후 근거를 반환하면,
+검증된 경로에 아직 커밋이 추가될 수 있음을 알리고 부모가 최종 HEAD를 확정할
+때까지만 재현 메타데이터를 보존합니다. 검증자는 각 수집 후 실행 소유의 브라우저·서버와 일회용 비밀 서버를 해제합니다. 보호된 worktree 로컬 비운영 인증 입력은 유지하고 tk-browser-verify의 인증 계약에 따라 지원되는 갱신을 사용합니다. 단계 정리와 접근 만료는 그 파일을 삭제하지 않습니다. 필수 최종 HEAD 재현 전에 인증이
+만료되면, 먼저 검증자가 지원하는 갱신 경로를 사용합니다. 자율 복구가 불가능하거나 새 로그인이 필요할 때만 누락된
+입력을 요청하고 구체적인 제약을 설명합니다.
 
-For direct and SDD execution, preserve scope and UI literals, use the exact review range, run acceptance review, retain
-automated regression protection, and create only approved local commits. Invoke the planned verifier (`tk-browser-verify`
-or `tk-app-verify`) for every applicable runtime AC; its evidence does not replace automated protection. SDD's whole-change final review already
-satisfies the broad review gate.
+직접 실행과 SDD 실행 모두 범위와 UI 문자열을 보존하고, 정확한 리뷰 범위를 사용하며, 인수 리뷰를 실행하고,
+자동 회귀 보호를 유지하며, 승인된 로컬 커밋만 만듭니다. 적용되는 모든 런타임 AC에 계획된 검증자(`tk-browser-verify`
+또는 `tk-app-verify`)를 호출합니다. 그 근거는 자동 보호를 대체하지 않습니다. SDD의 전체 변경 최종 리뷰는 이미
+광범위 리뷰 관문을 충족합니다.
 
-During final exact-scope review, follow repository-defined documentation mappings, bounded searches and verification
-commands; run the defined checks and report their results. When the diff changes a public command, path, configuration
-key, environment variable, API contract, or installation/build/deployment/onboarding procedure, compare the changed fact
-with its known repository-owned documents. If no procedure exists, an optional search of root documents and documentation
-directories using changed paths or symbols may identify an owner; do not read an unrelated documentation tree. Without
-a repository procedure, skip this check when no public fact changed.
-Correct only claims made stale by the approved change, using the repository's generator for generated documentation.
-Preserve accurate matches, voice, structure, strategy, and nearby prose; create no new documents or lifecycle. Never
-modify instruction or rule files (`AGENTS.md`, `CLAUDE.md`, `.claude/rules/**`), even when the procedure requests a mapping
-row there; report the exact proposed update instead. A correction requiring a new product decision or material scope
-expansion returns to preparation for revision and reapproval.
+최종의 정확한 범위 리뷰 중에는 저장소가 정의한 문서 매핑, 범위가 제한된 검색과 검증
+명령을 따릅니다. 정의된 점검을 실행하고 결과를 보고합니다. diff가 공개 명령, 경로, 설정
+키, 환경 변수, API 계약이나 설치·빌드·배포·온보딩 절차를 바꾸면, 변경된 사실을
+그에 대해 알려진 저장소 소유 문서와 비교합니다. 절차가 없으면 변경된 경로나 심벌을 사용해 루트 문서와 문서
+디렉터리를 선택적으로 검색하여 담당 문서를 찾을 수 있습니다. 관련 없는 문서 트리는 읽지 않습니다. 저장소 절차가
+없고 바뀐 공개 사실도 없으면 이 점검을 생략합니다.
+승인된 변경 때문에 낡아진 주장만 바로잡고, 생성 문서는 저장소의 생성기를 사용합니다.
+정확한 내용, 문체, 구조, 전략과 주변 문장은 보존합니다. 새 문서나 수명주기는 만들지 않습니다.
+절차에서 매핑 행을 요구하더라도 지침·규칙 파일(`AGENTS.md`, `CLAUDE.md`, `.claude/rules/**`)은 절대
+수정하지 않습니다. 대신 정확한 갱신 제안을 보고합니다. 새 제품 결정이나 중대한 범위
+확장이 필요한 수정은 준비로 돌아가 개정과 재승인을 받습니다.
 
-Material Goal/Scope/approved Decision/AC/security/required Verification drift returns to preparation for revision and
-reapproval. A reversible engineering ambiguity may receive a visible `Ruling:` with its reason and cost if wrong.
-Repeated blockers end as `Fail | Unverifiable | Blocked`, not an infinite loop.
+목표·범위·승인된 결정·AC·보안·필수 검증에 중대한 이탈이 있으면 준비로 돌아가 개정과
+재승인을 받습니다. 되돌릴 수 있는 엔지니어링 모호성에는 이유와 틀렸을 때의 비용을 함께 드러낸 `Ruling:`을 내릴 수 있습니다.
+차단이 반복되면 무한 루프가 아니라 `Fail | Unverifiable | Blocked`로 끝냅니다.

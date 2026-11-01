@@ -1,21 +1,14 @@
-# Sources and boundaries
+<a id="sources-and-boundaries"></a>
+# 출처와 경계
 
-Inspected on 2026-10-30 at immutable revisions, before designing this package:
+이 패키지를 설계하기 전인 2026-10-30에 불변 revision으로 검사했습니다.
 
 - `Agent-Threat-Rule/agent-threat-rules@28d0a198e843cbccf8b7446db3a798cfd27f5ec1`:
   `rules/skill-compromise/ATR-2026-00128-html-comment-hidden-payload.yaml`,
   `ATR-2026-00129-unicode-smuggling.yaml`, `ATR-2026-00149-skill-exfil-compound.yaml`,
-  and malicious encoded-comment/benign shell-wrapper benchmark examples. MIT, ATR Contributors.
+  그리고 악성 인코딩 주석/정상 shell wrapper 벤치마크 예시를 확인했습니다. MIT, ATR Contributors.
 - `OSSAfrica/skillguard@12a958cb426aac8163f7dc86e3a22af5fd1412eb`:
   `README.md`, `internal/analyzer/scorer.go`, `injection_test.go`, `regression_test.go`.
-  MIT, OSSAfrica. Regression cases distinguish prose from command execution and ordinary
-  multilingual text from suspicious mixed-script concealment.
+  MIT, OSSAfrica. 회귀 사례는 문구와 명령 실행을 구별하고, 일반 다국어 텍스트와 의심스러운 혼합 문자 은폐를 구별합니다.
 
-Keep concrete compound action evidence and benign controls. Adapt these failure classes to
-human-readable static review of the full package and update diff. Omit regex/scoring engines,
-thresholds, installation/enforcement, hooks, cloud reporting and claimed benchmark accuracy.
-Upstream experimental rule matches are not production blocking policy or proof of malice.
-Fixtures here are independently authored; no external engine or dependency is bundled.
-Several projects use the name SkillGuard: do not attribute this source to another repository.
-`LLMSecurity/skillguard` was found without a license and contributes no copied material.
-Original MIT notices are retained in this package's `LICENSE.txt`.
+구체적인 복합 행동 근거와 정상 대조 사례를 유지합니다. 이러한 실패 유형을 전체 패키지와 업데이트 diff에 대한 사람이 읽을 수 있는 정적 검토에 맞게 적용합니다. 정규식/점수 엔진, 임계값, 설치/강제 적용, hook, 클라우드 보고와 벤치마크 정확도 주장은 제외합니다. Upstream의 실험적 규칙 일치는 운영 차단 정책이나 악성의 증거가 아닙니다. 여기의 fixture는 독립적으로 작성했으며 외부 엔진이나 의존성을 포함하지 않습니다. 여러 프로젝트가 SkillGuard라는 이름을 사용하므로 이 출처를 다른 저장소에 귀속하지 않습니다. `LLMSecurity/skillguard`에는 라이선스가 없는 것으로 확인되어 복사한 자료가 없습니다. 원래 MIT 고지는 이 패키지의 `LICENSE.txt`에 보존합니다.

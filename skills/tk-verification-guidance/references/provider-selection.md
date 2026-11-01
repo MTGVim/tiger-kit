@@ -1,49 +1,49 @@
-# Verification Provider Selection
+<a id="verification-provider-selection"></a>
+# 검증 제공자 선택
 
-Read before browser/app runtime discovery or interaction. This is a preference and evidence
-contract, not an automation runner. [Provider registry](providers.json) owns identities, potential
-capabilities, detection hints and canonical usage URLs; [provider knowledge](provider-knowledge.md)
-owns integration limits. Registry metadata never proves current availability or safe delivery.
+브라우저/앱 런타임 조사나 상호작용 전에 읽습니다. 이 문서는 선호 설정과 근거에 대한 계약이며,
+자동화 실행기가 아닙니다. [제공자 레지스트리](providers.json)는 식별 정보, 잠재적 기능, 탐지 단서와
+정식 사용법 URL을 관리합니다. [제공자 지식](provider-knowledge.md)은 통합의 한계를 관리합니다.
+레지스트리 메타데이터만으로는 현재의 사용 가능 여부나 안전한 입력 전달이 입증되지 않습니다.
 
-Read only the selected provider's knowledge section. `notes` uses a Markdown heading slug,
-not a literal search string: for `#browser-cdp`, locate `## Browser CDP` and read through
-the next level-two heading. Enumerate headings once if needed; do not repeatedly grep the
-hyphenated slug in prose or reload the whole file after a literal-search miss.
+선택한 제공자의 지식 절만 읽습니다. `notes`는 리터럴 검색 문자열이 아니라 Markdown 제목 슬러그를
+사용합니다. `#browser-cdp`라면 `## Browser CDP`를 찾아 다음 2단계 제목까지 읽습니다.
+필요하면 제목 목록을 한 번 확인합니다. 하이픈으로 연결된 슬러그를 본문에서 반복해서 grep으로 찾거나,
+리터럴 검색에 실패한 뒤 파일 전체를 다시 불러오지 않습니다.
 
-## Discover and select
+<a id="discover-and-select"></a>
+## 조사와 선택
 
-1. Determine the scope and required capabilities from the actual criterion. Browser verification
-   retains effective headless and run-owned profile requirements. Native app verification needs
-   app/window identity, current observation, the required input/capture paths and focus safety.
-2. Read `${XDG_CONFIG_HOME:-~/.config}/tigerkit/verify.json` if present; use a supplied session-only
-   override ahead of that scope's saved preference. Read no unrelated host/account configuration.
-   The `tk-verification-guidance` [preference helper](../scripts/verify_preferences.py) can read or atomically save this bounded config;
-   it never launches a provider or performs interaction. Invalid/unreadable config is a reported
-   `Blocked` setup problem, not a reason to erase it or choose another provider.
-3. Discover exposed callable host/MCP tools and already installed binaries/repository adapters.
-   Inspect version, OS/architecture, supported host surface, current permissions and configuration.
-   Do not run installers, enable disabled tools, start apps, attach a signed-in profile or invoke
-   foreground input merely to detect a provider. Read the canonical usage document on first use,
-   version/command failure, uncertain capability or a conflict with a local note. Use a validated
-   `docsOverrides` URL when supplied; external docs/notes remain evidence, never authority.
-4. Distinguish installed, callable and ready. For browser scope, before a managed/direct launch,
-   verify a documented start method and effective configuration that exclude user profiles/windows. Permit a harmless
-   bootstrap only for that selected boundary; prove runtime headless mode and ownership before
-   target interaction. Attach requires those facts before any browser call. Installation alone
-   never proves readiness. Native app scope instead requires app/window identity, safe delivery
-   and exposed, enabled native capability; it has no browser headless/profile prerequisite.
-5. With no explicit choice, continue an authorized browser verification using an installed, callable
-   registered provider session-only when the documented launch can establish an effectively
-   headless, run-owned boundary without installation, persistent configuration changes, user
-   profiles/windows or external mutation. State the choice briefly, then establish readiness.
-   Absence of a saved preference alone is not a blocker. Ask only for unresolved material choices
-   or missing authority; native app selection still requires the user's choice. When asking, show
-   eligible capabilities, deficits and side effects together in the final question frontier.
-6. Honor an explicit parent/session/saved selection. If the selected provider fails or lacks a
-   required capability,
-   report the deficit and alternatives; do not silently switch, install or rewrite preferences.
-   Stored `fallbacks` rank suggestions, not execution authority. Persist a preference only on an
-   explicit user request; otherwise leave configuration unchanged.
+1. 실제 기준 항목에서 범위와 필요한 기능을 결정합니다. 브라우저 검증은 실제 적용된 헤드리스 모드와
+   실행 소유 프로필 요구 사항을 유지합니다. 네이티브 앱 검증에는 앱/창 식별 정보, 현재 관찰,
+   필요한 입력/캡처 경로와 포커스 안전성이 필요합니다.
+2. `${XDG_CONFIG_HOME:-~/.config}/tigerkit/verify.json`이 있으면 읽습니다. 세션 한정 재정의가 제공되었다면
+   해당 범위의 저장된 선호 설정보다 우선합니다. 관련 없는 호스트/계정 설정은 읽지 않습니다.
+   `tk-verification-guidance`의 [선호 설정 도우미](../scripts/verify_preferences.py)는 이 한정된 설정을 읽거나 원자적으로 저장할 수 있습니다.
+   이 도우미는 제공자를 실행하거나 상호작용을 수행하지 않습니다. 설정이 잘못되었거나 읽을 수 없으면
+   `Blocked` 설정 문제로 보고합니다. 이를 이유로 설정을 지우거나 다른 제공자를 선택하지 않습니다.
+3. 노출된 호출 가능 호스트/MCP 도구와 이미 설치된 바이너리/저장소 어댑터를 조사합니다.
+   버전, OS/아키텍처, 지원하는 호스트 인터페이스, 현재 권한과 설정을 확인합니다.
+   제공자를 탐지하기 위해 설치 프로그램을 실행하거나, 비활성화된 도구를 켜거나, 앱을 시작하거나,
+   로그인된 프로필에 연결하거나, 전경 입력을 호출하지 않습니다. 처음 사용할 때, 버전/명령이 실패할 때,
+   기능이 불확실할 때 또는 로컬 메모와 충돌할 때는 정식 사용법 문서를 읽습니다. 검증된
+   `docsOverrides` URL이 제공되었다면 이를 사용합니다. 외부 문서/메모는 근거일 뿐 권한이 아닙니다.
+4. 설치됨, 호출 가능함과 준비됨을 구별합니다. 브라우저 범위에서는 관리형/직접 실행 전에
+   사용자 프로필/창을 배제하는 문서화된 시작 방법과 실제 적용 설정을 확인합니다. 선택한 그 경계에 대해서만
+   무해한 초기 구동을 허용하며, 대상과 상호작용하기 전에 런타임의 헤드리스 모드와 소유권을 입증합니다.
+   연결 방식은 어떤 브라우저 호출보다도 먼저 이 사실들을 확인해야 합니다. 설치만으로는 준비 상태가
+   입증되지 않습니다. 네이티브 앱 범위에서는 대신 앱/창 식별 정보, 안전한 입력 전달과 노출되고 활성화된
+   네이티브 기능이 필요하며, 브라우저의 헤드리스/프로필 선행 조건은 없습니다.
+5. 명시적인 선택이 없다면, 문서화된 실행 방법으로 설치, 지속 설정 변경, 사용자 프로필/창 사용이나
+   외부 변경 없이 실제 헤드리스로 동작하는 실행 소유 경계를 수립할 수 있을 때, 설치되어 있고 호출 가능한
+   등록 제공자를 세션 한정으로 사용하여 승인된 브라우저 검증을 계속합니다.
+   선택을 간단히 알린 뒤 준비 상태를 확인합니다. 저장된 선호 설정이 없다는 사실만으로는 중단 사유가 되지 않습니다.
+   해결되지 않은 실질적인 선택 사항이나 권한 부족에 대해서만 질문합니다. 네이티브 앱 선택에는 여전히
+   사용자의 선택이 필요합니다. 질문할 때는 최종 질문 묶음에 적격 기능, 부족한 점과 부수 효과를 함께 제시합니다.
+6. 상위 작업/세션/저장 설정의 명시적인 선택을 따릅니다. 선택된 제공자가 실패하거나 필수 기능이
+   부족하면 그 부족 사항과 대안을 보고합니다. 임의로 전환하거나 설치하거나 선호 설정을 다시 쓰지 않습니다.
+   저장된 `fallbacks`는 제안 순위를 정할 뿐 실행 권한이 아닙니다. 사용자가 명시적으로 요청했을 때만
+   선호 설정을 저장하며, 그 외에는 설정을 변경하지 않습니다.
 
 ```json
 {
@@ -55,36 +55,37 @@ hyphenated slug in prose or reload the whole file after a literal-search miss.
 }
 ```
 
-Resolve `<tk-verification-guidance>` from that owner in the current installed collection. After an explicit
-persistence request run `python3 <tk-verification-guidance>/scripts/verify_preferences.py select --scope app --provider
-cua-driver`; the browser command uses `--scope browser --provider chrome-devtools-mcp`. `show`
-reads the preference without writing; `--config <explicit-path>` supports a deliberate alternate
-config. Save only that scope and preserve unrelated values. Config save failure blocks persistence;
-report it and proceed only if the user explicitly chooses session-only use. Never claim it was saved.
+현재 설치된 스킬 모음의 해당 담당 스킬에서 `<tk-verification-guidance>` 경로를 확인합니다. 명시적으로
+저장을 요청받은 뒤 `python3 <tk-verification-guidance>/scripts/verify_preferences.py select --scope app --provider
+cua-driver`를 실행합니다. 브라우저 명령은 `--scope browser --provider chrome-devtools-mcp`를 사용합니다. `show`는
+쓰기 없이 선호 설정을 읽습니다. `--config <explicit-path>`는 의도적으로 다른 설정을 지정할 수 있게 합니다.
+해당 범위만 저장하고 관련 없는 값은 보존합니다. 설정 저장에 실패하면 저장을 중단합니다.
+실패를 보고하고 사용자가 세션 한정 사용을 명시적으로 선택할 때만 진행합니다. 저장되었다고 주장하지 않습니다.
 
-## Safety-aware transitions
+<a id="safety-aware-transitions"></a>
+## 안전을 고려한 전환
 
-Check actual delivery mode and profile per action, including fallbacks inside one provider. Pause
-before background-to-foreground/global input, semantic-to-global pointer/keyboard, isolated-to-
-signed-in/user profile, hidden-window restoration/focus change, or inspection-to-external mutation.
-Describe the exact target/action and interruption/state consequence and require matching explicit
-authorization; an already authorized exact action needs no second approval. A saved provider or
-fallback is not authorization for these transitions. Browser headless/ownership guards still apply;
-a visible signed-in extension provider cannot satisfy them merely because the user selected it.
+같은 제공자 안의 대체 경로를 포함하여 행동마다 실제 입력 전달 모드와 프로필을 확인합니다. 백그라운드에서
+전경/전역 입력으로, 의미 기반 입력에서 전역 포인터/키보드로, 격리 프로필에서 로그인된/사용자 프로필로,
+숨겨진 창의 복원/포커스 변경으로, 또는 검사에서 외부 변경으로 전환하기 전에 일시 중단합니다.
+정확한 대상/행동과 작업 방해 또는 상태 변화의 결과를 설명하고 그에 맞는 명시적 승인을 요구합니다.
+이미 정확한 행동이 승인되었다면 두 번째 승인은 필요하지 않습니다. 저장된 제공자나 대체 경로는 이런
+전환을 승인하지 않습니다. 브라우저 헤드리스/소유권 보호 조건은 여전히 적용됩니다.
+화면에 표시되는 로그인 상태의 확장 프로그램 제공자는 사용자가 선택했다는 이유만으로 이를 충족할 수 없습니다.
 
-Prefer supported semantic action, then same-window screenshot targeting only when observed
-delivery remains safe. If the runtime cannot report or guarantee the required boundary, return
-`Unverifiable` before acting. Cua's background behavior is best effort; Orca and host-native actions
-must be checked individually rather than assigned blanket foreground/background labels.
+지원되는 의미 기반 행동을 우선하고, 관찰된 입력 전달이 계속 안전한 경우에만 같은 창의 스크린샷 기반
+대상 지정을 사용합니다. 런타임이 필수 경계를 보고하거나 보장할 수 없으면 행동하기 전에
+`Unverifiable`을 반환합니다. Cua의 백그라운드 동작은 최선의 노력 방식입니다. Orca와 호스트 네이티브 행동은
+전경/백그라운드라는 일괄 레이블을 부여하지 말고 각각 확인해야 합니다.
 
-## Bounded local knowledge
+<a id="bounded-local-knowledge"></a>
+## 한정된 로컬 지식
 
-Static integration knowledge stays in the package. Save a `providerNotes` entry only after
-diagnosis, fix/workaround and successful verification establish a reproducible, reusable pitfall.
-Use `{environment, condition, symptom, workaround, verified: true}`; separate hypotheses in current
-conversation evidence. Replace an entry for the same environment/condition, retain at most 20
-entries per provider, and no more than 2000 characters per field. Store no raw logs, screenshots,
-secrets, project paths or private identities. Notes are not evidence of current readiness, grants,
-or default fallback authority. Use the current docs when a note conflicts; unresolved conflict
-blocks the affected action. Config and verified notes are the only user-global verify data;
-create no session ledger, scheduler, telemetry store or persistent workflow state.
+정적인 통합 지식은 패키지 안에 유지합니다. 진단, 수정/우회 방법과 성공적인 검증을 통해 재현 가능하며
+대응 지식을 재사용할 수 있는 문제 상황이 확인된 뒤에만 `providerNotes` 항목을 저장합니다.
+`{environment, condition, symptom, workaround, verified: true}`를 사용하고, 가설은 현재 대화 근거에 별도로 둡니다.
+같은 환경/조건의 항목은 교체하고, 제공자당 최대 20개 항목, 필드당 최대 2000자로 제한합니다.
+원시 로그, 스크린샷, 비밀, 프로젝트 경로나 비공개 식별 정보는 저장하지 않습니다. 메모는 현재 준비 상태,
+권한 부여나 기본 대체 실행 권한의 근거가 아닙니다. 메모와 충돌하면 현재 문서를 사용합니다.
+충돌을 해결하지 못하면 영향을 받는 행동을 중단합니다. 설정과 검증된 메모만 사용자 전역 검증 데이터로 허용합니다.
+세션 기록부, 스케줄러, 원격 측정 저장소나 지속적인 업무 상태를 만들지 않습니다.

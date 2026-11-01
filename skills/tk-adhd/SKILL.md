@@ -10,48 +10,30 @@ metadata:
     relationship: adapted
 ---
 
-# Actionable output
+<a id="actionable-output"></a>
+# 실행하기 쉬운 출력
 
-## Shared References
+<a id="shared-references"></a>
+## 공통 참조
 
-Read branch-triggered criteria from the current installed owners. A missing/mismatched
-owner or resource blocks that action: use `tk-setup-skills`, not memory, another installation
-or unapproved installs. Reading grants no workflow or mutation authority.
+현재 설치된 소유 스킬에서 해당 분기의 조건에 따른 기준을 읽습니다. 소유 스킬이나 자원이 없거나 식별이 다르면 해당 행동을 중단하고 `tk-setup-skills`를 사용합니다. 기억, 다른 설치본이나 승인되지 않은 설치로 대신하지 않습니다. 참조를 읽어도 워크플로 실행이나 변경 권한은 부여되지 않습니다.
 
-- For a user-owned decision, missing approval or unmet prerequisite, read [question rounds](../tk-questioning/references/questions.md).
-- Before a user-facing completion report, artifact-path handoff or multi-attribute chat comparison, read [chat delivery](../tk-writing/references/delivery.md). The task's specific output contract wins.
+- 사용자에게 결정권이 있거나 승인이 없거나 선행 조건을 충족하지 못했다면 [질문 라운드](../tk-questioning/references/questions.md)를 읽습니다.
+- 사용자에게 완료 보고, 산출물 경로 인계 또는 여러 속성을 비교하는 채팅 답변을 전달하기 전에 [채팅 전달](../tk-writing/references/delivery.md)을 읽습니다. 해당 작업의 구체적인 출력 계약이 우선합니다.
 
-Shape the requested answer or the active owner's progress/result so the reader can find
-what matters and act on it. This is presentation assistance, not a workflow, task executor,
-medical inference or a session-status owner. Apply it to this response only; it neither stays
-on across turns nor changes the active task's authority, checks or continuation rules.
+독자가 중요한 내용을 찾아 행동할 수 있도록 요청받은 답변이나 현재 담당자의 진행 상황 및 결과를 정리합니다. 이는 표현을 돕는 역할이며 워크플로, 작업 실행자, 의료적 추론 또는 세션 현황의 담당자가 아닙니다. 이번 응답에만 적용하며, 다음 턴까지 유지하거나 현재 작업의 권한, 점검 또는 계속 진행하는 규칙을 바꾸지 않습니다.
 
-Lead with the answer, verified result or the one user action actually needed. If the agent
-already has authority and capability to do the work, keep doing it through its owner; do not
-turn its tasks into commands the user must carry out or add a routine permission question.
-For several user-performed steps, use a short numbered sequence of bounded actions. Group
-long lists by relevance while retaining every requested item, material risk, caveat and source.
-A small visible working set must not cap investigation, candidate generation or completeness.
+답변, 검증된 결과 또는 사용자에게 실제로 필요한 한 가지 행동을 먼저 제시합니다. 에이전트가 이미 작업할 권한과 능력을 갖췄다면 해당 담당자를 통해 계속 수행합니다. 에이전트의 작업을 사용자가 실행해야 하는 명령으로 바꾸거나 관례적인 권한 질문을 추가하지 않습니다. 사용자가 수행할 단계가 여러 개라면 범위가 분명한 행동을 짧은 번호 목록으로 제시합니다. 긴 목록은 관련성에 따라 묶되 요청받은 모든 항목, 중요한 위험, 주의 사항과 출처를 유지합니다. 화면에 보이는 작업 묶음을 작게 유지한다는 이유로 조사, 후보 생성 또는 완전성을 제한해서는 안 됩니다.
 
-Keep the task position and concrete verified completion easy to find when relevant, without
-repeating a whole plan. Distinguish plans from execution, baseline capture from acceptance,
-and local commits from confirmed publication. Describe an error's cause, impact and supported
-next action calmly; retain uncertainty and blockers. Do not invent times, progress or success.
-When no user action remains, end with the result; do not manufacture a follow-up task.
+필요한 경우 전체 계획을 반복하지 않으면서 현재 작업 위치와 구체적으로 검증된 완료 사항을 쉽게 찾을 수 있도록 합니다. 계획과 실행, 변경 전 기준 수집과 최종 판정, 로컬 커밋과 확인된 발행을 구별합니다. 오류의 원인, 영향과 근거가 있는 다음 행동을 차분하게 설명하고 불확실성과 장애 요인을 유지합니다. 시간, 진행률이나 성공을 지어내지 않습니다. 사용자에게 남은 행동이 없다면 결과로 끝내고 후속 작업을 만들어내지 않습니다.
 
-Explain fully when requested, using clear sections when useful. Suppress unrelated tangents
-without silently omitting necessary alternatives or safety information. Preserve exact code,
-commands, URLs, UI labels, terms and source qualifications. Output shaping never overrides
-harness instructions, evidence, authorization or the requested depth/format.
+자세한 설명을 요청받으면 충분히 설명하고 필요할 때 명확한 절을 사용합니다. 관련 없는 곁가지 설명은 줄이되 필요한 대안이나 안전 정보를 말없이 생략하지 않습니다. 정확한 코드, 명령, URL, UI 레이블, 용어와 출처의 한정 조건을 보존합니다. 출력 정리는 harness 지침, 근거, 승인 또는 요청된 깊이와 형식보다 우선하지 않습니다.
 
-A request for current-session orientation belongs to `tk-handoff`'s conversation-only branch;
-durable handoff writing/resume belongs to its artifact branch. Do not inspect repositories,
-other sessions or remote state merely to shape an answer, create a status ledger, or impose
-an orientation card on unrelated future replies. Session learning and improvement diagnosis belong to `tk-retro`; implementation belongs to the authorized change owner
-and its authorized implementation owner, not this output-shaping invocation.
+현재 세션의 현황을 파악해 달라는 요청은 `tk-handoff`의 대화 전용 분기가 담당하고, 지속적으로 보존할 인수인계 작성과 재개는 산출물 분기가 담당합니다. 답변을 정리한다는 이유만으로 저장소, 다른 세션이나 원격 상태를 조사하거나 상태 장부를 만들거나, 관련 없는 향후 답변에 현황 카드를 강제하지 않습니다. 세션 학습과 개선 진단은 `tk-retro`가 담당합니다. 구현은 이번 출력 정리 호출이 아니라 승인된 변경 담당자와 해당 변경의 승인된 구현 담당자의 역할입니다.
 
-For maintenance provenance, see [distillation](references/distillation.md).
+유지보수 출처는 [증류 기록](references/distillation.md)을 참조합니다.
 
-## Artifact Paths
+<a id="artifact-paths"></a>
+## 산출물 경로
 
-This skill creates no artifacts. Do not create temporary files, write reports, or edit ignore rules for this invocation; return the result in the conversation.
+이 스킬은 산출물을 만들지 않습니다. 이번 호출을 위해 임시 파일을 만들거나 보고서를 쓰거나 제외 규칙을 수정하지 말고 대화로 결과를 반환합니다.

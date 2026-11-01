@@ -1,53 +1,52 @@
-# Headless environment
+<a id="headless-environment"></a>
+# Headless 환경
 
-Use the provider selected under [provider selection](../../tk-verification-guidance/references/provider-selection.md).
-Discover native, Playwright-compatible, MCP and installed CLI/CDP paths without silently routing
-between them. When a required capability is missing, present the deficit and eligible alternatives
-in the final question frontier. Do not install a browser dependency for one run. Classify the
-selected path as `managed launch | direct launch | attach`; selection never waives the checks below.
+[제공자 선택](../../tk-verification-guidance/references/provider-selection.md)에 따라 선택한 제공자를 사용합니다.
+네이티브, Playwright 호환, MCP와 설치된 CLI/CDP 경로를 탐색하되 이들 사이에서 조용히 경로를
+전환하지 않습니다. 필수 기능이 없으면 최종 질문의 현재 결정 경계에 부족한 기능과 선택 가능한
+대안을 제시합니다. 한 번의 실행을 위해 브라우저 의존성을 설치하지 않습니다. 선택 경로를
+`managed launch | direct launch | attach`로 분류하며, 선택해도 아래 검사는 면제되지 않습니다.
 
-For `managed launch`, inspect the current host configuration and require an effective
-headless option before product interaction. The provider may start lazily, so a missing live
-browser process before its first call is not a failure. Use one harmless discovery call to
-bootstrap it, then record available runtime browser/version, transport, and ownership facts.
-A provider-managed pipe or equivalent transport needs no TCP endpoint. Modern
-`--headless`, `headless: true`, and another installed-version-equivalent headless setting
-are valid; do not require the exact text `--headless=new`.
+`managed launch`에서는 현재 호스트 설정을 확인하고 제품 상호작용 전에 유효한 headless 옵션을
+요구합니다. 제공자는 지연 시작할 수 있으므로 첫 호출 전에 실행 중인 브라우저 프로세스가 없다는
+사실은 실패가 아닙니다. 무해한 탐색 호출 한 번으로 부트스트랩한 뒤 확인 가능한 런타임 브라우저/
+버전, 전송 방식과 소유권 정보를 기록합니다. 제공자가 관리하는 pipe나 동등한 전송 방식에는 TCP
+endpoint가 필요하지 않습니다. 현대적인 `--headless`, `headless: true`와 설치된 버전에서 동등한
+다른 headless 설정은 유효하며, 정확히 `--headless=new`라는 텍스트를 요구하지 않습니다.
 
-Provider isolation is recommended, not a separate headless requirement. Prefer an ephemeral
-provider profile for a new configuration and use a scenario-isolated context when supported.
-An effectively headless provider-managed dedicated persistent profile remains usable when it
-is not the user's normal browsing profile; disclose that cookies, storage, and cache can
-survive provider restarts. Never treat `--isolated` as proof of scenario-level isolation.
+제공자 격리는 권고이며 별도의 headless 필수 조건이 아닙니다. 새 설정에는 임시 제공자 프로필을
+우선하고, 지원되면 시나리오 격리 컨텍스트를 사용합니다. 실제 headless인 제공자 관리 전용 영구
+프로필도 사용자의 일반 브라우징 프로필이 아니라면 사용할 수 있습니다. 쿠키, 저장소와 캐시가
+제공자 재시작 후에도 남을 수 있음을 공개합니다. `--isolated`를 시나리오 수준 격리의 증거로
+취급하지 않습니다.
 
-For `direct launch`, prove the effective headless option and run-owned browser/profile from
-the launch command and runtime state. For `attach`, prove the live endpoint, effective
-headless mode, and external browser/profile ownership before any browser call. A fixed
-`--browserUrl` provider starts no browser, so all of those facts belong to the external
-launcher. A saved port, prior browser UUID, `DevToolsActivePort`, provider default,
-configuration claim, or tool name is not sufficient attach evidence. If an attached process
-is headed, belongs to another run or the user, or has unknown ownership, return
-`Unverifiable` without creating a page.
+`direct launch`에서는 실행 명령과 런타임 상태로 유효한 headless 옵션과 실행 소유 브라우저/
+프로필을 입증합니다. `attach`에서는 어떤 브라우저 호출보다 먼저 살아 있는 endpoint, 유효한
+headless 모드와 외부 브라우저/프로필 소유권을 입증합니다. 고정 `--browserUrl` 제공자는
+브라우저를 시작하지 않으므로 이 모든 사실은 외부 실행기의 소관입니다. 저장된 포트, 이전
+브라우저 UUID, `DevToolsActivePort`, 제공자 기본값, 설정 주장이나 도구 이름은 충분한 attach
+근거가 아닙니다. 연결된 프로세스가 headed이거나 다른 실행 또는 사용자 소유이거나 소유권을
+알 수 없으면 페이지를 만들지 않고 `Unverifiable`을 반환합니다.
 
-## Provider readiness
+<a id="provider-readiness"></a>
+## 제공자 준비 상태
 
-Use the selected provider's current official usage guidance without installing dependencies or silently switching.
-For a new adapter or hand-authored verifier, check syntax, one DOM observation, required
-trusted pointer/keyboard behavior on a safe native control, and owned-resource cleanup before
-a broad viewport/theme capture matrix. Reuse an already verified path when available; no new
-framework is required. Isolate and repair verifier defects before replaying broad captures.
-Do not infer a product defect from an unverified input path or guess event options while
-repeating the full matrix. See [trusted input](behavior.md#exact-target-and-trusted-input).
+의존성을 설치하거나 조용히 전환하지 않고 선택한 제공자의 현재 공식 사용 안내를 따릅니다.
+새 adapter나 직접 작성한 검증기에서는 넓은 viewport/테마 캡처 행렬에 앞서 문법, DOM 관찰 한 번,
+안전한 네이티브 컨트롤에서 필요한 신뢰 포인터/키보드 동작과 소유 자원 정리를 확인합니다.
+이미 검증된 경로가 있으면 재사용하며 새 framework는 필요하지 않습니다. 광범위한 캡처 재생 전에
+검증기 결함을 격리하고 수정합니다. 미검증 입력 경로에서 제품 결함을 추론하거나 전체 행렬을
+반복하면서 이벤트 옵션을 추측하지 않습니다. [신뢰 입력](behavior.md#exact-target-and-trusted-input)을 참조합니다.
 
-## Missing provider setup
+<a id="missing-provider-setup"></a>
+## 제공자 설정 누락
 
-If no compatible route exists, do not install a provider or edit host configuration. Make no
-browser call. Invoke `tk-wizard` with the consumer `tk-browser-verify`, the exact blocked
-criterion (which remains `Blocked`), detected host/client and provider state, the missing capability, required
-effective headless mode, recommended provider isolation, completion signal, and exact resume
-action.
+호환 경로가 없으면 제공자를 설치하거나 호스트 설정을 편집하지 않습니다. 브라우저 호출도 하지
+않습니다. 소비자 `tk-browser-verify`, 정확히 차단된 기준(`Blocked` 유지), 감지한 호스트/클라이언트와
+제공자 상태, 누락 기능, 필수 유효 headless 모드, 권고 제공자 격리, 완료 신호와 정확한 재개 동작을
+담아 `tk-wizard`를 호출합니다.
 
-For a new Chrome DevTools MCP configuration, pass this conceptual default to the wizard:
+새 Chrome DevTools MCP 설정에는 다음 개념적 기본값을 wizard에 전달합니다.
 
 ```json
 {
@@ -60,200 +59,185 @@ For a new Chrome DevTools MCP configuration, pass this conceptual default to the
 }
 ```
 
-Disable usage statistics in new configurations to avoid the optional telemetry watchdog.
-Existing registrations are unchanged. For clients that launch user-scoped MCP servers per session,
-consider project scope when verification is needed only in selected repositories; derive the actual
-client lifecycle and scope from current evidence rather than assuming one shared server.
+새 설정에서는 선택적 telemetry watchdog을 피하도록 사용 통계를 비활성화합니다.
+기존 등록은 변경하지 않습니다. 세션마다 사용자 범위 MCP 서버를 시작하는 클라이언트에서는
+선택된 저장소에만 검증이 필요하다면 프로젝트 범위를 고려합니다. 하나의 공유 서버를 가정하지
+말고 현재 근거에서 실제 클라이언트 수명주기와 범위를 도출합니다.
 
-The wizard must derive the exact host-supported file, scope, command shape, and restart step
-from current local or official evidence and preserve unrelated configuration. TigerKit skills
-do not install Chrome DevTools MCP, its CLI, or its upstream skills.
+wizard는 현재 로컬 또는 공식 근거에서 호스트가 지원하는 정확한 파일, 범위, 명령 형태와
+재시작 단계를 도출하고 무관한 설정을 보존해야 합니다. TigerKit 스킬은 Chrome DevTools MCP,
+해당 CLI나 upstream 스킬을 설치하지 않습니다.
 
-Do not include `--browserUrl`, `--wsEndpoint`, a remote-debugging port, or port `9222` in the
-default. An attach route becomes eligible only after observed managed/direct launch failure or
-equivalent sandbox, VM, container, or host-boundary evidence. Pass that evidence to the
-wizard, explain the exposed-debugging and external-profile implications, and require the user
-to select attach before presenting its configuration.
+기본값에는 `--browserUrl`, `--wsEndpoint`, remote-debugging 포트나 포트 `9222`를 포함하지
+않습니다. 관리형/직접 실행 실패가 관찰되었거나 이에 준하는 sandbox, VM, container 또는 호스트
+경계 근거가 있을 때만 attach 경로를 선택할 수 있습니다. 해당 근거를 wizard에 전달하고,
+노출되는 디버깅과 외부 프로필의 영향을 설명하며, 설정을 제시하기 전에 사용자가 attach를
+선택하도록 요구합니다.
 
-## Authentication
+<a id="authentication"></a>
+## 인증
 
-Reuse only a safe authenticated session that is already available, owned by this run,
-and verified as headless. Otherwise, use transient material through the exact
-repository/application-supported header, cookie, storage, session bootstrap, or fully
-non-interactive login path. Do not capture secret values; verify the authenticated
-target state.
+이미 사용할 수 있고 이 실행이 소유하며 headless로 검증된 안전한 인증 세션만 재사용합니다.
+그렇지 않으면 저장소/애플리케이션이 지원하는 정확한 header, cookie, storage, 세션 부트스트랩
+또는 완전 비대화형 로그인 경로를 통해 일시적 자료를 사용합니다. 비밀 값은 캡처하지 않고
+인증된 대상 상태를 검증합니다.
 
-There is no browser bypass for interactive login, OTP, MFA, SSO, CAPTCHA, passkey, or
-device approval. First recover existing scoped authentication through the supported application
-session/refresh path. Request missing token/session or renewal input only when recovery is
-unavailable or fresh login is required. State the exact target environment and repository-verified
-login origin; do not infer either from token validity. If that origin is unknown, resolve it
-before requesting input. If no approved state can be established, return `Unverifiable` before
-product mutation.
+대화형 로그인, OTP, MFA, SSO, CAPTCHA, passkey 또는 device approval에는 브라우저 우회가
+없습니다. 먼저 지원된 애플리케이션 세션/refresh 경로로 기존 범위의 인증을 복구합니다. 복구를
+사용할 수 없거나 새 로그인이 필요할 때만 누락된 token/session 또는 갱신 입력을 요청합니다.
+정확한 대상 환경과 저장소에서 검증한 로그인 origin을 밝히며 토큰 유효성에서 둘 중 어느 것도
+추론하지 않습니다. 해당 origin을 모르면 입력 요청 전에 확인합니다. 승인된 상태를 확립할 수
+없으면 제품 변경 전에 `Unverifiable`을 반환합니다.
 
-## Worktree-local authentication reuse and renewal
+<a id="worktree-local-authentication-reuse-and-renewal"></a>
+## Worktree 로컬 인증 재사용과 갱신
 
-Establish readiness during prep before baseline. Public targets and safe existing sessions need
-no token input. Apply [worktree-local authentication](../../tk-artifacts/references/authentication.md)'s contract for every related consumer. Keep the same protected
-`.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json` across baseline, after and revisions,
-including access expiry, capture failure and interruption; preserve the non-secret path/target
-binding in active-task handoffs. Reuse is limited to the verified application/login origin,
-environment and account/role in this task/worktree. Remove it on explicit user direction or
-authorized worktree cleanup, not ordinary phase cleanup. Keep directory `0700` and file `0600`;
-recheck Git exclusion, ownership, nonsymlink regular-file status and single hard link before use.
+baseline 전에 준비 단계에서 준비 상태를 확립합니다. 공개 대상과 안전한 기존 세션에는 토큰
+입력이 필요하지 않습니다. 관련된 모든 소비자에 [worktree 로컬 인증](../../tk-artifacts/references/authentication.md)
+계약을 적용합니다. access 만료, 캡처 실패와 중단을 포함하여 baseline, after와 수정에 걸쳐 같은
+보호된 `.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json`을 유지합니다. 활성 작업
+인계에 비밀이 아닌 경로/대상 연결을 보존합니다. 재사용은 이 작업/worktree에서 검증한 애플리케이션/
+로그인 origin, 환경과 계정/역할로 제한됩니다. 일반 단계 정리가 아니라 명시적인 사용자 지시나
+승인된 worktree 정리 시 제거합니다. 디렉터리 `0700`과 파일 `0600`을 유지하고, 사용 전에 Git
+제외, 소유권, nonsymlink 일반 파일 상태와 단일 hard link를 재확인합니다.
 
-Privately check a finite numeric JWT `exp` or documented non-JWT expiry before injection;
-decoding is not signature verification or proof of access. Never inject expired/rejected access
-material. Unknown lifetime requires the application's supported readiness check, not an invented
-expiry. An authentication rejection does not establish that a separate refresh grant is invalid.
+주입 전에 유한한 숫자형 JWT `exp`나 문서화된 비 JWT 만료를 비공개로 확인합니다.
+디코딩은 서명 검증이나 접근 증명이 아닙니다. 만료되거나 거부된 access 자료를 주입하지 않습니다.
+수명을 알 수 없으면 만료를 만들어 내지 말고 애플리케이션이 지원하는 준비 검사를 사용합니다.
+인증 거부는 별도 refresh grant가 무효임을 입증하지 않습니다.
 
-Before the first input request and any later request, inspect the existing application auth client and supported refresh contract:
-trusted endpoint, required client authentication/header/cookie/body, response fields and rotation.
-Search the whole application source recursively for renewal identifiers (such as `refresh`, `renew`,
-`reissue`) and the identified access/refresh cookie or storage key names. Read each hit that consumes
-these identifiers, including UI components and hooks, as a possible renewal call site; follow its
-calls to establish the supported contract. Conclude that no renewal route exists only after this
-search and review; if the search is incomplete or a candidate remains unresolved, do not claim
-there is no route or seed an access-only template on that basis. Before seeding, record one
-non-secret decision line: the verified call site (`path:symbol` and endpoint), or the search scope
-and identifiers with no renewal candidates after reviewing hits. For browser-managed renewal,
-record its verified call site and state that no user-supplied refresh material is needed. Never
-include token or cookie values or account information in this line.
-Use the existing authorized renewal route; collect a refresh token only if that route needs one.
-When it requires user-supplied refresh material, include that field as required in the first input
-template, alongside the bootstrap fields; do not defer it until access expires. If no renewal route
-exists or it uses existing browser-managed state, request no extra refresh field.
-Prefer a separate login session for headless work rather than a rotating grant shared with the
-user's daily browser. Sharing a grant may create refresh races; a 401 alone does not prove that
-diagnosis. Confirm the app's actual renewal request before changing its transport contract.
-Keep refresh material in the protected file/approved secret consumer, never page-visible storage
-or the bootstrap server; inject only the app-required access/session fields. If the app itself
-requires browser-managed refresh, use its documented isolated bootstrap rather than exposing
-extra fields. Serialize renewal through one task owner, validate and atomically save rotated
-values without overwriting concurrent edits, then re-read and independently verify target auth.
-Before closing an owned browser that performed renewal, privately reconcile only the app's
-approved credential fields with its current cookies/session state and atomically update the
-same bound protected file under that renewal owner. Validate target/cookie scope and file
-permissions again; preserve unrelated fields and concurrent user edits. Do not export the whole
-cookie jar or replace accepted material from an unauthenticated/uncertain state. A failed
-reconciliation preserves the file and reports the reuse limitation while resource cleanup proceeds.
-If a rotating request's result is uncertain, reconcile supported state before retrying. Network
-failure alone does not prove invalidation or justify deleting the file/requesting new credentials.
-If restoration is unavailable, report the concrete limitation and request only necessary input.
-Do not replay a product write automatically after an auth error; first reconcile its outcome
-under the owning mutation authority.
+첫 입력 요청 전과 이후의 모든 요청 전에 기존 애플리케이션 인증 클라이언트와 지원되는 refresh
+계약을 확인합니다. 신뢰 endpoint, 필수 클라이언트 인증/header/cookie/body, 응답 필드와 회전을
+확인합니다. 전체 애플리케이션 소스를 재귀적으로 검색하여 갱신 식별자(예: `refresh`, `renew`,
+`reissue`)와 식별한 access/refresh cookie 또는 storage 키 이름을 찾습니다. UI 컴포넌트와 hook을
+포함하여 이 식별자를 소비하는 각 검색 결과를 잠재적 갱신 호출 지점으로 읽고, 호출을 따라 지원
+계약을 확립합니다. 이 검색과 검토 후에만 갱신 경로가 없다고 결론 내립니다. 검색이 불완전하거나
+후보가 미해결이면 경로가 없다고 주장하거나 이를 근거로 access 전용 템플릿을 준비하지 않습니다.
+템플릿 준비 전에 비밀이 아닌 결정 한 줄을 기록합니다. 검증한 호출 지점(`path:symbol`과 endpoint)
+또는 검색 결과 검토 후 갱신 후보가 없었던 검색 범위와 식별자를 기록합니다. 브라우저 관리 갱신은
+검증한 호출 지점을 기록하고 사용자가 제공하는 refresh 자료가 필요하지 않다고 밝힙니다. 이 줄에
+토큰이나 쿠키 값 또는 계정 정보를 포함하지 않습니다.
+기존 승인된 갱신 경로를 사용하며, 해당 경로에 필요할 때만 refresh token을 수집합니다.
+사용자 제공 refresh 자료가 필요하면 첫 입력 템플릿에서 bootstrap 필드와 함께 해당 필드를 필수로
+포함하고 access 만료 때까지 미루지 않습니다. 갱신 경로가 없거나 기존 브라우저 관리 상태를
+사용하면 추가 refresh 필드를 요청하지 않습니다.
+사용자의 일상 브라우저와 회전 grant를 공유하기보다 headless 작업용 별도 로그인 세션을 우선합니다.
+grant 공유는 refresh 경합을 일으킬 수 있지만 401만으로 그 진단을 입증할 수는 없습니다.
+전송 계약을 바꾸기 전에 앱의 실제 갱신 요청을 확인합니다.
+refresh 자료는 보호 파일/승인된 비밀 소비자에 두고, 페이지에 보이는 storage나 bootstrap 서버에
+두지 않습니다. 앱에 필요한 access/session 필드만 주입합니다. 앱 자체가 브라우저 관리 refresh를
+요구하면 추가 필드를 노출하지 말고 문서화된 격리 bootstrap을 사용합니다. 작업 담당자 하나를 통해
+갱신을 직렬화하고, 동시 편집을 덮어쓰지 않으면서 회전된 값을 검증하여 원자적으로 저장한 뒤,
+다시 읽고 대상 인증을 독립적으로 검증합니다.
+갱신을 수행한 소유 브라우저를 닫기 전에 앱이 승인한 자격 증명 필드만 현재 cookie/session 상태와
+비공개로 조정하고, 해당 갱신 담당자 아래에서 같은 대상에 연결된 보호 파일을 원자적으로 갱신합니다.
+대상/cookie 범위와 파일 권한을 다시 검증하고 무관한 필드와 동시 사용자 편집을 보존합니다.
+전체 cookie jar를 내보내거나 인증되지 않은/불확실한 상태에서 수락된 자료를 교체하지 않습니다.
+조정에 실패하면 파일을 보존하고 재사용 제한을 보고하면서 자원 정리는 계속합니다.
+회전 요청 결과가 불확실하면 재시도 전에 지원된 상태를 조정합니다. 네트워크 실패만으로 무효화를
+입증하거나 파일 삭제/새 자격 증명 요청을 정당화할 수는 없습니다. 복원이 불가능하면 구체적인
+제한을 보고하고 필요한 입력만 요청합니다. 인증 오류 후 제품 쓰기를 자동 재생하지 않습니다.
+먼저 해당 변경 권한 담당자 아래에서 결과를 조정합니다.
 
-Stop the run-owned loopback secret server immediately after every injection; close owned
-browser/dev-server resources after capture. Authentication-file retention never keeps processes
-or a user browser profile alive. Never print tokens/claims or store them in evidence, Git,
-parent/child receipts, another worktree or a global cache. Explicitly authorized development/QA
-passwords follow the same scoped protected-file retention contract in
-[worktree-local authentication](../../tk-artifacts/references/authentication.md); retention does not authorize password entry
-or bypass human-only login. Actual production credentials, OTPs, recovery codes and passwords
-outside that approved development/QA scope keep their transient lifecycle. This procedure creates no background
-refresher or cross-process lock and cannot guarantee continuation after a host session ends.
+매 주입 직후 실행 소유 loopback 비밀 서버를 중지하고, 캡처 후 소유 브라우저/개발 서버 자원을
+닫습니다. 인증 파일 보존을 이유로 프로세스나 사용자 브라우저 프로필을 유지하지 않습니다.
+토큰/claim을 출력하거나 근거, Git, 상위/자식 receipt, 다른 worktree나 전역 캐시에 저장하지
+않습니다. 명시적으로 승인된 개발/QA 비밀번호도 [worktree 로컬 인증](../../tk-artifacts/references/authentication.md)의
+같은 범위 제한 보호 파일 보존 계약을 따릅니다. 보존은 비밀번호 입력이나 사람 전용 로그인 우회를
+승인하지 않습니다. 실제 운영 자격 증명, OTP, 복구 코드와 승인된 개발/QA 범위 밖의 비밀번호는
+일시적 수명주기를 유지합니다. 이 절차는 백그라운드 갱신기나 프로세스 간 잠금을 만들지 않으며
+호스트 세션이 끝난 뒤의 계속 실행을 보장할 수 없습니다.
 
-When no safer temporary secret-input channel exists, first prove that
-`git ls-files -- .tigerkit/` returns no tracked paths and
-`git check-ignore -q -- .tigerkit/` succeeds. Accept Git's effective ignore decision
-whether it comes from a per-directory `.gitignore`, `.git/info/exclude`, or the configured
-user-level excludes file. Then create
-`.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json` with directory mode `0700` and
-file mode `0600`. Apply the user-editable input branch in [artifact paths](../../tk-artifacts/references/artifact-paths.md):
-seed a plain JSON object using the bootstrap and renewal fields identified above, with empty strings.
-When the verified route requires both, use the app's exact field names, for example
-`{"accessToken": "", "refreshToken": ""}`. Use access-only input such as `{"token": ""}`
-only when the recorded investigation establishes no renewal route or that the verified route
-needs no user-supplied refresh material.
-Before showing paths or input mechanics, state in one sentence which pending verification step
-needs this user-only input and why the existing evidence or authenticated state cannot satisfy it,
-using the user's terms. For example, say that the earlier run verified a different head or that
-the previous authenticated session expired. Do not lead with SSO, token-file, provider, or storage
-mechanics when the reason is the missing final-head verification.
-Give the user both the repository-relative and absolute paths, the secret-free template,
-and instructions to fill and save it. A clipboard command must JSON-serialize into the
-named field, preserve other fields and keep secrets out of arguments/history.
-When the same session already received these instructions for the same input format, later
-requests show only one short reason and the actual absolute path. Repeat the template, issuing
-location, and input steps only for the first request or when the format changes. Do not preface
-the path with a progress plan.
-Do not launch an editor, file opener,
-GUI, terminal UI, or focus-changing application merely to collect the secret. Open it
-only after the path is shown and the user explicitly asks. Never ask for or accept the
-value in chat. Use the owning SKILL.md Artifact Paths setup when ignore coverage is missing.
-If the path remains unignored, unwritable, or inaccessible, use no external scratch path;
-return `Unverifiable`.
+더 안전한 임시 비밀 입력 채널이 없으면 먼저 `git ls-files -- .tigerkit/`이 추적 경로를 반환하지
+않고 `git check-ignore -q -- .tigerkit/`가 성공함을 입증합니다. 디렉터리별 `.gitignore`,
+`.git/info/exclude` 또는 설정된 사용자 수준 excludes 파일 중 어느 곳에서 왔든 Git의 유효한 제외
+판정을 수락합니다. 그런 다음 디렉터리 모드 `0700`, 파일 모드 `0600`으로
+`.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json`을 만듭니다.
+[산출물 경로](../../tk-artifacts/references/artifact-paths.md)의 사용자 편집 가능 입력 분기를 적용합니다.
+위에서 식별한 bootstrap 및 갱신 필드와 빈 문자열로 일반 JSON 객체를 준비합니다.
+검증된 경로에 둘 다 필요하면 `{"accessToken": "", "refreshToken": ""}` 같은 앱의 정확한
+필드명을 사용합니다. 기록된 조사에서 갱신 경로가 없거나 검증된 경로가 사용자 제공 refresh
+자료를 필요로 하지 않는다고 확립했을 때만 `{"token": ""}` 같은 access 전용 입력을 사용합니다.
+경로나 입력 방법을 보여주기 전에 사용자 용어로, 어느 대기 중인 검증 단계에 이 사용자 전용 입력이
+필요하고 왜 기존 근거나 인증 상태로는 충족할 수 없는지 한 문장으로 밝힙니다. 예를 들어 이전
+실행이 다른 head를 검증했거나 이전 인증 세션이 만료되었다고 말합니다. 이유가 최종 head 검증의
+누락이라면 SSO, 토큰 파일, 제공자 또는 저장 방식부터 설명하지 않습니다.
+사용자에게 저장소 상대 경로와 절대 경로, 비밀 없는 템플릿과 입력 후 저장 안내를 모두 제공합니다.
+클립보드 명령은 지정 필드에 JSON 직렬화하여 넣고 다른 필드를 보존하며 비밀이 인수/이력에 남지
+않게 해야 합니다.
+같은 세션에서 같은 입력 형식에 대해 이미 안내했다면 이후 요청에는 짧은 이유 하나와 실제 절대
+경로만 보여줍니다. 템플릿, 발급 위치와 입력 단계는 첫 요청이거나 형식이 바뀔 때만 반복합니다.
+경로 앞에 진행 계획을 붙이지 않습니다.
+비밀 수집만을 위해 편집기, 파일 열기 도구, GUI, terminal UI 또는 포커스를 바꾸는 애플리케이션을
+시작하지 않습니다. 경로를 보여준 뒤 사용자가 명시적으로 요청할 때만 엽니다. 채팅에서 값을
+요청하거나 받지 않습니다. 제외 범위가 없으면 소유 SKILL.md의 산출물 경로 설정을 사용합니다.
+경로가 계속 제외되지 않거나 쓰기 불가능하거나 접근 불가능하면 외부 임시 경로를 사용하지 말고
+`Unverifiable`을 반환합니다.
 
-Before showing the paths, start bounded metadata-change polling in the background
-when supported; the path message is the final text message of the turn, with no tool
-calls after it (see [artifact paths](../../tk-artifacts/references/artifact-paths.md), including the unsupported-host fallback).
-Release this run's server/browser resources before waiting;
-do not launch replacements until input is ready. Never report content, size or
-modification time. The initial JSON is non-empty and must remain `Pending`.
-On change, use a trusted local reader to validate JSON and all required fields without
-returning values or parser excerpts; malformed, blank or partial input remains `Pending`.
-Recheck safe path, ownership and mode `0600`, then validate and consume the same current
-snapshot and continue directly to the approved injection. Do not ask for a completion
-message. Renew an expired wait window
-while the task remains active. Only when the runtime can no longer wait, leave the
-run-owned input path in place and report how monitoring can resume; never treat a timeout
-as proof that no value will be supplied.
+경로를 보여주기 전에 지원되는 경우 백그라운드에서 제한된 메타데이터 변경 polling을 시작합니다.
+경로 메시지는 해당 턴의 마지막 텍스트 메시지이며 그 뒤에는 도구 호출을 하지 않습니다
+([산출물 경로](../../tk-artifacts/references/artifact-paths.md)의 미지원 호스트 대안도 참조합니다).
+대기 전에 이 실행의 서버/브라우저 자원을 해제하고 입력이 준비될 때까지 대체 자원을 시작하지
+않습니다. 내용, 크기나 수정 시각을 보고하지 않습니다. 초기 JSON은 비어 있지 않으며 `Pending`을
+유지해야 합니다. 변경 시 신뢰할 수 있는 로컬 reader로 JSON과 모든 필수 필드를 검증하되 값이나
+파서 발췌문을 반환하지 않습니다. 잘못되거나 비어 있거나 부분적인 입력은 `Pending`을 유지합니다.
+안전한 경로, 소유권과 모드 `0600`을 재확인한 뒤 같은 현재 스냅샷을 검증하고 사용하여 승인된
+주입으로 바로 이어갑니다. 완료 메시지를 요청하지 않습니다. 작업이 활성 상태인 동안 만료된 대기
+시간을 갱신합니다. 런타임이 더 이상 기다릴 수 없을 때만 실행 소유 입력 경로를 그대로 두고 감시
+재개 방법을 보고합니다. 시간 초과를 값이 제공되지 않을 것이라는 증거로 취급하지 않습니다.
 
-After the target hostname and port are final, a no-log one-shot server bound only to
-loopback may extract only the validated credential field and return `Access-Control-Allow-Origin: *`. Fetch it inside
-the page and apply only the repository/application-supported cookie, header, or storage
-bootstrap. Return only injection success, never the value or the JSON wrapper.
+대상 hostname과 port가 확정되면 loopback에만 바인딩한 로그 없는 일회성 서버가 검증된 자격
+증명 필드만 추출하여 `Access-Control-Allow-Origin: *`를 반환할 수 있습니다. 페이지 안에서
+가져와 저장소/애플리케이션이 지원하는 cookie, header 또는 storage bootstrap만 적용합니다.
+주입 성공 여부만 반환하고 값이나 JSON 래퍼는 반환하지 않습니다.
 
-Stop the exact run-owned loopback server after injection. Apply the token retention and
-cleanup rules above; cookie scope follows hostname rather than port, so a hostname change
-requires establishing the approved state again. For interactive OAuth/OTP, use the supported
-injection path or return `Unverifiable`.
+주입 후 정확히 해당하는 실행 소유 loopback 서버를 중지합니다. 위 토큰 보존 및 정리 규칙을
+적용합니다. cookie 범위는 port가 아니라 hostname을 따르므로 hostname이 바뀌면 승인된 상태를
+다시 확립해야 합니다. 대화형 OAuth/OTP에는 지원된 주입 경로를 사용하거나 `Unverifiable`을 반환합니다.
 
-## Run-owned development server
+<a id="run-owned-development-server"></a>
+## 실행 소유 개발 서버
 
-Choose an available port consistent with repository configuration and the approved API target;
-preserve ports already used by the user or another run. Launch the repository-proven server
-command and record the PID returned by that launch, cwd, command, host/port and bounded log
-path. Use the host's owned process handle when available. Independently check HTTP readiness
-and current-project build identity under a bounded timeout. There is no worktree mutex,
-Git-common-directory lock, supervisor or server lease.
+저장소 설정과 승인된 API 대상에 맞는 사용 가능한 포트를 선택하며, 사용자나 다른 실행이 이미
+사용하는 포트를 보존합니다. 저장소에서 입증된 서버 명령을 시작하고 그 시작에서 반환한 PID,
+cwd, command, host/port와 제한된 로그 경로를 기록합니다. 가능하면 호스트의 소유 프로세스 핸들을
+사용합니다. 제한된 시간 안에 HTTP 준비 상태와 현재 프로젝트 빌드 식별 정보를 독립적으로 확인합니다.
+worktree mutex, Git 공통 디렉터리 잠금, supervisor나 서버 lease는 없습니다.
 
-After each capture phase, stop only the process created by this launch, using its recorded
-PID/handle and independently verified process identity. If it creates children, record those
-owned child PIDs/handles during launch and stop only those verified children; never search by
-port or process name to terminate. An already exited owned process needs no signal. Confirm
-owned processes have exited and check the selected port without killing its current occupant.
-If ownership is uncertain or shutdown fails, report the observed cleanup residue, never a
-successful cleanup or a broad process termination. Do not stop user-owned or other-run servers.
+각 캡처 단계 후에는 기록된 PID/핸들과 독립적으로 검증한 프로세스 식별 정보를 사용하여 해당
+시작이 만든 프로세스만 중지합니다. 자식을 만들면 시작 중에 소유 자식 PID/핸들을 기록하고 검증된
+자식만 중지합니다. 종료하려고 포트나 프로세스 이름으로 검색하지 않습니다. 이미 종료된 소유
+프로세스에는 신호가 필요하지 않습니다. 소유 프로세스의 종료를 확인하고 선택한 포트의 현재
+점유자를 죽이지 않고 포트를 확인합니다. 소유권이 불확실하거나 종료에 실패하면 성공적 정리나
+광범위한 프로세스 종료를 보고하지 말고 관찰된 정리 잔여물을 보고합니다. 사용자 소유 또는 다른
+실행의 서버를 중지하지 않습니다.
 
-## Server and serving source
+<a id="server-and-serving-source"></a>
+## 서버와 제공 소스
 
-For a `standalone` run, use one canonical safe command without another question when repository
-scripts, documentation, and tooling identify it unambiguously.
-In a `standalone` run with multiple viable `dev-server` commands, present the candidates
-and selection to the user and obtain confirmation before starting one. In a `nested`
-run where the `parent` supplied the exact command, do not ask for the same decision
-again. Include `BROWSER=NONE`, or the repository-documented equivalent `auto-open`
-suppression, for a `react-scripts`/CRA server. Start a `long-running server` through the host-supported background process API;
-record its launch-returned owned PID/handle, `cwd`, command basis, `port`, and bounded `log` path.
-Poll a concrete `HTTP`/`port` `readiness signal` under a `bounded timeout`;
-continue after `readiness` instead of waiting for process exit.
+`standalone` 실행에서는 저장소 스크립트, 문서와 도구가 명확하게 식별하는 정본 안전 명령 하나를
+추가 질문 없이 사용합니다. 가능한 `dev-server` 명령이 여러 개인 `standalone` 실행에서는
+후보와 선택을 사용자에게 제시하고 하나를 시작하기 전에 확인받습니다. `parent`가 정확한 명령을
+제공한 `nested` 실행에서는 같은 결정을 다시 질문하지 않습니다. `react-scripts`/CRA 서버에는
+`BROWSER=NONE` 또는 저장소에 문서화된 동등한 `auto-open` 억제를 포함합니다.
+호스트가 지원하는 백그라운드 프로세스 API로 `long-running server`를 시작하고, 시작에서 반환한
+소유 PID/핸들, `cwd`, 명령 근거, `port`와 제한된 `log` 경로를 기록합니다.
+`bounded timeout` 안에 구체적인 `HTTP`/`port` `readiness signal`을 polling하고,
+프로세스 종료를 기다리지 말고 `readiness` 후 계속합니다.
 
-Before selecting or starting the server, inspect the relevant package script and environment
-file for the intended hostname, port, and API target without exposing secret values. Follow
-that repository convention instead of drifting to a default port. Readiness requires both a
-live response and a project-specific identity such as the expected `<title>`, page marker, or
-current bundle fingerprint; an open port alone may belong to another project.
+서버를 선택하거나 시작하기 전에 관련 package script와 환경 파일에서 의도한 hostname, port와
+API 대상을 확인하되 비밀 값은 노출하지 않습니다. 기본 포트로 벗어나지 말고 저장소 관례를 따릅니다.
+준비 상태에는 살아 있는 응답과 예상 `<title>`, 페이지 marker 또는 현재 bundle fingerprint 같은
+프로젝트 고유 식별 정보가 모두 필요합니다. 열린 포트만으로는 다른 프로젝트일 수 있습니다.
 
-If the selected script uses `A && B` and `A` is the long-running server, `B` cannot execute.
-When repository evidence identifies `B` as a required asset/build step and its missing output
-causes the observed compile failure, run `B` once as a run-owned prerequisite and record it.
-Do not edit source or generalize this into an alternate server workflow.
+선택한 스크립트가 `A && B`를 사용하고 `A`가 장기 실행 서버이면 `B`는 실행될 수 없습니다.
+저장소 근거가 `B`를 필수 자산/빌드 단계로 식별하고 출력 부재가 관찰된 컴파일 실패를 일으키면,
+`B`를 실행 소유 선행 단계로 한 번 실행하고 기록합니다. 소스를 편집하거나 이를 대체 서버
+워크플로로 일반화하지 않습니다.
 
-Reuse an existing server only when its cwd matches the worktree, its asset/watch
-pipeline is current, and a bundle/response or changed render proves the serving
-version. The cwd alone is insufficient. Preserve other worktrees and user processes;
-use a separate port when ownership or freshness is uncertain.
+기존 서버는 cwd가 worktree와 일치하고 자산/watch 파이프라인이 최신이며, bundle/응답이나
+변경된 렌더링으로 제공 버전이 입증될 때만 재사용합니다. cwd만으로는 충분하지 않습니다.
+다른 worktree와 사용자 프로세스를 보존하며, 소유권이나 최신성이 불확실하면 별도 포트를 사용합니다.
 
-Record concise facts for browser/version, target, viewport/DPR when relevant, working
-tree, server process/cwd, asset pipeline, and serving-version proof.
+브라우저/버전, 대상, 관련된 경우 viewport/DPR, 작업 트리, 서버 프로세스/cwd, 자산 파이프라인과
+제공 버전 입증을 간결한 사실로 기록합니다.

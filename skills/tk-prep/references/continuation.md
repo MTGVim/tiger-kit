@@ -1,30 +1,30 @@
-## Baseline continuation and final-response gate
+<a id="baseline-continuation-and-final-response-gate"></a>
+## 변경 전 기준 수집 후 계속 진행과 최종 응답 관문
 
-Before invoking a pre-edit baseline, retain the approved execution shape, remaining implementation/verification/commit
-obligations, and next implementation action in current task context; direct/no-Seed needs no new artifact.
-When that baseline succeeds, bind its run/replay evidence to this task and execute the next approved implementation action
-in the same active turn. A progress update may precede that action; a final answer or a promise to resume cannot replace it.
-Then obtain the matching after comparison before final review, binding verification, or commit.
+편집 전 기준 수집을 호출하기 전에, 승인된 실행 형태, 남은 구현·검증·커밋
+의무와 다음 구현 행동을 현재 작업 맥락에 유지합니다. direct/no-Seed에는 새 산출물이 필요하지 않습니다.
+기준 수집이 성공하면 실행·재현 근거를 이 작업에 연결하고, 같은 진행 중 턴에서 다음으로 승인된 구현 행동을
+실행합니다. 그 행동 전에 진행 상황을 알릴 수는 있지만, 최종 답변이나 재개 약속으로 행동을 대신할 수는 없습니다.
+이후 최종 리뷰, 최종 후보에 결부한 검증이나 커밋 전에 짝이 맞는 변경 후 비교를 확보합니다.
 
-This applies both when the host loads the planned verifier (`tk-browser-verify` or `tk-app-verify`) through a Skill tool in the same agent and when a separate child
-returns. In the first case, resume the retained owner procedure yourself; do not wait for a nonexistent parent process.
-In the second, consume the child's terminal response as phase-local evidence. `Status: Pass`, `## Verdict`, or
-`resume_parent: required` in a child report never means the approved parent task is complete or triggers host scheduling.
+이는 호스트가 같은 에이전트에서 Skill 도구를 통해 계획된 검증자(`tk-browser-verify` 또는 `tk-app-verify`)를 불러오는 경우와 별도 자식이
+결과를 반환하는 경우 모두에 적용됩니다. 첫 번째 경우에는 유지한 담당 절차를 직접 재개합니다. 존재하지 않는 부모 프로세스를 기다리지 않습니다.
+두 번째 경우에는 자식의 최종 응답을 해당 단계에 한정된 근거로 사용합니다. 자식 보고서의 `Status: Pass`, `## Verdict`나
+`resume_parent: required`는 승인된 부모 작업의 완료를 뜻하지 않으며 호스트 스케줄링을 유발하지도 않습니다.
 
-Before sending a final user-facing result, check the retained approved obligations. If any approved implementation,
-verification, review, or commit obligation remains actionable, continue execution without another approval. Pause only for material drift, an unapproved
-limitation, a required user-owned decision, a safety boundary, or an explicit user stop/change of scope; name the actual
-reason and remaining work. Never end the parent turn merely to report baseline success.
+사용자에게 최종 결과를 보내기 전에 유지한 승인 의무를 확인합니다. 승인된 구현,
+검증, 리뷰나 커밋 의무 중 실행 가능한 것이 하나라도 남아 있으면, 추가 승인 없이 계속 실행합니다. 중대한 이탈, 승인되지 않은
+제약, 필요한 사용자 소유 결정, 안전 경계나 사용자의 명시적 중단·범위 변경이 있을 때만 일시 중지합니다.
+실제 이유와 남은 작업을 밝힙니다. 기준 수집 성공을 보고하려는 이유만으로 부모 턴을 끝내지 않습니다.
 
-When any uncovered row remains unexecuted because of missing authority, irreversibility, unavailable
-data, verifier limits, or another manual reason, state the count and stable criterion IDs in
-`human_action`, with each row's reason and unblock step, and recommend that the user start `/tk-qa-sheet` for
-follow-up. Exclude `covered-by` rows from that count because their equivalence evidence is recorded.
-Never auto-invoke the user-only skill.
-When the user asks for a manual QA checklist or HTML sheet, recommend explicit `/tk-qa-sheet`; it does
-not replace required implementation verification.
+권한 부족, 비가역성, 데이터 부재, 검증자 한계나 그 밖의 수동 처리 사유로
+검증되지 않은 행이 실행되지 않은 채 남으면, 그 개수와 안정적인 기준 ID를
+`human_action`에 적고 각 행의 이유와 차단 해제 단계를 명시합니다. 후속 처리를 위해 사용자가 `/tk-qa-sheet`를 시작하도록
+권합니다. `covered-by` 행은 동등성 근거가 기록되어 있으므로 그 개수에서 제외합니다.
+사용자 전용 스킬을 자동으로 호출하지 않습니다.
+사용자가 수동 QA 체크리스트나 HTML 시트를 요청하면, 명시적인 `/tk-qa-sheet` 호출을 권합니다. 이는
+필수 구현 검증을 대체하지 않습니다.
 
-For local execution, follow the already loaded local-execution reference. SDD additionally follows the private SDD
-protocol. Only after the final-response gate permits completion or a justified pause, return a compact result with the execution shape, Seed path or `none`, commits or handoff status, focused and
-required verification, runtime evidence, exceptions, review independence, and any blocker. Claim remote publication only after the separately authorized publication owner verifies it.
-
+로컬 실행에서는 이미 읽은 로컬 실행 참조를 따릅니다. SDD는 추가로 비공개 SDD
+프로토콜을 따릅니다. 최종 응답 관문이 완료나 정당한 일시 중지를 허용한 뒤에만 실행 형태, Seed 경로나 `none`, 커밋이나 인계 상태, 집중 검증과
+필수 검증, 런타임 근거, 예외, 리뷰 독립성과 차단 요인을 담은 간결한 결과를 반환합니다. 별도로 승인받은 발행 담당자가 원격 발행을 검증한 뒤에만 발행을 주장합니다.

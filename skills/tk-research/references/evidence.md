@@ -1,13 +1,12 @@
-# Research Evidence
+<a id="research-evidence"></a>
+# 연구 근거
 
-Search current primary, official, production, OSS and academic evidence as applicable. Deep-read the most relevant two or three cases, expanding only to resolve a concrete gap. Verify actual source content, version/date, assumptions and deployment context; snippets, popularity and repeated citations are not proof. Mark inaccessible or conflicting evidence and avoid invented measurements, adoption or consensus. Generalize private context before external queries.
+해당하는 최신 1차·공식·운영·OSS·학술 근거를 검색합니다. 가장 관련 있는 사례 두세 개를 깊이 읽고 구체적인 공백을 해결할 때만 확장합니다. 실제 출처 내용, 버전·날짜, 가정과 배포 맥락을 검증합니다. 발췌문, 인기와 반복 인용은 증거가 아닙니다. 접근할 수 없거나 충돌하는 근거를 표시하고 측정치, 도입 사례나 합의를 만들어 내지 않습니다. 외부 질의 전에 비공개 맥락을 일반화합니다.
 
-When a decision-relevant claim rests on a secondary source, resolve it toward the primary authority when reasonably accessible. Treat source liveness and claim faithfulness as separate checks: a live link is not evidence that its content supports the claim. Read the supporting passage or result before marking a material claim supported. Use `SUPPORTED`, `INTERPOLATED`, `UNSUPPORTED`, `CONTRADICTED` and `UNVERIFIABLE` only when useful; do not create a mandatory claim ledger. If a previously accepted claim is disproved or its source is retracted, retain the correction and reason instead of silently deleting it.
+결정에 관련된 주장이 2차 출처에 의존하면 합리적으로 접근 가능한 경우 1차 권위 출처까지 확인합니다. 출처가 살아 있는지와 주장을 충실히 뒷받침하는지는 별도로 점검합니다. 살아 있는 링크는 그 내용이 주장을 뒷받침한다는 근거가 아닙니다. 중요한 주장을 뒷받침된 것으로 표시하기 전에 지원하는 구절이나 결과를 읽습니다. 유용할 때만 `SUPPORTED`, `INTERPOLATED`, `UNSUPPORTED`, `CONTRADICTED`, `UNVERIFIABLE`을 사용하고 필수 주장 대장을 만들지 않습니다. 이전에 받아들인 주장이 반증되거나 출처가 철회되면 조용히 삭제하지 말고 정정과 이유를 남깁니다.
 
-Compare applicable assumptions, accuracy, false positives/negatives, data needs, explainability, operating cost, implementation effort and scaling conditions. Use decision-relevant dimensions with unknowns explicit. Separate measured results, source claims and inference; prefer direct evidence over source count. Preserve the simple/user approach as a baseline rather than only optimizing it.
+적용 가능한 가정, 정확도, 오탐·미탐, 데이터 요구, 설명 가능성, 운영 비용, 구현 노력과 확장 조건을 비교합니다. 결정에 관련된 차원을 사용하고 모르는 내용을 명시합니다. 측정 결과, 출처의 주장과 추론을 구분하고 출처 수보다 직접 근거를 우선합니다. 단순한 방식·사용자 방식을 최적화만 하지 말고 비교 기준으로 보존합니다.
 
-Challenge the leading approach with targeted counterexamples, failure reports and limitations. Resolve or retain disagreement, then recommend the minimum sufficient approach with confidence, claim-adjacent sources and relevant revision/date. If evidence cannot decide, name the smallest missing input or bounded validation spike with observable success/failure criteria; proposing it grants no execution authority. Preserve verified partial findings and mark the affected conclusion `Unverifiable` when required evidence is unavailable.
+주요 접근법에 구체적인 반례, 실패 보고와 한계로 이의를 제기합니다. 의견 차이를 해결하거나 유지한 후, 확신 수준, 주장 옆의 출처와 관련 revision·날짜를 포함하여 최소한으로 충분한 접근법을 권고합니다. 근거로 결정할 수 없으면 필요한 최소 입력 또는 관찰 가능한 성공·실패 기준을 갖춘 범위가 한정된 검증 spike를 명시합니다. 이를 제안해도 실행 권한이 생기지는 않습니다. 필수 근거를 사용할 수 없으면 검증된 부분 발견을 보존하고 영향을 받는 결론을 `Unverifiable`로 표시합니다.
 
-Before interpreting an access-log path as a user action, inspect the client call site and trigger
-timing. Prefetch, page initialization and background requests can occur without the named action;
-a route name alone cannot support a claim about intent or behavior.
+접근 로그 경로를 사용자 행동으로 해석하기 전에 클라이언트 호출 위치와 트리거 시점을 확인합니다. Prefetch, 페이지 초기화와 background 요청은 명시된 행동 없이도 발생할 수 있습니다. route 이름만으로 의도나 동작에 대한 주장을 뒷받침할 수는 없습니다.

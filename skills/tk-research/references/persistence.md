@@ -1,93 +1,49 @@
-# Research persistence
+<a id="research-persistence"></a>
+# 연구 영속화
 
-Read before initializing durable research, migrating legacy state, recording a material outcome,
-sharing tracked knowledge, or making research-owned local commits.
+지속 연구 초기화, 기존 상태 마이그레이션, 중요한 결과 기록, 추적되는 지식 공유 또는 연구 소유 로컬 commit 전에 읽습니다.
 
-## One local canonical home
+<a id="one-local-canonical-home"></a>
+## 하나의 로컬 정본 저장 위치
 
-Default to ignored `.tigerkit/research/<slug>/state.md`, with a filesystem-safe goal slug and a
-stable `researchId` derived from repository identity and the initial normalized goal, never secrets
-or personal identifiers. A slug is a display/path hint, not project identity: verify `researchId`
-and repository identity before reuse. A different owner requires a noncolliding sibling path.
-No configuration file, tracked tree or worktree is required for read-only research. Create state
-only when resume, frontier/history, negative results or next-batch evidence reuse needs it.
+기본값은 ignored `.tigerkit/research/<slug>/state.md`입니다. 파일시스템에 안전한 목표 slug와 저장소 식별 정보 및 최초의 정규화된 목표에서 도출한 안정적 `researchId`를 사용하고 비밀이나 개인 식별자에서는 도출하지 않습니다. slug는 표시·경로 힌트이며 프로젝트 식별 정보가 아닙니다. 재사용 전에 `researchId`와 저장소 식별 정보를 검증합니다. 소유자가 다르면 충돌하지 않는 형제 경로가 필요합니다. 읽기 전용 연구에는 설정 파일, 추적 트리 또는 worktree가 필요하지 않습니다. 재개, 후속 탐색 영역·이력, 부정적 결과 또는 다음 배치의 근거 재사용에 필요할 때만 상태를 만듭니다.
 
-The state is the hot index; retain decision-relevant findings and material checkpoint/experiment
-records under this same home only as needed. Do not create empty knowledge scaffolding. HTML is
-a projection and never the resume source. Short research can retain its verified facts in the
-current interaction without a state file. Apply Artifact Paths before every write.
+상태는 자주 참조하는 인덱스입니다. 결정에 관련된 발견과 중요한 확인 지점·실험 기록은 필요한 만큼만 같은 저장 위치 아래에 보존합니다. 빈 지식 기반 구조를 만들지 않습니다. HTML은 투영본이며 재개 원본이 아닙니다. 짧은 연구는 상태 파일 없이 현재 대화에 검증된 사실을 유지할 수 있습니다. 모든 쓰기 전에 산출물 경로 기준을 적용합니다.
 
-Source-changing experiments require a safe isolated research workspace. Reuse a clean, explicitly
-designated non-product home or create/reuse a dedicated linked research worktree under the active
-local authority, honoring repository/user restrictions on branch/worktree creation. A default/product,
-dirty, shared or differently owned checkout is unsafe for experimental mutation. If isolation is
-unavailable, continue read-only items; stop the mutation branch rather than absorb unrelated work.
-Move only run-owned local state/evidence into the experiment home with identity/readback checks;
-leave one canonical home and record its location. Never split one project across competing states.
+소스를 바꾸는 실험에는 안전하게 격리된 연구 작업 공간이 필요합니다. 명시적으로 지정된 깨끗한 비제품 저장 위치를 재사용하거나, 활성 로컬 권한 안에서 전용 linked 연구 worktree를 만들거나 재사용하되 저장소·사용자의 branch/worktree 생성 제한을 준수합니다. 기본·제품 checkout, dirty checkout, 공유 checkout 또는 다른 소유자의 checkout은 실험적 변경에 안전하지 않습니다. 격리할 수 없으면 읽기 전용 항목을 계속하고 관련 없는 작업을 흡수하지 말고 변경 분기를 중단합니다. 식별 정보·재읽기 점검을 거쳐 실행 소유 로컬 상태·근거만 실험 저장 위치로 옮깁니다. 정본 저장 위치는 하나로 유지하고 위치를 기록합니다. 하나의 프로젝트를 경쟁하는 상태들로 나누지 않습니다.
 
-A small material delta can use one state update containing findings, the checkpoint entry and handoff. Split substantial reusable experiment evidence only when needed; reference it instead of repeating narratives in synthesis, journal and handoff files. Keep freshness fingerprints in transient run context or the state's prior transaction fields; no extra transaction/baseline/config receipt is required.
+작지만 중요한 변경분은 발견 내용, 확인 지점 항목과 인계를 포함한 상태 갱신 한 번으로 처리할 수 있습니다. 상당한 재사용 가능 실험 근거는 필요할 때만 분리하고 종합·일지·인계 파일에서 설명을 반복하지 말고 참조합니다. 최신성 fingerprint는 일시적 실행 맥락 또는 상태의 이전 트랜잭션 필드에 유지합니다. 추가 트랜잭션·기준·설정 receipt는 필요하지 않습니다.
 
-## Material outcome transaction
+<a id="material-outcome-transaction"></a>
+## 중요한 결과의 트랜잭션
 
-Capture state fingerprint and home HEAD at batch start; recheck both before final ID allocation or
-write. External drift requires safe reconciliation against fresh state or `BLOCKED` with run-owned
-evidence preserved; never overwrite newer state or reuse IDs.
+배치 시작 시 상태 fingerprint와 저장 위치의 HEAD를 확보하고 최종 ID 할당이나 쓰기 전에 둘 다 다시 확인합니다. 외부 변경이 있으면 최신 상태와 안전하게 조정하거나 실행 소유 근거를 보존한 채 `BLOCKED`로 처리합니다. 더 최신인 상태를 덮어쓰거나 ID를 재사용하지 않습니다.
 
-Before `CHECKPOINT`, `CONCLUDE` or evidence-producing `BLOCKED`:
+`CHECKPOINT`, `CONCLUDE` 또는 근거를 생성하는 `BLOCKED` 전에 다음을 수행합니다.
 
-1. Allocate fresh monotonic `CHK-<NNN>` / `EXP-<NNN>` IDs after the drift check.
-2. Finalize attempted experiments including negative, inconclusive and blocked evidence; retain
-   sources, acceptance/evaluator identity, limits, next implications and relevant parent lessons.
-3. Record the material delta in findings and one checkpoint entry, update synthesis/frontier and
-   atomically write canonical state; reread it. Keep untested budget deferrals separate from rejection.
-4. Generate the human projection using [report](report.md). A report failure leaves canonical facts
-   intact and marks only the artifact branch `Unverifiable`; do not claim an unwritten report.
-5. Make an optional local experiment commit only when coherent run-owned code has future value;
-   stage exact owned paths, never unrelated work. Record its HEAD in local state. No default knowledge
-   commit, tracked mirror or commit-on-checkpoint policy exists.
+1. 변경 점검 후 새로운 단조 증가 `CHK-<NNN>` / `EXP-<NNN>` ID를 할당합니다.
+2. 부정적·불확정·차단 근거를 포함하여 시도한 실험을 마무리합니다. 출처, 수용 판정·평가기 식별 정보, 한계, 다음 시사점과 관련 상위 교훈을 유지합니다.
+3. 발견 내용과 확인 지점 항목 하나에 중요한 변경분을 기록하고 종합·후속 탐색 영역을 갱신하며 정본 상태를 원자적으로 쓴 후 다시 읽습니다. 테스트하지 않은 예산상 보류는 기각과 구분합니다.
+4. [보고서](report.md)를 사용하여 사람이 읽는 투영본을 생성합니다. 보고서 실패는 정본 사실을 그대로 유지하고 산출물 분기만 `Unverifiable`로 표시합니다. 쓰지 않은 보고서를 작성했다고 주장하지 않습니다.
+5. 일관된 실행 소유 코드에 미래 가치가 있을 때만 선택적으로 로컬 실험 commit을 만듭니다. 소유한 정확한 경로만 stage하고 관련 없는 작업은 stage하지 않습니다. 해당 HEAD를 로컬 상태에 기록합니다. 기본 지식 commit, 추적 미러 또는 확인 지점마다 commit하는 정책은 없습니다.
 
-Record a minimal blocker without inventing a checkpoint when no evidence delta exists. Preserve
-negative results before reverting/discarding run-owned failed code. `CONCLUDE` includes identity,
-home HEAD, accepted findings/experiments, rejected alternatives, limits and a next-owner handoff;
-research code is evidence, not production readiness or product integration authority.
+근거 변경분이 없으면 확인 지점을 만들어 내지 말고 최소한의 차단 요인을 기록합니다. 실행 소유의 실패 코드를 되돌리거나 폐기하기 전에 부정적 결과를 보존합니다. `CONCLUDE`에는 식별 정보, 저장 위치 HEAD, 수용된 발견·실험, 기각된 대안, 한계와 다음 소유자 인계를 포함합니다. 연구 코드는 근거이며 제품 준비 완료나 제품 통합 권한이 아닙니다.
 
-## Explicit shareable knowledge
+<a id="explicit-shareable-knowledge"></a>
+## 명시적으로 공유하는 지식
 
-Only an explicit save/share request promotes a sanitized report or decision-relevant knowledge to
-an agreed repository-relative destination outside `.git/` and `.tigerkit/`. Validate nonsymlink
-paths and ownership; never overwrite another project's files. A save is not commit/publication
-authority. HTML and tracked Markdown are shareable projections, never canonical execution mirrors.
-Do not write secrets, raw operational/protected data, direct personal identifiers, request/response
-dumps or full sensitive logs into shared files or ignored state. Use minimum abstractions, source
-revision, experiment IDs/hashes and safe ignored evidence pointers; retain raw authorized evidence
-only temporarily in a run-owned ignored location. If sanitization cannot preserve a claim, report
-its limitation rather than expose the data. Failed exports preserve local facts without false success.
+명시적인 저장·공유 요청만 정제된 보고서나 결정에 관련된 지식을 `.git/`와 `.tigerkit/` 밖의 합의된 저장소 상대 목적지로 승격합니다. nonsymlink 경로와 소유권을 검증하고 다른 프로젝트 파일을 덮어쓰지 않습니다. 저장은 commit·발행 권한이 아닙니다. HTML과 추적 Markdown은 공유 가능한 투영본이며 정본 실행 미러가 아닙니다. 공유 파일이나 ignored 상태에 비밀, 원시 운영·보호 데이터, 직접적인 개인 식별자, 요청·응답 dump 또는 민감한 전체 로그를 쓰지 않습니다. 최소한의 추상화, 소스 revision, 실험 ID·해시와 안전한 ignored 근거 포인터를 사용합니다. 승인된 원시 근거는 실행 소유 ignored 위치에 일시적으로만 보관합니다. 정제로 주장을 보존할 수 없으면 데이터를 노출하지 말고 그 한계를 보고합니다. 내보내기가 실패해도 로컬 사실을 보존하고 거짓 성공을 보고하지 않습니다.
 
-## Legacy migration
+<a id="legacy-migration"></a>
+## 기존 형식 마이그레이션
 
-`tk-autoresearch` is removed; install/invoke `tk-research`. Discover an actual matching legacy
-`.tigerkit/autoresearch/state.md` only on explicit resume or migration, within this repository's
-current/linked homes. Preserve `researchId`, repository/home identity, stable IDs, findings (including
-negative results), experiments, source/evaluator provenance, premises, pending questions, frontier,
-reopen conditions and handoffs. Validate any legacy config's exact keys/types: `version: 1`,
-`mode: local | hybrid | tracked`, `trackedRoot` string and `commitOnCheckpoint` boolean when supplied;
-reject unknown keys/version/mode and unsafe paths without rewriting the legacy input.
+`tk-autoresearch`는 제거되었습니다. `tk-research`를 설치·호출합니다. 명시적인 재개나 마이그레이션 시에만 이 저장소의 현재·linked 저장 위치 안에서 실제로 일치하는 기존 `.tigerkit/autoresearch/state.md`를 찾습니다. `researchId`, 저장소·저장 위치 식별 정보, 안정적 ID, 발견(부정적 결과 포함), 실험, 출처·평가기 출처 정보, 전제, 대기 질문, 후속 탐색 영역, 재개 조건과 인계를 보존합니다. 제공된 경우 기존 설정의 정확한 키·타입을 검증합니다. `version: 1`, `mode: local | hybrid | tracked`, `trackedRoot` 문자열과 `commitOnCheckpoint` boolean을 확인하고, 알 수 없는 키·버전·모드와 안전하지 않은 경로는 기존 입력을 다시 쓰지 않고 거부합니다.
 
-Legacy modes are historical preferences, not the new default. Copy verified run-owned facts to one
-safe local canonical home atomically, reread and compare essential fields before retiring the old
-canonical pointer. Keep legacy originals until verification succeeds, then label/archive them as
-historical so resume finds one owner. Existing tracked knowledge/mirrors remain historical and are
-not automatically updated or removed; continue sharing only under an explicit current request.
-Do not infer authority from legacy config or migrate other projects. Multiple possible owners,
-missing/mismatched state, unsafe paths or failed readback block migration without destroying originals.
+기존 모드는 과거의 선호 설정이며 새 기본값이 아닙니다. 검증된 실행 소유 사실을 하나의 안전한 로컬 정본 저장 위치로 원자적으로 복사하고 다시 읽으며 핵심 필드를 비교한 뒤 이전 정본 포인터를 사용 종료합니다. 검증이 성공할 때까지 기존 원본을 유지하고, 성공 후에는 재개 시 소유자 하나를 찾도록 과거 자료로 표시·보관합니다. 기존의 추적 지식·미러는 과거 자료로 남으며 자동으로 갱신하거나 제거하지 않습니다. 공유는 명시적인 현재 요청 아래에서만 계속합니다. 기존 설정에서 권한을 추론하거나 다른 프로젝트를 마이그레이션하지 않습니다. 가능한 소유자가 여러 명이거나, 상태가 없거나 일치하지 않거나, 경로가 안전하지 않거나, 재읽기가 실패하면 원본을 파괴하지 않고 마이그레이션을 차단합니다.
 
-## No-delta rule
+<a id="no-delta-rule"></a>
+## 변경분 없음 규칙
 
-No action or no new decision-relevant evidence means `NO-ACTION | NO-DELTA`, not a checkpoint,
-knowledge commit, journal heartbeat or HTML regeneration. New negative evidence is a material delta.
-Resume reads state/current findings first and history only by relevant IDs, never the full journal
-every invocation. A new no-candidate regeneration can update its proof in state without a checkpoint.
+행동이 없거나 결정에 관련된 새 근거가 없으면 `NO-ACTION | NO-DELTA`이며 확인 지점, 지식 commit, 일지 생존 신호 또는 HTML 재생성이 아닙니다. 새로운 부정적 근거는 중요한 변경분입니다. 재개 시 상태·현재 발견을 먼저 읽고 이력은 관련 ID로만 읽으며 호출마다 전체 일지를 읽지 않습니다. 새로운 무후보 재생성은 확인 지점 없이 상태의 증명을 갱신할 수 있습니다.
 
-When migrating run-owned scripts or generators, check changed path depth, relative imports and
-input/output resolution from the destination working directory. Replay a safe import/path check
-before retiring the old pointer; a moved file is not proof that its dependencies still resolve.
+실행 소유 스크립트나 생성기를 마이그레이션할 때는 목적지 작업 디렉터리에서 변경된 경로 깊이, 상대 import와 입력·출력 경로 해석을 점검합니다. 이전 포인터를 사용 종료하기 전에 안전한 import·경로 점검을 다시 실행합니다. 파일을 옮겼다고 의존성이 계속 해석된다는 증거가 되지는 않습니다.

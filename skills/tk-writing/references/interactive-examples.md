@@ -1,41 +1,44 @@
-# Interaction in archify pages
+<a id="interaction-in-archify-pages"></a>
+# archify 페이지의 상호작용
 
-Read for an explicit interaction request in the selected archify branch. A technique-specific
-HTML form instead follows the common renderer contract (native disclosure, inline enhancements,
-all steps readable without JS); do not apply archify limitations to that branch.
-Keep the complete archify explanation in archify, with
-prerequisites, causal steps, sources and material caveats outside controls. Read the installed
-`references/explainer-authoring.md` and, for viewer-specific behavior, `references/viewer-runtime.md`.
-Use supported directives and native diagrams; do not insert a TigerKit document shell,
-hand-authored script, iframe or post-render patch that invalidates archify's receipt.
+선택한 archify 분기에서 명시적으로 상호작용을 요청했을 때 읽습니다. 기법별
+HTML 형식은 대신 공통 렌더러 계약을 따릅니다(기본 disclosure, 인라인 향상,
+JS 없이도 모든 단계를 읽을 수 있어야 합니다). 해당 분기에 archify의 제한을 적용하지 않습니다.
+완전한 archify 설명은 archify 안에 유지하며,
+선행 조건, 인과 단계, 출처와 중요한 주의 사항은 컨트롤 밖에 둡니다. 설치된
+`references/explainer-authoring.md`를 읽고, 뷰어 고유 동작은 `references/viewer-runtime.md`를 읽습니다.
+지원되는 지시문과 기본 다이어그램을 사용합니다. archify의 receipt를 무효화하는 TigerKit 문서 셸,
+직접 작성한 스크립트, iframe이나 렌더링 후 패치를 삽입하지 않습니다.
 
-## Match the requested action
+<a id="match-the-requested-action"></a>
+## 요청한 동작에 맞추기
 
-Use a native diagram with `@steps` for an ordered walkthrough, and native node/route links
-for selection, focus and path exploration. Bind targets to real authored node/edge IDs.
-The visible label, highlighted entity, step description and source must agree. Native
-exploration reveals authored relationships; it does not run the represented application
-or prove runtime causality. Preserve any actual spatial relationship with scene images;
-do not replace live native controls with screenshots.
+순서가 있는 안내에는 `@steps`를 포함한 기본 다이어그램을 사용하고, 선택, 포커스와 경로 탐색에는
+기본 노드·경로 링크를 사용합니다. 대상을 실제로 작성한 노드·간선 ID에 연결합니다.
+표시되는 레이블, 강조된 개체, 단계 설명과 출처가 서로 일치해야 합니다. 기본
+탐색은 작성된 관계를 드러냅니다. 표현 대상인 애플리케이션을 실행하거나
+런타임 인과 관계를 입증하지는 않습니다. 실제 공간 관계는 장면 이미지로 보존합니다.
+작동하는 기본 컨트롤을 스크린샷으로 대체하지 않습니다.
 
-Check the installed version's documented capabilities before promising a custom action.
-Archify 3.2.0 supports guided steps and viewer exploration, not arbitrary authored JavaScript
-or parameter-driven simulation in an explainer. If a requested edit/reorder/calculation
-cannot be represented faithfully, report that requirement as `Blocked` with the missing
-capability. A static comparison may support the explanation, but cannot silently replace
-requested live behavior or turn partial delivery into `Pass`. Do not auto-switch to the
-legacy renderer, install/update a dependency or invoke a product-prototype workflow.
+사용자 정의 동작을 약속하기 전에 설치된 버전의 문서화된 기능을 확인합니다.
+Archify 3.2.0은 안내 단계와 뷰어 탐색을 지원하며, explainer에서 임의로 작성한 JavaScript나
+매개변수 기반 시뮬레이션은 지원하지 않습니다. 요청한 편집·순서 변경·계산을
+충실하게 표현할 수 없으면 부족한 기능과 함께 해당 요구 사항을 `Blocked`로 보고합니다.
+정적 비교가 설명을 뒷받침할 수는 있지만, 요청한 실시간 동작을 알리지 않고 대체하거나
+부분적인 제공을 `Pass`로 바꿀 수는 없습니다. 기존 렌더러로 자동 전환하거나,
+의존성을 설치·업데이트하거나, 제품 prototype 워크플로를 호출하지 않습니다.
 
-## Preserve meaning and verify
+<a id="preserve-meaning-and-verify"></a>
+## 의미 보존과 검증
 
-For a stateful comparison, preserve common inputs, entity identity, event order and actual
-state history across alternatives; visible consequences must follow those inputs. Label
-illustrative states and assumptions. A changed caption or highlighted node alone cannot
-claim a recalculated result, persistent state change or a successful reset. Unsupported
-custom input, branch-wide reset and backward replay remain unmet requirements.
+상태가 있는 비교에서는 대안 사이에 공통 입력, 개체 정체성, 이벤트 순서와 실제
+상태 이력을 보존합니다. 표시되는 결과는 그 입력에 따라야 합니다.
+예시 상태와 가정에는 레이블을 붙입니다. 캡션이나 강조된 노드만 바뀌었다고 해서 재계산한 결과,
+지속되는 상태 변경이나 성공적인 초기화를 주장할 수는 없습니다. 지원되지 않는
+사용자 정의 입력, 분기 전체 초기화와 역방향 재생은 충족되지 않은 요구 사항으로 남습니다.
 
-Use the exact saved page for the owning skill's accuracy checks. When screen/action checks
-are requested, route them to `tk-browser-verify`: exercise the requested native controls,
-forward/back movement where supported, keyboard/focus, and the matching visible states.
-Check no-JavaScript/reduced-motion reading when in scope. Keep the full static explanation
-available and report any unrun checks. `finalize explainer` alone is not browser evidence.
+실행 담당 스킬의 정확성 점검에는 정확히 저장된 페이지를 사용합니다. 화면·동작 점검을
+요청받으면 `tk-browser-verify`로 전달합니다. 요청한 기본 컨트롤,
+지원되는 경우의 앞으로·뒤로 이동, 키보드·포커스와 그에 대응하는 표시 상태를 실제로 점검합니다.
+범위에 포함되면 JavaScript 없는 읽기와 동작 줄이기를 점검합니다. 완전한 정적 설명을
+계속 제공하고 실행하지 않은 점검은 보고합니다. `finalize explainer`만으로는 브라우저 근거가 되지 않습니다.

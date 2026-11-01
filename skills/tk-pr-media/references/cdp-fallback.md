@@ -1,63 +1,67 @@
-# `CDP` fallback
+<a id="cdp-fallback"></a>
+# `CDP` 대체 경로
 
-Read this reference only when `CDP` was explicitly selected instead of `gh-attach`, or
-when the user chose to continue with `CDP` after target write access was unavailable.
+`gh-attach` 대신 `CDP`를 명시적으로 선택했거나, 대상에 대한 쓰기 권한이 없어
+사용자가 `CDP`로 계속하기로 선택한 경우에만 이 참조를 읽습니다.
 
-## Preparation and browser identification
+<a id="preparation-and-browser-identification"></a>
+## 준비와 브라우저 식별
 
-After `git check-ignore` proves that Git effectively ignores `.tigerkit/` and `git ls-files`
-shows no tracked path under it,
-create `.tigerkit/tmp/tk-pr-media/<run-id>/` as the run-owned staging
-directory. Use a safe, descriptive filename as the image alt text. If the path is not
-ignored, apply the owning SKILL.md Artifact Paths setup and recheck. If it remains
-unignored, unwritable, or inaccessible to the browser, use no external scratch path;
-return `Unverifiable`.
+`git check-ignore`로 Git이 `.tigerkit/`을 실제로 제외하고 있음을 입증하고 `git ls-files`로
+그 아래에 추적 경로가 없음을 확인한 뒤,
+실행 소유 staging 디렉터리로 `.tigerkit/tmp/tk-pr-media/<run-id>/`를
+만듭니다. 이미지 대체 텍스트에는 안전하고 설명적인 파일명을 사용합니다. 경로가
+제외되지 않았다면 담당 SKILL.md의 산출물 경로 설정을 적용하고 다시 확인합니다. 여전히
+제외되지 않거나, 쓸 수 없거나, 브라우저가 접근할 수 없다면 외부 임시 경로로 우회하지 말고
+`Unverifiable`을 반환합니다.
 
-Use this browser order:
+브라우저는 다음 순서로 사용합니다.
 
-1. an authenticated existing `Chrome` session through `CDP` or `Chrome DevTools MCP`;
-2. an authenticated persistent browser profile through `CDP` and `Playwright`;
-3. stop as `Unverifiable` and explain how to restore `CDP` access.
+1. `CDP` 또는 `Chrome DevTools MCP`를 통해 인증된 기존 `Chrome` 세션을 사용합니다.
+2. `CDP`와 `Playwright`를 통해 인증된 영구 브라우저 프로필을 사용합니다.
+3. `Unverifiable`로 중단하고 `CDP` 접근 복구 방법을 설명합니다.
 
-For the first option, `chrome://inspect/#remote-debugging`, `--autoConnect` for Chrome DevTools
-MCP, or a one-time Chrome permission prompt may be required. When the user must enable or
-approve that access, invoke `tk-wizard` with the selected CDP route, current host evidence,
-exact completion signal, and upload resume action. Do not duplicate an ad hoc setup wizard in
-this reference, and perform no upload until completion. Do not print cookies, tokens, or
-private identity details. Do not launch `Orca` or another desktop controller as a fallback.
+첫 번째 방식에는 `chrome://inspect/#remote-debugging`, Chrome DevTools MCP의
+`--autoConnect` 또는 일회성 Chrome 권한 프롬프트가 필요할 수 있습니다. 사용자가 접근을 활성화하거나
+승인해야 한다면 선택한 CDP 경로, 현재 호스트 근거,
+정확한 완료 신호와 업로드 재개 행동을 담아 `tk-wizard`를 호출합니다. 이 참조에
+임시 설정 마법사를 중복으로 만들지 않으며, 완료 전에는 업로드하지 않습니다. 쿠키, 토큰이나
+비공개 신원 정보를 출력하지 않습니다. 대체 경로로 `Orca`나 다른 데스크톱 제어기를 실행하지 않습니다.
 
-`Chrome 136+` ignores remote-debugging switches for the default data directory. A
-directly launched endpoint requires a dedicated `--user-data-dir` and one-time login.
-Supported `--autoConnect` can connect to an existing profile only after the user's explicit
-permission action through the wizard handoff. After it completes without a required client
-restart, resume the exact PR/comment target and selected CDP route. If restart is required,
-return the exact resume action and do not claim an upload. Do not trust a `DevToolsActivePort`
-file alone; verify the current socket and browser endpoint.
+`Chrome 136+`는 기본 데이터 디렉터리에서 remote-debugging 스위치를 무시합니다. 직접
+실행한 엔드포인트에는 전용 `--user-data-dir`과 일회성 로그인이 필요합니다.
+지원되는 `--autoConnect`는 마법사 인계를 통한 사용자의 명시적
+권한 부여 행동이 있은 뒤에만 기존 프로필에 연결할 수 있습니다. 필요한 클라이언트 재시작 없이
+완료되었다면 정확한 PR·댓글 대상과 선택한 CDP 경로를 재개합니다. 재시작이 필요하다면
+정확한 재개 행동을 반환하고 업로드했다고 주장하지 않습니다. `DevToolsActivePort`
+파일만 신뢰하지 말고 현재 소켓과 브라우저 엔드포인트를 검증합니다.
 
-## Upload and composer protection
+<a id="upload-and-composer-protection"></a>
+## 업로드와 작성창 보호
 
-Use the visible attachment control on the target PR page rather than relying on a
-hidden file input. Poll with a bounded retry count until every `![Uploading ...]()`
-placeholder becomes an actual `user-attachments/assets/...` URL or equivalent image
-element. On timeout, preserve the last visible diagnostic.
+숨겨진 파일 입력에 의존하지 말고 대상 PR 페이지에 보이는 첨부 컨트롤을 사용합니다.
+제한된 횟수로 재시도하며 모든 `![Uploading ...]()`
+자리표시자가 실제 `user-attachments/assets/...` URL이나 동등한 이미지
+요소로 바뀔 때까지 폴링합니다. 시간 초과 시 마지막으로 보이는 진단 정보를 보존합니다.
 
-Inspect the composer before entering anything. A non-empty user draft is a blocker;
-do not overwrite or submit it. After collecting asset URLs, clear only run-owned
-composer content and verify that the text area is empty and the comment button is
-disabled. Do not submit an empty comment to test the upload.
+무엇이든 입력하기 전에 작성창을 확인합니다. 비어 있지 않은 사용자 초안이 있으면 중단합니다.
+덮어쓰거나 제출하지 않습니다. 자산 URL을 수집한 뒤에는 실행 소유 작성창 내용만
+지우고 텍스트 영역이 비었으며 댓글 버튼이 비활성화되었는지
+확인합니다. 업로드를 시험하려고 빈 댓글을 제출하지 않습니다.
 
-## Verification and cleanup
+<a id="verification-and-cleanup"></a>
+## 검증과 정리
 
-After the skill updates the requested body/comment, preserve every generated image token byte-for-byte,
-verify its single occurrence and correct role/caption association, and verify the uploaded
-objects through authenticated image-byte checks and upload-ref reachability. Inspect the rendered PR page only when
-requested or when it is needed to investigate a concrete rendering concern. Do not treat a placeholder, Markdown
-presence, or fixed delay as proof of image bytes. Do not expose JWTs or query strings from signed URLs.
+스킬이 요청된 본문·댓글을 업데이트한 뒤, 생성된 모든 이미지 토큰의 바이트를 그대로 보존하고,
+각 토큰이 한 번만 나타나며 역할·캡션이 올바르게 연결되어 있는지 확인합니다. 인증된 이미지 바이트 검사와
+업로드 ref 도달 가능성 검사로 업로드 객체를 검증합니다. 렌더링된 PR 페이지는 요청받았거나
+구체적인 렌더링 문제를 조사하는 데 필요할 때만 확인합니다. 자리표시자, Markdown의
+존재나 고정 지연을 이미지 바이트의 증거로 취급하지 않습니다. 서명된 URL의 JWT나 쿼리 문자열을 노출하지 않습니다.
 
-Delete only the run-owned staging directory and verify its removal. If cleanup fails,
-report the exact owned path and do not claim `Pass`. After an upload or verification
-failure, do not submit a comment or silently retry through another path.
+실행 소유 staging 디렉터리만 삭제하고 삭제 여부를 확인합니다. 정리에 실패하면
+정확한 소유 경로를 보고하고 `Pass`라고 주장하지 않습니다. 업로드나 검증에
+실패한 뒤에는 댓글을 제출하거나 알리지 않고 다른 경로로 재시도하지 않습니다.
 
-This procedure draws conceptually from
-[`github-upload-image-to-pr`](https://github.com/tonkotsuboy/github-upload-image-to-pr)
-without copying the upstream source.
+이 절차는 upstream 소스를 복사하지 않고
+[`github-upload-image-to-pr`](https://github.com/tonkotsuboy/github-upload-image-to-pr)에서
+개념을 참고했습니다.

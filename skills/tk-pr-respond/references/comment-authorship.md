@@ -1,26 +1,17 @@
-## Comment authorship
+<a id="comment-authorship"></a>
+## 코멘트 작성 주체
 
-Comment authorship is a per-comment property, not an account property. Classify each feedback comment in this order:
+코멘트 작성 주체는 계정 단위가 아니라 코멘트별 속성입니다. 각 피드백 코멘트를 다음 순서로 분류합니다.
 
-1. If its body carries a prefix from `toolAuthoredCommentMarkers` in the repository-scope
-   `$XDG_CONFIG_HOME/tigerkit/pr-triage.json`, classify it as `tool-authored` regardless of account type.
-2. Otherwise, if `user.type == "Bot"` or the login ends with `[bot]`, classify it as `tool-authored`.
-3. Otherwise classify it as `human-authored`.
+1. 본문에 저장소 범위의 `$XDG_CONFIG_HOME/tigerkit/pr-triage.json`에 있는 `toolAuthoredCommentMarkers`의 접두사가 포함되어 있으면 계정 유형과 관계없이 `tool-authored`로 분류합니다.
+2. 그렇지 않고 `user.type == "Bot"`이거나 로그인이 `[bot]`으로 끝나면 `tool-authored`로 분류합니다.
+3. 그 밖에는 `human-authored`로 분류합니다.
 
-With no configured marker, apply only steps 2 and 3. Record that the human classification used no marker evidence;
-never invent a tool marker or infer tool authorship from writing style. A marker is comment-local: the same `User`
-account may have both tool-authored and human-authored comments.
+설정된 마커가 없으면 2단계와 3단계만 적용합니다. 사람이 작성했다고 분류할 때 마커 근거를 사용하지 않았음을 기록합니다. 도구 마커를 만들어 내거나 문체로 도구 작성 여부를 추론하지 않습니다. 마커는 해당 코멘트에만 적용됩니다. 같은 `User` 계정에도 도구가 작성한 코멘트와 사람이 작성한 코멘트가 함께 있을 수 있습니다.
 
-Use this classification only for the user-confirmation boundary before publishing a reply. A tool-authored finding needs
-no extra human-communication confirmation after the exact resolution/publication plan is approved. A human-authored
-finding requires current approval of the reply's exact substance, but the existing one-plan approval satisfies that
-requirement when it already covered that substance; never ask twice for the same decision.
+이 분류는 답글을 발행하기 전 사용자 확인 경계에만 사용합니다. 도구가 작성한 지적은 정확한 해결·발행 계획이 승인된 뒤에는 사람과의 소통에 관한 추가 확인이 필요하지 않습니다. 사람이 작성한 지적에는 답글의 정확한 내용에 대한 현재 승인이 필요하지만, 기존의 단일 계획 승인이 이미 그 내용을 포함했다면 그 승인이 요건을 충족합니다. 같은 결정을 두 번 묻지 않습니다.
 
-Authorship never changes whether a finding must be investigated or addressed. It also never controls re-review targets:
-`CHANGES_REQUESTED`, approval, and review-request capability belong to accounts, so those paths use account identity only.
+작성 주체는 지적을 조사하거나 처리해야 하는지 여부를 바꾸지 않습니다. 재검토 대상도 결정하지 않습니다. `CHANGES_REQUESTED`, 승인, 검토 요청 가능 여부는 계정에 속하므로 이 경로에서는 계정 식별 정보만 사용합니다.
 
-When a reviewer reply or current-head summary must explain a nontrivial architecture, flow,
-dependency or state change, read [GitHub-native PR visuals](../../tk-pr-guidance/references/github-visuals.md). Use
-Mermaid only when it reduces review effort and every relationship is verified; keep exact values
-and compact comparisons in GFM tables.
+검토자 답글이나 현재 head 요약에서 복잡한 아키텍처, 흐름, 의존성 또는 상태 변경을 설명해야 하면 [GitHub 네이티브 PR 시각 자료](../../tk-pr-guidance/references/github-visuals.md)를 읽습니다. Mermaid는 검토 부담을 줄이고 모든 관계가 검증된 경우에만 사용합니다. 정확한 값과 간결한 비교는 GFM 표에 둡니다.
 

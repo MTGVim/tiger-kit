@@ -1,13 +1,6 @@
-# Design choice evidence
+<a id="design-choice-evidence"></a>
+# 설계 선택의 근거
 
-Before presenting a design choice, read the PR body, linked ticket and relevant parent/discussion,
-and the cross-team contracts it depends on. Inspect open counterpart PRs changing that same API:
-use changed file paths as well as keywords, and inspect the bounded open list before claiming none
-exist. State unavailable evidence in one or two lines. Resolve existing edit/copy behavior and a
-proposed document's repository convention, tracking and ignore status before asking about them.
-When the PR body or linked ticket references a precedent or sibling PR for the same change in another
-repository, inspect how it settled the same choice before recommending; cite the evidence and explain
-any deliberate divergence. Limit cross-repository precedent lookup to referenced PRs and same-ticket-family
-PRs within the configured scope; without such a reference, do not search other repositories for precedents.
-An unmerged counterpart change cannot supersede an agreed task requirement: retain that premise,
-disclose the conflict as a verification item, and change the requirement only with user direction.
+설계 선택을 제시하기 전에 PR 본문, 연결된 티켓과 관련 상위 항목/논의, 의존하는 팀 간 계약을 읽습니다. 같은 API를 변경하는 열린 상대편 PR을 조사합니다. 키워드뿐 아니라 변경 파일 경로도 사용하고, 없다고 주장하기 전에 범위가 한정된 열린 목록을 확인합니다. 확보할 수 없는 근거는 한두 줄로 밝힙니다. 기존 편집/복사 동작과 제안 문서에 적용되는 저장소 관례, 추적 및 제외 상태는 질문 전에 확인합니다.
+PR 본문이나 연결된 티켓이 다른 저장소의 같은 변경에 대한 선례나 관련 PR을 참조하면 권고 전에 그 PR이 같은 선택을 어떻게 결정했는지 조사합니다. 근거를 인용하고 의도적으로 다르게 선택한 부분을 설명합니다. 저장소 간 선례 조회는 설정된 범위 안에서 참조된 PR과 같은 티켓 계열 PR로 한정합니다. 그러한 참조가 없으면 다른 저장소에서 선례를 검색하지 않습니다.
+병합되지 않은 상대편 변경은 합의된 작업 요구사항을 대체할 수 없습니다. 해당 전제를 유지하고 충돌을 검증 항목으로 밝히며, 요구사항은 사용자 지시가 있을 때만 변경합니다.

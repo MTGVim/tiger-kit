@@ -11,175 +11,188 @@ metadata:
     upstream-skill: pr
 ---
 
-# Open PR publication
+<a id="open-pr-publication"></a>
+# PR 발행
 
-## Shared References
+<a id="shared-references"></a>
+## 공통 참조
 
-Read branch-triggered criteria from the current installed owners. A missing/mismatched
-owner or resource blocks that action: use `tk-setup-skills`, not memory, another installation
-or unapproved installs. Reading grants no workflow or mutation authority.
+현재 설치된 담당 스킬에서 해당 분기의 조건에 따라 기준을 읽습니다. 소유자나 자원이 없거나 일치하지 않으면
+해당 작업을 중단합니다. 기억, 다른 설치본이나 승인되지 않은 설치 대신 `tk-setup-skills`를 사용합니다.
+참조 읽기는 워크플로 실행이나 변경 권한을 부여하지 않습니다.
 
-- For a user-owned decision, missing approval or unmet prerequisite, read [question rounds](../tk-questioning/references/questions.md).
-- Before a user-facing completion report, artifact-path handoff or multi-attribute chat comparison, read [chat delivery](../tk-writing/references/delivery.md). The task's specific output contract wins.
+- 사용자가 결정해야 할 사항, 누락된 승인이나 충족되지 않은 선행 조건이 있으면 [질문 라운드](../tk-questioning/references/questions.md)를 읽습니다.
+- 사용자에게 완료 보고, 산출물 경로 인계나 여러 속성을 비교하는 대화 응답을 전달하기 전에 [대화 전달](../tk-writing/references/delivery.md)을 읽습니다. 작업별 구체적인 출력 계약이 우선합니다.
 
-## UI Evidence
+<a id="ui-evidence"></a>
+## UI 근거
 
-Keep existing UI literals exact, including language/case/punctuation/spacing, separate from
-proposed copy. Require target/environment/locale/role-matched evidence for each navigation
-label and connection; a title/route/identifier alone proves no entry path. Preserve conflicting provenance.
-Report every required
-unsupported label/hop with available provenance, limitation and smallest missing input; never
-present it as navigation. User-supplied text is not independently observed and resolves only its supported claim.
+기존 UI 리터럴은 언어·대소문자·문장부호·공백까지 정확히 유지하고 제안 문구와
+구분합니다. 각 탐색 라벨과 연결에는 대상·환경·locale·역할이 일치하는 근거를
+요구합니다. 제목·경로·식별자만으로는 진입 경로를 입증할 수 없습니다. 상충하는 출처를 보존합니다.
+필요하지만 뒷받침되지 않은 모든
+라벨·이동 단계에는 확보한 출처, 제한 사항과 최소한의 누락 입력을 보고하며,
+이를 탐색 경로로 제시하지 않습니다. 사용자 제공 텍스트는 독립적인 관찰이 아니며, 뒷받침하는 주장만 해소합니다.
 
-Before collecting/verifying UI evidence within this owner's investigation scope, read
-[UI evidence collection](../tk-ui-evidence/references/ui-evidence.md). Non-UI and propagation-only
-branches skip collection; carry supplied evidence/gaps without starting a new investigation.
+이 담당자의 조사 범위 안에서 UI 근거를 수집·검증하기 전에
+[UI 근거 수집](../tk-ui-evidence/references/ui-evidence.md)을 읽습니다. UI와 무관하거나 전달만 하는
+분기는 수집을 생략하고, 새 조사를 시작하지 않은 채 제공된 근거·공백을 전달합니다.
 
-## Approval Continuity
+<a id="approval-continuity"></a>
+## 승인 연속성
 
-Reuse active same-task approval across turns and child phases (including baseline/after); continue only its authorized
-work through existing owners. Return child/baseline evidence and resume approved owner work;
-a phase status is not completion. Ask only for a new material decision, changed scope/authority
-or missing user-only input. Invocation and recovered artifacts grant no authority. Remote and
-destructive actions need explicit action/target approval, never inferred from local approval.
+같은 작업에 대한 유효한 승인을 턴과 자식 단계(baseline/after 포함) 전반에 재사용하고,
+기존 담당자를 통해 승인된 작업만 계속합니다. 자식·baseline 근거를 반환하고 승인된 담당 작업을 재개합니다.
+단계 상태는 완료를 뜻하지 않습니다. 새로운 중대한 결정, 범위·권한 변경이나 사용자만 제공할 수 있는
+입력이 누락된 경우에만 질문합니다. 호출과 복구된 산출물은 권한을 부여하지 않습니다. 원격 작업과
+파괴적 작업에는 행동·대상에 대한 명시적 승인이 필요하며, 로컬 승인에서 추론하지 않습니다.
 
-Start when the intent to create or update PR publication is explicit, such as `/tk-pr-open`, `$tk-pr-open`, selection through the host skill picker, `현재 브랜치로 PR 열어줘`, or a request to split the already-implemented current branch into reviewable stacked PRs.
+`/tk-pr-open`, `$tk-pr-open`, 호스트 스킬 선택기를 통한 선택, `현재 브랜치로 PR 열어줘` 또는 이미 구현된 현재 브랜치를 리뷰 가능한 stacked PR로 나누라는 요청처럼 PR 발행을 생성하거나 업데이트하려는 의도가 명시적일 때 시작합니다.
 
-The input is an already implemented and verified current-branch `commit`, plus any publication inputs supplied in the
-current interaction. Do not read `.tigerkit/seed.md`, inspect review state or implementation retros, invoke `tk-prep` or
-`tk-review`, or route remediation. Publication does not decide whether implementation review has converged.
+입력은 이미 구현·검증된 현재 브랜치의 `commit`과
+현재 상호작용에서 제공된 발행 입력입니다. `.tigerkit/seed.md`를 읽거나, 리뷰 상태나 구현 회고를 살펴보거나, `tk-prep`이나
+`tk-review`를 호출하거나, 수정 작업으로 연결하지 않습니다. 발행은 구현 리뷰가 수렴했는지 결정하지 않습니다.
 
-Do not repeat implementation, create a `worker`, or add new product changes.
-For an approved retrospective stack, this skill may create publication-only branches and commits that reconstruct the already-verified product tree exactly; those commits must not introduce, omit, or repair product behavior.
+구현을 반복하거나 `worker`를 만들거나 새 제품 변경을 추가하지 않습니다.
+승인된 구현 후 스택 분할에서는 이미 검증된 제품 트리를 정확히 재구성하는 발행 전용 브랜치와 커밋을 만들 수 있습니다. 해당 커밋은 제품 동작을 추가·누락·복구해서는 안 됩니다.
 
-## Current state
+<a id="current-state"></a>
+## 현재 상태
 
-First, verify the following.
+먼저 다음을 확인합니다.
 
-- Repository and authenticated GitHub account
-- Current branch and `HEAD`
-- Base branch
-- Target `commit`, tree, commit range, and changed paths
-- Whether a `PR` already exists for the same `head`, and its `observed draft | ready` state
-- Unrelated dirty/staged paths
-- Target repository's `PR template`
-- Current normative title guidance; only when absent, enough recent merged `PR` titles to establish a convention
+- 저장소와 인증된 GitHub 계정을 확인합니다.
+- 현재 브랜치와 `HEAD`를 확인합니다.
+- base 브랜치를 확인합니다.
+- 대상 `commit`, 트리, 커밋 범위와 변경된 경로를 확인합니다.
+- 같은 `head`의 `PR`이 이미 있는지와 그 `observed draft | ready` 상태를 확인합니다.
+- 무관한 dirty·staged 경로를 확인합니다.
+- 대상 저장소의 `PR template`을 확인합니다.
+- 현재 규범적인 제목 지침을 확인합니다. 지침이 없을 때만 관례를 파악하기에 충분한 수의 최근 merge `PR` 제목을 확인합니다.
 
-If the exact current `commit` cannot be proven or unrelated changes are mixed in, do not broaden scope; return `Blocked`/`Unverifiable`.
+정확한 현재 `commit`을 입증할 수 없거나 무관한 변경이 섞였다면 범위를 넓히지 말고 `Blocked`/`Unverifiable`을 반환합니다.
 
-## Reviewability preflight
+<a id="reviewability-preflight"></a>
+## 리뷰 가능성 사전 점검
 
-Before choosing one `PR`, inspect `base...HEAD` and choose the publication shape:
+단일 `PR`을 선택하기 전에 `base...HEAD`를 살펴보고 발행 형태를 선택합니다.
 
 ```text
 single | stacked
 ```
 
-Do not use a hard LOC threshold. A large diff is only a signal. Prefer `stacked` when the already-verified branch contains two or more independently reviewable concerns that form one coherent linear dependency story, especially when concerns have different reviewer audiences or clear foundation → implementation → integration boundaries.
+엄격한 LOC 기준을 사용하지 않습니다. 큰 diff는 신호일 뿐입니다. 이미 검증된 브랜치에 하나의 일관된 선형 의존 관계를 이루는 독립적으로 리뷰 가능한 관심사가 둘 이상 있다면 `stacked`를 우선합니다. 특히 관심사마다 리뷰어 집단이 다르거나 기반 → 구현 → 통합 경계가 분명한 경우에 해당합니다.
 
-If the handoff already plans multiple PR groups, read [multi-PR delivery safety](../tk-pr-guidance/references/multi-pr-delivery.md) before choosing publication shape. Preserve that grouping and its intermediate-state safety checks; a missing or changed mapping is not permission to invent a new split or publish one combined PR.
+인계에 여러 PR 그룹이 이미 계획되어 있다면 발행 형태를 선택하기 전에 [다중 PR 전달의 안전](../tk-pr-guidance/references/multi-pr-delivery.md)을 읽습니다. 해당 그룹 구성과 중간 상태 안전 검사를 보존합니다. 대응 관계가 없거나 바뀌었다고 새 분할을 만들거나 하나로 합친 PR을 발행할 권한이 생기는 것은 아닙니다.
 
-Generated output, lockfiles, snapshots, vendored artifacts, or mechanical churn do not justify a stack by themselves. Keep one coherent change as `single` even when its raw diff is large.
+생성 출력, lockfile, 스냅샷, vendoring된 산출물이나 기계적 대량 변경만으로 스택이 정당화되지는 않습니다. 원시 diff가 크더라도 일관된 변경 하나는 `single`로 유지합니다.
 
-Retrospective splitting is eligible only for a new publication before a same-`head` PR exists. Do not silently replace or restructure an existing PR with review comments or remote state. If a stack is a credible candidate or the user explicitly requests one, read [retrospective stack split](references/split-to-stack.md) before preparing the publication plan.
+구현 후 분할은 같은 `head`의 PR이 생기기 전 새 발행에만 적격입니다. 리뷰 댓글이나 원격 상태가 있는 기존 PR을 알리지 않고 대체하거나 재구성하지 않습니다. 스택이 타당한 후보이거나 사용자가 명시적으로 요청했다면 발행 계획을 준비하기 전에 [구현 후 스택 분할](references/split-to-stack.md)을 읽습니다.
 
-One invocation owns one coherent publication story: one PR or one linear stack. If unrelated work would require separate stacks or independent PRs, stop instead of hiding that scope expansion inside one publication.
+한 번의 호출은 하나의 일관된 발행 이야기를 담당합니다. PR 하나 또는 선형 스택 하나입니다. 무관한 작업에 별도 스택이나 독립 PR이 필요하다면 그 범위 확대를 하나의 발행 안에 숨기지 말고 중단합니다.
 
-Before interpreting repository behavior or domain meaning, read relevant repository-owned [domain context](../tk-repository-guidance/references/domain-context.md) when it exists.
+저장소 동작이나 도메인 의미를 해석하기 전에 관련된 저장소 소유 [도메인 맥락](../tk-repository-guidance/references/domain-context.md)이 있다면 읽습니다.
 
-## PR title and body
+<a id="pr-title-and-body"></a>
+## PR 제목과 본문
 
-Before drafting or updating a PR title/body, read [PR body preparation](references/pr-body.md). Preserve the applicable default-branch template and normative title guidance, describe the current reviewable concern, and reconcile verified UI and risk/recovery evidence. Required unresolved evidence blocks publication; this publication-only phase grants no new product investigation or mutation authority.
+PR 제목·본문을 작성하거나 업데이트하기 전에 [PR 본문 준비](references/pr-body.md)를 읽습니다. 적용되는 기본 브랜치 템플릿과 규범적인 제목 지침을 보존하고, 현재 리뷰 가능한 관심사를 설명하며, 검증된 UI와 위험·복구 근거를 대조하여 반영합니다. 필요한 근거가 해결되지 않았다면 발행을 중단합니다. 발행만 담당하는 이 단계는 새 제품 조사나 변경 권한을 부여하지 않습니다.
 
-## Evidence
+<a id="evidence"></a>
+## 근거
 
-Use a producer-neutral PR evidence manifest when the current publication input provides one.
+현재 발행 입력에서 제공된다면 생성자와 무관한 PR 근거 manifest를 사용합니다.
 
 ```text
 required | optional | N/A | undecided
 ```
 
-Resolve `undecided` before any remote write; never treat it as `N/A` by default.
-When the active task holds inspected run-owned images that bear on a publication claim but no manifest classifies them,
-list their paths and claim/pair in the approval packet and ask once at the publication checkpoint whether to upload each
-pair or individual image. A template limiting screenshots to UI changes is recommendation input, not a reason to skip
-the question. If sensitive content motivates withholding, offer a bounded crop or redaction of the same inspected image
-alongside "do not upload"; create only the selected derivative, preserve its claim and pair, and re-inspect it before upload.
-An explicit active-task image choice resolves this ambiguity without another question. With no images or image-backed
-claim, use `N/A`. A selected upload authorizes the exact image set through `tk-pr-media` after the owning PR exists;
-carry the criterion, verified route/screen literals, expected behavior and per-image observations
-from the approval preview in that handoff, even without a manifest. Do not start a new investigation.
-Do not fabricate a required manifest for it.
+원격 쓰기 전에 `undecided`를 해소합니다. 기본적으로 `N/A`로 취급하지 않습니다.
+현재 작업에 발행 주장을 뒷받침하는 검사 완료된 실행 소유 이미지가 있지만 이를 분류하는 manifest가 없다면,
+승인 자료에 경로와 주장·쌍을 나열하고 발행 점검 지점에서 각
+쌍이나 개별 이미지를 업로드할지 한 번 질문합니다. 스크린샷을 UI 변경으로 제한하는 템플릿은 권고 자료이며
+질문을 생략할 이유가 아닙니다. 민감한 내용 때문에 보류하려 한다면 “업로드하지 않음”과 함께 같은 검사 완료 이미지의
+범위를 한정한 자르기나 마스킹을 제안합니다. 선택한 파생본만 만들고, 주장과 쌍을 보존하며, 업로드 전에 다시 검사합니다.
+현재 작업에서 이미지를 명시적으로 선택했다면 다시 질문하지 않아도 모호함이 해소됩니다. 이미지나 이미지가 뒷받침하는
+주장이 없다면 `N/A`를 사용합니다. 선택된 업로드는 담당 PR이 존재한 뒤 `tk-pr-media`를 통한 정확한 이미지 집합의 업로드를 허용합니다.
+manifest가 없더라도 승인 미리보기의 기준, 검증된 경로·화면 리터럴, 기대 동작과 이미지별 관찰을
+해당 인계에 전달합니다. 새 조사를 시작하지 않습니다.
+이를 위해 필수 manifest를 만들어 내지 않습니다.
 
-Validate generic fields rather than producer identity: `evidence_required`, `evidence_kind`, `verification_status`,
-criterion, inspected artifact paths, `display_route` or its exact omission limitation, state/region, viewport, comparison,
-and limitations. Do not infer a requirement from visual differences, file names, a Seed, or a known producing skill.
-Before remote publication, stop as `Blocked` when a required entry is missing, not `Pass`, uninspected, or incomplete.
-An optional entry may be omitted; an absent or uninspected artifact is not valid optional evidence.
+생성자 신원이 아니라 범용 필드를 검증합니다. `evidence_required`, `evidence_kind`, `verification_status`,
+기준, 검사 완료된 산출물 경로, `display_route`나 그 정확한 생략 제한 사항, 상태·영역, viewport, 비교와
+제한 사항을 검증합니다. 시각적 차이, 파일명, Seed나 알려진 생성 스킬에서 요구사항을 추론하지 않습니다.
+원격 발행 전에 필수 항목이 없거나, `Pass`가 아니거나, 검사하지 않았거나, 불완전하다면 `Blocked`로 중단합니다.
+선택 항목은 생략할 수 있습니다. 없거나 검사하지 않은 산출물은 유효한 선택적 근거가 아닙니다.
 
-Do not upload actual secret-bearing screenshots or unverified captures.
-If an image is required, pass the exact generic manifest entry to `tk-pr-media` after the owning `PR` exists.
-Publish every valid entry marked `evidence_required: true`; do not downgrade `visual-preservation` because its baseline and
-after are identical or show no unintended difference. Require both labeled roles for that evidence kind.
-Optional motion supplements stay separate from the required image manifest. Carry only selected,
-inspected, run-owned GIF/MP4 artifacts with criteria/head, dimensions/duration, observations and
-sampling warnings to `tk-pr-media`; preserve an existing exact user selection without asking again.
-Generation opt-in alone does not select remote publication. Media failure leaves the independently
-verified application/required screenshot result intact, but explicitly requested media remains incomplete.
-For a stack, attach evidence to the layer that owns the browser-visible acceptance; do not copy the same evidence to unrelated lower layers.
+실제 비밀이 포함된 스크린샷이나 검증되지 않은 캡처를 업로드하지 않습니다.
+이미지가 필수라면 담당 `PR`이 존재한 뒤 정확한 범용 manifest 항목을 `tk-pr-media`에 전달합니다.
+`evidence_required: true`로 표시된 모든 유효한 항목을 발행합니다. baseline과
+after가 같거나 의도하지 않은 차이가 없다는 이유로 `visual-preservation`을 선택 사항으로 낮추지 않습니다. 이 근거 종류에는 두 역할의 라벨을 모두 요구합니다.
+선택적 동작 보충 자료는 필수 이미지 manifest와 분리해 유지합니다. 선택되고
+검사 완료된 실행 소유 GIF·MP4 산출물만 기준·head, 크기·재생 시간, 관찰과
+샘플링 경고와 함께 `tk-pr-media`에 전달합니다. 기존의 정확한 사용자 선택은 다시 질문하지 않고 보존합니다.
+생성에 동의했다는 사실만으로 원격 발행을 선택한 것은 아닙니다. 미디어 실패가 독립적으로
+검증된 애플리케이션·필수 스크린샷 결과를 훼손하지는 않지만 명시적으로 요청된 미디어는 미완료로 남습니다.
+스택에서는 브라우저에서 보이는 수용 조건을 담당하는 계층에 근거를 첨부합니다. 같은 근거를 무관한 하위 계층에 복사하지 않습니다.
 
-## Publication approval packet
+<a id="publication-approval-packet"></a>
+## 발행 승인 자료
 
-Before the publication checkpoint, read [approval packet](references/approval-packet.md). Bind the exact repository, single/stacked shape, operation, draft/ready state, base/head/tree, refspec, title/body, template, evidence and exclusions. Show a concrete rendered preview and retain the full packet; use `.tigerkit/pr-open.md` only under that reference's persistence conditions. New PRs default to ready; preserve an existing PR state unless a change was requested.
+발행 점검 지점 전에 [승인 자료](references/approval-packet.md)를 읽습니다. 정확한 저장소, single/stacked 형태, 작업, draft/ready 상태, base/head/tree, refspec, 제목·본문, 템플릿, 근거와 제외 사항을 연결합니다. 구체적으로 렌더링된 미리보기를 보여주고 전체 자료를 유지합니다. `.tigerkit/pr-open.md`는 해당 참조의 저장 조건을 충족할 때만 사용합니다. 새 PR은 ready가 기본값이며, 변경 요청이 없으면 기존 PR 상태를 보존합니다.
 
-## 🔴 CHECKPOINT · 🛑 STOP · Publication boundary
+<a id="-checkpoint---stop--publication-boundary"></a>
+## 🔴 점검 지점 · 🛑 중단 · 발행 경계
 
-Before any stack reconstruction or remote write, reread the active packet and any required artifact. Reuse explicit active-task publication authorization when repository, source/base, publication shape and PR state are settled. A direct request to open this branch as a single PR authorizes that action when these facts are resolved from the request and repository conventions; drafting its title/body and collecting evidence do not require a second approval. Show the concrete publication result before writing. If state, target or shape remains materially ambiguous, ask once. A stacked reconstruction still requires the exact layer plan; never infer it from a single-PR request.
+스택 재구성이나 원격 쓰기 전에 활성 자료와 필수 산출물을 다시 읽습니다. 저장소, source/base, 발행 형태와 PR 상태가 확정되었다면 현재 작업의 명시적 발행 승인을 재사용합니다. 요청과 저장소 관례에서 이 사실들을 확정할 수 있다면 이 브랜치를 단일 PR로 열라는 직접 요청이 해당 행동을 허용합니다. 제목·본문 작성과 근거 수집에 두 번째 승인은 필요하지 않습니다. 쓰기 전에 구체적인 발행 결과를 보여줍니다. 상태, 대상이나 형태에 중대한 모호함이 남으면 한 번 질문합니다. 스택 재구성에는 여전히 정확한 계층 계획이 필요합니다. 단일 PR 요청에서 추론하지 않습니다.
 
-An unresolved `undecided` evidence state is a material ambiguity: ask once at this checkpoint even for a direct single-PR
-request. Preserve existing publication authorization; wait only for the unresolved evidence choice.
+해결되지 않은 `undecided` 근거 상태는 중대한 모호함입니다. 직접적인 단일 PR 요청이라도
+이 점검 지점에서 한 번 질문합니다. 기존 발행 승인은 보존하고 해결되지 않은 근거 선택만 기다립니다.
 
-For `stacked`, the same approval also authorizes only the exact local publication-history reconstruction in the approved layer plan. It does not authorize product edits, rewriting the source branch, extra layers, or unrelated branch cleanup.
-STOP if the plan, approved `commit`, template/evidence state, stack tooling provenance, or current repository state cannot be reverified.
+`stacked`에서는 같은 승인이 승인된 계층 계획의 정확한 로컬 발행 이력 재구성만 추가로 허용합니다. 제품 수정, 소스 브랜치 재작성, 추가 계층이나 무관한 브랜치 정리는 허용하지 않습니다.
+계획, 승인된 `commit`, 템플릿·근거 상태, 스택 도구 출처나 현재 저장소 상태를 재검증할 수 없으면 중단합니다.
 
-## Publication
+<a id="publication"></a>
+## 발행
 
-After approval, recheck the repository, account, source branch, `HEAD`, base, existing `PR`, template source, and any stack branch-name collisions.
-Invalidate approval when an existing `PR`'s `actual state` materially differs from the approved `plan`.
-Invalidate the approval if any material `drift` exists.
+승인 후 저장소, 계정, 소스 브랜치, `HEAD`, base, 기존 `PR`, 템플릿 출처와 스택 브랜치 이름 충돌 여부를 다시 확인합니다.
+기존 `PR`의 `actual state`가 승인된 `plan`과 중대하게 다르면 승인을 무효화합니다.
+중대한 `drift`가 있으면 승인을 무효화합니다.
 
-Run remote state changes (`push`, PR create/update, `gh pr ready`, `gh pr edit`) in a tool call separate from local cleanup. Record and recheck the remote result independently so a denied cleanup cannot block or obscure the publication result.
+원격 상태 변경(`push`, PR 생성·업데이트, `gh pr ready`, `gh pr edit`)은 로컬 정리와 별도의 도구 호출에서 실행합니다. 정리 거부가 발행 결과를 차단하거나 가리지 않도록 원격 결과를 독립적으로 기록하고 재확인합니다.
 
-For `single`, push only the exact approved `refspec`, and create or update only the specified `PR`.
-For `create`, apply the approved `PR state`; for `update`, change state only when explicitly approved.
+`single`에서는 정확히 승인된 `refspec`만 push하고 지정된 `PR`만 생성하거나 업데이트합니다.
+`create`에서는 승인된 `PR state`를 적용하고, `update`에서는 명시적으로 승인된 경우에만 상태를 바꿉니다.
 
-For `stacked`, follow [retrospective stack split](references/split-to-stack.md). Preserve the source branch, reconstruct only the approved layers beside it, verify every layer and the final tree invariant, then submit the exact chain with verified `github/gh-stack`. Use the approved state for every newly created layer and edit auto-generated PR metadata to the exact approved title/body after submit.
+`stacked`에서는 [구현 후 스택 분할](references/split-to-stack.md)을 따릅니다. 소스 브랜치를 보존하고 그 옆에 승인된 계층만 재구성하며, 모든 계층과 최종 트리 불변 조건을 검증한 뒤 검증된 `github/gh-stack`으로 정확한 사슬을 제출합니다. 새로 생성한 모든 계층에 승인된 상태를 사용하고, 제출 후 자동 생성된 PR 메타데이터를 정확히 승인된 제목·본문으로 수정합니다.
 
-Do not `merge`, `close`, `tag`, `release`, delete the preserved source branch, or clean up unrelated refs.
+`merge`, `close`, `tag`, `release`를 수행하거나 보존된 소스 브랜치를 삭제하거나 무관한 ref를 정리하지 않습니다.
 
-After creating or updating publication, reread the remote state. For `single`, verify its URL, `head SHA`, actual `draft | ready` state, template compliance, and evidence state. For `stacked`, use machine-readable stack state and reread every PR URL, head/base relation, state, exact title/body, template compliance, and evidence state.
-If evidence is required or its upload was explicitly selected, use the image uploader after the owning PR exists.
-If any PR was created but required metadata/evidence or selected image publication fails, preserve the actual remote state
-and report completion as `Blocked` rather than hiding partial publication.
+발행을 생성하거나 업데이트한 뒤 원격 상태를 다시 읽습니다. `single`에서는 URL, `head SHA`, 실제 `draft | ready` 상태, 템플릿 준수와 근거 상태를 검증합니다. `stacked`에서는 기계 판독 스택 상태를 사용하고 모든 PR의 URL, head/base 관계, 상태, 정확한 제목·본문, 템플릿 준수와 근거 상태를 다시 읽습니다.
+근거가 필수이거나 업로드를 명시적으로 선택했다면 담당 PR이 존재한 뒤 이미지 업로더를 사용합니다.
+PR이 하나라도 생성되었지만 필수 메타데이터·근거나 선택된 이미지 발행이 실패했다면 실제 원격 상태를 보존하고
+부분 발행을 숨기지 말고 완료 상태를 `Blocked`로 보고합니다.
 
-## Completion
+<a id="completion"></a>
+## 완료
 
-Show only results important to the user.
+사용자에게 중요한 결과만 보여줍니다.
 
-- `PR` URL, or bottom-to-top stack PR URLs
-- Whether publication was created or updated
-- Current source `head`; for a stack, the preserved source branch and stack tip
-- Current `PR state`
-- Verification/evidence result
-- For a stack, whether stack-tip tree equals the original tree
-- Remaining blockers or partial remote state
+- `PR` URL이나 하위→상위 스택 PR URL을 보여줍니다.
+- 발행을 생성했는지 업데이트했는지 보여줍니다.
+- 현재 소스 `head`를 보여줍니다. 스택이라면 보존된 소스 브랜치와 스택 tip을 보여줍니다.
+- 현재 `PR state`를 보여줍니다.
+- 검증·근거 결과를 보여줍니다.
+- 스택이라면 stack-tip 트리가 원본 트리와 같은지 보여줍니다.
+- 남은 차단 요인이나 부분 원격 상태를 보여줍니다.
 
-Do not show provenance dumps or product implementation receipts.
+출처 전체 덤프나 제품 구현 receipt는 보여주지 않습니다.
 
-## Artifact Paths
+<a id="artifact-paths"></a>
+## 산출물 경로
 
-Before authorized artifact writes, checkout/transport/ignore setup or temporary-input consumption,
-read [artifact paths](../tk-artifacts/references/artifact-paths.md). Use safe owned nonsymlink paths
-and proven Git exclusion for repository scratch; failed checks stop that file branch. Preserve
-explicit final destinations and owner-specific defaults. Prefilled input is not completed input.
-Cleanup targets only recorded literal resolved absolute run-owned paths, never cwd-relative paths or globs.
+승인된 산출물 쓰기, checkout·전송·Git 제외 설정이나 임시 입력 소비 전에
+[산출물 경로](../tk-artifacts/references/artifact-paths.md)를 읽습니다. 저장소 임시 파일에는 안전하고 소유권이 확인된 심볼릭 링크가 아닌 경로와
+입증된 Git 제외를 사용합니다. 검사에 실패하면 해당 파일 분기를 중단합니다. 명시적인 최종 목적지와
+담당자별 기본값을 보존합니다. 미리 채워진 입력은 완료된 입력이 아닙니다.
+정리는 기록된 리터럴 형태의 해석 완료된 실행 소유 절대 경로만 대상으로 하며, cwd 상대 경로나 glob을 사용하지 않습니다.

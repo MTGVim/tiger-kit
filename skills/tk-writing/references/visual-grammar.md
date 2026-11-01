@@ -1,203 +1,212 @@
-# Visual grammar
+<a id="visual-grammar"></a>
+# 시각 표현 문법
 
-Read when a figure may clarify a relationship in an explanation, change walkthrough,
-course or research report. This reference owns representation choice and diagram geometry;
-[HTML output](html-output.md) owns offline rendering, accessibility, navigation, themes and
-render verification. Reuse those contracts without adding a renderer or calling another skill.
+설명, 변경 안내,
+수업이나 조사 보고서에서 그림이 관계를 명확히 할 수 있을 때 읽습니다. 이 참조는 표현 방식 선택과 다이어그램 기하 구조를 담당하며,
+[HTML 출력](html-output.md)은 오프라인 렌더링, 접근성, 탐색, 테마와
+렌더링 검증을 담당합니다. 렌더러를 추가하거나 다른 스킬을 호출하지 않고 이 계약들을 재사용합니다.
 
-## Choose a representation
+<a id="choose-a-representation"></a>
+## 표현 방식 선택
 
-Identify the reader's question and the verified relationship before choosing a visual type.
-Keep prose for a simple fact, condition or conclusion. Prefer a semantic table for dense
-attributes or exact comparisons, with expandable evidence when needed. Use a chart for
-numeric magnitude, trend or distribution; follow HTML output's data-visualization rules.
-Use a diagram when structure, branching or order becomes easier to understand visually.
-Use an interactive figure only when changing an input, state or event teaches a mechanism;
-its complete static explanation must remain available.
+시각 표현 유형을 선택하기 전에 독자의 질문과 검증된 관계를 식별합니다.
+간단한 사실, 조건이나 결론은 본문으로 유지합니다. 속성이 많거나 정확한
+비교에는 의미론적 표를 우선하고, 필요하면 근거를 펼쳐 볼 수 있게 합니다. 수치의
+크기, 추세나 분포에는 차트를 사용하고 HTML 출력의 데이터 시각화 규칙을 따릅니다.
+구조, 분기나 순서를 시각적으로 더 쉽게 이해할 수 있으면 다이어그램을 사용합니다.
+입력, 상태나 이벤트를 바꾸는 것이 작동 원리를 가르칠 때만 상호작용 그림을 사용하며,
+그에 대한 완전한 정적 설명을 계속 제공해야 합니다.
 
-Do not add a figure just for variety or decoration, duplicate prose without reducing
-reasoning effort, or turn an exact numeric comparison into a less precise diagram.
+다양성이나 장식만을 위해 그림을 추가하거나, 추론 부담을 줄이지 않으면서 본문을
+중복하거나, 정확한 수치 비교를 덜 정밀한 다이어그램으로 바꾸지 않습니다.
 
-| Relationship the reader needs | Useful grammar |
+| 독자에게 필요한 관계 | 유용한 문법 |
 | --- | --- |
-| Components and connections in one system | Architecture |
-| Conditions and alternative outcomes | Flowchart |
-| Time-ordered messages between actors | Sequence |
-| States, triggers and guarded transitions | State machine |
-| Data transformations or processing stages | Data flow |
-| Dated events | Timeline |
-| Ownership and handoffs across participants | Swimlane |
-| Parent/child hierarchy | Tree |
-| Prerequisites or dependencies | Dependency graph |
-| Added, removed or rewired system relationships | Architecture delta |
+| 하나의 시스템 안에 있는 구성 요소와 연결 | 아키텍처 |
+| 조건과 대안적 결과 | 순서도 |
+| 행위자 사이에 시간 순서로 오가는 메시지 | 시퀀스 |
+| 상태, 트리거와 guard가 있는 전이 | 상태 머신 |
+| 데이터 변환이나 처리 단계 | 데이터 흐름 |
+| 날짜가 있는 사건 | 타임라인 |
+| 참여자 사이의 소유권과 인계 | 스윔레인 |
+| 부모·자식 계층 | 트리 |
+| 선행 조건이나 의존성 | 의존성 그래프 |
+| 시스템 관계의 추가, 삭제나 재연결 | 아키텍처 변화 |
 
-Use one primary grammar for one question. When two grammars need substantial treatment,
-split an overview and detail rather than mixing their conventions. Preserve source identities,
-edge direction, timing, guards, outcomes and unknown connections; never invent an edge to
-complete the layout. Name the visual's scope so a focused view does not imply full coverage.
+하나의 질문에는 하나의 주된 문법을 사용합니다. 두 문법을 상당히 자세히 다루어야 하면
+관례를 섞지 말고 개요와 상세로 나눕니다. 출처의 식별 정보,
+간선 방향, 시점, guard, 결과와 알 수 없는 연결을 보존합니다. 배치를 완성하려고 간선을
+지어내지 않습니다. 초점을 좁힌 뷰가 전체를 다룬다는 인상을 주지 않도록 시각 자료의 범위를 명시합니다.
 
-## Reader-author exchange
+<a id="reader-author-exchange"></a>
+## 독자와 작성자의 문답
 
-Use a short exchange as one section technique when a realistic reader question makes background,
-intuition, a boundary or a likely misconception easier to follow. Do not ask artificial questions
-merely to restate the next paragraph. Answer directly from verified claims and preserve uncertainty.
-Use the existing HTML output contract for dialogue markup and role-label visibility.
+현실적인 독자 질문이 배경,
+직관, 경계나 흔한 오해를 더 쉽게 이해하도록 도울 때 짧은 문답을 절의 기법으로 사용합니다. 다음 단락을
+되풀이하기만 하는 인위적인 질문은 하지 않습니다. 검증된 주장에서 직접 답하고 불확실성을 보존합니다.
+대화 마크업과 역할 레이블 표시에는 기존 HTML 출력 계약을 사용합니다.
 
-Keep precise artifacts outside the dialogue when they are clearer there: code, file maps, numeric
-comparisons, tables, diagrams, verification outcomes and citations remain structured evidence.
-An exchange may point to those artifacts but must not paraphrase away a material condition. When the
-user asks for simpler wording, reduce prerequisites and sentence complexity in the same document
-while retaining the actual mechanism, technical terms needed for correctness, and the point where an
-analogy stops matching.
+정밀한 산출물을 대화 밖에 두는 편이 더 명확하다면 그대로 유지합니다. 코드, 파일 지도, 수치
+비교, 표, 다이어그램, 검증 결과와 인용은 구조화된 근거로 유지합니다.
+문답은 이 산출물을 가리킬 수 있지만 중요한 조건을 바꾸어 말하다가 없애서는 안 됩니다. 사용자가
+더 쉬운 표현을 요청하면 같은 문서에서 선행 지식과 문장 복잡성을 줄이되,
+실제 작동 원리, 정확성을 위해 필요한 기술 용어와
+비유가 더 이상 일치하지 않는 지점을 유지합니다.
 
-## Plan an evidence-backed visual storyboard
+<a id="plan-an-evidence-backed-visual-storyboard"></a>
+## 근거에 기반한 시각 스토리보드 계획
 
-For a nontrivial document, plan visuals only after establishing the prose claims and their evidence.
-For each candidate figure, write a compact internal storyboard: the reader's specific question,
-the one claim the figure should make easier to understand, the verified entities and links,
-the chosen static visual grammar, and the source location or assumption behind each material
-label, edge, value and transition. This is a planning check, not a required user-facing
-worksheet, file, JSON schema, new approval gate, or separate agent. Omit it for obvious
-single-fact presentations and straightforward semantic tables.
+단순하지 않은 문서는 본문의 주장과 그 근거를 확립한 뒤에만 시각 자료를 계획합니다.
+각 후보 그림에 대해 간결한 내부 스토리보드를 작성합니다. 독자의 구체적인 질문,
+그림이 더 쉽게 이해하도록 도와야 할 하나의 주장, 검증된 개체와 연결,
+선택한 정적 시각 문법, 그리고 중요한 각
+레이블, 간선, 값과 전이의 근거가 되는 출처 위치나 가정을 담습니다. 이것은 계획 점검이며 필수 사용자용
+워크시트, 파일, JSON 스키마, 새 승인 관문이나 별도 에이전트가 아닙니다. 명백한
+단일 사실 표현과 단순한 의미론적 표에서는 생략합니다.
 
-For spatial comparisons, represent every materially distinct layout needed to answer the
-question in labeled views; one shared annotated view suffices when differences stay explicit.
-Match prose actors/names and verify connecting elements. Tables or representative drawings
-cannot replace missing geometry. This is coverage, not a figure quota; nonspatial comparisons
-may remain prose or tables.
+공간 비교에서는 질문에 답하는 데 필요한, 실질적으로 서로 다른 모든 배치를
+레이블이 있는 뷰로 표현합니다. 차이를 명시적으로 유지할 수 있다면 주석이 있는 하나의 공통 뷰로 충분합니다.
+본문의 행위자·이름과 일치시키고 연결 요소를 검증합니다. 표나 대표 그림으로
+누락된 기하 구조를 대체할 수는 없습니다. 이것은 그림 할당량이 아니라 내용 범위에 관한 기준입니다. 공간과 무관한 비교는
+본문이나 표로 유지할 수 있습니다.
 
-For a spatial action choice, show the relevant actors' objectives and starting positions,
-then trace each taught route through the actual layout. Tie alternatives to their conditions;
-separate incompatible scenes when an overlay hides their order or choice. Layout-only views
-suffice for structure identification, not route selection. An optimal-route claim needs a
-supported objective and starting conditions; movement alone does not require animation.
+공간 안에서 동작을 선택하는 경우 관련 행위자의 목표와 시작 위치를 보여 준 다음,
+가르치는 각 경로를 실제 배치 안에서 추적합니다. 대안을 해당 조건에 연결하고,
+겹쳐 놓으면 순서나 선택이 가려지는 양립 불가능한 장면은 분리합니다. 배치만 보여 주는 뷰는
+구조 식별에는 충분하지만 경로 선택에는 충분하지 않습니다. 최적 경로라는 주장에는
+근거가 있는 목표와 시작 조건이 필요합니다. 이동 자체만으로 애니메이션이 필요한 것은 아닙니다.
 
-Choose the view by the cognitive task: compare alternatives side by side, orient a hierarchy
-with a stable spatial map, trace causal order with directed connections, show temporal change
-with shared identities and scales, or explore a stateful mechanism with controlled steps.
-Use one central takeaway per figure and a caption that states what the marks demonstrate,
-including important scope limits. If multiple claims compete for attention, divide the view
-into an overview and one focused detail rather than shrinking everything or producing
-ornamental cards. Do not translate unsupported prose into apparently factual graphics.
+인지 과제에 따라 뷰를 선택합니다. 대안은 나란히 비교하고, 계층은
+안정적인 공간 지도로 방향을 파악하게 하며, 인과 순서는 방향이 있는 연결로 추적하고, 시간에 따른 변화는
+공통 식별 정보와 척도로 보여 주며, 상태가 있는 작동 원리는 제어된 단계로 탐색합니다.
+그림마다 하나의 핵심 요점을 사용하고, 중요한 범위 제한을 포함하여 표시 요소가 무엇을 입증하는지 설명하는
+캡션을 붙입니다. 여러 주장이 주의를 분산시키면 모든 요소를 줄이거나
+장식용 카드를 만들지 말고 뷰를 개요와 하나의 집중된 상세로 나눕니다.
+근거 없는 본문을 사실처럼 보이는 그래픽으로 바꾸지 않습니다.
 
-Before rendering a stepper or interactive sequence, specify each frame's same entity IDs,
-actual state, guard/event, and outgoing transition. Render each frame from those facts, not
-from independently improvised captions or decorative motion. Only introduce progression if
-intermediate states expose a cause that before/after alone hides; start paused, allow backward
-steps and reset, and retain the meaningful static baseline. Follow the calling skill's
-interactive-examples contract when one exists.
+stepper나 상호작용 시퀀스를 렌더링하기 전에 각 프레임에서 유지할 동일한 개체 ID,
+실제 상태, guard·이벤트와 나가는 전이를 명시합니다. 각 프레임은 독립적으로 즉흥 작성한
+캡션이나 장식용 움직임이 아니라 그 사실에서 렌더링합니다. 변경 전후만으로는 드러나지 않는 원인을
+중간 상태가 드러낼 때만 진행을 도입합니다. 일시 정지 상태로 시작하고, 뒤로
+이동과 초기화를 허용하며, 의미 있는 정적 기준 상태를 유지합니다. 호출 스킬에
+interactive-examples 계약이 있으면 따릅니다.
 
-After rendering, audit the storyboard against the actual figure: every arrow, number, label,
-highlight and step must be supported by the cited source or marked illustrative/inferred.
-Inspect whether the reader can answer the original question from the visual plus caption
-without guessing a hidden legend. A visually attractive but ambiguous or unsupported figure
-fails this check. Reuse existing browser/HTML verification rather than creating another
-runtime, image service or verification harness.
+렌더링한 뒤에는 스토리보드를 실제 그림과 대조하여 점검합니다. 모든 화살표, 숫자, 레이블,
+강조와 단계에는 인용한 출처의 뒷받침이 있거나 예시·추론이라는 표시가 있어야 합니다.
+독자가 숨겨진 범례를 추측하지 않고 시각 자료와 캡션에서 원래 질문에 답할 수 있는지
+검사합니다. 시각적으로 매력적이어도 모호하거나 근거가 없는 그림은
+이 점검에 실패합니다. 다른 런타임, 이미지 서비스나 검증 하니스를 만들지 말고
+기존 브라우저·HTML 검증을 재사용합니다.
 
-## Decision evolution versus dated event timeline
+<a id="decision-evolution-versus-dated-event-timeline"></a>
+## 결정 변화와 날짜가 있는 사건 타임라인
 
-A dated event timeline answers what happened and when. A decision-evolution view answers
-which *documented* finding changed an assessment and why. Choose the latter only with
-actual prior and revised judgments on record; final conclusions, file order and publication
-dates alone do not prove an intervening decision. Without that history, use an evidence-to-
-recommendation map or comparison table instead.
+날짜가 있는 사건 타임라인은 무엇이 언제 일어났는지 답합니다. 결정 변화 뷰는
+어떤 *문서화된* 발견이 평가를 바꾸었고 왜 바꾸었는지 답합니다. 실제
+이전 판단과 수정한 판단이 기록되어 있을 때만 후자를 선택합니다. 최종 결론, 파일 순서와 발행
+날짜만으로는 중간에 결정이 있었다는 사실을 입증하지 못합니다. 그 이력이 없으면 대신 근거와
+추천을 연결하는 지도나 비교표를 사용합니다.
 
-For each supported change, retain the previous assessment, newly discovered evidence,
-revised assessment, affected candidate/condition and source link. Label the order as
-recorded decision sequence when calendar times are unavailable; never invent timestamps
-or imply that mere succession establishes causality. Do not show rejected candidates as
-failed experiments when they were never tried. Clearly distinguish facts, inference,
-recommendations and still-open limits. Give each change one concise takeaway and keep
-long source detail available without hiding material caveats.
+근거가 있는 각 변경에 대해 이전 평가, 새로 발견한 근거,
+수정한 평가, 영향을 받는 후보·조건과 출처 링크를 유지합니다. 날짜·시간을 알 수 없으면
+기록된 결정 순서라고 표시합니다. 타임스탬프를 지어내거나
+단순한 선후 관계가 인과 관계를 입증한다는 인상을 주지 않습니다. 시도하지 않은 후보를
+실패한 실험으로 표시하지 않습니다. 사실, 추론,
+추천과 아직 남아 있는 한계를 명확히 구별합니다. 각 변경에는 간결한 요점 하나를 부여하고,
+중요한 주의 사항을 숨기지 않으면서 긴 출처 세부 내용을 볼 수 있게 유지합니다.
 
-In offline HTML, use semantic ordered steps or compact cards before custom SVG. Where
-the relationship cannot be understood without interacting, progressive enhancement
-may reveal source details or toggle verified views, but full conclusions and essential
-evidence remain visible without JS. Prefer a static figure if interaction adds no insight.
-Verify keyboard navigation, narrow-screen reading, source anchors and matching captions
-under the existing HTML contract. Apply `clear-writing.md` to labels and sentences;
-emojis are optional semantic signposts, never the only status cue or a compulsory decoration.
+오프라인 HTML에서는 사용자 정의 SVG보다 의미론적인 순서 있는 단계나 간결한 카드를 먼저 사용합니다.
+상호작용 없이는 관계를 이해할 수 없는 경우, 점진적 향상으로
+출처 세부 내용을 드러내거나 검증된 뷰를 전환할 수 있지만, 완전한 결론과 필수
+근거는 JS 없이도 보여야 합니다. 상호작용이 통찰을 더하지 않으면 정적 그림을 우선합니다.
+기존 HTML 계약에 따라 키보드 탐색, 좁은 화면에서의 읽기, 출처 anchor와 일치하는 캡션을
+검증합니다. 레이블과 문장에는 `clear-writing.md`를 적용합니다.
+이모지는 선택적인 의미 안내 표지이며 유일한 상태 단서나 필수 장식이 되어서는 안 됩니다.
 
-## Card flow for grouped processing
+<a id="card-flow-for-grouped-processing"></a>
+## 묶음 처리를 위한 카드 흐름
 
-Use a vertical card flow when the question is how one input set passes through a central
-process, produces several distinct results, and feeds a verified reuse stage. Keep stage
-order visible and label result groups as simultaneous outputs or alternative choices;
-an alternative needs its condition and must not imply every choice executes. The results
-share a parent stage, not a sequence between neighboring cards. Draw only supported
-input/process/result/reuse relationships; omit an unknown downstream connection rather
-than implying every output feeds it. Name a subset explicitly when only some outputs are reused.
+하나의 입력 집합이 중앙
+처리를 거쳐 여러 개의 구별되는 결과를 만들고 검증된 재사용 단계로 전달되는 방식을 묻는 경우 세로 카드 흐름을 사용합니다.
+단계 순서를 눈에 보이게 유지하고 결과 그룹이 동시 출력인지 대안적 선택인지 표시합니다.
+대안에는 해당 조건이 필요하며 모든 선택이 실행된다는 인상을 주어서는 안 됩니다. 결과는
+인접한 카드 사이의 시퀀스가 아니라 부모 단계를 공유합니다. 근거가 있는
+입력·처리·결과·재사용 관계만 그립니다. 모든 출력이 후속 연결로 전달된다는 인상을 주기보다 알 수 없는 연결을 생략합니다.
+일부 출력만 재사용한다면 그 부분집합을 명시합니다.
 
-Prefer semantic HTML cards for short prose and grouped outcomes; use a flowchart when
-branch guards, cross-links or edge tracing need explicit geometry. Keep a simple statement
-as prose and dense exact comparisons as a table. Do not force this pattern into every
-document or replace prototype/checklist interfaces. [HTML output](html-output.md) owns
-the opt-in markup, shared styles and responsive checks.
+짧은 본문과 묶인 결과에는 의미론적 HTML 카드를 우선합니다. 분기 guard,
+교차 연결이나 간선 추적에 명시적인 기하 구조가 필요하면 순서도를 사용합니다. 간단한 진술은
+본문으로, 조밀하고 정확한 비교는 표로 유지합니다. 이 패턴을 모든
+문서에 강제하거나 prototype·체크리스트 인터페이스를 대체하지 않습니다. [HTML 출력](html-output.md)이
+선택적으로 사용하는 마크업, 공유 스타일과 반응형 점검을 담당합니다.
 
-## Bound complexity without shrinking meaning
+<a id="bound-complexity-without-shrinking-meaning"></a>
+## 의미를 축소하지 않으면서 복잡성 제한
 
-For criteria or diagnostic findings, prefer a compact icon-led list in one container when
-aligned labels and supporting evidence improve scanning. A list is not a flow: do not imply
-sequence or causal edges. Keep ordinary prose/list/table when it conveys the same information
-more clearly. Icons supplement visible wording; never use them as the only criterion or status.
-Use a callout only for a material note, limitation or recommendation, not decoration.
+기준이나 진단 발견 사항에서는 정렬된 레이블과 뒷받침하는 근거가 훑어보기에 도움이 될 때
+하나의 컨테이너 안에 간결한 아이콘 중심 목록을 우선합니다. 목록은 흐름이 아니므로
+순서나 인과 간선이 있다는 인상을 주지 않습니다. 같은 정보를 더 명확하게 전달한다면 일반 본문·목록·표를
+유지합니다. 아이콘은 눈에 보이는 문구를 보충하며 유일한 기준이나 상태로 사용해서는 안 됩니다.
+콜아웃은 중요한 참고 사항, 제한이나 추천에만 사용하고 장식에 사용하지 않습니다.
 
-For a diagnostic overview, pair optional KPI label/value groups with populated finding areas.
-Derive counts from actual inspected records and define units and overlap: analyzed PRs,
-deduplicated candidates and currently solved candidates are different measures. Identify the
-time window and observed, illustrative or partially collected data. A finding connects its
-area, evidence-backed status, judgment, short basis and next action to the existing citation
-contract. Unknown is not solved. Zero findings or missing access needs plain coverage/No change
-text, not fabricated metrics or empty cards. Do not mandate three KPIs, six areas, an icon per
-paragraph, severity colors or a particular skill's report format.
+진단 개요에서는 선택적인 KPI 레이블·값 그룹을 내용이 채워진 발견 영역과 짝지어 배치합니다.
+수치는 실제 검사한 기록에서 도출하고 단위와 중복을 정의합니다. 분석한 PR,
+중복을 제거한 후보와 현재 해결된 후보는 서로 다른 측정값입니다.
+기간과 데이터가 관찰값인지, 예시인지, 부분 수집인지 식별합니다. 발견 사항은 해당
+영역, 근거가 뒷받침하는 상태, 판단, 짧은 이유와 다음 동작을 기존 인용
+계약에 연결합니다. 알 수 없음은 해결됨이 아닙니다. 발견 사항이 없거나 접근 권한이 없으면 지어낸 지표나 빈 카드가 아니라
+범위·No change를 나타내는 평문이 필요합니다. KPI 세 개, 영역 여섯 개, 단락마다 아이콘,
+심각도 색상이나 특정 스킬의 보고서 형식을 의무화하지 않습니다.
 
-Include only relationships needed for the question. Combine elements only when the distinction
-is irrelevant to that question, with the grouping named. If labels, spacing or traceability
-suffer, split overview/detail and keep an explicit mapping between them. Do not solve crowding
-by shrinking text or silently deleting an important relationship. No universal node quota or
-upstream pixel ceiling substitutes for the actual reader and viewport checks.
+질문에 필요한 관계만 포함합니다. 해당 질문에 구별이 중요하지 않을 때만 요소를
+합치고 그룹 이름을 붙입니다. 레이블, 간격이나 추적 가능성이
+나빠지면 개요·상세로 나누고 둘 사이에 명시적인 대응 관계를 유지합니다. 텍스트를 줄이거나
+중요한 관계를 알리지 않고 삭제하여 혼잡을 해결하지 않습니다. 보편적인 노드 할당량이나
+upstream의 픽셀 상한이 실제 독자·뷰포트 점검을 대신할 수는 없습니다.
 
-## Verify geometry and correspondence
+<a id="verify-geometry-and-correspondence"></a>
+## 기하 구조와 대응 관계 검증
 
-Trace every connector from its source to its destination in the final figure. Repair
-overlapping/shared strokes, ambiguous crossings, labels hiding a connection, routes passing
-through unrelated nodes, clipped endpoints and indistinguishable attachment points. Use
-clear routes and enough separation; an orthogonal path is useful when it improves tracing,
-not a mandatory brand style. Label the relationship when direction alone cannot explain it.
-Keep readable labels and use text or shape as well as color for status distinctions.
+최종 그림에서 모든 연결선을 출발점부터 도착점까지 추적합니다.
+겹치거나 공유되는 선, 모호한 교차, 연결을 가리는 레이블, 관련 없는
+노드를 통과하는 경로, 잘린 끝점과 구별할 수 없는 연결 지점을 수정합니다. 명확한
+경로와 충분한 간격을 사용합니다. 직각 경로는 추적에 도움이 될 때 유용하며,
+필수 브랜드 스타일은 아닙니다. 방향만으로 관계를 설명할 수 없으면 레이블을 붙입니다.
+레이블을 읽을 수 있게 유지하고 상태를 구별할 때 색뿐 아니라 텍스트나 모양도 사용합니다.
 
-When a source-supported duration, TTL, distance, or validity window measures one fixed span,
-label that value on or directly beside the measured span and make its endpoints clear. A
-remote legend alone should not require readers to infer which span the value measures.
-Distinguish illustrative values from observed or required values; never invent a measurement.
-Use a table or chart instead when direct labels would obscure precise comparison or crowd
-the drawing. Verify the span and label together at narrow viewports without clipping,
-overlap, or horizontal overflow.
+출처가 뒷받침하는 지속 시간, TTL, 거리나 유효 기간이 하나의 고정된 구간을 측정한다면,
+그 값을 측정 구간 위나 바로 옆에 표시하고 양 끝점을 명확하게 합니다.
+떨어져 있는 범례만 보고 독자가 어느 구간의 측정값인지 추론해야 해서는 안 됩니다.
+예시 값을 관찰값이나 요구값과 구별합니다. 측정값을 절대로 지어내지 않습니다.
+직접 붙인 레이블이 정밀한 비교를 가리거나 그림을 혼잡하게 만들면 대신 표나 차트를
+사용합니다. 좁은 뷰포트에서 구간과 레이블을 함께 검증하여 잘림,
+겹침이나 가로 넘침이 없는지 확인합니다.
 
-For structure changes, keep the same component identities and spatial correspondence in
-Before and After wherever practical. Pair the views with a Changes ledger identifying
-added, removed, changed, moved and rewired elements as applicable. Preserve unchanged context;
-an attribute-only change usually needs a table rather than a topology diagram.
+구조 변경에서는 가능한 한 변경 전과 변경 후에 같은 구성 요소 식별 정보와 공간 대응 관계를
+유지합니다. 해당하는 추가, 삭제, 변경, 이동과 재연결 요소를 식별하는
+변경 목록을 뷰와 함께 제공합니다. 바뀌지 않은 맥락을 보존합니다.
+속성만 바뀐 경우에는 대개 토폴로지 다이어그램보다 표가 필요합니다.
 
-When screen checks are in scope, inspect figures at the required HTML viewports/themes, including the complete
-static form of an interactive figure. A clean page-width measurement does not prove all
-diagram content is reachable: check clipping and any local scroller. Correct geometry
-failures before claiming visual acceptance; report unavailable checks honestly.
+화면 점검이 범위에 포함되면 상호작용 그림의 완전한 정적 형태를 포함하여 필수 HTML 뷰포트·테마에서
+그림을 검사합니다. 페이지 너비 측정에 문제가 없다고 해서 모든
+다이어그램 콘텐츠에 접근할 수 있다는 사실이 입증되지는 않습니다. 잘림과 로컬 스크롤러를 점검합니다.
+시각적 인수를 주장하기 전에 기하 구조 실패를 수정하고, 실행할 수 없는 점검은 정직하게 보고합니다.
 
-## Distillation provenance
+<a id="distillation-provenance"></a>
+## 증류 출처
 
-Reviewed 2026-10-13 at `nicobailon/visual-explainer@1829e4f61ee804dff3651eb9ffdec4dfb779dbfc`
-(MIT): keep only source-supported dimension labels on meaningful spans; adapt to TigerKit's
-existing HTML and viewport checks. Omit every-number-as-picture, figure-first prose,
-numbered callout infrastructure and renderer-specific markup. Upstream runtime and model
-behavior were not rerun in TigerKit.
+2026-10-13에 `nicobailon/visual-explainer@1829e4f61ee804dff3651eb9ffdec4dfb779dbfc`
+(MIT)을 검토했습니다. 의미 있는 구간에 표시한, 출처가 뒷받침하는 치수 레이블만 유지하고 TigerKit의
+기존 HTML·뷰포트 점검에 맞게 조정합니다. 모든 숫자의 그림화, 그림 우선 본문,
+번호가 있는 콜아웃 인프라와 렌더러별 마크업은 제외합니다. upstream 런타임과 모델
+동작은 TigerKit에서 다시 실행하지 않았습니다.
 
-Reviewed 2026-10-07 at `cathrynlavery/diagram-design@d1376371965f513d99cc9ec388835d255c5c88d5`:
-`skills/diagram-design/SKILL.md` and relevant sections of `references/layout-budget.md`,
-`references/semantic-patterns.md`, `references/primitives-core.md` and
-`references/output-spec.md` under that package. Implementation and
-inline rationale were inspected; separate upstream behavior evals and runtime efficacy are
-unverified. Keep question-led representation and traceable geometry; adapt semantic selection,
-overview/detail and architecture deltas to TigerKit's existing HTML contract. Omit upstream
-branding, fonts/palette, onboarding, reference catalog, import/export workflow and renderer.
-Original MIT notice is included in each consuming package's `LICENSE.txt`.
+2026-10-07에 `cathrynlavery/diagram-design@d1376371965f513d99cc9ec388835d255c5c88d5`의
+`skills/diagram-design/SKILL.md`와 해당 패키지에 있는 `references/layout-budget.md`,
+`references/semantic-patterns.md`, `references/primitives-core.md`,
+`references/output-spec.md`의 관련 절을 검토했습니다. 구현과
+인라인 설계 근거는 검사했습니다. 별도의 upstream 동작 평가와 런타임 효능은
+검증하지 않았습니다. 질문 중심 표현 방식과 추적 가능한 기하 구조를 유지하고, 의미론적 선택,
+개요·상세와 아키텍처 변화를 TigerKit의 기존 HTML 계약에 맞게 조정합니다. upstream의
+브랜딩, 글꼴·팔레트, 온보딩, 참조 카탈로그, import/export 워크플로와 렌더러는 제외합니다.
+원본 MIT 고지는 이를 사용하는 각 패키지의 `LICENSE.txt`에 포함되어 있습니다.

@@ -1,74 +1,44 @@
-# Experiment Integrity
+<a id="experiment-integrity"></a>
+# 실험 무결성
 
-Read this only for metric/mechanically evaluated research or consequential noisy results.
-Ordinary qualitative research uses its observable evidence and falsifier without extra metric setup.
+지표 또는 기계적 평가를 사용하는 연구나 중요한 잡음 포함 결과에만 읽습니다. 일반적인 정성 연구는 추가 지표 설정 없이 관찰 가능한 근거와 반증 조건을 사용합니다.
 
-For a small deterministic fixture, prefer one existing or stdlib check and a concise outcome over a new evaluator harness. Create a harness only when it resolves a real reproducibility/evaluation gap. A contract can be a fixed command, input revision/hash and success predicate in the existing record; it needs no separate JSON schema, directory or duplicate narrative. Ordinary source-supported conclusions do not need a mechanical experiment merely to restate the source.
+작은 결정론적 fixture에는 새로운 평가 harness보다 기존 또는 표준 라이브러리 점검 하나와 간결한 결과를 우선합니다. 실제 재현성·평가 공백을 해결할 때만 harness를 만듭니다. 계약은 기존 기록의 고정 명령, 입력 revision·해시와 성공 판정 조건일 수 있으며 별도 JSON 스키마, 디렉터리 또는 중복 설명은 필요하지 않습니다. 일반적인 출처 기반 결론에는 출처를 다시 말하기 위한 기계적 실험이 필요하지 않습니다.
 
-## Protected evaluation contract
+<a id="protected-evaluation-contract"></a>
+## 보호된 평가 계약
 
-Before comparing candidates, reuse an existing evaluation contract or establish the smallest feasible one:
+후보를 비교하기 전에 기존 평가 계약을 재사용하거나 실현 가능한 최소 계약을 수립합니다.
 
-- metric and direction (`maximize`, `minimize` or equivalence), baseline and baseline revision;
-- authoritative evaluation command/evaluator and its version or fingerprint;
-- protected evaluation surface: evaluator, metric computation, fixed inputs/data and split semantics;
-- candidate-editable surface and acceptance criteria;
-- dev/search versus independent acceptance evidence roles, when available.
+- 지표와 방향(`maximize`, `minimize` 또는 동등성), 기준 방식과 기준 revision을 정합니다.
+- 기준이 되는 평가 명령·평가기와 버전 또는 fingerprint를 정합니다.
+- 보호된 평가 영역인 평가기, 지표 계산, 고정 입력·데이터와 분할 의미를 정합니다.
+- 후보가 편집할 수 있는 영역과 수용 기준을 정합니다.
+- 사용 가능하면 개발·탐색 근거와 독립적 수용 근거의 역할을 정합니다.
 
-Keep one contract definition in canonical state or the applicable experiment record, and its verified identity/reference in the other; do not duplicate full definitions or add config keys.
-Check protected surfaces before execution and again before accepting the result, including indirect changes
-through imports, configuration, data selection or command overrides. A better score obtained by changing the
-evaluation contract is invalid improvement evidence and cannot support `KEEP`. Preserve the drift and its
-effect; use `INCONCLUSIVE` or `BLOCKED` when the original contract cannot be evaluated safely, rather than
-claiming the hypothesis was falsified. Restore only run-owned changes when safe.
+정본 상태나 해당 실험 기록에 계약 정의 하나를 유지하고 다른 쪽에는 검증된 식별 정보·참조를 둡니다. 전체 정의를 중복하거나 설정 키를 추가하지 않습니다.
+실행 전과 결과 수용 전에 보호 영역을 점검하며, import, 설정, 데이터 선택 또는 명령 재정의를 통한 간접 변경도 포함합니다. 평가 계약을 바꿔 얻은 더 좋은 점수는 유효하지 않은 개선 근거이며 `KEEP`를 뒷받침할 수 없습니다. 변경과 그 영향을 보존합니다. 원래 계약을 안전하게 평가할 수 없으면 가설이 반증되었다고 주장하지 말고 `INCONCLUSIVE` 또는 `BLOCKED`를 사용합니다. 안전할 때 실행 소유 변경만 복원합니다.
 
-A legitimate evaluator correction is a separate contract revision with a fresh baseline and comparable
-candidate evaluation. Do not silently compare scores across contract versions or credit the correction as
-candidate improvement. Resolve a new user-owned material criterion through the existing question boundary;
-routine research setup inside current authority needs no additional approval.
+정당한 평가기 수정은 새 기준 결과와 비교 가능한 후보 평가를 갖춘 별도 계약 revision입니다. 계약 버전 간 점수를 조용히 비교하거나 수정을 후보 개선으로 인정하지 않습니다. 사용자가 결정해야 할 새로운 중요 기준은 기존 질문 경계에서 해결합니다. 현재 권한 안의 일반 연구 설정에는 추가 승인이 필요하지 않습니다.
 
-## Search and acceptance evidence
+<a id="search-and-acceptance-evidence"></a>
+## 탐색 근거와 수용 근거
 
-When an independent held-out/acceptance signal already exists or can reasonably be created within current
-authority, iterate on dev evidence and fix the candidate before checking independent acceptance for a
-direction adoption or consequential conclusion. Apply the recorded acceptance criterion; a dev gain that
-fails it cannot establish `KEEP`. Investigate noise, overfitting or split mismatch without tuning to the
-held-out cases or moving the threshold to admit that candidate.
+독립적인 보류·수용 신호가 이미 있거나 현재 권한 안에서 합리적으로 만들 수 있으면 개발 근거로 반복하고 후보를 고정한 후, 방향 채택이나 중요한 결론을 위해 독립 수용 여부를 확인합니다. 기록된 수용 기준을 적용합니다. 이를 충족하지 못하는 개발상 개선은 `KEEP`를 성립시킬 수 없습니다. 보류 사례에 맞춰 조정하거나 해당 후보를 통과시키려고 임계값을 옮기지 않고 잡음, 과적합 또는 분할 불일치를 조사합니다.
 
-Do not repeatedly inspect test/held-out results to steer search. Record any exposure or adaptive reuse
-that compromises independence; restore an unexposed acceptance signal when feasible, otherwise state the
-limitation and lower the conclusion's strength. Do not relabel a used search signal as held-out evidence.
-If separate acceptance evidence is unavailable or unreasonable to create, continue research and report
-that limitation in the finding/final synthesis. Do not require a fixed number of splits or a benchmark
-scaffold for all research, and do not invent validation evidence.
+탐색 방향을 정하려고 테스트·보류 결과를 반복해서 확인하지 않습니다. 독립성을 훼손하는 노출이나 적응적 재사용을 기록합니다. 가능하면 노출되지 않은 수용 신호를 복원하고, 그렇지 않으면 한계를 명시하고 결론의 강도를 낮춥니다. 사용한 탐색 신호를 보류 근거로 다시 표시하지 않습니다.
+별도 수용 근거를 사용할 수 없거나 만드는 것이 합리적이지 않으면 연구를 계속하고 발견·최종 종합에 한계를 보고합니다. 모든 연구에 고정 분할 수나 benchmark 기반 구조를 요구하지 않으며 검증 근거를 만들어 내지 않습니다.
 
-## Cost-aware measurement order
+<a id="cost-aware-measurement-order"></a>
+## 비용을 고려한 측정 순서
 
-Start candidate exploration with the cheapest valid smoke/probe under the protected evaluation
-contract. Stop clear, consistent inferiority without spending the full benchmark; a smoke failure
-establishes only the check it actually exercised. Escalate independent samples/runs selectively
-when evidence is promising or borderline. Choose measurement strength by cost, variability,
-effect size and decision importance, not a fixed count or futility threshold.
+보호된 평가 계약 안에서 가장 저렴한 유효 smoke/probe로 후보 탐색을 시작합니다. 명확하고 일관되게 열등하면 전체 benchmark에 비용을 쓰지 않고 중단합니다. smoke 실패는 실제로 실행한 점검만 입증합니다. 근거가 유망하거나 경계에 있을 때 독립 표본·실행을 선택적으로 늘립니다. 고정 횟수나 무익성 임계값이 아니라 비용, 변동성, 효과 크기와 결정의 중요성으로 측정 강도를 정합니다.
 
-Before a metric-based `KEEP`, confirm the fixed candidate more strongly than its exploratory
-probe against the same comparable baseline and acceptance criterion; use independent acceptance
-evidence when available under the rules above. A noisy single win cannot skip confirmation.
-For a deterministic decisive result, use an existing acceptance check or broader relevant check
-when informative, rather than repeating identical output. Once the evidence is sufficient,
-stop: neither clear early rejection nor deterministic confirmation needs ceremonial repetition.
-If useful confirmation is unavailable or unaffordable, qualify the result as `INCONCLUSIVE` or
-`BLOCKED`, not confirmed `KEEP` or falsification. Preserve the measurement limit and outcomes
-in the existing experiment record; add no schema, benchmark scaffold or quota.
+지표 기반 `KEEP` 전에 고정 후보를 같은 비교 가능한 기준 방식과 수용 기준에 대해 탐색 probe보다 더 강하게 확인합니다. 위 규칙에 따라 독립 수용 근거를 사용할 수 있으면 사용합니다. 잡음이 있는 단 한 번의 승리로 확인을 건너뛸 수는 없습니다. 결정론적으로 결정적인 결과에는 동일한 출력을 반복하기보다 유익한 경우 기존 수용 점검이나 더 넓은 관련 점검을 사용합니다. 근거가 충분하면 멈춥니다. 명확한 조기 기각과 결정론적 확인 모두 의례적인 반복이 필요하지 않습니다. 유용한 확인을 할 수 없거나 비용을 감당할 수 없으면 결과를 `INCONCLUSIVE` 또는 `BLOCKED`로 한정하고, 확정된 `KEEP`나 반증으로 처리하지 않습니다. 기존 실험 기록에 측정 한계와 결과를 보존하고 스키마, benchmark 기반 구조나 할당량을 추가하지 않습니다.
 
-## Decision-critical noise and replication
+<a id="decision-critical-noise-and-replication"></a>
+## 결정에 중요한 잡음과 재현
 
-When meaningful stochasticity/noise could change an important `KEEP`, direction adoption/rejection,
-program conclusion or downstream implementation decision, assess independent repetition before relying
-on one result. Choose repetitions by variability, cost and decision importance; use fresh runs/seeds or
-independent samples when appropriate. Preserve all comparable outcomes and uncertainty rather than
-selecting the luckiest run. Re-reading the same output is not replication.
+의미 있는 확률성·잡음이 중요한 `KEEP`, 방향 채택·기각, 연구 프로그램 결론 또는 후속 구현 결정을 바꿀 수 있으면 결과 하나에 의존하기 전에 독립 반복을 검토합니다. 변동성, 비용과 결정 중요도에 따라 반복을 정하고 적절하면 새로운 실행·seed 또는 독립 표본을 사용합니다. 가장 운 좋은 실행을 고르는 대신 비교 가능한 모든 결과와 불확실성을 보존합니다. 같은 출력을 다시 읽는 것은 재현이 아닙니다.
 
-Deterministic results and repetitions with negligible information value need no ceremonial rerun.
-If consequential uncertainty remains and useful repetition is unaffordable or unavailable, retain a
-qualified/inconclusive finding or blocker with the replication limit; do not promote an unstable best
-score into a confident accepted direction. Replication never widens authority or installs a fixed seed quota.
+결정론적 결과와 정보 가치가 미미한 반복에는 의례적인 재실행이 필요하지 않습니다. 중요한 불확실성이 남고 유용한 반복을 할 수 없거나 비용을 감당할 수 없으면 반복 한계와 함께 한정적·불확정 발견 또는 차단 요인을 유지합니다. 불안정한 최고 점수를 확신에 찬 수용 방향으로 격상하지 않습니다. 재현은 권한을 확대하거나 고정 seed 할당량을 도입하지 않습니다.

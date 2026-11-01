@@ -1,27 +1,22 @@
-# Skill placement rubric
+<a id="skill-placement-rubric"></a>
+# 스킬 배치 기준
 
-Apply this rubric only when a candidate is reusable and repository-specific. Evaluate
-one independently applicable skill instruction or workflow at a time.
+후보가 재사용 가능하고 저장소에 특화된 경우에만 이 기준을 적용합니다. 독립적으로 적용할 수 있는 스킬 지침이나 workflow를 한 번에 하나씩 평가합니다.
 
-## Normalized evidence
+<a id="normalized-evidence"></a>
+## 정규화한 근거
 
-Record the candidate text, verified skill source path, host, ownership evidence, and
-exact proposed native skill target. Do not inspect or classify repository/user rule
-paths.
+후보 텍스트, 검증된 스킬 출처 경로, 호스트, 소유권 근거와 정확히 제안하는 네이티브 스킬 대상을 기록합니다. 저장소·사용자 규칙 경로를 조사하거나 분류하지 않습니다.
 
-Normalize Unicode and compare English case-insensitively. Treat a skill target as valid
-only when the exact host-native path and ownership are verified.
+Unicode를 정규화하고 영어는 대소문자를 구분하지 않고 비교합니다. 정확한 호스트 네이티브 경로와 소유권이 검증된 경우에만 스킬 대상을 유효한 것으로 취급합니다.
 
-## Ordered decision table
+<a id="ordered-decision-table"></a>
+## 순서가 있는 결정 표
 
-Stop at the first match.
+처음 일치하는 항목에서 멈춥니다.
 
-1. A verified tracked repository skill keeps its repository-native target.
-2. A verified host-owned user skill keeps its user-native target.
-3. Missing or conflicting path/ownership evidence is `Unverifiable`.
+1. 검증된 추적 대상 저장소 스킬은 저장소 네이티브 대상을 유지합니다.
+2. 검증된 호스트 소유 사용자 스킬은 사용자 네이티브 대상을 유지합니다.
+3. 경로·소유권 근거가 없거나 충돌하면 `Unverifiable`입니다.
 
-Use only an existing current-host native skill path or one allowed by current-host
-discovery. Identify the current host from evidence. If it cannot be identified, do not
-invent a target; route to a caller-specific `Partial/Blocked` or `Unverifiable` path.
-Do not copy one host's path convention to another, fan out across hosts, synchronize
-targets, or create TigerKit global state.
+현재 호스트의 기존 네이티브 스킬 경로 또는 현재 호스트 탐색에서 허용한 경로만 사용합니다. 근거로 현재 호스트를 식별합니다. 식별할 수 없으면 대상을 만들어 내지 말고 호출자별 `Partial/Blocked` 또는 `Unverifiable` 경로로 처리합니다. 한 호스트의 경로 관례를 다른 호스트에 복사하거나, 여러 호스트로 확장하거나, 대상을 동기화하거나, TigerKit 전역 상태를 만들지 않습니다.

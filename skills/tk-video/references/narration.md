@@ -1,60 +1,52 @@
-# Selected Narration Alignment
+<a id="selected-narration-alignment"></a>
+# 선택한 내레이션 정렬
 
-`tk-tts` owns local synthesis, model/runtime pins, installation/cache and audio inspection.
-Invoke it after the creator has selected TTS; pass resolved parent voice/engine decisions and
-pronunciation-corrected script without asking again. Resolve voice per field from current
-explicit request, repository personal preference, user settings, team settings, then sohee.
-A voice preference never selects narration itself. Use ordinary returned WAV paths and measured
-durations; do not import sibling Python or install a second engine in tk-video. Supplied
-sufficient original narration can be reused. Keep captions faithful to original UI literals.
+`tk-tts`는 로컬 합성, 모델/런타임 고정, 설치/캐시와 오디오 검사를 담당합니다.
+제작자가 TTS를 선택한 뒤 호출하고, 이미 결정한 상위 작업의 음성/엔진과 발음 교정을 마친 원고를 다시 묻지 않고 전달합니다.
+음성의 각 필드는 현재 명시적 요청, 저장소 개인 선호, 사용자 설정, 팀 설정, sohee 순으로 결정합니다.
+음성 선호만으로 내레이션 자체를 선택하지 않습니다. 반환된 일반 WAV 경로와 측정한 길이를 사용합니다.
+tk-video에서 형제 패키지의 Python을 가져오거나 두 번째 엔진을 설치하지 않습니다. 제공된 원본 내레이션이 충분하면 재사용할 수 있습니다.
+자막은 원본 UI literal에 충실하게 유지합니다.
 
-Retain human_action: listen with actual sample paths and terms/numbers/endings to check until
-heard. Decode and non-silence are not pronunciation proof. Do not add ASR, automatic engine
-fallback or browser speech as an exported-audio route. No-narration MP4/GIF remains usable
-without tk-tts or inference dependencies. Installation/download authority stays with tk-tts.
+실제로 들을 때까지 human_action: listen을 유지하고, 실제 샘플 경로와 확인할 용어/숫자/어미를 함께 남깁니다.
+디코딩 성공과 무음이 아니라는 사실은 발음의 증거가 아닙니다. 내보낼 오디오 경로에 ASR, 자동 엔진 대체나 브라우저 음성을 추가하지 않습니다.
+내레이션 없는 MP4/GIF는 tk-tts나 추론 의존성 없이도 사용할 수 있어야 합니다. 설치/다운로드 권한은 tk-tts에 남습니다.
 
-## Fit narration to scenes
+<a id="fit-narration-to-scenes"></a>
+## 내레이션을 장면에 맞추기
 
-For `explainer`, attach frame `audio_path`; measured speech determines presentation holds.
-For `evidence`, retain actual timestamps. When an authorized non-mutating scenario is too short,
-synthesize each scene first and measure the trimmed WAV. Give the capture owner minimum scene
-holds of measured duration plus a small pause; recapture the same scenario and receive its actual
-scene starts, final end and final-state facts. Mark deliberate narration-paced waits explicitly;
-they are not application latency evidence. Do not stretch old captures or rerun mutating flows.
-If safe recapture is unavailable, keep captions and disclose omitted/undelivered narration; do not
-silently claim that an explicitly selected voice was delivered.
+`explainer`에서는 프레임의 `audio_path`를 연결하고, 측정한 발화 길이에 따라 화면 유지 시간을 정합니다.
+`evidence`에서는 실제 타임스탬프를 유지합니다. 승인된 비변경 시나리오가 너무 짧으면 각 장면을 먼저 합성하고 앞뒤를 정리한 WAV를 측정합니다.
+캡처 담당자에게 측정한 길이에 짧은 쉼을 더한 최소 장면 유지 시간을 전달합니다. 같은 시나리오를 다시 캡처하고 실제 장면 시작, 최종 종료와 최종 상태 사실을 받습니다.
+내레이션 속도에 맞추기 위해 의도적으로 기다린 구간은 명시적으로 표시합니다. 이러한 구간은 애플리케이션 지연의 근거가 아닙니다.
+기존 캡처를 늘리거나 상태를 변경하는 흐름을 다시 실행하지 않습니다.
+안전하게 다시 캡처할 수 없으면 자막을 유지하고 생략했거나 전달하지 못한 내레이션을 공개합니다. 명시적으로 선택한 음성을 전달했다고 조용히 주장하지 않습니다.
 
-Pass `scenes: [{start_ms, audio_path}]` in the evidence manifest, using observed scene boundaries,
-or an already prepared whole track with `--audio`. The assembler places scene WAVs and silence
-without shell-authored filter graphs; clips cannot overlap the next scene or movie end. Never mix
-scene audio with a full track, truncate speech or guess duration from character count.
+관찰한 장면 경계를 사용하여 evidence manifest에 `scenes: [{start_ms, audio_path}]`를 전달하거나, 이미 준비한 전체 트랙을 `--audio`로 전달합니다.
+조립기는 셸에서 작성한 필터 그래프 없이 장면 WAV와 무음을 배치합니다. 클립은 다음 장면이나 영상 끝과 겹칠 수 없습니다.
+장면 오디오와 전체 트랙을 섞거나, 발화를 잘라내거나, 글자 수로 길이를 추정하지 않습니다.
 
-For narrated evidence, plan sentence-level beats with start/end and `cue_targets` in the
-capture handoff. At each beat start clear previous marks and show only the targets named in
-that sentence. Match explicit quantities to all corresponding targets; state separate group
-counts and distinguish groups with colors and labels. Preserve UI labels verbatim, separate
-from narration. For disappearance, mark the target before the action and show a hidden/deleted
-badge at its prior location only after runtime confirms the state. Verify counts and target
-visibility at the beat end; record the evidence and any unresolved mismatch.
+내레이션이 있는 evidence에서는 캡처 인계에 시작/종료와 `cue_targets`를 포함하여 문장 단위 구간을 계획합니다.
+각 구간 시작 시 이전 표시를 지우고 해당 문장에서 지칭한 대상만 표시합니다.
+명시한 수량은 해당하는 모든 대상과 일치시킵니다. 그룹별 개수를 따로 말하고 색과 레이블로 그룹을 구별합니다.
+UI 레이블은 내레이션과 분리하여 원문 그대로 보존합니다. 사라지는 대상은 동작 전에 표시하고, 런타임이 상태를 확인한 뒤에만 이전 위치에 숨김/삭제 배지를 표시합니다.
+구간 끝에서 개수와 대상 가시성을 검증하고, 근거와 해결하지 못한 불일치를 기록합니다.
 
-When selected, put short callouts beside the cue at that beat, using measured source-frame
-coordinates and observed times from the capture handoff. Add facts the narration omits (item
-names or the condition/result relationship); avoid repeating the caption sentence. Keep callouts
-clear of targets. Pass all simultaneously named rectangles together for zoom planning, including
-groups in different parts of the screen; never start a zoom before the targets actually appear.
-See [assembly](assembly.md) for optional presentation fields and collision checks.
+콜아웃을 선택한 경우, 캡처 인계에서 받은 측정된 원본 프레임 좌표와 관찰 시간을 사용하여 해당 구간의 큐 옆에 짧은 콜아웃을 둡니다.
+내레이션이 생략한 사실(항목 이름 또는 조건과 결과의 관계)을 추가하고 자막 문장을 반복하지 않습니다. 콜아웃이 대상을 가리지 않도록 합니다.
+서로 다른 화면 영역에 있는 그룹을 포함하여 동시에 지칭한 모든 사각형을 함께 전달해 줌을 계획합니다. 대상이 실제로 나타나기 전에 줌을 시작하지 않습니다.
+선택적 프레젠테이션 필드와 충돌 검사는 [조립](assembly.md)을 참조합니다.
 
-## Teaching handoff
+<a id="teaching-handoff"></a>
+## 교육 작업 인계
 
-For continuous `animation`, keep the measured render timeline. Reuse `scenes` offsets or a full
-WAV only when no embedded audio exists; ambiguous mixed audio fails instead of silently replacing
-the render's sound. Prepare screen/caption literals separately from pronunciation-corrected
-spoken text, preserving numeric values and technical identity. A script review is not listening.
-If speech exceeds a scene, re-author/rerender that scene; never stretch the video or truncate audio.
+연속 `animation`에서는 측정한 렌더링 타임라인을 유지합니다.
+내장 오디오가 없을 때만 `scenes` 오프셋이나 전체 WAV를 재사용합니다. 혼합 오디오가 모호하면 렌더링의 소리를 조용히 교체하지 않고 실패로 처리합니다.
+화면/자막 literal과 발음을 교정한 발화 텍스트를 따로 준비하되 숫자 값과 기술적 정체성을 보존합니다. 원고 검토는 청취가 아닙니다.
+발화가 장면 길이를 초과하면 해당 장면을 다시 작성/렌더링합니다. 영상을 늘리거나 오디오를 잘라내지 않습니다.
 
-When a teaching caller supplies a sequence, retain its accepted scene point, observed start
-state, action/change, deciding visual and explanation. Reuse its already-refined script and
-settled audio choice. Missing causal steps return to the teaching author before assembly; a
-contact sheet, codec check or subtitle coverage does not validate the explanation. Browser Web
-Speech API playback does not provide a file track: a narrated movie requires supplied or
-synthesized file audio under the parent's resolved choice. Do not silently synthesize it.
+교육 작업 호출자가 시퀀스를 제공하면, 수락한 장면 요점, 관찰한 시작 상태, 동작/변화, 판단을 결정하는 시각 자료와 설명을 유지합니다.
+이미 다듬은 원고와 확정한 오디오 선택을 재사용합니다.
+인과 단계가 빠졌으면 조립 전에 교육 자료 작성자에게 돌려보냅니다. 콘택트 시트, 코덱 검사나 자막 범위만으로 설명을 검증할 수 없습니다.
+브라우저 Web Speech API 재생은 파일 트랙을 제공하지 않습니다. 내레이션 영상에는 상위 작업에서 결정한 선택에 따라 제공하거나 합성한 파일 오디오가 필요합니다.
+이를 조용히 합성하지 않습니다.

@@ -1,8 +1,9 @@
-# Video display copies
+<a id="video-display-copies"></a>
+# 동영상 표시용 사본
 
-Use an installed local encoder to make new MP4 or WebM files. Strip container metadata;
-match canvas, codec, frame-rate policy and audio treatment across candidates when those are
-not comparison variables. Preserve source timing/content when it is under test. Remove visible
-producer titles/watermarks and browser chrome only when consistent with the question. Decode and
-play every copy, checking duration, first/last frames and audio. Disclose conversion losses and
-residual cues. A failed conversion stays a failed output with its private original diagnostic.
+설치된 로컬 인코더로 새 MP4 또는 WebM 파일을 만듭니다. 컨테이너 메타데이터를 제거하고,
+캔버스, 코덱, 프레임 속도 정책과 오디오 처리가 비교 변수가 아니라면 후보 간에 일치시킵니다.
+원본의 타이밍이나 콘텐츠가 시험 대상이면 이를 보존합니다. 눈에 보이는 제작자 제목·워터마크와 브라우저
+chrome은 비교 질문에 부합할 때만 제거합니다. 모든 사본을 디코딩하고 재생하여 재생 시간,
+첫 프레임과 마지막 프레임, 오디오를 확인합니다. 변환 손실과 남아 있는 식별 단서를 공개합니다.
+변환에 실패한 출력은 실패 상태로 유지하며, 원래 진단 정보는 비공개로 보존합니다.

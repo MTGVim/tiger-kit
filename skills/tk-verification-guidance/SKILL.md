@@ -10,22 +10,17 @@ metadata:
     role: reference
 ---
 
-# Shared Verification Guidance
+<a id="shared-verification-guidance"></a>
+# 공통 검증 지침
 
-Read only references whose conditions below hold; return criteria and gaps to the caller,
-which retains scope, approvals and completion. References invoke no workflow and grant no
-installation, mutation, secret, Git or publication authority.
+아래 조건이 성립하는 참조만 읽고 기준과 공백을 호출자에게 반환합니다. 호출자는 범위, 승인과 완료에 대한 책임을 유지합니다. 참조는 워크플로를 호출하지 않으며 설치, 변경, 비밀, Git 또는 발행 권한을 부여하지 않습니다.
 
-Resolve owners in the current installed skill collection (`dependencies.json`), not memory,
-another installation, hardcoded homes or a source-checkout fallback. A missing/mismatched
-owner or resource blocks the affected action: guide to `tk-setup-skills`, never silently install.
-[Provider registry](references/providers.json) and [preference helper](scripts/verify_preferences.py)
-are owned here. `<tk-verification-guidance>` in commands is this current installed package path.
-The helper reads/saves only caller-authorized preferences; it never selects or launches a workflow.
+소유 스킬은 기억, 다른 설치본, 하드코딩한 홈이나 소스 checkout fallback이 아니라 현재 설치된 스킬 모음(`dependencies.json`)에서 확인합니다. 소유 스킬이나 자원이 없거나 식별이 다르면 해당 행동을 중단합니다. `tk-setup-skills`를 안내하며 몰래 설치하지 않습니다. [제공자 registry](references/providers.json)와 [선호 설정 도우미](scripts/verify_preferences.py)는 이 패키지가 소유합니다. 명령의 `<tk-verification-guidance>`는 현재 설치된 이 패키지의 경로입니다. 도우미는 호출자가 승인한 선호 설정만 읽고/저장하며 워크플로를 선택하거나 시작하지 않습니다.
 
-## Conditional references
+<a id="conditional-references"></a>
+## 조건부 참조
 
-- [provider knowledge](references/provider-knowledge.md): the caller requires selected-provider integration knowledge before discovery/interaction, or a diagnosed and reverified provider limitation may need a bounded troubleshooting note.
-- [provider selection](references/provider-selection.md): selecting a verification provider or interpreting its supported preferences.
-- [publication evidence](references/publication-evidence.md): preparing verification evidence for an authorized publication owner.
-- [verification](references/verification.md): establishing verification scope, evidence and result status.
+- [제공자 지식](references/provider-knowledge.md): 호출자가 탐색/상호작용 전에 선택된 제공자의 통합 지식을 필요로 하거나, 진단 후 재검증된 제공자 한계에 제한적인 문제 해결 메모가 필요할 수 있을 때 읽습니다.
+- [제공자 선택](references/provider-selection.md): 검증 제공자를 선택하거나 지원되는 선호 설정을 해석할 때 읽습니다.
+- [발행 근거](references/publication-evidence.md): 승인된 발행 담당자에게 전달할 검증 근거를 준비할 때 읽습니다.
+- [검증](references/verification.md): 검증 범위, 근거와 결과 상태를 정할 때 읽습니다.

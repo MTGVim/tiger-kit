@@ -1,78 +1,67 @@
-# Reader Presentation
+<a id="reader-presentation"></a>
+# 독자용 표현
 
-Apply these navigation and geometry rules only to shared-reader document portions selected by
-the owning workflow. Explanation/research pages follow their renderer contract, not this legacy
-shell; neither selected archify nor independently authored technique HTML inherits this builder.
+담당 워크플로가 선택한 공통 reader 문서 부분에만 이 탐색과 기하 구조 규칙을 적용합니다.
+설명/조사 페이지는 이 기존 셸이 아닌 자체 렌더러 계약을 따릅니다. 선택한 archify와 독립적으로 작성한 기법 HTML 어느 쪽에도 이 빌더가 적용되지 않습니다.
 
-## Document navigation
+<a id="document-navigation"></a>
+## 문서 탐색
 
-For long document-like artifacts, preserve meaningful stable `<section id="...">` elements and
-native hash links for deep access, browser history and Find. Put the hierarchical table of contents
-in a fixed left rail on desktop, with a separate lower-right top/bottom control. On narrow screens,
-collapse the table of contents into a native disclosure at the lower left; keep the top/bottom
-control at the lower right. A document with at most three section elements may omit both
-navigators only when they add no value. A document with four or more sections includes both
-navigators; never omit only one. Use the
-shared `.ht-document`, `.ht-doc-content`, `.ht-doc-nav`, `.ht-doc-toc` and `.ht-doc-controls`
-styles in the theme assets. The left rail and mobile disclosure must work without JavaScript.
-Use the target heading's full text in each TOC link. Shorten an overlong heading itself,
-or put a short label above the full heading in a `<small>` line inside the same link.
-For selected shared-reader documents, use [document assembly](html-assembly.md) to insert `tk-writing`'s
-[document shell](../assets/document-shell.html); specialized interfaces retain their generators.
+긴 문서형 산출물에서는 심층 접근, 브라우저 이력과 찾기를 위해 의미 있고 안정적인 `<section id="...">` 요소와 네이티브 해시 링크를 보존합니다.
+데스크톱에서는 계층형 목차를 고정 왼쪽 레일에 두고 오른쪽 아래에 별도의 맨 위/아래 제어를 둡니다.
+좁은 화면에서는 목차를 왼쪽 아래의 네이티브 접기 요소로 접고, 맨 위/아래 제어는 오른쪽 아래에 유지합니다.
+섹션 요소가 세 개 이하인 문서는 두 탐색기가 가치를 더하지 않을 때만 둘 다 생략할 수 있습니다.
+섹션이 네 개 이상인 문서는 둘 다 포함하며 하나만 생략하지 않습니다.
+테마 자산의 공통 `.ht-document`, `.ht-doc-content`, `.ht-doc-nav`, `.ht-doc-toc`, `.ht-doc-controls` 스타일을 사용합니다.
+왼쪽 레일과 모바일 접기 요소는 JavaScript 없이 작동해야 합니다.
+각 목차 링크에 대상 제목의 전체 텍스트를 사용합니다. 너무 긴 제목 자체를 줄이거나 같은 링크 안의 `<small>` 줄에 전체 제목 위의 짧은 레이블을 둡니다.
+선택한 공통 reader 문서는 [문서 조립](html-assembly.md)으로 `tk-writing`의 [문서 셸](../assets/document-shell.html)을 삽입합니다.
+특화된 인터페이스는 자체 생성기를 유지합니다.
 
-Place the footer directly under `.ht-document`, after `main`; shared CSS centers it.
-Separate source/version and date into paragraphs when present.
+footer는 `.ht-document` 바로 아래, `main` 뒤에 둡니다. 공통 CSS가 가운데 정렬합니다.
+출처/버전과 날짜가 있으면 별도 문단으로 나눕니다.
 
-Inline the existing theme script after the markup for optional current-section marking,
-Escape/outside dismissal, focus return and focus transfer to native anchor targets. Do not
-intercept hash navigation or replace browser history. Native anchors remain usable without JS;
-expose `aria-current="location"` with a non-color-only cue when JS is available. TOC and top/bottom
-navigation must not leave a persistent outline around the destination section or heading,
-including after programmatic focus transfer. Keep the shared static-target suppression and
-arrival cue: JavaScript highlights the destination immediately, waits for scrolling to
-settle plus about one second, then fades it. Repeated clicks restart it; another click cancels it.
-Section links mark only the heading. Reduced motion removes the fade. Without JavaScript,
-CSS `:target` briefly marks headings, but cannot replay the same hash or detect scroll completion. Custom static wrappers need the same narrowly scoped treatment. Never disable outlines globally: preserve
-visible keyboard focus on links, buttons, inputs and other interactive controls. Keep the popup
-within viewport and safe-area bounds at desktop/mobile widths and preserve keyboard order.
-Smooth anchor scrolling is the default; reduced motion uses immediate scrolling. Set the
-`--ht-anchor-offset` to the actual sticky header height plus breathing room, and verify targets
-remain visible. Verification-only positioning uses instant scrolling. Required background and
-conclusions stay expanded, readable and searchable; only secondary evidence may collapse.
-Keep flex/grid children shrinkable with `min-width: 0`; wrap wide tables in `.ht-table-scroll`
-and use `.ht-code` for wide code, never page-level clipping. Builder preflight warns about
-undefined `ht-*` classes; fix typos and use document-specific names for additive components. Give the page canvas and `.ht-doc-content` visibly distinct
-surface colors in light and dark themes; keep the content surface readable when cards or section
-surfaces are nested inside it. Verify TOC open/close, all links, top/bottom, hash reload/back,
-keyboard, no-JS, reduced motion and unobscured control/target geometry.
-Keep the native disclosure open in the HTML so the left rail remains available without JavaScript;
-the theme script may collapse it by default on narrow screens.
+마크업 뒤에 기존 테마 script를 인라인으로 넣어 선택적인 현재 섹션 표시, Escape/바깥쪽 닫기, 포커스 복귀와 네이티브 앵커 대상으로의 포커스 이동을 지원합니다.
+해시 탐색을 가로채거나 브라우저 이력을 대체하지 않습니다.
+네이티브 앵커는 JS 없이도 사용할 수 있게 유지합니다. JS가 있으면 색 이외의 단서와 함께 `aria-current="location"`을 노출합니다.
+목차와 맨 위/아래 탐색은 프로그래밍 방식 포커스 이동 후를 포함하여 대상 섹션이나 제목 주위에 지속적인 외곽선을 남기면 안 됩니다.
+공통 정적 대상 억제와 도착 표시를 유지합니다. JavaScript는 목적지를 즉시 강조하고 스크롤이 멈춘 뒤 약 1초를 더 기다려 서서히 사라지게 합니다.
+반복 클릭은 이를 다시 시작하고 다른 클릭은 취소합니다. 섹션 링크는 제목만 표시합니다. 동작 줄이기에서는 서서히 사라지는 효과를 제거합니다.
+JavaScript가 없으면 CSS `:target`이 제목을 잠시 표시하지만 같은 해시를 재실행하거나 스크롤 완료를 감지할 수 없습니다.
+맞춤 정적 래퍼에도 같은 좁은 범위의 처리가 필요합니다.
+외곽선을 전역으로 비활성화하지 않습니다. 링크, 버튼, 입력과 다른 상호작용 제어의 보이는 키보드 포커스를 보존합니다.
+데스크톱/모바일 너비에서 팝업을 뷰포트와 안전 영역 안에 유지하고 키보드 순서를 보존합니다.
+기본 앵커 스크롤은 부드럽게 하고 동작 줄이기에서는 즉시 스크롤합니다.
+`--ht-anchor-offset`을 실제 고정 헤더 높이에 여유 공간을 더한 값으로 설정하고 대상이 계속 보이는지 검증합니다.
+검증 전용 위치 지정은 즉시 스크롤을 사용합니다. 필수 배경과 결론은 펼쳐져 읽고 검색할 수 있어야 하며, 보조 근거만 접을 수 있습니다.
+flex/grid 자식은 `min-width: 0`으로 축소 가능하게 유지합니다. 넓은 표는 `.ht-table-scroll`로 감싸고 넓은 코드에는 `.ht-code`를 사용하며 페이지 수준 잘림은 사용하지 않습니다.
+빌더 사전 점검은 정의되지 않은 `ht-*` 클래스를 경고합니다. 오타를 고치고 추가 구성 요소에는 문서별 이름을 사용합니다.
+밝은/어두운 테마에서 페이지 캔버스와 `.ht-doc-content` 표면 색을 눈에 띄게 구별합니다.
+카드나 섹션 표면이 내부에 중첩되어도 내용 표면을 읽을 수 있게 유지합니다.
+목차 열기/닫기, 모든 링크, 맨 위/아래, 해시 새로고침/뒤로 가기, 키보드, JS 없는 상태, 동작 줄이기와 가리지 않는 제어/대상 기하 구조를 검증합니다.
+JavaScript 없이도 왼쪽 레일을 이용할 수 있도록 HTML에서 네이티브 접기 요소를 열린 상태로 유지합니다.
+테마 script는 좁은 화면에서 기본적으로 이를 접을 수 있습니다.
 
-For selected shared-reader portions, including document portions of QA sheets, use the shared document shell as a
-component contract, not a visual suggestion. Build the header
-with `.ht-topbar` and `.ht-topbar-title`; put the theme fieldset inside it with
-`.ht-theme-control`, `.ht-theme-label`, `.ht-theme-buttons` and `.ht-theme-option` around the native
-radio inputs. Keep the document body, content, navigation, disclosure and controls on their shared
-`.ht-document`, `.ht-doc-content`, `.ht-doc-nav`, `.ht-doc-toc` and `.ht-doc-controls` classes.
-Reuse the shared theme CSS and script unchanged. Do not replace or override their shell geometry,
-surface or control rules with page-level selectors, duplicate `.ht-doc-content` layout rules,
-one-off theme tokens, or substitute class names. Add document-specific styles and scripts only as an additive, scoped layer; leave shell layout
-and controls to the shared rules. If a default needs overriding or removal, report a shared-shell
-defect rather than patching it per document. Rebuild and rerun class, anchor and external-request
-checks after postprocessing. For a density/interaction example, assemble the optional
-[reader example](../assets/reader-example.html) through the same builder; it is a content fragment,
-not another shell or a mandatory section template. During user-led revisions, retain the
-request count in the active conversation as an observational cost signal, not a quality verdict
-or a new persistent ledger. The theme control's `data-ht-theme-control`
-attribute alone is insufficient because it enables the script but does not apply the shared styling.
+QA 시트의 문서 부분을 포함하여 선택한 공통 reader 부분에서는 공통 문서 셸을 시각적 제안이 아닌 구성 요소 계약으로 사용합니다.
+`.ht-topbar`와 `.ht-topbar-title`로 헤더를 만들고 테마 fieldset을 그 안에 둡니다.
+네이티브 라디오 입력 주위에 `.ht-theme-control`, `.ht-theme-label`, `.ht-theme-buttons`, `.ht-theme-option`을 사용합니다.
+문서 본문, 내용, 탐색, 접기 요소와 제어는 공통 `.ht-document`, `.ht-doc-content`, `.ht-doc-nav`, `.ht-doc-toc`, `.ht-doc-controls` 클래스를 유지합니다.
+공통 테마 CSS와 script를 변경 없이 재사용합니다.
+페이지 수준 선택자, 중복 `.ht-doc-content` 배치 규칙, 일회성 테마 토큰이나 대체 클래스 이름으로 셸 기하 구조, 표면이나 제어 규칙을 대체하거나 덮어쓰지 않습니다.
+문서별 스타일과 script는 범위가 한정된 추가 계층으로만 넣고 셸 배치와 제어는 공통 규칙에 맡깁니다.
+기본값을 덮어쓰거나 제거해야 하면 문서별로 수정하지 말고 공통 셸 결함으로 보고합니다.
+후처리 뒤 다시 빌드하고 클래스, 앵커와 외부 요청 검사를 다시 실행합니다.
+밀도/상호작용 예제가 필요하면 선택적 [reader 예제](../assets/reader-example.html)를 같은 빌더로 조립합니다.
+이는 내용 조각이며 다른 셸이나 의무적인 섹션 템플릿이 아닙니다.
+사용자 주도 수정 중에는 활성 대화의 요청 횟수를 관찰된 비용 신호로 유지하고 품질 판정이나 새로운 영구 기록부로 사용하지 않습니다.
+테마 제어의 `data-ht-theme-control` 속성만으로는 부족합니다. 이 속성은 script를 활성화하지만 공통 스타일을 적용하지 않습니다.
 
-A document uses one continuous presentation. Prose and semantic tables are valid without a named
-technique. Consult only a relevant [technique entry](explanation-techniques.md) for a requested
-or unfamiliar format. Avoid duplicate
-versions in modes or hidden tabs. Honor an explicit technique preference when it fits the content.
+문서는 하나의 연속된 표현을 사용합니다. 산문과 의미 기반 표는 이름 붙은 기법 없이도 유효합니다.
+요청받았거나 익숙하지 않은 형식에 관련된 [기법 항목](explanation-techniques.md)만 참조합니다.
+모드나 숨겨진 탭에 중복 버전을 만들지 않습니다. 명시적인 기법 선호가 내용에 맞으면 존중합니다.
 
 
-Separate document sections with 1px token-colored rules rather than nested section cards. Avoid
-decorative thick borders; visible keyboard focus outlines are the exception. Keep the shared document
-content panel as the only enclosing surface unless a specific figure needs a card.
+중첩 섹션 카드 대신 1px 토큰 색 구분선으로 문서 섹션을 나눕니다.
+장식적인 두꺼운 테두리는 피하되 보이는 키보드 포커스 외곽선은 예외입니다.
+특정 도해에 카드가 필요하지 않으면 공통 문서 내용 패널만 바깥을 감싸는 표면으로 유지합니다.
 

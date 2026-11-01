@@ -1,85 +1,33 @@
-# Human research report
+<a id="human-research-report"></a>
+# 사람이 읽는 조사 보고서
 
-Before drafting, read [clear writing](../../tk-writing/references/clear-writing.md), [documentation purpose](../../tk-writing/references/diataxis.md)
-and [renderer contract](../../tk-writing/references/renderer-contract.md). The report informs a concrete decision, not
-an obligatory tutorial. Use archify for every new or materially updated report, including
-supported native interactions. Do not use `render_report.py`, `build_html.py` or the legacy
-`assets/report.html`; shared specialized UI assets do not select a research renderer.
+초안을 작성하기 전에 [명확한 글쓰기](../../tk-writing/references/clear-writing.md), [문서의 목적](../../tk-writing/references/diataxis.md), [렌더러 계약](../../tk-writing/references/renderer-contract.md)을 읽습니다. 보고서는 구체적인 결정을 돕기 위한 것이며, 의무적으로 작성하는 튜토리얼이 아닙니다. 새 보고서나 실질적으로 갱신하는 모든 보고서에는 지원되는 기본 상호작용을 포함하여 archify를 사용합니다. `render_report.py`, `build_html.py` 또는 기존 `assets/report.html`을 사용하지 않습니다. 공통 특수 UI 자산은 조사 렌더러를 선택하지 않습니다.
 
-## Content and sources
+<a id="content-and-sources"></a>
+## 내용과 출처
 
-Render verified current facts from the interaction or canonical state/findings. Lead with
-the conclusion, confidence and deciding conditions. Cover the goal and downstream decision,
-strongest evidence, baseline and alternatives, actual investigations/experiments and their
-verdicts, rejected tested directions versus untested budget deferrals, unknowns and limits,
-conditions that would reverse the conclusion, and the next frontier or action. Include the
-smallest plausible implementation scope and cost of doing nothing when material. Preserve
-source, direction, experiment and finding IDs; a proposal is not an executed test.
+상호작용이나 정본 상태·발견 사항에서 검증한 현재 사실을 렌더링합니다. 결론, 확신도와 결정을 좌우하는 조건을 먼저 제시합니다. 목표와 후속 결정, 가장 강한 근거, 변경 전 기준과 대안, 실제 조사·실험과 그 판정, 시험 후 기각한 방향과 예산 때문에 시험하지 않고 미룬 방향, 미확인 사항과 한계, 결론을 뒤집을 조건, 다음 탐색 범위나 행동을 다룹니다. 중요하다면 타당한 최소 구현 범위와 아무것도 하지 않을 때의 비용을 포함합니다. 출처, 방향, 실험과 발견 사항의 ID를 보존합니다. 제안은 실행한 시험이 아닙니다.
 
-Keep the report coherent and conversational. Short reports can combine related facts into
-few panels; never create empty categories, duplicate views or a document-mode selector.
-Keep observations, inference and examples distinct. Explain unknowns where they affect the
-decision, and derive recommended procedures from inspected evidence or label them proposals.
-Do not add comprehension quizzes; `tk-explain` owns learning checks.
+보고서는 일관되고 대화하듯 자연스럽게 작성합니다. 짧은 보고서는 관련 사실을 몇 개의 패널로 합칠 수 있습니다. 빈 범주, 중복 보기나 문서 모드 선택기를 만들지 않습니다. 관찰, 추론과 예시를 구분합니다. 미확인 사항은 결정에 영향을 미치는 위치에서 설명하고, 권장 절차는 직접 확인한 근거에서 도출하거나 제안이라고 표시합니다. 이해도 퀴즈를 추가하지 않습니다. 학습 확인은 `tk-explain`이 담당합니다.
 
-Author `candidate.archify.md` under `.tigerkit/tmp/tk-research/<run-id>/` using the installed
-archify authoring reference. Use a conclusion and panels for evidence, alternatives, limits,
-next action, and actual verification; stable IDs bind the readable projection to its sources.
-Declare each source with `@source` and cite it beside the supported claim using archify's
-`source:id` inline-link syntax. Preserve revision/access date and research identity
-in readable scope/evidence text. Use verified URLs or pinned repository positions. If a
-source is unavailable, say so; a reachable link alone does not verify its claim. Code excerpts
-must resolve at the pinned revision. Never fabricate a source or turn raw private logs into
-report content. Preserve negative results and contradictions.
+설치된 archify 작성 참조를 사용하여 `.tigerkit/tmp/tk-research/<run-id>/` 아래에 `candidate.archify.md`를 작성합니다. 결론과 함께 근거, 대안, 한계, 다음 행동과 실제 검증을 위한 패널을 사용합니다. 안정적인 ID로 읽기용 표현과 출처를 연결합니다. 각 출처를 `@source`로 선언하고, archify의 `source:id` 인라인 링크 구문을 사용하여 뒷받침하는 주장 옆에 인용합니다. 사람이 읽는 범위·근거 텍스트에 revision/접근 날짜와 조사 식별 정보를 보존합니다. 검증한 URL이나 고정된 저장소 위치를 사용합니다. 출처를 이용할 수 없으면 그 사실을 밝힙니다. 링크에 접근할 수 있다는 사실만으로 주장이 검증되지는 않습니다. 코드 발췌는 고정된 revision에서 확인할 수 있어야 합니다. 출처를 꾸며 내거나 원시 비공개 로그를 보고서 내용으로 바꾸지 않습니다. 부정적 결과와 모순을 보존합니다.
 
-Use native diagrams and `@steps` when relationships or event order explain the conclusion;
-use comparisons for alternatives. For requested live behavior, read
-[interactive examples](../../tk-writing/references/interactive-examples.md) and verify actual archify support. For a
-spatial figure that native diagrams cannot express, read [scene figures](../../tk-writing/references/scene-figures.md)
-and embed its converted PNG with `@image`, alt text and a caption. Do not turn native
-interactive diagrams into pictures or use image generation to invent measured evidence.
+관계나 사건 순서가 결론을 설명할 때는 기본 다이어그램과 `@steps`를 사용하고, 대안에는 비교를 사용합니다. 실제 동작을 요청받았다면 [상호작용 예시](../../tk-writing/references/interactive-examples.md)를 읽고 archify의 실제 지원 여부를 검증합니다. 기본 다이어그램으로 표현할 수 없는 공간 그림에는 [장면 그림](../../tk-writing/references/scene-figures.md)을 읽고 변환한 PNG를 `@image`, 대체 텍스트와 캡션으로 삽입합니다. 기본 상호작용 다이어그램을 그림으로 바꾸거나 이미지 생성으로 측정 근거를 만들어 내지 않습니다.
 
-## Delivery and checks
+<a id="delivery-and-checks"></a>
+## 전달과 확인
 
-Apply Artifact Paths. Default to `.tigerkit/research/<slug>/report.html`, or an explicit safe
-destination. The directory/report alone never starts durable research. HTML is a readable
-projection, never the execution ledger, authority or canonical editable state. Check
-ownership before replacing only this project's report. Keep an existing valid report until
-a passing candidate is ready; stage rendering under the run directory before atomic replacement.
+산출물 경로 기준을 적용합니다. 기본 목적지는 `.tigerkit/research/<slug>/report.html`이며, 명시적으로 지정된 안전한 목적지를 사용할 수도 있습니다. 디렉터리나 보고서만으로 지속 조사를 시작하지 않습니다. HTML은 읽기용 표현이며, 실행 원장이나 권한 또는 편집 가능한 정본 상태가 아닙니다. 이 프로젝트의 보고서만 교체하기 전에 소유권을 확인합니다. 통과한 후보가 준비될 때까지 기존의 유효한 보고서를 보존합니다. 원자적으로 교체하기 전에 실행 디렉터리 아래에서 렌더링을 준비합니다.
 
-Run archify's complete `finalize explainer` command as specified in the renderer contract.
-The final file must open alone, with no external runtime requests; clickable source links
-are allowed. Retain the candidate and receipt bound to its final bytes. Inspect conclusion,
-claim-source links, quantities, IDs and coverage after rendering; the renderer does not
-prove factual accuracy. A failed/missing renderer or unsupported required interaction is
-not report success and never authorizes fallback to the old document template.
+렌더러 계약에 명시된 archify의 전체 `finalize explainer` 명령을 실행합니다. 최종 파일은 외부 런타임 요청 없이 단독으로 열려야 합니다. 클릭 가능한 출처 링크는 허용됩니다. 최종 바이트와 연결된 후보와 receipt를 보존합니다. 렌더링 후 결론, 주장과 출처 사이의 링크, 수량, ID와 포함 범위를 확인합니다. 렌더러는 사실의 정확성을 입증하지 않습니다. 렌더러가 실패하거나 없거나 필수 상호작용을 지원하지 않으면 보고서가 성공한 것이 아니며, 기존 문서 템플릿으로 대체할 권한도 생기지 않습니다.
 
-Include separate outcomes for static/artifact checks and screen/action checks in the
-verification panel. `finalize` does not run a browser. Use `tk-browser-verify` when the user
-requests screen checks or a material visual/interaction uncertainty requires them; report
-unrun checks honestly as not requested or unavailable, as applicable. Never assert theme,
-keyboard, navigation or interaction success from a static receipt alone.
+검증 패널에는 정적·산출물 확인과 화면·동작 확인의 결과를 별도로 포함합니다. `finalize`는 브라우저를 실행하지 않습니다. 사용자가 화면 확인을 요청하거나 중요한 시각·상호작용 불확실성 때문에 확인이 필요하면 `tk-browser-verify`를 사용합니다. 실행하지 않은 확인은 해당하는 이유에 따라 요청되지 않았거나 이용할 수 없었다고 정직하게 보고합니다. 정적 receipt만으로 테마, 키보드, 탐색이나 상호작용의 성공을 주장하지 않습니다.
 
-The first short-research conclusion or material persistent checkpoint must provide a
-current decision-ready report unless the user requested no files. Missing rendering leaves
-findings intact: report the artifact branch as `Blocked | Unverifiable` and give the useful
-conclusion in chat. Later `NO-ACTION | NO-DELTA` runs preserve existing report bytes; changing
-a report cannot make unchanged canonical facts fresh. Return its link and concise conclusion
-without opening a browser or changing user focus.
+첫 단기 조사 결론이나 중요한 지속 체크포인트에서는 사용자가 파일을 만들지 말라고 요청한 경우를 제외하고, 현재 결정을 내릴 수 있는 보고서를 제공해야 합니다. 렌더링하지 못해도 발견 사항은 유지됩니다. 산출물 분기를 `Blocked | Unverifiable`로 보고하고 유용한 결론은 채팅으로 전달합니다. 이후 `NO-ACTION | NO-DELTA` 실행에서는 기존 보고서 바이트를 보존합니다. 보고서를 변경해도 달라지지 않은 정본 사실이 최신 사실이 되지는 않습니다. 브라우저를 열거나 사용자 포커스를 바꾸지 않고 링크와 간결한 결론을 반환합니다.
 
-## Persistent-project coverage
+<a id="persistent-project-coverage"></a>
+## 지속 프로젝트의 포함 범위
 
-Project the whole project, not only the latest batch. Reconcile canonical IDs/counts for
-all findings, experiments and handoffs before replacement. Preserve meaningful progress,
-evidence, verdicts, rejected directions, waiting/reopen conditions and approval status.
-Use readable panels/tables instead of requiring unsupported raw HTML or collapsing away
-essential results. Missing/duplicate records fail coverage acceptance; an upstream page
-limit must not silently drop evidence. Keep current content within a supported layout or
-report the exact remaining limit, preserving the previous artifact.
+최신 묶음만이 아니라 프로젝트 전체를 표현합니다. 교체하기 전에 모든 발견 사항, 실험과 인계의 정본 ID·개수를 대조하여 맞춥니다. 의미 있는 진척, 근거, 판정, 기각한 방향, 대기·재개 조건과 승인 상태를 보존합니다. 지원되지 않는 원시 HTML을 요구하거나 필수 결과를 접어서 숨기지 말고, 읽기 쉬운 패널·표를 사용합니다. 레코드 누락이나 중복은 포함 범위 승인 실패입니다. upstream 페이지 제한 때문에 근거를 조용히 누락해서는 안 됩니다. 현재 내용을 지원되는 레이아웃 안에 유지하거나, 이전 산출물을 보존하면서 남은 정확한 한계를 보고합니다.
 
-Show a decision timeline only when recorded evidence actually changed a judgment; link the
-prior assessment, new evidence, resulting conclusion and consequence with known dates/IDs.
-Do not invent earlier opinions or chronology from source order. If only final findings are
-known, use a comparison or evidence-to-conclusion map. Prefer a small run-owned generator
-from canonical inputs when needed; edit its source and regenerate, never recover state or
-authority from report HTML. Existing user reports and research homes remain in place.
+기록된 근거가 실제로 판단을 바꿨을 때만 결정 타임라인을 표시합니다. 알려진 날짜·ID로 이전 평가, 새 근거, 그에 따른 결론과 영향을 연결합니다. 출처 순서에서 이전 의견이나 연대기를 만들어 내지 않습니다. 최종 발견 사항만 알려져 있다면 비교나 근거에서 결론으로 이어지는 관계도를 사용합니다. 필요하다면 정본 입력으로부터 생성하는 작은 실행 소유 생성기를 우선합니다. 생성기 소스를 수정하고 다시 생성하며, 보고서 HTML에서 상태나 권한을 복구하지 않습니다. 기존 사용자 보고서와 조사 홈은 제자리에 유지합니다.

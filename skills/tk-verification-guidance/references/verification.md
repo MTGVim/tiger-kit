@@ -1,103 +1,45 @@
-# Shared Verification Contract
+<a id="shared-verification-contract"></a>
+# 공통 검증 계약
 
-The skill owns acceptance, evidence and authority; the selected provider owns interaction.
-Provider selection never weakens these requirements. Read before the first runtime observation.
+스킬은 수용 판정, 근거와 권한을 담당하며 선택한 제공자는 상호작용을 담당합니다. 제공자 선택으로 이 요구 사항을 약화하지 않습니다. 첫 런타임 관찰 전에 읽습니다.
 
-## Acceptance and honesty
+<a id="acceptance-and-honesty"></a>
+## 수용 판정과 정직한 보고
 
-Bind each criterion to the exact candidate, target, environment, locale, role and inspected current
-evidence. Use the owning skill's UI Evidence collection rules; accessible names, routes and action
-success responses alone do not prove visible wording or final behavior. Observe the postcondition
-independently after acting. If an action times out, inspect the resulting state before any retry;
-never replay a possibly completed mutation blindly. Keep unresolved labels/connections itemized
-with evidence, limitation and smallest missing input in QA, handoff and publication preparation.
+각 기준을 정확한 후보, 대상, 환경, locale, 역할과 검사한 현재 근거에 연결합니다. 소유 스킬의 UI 근거 수집 규칙을 사용합니다. Accessible name, route와 행동 성공 응답만으로는 눈에 보이는 문구나 최종 동작을 입증하지 못합니다. 행동 후 postcondition을 독립적으로 관찰합니다. 행동이 timeout되면 재시도 전에 결과 상태를 검사합니다. 완료되었을 수도 있는 변경을 확인 없이 반복하지 않습니다. QA, 인계와 발행 준비에 미해결 label/연결을 근거, 한계와 필요한 최소 누락 입력과 함께 항목별로 유지합니다.
 
-Return `Pass | Fail | Blocked | Unverifiable` per criterion. Missing required evidence prevents
-aggregate `Pass`. A successful baseline is capture-only: `phase: baseline`,
-`baseline_capture: Pass`, `verification_complete: false`, and the exact `next_required`.
-For a nested baseline also return `resume_parent: required`; the approved parent continues its
-implementation. Only a complete after/acceptance phase may set `verification_complete: true`.
-Return compact phase evidence to an active owner; never end its approved work at a child boundary.
-Do not modify product/test/config source, Git state, or remote state as a verifier.
+기준별로 `Pass | Fail | Blocked | Unverifiable`을 반환합니다. 필수 근거가 없으면 종합 `Pass`를 부여할 수 없습니다. 성공한 baseline은 캡처만 완료한 상태입니다. `phase: baseline`, `baseline_capture: Pass`, `verification_complete: false`와 정확한 `next_required`를 반환합니다. 중첩 baseline이면 `resume_parent: required`도 반환합니다. 승인된 부모는 구현을 계속합니다. 완료된 after/acceptance 단계만 `verification_complete: true`를 설정할 수 있습니다. 진행 중인 담당자에게 간결한 단계 근거를 반환합니다. 자식 경계에서 담당자의 승인된 작업을 끝내지 않습니다. 검증 담당자로서 제품/테스트/설정 소스, Git 상태나 원격 상태를 수정하지 않습니다.
 
-## User shared state
+<a id="user-shared-state"></a>
+## 사용자 공유 상태
 
-Before interaction, list planned writes to user shared state such as the system clipboard,
-user files and notifications. The list must be empty or bind each necessary action to exact
-authorization and a verified preservation/restoration plan. Choose side-effect-free controls
-for diagnostic comparisons; a Copy, Save/Export or notification control is not a default
-control merely to prove click delivery. Background input and headless execution do not isolate
-these side effects. Prefer a verified run-owned destination or isolated mock when it can prove
-the criterion; do not send notifications or overwrite user files as a diagnostic shortcut.
+상호작용 전에 시스템 clipboard, 사용자 파일과 알림 같은 사용자 공유 상태에 계획한 쓰기를 나열합니다. 목록은 비어 있거나, 필요한 각 행동을 정확한 승인과 검증된 보존/복원 계획에 연결해야 합니다. 진단 비교에는 부작용이 없는 control을 선택합니다. 클릭 전달을 입증하기 위한 기본 control로 Copy, Save/Export 또는 알림 control을 선택하지 않습니다. 백그라운드 입력과 headless 실행은 이러한 부작용을 격리하지 않습니다. 기준을 입증할 수 있다면 검증된 실행 소유 목적지나 격리된 mock을 우선합니다. 진단 지름길로 알림을 보내거나 사용자 파일을 덮어쓰지 않습니다.
 
-When clipboard mutation is necessary, before acting back up the entire current clipboard,
-not a prefix or preview, preserving all available formats/types and bytes when supported.
-Apply Artifact Paths checks to a run-owned `.tigerkit/tmp/<skill>/<run-id>/` backup with
-directory `0700` and file `0600` (or equivalent verified access restrictions); never print
-clipboard contents or include them in prompts, logs, screenshots or publication evidence.
-Verify backup completeness and the restore capability before any write. If only text is
-supported, disclose that limitation before execution; proceed only if current evidence proves
-the clipboard is text-only or the user has explicitly authorized that exact limited coverage.
-Otherwise choose a safe alternative or return `Blocked | Unverifiable` without writing.
+Clipboard 변경이 필요하면 행동 전에 prefix나 preview가 아니라 현재 clipboard 전체를 백업합니다. 지원되는 경우 사용 가능한 모든 format/type과 바이트를 보존합니다. 실행 소유 `.tigerkit/tmp/<skill>/<run-id>/` 백업에 산출물 경로 점검을 적용하며 디렉터리는 `0700`, 파일은 `0600`(또는 동등하게 검증된 접근 제한)으로 둡니다. Clipboard 내용을 출력하거나 prompt, log, screenshot 또는 발행 근거에 포함하지 않습니다. 쓰기 전에 백업 완전성과 복원 기능을 검증합니다. 텍스트만 지원하면 실행 전에 그 한계를 고지합니다. 현재 근거가 clipboard에 텍스트만 있음을 입증하거나 사용자가 바로 그 제한된 범위를 명시적으로 승인했을 때만 진행합니다. 그렇지 않으면 안전한 대안을 선택하거나 쓰지 않고 `Blocked | Unverifiable`을 반환합니다.
 
-After checking the postcondition, restore the backup on success, failure or interruption and
-independently verify the restored content and type coverage without exposing values. If the
-user or another process has replaced the test clipboard meanwhile, do not overwrite the newer
-state; preserve the protected backup and report restoration as incomplete. Report backup
-coverage, restoration outcome and any residue. Failed or unverified restoration prevents
-aggregate `Pass`; retain the protected backup for recovery, and remove it after verified
-restoration. Never report partial or unavailable restoration as complete.
+Postcondition 확인 후 성공, 실패 또는 중단 시 백업을 복원하고 값을 노출하지 않은 채 복원된 내용과 type 범위를 독립적으로 검증합니다. 그동안 사용자나 다른 프로세스가 테스트 clipboard를 교체했다면 새로운 상태를 덮어쓰지 않습니다. 보호된 백업을 보존하고 복원 미완료를 보고합니다. 백업 범위, 복원 결과와 잔여물을 보고합니다. 복원 실패 또는 미검증 상태에서는 종합 `Pass`를 부여할 수 없습니다. 복구를 위해 보호된 백업을 유지하고 검증된 복원 후 제거합니다. 부분적이거나 불가능한 복원을 완료로 보고하지 않습니다.
 
-## Visual comparison
+<a id="visual-comparison"></a>
+## 시각적 비교
 
-Visible-state claims require a non-empty, actually inspected runtime screenshot containing the
-criterion and surrounding context. Direct trace/a11y/runtime evidence can prove nonvisual claims
-without a ceremonial image. A render-affecting candidate, including a visual-preservation
-refactor, requires comparable baseline/after evidence and a replay procedure bound to the same
-candidate provenance, window/viewport, scale/DPR, zoom, fonts, UI state and capture boundary.
-For worktree-built phases, comparability also requires evidenced parity of non-product
-untracked/ignored build inputs and scan exclusions, including run-owned artifacts created between
-phases. Record their exclusion or identical scanned paths/content in replay evidence; an identical
-polluted pair does not prove equivalence to a clean CI build. Git exclusion alone is insufficient,
-and repository-local scan changes belong to the implementation owner.
-Declare nondeterministic exclusions before comparison; preserve immutable failure evidence
-before any rerun. Missing provenance or comparable conditions is `Unverifiable`.
+가시 상태 주장에는 기준과 주변 맥락이 포함된 비어 있지 않은 실제 검사 런타임 screenshot이 필요합니다. 직접적인 trace/a11y/런타임 근거는 형식적인 이미지 없이 비시각적 주장을 입증할 수 있습니다. 시각적 보존 refactor를 포함하여 render에 영향을 주는 후보에는 비교 가능한 baseline/after 근거와 재현 절차가 필요합니다. 이 절차는 동일한 후보 출처, 창/viewport, 배율/DPR, zoom, font, UI 상태와 캡처 경계에 연결되어야 합니다. Worktree에서 build한 단계는 단계 사이에 생성된 실행 소유 산출물을 포함해, 제품 외 untracked/ignored build 입력과 스캔 제외가 동등하다는 근거도 있어야 비교 가능합니다. 재현 근거에 해당 입력의 제외 또는 동일하게 스캔한 경로/내용을 기록합니다. 동일하게 오염된 쌍은 깨끗한 CI build와의 동등성을 입증하지 않습니다. Git 제외만으로는 부족하며 저장소 로컬 스캔 변경은 구현 담당자에게 속합니다. 비교 전에 비결정적 제외 사항을 선언합니다. 재실행 전에 불변 실패 근거를 보존합니다. 출처나 비교 가능한 조건이 없으면 `Unverifiable`입니다.
 
-Classify every region before capture:
+캡처 전에 모든 영역을 분류합니다.
 
-| Intent | Outline placement |
+| 의도 | 외곽선 위치 |
 | --- | --- |
-| appear | after target only |
-| disappear | baseline target only |
-| change | corresponding target in both |
-| remain unchanged | none |
+| 나타남 | after 대상에만 표시합니다. |
+| 사라짐 | baseline 대상에만 표시합니다. |
+| 변경됨 | 양쪽의 대응 대상에 표시합니다. |
+| 변경 없이 유지됨 | 표시하지 않습니다. |
 
-Judge intended changes separately from preserved regions. An unapproved preserved-region
-difference is `Fail`. Inspect asset integrity, content, geometry/layout, typography, color/paint,
-imagery, responsive/window sizing and state. Complete every applicable axis on the first attempt,
-even after a mismatch; record reference/candidate/delta measurements for geometry and typography
-where measurable. Disclose missing measurements; never invent tolerances or turn an unchecked
-axis into `Pass`. Exact byte identity may discharge only a comparable, bounded, deterministic
-region against its named already inspected baseline, never an unrelated full-screen capture.
+의도한 변경은 보존 영역과 별도로 판정합니다. 승인되지 않은 보존 영역 차이는 `Fail`입니다. 자산 무결성, 콘텐츠, 기하/레이아웃, typography, 색상/paint, 이미지, 반응형/창 크기와 상태를 검사합니다. 불일치가 발견된 뒤에도 첫 시도에서 적용 가능한 모든 축을 완료합니다. 측정 가능한 기하와 typography에는 참조/후보/차이 측정값을 기록합니다. 누락 측정을 밝힙니다. 허용 오차를 만들어 내거나 확인하지 않은 축을 `Pass`로 바꾸지 않습니다. 정확한 바이트 동일성으로 확인을 대신할 수 있는 대상은 이름으로 지정된 이미 검사한 baseline과 비교 가능한 한정된 결정적 영역뿐이며, 무관한 전체 화면 캡처는 해당하지 않습니다.
 
-Apply the owning surface's annotation mechanics. Browser targets use runtime element outlines;
-native windows retain the raw capture and use a labeled annotated derivative with coordinates
-mapped from the same capture. Annotation is evidence handling, not product behavior. Always
-disclose it in `capture_only_mutation`; an annotated image cannot report `none`.
-For a required visual pair, `visual_contract: applied` records completed applicable checks, not
-acceptance by itself. An incomplete contract blocks `Pass` and completion. Use `n/a` only with
-a reason proving that no visual/pair/render-affecting branch applies.
+해당 표면의 소유자가 정한 주석 방식을 적용합니다. 브라우저 대상에는 런타임 요소 외곽선을 사용합니다. Native 창은 원본 캡처를 보존하고 같은 캡처에서 매핑한 좌표를 사용하여 label이 있는 주석 파생본을 만듭니다. 주석은 근거 처리이며 제품 동작이 아닙니다. 항상 `capture_only_mutation`에 밝힙니다. 주석이 있는 이미지는 `none`으로 보고할 수 없습니다. 필수 시각적 쌍에서 `visual_contract: applied`는 적용 가능한 점검을 완료했다는 기록이며 그 자체가 수용 판정은 아닙니다. 계약이 미완료라면 `Pass`와 완료를 차단합니다. 시각/쌍/render 영향 분기가 하나도 적용되지 않음을 입증하는 이유가 있을 때만 `n/a`를 사용합니다.
 
-## Evidence and cleanup
+<a id="evidence-and-cleanup"></a>
+## 근거와 정리
 
-Use the package's Artifact Paths checks before writing run-owned evidence. Record phase, run ID,
-provider/version/host, observed input/profile semantics, candidate/build identity, per-criterion
-facts, ordered capture paths/state/region/method/effective dimensions, auth mode without secrets,
-baseline provenance/replay, visual contract, capture-only mutations, limitations and cleanup.
-Keep failure captures separate from later after captures. Redact sensitive pixels before sharing;
-exclude credentials, tokens, private screen content and unrelated identity from logs/preferences.
-Close only run-owned resources; do not close or kill user apps, windows, profiles or processes.
+실행 소유 근거를 쓰기 전에 패키지의 산출물 경로 점검을 사용합니다. 단계, run ID, 제공자/버전/호스트, 관찰된 입력/profile 의미, 후보/build 식별 정보, 기준별 사실, 순서가 있는 캡처 경로/상태/영역/방법/유효 치수, 비밀이 없는 인증 모드, baseline 출처/재현, 시각적 계약, 캡처 전용 변경, 한계와 정리를 기록합니다. 실패 캡처는 나중의 after 캡처와 분리합니다. 공유 전에 민감한 픽셀을 가립니다. Log/선호 설정에서 자격 증명, token, 비공개 화면 콘텐츠와 무관한 식별 정보를 제외합니다. 실행 소유 자원만 닫습니다. 사용자 앱, 창, profile이나 프로세스를 닫거나 종료하지 않습니다.
 
-Publication uses the package's producer-neutral image manifest only for represented `Pass`
-criteria. Preserve required baseline/after pairs even when unchanged. Return evidence without
-uploading it. Missing publication evidence remains `Blocked | Unverifiable`.
+발행에는 표현된 `Pass` 기준에 대해서만 패키지의 생성자 중립 이미지 manifest를 사용합니다. 변경이 없어도 필수 baseline/after 쌍을 보존합니다. 업로드하지 않고 근거를 반환합니다. 발행 근거가 없으면 `Blocked | Unverifiable`로 남습니다.

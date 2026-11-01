@@ -1,74 +1,78 @@
-# Media choices and saved defaults
+<a id="media-choices-and-saved-defaults"></a>
+# 미디어 선택과 저장된 기본값
 
-Read before the first video/narration choice, including direct video requests and parent handoffs.
-Resolve each optional `evidenceMedia` field independently, highest first: current explicit request
-or answered current-run choice > ignored `.tigerkit/repository.json` > user
-`${XDG_CONFIG_HOME:-~/.config}/tigerkit/settings.json` > team `tigerkit.config.json` > defaults.
-Missing upper fields retain lower values. Inspect existing files without creating them. Preserve
-whether each value came from a request, saved field or fallback; a fallback is not an answered choice.
+직접적인 영상 요청과 상위 작업의 인계를 포함하여, 영상·내레이션을 처음 선택하기 전에 읽습니다.
+선택적인 `evidenceMedia` 필드는 각각 독립적으로 다음 우선순위에 따라 높은 쪽부터 결정합니다. 현재 명시적 요청
+또는 현재 실행에서 답변한 선택 > Git에서 제외된 `.tigerkit/repository.json` > 사용자
+`${XDG_CONFIG_HOME:-~/.config}/tigerkit/settings.json` > 팀 `tigerkit.config.json` > 기본값입니다.
+상위 계층에 없는 필드는 하위 값을 유지합니다. 기존 파일을 생성하지 않고 검사합니다.
+각 값이 요청, 저장된 필드, 대체값 중 어디에서 왔는지 보존합니다. 대체값은 사용자가 답변한 선택이 아닙니다.
 
-| Field | Type / values | Fallback |
+| 필드 | 타입 / 값 | 대체값 |
 | --- | --- | --- |
 | `enabled` | boolean | `false` |
 | `format` | `auto`, `gif`, `mp4` | `auto` |
 | `narration` | boolean | `false` |
 | `voice` | `serena`, `sohee` | `sohee` |
 | `captions` | `none`, `band`, `overlay`, `overlay-rounded` | `band` |
-| `emphasis` | `in-slide`, `zoom`, `none` | `in-slide` for authored slides; `zoom` for selected capture highlights |
+| `emphasis` | `in-slide`, `zoom`, `none` | 작성한 슬라이드에는 `in-slide`를, 선택한 캡처 강조 영역에는 `zoom`을 사용합니다. |
 | `callouts` | boolean | `false` |
 | `slideTheme` | `light`, `dark` | `light` |
 
-Validate objects and field types/enums before use. A malformed media object makes saved media
-preferences unusable for this run: disclose it, preserve its file and use safe fallbacks plus
-explicit current-run answers, not a lower-layer opt-in. Do not change unrelated configuration
-precedence. `voice` is a legacy Qwen speaker preference, not engine selection or permission to
-hide other supported TTS routes. A direct movie request selects this run even if `enabled` is false.
-No preference grants installation, capture mutation or publication authority.
+사용하기 전에 객체와 필드 타입·enum을 검증합니다. 미디어 객체 형식이 잘못되면 이번 실행에서는 저장된 미디어
+설정을 사용할 수 없습니다. 이를 알리고 파일을 보존하며, 하위 계층의 참여 설정 대신
+안전한 대체값과 현재 실행의 명시적 답변을 사용합니다. 관련 없는 설정의
+우선순위를 바꾸지 않습니다. `voice`는 기존 Qwen 화자 선호값이며, 엔진 선택이나
+다른 지원 TTS 경로를 숨길 권한이 아닙니다. 직접적인 영상 요청은 `enabled`가 false여도 이번 실행에서 미디어를 선택한 것으로 봅니다.
+어떤 선호 설정도 설치, 캡처 변경이나 발행 권한을 부여하지 않습니다.
 
-## One choice round before production
+<a id="one-choice-round-before-production"></a>
+## 제작 전 한 차례의 선택 질문
 
-Reuse explicit parent answers and saved values without re-asking them. For unresolved narration,
-follow Narration Choice. For TTS, load `tk-tts` and show every route from its current
-`list_options.py` output with device/platform, voices, missing dependencies and actual cache/setup
-status; module presence is not verified model readiness. Prior evaluations may explain a
-recommendation, never remove an available route. Keep supplied audio and no narration available.
-Use the owning skill's ordinary-chat question format, not a host structured-question substitute.
+상위 작업의 명시적 답변과 저장된 값을 다시 묻지 않고 재사용합니다. 내레이션이 아직 결정되지 않았다면
+Narration Choice를 따릅니다. TTS에는 `tk-tts`를 불러오고 현재
+`list_options.py` 출력의 모든 경로를 기기·플랫폼, 음성, 누락된 의존성과 실제 캐시·설정
+상태와 함께 보여 줍니다. 모듈이 존재한다는 사실만으로 모델 준비 상태를 검증한 것은 아닙니다. 이전 평가는
+추천 이유를 설명할 수 있지만, 사용 가능한 경로를 제외하는 근거가 될 수는 없습니다. 제공된 오디오와 내레이션 없음도 선택할 수 있게 유지합니다.
+호스트의 구조화된 질문 기능으로 대체하지 말고 실행 담당 스킬의 일반 채팅 질문 형식을 사용합니다.
 
-In that same first round, ask about presentation fields with neither an explicit answer nor a
-valid saved value: captions, emphasis, callouts and slide theme. Give the fallbacks as recommendations,
-not silent decisions. If media itself is still optional, make styling conditional on accepting it;
-declining media needs no styling answers. Theme concerns authored slides, not recoloring observed captures; resolve it
-once when absent and retain it for any authored cards. Include tutorial cursor/input displays when
-applicable. For a GIF with selected narration, resolve voiced MP4 versus caption-only GIF in that
-round; never silently disable sound or change format.
+같은 첫 질문 차례에서 명시적 답변도 유효한 저장값도 없는 표현 필드인
+자막, 강조, 콜아웃과 슬라이드 테마를 묻습니다. 대체값은 알리지 않은 결정이 아니라
+추천으로 제시합니다. 미디어 자체가 아직 선택 사항이면 스타일 질문은 미디어 수락을 조건으로 합니다.
+미디어를 거절하면 스타일 답변은 필요하지 않습니다. 테마는 관찰한 캡처의 색을 바꾸는 것이 아니라 작성한 슬라이드에 관한 것입니다. 값이
+없을 때 한 번 결정하고, 작성할 카드에도 그 값을 유지합니다. 해당되는 경우 튜토리얼의 커서·입력 표시를 포함합니다.
+내레이션이 선택된 GIF라면 같은 질문 차례에서 음성이 있는 MP4와 자막만 있는 GIF 중 무엇을 사용할지
+결정합니다. 소리를 알리지 않고 끄거나 형식을 바꾸지 않습니다.
 
-When resolving a new unsaved choice and no save offer has already been answered,
-on that same media-choice line append `이 선택을 기본값으로 저장할까요?`, naming the user
-settings destination and exact proposed fields/values. Show conditional proposed values if answers
-are still pending; clarify only an ambiguous save target/value. Selecting this run is not saving
-consent. Do not ask another routine save stage. Reuse an accepted/declined offer in the active
-conversation and pass its disposition, resolved values and their sources to the child owner.
-Do not persist a prompt ledger or hidden opt-in/refusal flag.
+저장되지 않은 새 선택을 결정하고 저장 제안에 아직 답변을 받지 않았다면,
+같은 미디어 선택 문장에 `이 선택을 기본값으로 저장할까요?`를 덧붙이고 사용자
+설정 저장 위치와 제안하는 정확한 필드·값을 명시합니다. 답변이 아직 없으면 조건부 제안값을
+보여 줍니다. 저장 대상·값이 모호할 때만 명확히 묻습니다. 이번 실행에서의 선택은 저장
+동의가 아닙니다. 별도의 통상적인 저장 단계를 다시 묻지 않습니다. 진행 중인
+대화에서 수락하거나 거절한 제안을 재사용하고, 그 처리 결과, 결정된 값과 출처를 하위 실행 담당자에게 전달합니다.
+질문 이력이나 숨겨진 참여·거절 플래그를 저장하지 않습니다.
 
-## Approved save only
+<a id="approved-save-only"></a>
+## 승인된 경우에만 저장
 
-Save only when the user approves the destination and exact fields/values. Validate the current
-JSON/version and path ownership again; merge only those approved `evidenceMedia` keys atomically
-in that same directory, preserving unrelated keys including `html` and `verificationDataPolicy`.
-Reread and verify every approved value before continuing. Concurrent changes require a fresh
-merge; malformed/unsupported settings are preserved and reported, not replaced. Refusal or absent
-save consent means current-run choices only. This bounded write is the sole settings exception;
-team-tracked configuration needs its own explicit mutation/review authority.
+사용자가 저장 위치와 정확한 필드·값을 승인했을 때만 저장합니다. 현재
+JSON·버전과 경로 소유권을 다시 검증합니다. 승인한 `evidenceMedia` 키만 같은 디렉터리에서
+원자적으로 병합하고, `html`과 `verificationDataPolicy`를 포함한 관련 없는 키를 보존합니다.
+계속하기 전에 다시 읽고 승인한 모든 값을 검증합니다. 동시에 변경된 내용이 있으면 새로
+병합해야 합니다. 형식이 잘못되었거나 지원되지 않는 설정은 대체하지 말고 보존하여 보고합니다. 거절했거나
+저장 동의가 없으면 현재 실행의 선택으로만 사용합니다. 이 제한된 쓰기만 설정의 유일한 예외이며,
+팀에서 추적하는 설정에는 별도의 명시적 변경·검토 권한이 필요합니다.
 
-## Translate resolved presentation into the manifest
+<a id="translate-resolved-presentation-into-the-manifest"></a>
+## 결정된 표현 설정을 manifest에 반영
 
-Map `captions` to `caption_style`; `none` explicitly disables subtitle output/coverage only,
-never selected narration or its missing/silent-audio checks. Keep source tags visible in rendered
-frames when captions are off. Map `callouts: false` to no callout rows; true selects authored,
-timed callouts rather than inventing geometry. Pass `slideTheme` to the card author, not ffmpeg.
-For authored slides, implement `in-slide` by changing only the currently narrated element; leave
-assembler zoom off. For capture-only input, `in-slide` means no assembler enlargement; retain
-actual captured cues, never fabricate a slide-style UI state. For captured UI, `zoom` applies only to deliberately selected highlight regions
-with the existing coordinate/provenance checks, not automatic motion on every frame. An explicit
-zoom request for authored slides must be honored and inspected as a selected exception.
-`none` means no emphasis; preserve visible comparisons and source facts in every treatment.
+`captions`를 `caption_style`에 대응시킵니다. `none`은 자막 출력·범위만 명시적으로 비활성화하며,
+선택한 내레이션이나 오디오 누락·무음 점검은 절대로 비활성화하지 않습니다. 자막을 꺼도 렌더링된
+프레임에 출처 태그를 계속 표시합니다. `callouts: false`는 콜아웃 행 없음으로 대응시킵니다. true이면 기하 구조를 지어내는 대신
+작성하고 시간을 지정한 콜아웃을 선택합니다. `slideTheme`는 ffmpeg가 아니라 카드 작성자에게 전달합니다.
+작성한 슬라이드에서는 현재 내레이션 중인 요소만 바꾸어 `in-slide`를 구현하고,
+조립기의 zoom은 끕니다. 캡처만 입력된 경우 `in-slide`는 조립기 확대를 하지 않는다는 뜻입니다.
+실제로 캡처된 단서를 유지하고 슬라이드 형태의 UI 상태를 지어내지 않습니다. 캡처한 UI에서 `zoom`은 기존 좌표·출처 점검을 거친,
+의도적으로 선택한 강조 영역에만 적용하며 모든 프레임에 자동 동작을 적용하지 않습니다. 작성한 슬라이드에 대한 명시적인
+zoom 요청은 선택된 예외로서 준수하고 검사해야 합니다.
+`none`은 강조 없음이라는 뜻입니다. 어떤 표현 방식을 사용하든 눈에 보이는 비교와 출처의 사실을 보존합니다.

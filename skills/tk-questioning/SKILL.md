@@ -10,18 +10,15 @@ metadata:
     role: reference
 ---
 
-# Shared Questioning
+<a id="shared-questioning"></a>
+# 공통 질문 기준
 
-Read only references whose conditions below hold; return criteria and gaps to the caller,
-which retains scope, approvals and completion. References invoke no workflow and grant no
-installation, mutation, secret, Git or publication authority.
+아래 조건에 해당하는 참조만 읽고 기준과 미확인 사항을 호출자에게 반환합니다. 범위, 승인과 완료 책임은 호출자가 유지합니다. 참조는 워크플로를 호출하지 않으며 설치, 변경, 비밀 접근, Git 또는 발행 권한을 부여하지 않습니다.
 
-Resolve owners in the current installed skill collection (`dependencies.json`), not memory,
-another installation, hardcoded homes or a source-checkout fallback. A missing/mismatched
-owner or resource blocks the affected action: guide to `tk-setup-skills`, never silently install.
-Resource links name the installed owner; visual-question theme assets belong to `tk-writing`.
+소유자는 기억, 다른 설치본, 하드코딩한 홈이나 소스 checkout 대체 경로가 아니라 현재 설치된 스킬 모음(`dependencies.json`)에서 확인합니다. 소유자나 자원이 없거나 일치하지 않으면 해당 행동을 중단합니다. 조용히 설치하지 말고 `tk-setup-skills`를 안내합니다. 자원 링크는 설치된 소유자를 가리킵니다. 시각적 질문의 테마 자산은 `tk-writing`이 소유합니다.
 
-## Conditional references
+<a id="conditional-references"></a>
+## 조건부 참조
 
-- [questions](references/questions.md): a user-owned decision, missing approval or unmet prerequisite needs a question.
-- [visual questions](references/visual-questions.md): an unresolved layout, navigation or visual choice needs a question aid.
+- [질문](references/questions.md): 사용자가 결정해야 할 사항, 누락된 승인 또는 충족되지 않은 선행 조건 때문에 질문이 필요할 때 읽습니다.
+- [시각적 질문](references/visual-questions.md): 미해결 레이아웃, 탐색 또는 시각적 선택에 질문 보조 자료가 필요할 때 읽습니다.

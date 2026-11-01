@@ -1,22 +1,23 @@
-# Headless authentication
+<a id="headless-authentication"></a>
+# 헤드리스 인증
 
-All required scenarios must be executable headlessly. Use this priority order:
+모든 필수 시나리오는 헤드리스로 실행할 수 있어야 합니다. 다음 우선순위를 따릅니다.
 
-1. no authentication required
-2. reuse an existing safe, verifiable, run-owned authenticated session/profile
-3. reuse the same worktree's protected authentication input and restore expired access through the application's supported renewal path under [environment](environment.md)
-4. inspect bootstrap and renewal contracts before the first input request under [environment](environment.md); request only missing fields, including refresh material required by that route, then inject through the repository/application-supported bootstrap
-5. use username/password only for fully non-interactive login without OTP, MFA, SSO, CAPTCHA, passkey, or device approval
+1. 인증이 필요하지 않은 방식을 사용합니다.
+2. 기존의 안전하고 검증 가능하며 이번 실행이 소유한 인증 세션/프로필을 재사용합니다.
+3. 같은 워크트리의 보호된 인증 입력을 재사용하고, [환경](environment.md)에 따라 애플리케이션이 지원하는 갱신 경로로 만료된 액세스를 복구합니다.
+4. [환경](environment.md)에 따라 첫 입력 요청 전에 초기 인증과 갱신 계약을 확인한 뒤, 해당 경로에 필요한 갱신 자료를 포함하여 누락된 필드만 요청하고 저장소/애플리케이션이 지원하는 초기 인증 경로로 주입합니다.
+5. OTP, MFA, SSO, CAPTCHA, 패스키나 기기 승인이 없는 완전한 비대화형 로그인에만 사용자 이름/비밀번호를 사용합니다.
 
-Do not guess the authentication injection method. Tie it to repository/application evidence or a user-specified method and
-verify the resulting authenticated state.
+인증 주입 방법을 추측하지 않습니다. 저장소/애플리케이션 근거나 사용자가 지정한 방법에 연결하고,
+그 결과 인증된 상태가 되었는지 검증합니다.
 
-Do not store usernames, passwords, tokens, OTPs, cookies, session values, recovery codes, or sensitive identities in
-the conversation, `.tigerkit/*.md`, prompts, logs, summaries, or child receipts.
-Record only non-sensitive facts such as `auth mode: token-headless` or `authenticated state established`.
-Retain authorized non-production access/session and route-required refresh material only in the protected
-worktree-local input under [environment](environment.md); stage cleanup and expiry do not delete it.
-Never retain production credentials or share token files between worktrees. Never print file contents.
+사용자 이름, 비밀번호, 토큰, OTP, 쿠키, 세션 값, 복구 코드나 민감한 식별 정보를
+대화, `.tigerkit/*.md`, 프롬프트, 로그, 요약이나 자식 작업 반환 기록에 저장하지 않습니다.
+`auth mode: token-headless`나 `authenticated state established`와 같이 민감하지 않은 사실만 기록합니다.
+승인된 비운영 액세스/세션과 해당 경로에 필요한 갱신 자료는 [환경](environment.md)에 따라 보호된
+워크트리 로컬 입력에만 보존합니다. 단계 정리나 만료를 이유로 이를 삭제하지 않습니다.
+운영 자격 증명을 보존하거나 워크트리 사이에 토큰 파일을 공유하지 않습니다. 파일 내용을 절대로 출력하지 않습니다.
 
-If safe headless authentication cannot be established, do not fall back to a visible browser; return `Unverifiable`.
+안전한 헤드리스 인증을 수립할 수 없으면 화면에 표시되는 브라우저로 대체하지 말고 `Unverifiable`을 반환합니다.
 

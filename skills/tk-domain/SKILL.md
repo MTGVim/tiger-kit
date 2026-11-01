@@ -10,47 +10,51 @@ metadata:
     relationship: native
 ---
 
-# Repository Domain Context
+<a id="repository-domain-context"></a>
+# 저장소 도메인 맥락
 
-## Shared References
+<a id="shared-references"></a>
+## 공통 참조
 
-Read branch-triggered criteria from the current installed owners. A missing/mismatched
-owner or resource blocks that action: use `tk-setup-skills`, not memory, another installation
-or unapproved installs. Reading grants no workflow or mutation authority.
+분기 조건에 해당하는 기준은 현재 설치된 소유 스킬에서 읽습니다. 소유자나 자원이 없거나 일치하지
+않으면 해당 행동을 차단합니다. 기억, 다른 설치본이나 승인되지 않은 설치 대신 `tk-setup-skills`를
+사용합니다. 읽기는 워크플로 실행이나 변경 권한을 부여하지 않습니다.
 
-- For a user-owned decision, missing approval or unmet prerequisite, read [question rounds](../tk-questioning/references/questions.md).
-- Before a user-facing completion report, artifact-path handoff or multi-attribute chat comparison, read [chat delivery](../tk-writing/references/delivery.md). The task's specific output contract wins.
+- 사용자 소유 결정, 누락된 승인 또는 충족되지 않은 선행 조건이 있으면 [질문 라운드](../tk-questioning/references/questions.md)를 읽습니다.
+- 사용자에게 완료 보고, 산출물 경로 인계 또는 여러 속성을 비교하는 채팅 답변을 하기 전에 [채팅 전달](../tk-writing/references/delivery.md)을 읽습니다. 작업의 구체적인 출력 계약이 우선합니다.
 
-## Approval Continuity
+<a id="approval-continuity"></a>
+## 승인 연속성
 
-Reuse active same-task approval across turns and child phases (including baseline/after); continue only its authorized
-work through existing owners. Return child/baseline evidence and resume approved owner work;
-a phase status is not completion. Ask only for a new material decision, changed scope/authority
-or missing user-only input. Invocation and recovered artifacts grant no authority. Remote and
-destructive actions need explicit action/target approval, never inferred from local approval.
+활성 상태인 같은 작업의 승인은 여러 턴과 자식 단계(baseline/after 포함)에 걸쳐 재사용하며,
+기존 담당자를 통해 승인된 작업만 계속합니다. 자식/baseline 근거를 반환하고 승인된 담당 작업을
+재개합니다. 단계 상태는 완료가 아닙니다. 새로운 중대한 결정, 범위/권한 변경 또는 누락된 사용자
+전용 입력이 있을 때만 질문합니다. 호출과 복구한 산출물은 권한을 부여하지 않습니다. 원격 및
+파괴적 행동에는 명시적인 행동/대상 승인이 필요하며, 로컬 승인에서 추론하지 않습니다.
 
-Use this skill only to create or refine repository-owned ubiquitous language and sparse durable decision context.
-Glossary entries and ADRs remain distinct artifacts. This is not a generic memory store, rules corpus, architecture
-document, implementation guide, or troubleshooting archive.
+이 스킬은 저장소 소유의 보편 언어와 드문 지속적 결정 맥락을 만들거나 다듬을 때만 사용합니다.
+용어집 항목과 ADR은 별도 산출물로 유지합니다. 범용 메모리 저장소, 규칙 corpus, 아키텍처 문서,
+구현 안내나 문제 해결 아카이브로 사용하지 않습니다.
 
-## Evidence
+<a id="evidence"></a>
+## 근거
 
-Investigate repository source, product material, and supplied conversation evidence for one concrete project-specific
-term. Confirm the canonical spelling, meaning, and useful alternatives. If the meaning claims code behavior, ground it
-in current source. Ask the user only when canonical vocabulary is a genuine product/domain decision that evidence cannot
-resolve.
+구체적인 프로젝트 고유 용어 하나에 대해 저장소 소스, 제품 자료와 제공된 대화 근거를 조사합니다.
+표준 표기, 의미와 유용한 대안을 확인합니다. 의미가 코드 동작을 주장한다면 현재 소스에 근거합니다.
+표준 어휘가 근거만으로 해결할 수 없는 실제 제품/도메인 결정일 때만 사용자에게 질문합니다.
 
-Do not create an artifact before the first real term is confirmed. Respect an existing repository glossary convention
-instead of duplicating it.
+첫 실제 용어를 확인하기 전에 산출물을 만들지 않습니다. 기존 저장소 용어집 관례를 존중하고
+중복 생성하지 않습니다.
 
-Sharpen fuzzy or overloaded language only when the ambiguity changes an artifact or decision. Use one concrete edge
-case only when the relationship cannot otherwise be resolved. Fresher code or runtime evidence beats a stale glossary
-claim; surface the conflict instead of silently preserving stale wording. Ordinary wording ambiguity needs no domain
-ceremony.
+모호함이 산출물이나 결정을 바꿀 때만 불명확하거나 여러 의미로 쓰이는 표현을 명료하게 합니다.
+관계를 달리 해결할 수 없을 때만 구체적인 경계 사례 하나를 사용합니다. 최신 코드나 런타임 근거가
+오래된 용어집 주장보다 우선합니다. 오래된 문구를 조용히 보존하지 말고 충돌을 드러냅니다.
+일반적인 문구 모호성에는 도메인 절차가 필요하지 않습니다.
 
-## Artifact
+<a id="artifact"></a>
+## 산출물
 
-For one context, create or refine root `CONTEXT.md` with the smallest useful form:
+맥락 하나에는 유용한 최소 형태로 루트 `CONTEXT.md`를 만들거나 다듬습니다.
 
 ```md
 # Domain Context
@@ -62,66 +66,70 @@ For one context, create or refine root `CONTEXT.md` with the smallest useful for
 _Avoid_: <misleading synonym>, <unwanted translation>
 ```
 
-`_Avoid_` is optional. Preserve Korean/English spelling, acronyms, casing, and spacing exactly when they are part of
-the canonical term.
+`_Avoid_`는 선택 사항입니다. 한국어/영어 표기, 약어, 대소문자와 띄어쓰기가 표준 용어의
+일부라면 정확히 보존합니다.
 
-Exclude file paths, classes/functions/tables, debugging tips, generic programming vocabulary, transient values,
-task acceptance criteria, general engineering rules, and long product specifications. Move behavioral invariants to
-their repo-native owner instead of the glossary.
+파일 경로, 클래스/함수/테이블, 디버깅 팁, 일반 프로그래밍 어휘, 일시적 값, 작업 인수 기준,
+일반 엔지니어링 규칙과 긴 제품 명세는 제외합니다. 동작 불변 조건은 용어집 대신 저장소 고유의
+담당 위치로 옮깁니다.
 
-## Optional Multi-Context Escalation
+<a id="optional-multi-context-escalation"></a>
+## 선택적 다중 맥락 확장
 
-Default to root `CONTEXT.md`. A monorepo or multiple packages alone is not evidence for splitting. Propose
-`CONTEXT-MAP.md` only when actual bounded contexts exist, such as one term having different meanings, unrelated
-vocabularies repeatedly mixing, or workers rarely needing another context's language. This structural change requires
-explicit active-task approval.
+기본은 루트 `CONTEXT.md`입니다. monorepo나 여러 패키지의 존재만으로 분리 근거가 되지는
+않습니다. 같은 용어가 다른 의미를 갖거나, 무관한 어휘가 반복해서 섞이거나, 작업자가 다른
+맥락의 언어를 거의 필요로 하지 않는 등 실제 bounded context가 있을 때만 `CONTEXT-MAP.md`를
+제안합니다. 이 구조 변경에는 명시적인 활성 작업 승인이 필요합니다.
 
-The map contains only relevant context paths and relationships; it never duplicates glossary entries. After approval,
-place each glossary at the natural bounded-context path and verify every mapped path.
+맵에는 관련 맥락 경로와 관계만 포함하며 용어집 항목을 복제하지 않습니다. 승인 후 각 용어집을
+자연스러운 bounded-context 경로에 두고 매핑한 모든 경로를 검증합니다.
 
-## Sparse Durable Decisions
+<a id="sparse-durable-decisions"></a>
+## 드문 지속적 결정
 
-Propose an ADR only when all three thresholds hold:
+다음 세 기준을 모두 충족할 때만 ADR을 제안합니다.
 
-1. **hard to reverse**: changing course has meaningful rollback or migration cost;
-2. **surprising without context**: a future maintainer may undo the choice without its rationale;
-3. **real trade-off**: at least two valid alternatives existed and the decision chose among them for a reason.
+1. **되돌리기 어렵습니다**: 방향 전환에 유의미한 롤백 또는 마이그레이션 비용이 듭니다.
+2. **맥락 없이는 의외입니다**: 미래의 유지보수자가 근거를 모르면 선택을 되돌릴 수 있습니다.
+3. **실제 절충이 있습니다**: 유효한 대안이 둘 이상 있었고 이유를 가지고 그중 하나를 골랐습니다.
 
-Keep local implementation rationale in a code comment or its repository-native owner. Do not ADR-ize ticket plans,
-test methods, coding conventions, simple library selection, or easily reversible choices.
+로컬 구현 근거는 코드 주석이나 저장소 고유 담당 위치에 둡니다. 티켓 계획, 테스트 방법, 코딩
+관례, 단순한 라이브러리 선택이나 쉽게 되돌릴 수 있는 선택을 ADR로 만들지 않습니다.
 
-Prefer an established repository ADR convention. When none exists, use the minimal fallback
-`docs/adr/0001-<slug>.md`, incrementing the highest filename number without reading unrelated files. Create
-`docs/adr/` lazily for the first real ADR. The fallback contains a title and usually one to three sentences stating
-the context, decision, and why. Add status, alternatives, consequences, or other fields only when they carry information.
+기존 저장소 ADR 관례를 우선합니다. 관례가 없으면 최소 대안인 `docs/adr/0001-<slug>.md`를
+사용하며, 무관한 파일을 읽지 않고 가장 큰 파일명 번호에서 증가시킵니다. 첫 실제 ADR이 생길
+때만 `docs/adr/`를 만듭니다. 대안 형식에는 제목과, 보통 맥락·결정·이유를 밝히는 한 문장부터
+세 문장이 들어갑니다. 정보를 전달할 때만 상태, 대안, 결과나 다른 필드를 추가합니다.
 
-Before proposing a new ADR, read only existing ADR evidence relevant to that decision. Compare it with current code
-and decide whether the request is a duplicate, refinement, or supersession. Do not silently overwrite or contradict
-owned rationale: reuse an unchanged decision, or surface `revisit ADR` with the changed premise and propose an explicit
-`refine or supersede` path. Never scan an unrelated ADR or context tree.
+새 ADR을 제안하기 전에 그 결정에 관련된 기존 ADR 근거만 읽습니다. 현재 코드와 비교하여
+요청이 중복인지, 보완인지, 대체인지 판단합니다. 소유된 근거를 조용히 덮어쓰거나 모순시키지
+않습니다. 변경 없는 결정은 재사용하거나, 달라진 전제와 함께 `revisit ADR`을 드러내고 명시적인
+`refine or supersede` 경로를 제안합니다. 무관한 ADR이나 맥락 트리를 탐색하지 않습니다.
 
-## 🔴 CHECKPOINT · 🛑 STOP
+<a id="-checkpoint---stop"></a>
+## 🔴 점검 지점 · 🛑 중단
 
-Before any write, present the term or durable decision, evidence, exact target path, proposed wording, exclusions, and
-whether this is a root refinement, approved multi-context change, new ADR, refinement, or supersession. Require
-active-task approval for the exact mutation. Evidence or scope drift invalidates approval.
+어떤 쓰기든 수행하기 전에 용어나 지속적 결정, 근거, 정확한 대상 경로, 제안 문구, 제외 사항과
+루트 보완인지, 승인된 다중 맥락 변경인지, 새 ADR인지, 보완인지, 대체인지를 제시합니다.
+정확한 변경에 대해 활성 작업 승인을 요구합니다. 근거나 범위가 달라지면 승인은 무효가 됩니다.
 
-After approval, write the minimum artifact atomically and reread it. Verify that glossary terms and `_Avoid_` values
-are exact, or that the ADR preserves its evidence, decision, why, and relationship to existing rationale. Ensure no
-excluded implementation/rule content entered either artifact. Do not create central TigerKit state, host-specific
-memory, a learning corpus, or automatic repository scanning.
+승인 후 최소 산출물을 원자적으로 쓰고 다시 읽습니다. 용어집의 용어와 `_Avoid_` 값이 정확한지,
+또는 ADR이 근거, 결정, 이유와 기존 근거와의 관계를 보존하는지 검증합니다. 제외 대상인 구현/규칙
+내용이 어느 산출물에도 들어가지 않았는지 확인합니다. 중앙 TigerKit 상태, 호스트별 메모리,
+학습 corpus 또는 자동 저장소 탐색을 만들지 않습니다.
 
-Return the changed path, canonical terms or decision, evidence basis, verification, and one actual status:
+변경 경로, 표준 용어나 결정, 근거 기반, 검증과 실제 상태 하나를 반환합니다.
 `Pass | Blocked | Unverifiable | Fail`.
 
-If the requested next step is a user-only skill, give one line with `/<skill>` and say
-that the current conversation carries over. Provide a full handoff prompt only for
-a different session; respect `disable-model-invocation` without calling or simulating it.
+요청한 다음 단계가 사용자 전용 스킬이면 `/<skill>`을 담은 한 줄을 제공하고 현재 대화가 이어진다고
+말합니다. 다른 세션에만 전체 인계 프롬프트를 제공합니다. `disable-model-invocation`을 존중하며
+호출하거나 모의 실행하지 않습니다.
 
-## Artifact Paths
+<a id="artifact-paths"></a>
+## 산출물 경로
 
-Before authorized artifact writes, checkout/transport/ignore setup or temporary-input consumption,
-read [artifact paths](../tk-artifacts/references/artifact-paths.md). Use safe owned nonsymlink paths
-and proven Git exclusion for repository scratch; failed checks stop that file branch. Preserve
-explicit final destinations and owner-specific defaults. Prefilled input is not completed input.
-Cleanup targets only recorded literal resolved absolute run-owned paths, never cwd-relative paths or globs.
+승인된 산출물 쓰기, checkout/전송/제외 설정 또는 임시 입력 사용 전에
+[산출물 경로](../tk-artifacts/references/artifact-paths.md)를 읽습니다. 저장소 임시 파일에는 안전한 소유
+nonsymlink 경로와 입증된 Git 제외를 사용합니다. 검사 실패는 해당 파일 분기를 중단합니다.
+명시적인 최종 목적지와 소유자별 기본값을 보존합니다. 미리 채운 입력은 완료된 입력이 아닙니다.
+정리는 기록된 리터럴 형태의 해석된 절대 실행 소유 경로만 대상으로 하며, cwd 상대 경로나 glob은 사용하지 않습니다.

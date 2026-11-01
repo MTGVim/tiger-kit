@@ -1,27 +1,30 @@
-# Chat delivery
+<a id="chat-delivery"></a>
+# 채팅 전달
 
-Read when returning a user-facing result, artifact links or a multi-attribute chat comparison.
-The caller owns evidence, deliverables, authority and completion. Its required preview,
-status/footer, machine return and final question block take precedence. Do not add a recap
-to a plain rewrite or shorten away requested detail; publication bodies and file artifacts
-retain their own formats.
+사용자에게 결과, 산출물 링크나 여러 속성을 비교하는 채팅을 반환할 때 읽습니다.
+호출자는 근거, 산출물, 권한과 완료를 담당합니다. 호출자가 요구하는 미리보기,
+상태나 푸터, 기계 반환값과 마지막 질문 블록이 우선합니다. 일반 재작성에 요약을
+추가하거나 요청된 세부 내용을 줄여 없애지 않습니다. 발행 본문과 파일 산출물은
+각자의 형식을 유지합니다.
 
-## Results
+<a id="results"></a>
+## 결과
 
-Lead with the outcome and actual verification. Link deliverables directly and retain material
-limitations, skipped/failed checks, outstanding manual checks, cleanup residue and real blockers
-or human actions. Distinguish plans from execution and local work from verified publication;
-never claim unverified completion or cleanup. Keep nested returns compact and omit empty sections.
-This is presentation guidance, not another report, retro or workflow to execute.
+결과와 실제 검증을 먼저 제시합니다. 산출물에 직접 링크하고 중요한
+한계, 생략하거나 실패한 검사, 남은 수동 검사, 정리 후 잔여물과 실제 차단 요인이나
+사람이 해야 할 일을 유지합니다. 계획과 실행, 로컬 작업과 확인된 발행을 구분하고,
+확인하지 않은 완료나 정리를 주장하지 않습니다. 상위 작업에 돌려주는 결과는 간결하게 유지하고 빈 절은 생략합니다.
+이는 표현 지침이며, 실행해야 할 또 다른 보고서, 회고나 워크플로가 아닙니다.
 
-## Notation
+<a id="notation"></a>
+## 표기
 
-- Use ASCII `1. Item`, `(1) Item` or `- Item`, not enclosed/keycap numerals.
-- Show complete absolute clickable file paths, including examples, without ellipses.
-- Preserve exact code, commands, identifiers, URLs, quotations and verified UI labels unless
-  their edit is authorized.
-- For chat comparisons with multiple shared attributes, use narrow GFM pipe tables (about four
-  columns, header, short cells); otherwise use lists. No box-drawing, fenced or empty tables.
-  The caller's specific preview/table contract wins.
-- In rendered Markdown prose, use hyphens for ranges and escape literal tildes as `\~`;
-  preserve exact code, quotations and identifiers.
+- 둘러싸인 숫자나 키캡 숫자 대신 ASCII `1. Item`, `(1) Item` 또는 `- Item`을 사용합니다.
+- 예시를 포함하여 클릭할 수 있는 전체 절대 파일 경로를 줄임표 없이 표시합니다.
+- 편집이 승인되지 않은 정확한 코드, 명령, 식별자, URL, 인용과 확인된 UI 라벨을
+  보존합니다.
+- 공통 속성이 여러 개인 채팅 비교에는 좁은 GFM 파이프 표를 사용합니다. 열은 약 네 개로 하고
+  헤더와 짧은 셀을 둡니다. 그 외에는 목록을 사용합니다. 박스 그리기 문자로 그린 표, 코드 블록 안의 표나 빈 표는 사용하지 않습니다.
+  호출자의 구체적인 미리보기 및 표 계약이 우선합니다.
+- 렌더링되는 Markdown 글에서는 범위를 하이픈으로 표시하고 물결표 리터럴을 `\~`로 이스케이프합니다.
+  정확한 코드, 인용과 식별자는 보존합니다.

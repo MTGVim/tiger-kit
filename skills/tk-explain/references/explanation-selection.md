@@ -1,206 +1,216 @@
-# Explanation selection
+<a id="explanation-selection"></a>
+# 설명 방식 선택
 
-## Select known axes in order
+<a id="select-known-axes-in-order"></a>
+## 알려진 축을 순서대로 선택한다
 
-Resolve three axes: technique, compatible format, then image style/aspect when relevant.
-Reuse the current request and confirmed choices; skip every resolved axis. When all axes are
-specified, announce the concrete treatment and generate without another question. Keep source,
-feasibility and artifact checks. A request to compare subjects is not a request for variants.
-Ordinary unspecified requests now wait for these selections rather than auto-picking a shortlist.
-Do not ask abstract questions about learning style or intended use instead of naming techniques.
+기법, 호환되는 형식, 그리고 관련이 있다면 이미지 스타일·종횡비의 세 축을 확정합니다.
+현재 요청과 확인된 선택을 재사용하며, 확정된 축은 모두 건너뜁니다. 모든 축이
+지정되어 있으면 구체적인 표현 방식을 알리고 추가 질문 없이 생성합니다. 출처,
+실현 가능성과 산출물 검사를 유지합니다. 주제를 비교해 달라는 요청은 변형본 요청이 아닙니다.
+이제 일반적인 미지정 요청에서는 짧은 후보 목록을 자동 선택하는 대신 이러한 선택을 기다립니다.
+기법을 구체적으로 제시하는 대신 학습 스타일이나 용도에 관한 추상적인 질문을 하지 않습니다.
 
-### 1. Show the whole catalog by theme
+<a id="1-show-the-whole-catalog-by-theme"></a>
+### 1. 전체 카탈로그를 주제별로 보여준다
 
-Show every technique below, including low-ranked and request-only choices, with stable IDs and
-concrete names in the user's language. Mark one fitting recommendation per theme, with a short
-reason and limitation; if none fits, state why and leave that theme without a recommendation.
-Never hide/remove a technique because it lost an earlier comparison. Keep the full numbered menu
-in readable chat; put theme recommendations in the input tool up to its actual choice capacity,
-and explicitly accept any catalog ID typed in free text. Tool limits never truncate the catalog.
-Do not dump internal renderer/schema names or ask which archify diagram grammar to use.
+낮은 순위와 요청 전용 선택지를 포함하여 아래의 모든 기법을 고정 ID와
+사용자 언어의 구체적인 이름으로 보여줍니다. 각 주제마다 적합한 추천 하나를 짧은
+이유와 한계와 함께 표시합니다. 적합한 것이 없으면 이유를 밝히고 해당 주제는 추천 없이 둡니다.
+이전 비교에서 졌다는 이유로 기법을 숨기거나 제거하지 않습니다. 읽기 쉬운 대화에 번호가 있는 전체 메뉴를
+유지합니다. 입력 도구에는 실제 선택지 용량까지 주제별 추천을 넣고,
+자유 텍스트에 입력한 어떤 카탈로그 ID든 받겠다고 명시합니다. 도구 한계 때문에 카탈로그를 잘라내지 않습니다.
+내부 렌더러·스키마 이름을 쏟아내거나 어떤 archify 다이어그램 문법을 사용할지 묻지 않습니다.
 
-| Theme | Technique IDs and concrete names |
+| 주제 | 기법 ID와 구체적인 이름 |
 | --- | --- |
-| Diagrams and evidence | 03 Real Output; 15 Before/After Comparison; 16 Concept Map; 26 Annotated Code; A Archify Panel Board |
-| Stories and actors | 04 Zine Comic; 07 Group Chat; 08 Sketch Comedy (request-only); 10 Incident Postmortem |
-| Participation | 02 Hands-on Simulator or Calculator; 09 Socratic Questions; 12 Choose-Your-Own Path; 19 Predict First; 20 Quiz; 21 Flashcards; 22 Invent Before Reveal; 23 Feynman Technique (request-only); 24 Hint Ladder |
-| Correction and reference | 01 Five-Step Ladder; 06 Misconception Correction; 25 Cheat Sheet; 28 Failure Modes |
-| Scenes and visual treatments | 05 Scrollytelling; 11 Illustrated Intuition; 18 Animated Metaphor; P1 Layout/style separation; P2 Design philosophy and restrained hierarchy; P3 Central scene; P4 Independent hand-drawn SVG |
+| 다이어그램과 근거 | 03 실제 출력; 15 변경 전후 비교; 16 개념도; 26 주석이 달린 코드; A Archify 패널 보드 |
+| 이야기와 행위자 | 04 진 만화; 07 그룹 채팅; 08 스케치 코미디(요청 전용); 10 사고 회고 |
+| 참여 | 02 직접 조작하는 시뮬레이터 또는 계산기; 09 소크라테스식 질문; 12 경로 선택; 19 먼저 예측하기; 20 퀴즈; 21 플래시카드; 22 공개 전에 고안하기; 23 파인만 기법(요청 전용); 24 단계별 힌트 |
+| 교정과 참조 | 01 다섯 단계 사다리; 06 오개념 교정; 25 치트 시트; 28 실패 유형 |
+| 장면과 시각적 표현 | 05 스크롤텔링; 11 그림으로 전달하는 직관; 18 애니메이션 비유; P1 배치와 스타일의 분리; P2 디자인 철학과 절제된 위계; P3 중심 장면; P4 독립적인 손그림 SVG |
 
-Keep all original [30 entries](../../tk-writing/references/explanation-techniques.md) addressable. The six entries below
-belong to another axis; show this compact relocation list with the catalog so none disappears:
-13 Sequence Diagram and 14 Waterfall Timeline are diagram details, chosen from the content;
-17 Infographic Poster, 27 Terminal Replay, 29 Slide Deck and 30 Social Thread are formats.
-Accept an explicit ID at any axis and carry it forward; #30 stays request-only. Selecting #08,
-#23 or #30 explicitly is the request that enables it; do not recommend them unsolicited.
-A diagram-detail request constrains the automatic figure choice, not a second technique prompt.
+원래 [30개 항목](../../tk-writing/references/explanation-techniques.md) 모두를 지정할 수 있게 유지합니다. 아래 여섯 항목은
+다른 축에 속합니다. 아무 항목도 사라지지 않도록 이 간결한 이동 목록을 카탈로그와 함께 보여줍니다.
+13 시퀀스 다이어그램과 14 워터폴 타임라인은 콘텐츠에 따라 선택하는 다이어그램 세부 유형입니다.
+17 인포그래픽 포스터, 27 터미널 재생, 29 슬라이드 덱과 30 소셜 스레드는 형식입니다.
+어느 축에서든 명시적인 ID를 받아 이후 단계로 유지합니다. #30은 요청 전용으로 유지합니다. #08,
+#23 또는 #30의 명시적 선택 자체가 이를 활성화하는 요청입니다. 요청받지 않았을 때 추천하지 않습니다.
+다이어그램 세부 유형 요청은 자동 그림 선택을 제약하며, 두 번째 기법 질문을 만들지 않습니다.
 
-### 2. Offer only compatible formats
+<a id="2-offer-only-compatible-formats"></a>
+### 2. 호환되는 형식만 제시한다
 
-Ask this after the technique is settled; never send technique and format questions concurrently.
-Respect an explicit format (for example `이미지로`) and skip this question. If an explicit pair
-conflicts, explain the lost requirement and ask only which bound requirement to change. Never
-silently flatten interaction or rasterize exact code. With just one feasible format, announce it.
+기법이 확정된 뒤에 질문합니다. 기법과 형식 질문을 동시에 보내지 않습니다.
+명시적인 형식(예: `이미지로`)을 존중하고 이 질문은 건너뜁니다. 명시적인 조합이
+충돌하면 충족되지 않는 요구 사항을 설명하고 구속력 있는 요구 사항 중 무엇을 바꿀지만 질문합니다.
+상호작용을 조용히 평면화하거나 정확한 코드를 래스터화하지 않습니다. 실현 가능한 형식이 하나뿐이면 이를 알립니다.
 
-Use these stable format IDs in every format question: show both ID and concrete name and accept
-the ID alone (for example `F1`). Filter to compatible choices without renumbering. `F` IDs are
-format choices, independent of the unchanged technique/principle IDs `01`-`30`, `A`, `P1`-`P4`.
+모든 형식 질문에서 아래의 고정 형식 ID를 사용합니다. ID와 구체적인 이름을 함께 보여주고
+ID만 입력해도 받습니다(예: `F1`). 번호를 다시 매기지 말고 호환되는 선택지로 필터링합니다. `F` ID는
+형식 선택이며, 그대로 유지되는 기법·원칙 ID `01`-`30`, `A`, `P1`-`P4`와는 독립적입니다.
 
-| Format ID | Concrete format |
+| 형식 ID | 구체적인 형식 |
 | --- | --- |
-| F1 | Offline HTML, interactive when the technique requires it |
-| F2 | Precise static PNG |
-| F3 | AI illustration (raster) |
-| F4 | #17 Infographic Poster |
-| F5 | #29 Slide Deck |
-| F6 | Standalone SVG, animated only when explicitly selected |
-| F7 | Video, only when explicitly selected |
-| F8 | #27 Terminal Replay |
-| F9 | #30 Social Thread (request-only) |
+| F1 | 오프라인 HTML이며, 기법이 요구하면 상호작용을 지원합니다. |
+| F2 | 정밀한 정적 PNG |
+| F3 | AI 일러스트레이션(래스터) |
+| F4 | #17 인포그래픽 포스터 |
+| F5 | #29 슬라이드 덱 |
+| F6 | 독립형 SVG이며, 명시적으로 선택한 경우에만 애니메이션을 사용합니다. |
+| F7 | 명시적으로 선택한 경우에만 사용하는 영상 |
+| F8 | #27 터미널 재생 |
+| F9 | #30 소셜 스레드(요청 전용) |
 
-An ID resolves only its format axis; retain the selected technique and remaining style/aspect
-question. Reject an incompatible ID with its lost requirement instead of silently remapping it.
-Explicit legacy IDs #17/#27/#29/#30 and format names remain accepted aliases. F9 enables #30 only
-when explicitly requested; do not offer it unsolicited. F4/F5 are compositions rather than a
-request to replace their facts with AI-generated text; infer their compatible rendering route.
+ID는 해당 형식 축만 확정합니다. 선택한 기법과 남은 스타일·종횡비
+질문을 유지합니다. 호환되지 않는 ID는 조용히 다시 매핑하지 말고, 충족되지 않는 요구 사항을 설명하며 거절합니다.
+기존의 명시적인 ID #17/#27/#29/#30과 형식 이름도 별칭으로 계속 받습니다. F9는
+명시적으로 요청했을 때만 #30을 활성화합니다. 요청받지 않았을 때 제시하지 않습니다. F4/F5는 구성이며,
+사실을 AI 생성 텍스트로 바꿔 달라는 요청이 아닙니다. 호환되는 렌더링 경로를 추론합니다.
 
-| Selected requirement | Compatible formats / exclusions |
+| 선택된 요구 사항 | 호환되는 형식과 제외 사항 |
 | --- | --- |
-| Participation (#02, #09, #12, #19-#24, including request-only #23) | F1 only, interactive offline HTML; native disclosure/links and a static no-JS reading path. No still image/video/slide replacement. |
-| A Archify Panel Board or #05 Scrollytelling | F1 preserving the actual board or scroll behavior; do not replace the defining form with a still image. |
-| P4 Independent hand-drawn SVG | F6 or F1 containing the actual vector sketch; an AI raster is a different treatment, not this SVG execution. |
-| Exact code or command output (#26, #27, or another technique whose claim needs exact source bytes) | F1 selectable-text HTML, or explicit F8 terminal replay. Exclude F3 AI raster illustration. |
-| General static explanation | F1, F2, F3 and fitting explicit F4/F5; choose only options that preserve the needed facts. |
-| Motion essential (#18) | F1 live HTML or explicitly selected F6 animated SVG/F7 video, with static equivalent. A still image cannot satisfy motion. |
-| #30 Social Thread | F9 request-only separate sharing summary, retaining a link/reference to the full explanation; never auto-select it. |
+| 참여(#02, #09, #12, #19-#24, 요청 전용 #23 포함) | F1만 가능합니다. 상호작용 오프라인 HTML이며, 기본 펼침 요소·링크와 JS 없는 정적 읽기 경로를 제공합니다. 정지 이미지·영상·슬라이드로 대체하지 않습니다. |
+| A Archify 패널 보드 또는 #05 스크롤텔링 | 실제 보드나 스크롤 동작을 보존하는 F1입니다. 형식을 정의하는 요소를 정지 이미지로 대체하지 않습니다. |
+| P4 독립적인 손그림 SVG | 실제 벡터 스케치를 담은 F6 또는 F1입니다. AI 래스터는 다른 표현 방식이며, 이 SVG 실행에 해당하지 않습니다. |
+| 정확한 코드 또는 명령 출력(#26, #27 또는 주장을 위해 정확한 원본 바이트가 필요한 다른 기법) | 텍스트를 선택할 수 있는 F1 HTML 또는 명시적인 F8 터미널 재생입니다. F3 AI 래스터 일러스트레이션은 제외합니다. |
+| 일반적인 정적 설명 | F1, F2, F3 및 적합하고 명시적인 F4/F5입니다. 필요한 사실을 보존하는 선택지만 고릅니다. |
+| 움직임이 필수인 경우(#18) | 동작하는 F1 HTML 또는 명시적으로 선택한 F6 애니메이션 SVG/F7 영상이며, 정적 등가물을 제공합니다. 정지 이미지로는 움직임을 충족할 수 없습니다. |
+| #30 소셜 스레드 | F9 요청 전용의 별도 공유 요약이며, 전체 설명으로 가는 링크·참조를 유지합니다. 자동 선택하지 않습니다. |
 
-For an unspecified single HTML without a technique-specific form, archify remains the page
-renderer. A choice of HTML is not a choice of image style; do not ask a third question for HTML.
-#13/#14 diagram detail, archify type, chart type and layout are inferred from evidence, not user
-menu axes. Preserve an explicit correct detail without requiring another selection.
-The PR/issue summary PNG destination remains a resolved format under its own contract.
+기법 고유 형식이 지정되지 않은 단일 HTML에서는 archify가 페이지
+렌더러로 유지됩니다. HTML 선택은 이미지 스타일 선택이 아닙니다. HTML에 세 번째 질문을 하지 않습니다.
+#13/#14 다이어그램 세부 유형, archify 유형, 차트 유형과 배치는 사용자
+메뉴 축이 아니라 근거에서 추론합니다. 명시적으로 지정된 올바른 세부 유형은 추가 선택 없이 보존합니다.
+PR/이슈 요약 PNG 목적지는 자체 계약에 따라 확정된 형식으로 유지됩니다.
 
-### 3. Confirm image style and aspect only when needed
+<a id="3-confirm-image-style-and-aspect-only-when-needed"></a>
+### 3. 필요한 경우에만 이미지 스타일과 종횡비를 확인한다
 
-For AI illustration, read [raster illustration](raster-illustration.md). Show the automatically
-chosen information layout as a concrete composition alongside 3-4 suitable style treatments and
-`알아서`, plus only unresolved aspect choices. This confirms layout×style/aspect without asking
-users to choose an internal layout taxonomy. Existing explicit choices win. If an axis has zero
-or one feasible choice, report the decision/limit instead of asking; with multiple choices, wait
-for the answer. If the input tool has fewer slots, keep the full numbered options in chat and
-accept typed IDs; never silently pick a missing answer. “Choose for me” delegates only that axis.
-Precise static PNG/SVG uses applicable style/aspect choices without invoking AI raster generation;
-HTML has no third-round image question. The raster reference owns prompt persistence and checks.
+AI 일러스트레이션에서는 [래스터 일러스트레이션](raster-illustration.md)을 읽습니다. 자동으로
+선택한 정보 배치를 구체적인 구성으로 제시하고, 적합한 스타일 표현 3~4개와
+`알아서`, 그리고 미확정 종횡비 선택지만 함께 보여줍니다. 사용자가 내부 배치 분류를
+선택하게 하지 않으면서 배치×스타일·종횡비를 확인합니다. 기존에 명시한 선택이 우선합니다. 어떤 축에서 실현 가능한
+선택지가 없거나 하나뿐이면 질문 대신 결정·한계를 보고합니다. 여러 선택지가 있으면
+답을 기다립니다. 입력 도구의 슬롯이 부족하면 번호가 있는 전체 선택지를 대화에 유지하고
+입력한 ID를 받습니다. 빠진 답을 조용히 대신 고르지 않습니다. “Choose for me”는 해당 축만 위임합니다.
+정밀한 정적 PNG/SVG에는 AI 래스터 생성을 호출하지 않고 해당되는 스타일·종횡비 선택을 적용합니다.
+HTML에는 세 번째 이미지 질문을 하지 않습니다. 프롬프트 보존과 검사는 래스터 참조가 담당합니다.
 
-### Context-bound evaluation influence
+<a id="context-bound-evaluation-influence"></a>
+### 맥락에 한정된 평가의 영향
 
-Only authorized, relevant external preference evidence may reorder choices inside a theme.
-When used, show topic type, number of evaluated comparisons/topics and evaluator count alongside
-the observed result; distinguish match wins/reached round from a cardinal score. Unknown counts
-stay unknown. The supplied 19-candidate, one-PR, one-evaluator tournament is one comparison,
-not 19 independent ratings and not general superiority. Its unidentified first-round losers do
-not justify inventing a per-technique ranking. Keep all entries visible and request-only status.
-Use the consent rules below before saving any result or reason; this menu creates no memory store.
+승인되었고 관련성이 있는 외부 선호 근거만 주제 안에서 선택 순서를 바꿀 수 있습니다.
+이를 사용할 때는 관찰된 결과와 함께 주제 유형, 평가한 비교·주제 수와 평가자 수를 보여줍니다.
+대결 승수·진출 라운드와 기수적 점수를 구별합니다. 알 수 없는 수는
+미상으로 둡니다. 제공된 후보 19개, PR 하나, 평가자 한 명의 토너먼트는 하나의 비교이며,
+독립 평가 19개나 일반적인 우월성의 근거가 아닙니다. 신원이 밝혀지지 않은 1라운드 탈락 후보로는
+기법별 순위를 지어낼 수 없습니다. 모든 항목을 보이게 유지하고 요청 전용 상태도 유지합니다.
+결과나 이유를 저장하기 전에 아래의 동의 규칙을 사용합니다. 이 메뉴는 메모리 저장소를 만들지 않습니다.
 
-## Archify panel board
+<a id="archify-panel-board"></a>
+## Archify 패널 보드
 
-Include one additional choice alongside the original 30-entry catalog and four principles: **archify panel
-board** (conclusion first, native diagrams, table panels). Use it for an ordinary single page
-without a technique-specific form or when explicitly selected. Its fixed panel grammar cannot
-express arbitrary HTML treatments. A request for a particular form takes precedence; requested
-variant sets include at most one archify panel board, not repeated boards with different wording.
+원래의 30개 항목 카탈로그 및 네 원칙과 함께 추가 선택지 하나인 **archify 패널
+보드**(결론 우선, 내장 다이어그램, 표 패널)를 포함합니다. 기법 고유 형식이 없는 일반적인 단일 페이지나
+명시적으로 선택했을 때 사용합니다. 고정 패널 문법으로는
+임의의 HTML 표현을 구현할 수 없습니다. 특정 형식 요청이 우선합니다. 요청된
+변형본 집합에는 archify 패널 보드를 최대 하나만 포함하며, 문구만 바꾼 보드를 반복하지 않습니다.
 
-## Four available distilled principles
+<a id="four-available-distilled-principles"></a>
+## 선택할 수 있는 네 가지 증류 원칙
 
-Always include these in the selection pool. No further trial or favorable evaluation is a
-condition of availability. When combined with an existing technique, retain the principle's name
-and source as a separately selectable treatment; do not collapse all four into “infographic.”
-Each is a partial adaptation, not the original skill's formal execution or a replacement for it. An HTML/SVG treatment
-using one of these principles is not an original upstream output. For an original-like AI
-illustration, select the raster route; the independent SVG option remains explicitly a sketch,
-never an Excalidraw export or a substitute for requested raster art.
+이 원칙들을 항상 선택 후보에 포함합니다. 추가 시험이나 긍정적인 평가를
+이용 가능 조건으로 삼지 않습니다. 기존 기법과 결합하더라도 원칙 이름과
+출처를 별도로 선택할 수 있는 표현 방식으로 유지합니다. 네 원칙을 모두 “인포그래픽”으로 합치지 않습니다.
+각 원칙은 부분적으로 조정한 것이며, 원래 스킬의 정식 실행이나 대체물이 아닙니다. 이 원칙 중 하나를 사용하는 HTML/SVG 표현은
+upstream의 원래 출력이 아닙니다. 원본과 유사한 AI
+일러스트레이션에는 래스터 경로를 선택합니다. 독립 SVG 선택지는 명시적으로 스케치로 유지하며,
+Excalidraw 내보내기나 요청된 래스터 그림의 대체물로 취급하지 않습니다.
 
-| Choice / source | Apply when | Limitation |
+| 선택지와 출처 | 적용할 상황 | 한계 |
 | --- | --- | --- |
-| Layout/style separation, from `baoyu-infographic` | First map the information order and relationships, then choose a visual treatment independently. Useful for a process whose structure must survive style changes. | A style cannot establish sequence, causality or a measurement; use raster generation for an original-like illustrated output; HTML/SVG-only adaptation is a different output. |
-| Design philosophy and restrained hierarchy, from `canvas-design` | State a brief visual intent for emphasis, spacing and grouping, then use a few clear levels to expose the main relationship. | Restraint cannot delete prerequisites, qualifications or causal steps; this is explanation, not an art-only text quota. |
-| Central scene, from `Epic Infographics` | Put a concrete subject or mechanism at the center and attach verified facts to the relevant parts, with a legible reading path. | Decorative atmosphere must not imply unsupported dimensions, magnitude or causality; a scene is not mandatory for every subject. |
-| Independent hand-drawn SVG, contrasted with `Excalidraw` | Use original slightly irregular strokes, simple shapes and legible labels for an approachable spatial or conceptual sketch. | This is independently authored SVG, not an Excalidraw export, editor integration or fidelity claim; rough strokes must not distort geometry or arrows. |
+| `baoyu-infographic`에서 가져온 배치와 스타일의 분리 | 먼저 정보의 순서와 관계를 정리한 다음 시각적 표현을 독립적으로 선택합니다. 스타일을 바꾸어도 구조가 유지되어야 하는 과정에 유용합니다. | 스타일은 순서, 인과 또는 측정값을 입증할 수 없습니다. 원본과 유사한 삽화 출력에는 래스터 생성을 사용합니다. HTML/SVG만으로 조정한 것은 다른 출력입니다. |
+| `canvas-design`에서 가져온 디자인 철학과 절제된 위계 | 강조, 간격과 그룹화에 관한 짧은 시각적 의도를 밝힌 다음, 몇 가지 명료한 수준으로 주요 관계를 드러냅니다. | 절제를 이유로 선행 요건, 한정 조건이나 인과 단계를 삭제할 수 없습니다. 이는 설명이며, 예술 작품에만 적용하는 텍스트 분량 제한이 아닙니다. |
+| `Epic Infographics`에서 가져온 중심 장면 | 구체적인 대상이나 메커니즘을 중심에 두고, 관련 부분에 검증된 사실을 붙여 읽기 쉬운 경로를 만듭니다. | 장식적 분위기로 근거 없는 치수, 크기나 인과를 암시해서는 안 됩니다. 모든 주제에 장면이 필수인 것은 아닙니다. |
+| `Excalidraw`와 대비되는 독립적인 손그림 SVG | 독창적인 약간 불규칙한 선, 단순한 도형과 읽기 쉬운 라벨로 친근한 공간·개념 스케치를 만듭니다. | 이는 독립적으로 작성한 SVG이며, Excalidraw 내보내기, 편집기 통합 또는 충실도 주장이 아닙니다. 거친 선이 기하 구조나 화살표를 왜곡해서는 안 됩니다. |
 
-Sources, exact revisions, keep/adapt/omit decisions, license and evidence limits are recorded in
-[selection provenance](sources.md#explanation-selection-and-four-principles-2026-10-30).
-Do not fetch upstream at explanation runtime. Reuse the current renderer and figure contracts:
-Archify owns only the selected panel-board branch and its native diagrams/interactions.
-Technique-specific HTML follows the common renderer contract and may embed original inline SVG;
-figures entering archify still use scene-figure restrictions and PNG conversion for `@image`. The PR/issue summary
-PNG route stays the default for that destination, and explicit standalone SVG/video keeps its
-own route. No principle skips source, author, accuracy, accessibility or offline checks.
-Use an available image tool only when raster generation is actually selected and authorized;
-do not claim that these principles remove image-generation dependencies. Unavailable/failed
-generation is a disclosed failure, not a successful image or a silently substituted original skill.
+출처, 정확한 revision, 유지·조정·제외 결정, 라이선스와 근거의 한계는
+[선택 출처 기록](sources.md#explanation-selection-and-four-principles-2026-10-30)에 기록되어 있습니다.
+설명을 실행하는 동안 upstream을 가져오지 않습니다. 현재 렌더러와 그림 계약을 재사용합니다.
+Archify는 선택된 패널 보드 분기와 그 내장 다이어그램·상호작용만 담당합니다.
+기법별 HTML은 공통 렌더러 계약을 따르며, 직접 만든 인라인 SVG를 포함할 수 있습니다.
+archify에 들어가는 그림에는 여전히 장면 그림 제한과 `@image`용 PNG 변환을 적용합니다. PR/이슈 요약
+PNG 경로는 해당 목적지의 기본값으로 유지하며, 명시적인 독립형 SVG·영상은
+자체 경로를 유지합니다. 어떤 원칙도 출처, 작성자, 정확성, 접근성 또는 오프라인 검사를 건너뛰지 않습니다.
+래스터 생성을 실제로 선택하고 승인했을 때만 이용 가능한 이미지 도구를 사용합니다.
+이 원칙들이 이미지 생성 의존성을 없앤다고 주장하지 않습니다. 생성을 이용할 수 없거나 실패하면
+실패로 공개하며, 성공한 이미지로 처리하거나 원래 스킬을 조용히 대체하지 않습니다.
 
-## Requested variants
+<a id="requested-variants"></a>
+## 요청된 변형본
 
-An explicit request to compare explanation techniques/treatments permits up to five suitable
-variants. An explicit request for broad exploration, including a request for fifteen treatments,
-permits up to fifteen. These are ceilings, not quotas. A request to compare two subjects in one
-explanation does not select either branch. Ordinary explanation never starts a gallery.
-For exploration, select the requested suitable treatments from the complete catalog and show
-each choice's reason and limitation before generation; do not reopen already specified axes. Preserve an explicit smaller requested count.
-Disclose fewer fitting choices, tool/cost limits and failed variants without inventing coverage.
+설명 기법·표현 방식을 비교해 달라는 명시적인 요청은 적합한 변형본 최대 다섯 개를
+허용합니다. 열다섯 가지 표현 요청을 포함하여 폭넓게 탐색해 달라는 명시적인 요청은
+최대 열다섯 개를 허용합니다. 이는 상한이며 할당량이 아닙니다. 하나의 설명에서 두 주제를
+비교해 달라는 요청은 어느 분기도 선택하지 않습니다. 일반적인 설명은 갤러리를 시작하지 않습니다.
+탐색에서는 전체 카탈로그에서 요청에 맞는 적합한 표현을 선택하고
+생성 전에 각 선택의 이유와 한계를 보여줍니다. 이미 지정한 축을 다시 질문하지 않습니다. 명시적으로 더 적은 개수를 요청했다면 이를 유지합니다.
+적합한 선택지 부족, 도구·비용 한계와 실패한 변형본을 공개하며, 다루지 못한 범위를 지어내지 않습니다.
 
-Use the same run `evidence.md` for all variants: essential facts, source bindings, inputs,
-conditions and known limits. For each final variant separately verify factual coverage, units,
-causal/spatial relationships and all rendered text against that evidence. Check for missing
-conditions even when another variant is correct. Keep the same necessary facts while varying
-presentation; do not fill source gaps for visual symmetry. Perform the applicable author check,
-renderer/static gates and accuracy review on each candidate's final bytes, not one representative.
+모든 변형본에 동일한 실행 `evidence.md`를 사용합니다. 핵심 사실, 출처 결합, 입력,
+조건과 알려진 한계를 포함합니다. 최종 변형본마다 사실 범위, 단위,
+인과·공간 관계와 렌더링된 모든 텍스트를 해당 근거와 별도로 대조합니다. 다른 변형본이
+맞더라도 빠진 조건이 없는지 확인합니다. 필요한 사실은 동일하게 유지하면서
+표현을 바꿉니다. 시각적 대칭을 맞추려고 출처의 빈틈을 채우지 않습니다. 대표본 하나가 아니라
+각 후보의 최종 바이트에 적용되는 작성자 검사, 렌더러·정적 관문과 정확성 검토를 수행합니다.
 
-Before comparison, inspect each variant's **form fidelity**, not just its facts. Name its
-core form (for example dialogue bubbles, crossed-out misconception, a `<details>` answer,
-fixed figure, scroll-linked step emphasis or inline SVG) and verify that it actually exists
-and remains usable in the chosen renderer. Different panel order or prose alone is not a
-technique distinction. If the renderer cannot express that form, mark the variant `limited`,
-name the lost behavior and notify the user before starting comparison. Keep it out of a
-fully implemented technique set; do not silently substitute a list/next panel or claim success.
-A disclosed limited candidate may enter evaluation only when the user explicitly accepts it.
-Keep factual and form checks separate; all steps and core facts must remain readable without JS.
+비교 전에 사실뿐 아니라 각 변형본의 **형식 충실도**를 확인합니다. 핵심
+형식(예: 대화 말풍선, 취소선을 그은 오개념, `<details>` 답변,
+고정 그림, 스크롤에 연결된 단계 강조 또는 인라인 SVG)을 명시하고, 선택한 렌더러에 실제로 존재하며
+사용할 수 있는지 확인합니다. 패널 순서나 글만 다르게 하는 것은
+기법 차이가 아닙니다. 렌더러가 해당 형식을 표현할 수 없다면 변형본을 `limited`로 표시하고,
+빠진 동작을 명시하며 비교를 시작하기 전에 사용자에게 알립니다. 완전히
+구현된 기법 집합에서는 제외합니다. 목록·다음 패널로 조용히 대체하거나 성공했다고 주장하지 않습니다.
+한계를 공개한 후보는 사용자가 명시적으로 수용할 때만 평가에 포함할 수 있습니다.
+사실 검사와 형식 검사를 분리합니다. 모든 단계와 핵심 사실은 JS 없이도 읽을 수 있어야 합니다.
 
-Before evaluation, show the technique names/reasons/limits but keep the mapping to anonymous
-samples private. Explain that visual style may still allow guessing. Hand generated candidates,
-their actual success/failure states and the private mapping to `tk-blind-comparison`; read its
-current invocation/manifest contract rather than inventing flags or copying its protocol here.
-That owner evaluates existing candidates and owns gallery/versus/delivery/privacy contracts;
-it does not generate variants. Use that owner's embedded-self-evaluation or separate-distribution key contract and disclose
-sample identity only through its explicit reveal flow. Keep a separate key private when that
-delivery mode is selected; an embedded key is encoded and validated, not visible before reveal. Do not leak it through filenames,
-captions, metadata or recommendation ordering. If the owner is unavailable, report the blocked
-evaluation instead of claiming a blind gallery or constructing a replacement evaluation UI.
+평가 전에 기법 이름·이유·한계를 보여주되 익명
+표본과의 대응 관계는 비공개로 유지합니다. 시각 스타일로 여전히 추측할 수 있음을 설명합니다. 생성된 후보,
+실제 성공·실패 상태와 비공개 매핑을 `tk-blind-comparison`에 넘깁니다. 플래그를 지어내거나
+이곳에 프로토콜을 복사하지 말고 해당 담당자의 현재 호출·manifest 계약을 읽습니다.
+해당 담당자는 기존 후보를 평가하고 갤러리·일대일 비교·전달·개인정보 계약을 담당하며,
+변형본을 생성하지 않습니다. 해당 담당자의 내장 자기평가 또는 별도 배포 키 계약을 사용하고,
+명시적인 공개 흐름을 통해서만 표본 정체를 공개합니다. 별도 키를 사용하는
+전달 모드를 선택하면 키를 비공개로 유지합니다. 내장 키는 인코딩하고 검증하며, 공개 전에는 보이지 않아야 합니다. 파일명,
+캡션, 메타데이터나 추천 순서로 이를 누설하지 않습니다. 담당자를 이용할 수 없으면 블라인드
+갤러리라고 주장하거나 대체 평가 UI를 만들지 말고 평가가 차단되었다고 보고합니다.
 
-## Consent-based external preferences
+<a id="consent-based-external-preferences"></a>
+## 동의에 따른 외부 선호
 
-The current request wins over remembered preferences. Use only relevant preferences the user
-authorized for reuse, and retain their topic/audience/context limits. A rating is an observation,
-not evidence of its cause or a permanent trait. One evaluator on one topic does not establish
-general superiority; earlier baoyu/canvas examples were reference-based adaptations, not formal
-upstream executions, and two trials used the built-in image generator.
+현재 요청이 기억된 선호보다 우선합니다. 사용자가 재사용을
+승인한 관련 선호만 사용하고, 주제·대상 독자·맥락의 한계를 유지합니다. 평가는 관찰이며,
+그 원인이나 영구적인 특성의 근거가 아닙니다. 한 주제에 대한 평가자 한 명의 결과로는
+일반적인 우월성을 입증할 수 없습니다. 이전의 baoyu/canvas 예시는 참조 기반 조정이며 정식
+upstream 실행이 아니었고, 두 번의 시험에서는 내장 이미지 생성기를 사용했습니다.
 
-After actual evaluation, offer saving only if useful and unanswered. Show the exact proposed
-record and the available external memory owner/destination before asking for consent. Separate:
-- context: topic, audience, task and compared treatments, with the scope of future reuse;
-- observations: actual scores, choices and sample identity after authorized reveal;
-- reasons: only what the user stated and confirmed, distinct from any unconfirmed hypothesis.
+실제 평가 뒤에 저장이 유용하고 아직 결정되지 않았을 때만 저장을 제안합니다. 동의를 요청하기 전에 정확한
+저장 제안 기록과 이용 가능한 외부 메모리 담당자·목적지를 보여줍니다. 다음을 구별합니다.
+- 맥락: 주제, 대상 독자, 작업과 비교한 표현 방식 및 향후 재사용 범위를 포함합니다.
+- 관찰: 실제 점수, 선택과 승인된 공개 이후의 표본 정체를 포함합니다.
+- 이유: 확인되지 않은 가설과 구별하여 사용자가 직접 말하고 확인한 내용만 포함합니다.
 
-Confirm an ambiguous reason before proposing it as fact. Approval of generation, scoring,
-exporting evaluation records or this-run choices is not approval of durable preference storage.
-No consent or no user-approvable external provider means no preference writes: say so briefly
-and keep any preference inference within the current conversation only. Do not create a TigerKit
-memory backend, settings fallback or hidden preference file. Requested evidence/score exports
-remain evaluation artifacts, not automatic cross-run recommendation memory.
+모호한 이유는 사실로 제안하기 전에 확인합니다. 생성, 채점,
+평가 기록 내보내기 또는 이번 실행 선택에 대한 승인은 지속적인 선호 저장 승인이 아닙니다.
+동의가 없거나 사용자가 승인할 수 있는 외부 제공자가 없으면 선호를 기록하지 않습니다. 이를 짧게 밝히고
+선호 추론은 현재 대화 안에서만 유지합니다. TigerKit
+메모리 백엔드, 설정 대체 경로나 숨은 선호 파일을 만들지 않습니다. 요청된 근거·점수 내보내기는
+평가 산출물로 유지하며, 실행 간 추천 메모리로 자동 전환하지 않습니다.
 
-With explicit consent to the exact record, destination and reuse scope, delegate the bounded
-save to the available external memory owner under its supported contract. Confirm the outcome;
-unsupported or failed writes are not saved preferences. Later correction/deletion uses that same
-owner's current capabilities and user authority; report unsupported actions without promising
-erasure or silently writing a contradictory replacement. A refusal is not itself a preference
-to persist. Do not automatically write scores, explanations, inferred reasons or raw session logs.
+정확한 기록, 목적지와 재사용 범위에 대한 명시적인 동의가 있으면 범위가 정해진
+저장을 이용 가능한 외부 메모리 담당자의 지원 계약에 따라 위임합니다. 결과를 확인합니다.
+지원되지 않거나 실패한 쓰기는 저장된 선호가 아닙니다. 이후 수정·삭제에는 같은
+담당자의 현재 기능과 사용자 권한을 사용합니다. 지원되지 않는 행동은 삭제를 약속하거나
+모순되는 대체 기록을 조용히 쓰지 말고 지원되지 않는다고 보고합니다. 거절 자체는 저장할 선호가
+아닙니다. 점수, 설명, 추론한 이유나 원시 세션 로그를 자동 기록하지 않습니다.

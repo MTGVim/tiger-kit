@@ -10,202 +10,182 @@ metadata:
     relationship: native
 ---
 
-# Skill Grooming Audit
+<a id="skill-grooming-audit"></a>
+# 스킬 Grooming 감사
 
-## Shared References
+<a id="shared-references"></a>
+## 공통 참조
 
-Read branch-triggered criteria from the current installed owners. A missing/mismatched
-owner or resource blocks that action: use `tk-setup-skills`, not memory, another installation
-or unapproved installs. Reading grants no workflow or mutation authority.
+현재 설치된 소유 스킬에서 해당 분기 조건에 따른 기준을 읽습니다. 소유 스킬이나 자원이 없거나
+일치하지 않으면 해당 행동을 중단합니다. 기억, 다른 설치본이나 승인받지 않은 설치를 이용하지 말고
+`tk-setup-skills`를 사용합니다. 읽기만으로 workflow 실행이나 변경 권한이 생기지 않습니다.
 
-- For a user-owned decision, missing approval or unmet prerequisite, read [question rounds](../tk-questioning/references/questions.md).
-- Before a user-facing completion report, artifact-path handoff or multi-attribute chat comparison, read [chat delivery](../tk-writing/references/delivery.md). The task's specific output contract wins.
+- 사용자 소유 결정, 누락된 승인이나 충족되지 않은 선행 조건이 있으면 [질문 라운드](../tk-questioning/references/questions.md)를 읽습니다.
+- 사용자에게 완료 보고, 산출물 경로 인계나 여러 속성을 비교하는 채팅 응답을 전달하기 전에 [채팅 전달](../tk-writing/references/delivery.md)을 읽습니다. 해당 작업의 구체적인 출력 계약이 우선합니다.
 
-## Approval Continuity
+<a id="approval-continuity"></a>
+## 승인 연속성
 
-Reuse active same-task approval across turns and child phases (including baseline/after); continue only its authorized
-work through existing owners. Return child/baseline evidence and resume approved owner work;
-a phase status is not completion. Ask only for a new material decision, changed scope/authority
-or missing user-only input. Invocation and recovered artifacts grant no authority. Remote and
-destructive actions need explicit action/target approval, never inferred from local approval.
+같은 작업에 대한 유효한 승인을 턴과 자식 단계 사이에서 재사용합니다. 변경 전 기준·변경 후 단계도
+포함하며, 기존 담당자를 통해 승인된 작업만 계속합니다. 자식 단계·변경 전 기준 근거를 반환하고
+승인된 담당 작업을 재개합니다. 단계 상태는 완료가 아닙니다. 새로운 중대한 결정, 범위·권한 변경이나
+사용자만 제공할 수 있는 누락 입력이 있을 때만 질문합니다. 호출과 복구된 산출물은 권한을 부여하지
+않습니다. 원격 행동과 파괴적 행동에는 행동·대상에 대한 명시적 승인이 필요하며, 로컬 승인에서 추론하지 않습니다.
 
-Apply only upon an explicit invocation concerning existing repository or user skills,
-persistent rules, or auto memory; a clear audit request; or user correction of behavior
-that plausibly followed persistent context. Do not apply automatically to general cleanup,
-implementation requests, or failures without persistent-context evidence.
-Implicit mode is report-only.
+기존 저장소·사용자 스킬, 지속 규칙이나 auto memory에 대한 명시적 호출, 명확한 감사 요청,
+또는 지속 맥락을 따랐을 가능성이 있는 행동에 대한 사용자 교정이 있을 때만 적용합니다.
+일반 정리, 구현 요청이나 지속 맥락 근거가 없는 실패에 자동으로 적용하지 않습니다.
+암묵적 모드는 보고 전용입니다.
 
-## Workflow
+<a id="workflow"></a>
+## 작업 절차
 
-1. `scope`: Confirm the requested scope, literal `--apply`, target paths, and
-   permitted mutations. Preserve exclusions specified in the active conversation
-   or a durable governing source without reconfirming them.
-2. `discovery`: Read only existing native skill, rule, and auto-memory paths and create
-   a candidate list for the requested area. Read
-   [persistent context](references/persistent-context.md) only when rules, memory, or a
-   user-corrected behavior is in scope.
-3. `evidence`: Record area-specific observations, paths, verification status,
-   and ownership evidence for every candidate. For confirmed marketplace vendor candidates,
-   check [freshness evidence](references/discovery.md#freshness-evidence-vendor).
-   For a declared installed-skill dependency, also check its minimum version under that reference.
-   When usage frequency or inactivity is in scope, read [usage evidence](references/usage-evidence.md).
-4. `incident attribution`: When user feedback says prior behavior was wrong, compare
-   the behavior's cited or observed instruction with the active skill and persistent
-   context. Classify a proven obsolete instruction that conflicts with the current owner
-   as `stale override`; do not infer precedence or causation from file presence alone.
-5. `description shortcut audit`: Before any frontmatter description rewrite, identify
-   the exact process-summary phrase that could substitute for loading the body, preserve
-   the smallest routing discriminator, and compare prior/candidate routing and body behavior.
-6. `instruction economy audit`: When existing skill or persistent-instruction load is in
-   scope, read [instruction economy](references/instruction-economy.md) and apply its
-   branch-aware behavior comparison. Do not load it for a persistent-memory-only incident
-   whose question is solely freshness, conflict, or attribution.
-7. `model-fit audit`: When the request asks about target-model fit, a model change, or dated or
-   over-specified prompting, read [model fit](references/model-fit.md). Skip this branch
-   for a persistent-memory-only freshness, conflict, or attribution question.
-8. `classification/proposal`: Apply the
-   [placement criteria table](references/repository-placement.md) to skill candidates.
-   Classify skill actions as `keep | keep (vendor) | tighten | merge | split | move |
-   deprecate | delete | fix`; persistent context may also use `duplicate | conflict |
-   stale override` as a finding before proposing an action.
-9. `mutation tiers`: Resolve symlinks before classifying the actual mutation target.
-   When a repository is in scope, record its root with `git rev-parse --show-toplevel`; for a target in a
-   linked worktree, verify the same Git common directory and use that target's root.
-   Classify `T1` outside those repository roots, `T2` inside but untracked, or `T3`
-   tracked, using `git ls-files --error-unmatch -- <relative-target>` at the owning root
-   (exit 0: tracked; exit 1: no match; other errors: evidence gap). A confirmed user-only
-   audit with no repository needs no Git root; its targets are T1. Distinguish that
-   scope from an inaccessible repository rather than silently treating errors as T1.
-   For T2, inspect `git check-ignore -v -- <relative-target>` and distinguish ignored
-   from ordinary untracked files. Record both link and real paths and shared-worktree
-   impact. Missing paths, broken links or failed Git probes are evidence gaps, not T1/T2.
-   Tier describes mutation location; vendor ownership and action authority still apply.
-10. `🔴 CHECKPOINT · 🛑 STOP`: Show the complete Disposition once, then handle only
-    the next nonempty tier in `T1 -> T2 -> T3` order. Summarize its exact items,
-    evidence, targets, shared impact and permitted actions. Reuse existing matching
-    approval; a literal initial `--apply` pre-approves only its verified mechanical
-    scope. Otherwise ask for that tier alone. Later-tier approval is a dependent
-    question under [question rounds](../tk-questioning/references/questions.md): applying an earlier
-    tier can change links, sources or conflicts. Skip empty tiers and do not invent
-    a checkpoint when authorization already covers the next step.
-    T3 defaults to an exact handoff proposal for the tracked change's owner unless
-    the active task already covers it; do not create an issue, branch or PR merely
-    to hand off. Scope, evidence or target drift invalidates only affected approval.
-11. `apply/report`: In report-only mode, output the proposal/receipt. If authority
-   exists, reread the sources, search references before delete/move, preserve
-   managed/generated markings, and modify only the approved receipt scope.
-    Before mutating T1/T2, copy each real target to a durable, run-identifiable backup
-    outside session-temp storage and auto-loaded directories. Verify byte equality,
-    preserve restoration metadata and protect sensitive contents; report the absolute
-    backup path and equality result without its contents. If durable storage or a
-    verifiable copy is unavailable, block that mutation rather than using temp storage.
-    This recovery backup is not a temporary artifact; keep it available after the run.
-    Recovery-backup exception to Artifact Paths: a user-owned durable backup needs
-    no Git root or `.tigerkit/` exclusion. Before writing, verify an absolute,
-    nonsymlink destination, user ownership, restrictive permissions, persistence
-    beyond this session and exclusion from automatic instruction loading. Create
-    only a unique recovery copy, never overwrite another backup. If those facts
-    cannot be established, block the mutation. Repository reports/scratch still
-    follow the ordinary artifact policy; this exception grants no other write.
-12. `revalidate`: Recheck links, duplication, frontmatter, persistent-context conflicts,
-    and any behavior comparison that justified instruction pruning, then report the
-    results, unverified scope, and unresolved items. After applying and verifying a
-    tier, recompute remaining tiers' path, ownership, scope and conflict evidence
-    before their checkpoint. Stop dependent mutation if verification fails.
+1. `scope`: 요청받은 범위, 리터럴 `--apply`, 대상 경로와 허용된 변경을 확인합니다.
+   현재 대화나 지속적으로 적용되는 근거에 명시된 제외 사항은 다시 확인하지 않고 보존합니다.
+2. `discovery`: 기존 네이티브 스킬, 규칙과 auto-memory 경로만 읽고 요청 영역의 후보 목록을 만듭니다.
+   규칙, memory나 사용자가 교정한 행동이 범위에 있을 때만
+   [지속 맥락](references/persistent-context.md)을 읽습니다.
+3. `evidence`: 모든 후보에 대해 영역별 관찰, 경로, 검증 상태와 소유권 근거를 기록합니다.
+   marketplace vendor 후보로 확인되면 [최신성 근거](references/discovery.md#freshness-evidence-vendor)를 확인합니다.
+   설치 스킬 의존성이 선언되어 있으면 해당 참조에 따라 최소 버전도 확인합니다.
+   사용 빈도나 비활성이 범위에 있으면 [사용 근거](references/usage-evidence.md)를 읽습니다.
+4. `incident attribution`: 이전 행동이 잘못되었다는 사용자 피드백이 있으면 그 행동이 인용했거나
+   관찰된 지침을 활성 스킬과 지속 맥락에 비교합니다. 현행 소유자와 충돌하는 것으로 입증된
+   폐기 지침은 `stale override`로 분류합니다. 파일 존재만으로 우선순위나 인과관계를 추론하지 않습니다.
+5. `description shortcut audit`: frontmatter description을 다시 쓰기 전에 본문 로드를 대체할 수 있는
+   정확한 절차 요약 문구를 식별하고, 최소한의 라우팅 구분 기준을 보존하며, 이전·후보의 라우팅과 본문 동작을 비교합니다.
+6. `instruction economy audit`: 기존 스킬이나 지속 지침 로드가 범위에 있으면
+   [지침 경제성](references/instruction-economy.md)을 읽고 분기별 동작 비교를 적용합니다.
+   최신성, 충돌이나 귀속만 묻는 지속 memory 전용 사고에서는 읽지 않습니다.
+7. `model-fit audit`: 요청이 대상 모델 적합성, 모델 변경이나 오래되었거나 지나치게 구체적인
+   프롬프트를 다루면 [모델 적합성](references/model-fit.md)을 읽습니다. 지속 memory만의 최신성,
+   충돌이나 귀속 질문에서는 이 분기를 건너뜁니다.
+8. `classification/proposal`: 스킬 후보에 [배치 기준 표](references/repository-placement.md)를 적용합니다.
+   스킬 행동은 `keep | keep (vendor) | tighten | merge | split | move |
+   deprecate | delete | fix`로 분류합니다. 지속 맥락은 행동 제안 전에
+   `duplicate | conflict |
+   stale override`를 발견 사항으로 사용할 수도 있습니다.
+9. `mutation tiers`: 실제 변경 대상을 분류하기 전에 symlink를 해석합니다.
+   저장소가 범위에 있으면 `git rev-parse --show-toplevel`로 루트를 기록합니다. 대상이 연결된
+   worktree에 있으면 동일한 Git common directory인지 검증하고 해당 대상의 루트를 사용합니다.
+   해당 저장소 루트 밖은 `T1`, 안에 있지만 미추적이면 `T2`, 추적 대상이면 `T3`로 분류합니다.
+   소유 루트에서 `git ls-files --error-unmatch -- <relative-target>`를 사용합니다.
+   종료 0은 추적 대상, 종료 1은 일치 없음, 다른 오류는 근거 누락입니다. 저장소가 없는 사용자 전용
+   감사로 확인되면 Git 루트가 필요하지 않으며 대상은 T1입니다. 오류를 조용히 T1으로 취급하지 말고
+   그 범위와 접근 불가능한 저장소를 구분합니다. T2는 `git check-ignore -v -- <relative-target>`를
+   검사하여 ignored 파일과 일반 미추적 파일을 구분합니다. 링크 경로와 실제 경로, 공유 worktree
+   영향을 모두 기록합니다. 누락 경로, 깨진 링크나 실패한 Git 조회는 근거 누락이며 T1/T2가 아닙니다.
+   tier는 변경 위치를 설명합니다. vendor 소유권과 행동 권한은 계속 적용됩니다.
+10. `🔴 CHECKPOINT · 🛑 STOP`: 전체 Disposition을 한 번 보여 준 다음 `T1 -> T2 -> T3`
+    순서에서 비어 있지 않은 다음 tier만 처리합니다. 정확한 항목, 근거, 대상, 공유 영향과 허용된
+    행동을 요약합니다. 일치하는 기존 승인을 재사용합니다. 최초의 리터럴 `--apply`는 검증된 기계적
+    범위만 사전 승인합니다. 그렇지 않으면 해당 tier만 질문합니다. 이전 tier를 적용하면 링크,
+    출처나 충돌이 바뀔 수 있으므로 이후 tier 승인은 [질문 라운드](../tk-questioning/references/questions.md)의
+    종속 질문입니다. 빈 tier는 건너뛰고, 권한이 이미 다음 단계를 포함하면 체크포인트를 만들어 내지 않습니다.
+    현재 작업에 이미 포함되지 않은 T3는 기본적으로 추적 변경 소유자를 위한 정확한 인계 제안으로
+    남깁니다. 인계만을 위해 이슈, branch나 PR을 만들지 않습니다. 범위, 근거나 대상 변동은 영향을 받는 승인만 무효화합니다.
+11. `apply/report`: 보고 전용 모드에서는 제안·결과 보고를 출력합니다. 권한이 있으면 출처를 다시
+   읽고, 삭제·이동 전에 참조를 검색하며, 관리·생성 표식을 보존하고, 승인된 결과 보고 범위만 수정합니다.
+    T1/T2를 변경하기 전에 각 실제 대상을 세션 임시 저장소와 자동 로드 디렉터리 밖의 지속적이며
+    실행을 식별할 수 있는 백업으로 복사합니다. 바이트 일치를 검증하고, 복원 메타데이터를 보존하며,
+    민감한 내용을 보호합니다. 내용 없이 절대 백업 경로와 일치 결과를 보고합니다. 지속 저장소나
+    검증 가능한 사본을 사용할 수 없으면 임시 저장소를 쓰지 말고 해당 변경을 중단합니다.
+    이 복구 백업은 임시 산출물이 아닙니다. 실행 후에도 사용할 수 있도록 유지합니다.
+    산출물 경로의 복구 백업 예외: 사용자 소유의 지속 백업에는 Git 루트나 `.tigerkit/` 제외가
+    필요하지 않습니다. 쓰기 전에 절대 경로인 nonsymlink 목적지, 사용자 소유권, 제한적인 권한,
+    세션 이후의 지속성과 자동 지침 로드에서 제외됨을 검증합니다. 고유한 복구 사본만 만들고
+    다른 백업을 덮어쓰지 않습니다. 이를 입증할 수 없으면 변경을 중단합니다. 저장소 보고·임시
+    작업은 계속 일반 산출물 정책을 따릅니다. 이 예외는 다른 쓰기 권한을 부여하지 않습니다.
+12. `revalidate`: 링크, 중복, frontmatter, 지속 맥락 충돌과 지침 정리의 근거가 된 모든 동작 비교를
+    재확인한 뒤 결과, 검증하지 못한 범위와 미해결 항목을 보고합니다. tier를 적용·검증한 후에는
+    나머지 tier의 경로, 소유권, 범위와 충돌 근거를 각 체크포인트 전에 다시 산정합니다.
+    검증이 실패하면 종속 변경을 중단합니다.
 
-Investigate only the repository or user skill, rule, and auto-memory areas explicitly
-stated or implicated by the request. Use the actual host-native paths from
-[discovery](references/discovery.md). Do not create missing files, invent a memory backend,
-or migrate legacy/global TigerKit state. Rule and memory inspection is for persistent
-instruction health, not generic ticket, spec, or repository-document cleanup.
+요청에서 명시하거나 관련이 드러난 저장소·사용자 스킬, 규칙과 auto-memory 영역만 조사합니다.
+[탐색](references/discovery.md)의 실제 호스트 네이티브 경로를 사용합니다. 누락된 파일을 만들거나,
+memory backend를 만들어 내거나, 레거시·전역 TigerKit 상태를 이전하지 않습니다. 규칙과 memory
+검사는 지속 지침의 건전성을 위한 것이며 일반 ticket, spec이나 저장소 문서 정리를 위한 것이 아닙니다.
 
-Evaluate repository/user skills, rules, and auto-memory entries as independently normative
-instruction/workflow units, not as whole files. Use `move` only when an exact native target exists,
-and use `split` when independent outcomes are mixed in one artifact. Use `tighten`
-only when removing duplication/ambiguity without changing ownership, kind, scope,
-or meaning. Otherwise, use `keep`. If path or ownership evidence is missing or
-conflicting, treat only that area as `Partial/Blocked | Unverifiable`.
+저장소·사용자 스킬, 규칙과 auto-memory 항목은 파일 전체가 아니라 독립적으로 규범적 효력이 있는
+지침·workflow 단위로 평가합니다. 정확한 네이티브 대상이 있을 때만 `move`를 사용하고, 독립적인
+결과가 산출물 하나에 섞여 있으면 `split`을 사용합니다. 소유권, 종류, 범위나 의미를 바꾸지 않고
+중복·모호함을 제거할 때만 `tighten`을 사용합니다. 그렇지 않으면 `keep`을 사용합니다.
+경로나 소유권 근거가 없거나 충돌하면 해당 영역만 `Partial/Blocked | Unverifiable`로 처리합니다.
 
-For a description audit, quote the exact phrase that summarizes workflow order,
-internal routing, approval sequence, artifact lifecycle, or another procedure well
-enough to become a shortcut around body loading. Preserve only the smallest trigger,
-symptom, intended scope, and positive/negative routing discriminator needed to decide
-whether the skill should load. Do not shorten mechanically. If a longer description is
-necessary to avoid false-positive or false-negative invocation, return `keep`/no-op.
+description 감사에서는 workflow 순서, 내부 라우팅, 승인 순서, 산출물 lifecycle이나 다른 절차를
+본문 로드를 우회할 수 있을 만큼 요약하는 정확한 문구를 인용합니다. 스킬을 로드할지 결정하는 데
+필요한 최소한의 트리거, 증상, 의도한 범위와 긍정·부정 라우팅 구분 기준만 보존합니다.
+기계적으로 줄이지 않습니다. 잘못된 호출이나 필요한 호출 누락을 피하려면 더 긴 description이
+필요한 경우 `keep`/no-op을 반환합니다.
 
-Determine ownership from confirmed paths and link targets, package-manager
-installation locations, updater/version artifacts, and verifiable author history.
-Names and conventions are not evidence. Always treat candidates confirmed as
-vendor-managed as `keep (vendor)`; report only quality findings and do not create
-proposals or edits. Report outdated installations and disabled auto-update as quality
-findings; only advise host update/settings actions, never execute them, including in `--apply`.
-If ownership is uncertain, stop before proposing edits and ask
-whether it is user-managed or externally installed.
+확인된 경로와 링크 대상, 패키지 관리자 설치 위치, updater·버전 산출물과 검증 가능한 작성 이력으로
+소유권을 결정합니다. 이름과 관례는 근거가 아닙니다. vendor 관리로 확인된 후보는 항상
+`keep (vendor)`로 처리합니다. 품질상 발견 사항만 보고하고 제안이나 수정을 만들지 않습니다.
+오래된 설치와 꺼진 자동 업데이트는 품질상 발견 사항으로 보고합니다. 호스트 업데이트·설정 행동은
+안내만 하고 `--apply`를 포함하여 실행하지 않습니다. 소유권이 불확실하면 수정 제안 전에 멈추고
+사용자 관리인지 외부 설치인지 질문합니다.
 
-Classification alone does not grant modification authority. Even after approval,
-directly own only meaning-preserving `tighten`, mechanical `move` with an exact
-target, unreferenced `delete`, and frontmatter/link `fix`. A rule or auto-memory deletion
-or semantic rewrite always requires exact item-level active-task approval. Leave semantic `merge`,
-`deprecate`, workflow `split`, and semantic skill rewrites only as exact `pending`
-proposals. These proposals may inform `tk-retro` evidence review; approved semantic changes belong
-to their implementation owner. This skill does not invoke other skills. Keep vendor-managed candidates report-only in every apply mode.
+분류만으로 수정 권한이 생기지 않습니다. 승인 후에도 직접 담당하는 것은 의미를 보존하는
+`tighten`, 정확한 대상을 갖는 기계적 `move`, 참조되지 않는 `delete`와 frontmatter·링크 `fix`뿐입니다.
+규칙이나 auto-memory 삭제 또는 의미상 재작성에는 항상 정확한 항목 단위의 현재 작업 승인이
+필요합니다. 의미적 `merge`, `deprecate`, workflow `split`과 의미적 스킬 재작성은 정확한
+`pending` 제안으로만 남깁니다. 이 제안은 `tk-retro` 근거 검토에 활용할 수 있습니다. 승인된 의미
+변경은 해당 구현 담당자의 소관입니다. 이 스킬은 다른 스킬을 호출하지 않습니다. 모든 적용 모드에서
+vendor 관리 후보를 보고 전용으로 유지합니다.
 
-If no persistent instruction can be tied to the corrected behavior, preserve the candidate
-and recommend `tk-retro` incident review. If the active skill contract itself
-needs semantic change, leave an exact proposal for its implementation owner. Do not
-automatically invoke other skills.
+교정된 행동과 연결할 수 있는 지속 지침이 없으면 후보를 보존하고 `tk-retro` 사고 검토를 권고합니다.
+활성 스킬 계약 자체에 의미 변경이 필요하면 구현 담당자에게 정확한 제안을 남깁니다.
+다른 스킬을 자동 호출하지 않습니다.
 
-Do not invent knowledge or substitute for skill learning.
+지식을 만들어 내거나 스킬 학습을 대신하지 않습니다.
 
-Continue excluding exclusions declared in the active conversation from subsequent
-grooming runs in that conversation. Continue excluding exclusions recorded in a
-governing repository/user rule or another requested durable source across sessions.
-Do not create hidden global state or store exclusions in `.tigerkit/`.
+현재 대화에서 선언한 제외 사항은 해당 대화의 이후 grooming 실행에서도 계속 제외합니다.
+저장소·사용자 규칙이나 요청받은 다른 지속적 근거에 기록된 제외 사항은 세션 간에도 계속 제외합니다.
+숨겨진 전역 상태를 만들거나 `.tigerkit/`에 제외 사항을 저장하지 않습니다.
 
-When an access, ownership, scope, reference, drift or verification checkpoint fails,
-read [failure handling](references/failure-paths.md) before deciding to stop,
-preserve or restore state. Do not treat an unchecked edit as complete.
+접근, 소유권, 범위, 참조, 변동이나 검증 체크포인트가 실패하면 중단·보존·복원을 결정하기 전에
+[실패 처리](references/failure-paths.md)를 읽습니다. 확인하지 않은 수정을 완료로 취급하지 않습니다.
 
-## Contract
+<a id="contract"></a>
+## 계약
 
-Evidence records the actual path/content for each area. If required evidence is
-missing, treat that area as `Unverifiable`. If any area is blocked, overall
-completion cannot be claimed; use `Complete | Fail | Partial/Blocked | Unverifiable`.
+근거는 각 영역의 실제 경로·내용을 기록합니다. 필수 근거가 없으면 해당 영역을 `Unverifiable`로
+처리합니다. 차단된 영역이 하나라도 있으면 전체 완료를 주장할 수 없습니다.
+`Complete | Fail | Partial/Blocked | Unverifiable`를 사용합니다.
 
-## Output Contract
+<a id="output-contract"></a>
+## 출력 계약
 
-Assign `GR-01`, `GR-02`, ... once, in initial identification order, to each
-independently normative instruction/workflow. Output one `## Disposition` table
-first.
+독립적으로 규범적 효력이 있는 각 지침·workflow에 최초 식별 순서대로 `GR-01`, `GR-02`, ...를
+한 번 부여합니다. 먼저 `## Disposition` 표 하나를 출력합니다.
 
 | ID | Item | Tier | Action | Target | Basis |
 | --- | --- | --- | --- | --- | --- |
 | GR-01 | `<short name>` | `T1/T2/T3` | `<classification>` | `<real target>` | `<path/tracking/ownership evidence>` |
 
-Reuse the same IDs for applied changes and verification. Add `## Exceptions` only
-when there are evidence gaps, ownership conflicts, unresolved scope, or failed
-verification. Add `## Applied` and `## Verification` only after mutation. Keep the
-table scannable: give each high-impact finding its own row and group lower-impact
-findings by audited target path while retaining each item's ID, action, target, and basis.
-Do not impose a minimum or maximum row count. Do not create artifact/lifecycle actions solely
-for output.
+적용한 변경과 검증에서도 같은 ID를 재사용합니다. 근거 누락, 소유권 충돌, 미해결 범위나 검증
+실패가 있을 때만 `## Exceptions`를 추가합니다. 변경 후에만 `## Applied`와 `## Verification`을
+추가합니다. 표를 훑어보기 쉽게 유지합니다. 영향이 큰 발견 사항은 각각 별도 행에 두고, 영향이 작은
+발견 사항은 감사한 대상 경로별로 묶되 각 항목의 ID, 행동, 대상과 근거를 유지합니다.
+최소·최대 행 수를 부과하지 않습니다. 출력만을 위해 산출물·lifecycle 행동을 만들지 않습니다.
 
-Record the overall `report-only | applied` disposition in `## Disposition`, but do
-not repeat the table or append metadata. If there are no items, output one
-`— | None | — | keep | — | no finding` row. Use `keep (vendor)` for vendor rows;
-use `Unverifiable` in Tier when classification evidence is missing. Preserve IDs
-across tier checkpoints without repeating the complete table. For an outdated vendor
-installation, keep `Action` as `keep (vendor)` and put installed version or commit, source
-version or commit, and auto-update state in `Basis`. Mark unknown values `Unverifiable`;
-report a freshness evidence gap without claiming current. Do not add a freshness-only row
-or exception for a confirmed current installation with auto-update enabled.
+전체 `report-only | applied` 처리를 `## Disposition`에 기록하되 표를 반복하거나 메타데이터를
+덧붙이지 않습니다. 항목이 없으면 `— | None | — | keep | — | no finding` 행 하나를 출력합니다.
+vendor 행에는 `keep (vendor)`를 사용합니다. 분류 근거가 없으면 Tier에 `Unverifiable`을 사용합니다.
+전체 표를 반복하지 않고 tier 체크포인트 사이에서 ID를 보존합니다. 오래된 vendor 설치는
+`Action`을 `keep (vendor)`로 유지하고 설치 버전 또는 commit, 출처 버전 또는 commit과 자동
+업데이트 상태를 `Basis`에 넣습니다. 알 수 없는 값은 `Unverifiable`로 표시합니다. 최신이라고
+주장하지 말고 최신성 근거 누락을 보고합니다. 최신 설치이며 자동 업데이트가 켜진 것으로 확인되면
+최신성만을 위한 행이나 예외를 추가하지 않습니다.
 
-For distillation maintenance, see [sources](references/sources.md); ordinary audits do not need it.
+증류 유지보수는 [출처](references/sources.md)를 참조합니다. 일반 감사에는 필요하지 않습니다.
 
-## Artifact Paths
+<a id="artifact-paths"></a>
+## 산출물 경로
 
-Before authorized artifact writes, checkout/transport/ignore setup or temporary-input consumption,
-read [artifact paths](../tk-artifacts/references/artifact-paths.md). Use safe owned nonsymlink paths
-and proven Git exclusion for repository scratch; failed checks stop that file branch. Preserve
-explicit final destinations and owner-specific defaults. Prefilled input is not completed input.
-Cleanup targets only recorded literal resolved absolute run-owned paths, never cwd-relative paths or globs.
+승인된 산출물 작성, checkout·전송·ignore 설정이나 임시 입력 소비 전에
+[산출물 경로](../tk-artifacts/references/artifact-paths.md)를 읽습니다. 저장소 임시 작업에는 소유권이
+확인된 안전한 nonsymlink 경로와 입증된 Git 제외를 사용합니다. 점검에 실패하면 해당 파일 분기를
+중단합니다. 명시적인 최종 목적지와 담당자별 기본값을 보존합니다. 미리 채워진 입력은 완료된 입력이 아닙니다.
+정리 대상은 기록된 리터럴 형태의 해석된 절대 경로 중 해당 실행이 소유한 경로뿐입니다.
+cwd 상대 경로나 glob은 사용하지 않습니다.

@@ -1,26 +1,11 @@
-# Visual question aid
+<a id="visual-question-aid"></a>
+# 시각적 질문 보조 자료
 
-Read only when spatial alternatives can change an unresolved user-owned choice. Keep the numbered plain-chat question, a short description of every option and the recommendation complete without opening a file. Add the complete absolute HTML link in that question; users can answer by number or paste the copied selections.
+공간적 대안이 사용자가 결정해야 할 미해결 선택에 영향을 줄 수 있을 때만 읽습니다. 파일을 열지 않아도 번호가 있는 일반 채팅 질문, 모든 선택지의 짧은 설명과 권고 내용을 완전히 이해할 수 있도록 합니다. 해당 질문에 완전한 절대 HTML 링크를 추가합니다. 사용자는 번호로 답하거나 복사한 선택 내용을 붙여 넣어 답할 수 있습니다.
 
-After Artifact Paths checks, create one external-resource-free HTML file in `.tigerkit/tmp/<calling-skill>/<run-id>/questions.html`. Inline installed `tk-writing`'s [theme CSS](../../tk-writing/assets/html-theme.css) and [theme script](../../tk-writing/assets/html-theme.js) unchanged,
-using their `ht-*` components and tokens; add only question-specific wireframe styles.
-Set `<html data-default-theme="system">`. Put the title in `.ht-topbar-title` and a
-`.ht-theme-control[data-ht-theme-control]` fieldset inside `.ht-topbar`. Initially hide the fieldset;
-the shared script reveals it and inserts a `글자 크기` select to its left (50–200% in 25% steps,
-100% default, browser preference retained). Reuse scaled font tokens or inheritance; multiply
-custom absolute font sizes once by `var(--ht-font-scale)`. Keep the generated reader controls
-wrapping within the viewport. Give it labeled `system`, `light`, and `dark` radio choices using
-`.ht-theme-buttons` and `.ht-theme-option`, each `input[name="ht-theme"]` immediately followed by
-a nonempty `span`. Place the script after the markup. Verify all three choices and storage-refusal
-behavior before delivery. Show comparable low-fidelity wireframes, option numbers, pros/cons and the recommended option. Offer single-option and side-by-side views when useful, with keyboard-accessible controls and no focus outlines on passive scroll targets. Match the same viewport/content across options; do not add decorative imagery or implementation code. Reuse this file for later visual rounds in the same run; do not generate files for nonvisual questions, a plan recap or a resolved choice.
+산출물 경로를 점검한 후 `.tigerkit/tmp/<calling-skill>/<run-id>/questions.html`에 외부 자원을 사용하지 않는 HTML 파일 하나를 만듭니다. 설치된 `tk-writing`의 [테마 CSS](../../tk-writing/assets/html-theme.css)와 [테마 스크립트](../../tk-writing/assets/html-theme.js)를 변경 없이 인라인으로 넣고, 해당 `ht-*` 구성 요소와 토큰을 사용합니다. 질문별 와이어프레임 스타일만 추가합니다.
+`<html data-default-theme="system">`을 설정합니다. 제목은 `.ht-topbar-title`에 넣고 `.ht-theme-control[data-ht-theme-control]` fieldset은 `.ht-topbar` 안에 넣습니다. 처음에는 fieldset을 숨깁니다. 공통 스크립트가 이를 표시하고 왼쪽에 `글자 크기` select를 삽입합니다. 범위는 50–200%이며 25% 간격이고 기본값은 100%이며 브라우저 설정을 유지합니다. 크기가 조정되는 글꼴 토큰이나 상속을 재사용하고, 사용자 정의 절대 글꼴 크기에는 `var(--ht-font-scale)`을 한 번 곱합니다. 생성한 읽기 제어 요소는 줄바꿈하여 viewport 안에 들어가도록 합니다. 레이블이 있는 `system`, `light`, `dark` 라디오 선택지를 `.ht-theme-buttons`와 `.ht-theme-option`을 사용하여 제공하고, 각 `input[name="ht-theme"]` 바로 뒤에 비어 있지 않은 `span`을 둡니다. 스크립트는 마크업 뒤에 배치합니다. 전달 전에 세 선택지와 저장소 접근 거부 시 동작을 검증합니다. 비교 가능한 저충실도 와이어프레임, 선택지 번호, 장단점과 권고 선택지를 보여 줍니다. 유용한 경우 단일 선택지 보기와 나란히 보기를 제공하며, 제어 요소는 키보드로 접근할 수 있어야 하고 수동 스크롤 대상에는 포커스 외곽선을 표시하지 않습니다. 선택지 간 viewport와 콘텐츠를 동일하게 맞춥니다. 장식용 이미지나 구현 코드는 추가하지 않습니다. 같은 실행의 후속 시각적 질문 라운드에서는 이 파일을 재사용합니다. 시각적이지 않은 질문, 계획 요약 또는 이미 결정된 선택에는 파일을 생성하지 않습니다.
 
-Let the user pick an option in place on each option card, plus inline choices for any
-nonvisual question in the same round. Keep a fixed answer bar that shows progress in words
-(for example `2/5 selected · remaining Q3, Q4, Q5`) and a copy button that copies only the
-picked answers in the round's reply format, with an optional note. Never fill unanswered
-questions with recommendations or treat copying as approval; identify remaining questions.
-Persist picks to `localStorage` under a run- and round-scoped key, wrapping every access in
-try/catch; copy must work when storage is refused. If clipboard access fails, expose the
-same text for manual copying. Do not watch a saved file from the session.
+각 선택지 카드에서 사용자가 직접 선택할 수 있도록 하고, 같은 라운드의 시각적이지 않은 질문에도 인라인 선택지를 제공합니다. 진행 상황을 말로 보여 주는 고정 답변 표시줄(예: `2/5 selected · remaining Q3, Q4, Q5`)과, 선택한 답변만 선택적 메모와 함께 해당 라운드의 응답 형식으로 복사하는 버튼을 둡니다. 답하지 않은 질문을 권고안으로 채우거나 복사를 승인으로 취급하지 않습니다. 남은 질문을 명시합니다. 실행 및 라운드별 키로 `localStorage`에 선택 내용을 저장하고 모든 접근을 try/catch로 감쌉니다. 저장소 접근이 거부되어도 복사는 작동해야 합니다. 클립보드 접근이 실패하면 같은 텍스트를 수동으로 복사할 수 있도록 표시합니다. 세션에서 저장된 파일을 감시하지 않습니다.
 
-If writing or viewing the HTML is unavailable, finish the text round and disclose only the missing visual aid. A missing repository does not justify initializing Git or using an external temporary path. Preserve source/config/Seed and approval boundaries apart from the canonical minimal ignore setup. This aid is not a product prototype or approval to implement it.
+HTML을 쓰거나 볼 수 없으면 텍스트 질문 라운드를 완료하고 시각적 보조 자료가 누락되었다는 사실만 알립니다. 저장소가 없다는 이유로 Git을 초기화하거나 외부 임시 경로를 사용하지 않습니다. 정본의 최소 ignore 설정을 제외하고 소스, 설정, Seed와 승인 경계를 보존합니다. 이 보조 자료는 제품 prototype이 아니며 이를 구현할 승인도 아닙니다.

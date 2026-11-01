@@ -1,46 +1,26 @@
-# Sources and distillation
+<a id="sources-and-distillation"></a>
+# 출처와 증류
 
 - Matt Pocock, `mattpocock/skills`, `skills/engineering/retro/SKILL.md`,
-  source revision `5beb35b040e3de97e54fa9e386d7e42d15c295c2`,
-  blob `12149acf2dd23b4514dec57b04a6293eaa1352fa` (rechecked 2026-10-23):
-  **keep** session evidence, severity ordering, navigation/checks/tool economy,
-  reviewer-vs-implementer context pressure, no-op pruning and information access;
-  **adapt** deterministic prevention to existing TigerKit checks and evidence gate;
-  **omit** presumed access to local history and hard-coded document owners.
-- Former TigerKit `tk-skill-diagnose`: **keep** target-specific incident isolation,
-  failure planes, documentary versus behavioral evidence and minimum controls;
-  **adapt** as conditional deeper diagnosis rather than a separate mandatory
-  handoff; **omit** `learn-ready` states and semantic writer delegation machinery.
-- Former TigerKit `tk-learn`: **keep** skill-candidate fit, prior/no-skill comparison,
-  positive/negative routing and secrets/anonymization boundaries;
-  **adapt** to proposals only, with conversational findings and sanitized upstream
-  issue drafts checked for private identifiers after writing; **omit** canonical skill write, approval/apply
-  gates, promotion state machine and auto-publication. The 2026-10-08 user-supplied
-  retrospective grounded the former default-report policy. The 2026-10-23 user workflow
-  supersedes it: conversation carries the summary and local proposals; only upstream
-  issue drafts persist. The upstream retro itself presents candidates conversationally;
-  it does not require a report file. No upstream runtime is added.
+  출처 revision `5beb35b040e3de97e54fa9e386d7e42d15c295c2`,
+  blob `12149acf2dd23b4514dec57b04a6293eaa1352fa`(2026-10-23 재확인):
+  **keep**한 것은 세션 근거, 심각도 순서, 탐색·확인·도구 사용 효율, 리뷰어와 구현자 간 맥락 부담, no-op 제거와 정보 접근입니다.
+  **adapt**한 것은 기존 TigerKit 확인과 근거 관문에 맞춘 결정론적 예방입니다.
+  **omit**한 것은 로컬 이력에 접근할 수 있다는 가정과 하드코딩된 문서 담당자입니다.
+- 이전 TigerKit `tk-skill-diagnose`: **keep**한 것은 대상별 사고 격리, 실패 계층, 문서 근거와 동작 근거의 구분 및 최소 대조군입니다.
+  **adapt**한 것은 별도 필수 인계 대신 조건부 심층 진단으로 사용하는 방식입니다. **omit**한 것은 `learn-ready` 상태와 의미 작성자 위임 체계입니다.
+- 이전 TigerKit `tk-learn`: **keep**한 것은 스킬 후보 적합성, 이전 기준·스킬 미사용 비교, 긍정·부정 라우팅과 비밀·익명화 경계입니다.
+  **adapt**한 것은 제안만 제공하고, 발견 사항은 대화로 전달하며, 민감한 정보를 제거한 upstream 이슈 초안은 쓰기 후 비공개 식별자를 확인하는 방식입니다. **omit**한 것은 정본 스킬 쓰기, 승인·적용 관문, 승격 상태 머신과 자동 발행입니다. 2026-10-08 사용자가 제공한 회고는 이전의 기본 보고서 정책의 근거였습니다. 2026-10-23 사용자 워크플로가 이를 대체합니다. 대화가 요약과 로컬 제안을 담고 upstream 이슈 초안만 지속 저장합니다. upstream retro 자체도 후보를 대화로 제시하며 보고서 파일을 요구하지 않습니다. upstream 런타임은 추가하지 않습니다.
 
-The MIT source notice is in `LICENSE.txt`. The previous skill packages and
-their historical changes remain traceable through Git.
+MIT 출처 고지는 `LICENSE.txt`에 있습니다. 이전 스킬 패키지와 과거 변경은 Git으로 계속 추적할 수 있습니다.
 
-## Requested labeled bundles and privacy checks (2026-10-26)
+<a id="requested-labeled-bundles-and-privacy-checks-2026-10-26"></a>
+## 요청된 수준 표시 묶음과 개인정보 확인(2026-10-26)
 
-The supplied improvement bundle provides an explicit reusable workflow and incident evidence:
-identifier-only scanning missed copied user wording and examples. Its attachment was manually
-applied once; its proposed skill changes were unverified. This does not establish general
-privacy detection accuracy or turn accepted prose into a field-tested skill.
+제공된 개선 묶음은 명시적인 재사용 워크플로와 사고 근거를 제공합니다. 식별자만 검사해서는 복사된 사용자 문구와 예시를 놓쳤습니다. 첨부 파일은 한 번 수동 적용되었고, 제안된 스킬 변경은 검증되지 않았습니다. 이는 일반적인 개인정보 탐지 정확성을 입증하지 않으며 수용된 산문을 실전 검증된 스킬로 바꾸지도 않습니다.
 
-- **keep:** conversation as the report, proposal-only authority, package-specific upstream drafts,
-  preserved public upstream identifiers, source/license attribution and no publication offer.
-- **adapt:** requested attachments and a manifest/ZIP, exact verification levels, fixed-string
-  identifier scanning plus redacted deterministic wording comparison and a separate fresh
-  read-only privacy reviewer. Generic/public exceptions need a reason; unavailable evidence
-  remains Unverifiable. The new conditional reference owns file-delivery checks.
-- **omit:** unsolicited bundles, raw evidence in reusable files, private search output, automatic
-  source deletion, persistent incident corpora, canonical skill edits and issue publication.
+- **keep:** 보고서는 대화로 전달하고, 제안 전용 권한, 패키지별 upstream 초안, 공개 upstream 식별자 보존, 출처·라이선스 표시와 발행 제안 금지를 유지합니다.
+- **adapt:** 요청된 첨부 파일과 manifest·ZIP, 정확한 검증 수준, 고정 문자열 식별자 검사와 내용을 가린 결정론적 문구 비교, 별도의 새로운 읽기 전용 개인정보 리뷰어를 적용합니다. 일반 표현·공개 예외에는 이유가 필요하며, 이용할 수 없는 근거는 Unverifiable로 남습니다. 새 조건부 참조가 파일 전달 확인을 담당합니다.
+- **omit:** 요청하지 않은 묶음, 재사용 파일 안의 원시 근거, 비공개 검색 출력, 자동 출처 삭제, 지속적인 사고 말뭉치, 정본 스킬 편집과 이슈 발행을 제외합니다.
 
-The prior issue-draft-only decision remains the default; user-requested reusable attachments
-are its narrow exception. Independently authored scanner tests check wording, Unicode,
-whitespace, separate messages, public exceptions, private-term protection and redacted failures.
-They do not establish that a fresh reviewer recognizes every real private incident.
+이전의 이슈 초안 전용 결정은 기본값으로 유지됩니다. 사용자가 요청한 재사용 첨부 파일은 그 좁은 예외입니다. 독립적으로 작성된 스캐너 테스트는 문구, Unicode, 공백, 분리된 메시지, 공개 예외, 비공개 용어 보호와 내용을 가린 실패를 확인합니다. 새로운 리뷰어가 실제 비공개 사고를 모두 알아본다는 사실을 입증하지는 않습니다.

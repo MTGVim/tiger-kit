@@ -1,339 +1,356 @@
-# Provenance
+<a id="provenance"></a>
+# 출처 기록
 
-Maintenance record for upstream distillation; not part of the skill's reading path.
+upstream 증류를 위한 유지보수 기록이며, 스킬의 읽기 경로에 포함되지 않습니다.
 
 ## clear-writing.md
 
-- `docwriter-org/plain-writing-skill`, `f0d3630983ac7a82aa580f1c1509d72df739ee12`: relevant background, concrete subjects, coherent explanation, consistent terminology. Rules 3 and 15 also inform the Korean empty-emphasis and middle-dot requirements; adapt them to supported specifics and protected literals, without importing unrelated formatting bans.
-- `hjongc/humanizer-kr`, `a1a7069a32f669afe4b10e35e9522ff504a13263`: reader/register fit, contextual editing, restrained claims, internal naturalness review.
-- `snflkd/fluent-korean`, `ce8683f0eba8cddb91de4dcd151425ff73e60498`: Korean sentence components, particles/endings, accurate vocabulary, literal-expression boundaries. This is a selective adaptation with rationale and examples, not a replacement for the upstream global output style.
+- `docwriter-org/plain-writing-skill`, `f0d3630983ac7a82aa580f1c1509d72df739ee12`: 관련 배경, 구체적인 주어, 일관된 설명과 용어를 참고합니다. 규칙 3과 15는 한국어의 내용 없는 강조 및 가운뎃점 요구 사항에도 참고했습니다. 관련 없는 서식 금지를 가져오지 않고, 근거 있는 구체성과 보호 대상 리터럴에 맞게 조정합니다.
+- `hjongc/humanizer-kr`, `a1a7069a32f669afe4b10e35e9522ff504a13263`: 독자·문체 적합성, 맥락에 맞는 편집, 절제된 주장과 내부 자연스러움 검토를 참고합니다.
+- `snflkd/fluent-korean`, `ce8683f0eba8cddb91de4dcd151425ff73e60498`: 한국어 문장 성분, 조사·어미, 정확한 어휘와 리터럴 표현의 경계를 참고합니다. 이는 근거와 예시를 갖춘 선택적 조정이며, upstream의 전역 출력 스타일을 대체하지 않습니다.
 
-- `evergreentree97/K-Humanizer`, `324435d561ba48d53de6b7d3fb3dd72cf77030dc`: preserve useful paragraph links without inventing relationships.
-- `epoko77-ai/im-not-ai`, `9747f036cdc28a1a8aea4dc71fef1f7846eb96f7`: contextual strength, selective density-based editing, avoiding newly introduced style defects, and conservative correction when empirical evidence contradicts a presumed pattern. Taxonomy, authorship judgments, and numeric thresholds are not imported.
+- `evergreentree97/K-Humanizer`, `324435d561ba48d53de6b7d3fb3dd72cf77030dc`: 관계를 지어내지 않으면서 유용한 문단 연결을 보존합니다.
+- `epoko77-ai/im-not-ai`, `9747f036cdc28a1a8aea4dc71fef1f7846eb96f7`: 맥락에 따른 강도, 밀도에 따른 선택적 편집, 새로운 문체 결함 방지와 경험적 근거가 추정 패턴에 어긋날 때의 보수적 수정을 참고합니다. 분류 체계, 작성자 판정과 수치 임계값은 가져오지 않습니다.
 
-- `conorbronsdon/avoid-ai-writing`, `c4783463cf019a8943364c1ef5f80e0a4c8bff94`: candidate-to-justified-edit scope, preservation of unaffected passages, and valid zero-edit outcomes; no detector, taxonomy, pass budget, or public audit trail is imported.
+- `conorbronsdon/avoid-ai-writing`, `c4783463cf019a8943364c1ef5f80e0a4c8bff94`: 수정 후보에서 근거 있는 수정까지의 범위, 영향받지 않은 구절의 보존과 수정이 없는 유효한 결과를 참고합니다. 탐지기, 분류 체계, 검토 횟수 예산이나 공개 감사 기록은 가져오지 않습니다.
 
-- `conorbronsdon/avoid-ai-writing`, `5dd2e4ab72b9e0b7e125e5cb592af87033da4fda` (compared with `9b8d030ce5c846af9520a4f6e5eb7d3b8d80ff43`): separate mechanical and semantic preservation, equivalent numeric notation, and honest incomplete verification. Keep the two internal passes and one final result; adapt only these safeguards. Omit the upstream validator, detector, handoff envelope, repair budget, and public verification report.
+- `conorbronsdon/avoid-ai-writing`, `5dd2e4ab72b9e0b7e125e5cb592af87033da4fda`(`9b8d030ce5c846af9520a4f6e5eb7d3b8d80ff43`과 비교): 기계적 보존과 의미 보존의 분리, 동등한 수치 표기와 미완료 검증의 정직한 보고를 참고합니다. 두 번의 내부 검토와 하나의 최종 결과를 유지하고, 이러한 보호 장치만 조정합니다. upstream 검증기, 탐지기, 인수인계 봉투 형식, 수정 예산과 공개 검증 보고서는 제외합니다.
 
-Style-sample factual boundaries also draw on `addyosmani/clarity`,
-`e27ceeff60368cf6966b4ea00a5b9b36418ee9a0`: `SKILL.md`, `references/edit.md` and
-`evals/cases.json` (`voice_sample_controls_style_not_facts`). Keep truth preservation;
-adapt expression-only sample use; omit co-writing, detectors and public review reports.
-Project familiarity is an independently authored extension of the existing audience/context
-contract, not a claim of a verified upstream project-familiarity rule.
+스타일 예시의 사실적 경계는 `addyosmani/clarity`,
+`e27ceeff60368cf6966b4ea00a5b9b36418ee9a0`의 `SKILL.md`, `references/edit.md`와
+`evals/cases.json`(`voice_sample_controls_style_not_facts`)도 참고합니다. 진실 보존을 유지하고,
+표현에만 예시를 사용하도록 조정하며, 공동 집필, 탐지기와 공개 검토 보고서는 제외합니다.
+프로젝트 친숙도는 기존 독자·맥락 계약을 독립적으로 확장한 것이며,
+검증된 upstream 프로젝트 친숙도 규칙이 있다는 주장이 아닙니다.
 
-Original MIT notices are in the calling package's `LICENSE.txt`.
+원본 MIT 고지는 호출 패키지의 `LICENSE.txt`에 있습니다.
 
-Evaluative intensity versus certainty draws on `dotoricode/korean-humanizer`, `4fc566b7d7ded76887f7a85c0886e44796e5e38c` (`references/ko-ai-signals.md` and native-skill QA). Concession preservation draws on `conorbronsdon/avoid-ai-writing`, `bdeb726580634868b254972d8eab1a9340d9db16` (`FALSE_CONCESSION`, PR #359 and its fixtures). Adapt semantic preservation and must-not-overcorrect cases; omit detector regexes, taxonomy, output templates and runtime tooling.
+평가적 강도와 확실성의 구분은 `dotoricode/korean-humanizer`, `4fc566b7d7ded76887f7a85c0886e44796e5e38c`(`references/ko-ai-signals.md`와 기본 스킬 QA)를 참고합니다. 양보 표현 보존은 `conorbronsdon/avoid-ai-writing`, `bdeb726580634868b254972d8eab1a9340d9db16`(`FALSE_CONCESSION`, PR #359와 해당 fixture)을 참고합니다. 의미 보존과 과잉 교정을 금지해야 하는 사례를 조정하고, 탐지기 정규식, 분류 체계, 출력 템플릿과 런타임 도구는 제외합니다.
 
-Claim-evidence binding also draws on `AIScientists-Dev/academic-humanizer`,
-`94b88b23703bed7df507acae7d6d5876209a0cdf`; evidence addition, academic taxonomy and venue rules are omitted.
+주장과 근거의 결합은 `AIScientists-Dev/academic-humanizer`,
+`94b88b23703bed7df507acae7d6d5876209a0cdf`도 참고합니다. 근거 추가, 학술 분류 체계와 발표 매체 규칙은 제외합니다.
 
-Meaningful modality also draws on `epoko77-ai/im-not-ai`,
-`92b2936956d65d62ff4b19b75cccad8e3429bf43`: A-10/G-2 and their correction history motivate preserving claim strength even under repetition. Apply semantic equivalence across genres; omit domain-only exceptions, fixed repetition thresholds, hedge dictionaries, marker counts, and runtime restoration.
+의미 있는 양태 표현은 `epoko77-ai/im-not-ai`,
+`92b2936956d65d62ff4b19b75cccad8e3429bf43`도 참고합니다. A-10/G-2와 그 수정 이력은 반복되더라도 주장 강도를 보존해야 한다는 근거가 됩니다. 장르 전반에 의미적 동등성을 적용합니다. 특정 분야에만 해당하는 예외, 고정 반복 임계값, 완곡 표현 사전, 표지 개수와 런타임 복원은 제외합니다.
 
-Rewriting-only scope draws on `dotoricode/korean-humanizer`, `93580567d4c965024e5b9eb1fb96ace3e7b45907` (`SKILL.md`, PR #6 and package-skill QA). Adapt the editing-only boundary while preserving explicitly requested advice; omit fixed output sections and distribution/runtime tooling.
+다시 쓰기에만 한정하는 범위는 `dotoricode/korean-humanizer`, `93580567d4c965024e5b9eb1fb96ace3e7b45907`(`SKILL.md`, PR #6과 패키지 스킬 QA)를 참고합니다. 명시적으로 요청된 조언은 보존하면서 편집 전용 경계를 조정합니다. 고정 출력 절과 배포·런타임 도구는 제외합니다.
 
 ## html-output.md
 
-Live-figure provenance (2026-10-05): `nicobailon/visual-explainer` at
+동적 그림 출처 기록(2026-10-05): `nicobailon/visual-explainer`의
 `5846f5aef34a23c8fea389d2f23ce56224cbf840`, `plugins/visual-explainer/SKILL.md`,
-`references/diagrams.md` (Live figure) and `templates/page.html` under that package.
-Keep lightweight interaction and readable static state; adapt shared pure-model
-calculation, small controls, verified defaults and simplified-model disclosure.
-Omit upstream templates, external dependencies, forced figure-first presentation
-and automatic opening. Separate upstream behavior evals and runtime efficacy are
-unverified; the calling package's `LICENSE.txt` preserves the MIT notice.
+해당 패키지의 `references/diagrams.md`(Live figure)와 `templates/page.html`입니다.
+가벼운 상호작용과 읽을 수 있는 정적 상태를 유지합니다. 공유 순수 모델
+계산, 작은 컨트롤, 검증된 기본값과 단순화된 모델의 공개를 조정합니다.
+upstream 템플릿, 외부 의존성, 강제적인 그림 우선 표현과
+자동 열기는 제외합니다. 별도의 upstream 동작 평가와 런타임 효과는
+미검증 상태입니다. 호출 패키지의 `LICENSE.txt`에 MIT 고지를 보존합니다.
 
 ## interactive-examples.md
 
-Sources inform behavior; their runtime and stylistic instructions are not dependencies or authority.
+출처는 동작에 참고합니다. 출처의 런타임과 스타일 지침은 의존성이나 권한이 아닙니다.
 
-- Live-figure selection (issue #460): rechecked `nicobailon/visual-explainer` at
+- 동적 그림 선택(issue #460): `nicobailon/visual-explainer`의
   `5f378868e0ea745a6284b51e710c390f0c76f72c`, `plugins/visual-explainer/SKILL.md`
-  (figure selection), `references/motion.md` (Live figure), and `eval/` methodology,
-  prompts and judge. Keep parameter-driven consequences; adapt selection examples
-  to the existing static/step-through boundary. Shared calculation, small controls,
-  assumptions and static fallback already belong to `../../tk-writing/references/html-output.md` and existing
-  evals; do not duplicate them. Omit kit, renderer, templates and figure-first
-  defaults. No live-figure-specific upstream behavior eval or efficacy result was
-  found; upstream runtime efficacy was not reproduced. Existing MIT notice applies.
+  (그림 선택), `references/motion.md`(Live figure), `eval/`의 방법론,
+  프롬프트와 판정기를 다시 확인했습니다. 매개변수에 따른 결과를 유지하고, 선택 예시를
+  기존 정적·단계별 진행 경계에 맞게 조정합니다. 공유 계산, 작은 컨트롤,
+  가정과 정적 대체 경로는 이미 `../../tk-writing/references/html-output.md`와 기존
+  평가가 담당합니다. 이를 중복 작성하지 않습니다. 도구 모음, 렌더러, 템플릿과 그림 우선
+  기본값은 제외합니다. 동적 그림에 특화된 upstream 동작 평가나 효과 결과는
+  찾지 못했습니다. upstream 런타임 효과는 재현하지 않았습니다. 기존 MIT 고지를 적용합니다.
 
-- `Unclecheng-li/AI_Animation`, `skills/flowchart/SKILL.md`, revision `22ce6df3754c3d914caee78e59b24903191f01bc`: keep user-controlled stepping and playback with pause/reset; adapt motion to explanatory transitions and a paused initial state. Omit mandatory continuous animation, scene/line quotas, CDN fonts, and fixed visual styling.
-- `CopilotKit/OpenGenerativeUI`, `apps/agent/skills/advanced-visualization/SKILL.md`, revision `457e60cdf7f63fb78004486e1dc7ba753194696d`, Parts 8–9: keep direct manipulation, self-explanatory visuals and non-color-only cues; adapt its content-dependent visual selection to an offline explanation with complete reset and visible causal differences. Omit sandbox/tool contracts, host bridges, external libraries, and widget-only narration rules.
+- `Unclecheng-li/AI_Animation`, `skills/flowchart/SKILL.md`, revision `22ce6df3754c3d914caee78e59b24903191f01bc`: 사용자가 제어하는 단계 진행과 일시정지·초기화를 갖춘 재생을 유지합니다. 움직임은 설명용 전이와 처음에 일시정지된 상태에 맞게 조정합니다. 필수 연속 애니메이션, 장면·행 할당량, CDN 글꼴과 고정 시각 스타일은 제외합니다.
+- `CopilotKit/OpenGenerativeUI`, `apps/agent/skills/advanced-visualization/SKILL.md`, revision `457e60cdf7f63fb78004486e1dc7ba753194696d`, 8~9부: 직접 조작, 자체로 이해할 수 있는 시각 요소와 색상에만 의존하지 않는 단서를 유지합니다. 콘텐츠에 따른 시각화 선택을 완전한 초기화와 눈에 보이는 인과 차이가 있는 오프라인 설명에 맞게 조정합니다. sandbox·도구 계약, 호스트 브리지, 외부 라이브러리와 위젯 전용 설명 규칙은 제외합니다.
 
-The source mechanisms and rationale were inspected. Local artifact comparison supplies example-level evidence, not a general upstream performance claim; full host-runtime and video backend efficacy remain outside this contract.
+출처의 메커니즘과 설계 근거를 확인했습니다. 로컬 산출물 비교는 예시 수준의 근거이며, 일반적인 upstream 성능 주장이 아닙니다. 전체 호스트 런타임과 영상 백엔드 효과는 이 계약의 범위 밖입니다.
 
-## Document navigation (2026-10-07)
+<a id="document-navigation-2026-10-07"></a>
+## 문서 탐색(2026-10-07)
 
-Reviewed `EveryInc/compound-engineering-plugin@142dbabc23c86884f2e353502eb20a5fdd2a6d3d`,
-`skills/ce-ideate/references/html-rendering.md` (navigation/self-contained invariants) and
-`docs/plans/2026-05-11-001-feat-output-html-mode-plan.md` (single-file and package-local
-copy rationale). Adapt semantic sections, sticky/compact native navigation, hashes and details;
-omit donor templates/styles, CDN fonts, default tracked commits and orchestration. Runtime
-efficacy was not reproduced. The current canonical contract is `tk-writing/references/html-output.md`;
-consumers read that installed owner, and the MIT notice remains in this package's `LICENSE.txt`.
+`EveryInc/compound-engineering-plugin@142dbabc23c86884f2e353502eb20a5fdd2a6d3d`의
+`skills/ce-ideate/references/html-rendering.md`(탐색·독립형 불변 조건)와
+`docs/plans/2026-05-11-001-feat-output-html-mode-plan.md`(단일 파일과 패키지 로컬
+복사의 근거)를 검토했습니다. 의미 단위의 절, 고정·간결한 기본 탐색, 해시와 details를 조정합니다.
+원본 템플릿·스타일, CDN 글꼴, 기본 추적 commit과 오케스트레이션은 제외합니다. 런타임
+효과는 재현하지 않았습니다. 현재 정본 계약은 `tk-writing/references/html-output.md`입니다.
+소비자는 해당 설치된 담당 스킬을 읽으며, MIT 고지는 이 패키지의 `LICENSE.txt`에 유지합니다.
 
-## HTML quality extension (2026-10-07)
+<a id="html-quality-extension-2026-10-07"></a>
+## HTML 품질 확장(2026-10-07)
 
-The supplied recurring-artifact proposal and TigerKit baseline `56c8a50603bd1649465a74b2e8af373a0e51a8a9`
-provide explicit reusable intent and inspectable contract/template gaps. Keep offline reading and
-hash navigation; adapt neutral QA theme structure and whole-project projections; omit domain-specific
-scripts and raw session details. The reported proprietary `dataviz` bundle is reference-only:
-no wording, code, palettes or validation script is included. Its distribution/license and upstream
-behavior were not independently verified here; the general chart rules and neutral tokens are
-independently authored. Runtime/provider observations remain conditional, not compatibility claims.
+제공된 반복 산출물 제안과 TigerKit 기준판 `56c8a50603bd1649465a74b2e8af373a0e51a8a9`에서
+명시적인 재사용 의도와 확인 가능한 계약·템플릿의 빈틈을 파악할 수 있습니다. 오프라인 읽기와
+해시 탐색을 유지합니다. 중립적인 QA 테마 구조와 프로젝트 전체 투영을 조정합니다. 특정 분야 전용
+스크립트와 원시 세션 세부 내용은 제외합니다. 보고된 독점 `dataviz` 번들은 참조 전용이며,
+어떤 문구, 코드, 팔레트나 검증 스크립트도 포함하지 않습니다. 배포·라이선스와 upstream
+동작은 여기서 독립적으로 검증하지 않았습니다. 일반 차트 규칙과 중립 토큰은
+독립적으로 작성했습니다. 런타임·제공자 관찰은 조건부이며 호환성 주장이 아닙니다.
 
-## Verification outcome structure (2026-10-13)
+<a id="verification-outcome-structure-2026-10-13"></a>
+## 검증 결과 구조(2026-10-13)
 
-The inspected report-generation incident and explicit reusable-output request establish the gap:
-final status injection merged static success and unavailable screen verification into one plain
-paragraph. W3C WAI [Content Structure](https://www.w3.org/WAI/tutorials/page-structure/content/),
-retrieved 2026-10-13, supports semantic paragraphs and separate list items for related information.
-Keep semantic grouping; adapt independently authored bold check labels and a lower-document summary
-to the user's scanning needs. Omit upstream example content, styles and runtime machinery. The WAI
-guidance does not itself mandate bold labels or summary placement. Template markup and mutation
-checks establish structural protection only, not browser rendering or model compliance rates.
+확인한 보고서 생성 사례와 명시적인 재사용 출력 요청에서 빈틈이 드러났습니다.
+최종 상태 주입이 정적 검사 성공과 화면 검증 불가를 하나의 일반
+문단으로 합쳤습니다. 2026-10-13에 조회한 W3C WAI [콘텐츠 구조](https://www.w3.org/WAI/tutorials/page-structure/content/)는
+관련 정보를 의미 있는 문단과 별도 목록 항목으로 구성하도록 뒷받침합니다.
+의미적 그룹화를 유지합니다. 독립적으로 작성한 굵은 검사 라벨과 문서 하단 요약을
+사용자의 훑어읽기 요구에 맞게 조정합니다. upstream 예시 콘텐츠, 스타일과 런타임 장치는 제외합니다. WAI
+지침 자체가 굵은 라벨이나 요약 위치를 의무화하지는 않습니다. 템플릿 마크업과 변경
+검사는 구조적 보호만 확인하며, 브라우저 렌더링이나 모델 준수율을 입증하지 않습니다.
 
-## Content-only document assembly (2026-10-25)
+<a id="content-only-document-assembly-2026-10-25"></a>
+## 콘텐츠만 작성하는 문서 조립(2026-10-25)
 
-Reviewed current `nicobailon/visual-explainer@5f378868e0ea745a6284b51e710c390f0c76f72c`:
-`plugins/visual-explainer/SKILL.md`, `templates/page.html`, and `eval/README.md`; also
-`mattpocock/skills@5beb35b040e3de97e54fa9e386d7e42d15c295c2`,
-`skills/productivity/teach/SKILL.md` (Assets and scoped lessons). The implementation and
-embedded design rationale favor local asset injection, reuse and small source edits; the
-visual-explainer evaluation separates correctness from token use. Upstream runtime and
-end-to-end timing were not reproduced.
+당시 최신 `nicobailon/visual-explainer@5f378868e0ea745a6284b51e710c390f0c76f72c`의
+`plugins/visual-explainer/SKILL.md`, `templates/page.html`과 `eval/README.md`를 검토했습니다. 또한
+`mattpocock/skills@5beb35b040e3de97e54fa9e386d7e42d15c295c2`의
+`skills/productivity/teach/SKILL.md`(Assets와 범위가 정해진 수업)를 검토했습니다. 구현과
+포함된 설계 근거는 로컬 자산 주입, 재사용과 작은 원본 수정을 지향합니다.
+visual-explainer 평가는 정확성과 토큰 사용을 구별합니다. upstream 런타임과
+종단 간 소요 시간은 재현하지 않았습니다.
 
-- **keep:** local insertion of shared presentation, reusable semantic components, source edits.
-- **adapt:** an independently authored stdlib builder and shell under the existing offline
-  HTML, settings, export and browser-verification contracts. Default it only for new ordinary
-  explanation/lesson documents; retained generators and specialized interfaces keep ownership.
-- **omit:** donor kit/code/templates, external fonts/CDNs, automatic browser opening,
-  figure-first/prose quotas, extra Markdown, consumer runtimes and render-check exemptions.
+- **유지:** 공통 표현의 로컬 삽입, 재사용 가능한 의미 컴포넌트와 원본 수정을 유지합니다.
+- **조정:** 기존 오프라인 HTML, 설정, 내보내기와 브라우저 검증 계약 아래에서
+  독립적으로 작성한 stdlib 빌더와 셸을 사용하도록 조정합니다. 새로 만드는 일반적인
+  설명·수업 문서에만 이를 기본값으로 둡니다. 유지되는 생성기와 특수 인터페이스는 담당자를 유지합니다.
+- **제외:** 원본 도구 모음·코드·템플릿, 외부 글꼴·CDN, 자동 브라우저 열기,
+  그림 우선·산문 할당량, 추가 Markdown, 소비자 런타임과 렌더링 검사 면제를 제외합니다.
 
-TigerKit's gap was executable shell assembly: it already supplied CSS/JS and navigation
-markup instructions, but agents still had to construct that markup and inline assets.
-Reduced authored markup is an observable mechanism, not an end-to-end speed claim.
-The current user request explicitly preserves one-step HTML and content/verification quality.
+TigerKit에 빠져 있던 것은 실행 가능한 셸 조립이었습니다. 이미 CSS/JS와 탐색
+마크업 지침을 제공했지만, 에이전트는 여전히 그 마크업을 구성하고 자산을 인라인으로 넣어야 했습니다.
+작성해야 하는 마크업의 감소는 관찰 가능한 메커니즘이며, 종단 간 속도 주장이 아닙니다.
+현재 사용자 요청은 한 단계 HTML과 콘텐츠·검증 품질을 명시적으로 보존합니다.
 
-## Independent artifact review and recognition/action coverage (2026-10-26)
+<a id="independent-artifact-review-and-recognitionaction-coverage-2026-10-26"></a>
+## 독립 산출물 검토와 인식·행동 범위(2026-10-26)
 
-Reviewed current `mattpocock/skills@5beb35b040e3de97e54fa9e386d7e42d15c295c2`
-(`skills/productivity/teach/SKILL.md`, retained in context and main identity rechecked) and
+당시 최신 `mattpocock/skills@5beb35b040e3de97e54fa9e386d7e42d15c295c2`
+(`skills/productivity/teach/SKILL.md`를 맥락에 유지하고 주 정체성을 재확인했습니다)와
 `obra/superpowers@2ce8aa15d05bd57213e6f746f953aafb7ded7a8b`
-(`skills/requesting-code-review/SKILL.md`, `code-reviewer.md`). The latter's implementation
-and rationale use fresh reviewer context, inspected evidence, severity and correction before
-proceeding. A separate upstream content-review eval was not established; a tests/README.md
-lookup was unavailable, and upstream runtime/learning efficacy were not reproduced.
+(`skills/requesting-code-review/SKILL.md`, `code-reviewer.md`)를 검토했습니다. 후자의 구현과
+설계 근거는 진행 전에 새로운 검토자 맥락, 확인한 근거, 심각도와 수정을
+사용합니다. 별도의 upstream 콘텐츠 검토 평가는 확인하지 못했습니다. tests/README.md
+조회가 불가능했고 upstream 런타임·학습 효과는 재현하지 않았습니다.
 
-- **keep:** scoped teaching goals, complete worked material and evidence-based independent review.
-- **adapt:** the current explicit user workflow to one read-only adversarial content reviewer,
-  current-artifact identity, goal-blocking omissions, repair/re-review and honest unavailable
-  execution. Teach recognition inputs, spatial actors/routes and exact pre-reveal question state.
-- **omit:** code-review/merge verdicts, Git-range templates, author assessments as reviewer context,
-  orchestration runtime, new skills, reviewer cascades, stylistic quotas and mastery inference.
+- **유지:** 범위가 정해진 교육 목표, 완전한 풀이 자료와 근거 기반 독립 검토를 유지합니다.
+- **조정:** 현재의 명시적 사용자 작업 절차를 한 명의 읽기 전용 반대 관점 콘텐츠 검토자,
+  현재 산출물의 정체성, 목표를 막는 누락, 수정·재검토와 실행 불가의 정직한 보고에 맞게
+  조정합니다. 인식에 필요한 입력, 공간상의 행위자·경로와 답 공개 전의 정확한 질문 상태를 가르칩니다.
+- **제외:** 코드 검토·merge 판정, Git 범위 템플릿, 검토자 맥락으로 제공하는 작성자 평가,
+  오케스트레이션 런타임, 새 스킬, 연쇄 검토자, 문체 할당량과 숙달 추론은 제외합니다.
 
-Earlier causal prose, spatial-layout coverage, verifier preflight and inline references already
-exist and are retained. Browser checks now require explicit user scope for explanation/lesson
-production; separately requested checks retain the existing provider/evidence/safety contract.
-Other HTML owners keep their scoped UI checks. Source checks and content review remain required.
-The instructions and fixtures are independently authored; no donor code/template is copied.
+기존의 인과 설명문, 공간 배치 범위, 검증기 사전 점검과 인라인 참조는 이미
+존재하며 유지합니다. 이제 설명·수업 제작의 브라우저 검사에는 명시적인 사용자 범위가
+필요합니다. 별도로 요청된 검사는 기존 제공자·근거·안전 계약을 유지합니다.
+다른 HTML 담당자는 범위가 정해진 UI 검사를 유지합니다. 출처 검사와 콘텐츠 검토는 여전히 필수입니다.
+지침과 fixture는 독립적으로 작성했으며, 원본 코드·템플릿을 복사하지 않습니다.
 
-## Reader formatting and bounded figures (2026-10-26)
+<a id="reader-formatting-and-bounded-figures-2026-10-26"></a>
+## 독자용 서식과 경계가 있는 그림(2026-10-26)
 
-The original reader-formatting bundle documents repeated feedback on one explanation and a
-manual `applied-once` result. A subsequent supplied comparison reports that the reader preferred
-the control to the first skill run. Its revised run restored context, an early figure and a check,
-but reader comparison remains pending. Shortening as a cause is a supported hypothesis, not an
-isolated causal result. Keep `applied-once`; do not promote this evidence to `field-tested`.
-The grid overflow hypothesis was checked separately with a 360px wide-SVG baseline/replay.
-Neither result establishes reader comprehension or end-to-end speed.
+원래의 독자용 서식 번들은 한 설명에 대한 반복 피드백과
+수동 `applied-once` 결과를 기록합니다. 이후 제공된 비교에서는 독자가
+첫 스킬 실행본보다 대조본을 선호했다고 보고했습니다. 수정 실행본은 맥락, 초반 그림과 확인 문제를 복원했지만,
+독자 비교는 아직 진행 전입니다. 단축이 원인이라는 설명은 근거 있는 가설이며,
+원인을 분리한 인과 결과가 아닙니다. `applied-once`를 유지합니다. 이 근거를 `field-tested`로 격상하지 않습니다.
+그리드 넘침 가설은 너비 360px의 넓은 SVG 기준본·재현으로 별도 확인했습니다.
+어느 결과도 독자의 이해나 종단 간 속도를 입증하지 않습니다.
 
-Reviewed GitHub Docs' `Troubleshooting content type` and `LICENSE` at
-`github/docs@564868161b9cd8bb75f789079690fb44a4a5149d`
+GitHub Docs의 `Troubleshooting content type`과 `LICENSE`를
+`github/docs@564868161b9cd8bb75f789079690fb44a4a5149d`에서 검토했습니다
 (`content/contributing/style-guide-and-content-model/troubleshooting-content-type.md`,
-CC BY 4.0, https://creativecommons.org/licenses/by/4.0/). GitHub's content distinguishes
-known issues from broader troubleshooting and gives category-based titles. The four-way
-Korean supporting-section taxonomy is independently adapted from the supplied proposal;
-it is not a GitHub mandate. No upstream prose, implementation or template is copied.
-A separate upstream evaluation was not established.
+CC BY 4.0, https://creativecommons.org/licenses/by/4.0/). GitHub의 콘텐츠는
+알려진 문제와 더 넓은 문제 해결을 구별하며 범주 기반 제목을 제공합니다. 네 가지
+한국어 보조 절 분류는 제공된 제안을 독립적으로 조정한 것이며,
+GitHub의 의무 사항이 아닙니다. upstream 문구, 구현이나 템플릿을 복사하지 않습니다.
+별도의 upstream 평가는 확인하지 못했습니다.
 
-- **keep:** concrete causal explanation, independent content review, exact identifiers when needed,
-  public source provenance, required warnings/verification structures and offline output.
-- **adapt:** sparse emphasis, sentence breaks, category headings, visible figure boundaries,
-  single-owner installed references, safe grid shrinkage and two logical reference rows.
-  Shortness applies to sentences: retain needed scenarios, early figures, causal steps, selected
-  summaries/checks and exact comparison values. Put a motivating situation before the mechanism
-  with the main figure nearby in reading order; preserve responsive layout and optional checks.
-  This reconsiders the older single-line reference default; natural multi-line wrapping remains.
-  Immediate citations may be reduced only when exact supported sections/claims remain identifiable;
-  research's checker-owned citation/backlink coverage is unchanged.
-- **omit:** copied private examples, hard two-physical-line limits, blanket code bans in tables,
-  uncertain external license claims, broad writing-rule duplication and new document runtimes.
-  A mandatory summary box and a stricter opening-sentence rule remain unverified proposals;
-  do not add those defaults from this single comparison.
+- **유지:** 구체적인 인과 설명, 독립 콘텐츠 검토, 필요할 때의 정확한 식별자,
+  공개 출처 기록, 필수 경고·검증 구조와 오프라인 출력을 유지합니다.
+- **조정:** 드문 강조, 문장 나누기, 범주 제목, 눈에 보이는 그림 경계,
+  단일 담당자의 설치된 참조, 안전한 그리드 축소와 두 개의 논리적 참조 행을 조정합니다.
+  짧게 만드는 대상은 문장입니다. 필요한 상황, 초반 그림, 인과 단계, 선택한
+  요약·확인 문제와 정확한 비교값은 유지합니다. 메커니즘보다 동기를 제공하는 상황을 먼저 두고,
+  읽기 순서상 주요 그림을 가까이 배치합니다. 반응형 배치와 선택적 확인 문제를 보존합니다.
+  이는 이전의 한 줄 참조 기본값을 재검토한 것이며, 자연스러운 여러 줄 줄바꿈은 유지합니다.
+  바로 붙는 인용은 정확히 어느 절·주장을 뒷받침하는지 식별할 수 있을 때만 줄일 수 있습니다.
+  연구의 검사기 소유 인용·역링크 범위는 바뀌지 않습니다.
+- **제외:** 복사한 비공개 예시, 물리적으로 두 줄이라는 엄격한 제한, 표 안의 코드 전면 금지,
+  불확실한 외부 라이선스 주장, 광범위한 글쓰기 규칙 중복과 새 문서 런타임을 제외합니다.
+  필수 요약 상자와 더 엄격한 첫 문장 규칙은 여전히 미검증 제안입니다.
+  이 단일 비교만으로 이러한 기본값을 추가하지 않습니다.
 
-Only the GitHub primary text and license above were verified here. The bundle also names Google
-Cloud, Red Hat, Oracle and Splunk as concept-level influences; their pages, exact editions and
-licenses were not verified in this change, and no content from them is incorporated.
+여기서 검증한 것은 위의 GitHub 1차 문서와 라이선스뿐입니다. 번들은 Google
+Cloud, Red Hat, Oracle과 Splunk도 개념적 영향으로 명시하지만, 해당 페이지, 정확한 판본과
+라이선스는 이번 변경에서 검증하지 않았으며 어떤 콘텐츠도 포함하지 않습니다.
 
-## Shared reader corrections (2026-10-26)
+<a id="shared-reader-corrections-2026-10-26"></a>
+## 공통 독자 인터페이스 수정(2026-10-26)
 
-The supplied HTML-artifacts proposal and reference implementations are an explicit reusable
-workflow, reported as applied once before generalization; their generalized browser behavior
-was unverified. Compared with TigerKit `ec09ba42`, keep source-text preservation, offline
-export and package-local copies; adapt code headers, local sharing guard, opt-in previews and
-cancelable arrival cues. Omit domain-specific CSS, unconditional share removal and newline
-trimming. Existing reader-formatting guidance owns density and emphasis; extend that owner.
+제공된 HTML 산출물 제안과 참조 구현은 명시적인 재사용
+작업 절차이며, 일반화 전에 한 번 적용했다고 보고되었습니다. 일반화된 브라우저 동작은
+미검증 상태였습니다. TigerKit `ec09ba42`와 비교하여 원문 보존, 오프라인
+내보내기와 패키지 로컬 사본을 유지합니다. 코드 헤더, 로컬 공유 보호 장치, 선택적 미리보기와
+취소 가능한 도착 단서를 조정합니다. 특정 분야 전용 CSS, 무조건적인 공유 제거와 줄바꿈
+제거는 제외합니다. 밀도와 강조는 기존 독자용 서식 지침이 담당하므로 그 담당 영역을 확장합니다.
 
-Design sources inspected on 2026-10-26: `anthropics/skills`,
-`skills/frontend-design/SKILL.md`, content blob `a5333457c414d20d625f307df945842c0952ecc3`;
-<https://impeccable.style/slop/>; <https://vercel.com/design/guidelines>.
-Adapt semantic emphasis and accessible icon/status behavior, using independently authored
-wording and code. Omit page templates, visual branding, fonts, orchestrators and mandatory
-style passes. The Impeccable source-path lookup returned 404; its public catalog was read
-instead. No donor runtime or behavior eval was executed; no measured improvement in user
-revision count, comprehension or token cost is claimed. Historical local regression checks are recorded in Git history at
-`cbd9b064:evals/changes/html-reader-corrections.md`; the repository eval framework is retired.
+2026-10-26에 확인한 디자인 출처는 `anthropics/skills`,
+`skills/frontend-design/SKILL.md`, 콘텐츠 blob `a5333457c414d20d625f307df945842c0952ecc3`;
+<https://impeccable.style/slop/>; <https://vercel.com/design/guidelines>입니다.
+독립적으로 작성한 문구와 코드로 의미적 강조와 접근성 있는 아이콘·상태 동작을
+조정합니다. 페이지 템플릿, 시각 브랜딩, 글꼴, 오케스트레이터와 필수
+스타일 검토는 제외합니다. Impeccable 원본 경로 조회는 404를 반환하여 공개 카탈로그를
+대신 읽었습니다. 원본 런타임이나 동작 평가를 실행하지 않았습니다. 사용자
+수정 횟수, 이해도 또는 토큰 비용이 측정상 개선되었다고 주장하지 않습니다. 과거 로컬 회귀 검사는 Git 이력의
+`cbd9b064:evals/changes/html-reader-corrections.md`에 기록되어 있습니다. 저장소 평가 프레임워크는 폐지되었습니다.
 
-## Repeated-link return navigation (2026-10-26)
+<a id="repeated-link-return-navigation-2026-10-26"></a>
+## 반복 링크의 복귀 탐색(2026-10-26)
 
-Compared the user's repeated-link ambiguity report with TigerKit `096ce0bc` and
-MediaWiki Help:Cite, revision `8659984`, “Multiple uses of the same footnote” and
-“Set references to use ^ and letters”:
+반복 링크가 모호하다는 사용자 보고를 TigerKit `096ce0bc` 및
+MediaWiki Help:Cite의 revision `8659984`, “Multiple uses of the same footnote”와
+“Set references to use ^ and letters”와 비교했습니다.
 <https://www.mediawiki.org/w/index.php?title=Help:Cite&oldid=8659984>.
-Keep distinct native return anchors; adapt occurrence labels to both ends of the link,
-using source.occurrence for citations and per-target numbers for terms. The transient
-recent-origin marker is an independently authored TigerKit extension. Omit wiki syntax,
-runtime, templates, skin and source code. No upstream runtime/eval was executed and no
-NamuWiki behavior is asserted. Local browser regression owns the interaction evidence.
+서로 구별되는 기본 복귀 앵커를 유지합니다. 링크 양 끝에 출현 라벨을 적용하고,
+인용에는 source.occurrence를, 용어에는 대상별 번호를 사용하도록 조정합니다. 일시적인
+최근 출발점 표시는 독립적으로 작성한 TigerKit 확장입니다. 위키 문법,
+런타임, 템플릿, 스킨과 소스 코드는 제외합니다. upstream 런타임·평가는 실행하지 않았으며
+NamuWiki 동작도 주장하지 않습니다. 상호작용 근거는 로컬 브라우저 회귀 검사가 담당합니다.
 
-## Standalone looping SVG (2026-10-28)
+<a id="standalone-looping-svg-2026-10-28"></a>
+## 독립형 반복 재생 SVG(2026-10-28)
 
-Compared `praveenvijayan/animdiagram@a8edca75f041ebb75c74ac9d3b3fbec3b9cd5486`:
-`SKILL.md`, `scripts/timeline.py`, `scripts/check.py` and README. Keep a shared causal clock,
-static meaning without moving packets and reduced-motion fallback. Adapt this into the existing
-explanation owner's explicit SVG branch with a small independently authored stdlib scene compiler.
-Omit its style system, skins, automatic browser preview, MP4 exporter, extra invocation and runtime.
-The donor is MIT; no source code, SVG assets or instruction blocks were copied. Python/scene tests
-are separate from browser animation and GitHub embedding; unexecuted checks remain unverified.
+`praveenvijayan/animdiagram@a8edca75f041ebb75c74ac9d3b3fbec3b9cd5486`의
+`SKILL.md`, `scripts/timeline.py`, `scripts/check.py`와 README를 비교했습니다. 공통 인과 시계,
+움직이는 패킷 없이도 전달되는 정적 의미와 움직임 감소 대체 경로를 유지합니다. 이를 기존
+설명 담당자의 명시적 SVG 분기에 맞게 조정하고, 독립적으로 작성한 작은 stdlib 장면 컴파일러를 사용합니다.
+원본 스타일 시스템, 스킨, 자동 브라우저 미리보기, MP4 내보내기, 추가 호출과 런타임은 제외합니다.
+원본은 MIT이며 소스 코드, SVG 자산이나 지침 블록을 복사하지 않았습니다. Python·장면 테스트는
+브라우저 애니메이션 및 GitHub 삽입과 별개입니다. 실행하지 않은 검사는 미검증 상태로 유지합니다.
 
-## Archify consolidation
+<a id="archify-consolidation"></a>
+## Archify 통합
 
-Use the external `tt-a1i/archify` 3.2.0 explainer contract verified at
-`d6059331abbddb49bca380ff46dca8ce33158b04`; do not vendor its runtime. Keep conclusion-first
-layout, native diagrams, contained images and finalize gates; adapt evidence/review scope
-and scene PNG conversion; omit automatic updates and a separate Korean rewrite stage.
-See [renderer contract](../../tk-writing/references/renderer-contract.md) for compatibility and known limitations.
-Retained [change provenance](change-provenance.md) and [teaching provenance](teaching-provenance.md)
-record earlier design sources; they are provenance, not current runtime instructions.
+외부 `tt-a1i/archify` 3.2.0의 explainer 계약을
+`d6059331abbddb49bca380ff46dca8ce33158b04`에서 검증한 대로 사용합니다. 런타임을 vendoring하지 않습니다. 결론 우선
+배치, 내장 다이어그램, 영역 안에 들어가는 이미지와 finalize 관문을 유지합니다. 근거·검토 범위와
+장면 PNG 변환을 조정하고, 자동 업데이트와 별도의 한국어 문장 다듬기 단계는 제외합니다.
+호환성과 알려진 한계는 [렌더러 계약](../../tk-writing/references/renderer-contract.md)을 확인합니다.
+유지한 [변경 출처 기록](change-provenance.md)과 [교육 출처 기록](teaching-provenance.md)은
+이전 설계 출처를 기록합니다. 이는 출처 기록이며 현재 런타임 지침이 아닙니다.
 
-## Archify-only document routing (2026-10-28)
+<a id="archify-only-document-routing-2026-10-28"></a>
+## Archify 전용 문서 경로 선택(2026-10-28)
 
-Fresh source still resolves to `tt-a1i/archify@d6059331abbddb49bca380ff46dca8ce33158b04`
-(3.2.0). Inspected its release manifest, SKILL.md, explainer authoring and viewer-runtime
-contracts, explainer renderer, and CLI/packaging tests before removing the legacy-document
-route. Keep native guided steps, node/route exploration, source bindings and offline finalize
-gates. Use `tk-writing`'s shared renderer/scene helpers for both explanation and research
-output. Omit automatic installs, vendored runtime and custom script injection. Arbitrary
-parameter-driven simulation is not part of this version's explainer grammar; preserve the
-requested behavior as unmet instead of claiming a static picture implements it. Specialized
-QA/gallery/prototype/question interfaces and existing user artifacts retain their owners.
-Earlier shared-shell provenance records history, not a new explanation/report rendering path.
+새로 확인한 원본은 여전히 `tt-a1i/archify@d6059331abbddb49bca380ff46dca8ce33158b04`
+(3.2.0)입니다. 기존 문서 경로를 제거하기 전에 릴리즈 manifest, SKILL.md, explainer 작성·viewer-runtime
+계약, explainer 렌더러와 CLI·패키징 테스트를
+확인했습니다. 기본 안내 단계, 노드·경로 탐색, 출처 결합과 오프라인 finalize
+관문을 유지합니다. 설명과 연구 출력 모두에 `tk-writing`의 공통 렌더러·장면 도우미를
+사용합니다. 자동 설치, vendoring한 런타임과 사용자 정의 스크립트 주입은 제외합니다. 임의의
+매개변수 기반 시뮬레이션은 이 버전의 explainer 문법에 포함되지 않습니다. 정적 그림이 이를 구현한다고
+주장하지 말고 요청된 동작을 미충족 상태로 보존합니다. 특수
+QA·갤러리·prototype·질문 인터페이스와 기존 사용자 산출물은 각 담당자를 유지합니다.
+이전의 공통 셸 출처 기록은 이력이며, 새 설명·보고서 렌더링 경로가 아닙니다.
 
 
-## Specialized HTML appearance (2026-10-28)
+<a id="specialized-html-appearance-2026-10-28"></a>
+## 특수 HTML 외관(2026-10-28)
 
-Reviewed `tt-a1i/archify@d6059331abbddb49bca380ff46dca8ce33158b04`,
-`archify/explainer/reader.css`, alongside its renderer and CLI/packaging tests.
-Keep each QA, blind-comparison, prototype and question interface's own structure and
-interaction/storage contracts. Adapt neutral surfaces, typographic hierarchy, subtle
-card elevation, bounded spacing and accessible selected controls in the shared theme.
-Omit document navigation, upstream code copying, external fonts and runtime replacement.
-All blind candidates receive the same styles. This is a visual adaptation, not a claim
-that the specialized interfaces use archify or that its usability was independently proven.
+`tt-a1i/archify@d6059331abbddb49bca380ff46dca8ce33158b04`의
+`archify/explainer/reader.css`를 렌더러 및 CLI·패키징 테스트와 함께 검토했습니다.
+각 QA, 블라인드 비교, prototype과 질문 인터페이스의 자체 구조와
+상호작용·저장 계약을 유지합니다. 공통 테마에 중립적인 표면, 타이포그래피 위계, 은은한
+카드 입체감, 제한된 간격과 접근성 있는 선택 컨트롤을 조정하여 적용합니다.
+문서 탐색, upstream 코드 복사, 외부 글꼴과 런타임 교체는 제외합니다.
+모든 블라인드 후보에 동일한 스타일을 적용합니다. 이는 시각적 조정이며,
+특수 인터페이스가 archify를 사용하거나 사용성이 독립적으로 입증되었다는 주장이 아닙니다.
 
-## Destination-specific summary images (2026-10-29)
+<a id="destination-specific-summary-images-2026-10-29"></a>
+## 목적지별 요약 이미지(2026-10-29)
 
-Fresh upstream `tt-a1i/archify@d6059331abbddb49bca380ff46dca8ce33158b04` remains
-unchanged. Reviewed explainer authoring, artifact selection and CLI delivery/finalize tests.
-Keep its explainer page contract for explicit pages; omit the page runtime for a requested
-single PR/issue infographic. The destination-specific PNG branch is an original TigerKit
-correction grounded in the supplied long-page versus compact-image incident, not a claimed
-upstream PNG feature. Adapt existing inert SVG/capture helpers, evidence binding and change
-review; omit new dependencies, publishing authority and a second explanation shell.
+새로 확인한 upstream `tt-a1i/archify@d6059331abbddb49bca380ff46dca8ce33158b04`는
+그대로입니다. explainer 작성, 산출물 선택과 CLI 전달·finalize 테스트를 검토했습니다.
+명시적인 페이지에는 explainer 페이지 계약을 유지합니다. 단일 PR·이슈 인포그래픽을
+요청하면 페이지 런타임을 제외합니다. 목적지별 PNG 분기는 제공된 긴 페이지와 간결한 이미지 간
+사례에 근거한 TigerKit 고유의 수정이며, upstream PNG 기능이라는 주장이
+아닙니다. 기존 비활성 SVG·캡처 도우미, 근거 결합과 변경
+검토를 조정합니다. 새 의존성, 발행 권한과 두 번째 설명 셸은 제외합니다.
 
-## Explanation selection and four principles (2026-10-30)
+<a id="explanation-selection-and-four-principles-2026-10-30"></a>
+## 설명 선택과 네 원칙(2026-10-30)
 
-Fresh default-branch HEADs were resolved through GitHub's commit API on 2026-10-30,
-then the following pinned files were inspected before distillation. These sources inform
-principles, not runtime dependencies. The selection reference and eval prompts are independently
-authored; no donor instruction block, renderer code, template, image or font is incorporated.
-Original license notices are retained in this package's `LICENSE.txt` for provenance.
+2026-10-30에 GitHub commit API로 최신 기본 브랜치 HEAD를 확정한 뒤,
+증류 전에 아래의 고정 파일을 확인했습니다. 이 출처는 원칙에 참고하며
+런타임 의존성이 아닙니다. 선택 참조와 평가 프롬프트는 독립적으로
+작성했습니다. 원본 지침 블록, 렌더러 코드, 템플릿, 이미지나 글꼴은 포함하지 않습니다.
+출처 기록을 위해 원본 라이선스 고지를 이 패키지의 `LICENSE.txt`에 보존합니다.
 
-| Upstream / pinned revision | Inspected implementation and rationale | Output-defining behavior: keep or explicit replacement | Keep / adapt / omit |
+| Upstream과 고정 revision | 확인한 구현과 설계 근거 | 출력을 정의하는 동작: 유지 또는 명시적 대체 | 유지·조정·제외 |
 | --- | --- | --- | --- |
-| [JimLiu/baoyu-skills](https://github.com/JimLiu/baoyu-skills/tree/1567581c26ec29f4216c6e6835415bf30343b0e3), `1567581c26ec29f4216c6e6835415bf30343b0e3`, MIT | `skills/baoyu-infographic/SKILL.md` (layout/style, learning objectives and backend boundaries), `references/analysis-framework.md` under that skill, `docs/testing.md`, root `LICENSE` | AI-generated raster; structure then layout×style/aspect confirmation; persist the full prompt before generation; no code-drawn substitute or text overlays. Keep these through the runtime-native raster route. | Keep separate information structure and visual style; adapt source-faithful ordering to current explanation evidence and renderer; adapt provider discovery to the available native image tool; keep the prompt/confirmation/text-correction contracts; omit vendor-specific backend routing, EXTEND settings, quotas, fixed default combinations and verbatim-only prose constraints (exact data remains preserved). |
-| [anthropics/skills canvas-design](https://github.com/anthropics/skills/tree/ca45fc496a3436251f191354091d557da31c15b5/skills/canvas-design), `ca45fc496a3436251f191354091d557da31c15b5`, Apache-2.0 | `skills/canvas-design/SKILL.md` (philosophy, hierarchy and contained readable text), package `LICENSE.txt`, repository tree for eval/NOTICE discovery | Design philosophy expressed as a visual PNG/PDF artifact with essential text. Replace with an explicitly selected illustrated raster or precise static visual; an HTML principle-only adaptation is a different output, never a formal upstream execution. | Keep intentional spatial hierarchy; adapt a brief design intent without deleting necessary explanatory text; adapt the visual artifact route without deleting explanation prerequisites; omit philosophy-document quotas, craft rhetoric, mandatory font downloads and bundled fonts. |
-| [OrRon/EpicInfographics](https://github.com/OrRon/EpicInfographics/tree/bf97e589df21302aacb24d9c7631393e81b9a015), `bf97e589df21302aacb24d9c7631393e81b9a015`, MIT | `skills/epic-infographics/SKILL.md`, its `references/composition.md`, `docs/PLAN.md` (composition and manual-eval rationale), root `LICENSE` and tree | Self-contained HTML/CSS/SVG rendered to inspected PNG, with a check-render-review loop. Keep via the precise summary PNG/capture route; AI illustration is an explicitly different optional treatment, not the original renderer. | Keep a meaningful focal subject and reading path; adapt a source-bound central scene only where fitting; omit blanket minimalism bans, claimed audience superiority, area/type ratios, Google Fonts, donor renderer implementation (replace with the existing inspected PNG capture), installation and optional motion machinery. |
-| [excalidraw/excalidraw](https://github.com/excalidraw/excalidraw/tree/e7b534668a60add7f725531f3c9abf32508c7b4e), `e7b534668a60add7f725531f3c9abf32508c7b4e`, MIT | `README.md` (hand-drawn editor and SVG export), `packages/element/src/renderElement.ts` (RoughJS canvas drawing), `packages/excalidraw/tests/export.test.tsx` (scale, metadata and transformed-image export), root `LICENSE` | Editable hand-drawn canvas with PNG/SVG export. Keep the output alternatives through an explicit independent SVG sketch or raster illustration; neither is an editable Excalidraw canvas/export without that actual tool. | Keep an approachable sketch idiom; adapt it as independent inert SVG under scene geometry/label checks; omit RoughJS/editor code, export metadata, collaboration, runtime, assets and fidelity claims. This treatment is contrasted with Excalidraw, not produced by it. |
+| [JimLiu/baoyu-skills](https://github.com/JimLiu/baoyu-skills/tree/1567581c26ec29f4216c6e6835415bf30343b0e3), `1567581c26ec29f4216c6e6835415bf30343b0e3`, MIT | `skills/baoyu-infographic/SKILL.md`(배치·스타일, 학습 목표와 백엔드 경계), 해당 스킬의 `references/analysis-framework.md`, `docs/testing.md`, 루트 `LICENSE`를 확인했습니다. | AI 생성 래스터, 구조 이후 배치×스타일·종횡비 확인, 생성 전 전체 프롬프트 보존, 코드로 그린 대체물과 텍스트 오버레이 금지를 유지합니다. 런타임 네이티브 래스터 경로를 통해 이를 유지합니다. | 정보 구조와 시각 스타일의 분리를 유지합니다. 출처에 충실한 순서를 현재 설명 근거와 렌더러에 맞게 조정합니다. 제공자 탐색은 이용 가능한 네이티브 이미지 도구에 맞게 조정합니다. 프롬프트·확인·텍스트 수정 계약은 유지합니다. 공급업체 전용 백엔드 경로 선택, EXTEND 설정, 할당량, 고정 기본 조합과 원문 그대로의 산문만 허용하는 제약은 제외합니다(정확한 데이터는 계속 보존합니다). |
+| [anthropics/skills canvas-design](https://github.com/anthropics/skills/tree/ca45fc496a3436251f191354091d557da31c15b5/skills/canvas-design), `ca45fc496a3436251f191354091d557da31c15b5`, Apache-2.0 | `skills/canvas-design/SKILL.md`(철학, 위계와 영역 안에 들어가는 읽기 쉬운 텍스트), 패키지 `LICENSE.txt`, eval·NOTICE 탐색을 위한 저장소 트리를 확인했습니다. | 필수 텍스트가 있는 시각적 PNG/PDF 산출물로 디자인 철학을 표현합니다. 명시적으로 선택한 삽화 래스터 또는 정밀한 정적 시각 자료로 대체합니다. HTML에서 원칙만 조정한 것은 다른 출력이며, upstream의 정식 실행이 아닙니다. | 의도적인 공간 위계를 유지합니다. 필요한 설명 텍스트를 삭제하지 않고 짧은 디자인 의도로 조정합니다. 설명의 선행 요건을 삭제하지 않고 시각 산출물 경로를 조정합니다. 철학 문서 할당량, 장인정신 수사, 필수 글꼴 다운로드와 번들 글꼴은 제외합니다. |
+| [OrRon/EpicInfographics](https://github.com/OrRon/EpicInfographics/tree/bf97e589df21302aacb24d9c7631393e81b9a015), `bf97e589df21302aacb24d9c7631393e81b9a015`, MIT | `skills/epic-infographics/SKILL.md`, 해당 스킬의 `references/composition.md`, `docs/PLAN.md`(구성과 수동 평가의 근거), 루트 `LICENSE`와 트리를 확인했습니다. | 독립형 HTML/CSS/SVG를 PNG로 렌더링하고 확인하며, 검사·렌더링·검토를 반복합니다. 정밀한 요약 PNG·캡처 경로로 유지합니다. AI 일러스트레이션은 명시적으로 다른 선택적 표현이며, 원래 렌더러가 아닙니다. | 의미 있는 초점 대상과 읽기 경로를 유지합니다. 적합한 경우에만 출처가 결합된 중심 장면을 조정합니다. 미니멀리즘의 전면 금지, 독자 대상 우월성 주장, 면적·유형 비율, Google Fonts, 원본 렌더러 구현(기존의 확인된 PNG 캡처로 대체합니다), 설치와 선택적 움직임 장치는 제외합니다. |
+| [excalidraw/excalidraw](https://github.com/excalidraw/excalidraw/tree/e7b534668a60add7f725531f3c9abf32508c7b4e), `e7b534668a60add7f725531f3c9abf32508c7b4e`, MIT | `README.md`(손그림 편집기와 SVG 내보내기), `packages/element/src/renderElement.ts`(RoughJS canvas 그리기), `packages/excalidraw/tests/export.test.tsx`(배율, 메타데이터와 변환된 이미지 내보내기), 루트 `LICENSE`를 확인했습니다. | PNG/SVG 내보내기가 있는 편집 가능한 손그림 canvas입니다. 명시적인 독립 SVG 스케치 또는 래스터 일러스트레이션을 통해 대체 출력 선택지를 유지합니다. 실제 도구가 없으면 어느 쪽도 편집 가능한 Excalidraw canvas·내보내기가 아닙니다. | 친근한 스케치 표현을 유지합니다. 장면 기하 구조·라벨 검사 아래 독립적인 비활성 SVG로 조정합니다. RoughJS·편집기 코드, 내보내기 메타데이터, 협업, 런타임, 자산과 충실도 주장은 제외합니다. 이 표현은 Excalidraw와 대비되는 것이며, Excalidraw로 제작한 것이 아닙니다. |
 
-Evaluation limits: baoyu's testing document describes library/CLI coverage, not demonstrated
-infographic comprehension. Epic's plan describes manual brief/render assessment; no separately
-named automated eval/test file was found in its pinned tree. No canvas-design-specific eval or
-NOTICE file was found in the inspected tree. Excalidraw export tests were read, not executed,
-and do not establish the quality of independently authored sketches. None of the upstream
-runtimes or comparative efficacy was reproduced. The approved local preference evidence concerns
-one evaluator and one topic; the baoyu/canvas treatments were adaptations rather than formal skill
-runs, and two examples used built-in image generation. Do not generalize rankings or claim that
-image generation is unnecessary for every selected output.
+평가의 한계: baoyu의 테스트 문서는 라이브러리·CLI 범위를 설명하며, 인포그래픽
+이해가 입증되었다는 내용은 아닙니다. Epic의 계획은 수동 brief·렌더링 평가를 설명합니다. 고정된 트리에서
+별도로 명명된 자동 평가·테스트 파일은 찾지 못했습니다. 확인한 트리에서 canvas-design 전용 평가나
+NOTICE 파일도 찾지 못했습니다. Excalidraw 내보내기 테스트는 읽었지만 실행하지 않았으며,
+독립적으로 작성한 스케치의 품질을 입증하지 않습니다. upstream
+런타임이나 비교 효과는 어느 것도 재현하지 않았습니다. 승인된 로컬 선호 근거는
+평가자 한 명과 주제 하나에 관한 것입니다. baoyu/canvas 표현은 정식 스킬
+실행이 아니라 조정본이었으며, 두 예시는 내장 이미지 생성을 사용했습니다. 순위를 일반화하거나
+선택한 모든 출력에 이미지 생성이 불필요하다고 주장하지 않습니다.
 
-Legal/asset boundary: the three root licenses above are MIT; canvas-design's own license is
-Apache-2.0 with `Copyright 2026 Anthropic, PBC.`. Its bundled fonts have separate OFL notices;
-no bundled fonts, screenshots, artwork or third-party images are redistributed here. Future asset
-reuse needs the actual asset's terms and required attribution checked independently, not an
-assumption that the repository license covers every asset. Existing package notices remain intact.
-The four principle descriptions are selective independent adaptations, not copied source files.
-
-
-## Technique-specific forms and versus previews (2026-10-30)
-
-Freshly inspected `tt-a1i/archify@e3920894b0f30db7d5fc7d7d4ece57b304c17015`
-(stable metadata still 3.2.0): `archify/references/explainer-authoring.md`,
-`archify/explainer/inline.mjs`, `test/explainer-inline.test.mjs` and
-`test/explainer-validation.test.mjs`. Authoring and validation intentionally reject raw HTML
-and strikethrough; panel structure is part of its explainer contract. Keep its conclusion-first
-board, native diagrams and finalize for the selected archify branch. Adapt routing so explicit
-technique forms can use independently authored offline HTML; omit upstream code, custom patches,
-new dependencies and any claim of upstream runtime efficacy. The 15-treatment incident supplied
-with this request is supporting case evidence, not independently reproduced model evaluation.
-This scoped decision supersedes the earlier universal-layout rule for `tk-explain`; research
-pages keep archify. Common source/author/static/accuracy obligations remain in both branches.
-The blind-comparison preview is original TigerKit code using standard sandboxed iframes; it
-reuses existing neutral-copy/fingerprint contracts rather than copying an upstream renderer.
+법적·자산 경계: 위의 루트 라이선스 세 개는 MIT입니다. canvas-design 자체 라이선스는
+Apache-2.0이며 `Copyright 2026 Anthropic, PBC.`를 포함합니다. 번들 글꼴에는 별도의 OFL 고지가 있습니다.
+여기서는 번들 글꼴, 스크린샷, 그림이나 제삼자 이미지를 재배포하지 않습니다. 향후 자산
+재사용 시 저장소 라이선스가 모든 자산을 포괄한다고 가정하지 말고 실제 자산의 조건과 필수
+출처 표시를 독립적으로 확인해야 합니다. 기존 패키지 고지는 그대로 유지합니다.
+네 원칙의 설명은 선택적으로 독립 조정한 것이며, 원본 파일을 복사한 것이 아닙니다.
 
 
-## Output identity, ordered selection and reveal follow-up (2026-10-30)
+<a id="technique-specific-forms-and-versus-previews-2026-10-30"></a>
+## 기법 고유 형식과 일대일 비교 미리보기(2026-10-30)
 
-Fresh source HEADs still match the baoyu `1567581c`, canvas-design `ca45fc49` and Epic
-`bf97e589` pinned rows above; earlier Excalidraw export evidence remains pinned. Re-read
-baoyu's complete `skills/baoyu-infographic/SKILL.md`, `references/base-prompt.md` and analysis
-framework, plus canvas-design's output/philosophy instructions and Epic's PNG production
-workflow. The output-defining column cannot be omitted: retain its behavior or name a
-replacement route and its limitation. Omit only incidental machinery outside that column.
+`tt-a1i/archify@e3920894b0f30db7d5fc7d7d4ece57b304c17015`를 새로 확인했습니다
+(stable 메타데이터는 여전히 3.2.0입니다). `archify/references/explainer-authoring.md`,
+`archify/explainer/inline.mjs`, `test/explainer-inline.test.mjs`와
+`test/explainer-validation.test.mjs`를 확인했습니다. 작성과 검증은 의도적으로 raw HTML과
+취소선을 거부합니다. 패널 구조는 explainer 계약의 일부입니다. 선택된 archify 분기에서는 결론 우선
+보드, 내장 다이어그램과 finalize를 유지합니다. 명시적인 기법 형식이
+독립적으로 작성한 오프라인 HTML을 사용할 수 있도록 경로 선택을 조정합니다. upstream 코드, 사용자 정의 패치,
+새 의존성과 upstream 런타임 효과 주장은 제외합니다. 이번 요청에 제공된 15가지 표현 사례는
+보조 사례 근거이며, 독립적으로 재현한 모델 평가가 아닙니다.
+범위가 정해진 이 결정은 `tk-explain`의 이전 범용 배치 규칙을 대체합니다. 연구
+페이지는 archify를 유지합니다. 공통 출처·작성자·정적 검사·정확성 의무는 두 분기 모두에 유지합니다.
+블라인드 비교 미리보기는 표준 sandbox iframe을 사용하는 TigerKit 고유 코드입니다.
+upstream 렌더러를 복사하지 않고 기존 중립 문구·fingerprint 계약을 재사용합니다.
 
-Keep baoyu's generated raster, prompt-before-tool, exact data, confirmation and regenerate-text
-boundaries. Adapt Step 4 to the user's staged technique→format→image-style/aspect flow: infer
-layout, show it with style choices, and skip axes already explicit or delegated. Omit only
-vendor backend routing/settings; preserve native image-tool use and fail honestly if absent.
-The new prompt skeleton follows its specifications/guidelines/content/label structure with
-independently authored evidence constraints; existing MIT attribution remains in LICENSE.txt.
-Canvas and Epic are not both AI image generators; preserve their documented visual/static
-artifact identity rather than claiming a raster backend was part of every donor. Independent
-SVG remains a disclosed treatment, not a claim of Excalidraw integration.
 
-The full visible catalog, stable-ID relocation and scoped preference ordering are adaptations
-of the supplied first-hand selection trials, not an upstream learning-style claim. A single
-19-candidate PR tournament with one evaluator cannot supply missing per-technique identities
-or a general ranking. Preference persistence still requires the exact consented external owner.
+<a id="output-identity-ordered-selection-and-reveal-follow-up-2026-10-30"></a>
+## 출력 정체성, 순차 선택과 공개 후속 절차(2026-10-30)
+
+새로 확인한 원본 HEAD는 여전히 위에 고정한 baoyu `1567581c`, canvas-design `ca45fc49`와 Epic
+`bf97e589` 행과 일치합니다. 이전 Excalidraw 내보내기 근거도 고정된 상태로 유지합니다.
+baoyu의 전체 `skills/baoyu-infographic/SKILL.md`, `references/base-prompt.md`와 분석
+프레임워크, canvas-design의 출력·철학 지침과 Epic의 PNG 제작
+절차를 다시 읽었습니다. 출력을 정의하는 열은 생략할 수 없습니다. 해당 동작을 유지하거나
+대체 경로와 그 한계를 명시합니다. 해당 열 밖의 부수적인 장치만 제외합니다.
+
+baoyu의 생성 래스터, 도구 호출 전 프롬프트, 정확한 데이터, 확인과 텍스트 재생성
+경계를 유지합니다. Step 4를 사용자의 단계별 기법→형식→이미지 스타일·종횡비 흐름에 맞게 조정합니다.
+배치를 추론하고 스타일 선택지와 함께 보여주며, 이미 명시되거나 위임된 축은 건너뜁니다.
+공급업체 백엔드 경로 선택·설정만 제외합니다. 네이티브 이미지 도구 사용을 보존하며, 도구가 없으면 정직하게 실패로 처리합니다.
+새 프롬프트 틀은 독립적으로 작성한 근거 제약을 사용하면서 사양·지침·콘텐츠·라벨 구조를
+따릅니다. 기존 MIT 출처 표시는 LICENSE.txt에 유지합니다.
+Canvas와 Epic이 모두 AI 이미지 생성기인 것은 아닙니다. 모든 원본에 래스터 백엔드가 있었다고
+주장하지 말고 문서화된 시각·정적 산출물 정체성을 보존합니다. 독립
+SVG는 공개된 별도 표현으로 유지하며, Excalidraw 통합 주장으로 취급하지 않습니다.
+
+전체를 보여주는 카탈로그, 고정 ID의 축 이동과 범위가 정해진 선호 순서는
+제공된 직접 선택 시험을 조정한 것이며, upstream 학습 스타일 주장이 아닙니다. 평가자 한 명과 후보 19개의
+단일 PR 토너먼트로는 빠진 기법별 정체성이나 일반적인 순위를
+확보할 수 없습니다. 선호 보존에는 여전히 정확히 동의받은 외부 담당자가 필요합니다.

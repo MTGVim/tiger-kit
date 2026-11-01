@@ -1,45 +1,20 @@
-# Finding quality
+<a id="finding-quality"></a>
+# 발견 사항의 품질
 
-Read this for every code review before reporting findings.
+모든 코드 리뷰에서 발견 사항을 보고하기 전에 이 문서를 읽습니다.
 
-Report a finding only after identifying the exact changed or affected location, a reachable input/state/sequence, and a
-concrete observable impact. Inspect surrounding guards, callers, imports, tests, types, and framework/runtime defaults;
-repository behavior outranks a generic heuristic. Set severity from impact and reachability, discard taste or speculation,
-and allow zero findings.
+정확한 변경 위치 또는 영향받는 위치, 도달 가능한 입력·상태·순서와 구체적으로 관찰 가능한 영향을 식별한 뒤에만 발견 사항을 보고합니다. 주변 가드, 호출자, import, 테스트, 타입과 프레임워크·런타임 기본값을 검사합니다. 일반적인 경험 법칙보다 저장소의 동작이 우선합니다. 영향과 도달 가능성에 따라 심각도를 정하고 취향이나 추측은 버립니다. 발견 사항이 없어도 됩니다.
 
-When implementation and related tests/evals change together, compare the behavior protected before and after: reduced
-counts/ranges/fidelity, relaxed calls/conditions, removed assertions/scenarios, skip/xfail/exception allowances, excluded
-tests, or checks of mocks/tools instead of observable results may hide a regression despite GREEN. Compare intent/AC,
-the prior contract, a reachable failure and remaining protection; legitimate specification changes are not defects.
-Patterns alone establish neither a finding nor severity. Missing material evidence follows the existing Unresolved /
-Unverifiable path, not an invented failure or pass.
+구현과 관련 테스트·평가가 함께 바뀌면 변경 전후에 보호한 동작을 비교합니다. 개수·범위·충실도 축소, 호출·조건 완화, 단언·시나리오 제거, skip/xfail/예외 허용, 테스트 제외 또는 관찰 가능한 결과 대신 mock·도구를 확인하는 검사는 GREEN이어도 회귀를 숨길 수 있습니다. 의도·AC, 이전 계약, 도달 가능한 실패와 남아 있는 보호를 비교합니다. 정당한 명세 변경은 결함이 아닙니다. 패턴만으로는 발견 사항이나 심각도가 성립하지 않습니다. 중요한 근거가 부족하면 실패나 통과를 꾸며 내지 않고 기존 Unresolved / Unverifiable 경로를 따릅니다.
 
-Support absence/removal-safety claims within the affected system's relevant scope: check plausible name variants,
-dynamic imports, string entry points, routes/configuration and registration conventions as applicable. A static zero-match
-search alone cannot establish absence when runtime lookup remains unchecked. For API/shape/field/ID/state changes,
-trace the producer through relevant direct and indirect consumers and compatibility/migration boundaries; verify actual
-read paths rather than only the changed producer. Reuse exact-target fresh-state evidence and refresh affected claims
-after edits; do not add a global search ritual, a new review phase or a report ledger.
+부재 또는 제거 안전성 주장은 영향받는 시스템의 관련 범위 안에서 뒷받침합니다. 해당하는 경우 가능한 이름 변형, 동적 import, 문자열 진입점, 라우트·설정과 등록 관례를 확인합니다. 런타임 조회를 확인하지 않았다면 정적 검색 결과가 0건이라는 사실만으로 부재를 입증할 수 없습니다. API·형태·필드·ID·상태 변경에서는 생성자부터 관련 직접·간접 소비자와 호환성·마이그레이션 경계까지 추적합니다. 변경한 생성자만 보지 말고 실제 읽기 경로를 검증합니다. 정확한 대상의 최신 상태 근거를 재사용하고 편집 후에는 영향받는 주장을 갱신합니다. 전역 검색 의식, 새로운 리뷰 단계나 보고 장부를 추가하지 않습니다.
 
-Cluster manifestations only when evidence proves the same causal root, correction boundary, and failure class. Similar
-symptoms or a report's proposed mechanism are not proof.
+근거로 동일한 인과적 근원, 수정 경계와 실패 유형이 입증될 때만 여러 현상을 묶습니다. 증상이 비슷하거나 보고서가 특정 메커니즘을 제안했다는 사실은 증거가 아닙니다.
 
-Check for silent failures: empty catches or ignored exceptions, errors converted without evidence into `null`, empty data,
-or default success, log-and-continue paths that lose required context, partial mutation reported as success, and missing
-propagation or rollback. Do not flag an intentional fallback when its observable contract, telemetry, or caller handling
-makes the behavior explicit and safe.
+조용한 실패를 확인합니다. 빈 catch나 무시한 예외, 근거 없이 `null`·빈 데이터·기본 성공으로 변환한 오류, 필요한 맥락을 잃는 로그 후 계속 경로, 성공으로 보고한 부분 변경, 전파나 롤백 누락을 확인합니다. 관찰 가능한 계약, 원격 측정 또는 호출자 처리가 동작을 명시적이고 안전하게 만드는 의도적 fallback은 지적하지 않습니다.
 
-Treat apparent issues as questions until context confirms them. Caller-side validation, proven narrowing, intentional
-fire-and-forget, fixed-cardinality loops, test literals, framework guarantees, and unchanged code often reject a finding.
-Runtime breakage, data loss, security, or payment risk is not dismissed merely because the affected line is unchanged.
+맥락으로 확인하기 전까지 겉으로 보이는 문제를 질문으로 취급합니다. 호출자 측 검증, 입증된 타입 좁히기, 의도적 fire-and-forget, 고정 개수 루프, 테스트 리터럴, 프레임워크 보장과 변경되지 않은 코드는 종종 후보를 기각합니다. 영향받는 줄이 변경되지 않았다는 이유만으로 런타임 장애, 데이터 손실, 보안 또는 결제 위험을 무시하지 않습니다.
 
-Use `Critical` only when the exact change cannot safely merge because it creates or exposes a concrete path to broken
-required or core functionality, security compromise, payment/data loss or corruption, irreversible migration failure,
-or build/deploy/runtime unusability. Use `Important` for a concrete reachable change-owned defect that should be fixed
-before merge, including an unmet binding AC, supported-path contract mismatch, bounded recoverable wrong behavior,
-incorrect error handling, or a protection gap tied to one named changed behavior and plausible regression.
+정확한 변경이 필수·핵심 기능 장애, 보안 침해, 결제·데이터 손실이나 손상, 되돌릴 수 없는 마이그레이션 실패 또는 빌드·배포·런타임 사용 불가로 이어지는 구체적 경로를 만들거나 노출하여 안전하게 병합할 수 없을 때만 `Critical`을 사용합니다. 병합 전에 수정해야 하는, 변경에 귀속되는 구체적이고 도달 가능한 결함에는 `Important`를 사용합니다. 여기에는 구속력 있는 AC 미충족, 지원 경로의 계약 불일치, 범위가 한정되고 복구 가능한 잘못된 동작, 잘못된 오류 처리 또는 명명한 변경 동작 하나와 가능한 회귀에 연결된 보호 공백이 포함됩니다.
 
-Architecture, maintainability, or test concerns qualify only when they establish a concrete failure or material cost.
-Do not report style, generic requests for more tests, optional optimization, documentation polish, pre-existing unrelated
-defects, or subjective preference. Severity reflects impact, reachability, blast radius, and recoverability; record
-confidence separately rather than lowering severity.
+아키텍처, 유지보수성 또는 테스트 문제는 구체적 실패나 중대한 비용을 입증할 때만 해당합니다. 스타일, 일반적인 테스트 추가 요청, 선택적 최적화, 문서 다듬기, 기존의 무관한 결함이나 주관적 선호는 보고하지 않습니다. 심각도는 영향, 도달 가능성, 영향 범위와 복구 가능성을 반영합니다. 심각도를 낮추는 대신 확신도를 별도로 기록합니다.

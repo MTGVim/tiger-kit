@@ -10,165 +10,145 @@ metadata:
     relationship: adapted
 ---
 
-# User-Run Wizard
+<a id="user-run-wizard"></a>
+# 사용자가 실행하는 설정 안내
 
-## Shared References
+<a id="shared-references"></a>
+## 공통 참조
 
-Read branch-triggered criteria from the current installed owners. A missing/mismatched
-owner or resource blocks that action: use `tk-setup-skills`, not memory, another installation
-or unapproved installs. Reading grants no workflow or mutation authority.
+분기 조건에 해당하는 기준을 현재 설치된 소유 스킬에서 읽습니다. 소유 스킬이나 자원이 없거나 일치하지 않으면 해당 행동을 중단합니다.
+기억, 다른 설치본이나 승인하지 않은 설치로 대체하지 말고 `tk-setup-skills`를 사용합니다. 읽기는 워크플로 실행이나 변경 권한을 부여하지 않습니다.
 
-- For a user-owned decision, missing approval or unmet prerequisite, read [question rounds](../tk-questioning/references/questions.md).
-- Before a user-facing completion report, artifact-path handoff or multi-attribute chat comparison, read [chat delivery](../tk-writing/references/delivery.md). The task's specific output contract wins.
+- 사용자 소유 결정, 누락된 승인이나 충족하지 못한 선행 조건이 있으면 [질문 라운드](../tk-questioning/references/questions.md)를 읽습니다.
+- 사용자에게 완료 보고, 산출물 경로 인계나 여러 속성을 비교하는 채팅을 전달하기 전에 [채팅 전달](../tk-writing/references/delivery.md)을 읽습니다. 작업의 구체적인 출력 계약이 우선합니다.
 
-## UI Evidence
+<a id="ui-evidence"></a>
+## UI 근거
 
-Keep existing UI literals exact, including language/case/punctuation/spacing, separate from
-proposed copy. Require target/environment/locale/role-matched evidence for each navigation
-label and connection; a title/route/identifier alone proves no entry path. Preserve conflicting provenance.
-Report every required
-unsupported label/hop with available provenance, limitation and smallest missing input; never
-present it as navigation. User-supplied text is not independently observed and resolves only its supported claim.
+기존 UI literal은 언어/대소문자/문장부호/공백까지 정확히 유지하고 제안 문구와 구별합니다.
+각 탐색 레이블과 연결에는 대상/환경/로케일/역할이 일치하는 근거를 요구합니다. 제목/경로/식별자만으로는 진입 경로가 입증되지 않습니다. 충돌하는 출처를 보존합니다.
+필수 레이블/이동 단계 중 근거가 없는 것은 모두 이용 가능한 출처, 한계와 최소한의 누락 입력을 함께 보고합니다. 이를 탐색 경로로 제시하지 않습니다.
+사용자가 제공한 텍스트는 독립적으로 관찰한 것이 아니며, 해당 텍스트가 뒷받침하는 주장만 해소합니다.
 
-Before collecting/verifying UI evidence within this owner's investigation scope, read
-[UI evidence collection](../tk-ui-evidence/references/ui-evidence.md). Non-UI and propagation-only
-branches skip collection; carry supplied evidence/gaps without starting a new investigation.
+이 담당자의 조사 범위에서 UI 근거를 수집/검증하기 전에 [UI 근거 수집](../tk-ui-evidence/references/ui-evidence.md)을 읽습니다.
+UI가 아닌 분기와 전달만 하는 분기는 수집을 생략하고, 새 조사를 시작하지 않은 채 제공된 근거/공백을 전달합니다.
 
-Guide `host-session` procedures that users must perform themselves. Internally, strictly track steps, value
-sources/destinations, secrecy, and safety boundaries, but do not dump them to the user
-like an approval document.
+사용자가 직접 수행해야 하는 `host-session` 절차를 안내합니다. 내부적으로 단계, 값의 출처/목적지, 비밀 여부와 안전 경계를 엄격히 추적하되,
+이를 승인 문서처럼 사용자에게 쏟아내지 않습니다.
 
-**Keep the conversation natural and the state strict.**
+**대화는 자연스럽게 진행하고 상태는 엄격하게 관리합니다.**
 
-Open with a brief overview of the full journey, then naturally guide the user through
-one action they must take now. Do not repeatedly confirm already completed steps.
+전체 여정을 짧게 개괄한 뒤 사용자가 지금 해야 할 한 가지 행동을 자연스럽게 안내합니다. 이미 완료한 단계를 반복해서 확인하지 않습니다.
 
-## Scope
+<a id="scope"></a>
+## 범위
 
-Applicable examples:
+적용할 수 있는 예시는 다음과 같습니다.
 
-- `provisioning` and `dashboard` setup
-- Issuing and placing `credential`/`secret` values
-- `login`, MFA, OTP, CAPTCHA, `passkey`
-- `permission`/`keychain`/`device` `pairing`
-- Human-only steps during `migration`/`cutover`
-- Exact consumer handoffs for host configuration, authentication, permission, or restart
-  actions that the invoking skill cannot perform safely
+- `provisioning`과 `dashboard` 설정입니다.
+- `credential`/`secret` 값의 발급과 배치입니다.
+- `login`, MFA, OTP, CAPTCHA, `passkey`입니다.
+- `permission`/`keychain`/`device` `pairing`입니다.
+- `migration`/`cutover` 중 사람만 수행할 수 있는 단계입니다.
+- 호출한 스킬이 안전하게 수행할 수 없는 호스트 설정, 인증, 권한이나 재시작 행동에 대한 정확한 소비자 인계입니다.
 
-Routine code/CLI tasks the `agent` can safely execute, product decisions, and `acceptance` `verification`
-are outside this skill's scope.
+`agent`가 안전하게 실행할 수 있는 일상적인 코드/CLI 작업, 제품 결정과 `acceptance` `verification`은 이 스킬의 범위 밖입니다.
 
-When another skill supplies an exact setup handoff, read
-[consumer handoffs](references/consumer-handoffs.md). The invoking skill keeps ownership of
-its operation and verdict; this wizard owns only the current human action and its completion
-signal.
+다른 스킬이 정확한 설정 인계를 제공하면 [소비자 인계](references/consumer-handoffs.md)를 읽습니다.
+호출한 스킬이 자신의 작업과 판정을 계속 담당합니다. 이 안내 스킬은 현재 사람이 수행할 행동과 그 완료 신호만 담당합니다.
 
-## Research and Planning
+<a id="research-and-planning"></a>
+## 조사와 계획
 
-Read [upstream distillation](references/upstream-distillation.md) only when deciding `upstream provenance` or `adaptation`;
-do not read it during an ordinary `wizard` run.
+`upstream provenance`나 `adaptation`을 결정할 때만 [upstream 증류](references/upstream-distillation.md)를 읽습니다.
+일반적인 `wizard` 실행 중에는 읽지 않습니다.
 
-First read the `repository` and current `host` `evidence` to build this internal state:
+먼저 `repository`와 현재 `host` `evidence`를 읽고 다음 내부 상태를 구성합니다.
 
-- Full journey and sequence
-- Each value's `source`/`destination`
-- `secret`/`public` classification
-- Already completed steps
-- Steps the user must perform
-- Irreversible steps
-- Verifiable `completion` `signal`
+- 전체 여정과 순서입니다.
+- 각 값의 `source`/`destination`입니다.
+- `secret`/`public` 분류입니다.
+- 이미 완료한 단계입니다.
+- 사용자가 수행해야 할 단계입니다.
+- 되돌릴 수 없는 단계입니다.
+- 검증할 수 있는 `completion` `signal`입니다.
 
-For a consumer handoff, also preserve the consumer, exact pending criterion, detected host
-and capability state, required versus recommended properties, and resume action. Do not ask
-the user to restate values already present in the handoff.
+소비자 인계에서는 소비자, 정확한 대기 기준, 감지한 호스트와 기능 상태, 필수 속성과 권장 속성, 재개 행동도 보존합니다.
+인계에 이미 있는 값을 사용자에게 다시 말해 달라고 하지 않습니다.
 
-Do not invent unknown UI, buttons, URLs, or commands. Where evidence is unavailable, describe only that point
-as `Unverifiable`.
+알 수 없는 UI, 버튼, URL이나 명령을 만들지 않습니다. 근거를 이용할 수 없는 지점만 `Unverifiable`로 설명합니다.
 
-When the journey depends on a version-sensitive external API, OAuth/SSO provider, or provider dashboard that repository
-evidence cannot establish, read [external contract evidence](../tk-repository-guidance/references/external-contracts.md). Installed/local contract
-evidence stays authoritative over generic latest documentation.
+여정이 버전에 민감한 외부 API, OAuth/SSO 제공자나 제공자 대시보드에 의존하고 저장소 근거로 이를 확립할 수 없으면
+[외부 계약 근거](../tk-repository-guidance/references/external-contracts.md)를 읽습니다. 설치된/로컬 계약 근거가 일반적인 최신 문서보다 우선합니다.
 
-Apply UI Evidence to every user instruction, including provider-dashboard navigation.
+제공자 대시보드 탐색을 포함하여 사용자에게 하는 모든 지시에 UI 근거 기준을 적용합니다.
 
-For example, tell the user:
+예를 들어 사용자에게 다음과 같이 말합니다.
 
 ```text
 대략 키 발급 → 로컬 저장 → 연결 확인 세 단계면 끝납니다.
 키 값은 대화에 남기지 않을게요. 먼저 발급 화면까지 들어가 주세요.
 ```
 
-Guide the next step only after observing the previous step's `completion`.
+이전 단계의 `completion`을 관찰한 뒤에만 다음 단계를 안내합니다.
 
-## Secrets and Authentication
+<a id="secrets-and-authentication"></a>
+## 비밀과 인증
 
-Never `echo` a `secret` or store it in `chat`, Markdown, `log`, or `eval`.
-Use hidden input for one-time secrets. For explicitly authorized development/QA application
-credentials, including passwords, read [worktree-local authentication](../tk-artifacts/references/authentication.md)
-before reuse or cleanup and use only the scoped protected file; retention does not authorize
-new login or automated secret entry.
+`secret`을 `echo`하거나 `chat`, Markdown, `log`, `eval`에 저장하지 않습니다.
+일회성 비밀에는 숨김 입력을 사용합니다. 암호를 포함하여 명시적으로 승인된 개발/QA 애플리케이션 자격 증명은
+재사용하거나 정리하기 전에 [worktree 로컬 인증](../tk-artifacts/references/authentication.md)을 읽고, 범위가 지정된 보호 파일만 사용합니다.
+보존은 새로운 로그인이나 자동 비밀 입력을 승인하지 않습니다.
 
-Do not prompt users to paste OTP, `password`, `token`, `session` `value`, or `recovery` `code`
-into the conversation. Do not retain even non-secret `identifier` values unless needed for the task.
+사용자에게 OTP, `password`, `token`, `session` `value`나 `recovery` `code`를 대화에 붙여 넣으라고 하지 않습니다.
+작업에 필요하지 않으면 비밀이 아닌 `identifier` 값도 보존하지 않습니다.
 
-For file-mediated input in a repository task, first prove that `git ls-files -- .tigerkit/`
-returns no tracked paths and `git check-ignore -q -- .tigerkit/` succeeds. Accept Git's
-effective per-directory, local-exclude, or user-level-exclude decision. Read the user-editable
-input branch in [artifact paths](../tk-artifacts/references/artifact-paths.md) before creation or consumption.
-If a parent already created and showed an input file, reuse that exact path under its
-established owner, lifecycle and target binding; do not create a second wizard file.
-If that boundary is missing, conflicts or belongs to a different task/worktree, application,
-verified origin, environment or account/role, hold reuse, overwrite and deletion until the
-parent resolves it. For a new wizard-owned input, create
-`.tigerkit/secret-input/tk-wizard-<run-id>/input.json` with directory mode `0700`
-and file mode `0600`, seeded with a plain JSON object such as `{"token": ""}` or the exact
-required credential fields. Before waiting for input, verify the exact file still exists
-at the reported path, then visibly show both the repository-relative and absolute paths
-as well as the secret-free template and fields to fill
-and save. A clipboard command must JSON-serialize into the named field, preserve other
-fields and expose no value in arguments or shell history.
-Do not launch an editor, file opener, GUI, terminal UI, or focus-changing
-application to collect the value. Open the file only after showing the path and receiving
-an explicit user request. If the path cannot be proven safe and accessible, use an
-available host-native hidden input or return `Blocked | Unverifiable`; do not fall back to
-an external scratch path.
+저장소 작업에서 파일을 통한 입력을 사용하려면 먼저 `git ls-files -- .tigerkit/`가 추적 경로를 반환하지 않고
+`git check-ignore -q -- .tigerkit/`가 성공한다는 것을 입증합니다. Git에 실제 적용되는 디렉터리별, 로컬 제외 또는 사용자 수준 제외 판정을 받아들입니다.
+생성하거나 소비하기 전에 [산출물 경로](../tk-artifacts/references/artifact-paths.md)의 사용자 편집 입력 분기를 읽습니다.
+상위 작업이 이미 입력 파일을 만들고 보여 주었다면, 정해진 소유자, 수명 주기와 대상 결합을 유지하며 그 정확한 경로를 재사용합니다.
+두 번째 wizard 파일을 만들지 않습니다.
+이 경계가 없거나 충돌하거나 다른 작업/worktree, 애플리케이션, 검증된 origin, 환경 또는 계정/역할에 속하면 상위 작업이 해결할 때까지 재사용, 덮어쓰기와 삭제를 보류합니다.
+새 wizard 소유 입력은 디렉터리 모드 `0700`, 파일 모드 `0600`으로 `.tigerkit/secret-input/tk-wizard-<run-id>/input.json`을 만들고,
+`{"token": ""}` 같은 일반 JSON 객체나 정확히 필요한 자격 증명 필드로 초기화합니다.
+입력을 기다리기 전에 보고한 경로에 정확한 파일이 여전히 존재하는지 검증하고, 저장소 상대 경로와 절대 경로를 모두 사용자에게 표시합니다.
+비밀이 없는 템플릿과 채우고 저장할 필드도 보여 줍니다.
+클립보드 명령은 지정한 필드에 JSON 직렬화를 해야 하고 다른 필드를 보존해야 하며, 인수나 셸 이력에 값을 노출하지 않아야 합니다.
+값을 수집하려고 편집기, 파일 열기 도구, GUI, 터미널 UI나 포커스를 바꾸는 애플리케이션을 실행하지 않습니다.
+경로를 보여 주고 사용자의 명시적인 요청을 받은 뒤에만 파일을 엽니다.
+경로가 안전하고 접근 가능하다고 입증할 수 없으면 이용 가능한 호스트 네이티브 숨김 입력을 사용하거나 `Blocked | Unverifiable`을 반환합니다.
+외부 임시 경로로 대체하지 않습니다.
 
-After showing the path, use bounded metadata-change polling; the non-empty initial template
-is still `Pending`. On change, a trusted local reader validates JSON and all required fields
-without returning content or parser excerpts. Blank, missing or partly saved values stay
-`Pending` without rewriting the file. Before use, recheck safe path, ownership and mode
-`0600`, validate and consume the same snapshot, then continue the exact pending step without
-a completion message. Apply the established lifecycle: immediately remove consumed one-time
-secret input and its run directory on success, failure or exception only within the owner's
-cleanup authority, and verify no residue. For authorized scoped application authentication,
-including development/QA passwords, preserve the protected file under
-[worktree-local authentication](../tk-artifacts/references/authentication.md); phase completion, failure,
-interruption and access expiry are not deletion triggers. Actual production credentials,
-OTPs, recovery codes and passwords outside that approved scope remain one-time input.
-Never return a user-input `Pending` state unless both actual paths have appeared in the
-user-visible answer; absence of an actual created file is `Blocked | Unverifiable`,
-not an instruction to guess a path.
-Renew an expired wait window while the task remains active. Only when the runtime can no
-longer wait, preserve the run-owned input path and explain how to resume monitoring.
+경로를 보여 준 뒤에는 범위를 제한한 메타데이터 변경 폴링을 사용합니다. 비어 있지 않은 초기 템플릿도 여전히 `Pending`입니다.
+변경이 발생하면 신뢰하는 로컬 읽기 도구가 내용이나 파서 발췌를 반환하지 않고 JSON과 모든 필수 필드를 검증합니다.
+비어 있거나 누락되거나 일부만 저장된 값은 파일을 다시 쓰지 않은 채 `Pending`으로 유지합니다.
+사용 전에 안전한 경로, 소유권과 모드 `0600`을 다시 확인하고, 같은 스냅샷을 검증하고 소비한 뒤 완료 메시지 없이 정확한 대기 단계를 계속합니다.
+정해진 수명 주기를 적용합니다. 소비한 일회성 비밀 입력과 실행 디렉터리는 성공, 실패나 예외 시 소유자의 정리 권한 안에서만 즉시 제거하고 잔여물이 없는지 검증합니다.
+개발/QA 암호를 포함하여 승인되고 범위가 지정된 애플리케이션 인증은 [worktree 로컬 인증](../tk-artifacts/references/authentication.md)에 따라 보호 파일을 보존합니다.
+단계 완료, 실패, 중단과 접근 만료는 삭제 조건이 아닙니다.
+실제 운영 자격 증명, OTP, 복구 코드와 승인 범위 밖의 암호는 계속 일회성 입력으로 취급합니다.
+두 실제 경로가 모두 사용자에게 보이는 답변에 나타나기 전에는 사용자 입력 `Pending` 상태를 반환하지 않습니다.
+실제로 만든 파일이 없으면 `Blocked | Unverifiable`이며, 경로를 추측하라는 지시가 아닙니다.
+작업이 활성 상태인 동안 만료된 대기 시간을 갱신합니다. 런타임이 더 이상 기다릴 수 없을 때만 실행 소유 입력 경로를 보존하고 감시 재개 방법을 설명합니다.
 
-If a `helper` is needed, create it as a one-time `user-run` `helper` and preserve these semantics:
+`helper`가 필요하면 일회성 `user-run` `helper`로 만들고 다음 의미를 보존합니다.
 
-- Separate normal input from `secret` `input`
-- Do not `persist` `secret` values by default
-- Clearly show the `destination`
-- Do not silently overwrite existing values
-- Statically validate with `bash -n` and, when possible, `shellcheck`
-- Explain how to delete or retain it afterward
+- 일반 입력과 `secret` `input`을 분리합니다.
+- 기본적으로 `secret` 값을 `persist`하지 않습니다.
+- `destination`을 명확히 보여 줍니다.
+- 기존 값을 조용히 덮어쓰지 않습니다.
+- `bash -n`과 가능하면 `shellcheck`로 정적 검증합니다.
+- 이후 삭제하거나 보존하는 방법을 설명합니다.
 
-## 🔴 CHECKPOINT · 🛑 STOP · Safety Confirmation
+<a id="-checkpoint---stop--safety-confirmation"></a>
+## 🔴 CHECKPOINT · 🛑 STOP · 안전 확인
 
-Treat irreversible, production-affecting, or unverifiable steps below as hard stops; ordinary reversible steps remain frictionless.
+아래의 되돌릴 수 없거나 운영에 영향을 주거나 검증할 수 없는 단계는 반드시 중단하는 지점으로 취급합니다. 일반적인 가역적 단계는 불필요한 절차 없이 진행합니다.
 
-Do not ask for approval at every ordinary `reversible` step.
-Require explicit confirmation only for actions that change the user's decision, are difficult to reverse,
-or affect `production`.
+일반적인 `reversible` 단계마다 승인을 요청하지 않습니다.
+사용자의 결정을 바꾸거나 되돌리기 어렵거나 `production`에 영향을 주는 행동에만 명시적 확인을 요구합니다.
 
-Example:
+예시는 다음과 같습니다.
 
 ```text
 여기서 기존 production key를 폐기하면 현재 서비스에 영향이 생길 수 있어요.
@@ -176,19 +156,20 @@ Example:
 새 key 확인 후 기존 key를 폐기할까요?
 ```
 
-If no safe verification path exists, do not rush execution; explain the state as `Blocked` or `Unverifiable`.
+안전한 검증 경로가 없으면 실행을 서두르지 않고 `Blocked` 또는 `Unverifiable` 상태로 설명합니다.
 
-## Completion
+<a id="completion"></a>
+## 완료
 
-At the end, briefly explain what the user completed and how it was verified.
-Do not expose a `stage` `table`, `secret` `inventory`, internal state machine, or long `receipt` by default.
+마지막에는 사용자가 무엇을 완료했고 어떻게 검증했는지 짧게 설명합니다.
+기본적으로 `stage` `table`, `secret` `inventory`, 내부 상태 머신이나 긴 `receipt`를 노출하지 않습니다.
 
-Use exactly one actual state from `Status: Pass | Pending | Blocked | Unverifiable | Fail` as the `terminal` `token`.
+`Status: Pass | Pending | Blocked | Unverifiable | Fail` 중 실제 상태를 정확히 하나 사용하여 `terminal` `token`으로 삼습니다.
 
-## Artifact Paths
+<a id="artifact-paths"></a>
+## 산출물 경로
 
-Before authorized artifact writes, checkout/transport/ignore setup or temporary-input consumption,
-read [artifact paths](../tk-artifacts/references/artifact-paths.md). Use safe owned nonsymlink paths
-and proven Git exclusion for repository scratch; failed checks stop that file branch. Preserve
-explicit final destinations and owner-specific defaults. Prefilled input is not completed input.
-Cleanup targets only recorded literal resolved absolute run-owned paths, never cwd-relative paths or globs.
+승인된 산출물 쓰기, checkout/전송/제외 설정 또는 임시 입력 소비 전에 [산출물 경로](../tk-artifacts/references/artifact-paths.md)를 읽습니다.
+안전하고 소유권이 있는 비심볼릭 링크 경로와 Git 제외가 입증된 저장소 임시 공간을 사용합니다. 검사에 실패하면 해당 파일 분기를 중단합니다.
+명시적 최종 목적지와 담당자별 기본값을 보존합니다. 미리 채운 입력은 완료한 입력이 아닙니다.
+정리 대상은 기록된 리터럴 해석 완료 절대 실행 소유 경로뿐이며, cwd 상대 경로나 glob은 사용하지 않습니다.

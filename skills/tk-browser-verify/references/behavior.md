@@ -1,80 +1,80 @@
-# Behavior verification
+<a id="behavior-verification"></a>
+# 동작 검증
 
-## Exact target and trusted input
+<a id="exact-target-and-trusted-input"></a>
+## 정확한 대상과 신뢰할 수 있는 입력
 
-Identify the exact control. If it is missing, inspect the mode, tab, scroll, and toggle
-state instead of repeatedly searching for a button with a similar label.
+정확한 컨트롤을 식별합니다. 해당 컨트롤이 없으면 비슷한 레이블의 버튼을 반복해서 찾지 말고
+모드, 탭, 스크롤과 토글 상태를 확인합니다.
 
-Choose side-effect-free controls for click-delivery comparisons. Before any clipboard,
-file or notification write, apply [user shared-state safety](../../tk-verification-guidance/references/verification.md#user-shared-state);
-headless input does not isolate the user's system clipboard or files.
+클릭 전달을 비교할 때는 부작용이 없는 컨트롤을 선택합니다. 클립보드, 파일 또는 알림에 쓰기 전에
+[사용자 공유 상태 안전 기준](../../tk-verification-guidance/references/verification.md#user-shared-state)을 적용합니다.
+headless 입력은 사용자의 시스템 클립보드나 파일을 격리하지 않습니다.
 
-Use provider-native trusted pointer and keyboard APIs. Use `evaluate_script` only to
-observe state, computed values, or coordinates. Never treat `element.click()`,
-`form.submit()`, or `dispatchEvent()` as interaction evidence.
+제공자의 네이티브 신뢰 포인터·키보드 API를 사용합니다. `evaluate_script`는 상태, 계산된 값 또는
+좌표를 관찰할 때만 사용합니다. `element.click()`, `form.submit()` 또는 `dispatchEvent()`를
+상호작용 근거로 취급하지 않습니다.
 
-For a newly implemented direct-input helper, first prove the required action and observed
-postcondition on one safe target control before broad captures. Observe native default behavior,
-not merely event receipt. A passing Space action does not resolve a failed Enter action: repair
-and replay the original input or retain it as unverified, with separate coverage. Do not copy
-one provider's event payload as a universal rule.
+새로 구현한 직접 입력 도우미는 광범위한 캡처에 앞서 안전한 대상 컨트롤 하나에서 필요한 동작과
+관찰된 사후 조건을 먼저 입증합니다. 이벤트 수신만이 아니라 네이티브 기본 동작을 관찰합니다.
+Space 동작이 통과해도 Enter 동작의 실패가 해결되지는 않습니다. 원래 입력을 수정하여 재생하거나,
+별도 검증 범위로 구분하여 미검증 상태로 유지합니다. 한 제공자의 이벤트 페이로드를 보편적인 규칙으로
+복사하지 않습니다.
 
-Enter form values through trusted keyboard input and operate native date/select controls through
-their visible keyboard or pointer behavior. Do not assign DOM values or use scripted input that may
-bypass constraints such as `maxLength` or fail to exercise native control behavior. If a provider's
-`fill` operation is used, first establish that it produces user-equivalent trusted input and honors
-the control's constraints; otherwise type through the keyboard. Inspect the resulting visible value
-and, for save flows, the captured request body.
+양식 값은 신뢰할 수 있는 키보드 입력으로 입력하며, 네이티브 날짜/선택 컨트롤은 눈에 보이는
+키보드 또는 포인터 동작으로 조작합니다. `maxLength` 같은 제약을 우회하거나 네이티브 컨트롤
+동작을 실행하지 않을 수 있는 DOM 값 할당이나 스크립트 입력을 사용하지 않습니다. 제공자의
+`fill` 작업을 사용한다면 사용자와 동등한 신뢰 입력을 생성하고 컨트롤의 제약을 준수하는지 먼저
+확인합니다. 그렇지 않으면 키보드로 입력합니다. 결과로 표시된 값을 확인하고, 저장 흐름에서는
+캡처한 요청 본문도 확인합니다.
 
-A mutation claim requires the related network request and response. Acceptance
-verification connects the UI transition, request/response, and final UI state in one
-flow. A response, toast, or local DOM change alone is insufficient.
+변경이 이루어졌다고 주장하려면 관련 네트워크 요청과 응답이 필요합니다. 인수 검증은 하나의
+흐름에서 UI 전환, 요청/응답과 최종 UI 상태를 연결합니다. 응답, 토스트 또는 로컬 DOM 변경만으로는
+충분하지 않습니다.
 
-For save flows, record method, path and status with page-target protocol events in a
-host-side run recorder so evidence survives redirects, `history.back()`, and bfcache
-restoration. At `Network.requestWillBeSent`, extract only explicitly allowlisted,
-non-sensitive body fields; never retain headers or an unfiltered payload. For the
-default write block, install a matching request-stage Fetch interception before the
-trusted action. While the request is paused, correlate the allowlisted fields from
-`requestWillBeSent` or the paused request, call `Fetch.failRequest`, and verify that
-transmission was prevented; report `blocked-intercept`, which proves payload construction
-only. When the exact save is authorized, retain the request/response event pair and then
-verify the saved result by rereading the same screen and field in the newly entered page.
-Do not rely on a page-wrapped recorder as the durable source for a flow that navigates away.
+저장 흐름에서는 리디렉션, `history.back()`과 bfcache 복원 후에도 근거가 남도록 호스트 측 실행
+기록기에서 페이지 대상 프로토콜 이벤트로 method, path와 status를 기록합니다.
+`Network.requestWillBeSent`에서는 명시적으로 허용 목록에 포함된 비민감 본문 필드만 추출하고,
+헤더나 필터링하지 않은 페이로드는 보존하지 않습니다. 기본 쓰기 차단을 위해 신뢰 동작 전에
+일치하는 요청 단계 Fetch 가로채기를 설치합니다. 요청이 일시 정지된 동안 `requestWillBeSent`나
+정지된 요청에서 허용 목록 필드를 연관 짓고, `Fetch.failRequest`를 호출하여 전송이 방지되었는지
+검증합니다. 이때 페이로드 구성만 입증하는 `blocked-intercept`로 보고합니다. 정확히 해당하는
+저장이 승인되면 요청/응답 이벤트 쌍을 보존한 뒤, 새로 진입한 페이지에서 같은 화면과 필드를
+다시 읽어 저장 결과를 검증합니다. 다른 페이지로 이동하는 흐름의 지속적인 근거 출처로
+페이지를 감싼 기록기에 의존하지 않습니다.
 
-For native HTML drag-and-drop controls such as SortableJS, enable CDP
-`Input.setInterceptDrags`, press and move from the handle to obtain the intercepted drag
-data, then use `Input.dispatchDragEvent` with `dragEnter`, `dragOver`, and `drop` at the
-target. For a closed native `<select>` that ignores trusted keyboard selection in headless
-mode, set the option value and dispatch `change` only as a documented input limitation;
-verify the resulting request and UI state independently, and do not describe this workaround
-as trusted user input.
+SortableJS 같은 네이티브 HTML 드래그 앤 드롭 컨트롤에서는 CDP `Input.setInterceptDrags`를
+활성화하고, 핸들을 누른 뒤 이동하여 가로챈 드래그 데이터를 얻습니다. 그런 다음 대상에
+`Input.dispatchDragEvent`로 `dragEnter`, `dragOver`와 `drop`을 전달합니다. headless 모드에서
+신뢰할 수 있는 키보드 선택을 무시하는 닫힌 네이티브 `<select>`에서는 문서화한 입력 제한에 대한
+대응으로만 옵션 값을 설정하고 `change`를 전달합니다. 결과 요청과 UI 상태는 독립적으로 검증하며,
+이 우회 방법을 신뢰할 수 있는 사용자 입력으로 설명하지 않습니다.
 
-## Conditional state and dialogs
+<a id="conditional-state-and-dialogs"></a>
+## 조건부 상태와 대화상자
 
-When UI appears only for a particular API state, prefer an `initScript` response mock
-over a real send or save. Match the envelope the application actually parses; inspect
-the source mapping instead of guessing the shape.
+특정 API 상태에서만 UI가 나타나면 실제 전송이나 저장보다 `initScript` 응답 mock을 우선합니다.
+애플리케이션이 실제로 파싱하는 envelope에 맞추며, 형태를 추측하지 말고 소스 매핑을 확인합니다.
 
-Install native alert/confirm handlers before interaction. If a blocking dialog is
-already open, accept or dismiss it before continuing.
+상호작용 전에 네이티브 alert/confirm 핸들러를 설치합니다. 차단 대화상자가 이미 열려 있으면
+수락하거나 닫은 뒤 계속합니다.
 
-## Motion
+<a id="motion"></a>
+## 모션
 
-Do not infer that no animation exists merely because a CDP round-trip snapshot omits
-it. Before the trigger, register `animationstart`, `animationend`, `transitionstart`,
-`transitionend`, and any required `MutationObserver`; then inspect one event timeline
-after trusted input.
+CDP 왕복 스냅샷에 애니메이션이 없다는 이유만으로 애니메이션이 존재하지 않는다고 추론하지 않습니다.
+트리거 전에 `animationstart`, `animationend`, `transitionstart`, `transitionend`와 필요한
+`MutationObserver`를 등록하고, 신뢰 입력 후 하나의 이벤트 타임라인을 확인합니다.
 
-A synthetic DOM probe is valid only for pure CSS calculations. When framework
-mount/unmount lifecycle matters, verify a replay through the real component render
-cycle.
+합성 DOM probe는 순수 CSS 계산에만 유효합니다. 프레임워크의 mount/unmount 수명주기가 중요하면
+실제 컴포넌트 렌더링 주기로 재생하여 검증합니다.
 
-## Clearing fields
+<a id="clearing-fields"></a>
+## 필드 비우기
 
-Verify that provider `fill(uid, "")` clears the value. If an empty fill is a no-op,
-fill a nonempty value and use trusted Backspace, or send one Backspace per actual
-character from the end of the field. Observe the empty value again before saving.
+제공자의 `fill(uid, "")`이 값을 지우는지 검증합니다. 빈 값 채우기가 아무 효과도 없다면
+비어 있지 않은 값을 채운 뒤 신뢰할 수 있는 Backspace를 사용하거나, 필드 끝에서 실제 문자마다
+Backspace를 한 번씩 보냅니다. 저장하기 전에 값이 비었는지 다시 관찰합니다.
 
-For native date pickers, use trusted pointer input to select the date; do not set the control
-value through DOM evaluation and count that as interaction evidence.
+네이티브 날짜 선택기에서는 신뢰할 수 있는 포인터 입력으로 날짜를 선택합니다. DOM 평가로
+컨트롤 값을 설정한 뒤 이를 상호작용 근거로 계산하지 않습니다.

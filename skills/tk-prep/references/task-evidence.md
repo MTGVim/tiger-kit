@@ -1,59 +1,60 @@
-# Task evidence
+<a id="task-evidence"></a>
+# 작업 근거
 
-Read the task source, instructions, code/callers, tests, commands, and Git state. When the task carries a prototype comparison or selection, read [selected prototype handoff](../../tk-engineering/references/selection-handoff.md) before translating it into requirements or implementation decisions. If the task source is a child work item,
-read its parent work item's body and comments as the next source lookup, before opening linked documents or asking the
-user. The parent's explicit shared rules, including fallback and unresolved-decision instructions, govern the child; do
-not replace them with a conflicting child-level suggestion or linked document. Read parent comments for clarifications
-and prior answers, and investigate any conflict that could change behavior before asking or proposing.
-Before interpreting repository behavior, requirements, ownership, impact, or domain meaning, or writing
-implementation/review prose that depends on them, lazy-load [domain context](../../tk-repository-guidance/references/domain-context.md) when
-repository-owned context exists. Read only the
-relevant mapped context; purely mechanical Git/ref/formatting work may skip it.
-When issue-tracker identity, project selection or discovery scope is material to
-this request and not confirmed by source or active instructions, read
-[repository configuration](../../tk-repository-guidance/references/repository-context.md) even if no
-settings file exists. Inspect available facts first, then ask only the
-remaining project-owned decisions and offer an exact approved settings
-draft. Never select a guessed issue source as an implementation contract.
-Ordinary local fixes require no tracker onboarding.
+작업 원천, 지침, 코드와 호출자, 테스트, 명령, Git 상태를 읽습니다. 작업에 프로토타입 비교나 선택이 포함되어 있으면, 이를 요구사항이나 구현 결정으로 옮기기 전에 [선택한 프로토타입 인계](../../tk-engineering/references/selection-handoff.md)를 읽습니다. 작업 원천이 자식 작업 항목이면,
+연결된 문서를 열거나 사용자에게 묻기 전에 다음 원천 조회로 부모 작업 항목의 본문과 댓글을
+읽습니다. 대체 경로와 미해결 결정에 관한 지침을 포함한 부모의 명시적 공통 규칙이 자식에 적용됩니다.
+이와 충돌하는 자식 수준의 제안이나 연결 문서로 대체하지 않습니다. 부모 댓글에서 명확해진 내용과 이전 답변을 읽고,
+행동을 바꿀 수 있는 충돌은 질문하거나 제안하기 전에 조사합니다.
+저장소의 동작, 요구사항, 소유권, 영향, 도메인 의미를 해석하거나 이에 의존하는
+구현·리뷰 설명을 쓰기 전에, 저장소 소유 맥락이 있으면 [도메인 맥락](../../tk-repository-guidance/references/domain-context.md)을 조건에 따라
+읽습니다. 관련 항목에 연결된 맥락만
+읽습니다. 순수하게 기계적인 Git/ref/서식 작업은 이를 생략할 수 있습니다.
+이슈 트래커 식별, 프로젝트 선택이나 탐색 범위가 이번 요청에 중요하지만
+원천이나 현재 적용되는 지침으로 확인되지 않았다면,
+설정 파일이 없어도 [저장소 설정](../../tk-repository-guidance/references/repository-context.md)을
+읽습니다. 먼저 확인 가능한 사실을 조사한 다음, 남은
+프로젝트 소유 결정만 묻고 승인된 설정
+초안을 정확히 제시합니다. 추측한 이슈 원천을 구현 계약으로 선택하지 않습니다.
+일반적인 로컬 수정에는 트래커 온보딩이 필요하지 않습니다.
 
-When repository instructions or the task explicitly declare local rule bundles, read
-[project rule selection](../../tk-engineering/references/project-rules.md) and carry applicable constraints and citations
-into the current plan, executor handoff and review obligations.
+저장소 지침이나 작업이 로컬 규칙 묶음을 명시적으로 선언하면,
+[프로젝트 규칙 선택](../../tk-engineering/references/project-rules.md)을 읽고 적용되는 제약과 인용을
+현재 계획, 실행자 인계, 리뷰 의무에 포함합니다.
 
-Follow repository-defined documentation discovery/update procedures and verification commands within the approved scope;
-otherwise allow an optional search of root documents and documentation directories using changed paths or symbols.
-Do not scan an unrelated documentation tree or create a lifecycle. If fresher code/test/runtime evidence conflicts with
-a requirement or decision, surface it and confirm the source of truth. Treat instruction-file updates as proposals only.
-Before creating anything, find existing components, helpers, schemas, clients, patterns, and conventions; tie claims to `path:line`, command output, or fresh state. Before comparing a hard-to-reverse design, interface, schema, or migration choice, read only relevant ADR rationale and current evidence. Do not reopen a decision whose premise still holds; surface `revisit ADR` only when it changed, and never scan an unrelated ADR or context tree.
+승인된 범위 안에서 저장소가 정의한 문서 탐색·갱신 절차와 검증 명령을 따릅니다.
+그런 절차가 없으면, 변경된 경로나 심벌을 사용해 루트 문서와 문서 디렉터리를 선택적으로 검색할 수 있습니다.
+관련 없는 문서 트리를 훑거나 새 수명주기를 만들지 않습니다. 더 최신인 코드·테스트·런타임 근거가
+요구사항이나 결정과 충돌하면 이를 드러내고 정본을 확인합니다. 지침 파일 갱신은 제안으로만 다룹니다.
+무엇이든 만들기 전에 기존 컴포넌트, 도우미, 스키마, 클라이언트, 패턴과 관례를 찾습니다. 주장은 `path:line`, 명령 출력이나 새로 확인한 상태에 연결합니다. 되돌리기 어려운 설계, 인터페이스, 스키마나 마이그레이션 선택을 비교하기 전에 관련 ADR의 근거와 현재 증거만 읽습니다. 전제가 여전히 유효한 결정을 다시 열지 않습니다. 전제가 바뀐 경우에만 `revisit ADR`을 제시하고, 관련 없는 ADR이나 맥락 트리는 절대 훑지 않습니다.
 
-When a source the user provided materially informs a frontier question, briefly surface the decision-relevant content you actually read before asking. Attribute it to the source and preserve its verification status; do not present source claims as independently verified. Keep this as concise context, not a confirmation round, and do not ask the user to repeat known facts. If the source could not be accessed or read, say so plainly and do not infer its contents; gather accessible evidence or defer any decision that depends on it.
+사용자가 제공한 원천이 현재 질문 가능한 결정에 실질적인 근거가 되면, 질문하기 전에 실제로 읽은 내용 중 결정과 관련된 부분을 짧게 제시합니다. 해당 원천의 내용임을 밝히고 검증 상태를 유지합니다. 원천의 주장을 독립적으로 검증한 것처럼 제시하지 않습니다. 이를 확인 질문이 아닌 간결한 맥락으로 제시하고, 알려진 사실을 사용자에게 반복해서 묻지 않습니다. 원천에 접근하거나 읽을 수 없었다면 이를 분명히 밝히고 내용을 추론하지 않습니다. 접근 가능한 근거를 모으거나 해당 원천에 의존하는 결정을 미룹니다.
 
-Before recommending a solution, distinguish the reported symptom from the intended result and the scenario where it matters. Use the request and investigated evidence; label a material inference as an inference, and state it only when it could change scope, behavior, acceptance, or verification. If the intended result is already clear, continue without a recap or confirmation question; ask only remaining material user-owned decisions through the existing frontier.
+해결책을 권하기 전에 보고된 증상, 의도한 결과, 그 결과가 중요한 시나리오를 구별합니다. 요청과 조사한 근거를 사용합니다. 중요한 추론은 추론이라고 표시하고, 범위·동작·인수 조건·검증을 바꿀 수 있을 때만 서술합니다. 의도한 결과가 이미 명확하면 요약이나 확인 질문 없이 계속 진행합니다. 기존의 현재 질문 가능한 결정 집합을 통해 남은 중요한 사용자 소유 결정만 묻습니다.
 
 
-## Conditional investigation
+<a id="conditional-investigation"></a>
+## 조건부 조사
 
-If the approved outcome may include local implementation, read [local execution](local-execution.md) before
-the final checkpoint. It owns checkout isolation, unrelated-work protection, direct execution, review, and local commit.
-When changing accepted values or validation rules, list paths creating those values and loading
-stored values into the same form, schema or parser: edit, partial edit, copy/duplicate, import and
-legacy records where relevant. Record each path's accept, reject, migrate or preserve policy.
-Bring policies unstated by the task source to the frontier before approval; include a behavior
-test for each relevant path in the testing plan. Skip this inventory for unrelated changes.
+승인된 결과에 로컬 구현이 포함될 수 있으면, 최종 확인 지점 전에
+[로컬 실행](local-execution.md)을 읽습니다. 이 참조는 체크아웃 격리, 무관한 작업 보호, 직접 실행, 리뷰와 로컬 커밋을 담당합니다.
+허용 값이나 검증 규칙을 바꿀 때는 값을 생성하거나 저장된 값을 같은 폼·스키마·파서에 불러오는
+경로를 나열합니다. 해당되는 경우 편집, 부분 편집, 복사·복제, 가져오기와
+레거시 레코드를 포함합니다. 각 경로의 수용·거부·마이그레이션·보존 정책을 기록합니다.
+작업 원천에 명시되지 않은 정책은 승인 전에 현재 질문 가능한 결정으로 올립니다. 테스트 계획에는
+관련 경로마다 행동 테스트를 포함합니다. 무관한 변경에서는 이 목록 작성을 생략합니다.
 
-If user-visible text or navigation is in scope, read [UI evidence collection](../../tk-ui-evidence/references/ui-evidence.md) before accepting or restating a label or path.
-A text-locator match may normalize whitespace and does not prove a verbatim quote; trace the rendered literal.
-When no visible label exists, use a verified structural description or exact verified destination title,
-without inventing intervening navigation. Resolve material provenance conflicts during preparation
-rather than choosing a source silently.
-If implementation adds or changes a factual code comment/JSDoc claim or models an
-external response contract, read [committed assertion evidence](artifact-claims.md)
-before approval and apply it again to the final candidate.
-When a version-sensitive external library/API/OAuth/provider contract cannot be established from the repository alone,
-read [external contract evidence](../../tk-repository-guidance/references/external-contracts.md) before accepting its fields, nullability, UI steps,
-or setup commands.
-Use the current repository and explicitly supplied task sources. Do not list or investigate other open PRs as a background collision preflight. Read another PR only when the user explicitly requests that comparison or supplies it as necessary task evidence; keep that read bounded to the stated question.
+사용자에게 보이는 문구나 탐색이 범위에 포함되면, 레이블이나 경로를 받아들이거나 다시 서술하기 전에 [UI 근거 수집](../../tk-ui-evidence/references/ui-evidence.md)을 읽습니다.
+텍스트 로케이터 일치는 공백을 정규화할 수 있으며 원문 그대로의 인용임을 증명하지 않습니다. 렌더링된 문자열을 추적합니다.
+보이는 레이블이 없으면, 중간 탐색을 지어내지 말고 검증된 구조 설명이나 정확히 검증된 목적지 제목을
+사용합니다. 출처 간 중요한 충돌은 조용히 한 원천을 선택하지 말고
+준비 중에 해결합니다.
+구현에서 사실을 주장하는 코드 주석·JSDoc을 추가·변경하거나
+외부 응답 계약을 모델링하면, 승인 전에 [커밋되는 주장의 근거](artifact-claims.md)를 읽고
+최종 후보에도 다시 적용합니다.
+버전에 민감한 외부 라이브러리·API·OAuth·제공자 계약을 저장소만으로 확정할 수 없으면,
+그 필드, null 허용 여부, UI 단계나 설정 명령을 받아들이기 전에 [외부 계약 근거](../../tk-repository-guidance/references/external-contracts.md)를
+읽습니다.
+현재 저장소와 명시적으로 제공된 작업 원천을 사용합니다. 백그라운드 충돌 사전 점검을 위해 다른 열린 PR을 나열하거나 조사하지 않습니다. 사용자가 명시적으로 비교를 요청하거나 필요한 작업 근거로 제공한 경우에만 다른 PR을 읽습니다. 조회는 명시된 질문의 범위로 제한합니다.
 
-For tracker-backed work, repository discovery, or verification-data policy, read [repository context](../../tk-repository-guidance/references/repository-context.md) when configuration or a work source is supplied. Recheck the actual source; only its validated structured `verificationDataPolicy` field can grant the narrow standing authority defined there. Other context never grants mutation authority.
-
+트래커에 연결된 작업, 저장소 탐색이나 검증 데이터 정책의 경우, 설정이나 작업 원천이 제공되면 [저장소 맥락](../../tk-repository-guidance/references/repository-context.md)을 읽습니다. 실제 원천을 다시 확인합니다. 검증된 구조화 `verificationDataPolicy` 필드만 해당 참조가 정의한 좁은 상시 권한을 부여할 수 있습니다. 다른 맥락은 변경 권한을 부여하지 않습니다.

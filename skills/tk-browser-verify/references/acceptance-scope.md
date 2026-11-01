@@ -1,26 +1,25 @@
-# Acceptance scope
+<a id="acceptance-scope"></a>
+# 인수 검증 범위
 
-Nested execution uses the target, scenario, authentication, and evidence plan already
-defined by its parent. For standalone calls with no explicit criteria or only a scope
-phrase, resolve the full criterion set before starting any server or browser: inspect the
-same-task inventory in `.tigerkit/qa/` (including embedded `qa-data`) and the current
-`tk-prep` impact inventory or Seed. Use every row from the matching inventory, including
-`verification-gap` rows; only explicit user scope may narrow it. If more than one unrelated
-inventory matches and task identity cannot resolve it, ask before runtime startup. Never
-substitute a self-selected subset or a previous run's private plan.
+중첩 실행에서는 상위 작업이 이미 정한 대상, 시나리오, 인증과 근거 계획을 사용합니다.
+명시적인 기준이 없거나 범위 문구만 있는 독립 호출에서는 서버나 브라우저를 시작하기 전에
+전체 기준 집합을 확정합니다. `.tigerkit/qa/`에 있는 같은 작업의 인벤토리(내장된 `qa-data` 포함)와
+현재 `tk-prep` 영향 인벤토리 또는 Seed를 확인합니다. `verification-gap` 행을 포함하여 일치하는
+인벤토리의 모든 행을 사용하며, 명시적인 사용자 범위만 이를 좁힐 수 있습니다. 서로 무관한
+인벤토리가 둘 이상 일치하고 작업 식별 정보로 구별할 수 없다면 런타임을 시작하기 전에 질문합니다.
+임의로 고른 일부 행이나 이전 실행의 비공개 계획으로 대체하지 않습니다.
 
-Read the QA sheet's top-level `head` and the Prep Seed's checkout/PR head to establish
-lineage. If both current-task sources exist, union their rows by exact stable criterion ID;
-keep IDs unchanged and do not merge merely similar wording. A conflicting duplicate ID or
-unprovable task/head lineage is a pre-runtime blocker to resolve or report, not permission to
-drop one source. A missing inventory head is stale/unknown and must be reconciled against the
-current diff before execution.
+QA 시트의 최상위 `head`와 Prep Seed의 checkout/PR head를 읽어 계보를 확인합니다.
+현재 작업의 두 출처가 모두 있으면 정확하고 안정적인 기준 ID를 기준으로 행의 합집합을 구성합니다.
+ID는 변경하지 않으며, 문구가 비슷하다는 이유만으로 병합하지 않습니다. 중복 ID의 내용이 충돌하거나
+작업/head 계보를 입증할 수 없다면 런타임 시작 전에 해결하거나 보고해야 하는 차단 사유이며,
+어느 한 출처를 버려도 된다는 뜻이 아닙니다. 인벤토리에 head가 없으면 오래되었거나 알 수 없는
+상태로 취급하고, 실행 전에 현재 diff와 대조하여 조정해야 합니다.
 
-If the inventory is bound to an older head or its labels/rows no longer match the current
-diff, disclose that once and reconcile the complete row map to the current head before
-runtime startup: update affected labels, add newly affected rows, and remove rows only with
-a diff-based reason. Preserve stable row IDs. Do not regenerate or overwrite the user-owned
-QA sheet; return the reconciled ID-to-criterion map so `/tk-qa-sheet` can consume it. Reuse
-current evidence only for the exact reconciled row and head; attempt every remaining in-scope
-row. An explicit narrower scope records all excluded inventory rows as `out-of-scope`.
-
+인벤토리가 이전 head에 연결되어 있거나 레이블/행이 현재 diff와 더 이상 일치하지 않으면,
+그 사실을 한 번 알리고 런타임 시작 전에 전체 행 매핑을 현재 head에 맞게 조정합니다.
+영향받는 레이블을 갱신하고 새로 영향받는 행을 추가하며, diff에 근거한 이유가 있을 때만 행을
+제거합니다. 안정적인 행 ID는 보존합니다. 사용자가 소유한 QA 시트를 재생성하거나 덮어쓰지 않습니다.
+`/tk-qa-sheet`가 사용할 수 있도록 조정한 ID와 기준의 매핑을 반환합니다. 현재 근거는 정확히
+일치하는 조정된 행과 head에 대해서만 재사용하며, 범위 안의 나머지 모든 행을 시도합니다.
+명시적으로 범위를 좁혔다면 제외된 인벤토리 행을 모두 `out-of-scope`로 기록합니다.

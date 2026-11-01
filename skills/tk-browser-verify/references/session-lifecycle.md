@@ -1,71 +1,68 @@
-# Headless session lifecycle
+<a id="headless-session-lifecycle"></a>
+# Headless 세션 수명주기
 
-Classify ownership before interaction. An owned browser/context/page/process was
-created by this run; an attached resource is independently proven to have existed
-before the run. Close only owned resources. If ownership is unknown, do not close it.
+상호작용 전에 소유권을 분류합니다. 소유한 브라우저/컨텍스트/페이지/프로세스는 이 실행이 만든
+자원이며, 연결한 자원은 실행 전에 존재했음이 독립적으로 입증된 자원입니다. 소유한 자원만 닫습니다.
+소유권을 알 수 없으면 닫지 않습니다.
 
-For a direct run-owned Chrome/Chromium launch, use a run-owned isolated profile and an
-effective modern headless setting. For a managed provider, the provider owns its server,
-browser process, and provider profile; the verification run owns only the pages, scenario
-contexts, evidence, and development server that it creates. Prefer an ephemeral provider
-profile, but allow a headless dedicated persistent provider profile with a disclosed storage
-limitation. Never reuse the user's default browsing profile. If effective headless mode or
-ownership cannot be proven after the permitted managed/direct-launch bootstrap, return
-`Unverifiable`; do not retry with a visible browser.
+실행이 소유한 Chrome/Chromium을 직접 시작할 때는 실행 소유의 격리된 프로필과 실제로 적용되는
+현대적인 headless 설정을 사용합니다. 관리형 제공자에서는 제공자가 서버, 브라우저 프로세스와
+제공자 프로필을 소유하며, 검증 실행은 자신이 만든 페이지, 시나리오 컨텍스트, 근거와 개발 서버만
+소유합니다. 임시 제공자 프로필을 우선하되, 저장 관련 제한을 공개한 headless 전용 영구 제공자
+프로필도 허용합니다. 사용자의 기본 브라우징 프로필은 재사용하지 않습니다. 허용된 관리형/직접
+실행 부트스트랩 후에도 유효한 headless 모드나 소유권을 입증할 수 없으면 `Unverifiable`을
+반환하고, 화면이 보이는 브라우저로 재시도하지 않습니다.
 
-Before the first write to repository-local evidence, prove that
-`git ls-files -- .tigerkit/` returns no tracked path and
-`git check-ignore -q -- .tigerkit/` succeeds. Classify the matching rule from
-`git check-ignore -v` as `per-directory | info-exclude | user-level` and record the
-pattern without exposing an absolute user-level path. Use the owning SKILL.md Artifact Paths
-setup when ignore coverage is missing. If checks still fail, do not create evidence or
-switch to an external path; return `Unverifiable`.
+저장소 로컬 근거에 처음 쓰기 전에 `git ls-files -- .tigerkit/`이 추적 경로를 반환하지 않고
+`git check-ignore -q -- .tigerkit/`가 성공함을 입증합니다. `git check-ignore -v`의 일치 규칙을
+`per-directory | info-exclude | user-level`로 분류하고 절대 사용자 수준 경로를 노출하지 않은 채
+패턴을 기록합니다. 제외 범위가 없으면 소유 SKILL.md의 산출물 경로 설정을 사용합니다.
+검사가 계속 실패하면 근거를 생성하거나 외부 경로로 전환하지 말고 `Unverifiable`을 반환합니다.
 
-Place binary evidence in the parent-provided or standalone run-owned evidence
-directory. Only a bounded `README.md` AC-to-file evidence index may accompany it; do not
-create a Markdown lifecycle ledger. Every cited screenshot must exist, be non-empty, and
-be actually inspected. If the directory cannot be resolved, the image is missing, or
-inspection fails, required browser evidence is `Unverifiable`.
+바이너리 근거는 상위 작업이 제공했거나 독립 실행이 소유한 근거 디렉터리에 둡니다.
+제한된 `README.md` AC와 파일 간 근거 색인만 함께 둘 수 있으며, Markdown 수명주기 원장을
+만들지 않습니다. 인용한 모든 스크린샷은 실제로 존재하고 비어 있지 않으며 실제로 확인해야 합니다.
+디렉터리를 확인할 수 없거나 이미지가 없거나 확인에 실패하면 필수 브라우저 근거는 `Unverifiable`입니다.
 
-After file-mediated authentication injection, independently verify the authenticated state.
-Stop the exact run-owned loopback secret server immediately after injection. Apply
-[environment](environment.md)'s worktree-local authentication rules: preserve the protected
-non-production access/session and optional refresh input across baseline, after, revision,
-interruption and failed captures. Expiry blocks use of stale access material and triggers
-supported renewal; it does not delete the file. Leave its removal to explicit user direction
-or authorized worktree cleanup. Never retain production credentials or one-time secrets.
-A normal pending-input handoff also preserves its file. Verify required deletions without
-exposing contents; do not delete a containing directory that still holds retained auth input.
+파일을 통한 인증 주입 후에는 인증 상태를 독립적으로 검증합니다. 주입 직후 정확히 해당하는 실행
+소유 loopback 비밀 서버를 중지합니다. [환경](environment.md)의 worktree 로컬 인증 규칙을
+적용합니다. 보호된 비운영 access/session 입력과 선택적 refresh 입력은 baseline, after,
+revision, 중단과 캡처 실패에 걸쳐 보존합니다. 만료되면 오래된 access 자료 사용을 차단하고 지원된
+갱신을 시작하며, 파일을 삭제하지는 않습니다. 파일 제거는 명시적 사용자 지시나 승인된 worktree
+정리에 맡깁니다. 운영 자격 증명이나 일회성 비밀은 보존하지 않습니다. 일반적인 입력 대기 인계도
+파일을 보존합니다. 내용을 노출하지 않고 필수 삭제를 검증하며, 보존할 인증 입력이 남아 있는
+상위 디렉터리는 삭제하지 않습니다.
 
-After any baseline, after, or acceptance capture, close run-owned browser resources and stop
-the run-owned development server immediately using the recorded launch PID/handle and verified
-owned children. Confirm their exit; an already exited process needs no termination signal.
-Waiting for user input or token update is not an excuse to retain server/browser processes.
-If an abnormal exit leaves a suspected server orphan, report it for ownership-based
-recovery without broad process termination. Persist the inspected evidence and a replay recipe, not
-live processes or an authenticated browser profile. A parent continuing to implement or review
-must never hold these processes merely to avoid a later startup; an immediate final-head replay
-starts a fresh owned browser/server and reestablishes the scoped authentication state if required.
-The immutable baseline provenance stays usable for comparable after capture when viewport,
-DPR, fonts, UI state, target environment, and replay conditions are independently reproduced.
-When those conditions cannot be reproduced, report `Unverifiable`, not a silently comparable pair.
+baseline, after 또는 acceptance 캡처 후에는 기록된 실행 PID/핸들과 검증된 소유 자식을 사용하여
+실행 소유 브라우저 자원을 닫고 개발 서버를 즉시 중지합니다. 종료를 확인하며 이미 종료된
+프로세스에는 종료 신호가 필요하지 않습니다. 사용자 입력이나 토큰 갱신 대기는 서버/브라우저
+프로세스를 보존할 이유가 아닙니다. 비정상 종료 후 서버 고아 프로세스가 의심되면 광범위한 프로세스
+종료 없이 소유권 기반 복구를 위해 보고합니다. 확인한 근거와 재생 절차를 보존하고, 살아 있는
+프로세스나 인증된 브라우저 프로필을 보존하지 않습니다. 구현이나 리뷰를 계속하는 상위 작업은
+나중의 시작을 피하려고 이러한 프로세스를 유지해서는 안 됩니다. 즉시 최종 head를 재생할 때도
+새 소유 브라우저/서버를 시작하고 필요하면 범위에 맞는 인증 상태를 다시 확립합니다. viewport,
+DPR, 폰트, UI 상태, 대상 환경과 재생 조건을 독립적으로 재현하면 변경 불가능한 baseline 출처는
+비교 가능한 after 캡처에 계속 사용할 수 있습니다. 이러한 조건을 재현할 수 없으면 조용히 비교
+가능한 쌍으로 취급하지 말고 `Unverifiable`을 보고합니다.
 
-On interruption, timeout, failed capture, or parent handoff, perform the same owned-resource
-cleanup; do not keep background dev servers during a suspended workflow. Cleanup failures and
-unowned/provider-owned resources are reported rather than terminated blindly.
+중단, 시간 초과, 캡처 실패 또는 상위 작업 인계에서도 같은 소유 자원 정리를 수행합니다.
+일시 중지된 워크플로에서 백그라운드 개발 서버를 유지하지 않습니다. 정리 실패와 소유하지 않은
+자원/제공자 소유 자원은 무작정 종료하지 않고 보고합니다.
 
-Clean up success, failure, interruption, and exception paths in this order:
+성공, 실패, 중단과 예외 경로에서 다음 순서로 정리합니다.
 
-1. run-created pages/tabs;
-2. run-created contexts;
-3. direct browser instances started by this run;
-4. run-owned development server (graceful stop first, then exact verified owned PIDs/handles if needed);
-5. run-owned `.tigerkit/tmp/tk-browser-verify/<run-id>/baseline-source/` trees after their servers have stopped.
+1. 실행이 만든 페이지/탭을 정리합니다.
+2. 실행이 만든 컨텍스트를 정리합니다.
+3. 이 실행이 직접 시작한 브라우저 인스턴스를 정리합니다.
+4. 실행 소유 개발 서버를 정리합니다(먼저 정상 종료하고, 필요하면 검증된 정확한 소유 PID/핸들을 사용합니다).
+5. 서버가 중지된 뒤 실행 소유 `.tigerkit/tmp/tk-browser-verify/<run-id>/baseline-source/` 트리를 정리합니다.
 
-Write filesystem cleanup deletions with the literal, fully resolved absolute run-owned path already recorded in this run. Never derive a deletion target from command substitution, a path file read back, or a glob piped through `head` or `tail`. If the exact literal path is unknown, list the candidate paths and stop instead of deleting.
+파일시스템 정리 삭제에는 이 실행에서 이미 기록한, 완전히 해석된 실행 소유 절대 경로를 리터럴로
+씁니다. 명령 치환, 다시 읽은 경로 파일 또는 `head`나 `tail`로 파이프한 glob에서 삭제 대상을
+도출하지 않습니다. 정확한 리터럴 경로를 모르면 후보 경로를 나열하고 삭제 대신 중단합니다.
 
-Before forced termination, match the PID and profile against process arguments. Never
-use `killall`, broad `pkill`, or task-name bulk termination. Preserve evidence directories, provider-owned and
-attached browsers, user tabs/profiles, shared MCP/CDP instances, other verification runs,
-and user-owned servers. Provider shutdown owns cleanup of its browser and temporary profile.
-Report cleanup residue without changing the application verdict.
+강제 종료 전에 프로세스 인수와 PID 및 프로필을 대조합니다. `killall`, 광범위한 `pkill` 또는
+작업 이름에 따른 일괄 종료를 사용하지 않습니다. 근거 디렉터리, 제공자 소유 및 연결된 브라우저,
+사용자 탭/프로필, 공유 MCP/CDP 인스턴스, 다른 검증 실행과 사용자 소유 서버를 보존합니다.
+제공자의 브라우저와 임시 프로필 정리는 제공자 종료가 담당합니다.
+애플리케이션 판정을 바꾸지 않고 정리 잔여물을 보고합니다.

@@ -1,27 +1,28 @@
-# Evidence binding
+<a id="evidence-binding"></a>
+# 근거 결합
 
-For change mode, resolve the repository and requested target before drafting. Pin full
-base/head SHAs and comparison semantics: PR/branch normally uses merge base; an explicit
-range uses its endpoints. A worktree uses HEAD plus separate staged/unstaged diffs and
-hashes of relevant untracked files. Never replace an inaccessible PR with the checkout.
-Read surrounding callers, models, tests and configuration at both snapshots. Cite deleted
-code at base lines and new code at head lines. For uncommitted files use the recorded content
-hash and snapshot line numbers, never pretend archify `@code` can read them from HEAD.
-Trace behavior, preserved invariants and material boundary cases, not just changed lines.
-Read referenced issue/RFC/ADR intent separately from code-verified behavior. A broken or
-unverified invariant remains a disclosed explanation limit; `tk-review` owns defect verdicts.
-Group meaningful behavior and de-emphasize verified mechanical changes without hiding
-security, schema, compatibility, migration or generated-API changes.
+변경 모드에서는 초안을 작성하기 전에 저장소와 요청 대상을 확정합니다. 전체
+base/head SHA와 비교 의미를 고정합니다. PR/브랜치는 보통 merge base를 사용하고, 명시적인
+범위는 그 양 끝점을 사용합니다. worktree는 HEAD와 별도의 staged/unstaged diff,
+관련 untracked 파일의 해시를 사용합니다. 접근할 수 없는 PR을 checkout으로 대체하지 않습니다.
+두 스냅샷에서 주변 호출자, 모델, 테스트와 설정을 읽습니다. 삭제된
+코드는 base 행으로, 새 코드는 head 행으로 인용합니다. 커밋하지 않은 파일은 기록된 콘텐츠
+해시와 스냅샷 행 번호를 사용하며, archify `@code`가 HEAD에서 해당 파일을 읽을 수 있는 것처럼 가장하지 않습니다.
+변경된 행만이 아니라 동작, 보존된 불변 조건과 중요한 경계 사례를 추적합니다.
+참조된 issue/RFC/ADR의 의도는 코드로 확인한 동작과 별도로 읽습니다. 깨졌거나
+검증되지 않은 불변 조건은 설명의 한계로 공개한 상태를 유지합니다. 결함 판정은 `tk-review`가 담당합니다.
+의미 있는 동작을 묶고, 확인된 기계적 변경은 덜 강조하되
+보안, 스키마, 호환성, 마이그레이션 또는 생성된 API의 변경을 숨기지 않습니다.
 
-For concept mode, pin repository examples to a commit. Verify current, specialist or
-uncertain claims in primary sources. Record web URLs, access date, relevant version and
-supporting passage; search snippets are discovery, not inspected evidence. Check a community
-term's definition/glossary and primary use before discussing origin. Say origin is unverified
-only after naming what was checked; absence in one search does not prove no origin exists.
-Preserve uncertainty, conflicts, essential conditions and supplied question/figure inputs.
-Label measured, simulated and illustrative values; do not imply benchmark or runtime evidence.
+개념 모드에서는 저장소 예시를 특정 commit에 고정합니다. 최신성에 민감하거나 전문적이거나
+불확실한 주장은 1차 출처에서 검증합니다. 웹 URL, 접근 날짜, 관련 버전과
+뒷받침하는 구절을 기록합니다. 검색 스니펫은 탐색 수단이며, 직접 확인한 근거가 아닙니다. 커뮤니티
+용어의 기원을 논하기 전에 정의·용어집과 1차 사용례를 확인합니다. 무엇을 확인했는지 명시한 뒤에만
+기원이 검증되지 않았다고 말합니다. 한 번의 검색에서 나오지 않았다고 기원이 없다는 뜻은 아닙니다.
+불확실성, 충돌, 필수 조건과 제공된 질문·그림 입력을 보존합니다.
+측정값, 시뮬레이션값과 예시값을 구분하여 표시합니다. 벤치마크나 런타임 근거인 것처럼 암시하지 않습니다.
 
-Use this compact evidence format; omit inapplicable fields:
+아래의 간결한 근거 형식을 사용하고, 적용되지 않는 필드는 생략합니다.
 
 ```text
 mode / reader goal / run ID:
@@ -32,6 +33,6 @@ preserved invariants / verification limits:
 supplied finite set: used / partial / unavailable / omitted-with-reason
 ```
 
-Recheck line ranges and moving refs before delivery. Either retain and disclose the pinned
-snapshot or refresh the whole affected explanation; never mix versions. Give reviewers this
-same file and actual sources. Keep private code out of web queries and public artifacts.
+전달하기 전에 행 범위와 이동하는 ref를 다시 확인합니다. 고정한
+스냅샷을 유지하고 공개하거나, 영향받은 설명 전체를 갱신합니다. 버전을 섞지 않습니다. 검토자에게도 이
+파일과 실제 출처를 그대로 제공합니다. 비공개 코드는 웹 검색어와 공개 산출물에 넣지 않습니다.

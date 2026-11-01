@@ -1,22 +1,22 @@
-# Failure planes and evidence
+<a id="failure-planes-and-evidence"></a>
+# 실패 계층과 근거
 
-Do not begin by assuming a wording defect. Classify every observed symptom against one
-or more evidence-backed planes.
+문구 결함을 가정하며 시작하지 않습니다. 관찰한 모든 증상을 근거가 뒷받침하는 하나 이상의 계층으로 분류합니다.
 
-| Plane | Meaning | Representative evidence |
+| 계층 | 의미 | 대표 근거 |
 |---|---|---|
-| `selection` | Skill selected when unnecessary, or not selected when required | trigger train/validation result, selected skill |
-| `loading` | Selection occurred but the body did not load | adapter `skill_loaded`, loaded-skill list |
-| `instruction` | Scope, terms, or input contract misunderstood | fresh trace, output evidence |
-| `planning` | Wrong owner, branch, sequence, or decision loop | trace, retries, discretionary fill-in |
-| `execution` | Tool, command, verification, or mutation failed | command, file, Git, runtime evidence |
-| `formatting` | Output or receipt ownership violated | output assertion, structured comparison |
-| `evaluation` | Grader/assertion misclassified correct output | deliverable versus criterion/mechanical evidence |
-| `compatibility` | Host invocation, loading, tool, or metadata behavior differs | Claude Code/Codex/Hermes matrix |
-| `local override` | Consumer override or local configuration causes the incident | exact override/configuration and adjacent package control |
-| `efficiency` | Correct output consumed avoidable resources | matched baseline/candidate metrics |
+| `selection` | 불필요할 때 스킬이 선택되거나 필요할 때 선택되지 않았습니다. | 트리거 학습·검증 결과, 선택된 스킬입니다. |
+| `loading` | 선택은 이루어졌지만 본문이 로드되지 않았습니다. | adapter의 `skill_loaded`, 로드된 스킬 목록입니다. |
+| `instruction` | 범위, 용어나 입력 계약을 잘못 이해했습니다. | 새로운 trace, 출력 근거입니다. |
+| `planning` | 담당자, 분기, 순서나 결정 루프가 잘못되었습니다. | trace, 재시도, 재량으로 채운 내용입니다. |
+| `execution` | 도구, 명령, 검증이나 변경이 실패했습니다. | 명령, 파일, Git, 런타임 근거입니다. |
+| `formatting` | 출력이나 receipt 소유권을 위반했습니다. | 출력 assertion, 구조화된 비교입니다. |
+| `evaluation` | grader/assertion이 올바른 출력을 잘못 분류했습니다. | 결과물과 기준·기계적 근거의 비교입니다. |
+| `compatibility` | 호스트 호출, 로드, 도구나 메타데이터 동작이 다릅니다. | Claude Code/Codex/Hermes 행렬입니다. |
+| `local override` | 소비자 override나 로컬 설정이 사고를 일으킵니다. | 정확한 override·설정과 인접 패키지 대조군입니다. |
+| `efficiency` | 올바른 출력에 피할 수 있는 자원이 소모되었습니다. | 조건이 일치하는 변경 전 기준·후보 지표입니다. |
 
-Record variability only when observed; do not invent numeric metrics:
+관찰한 경우에만 변동성을 기록합니다. 수치 지표를 만들어 내지 않습니다.
 
 ```text
 reproduction rate
@@ -28,57 +28,46 @@ token/duration variance
 tool/nested-call/fan-out variance
 ```
 
-## Isolation rules
+<a id="isolation-rules"></a>
+## 격리 규칙
 
-- When output is correct and only grading fails, inspect `evaluation` before expanding
-  the skill body.
-- When selection is correct but `skill_loaded` differs, inspect `loading` or
-  `compatibility`.
-- When the same decision repeats, find the earliest weak phase and blocker fingerprint
-  before blaming execution.
-- When resource use grows, identify the increased phase, retry, reference descent, tool
-  loop, nested call, or fan-out.
-- Require deterministic evidence beside every self-reported cause.
+- 출력이 올바르고 채점만 실패하면 스킬 본문을 늘리기 전에 `evaluation`을 확인합니다.
+- 선택이 올바르지만 `skill_loaded`가 다르면 `loading`이나 `compatibility`를 확인합니다.
+- 같은 결정이 반복되면 실행을 탓하기 전에 가장 이른 취약 단계와 차단 요인 fingerprint를 찾습니다.
+- 자원 사용이 늘면 증가한 단계, 재시도, 참조 하강, 도구 루프, 중첩 호출이나 fan-out을 식별합니다.
+- 모든 자기 보고 원인에는 결정론적 근거가 함께 있어야 합니다.
 
-## Efficiency comparison
+<a id="efficiency-comparison"></a>
+## 효율 비교
 
-Verify at least one anchor:
+다음 기준점 중 하나 이상을 검증합니다.
 
-- previous stable ref;
-- no-skill baseline;
-- a prior verified run of the same prompt;
-- explicit token/time/tool threshold;
-- the candidate under comparison.
+- 이전의 안정적인 ref를 검증합니다.
+- 스킬을 사용하지 않는 기준을 검증합니다.
+- 같은 프롬프트의 이전 검증 실행을 검증합니다.
+- 명시적인 토큰·시간·도구 임계값을 검증합니다.
+- 비교 중인 후보를 검증합니다.
 
-Match the prompt, host, observed model/config, tools and repository state. Repeat trials only when variability or a threshold matters.
-The eval adapter reports `execution_identity` from actual host metadata, never a
-requested model or an agent's self-report. The common runner pairs exact host,
-case, trial and prompt hashes before comparative claims. Missing/different model
-identity or mismatched observable config makes comparison `Unverifiable`; keep
-individual measurements and candidate-only safety failures. Config omitted on
-both sides proves no config equivalence; report only the observed model match.
-Do not select, pin, reroute or retry a model to force comparability.
-If a metric is unavailable, leave it `null`/`Unverifiable`; never estimate it.
+프롬프트, 호스트, 관찰한 모델·설정, 도구와 저장소 상태를 맞춥니다. 변동성이나 임계값이 중요할 때만 시험을 반복합니다.
+eval adapter는 요청된 모델이나 에이전트의 자기 보고가 아니라 실제 호스트 메타데이터에서 `execution_identity`를 보고합니다. 공통 runner는 비교 주장 전에 정확한 호스트, 사례, trial과 프롬프트 해시를 짝짓습니다. 모델 식별 정보가 없거나 다르거나 관찰 가능한 설정이 일치하지 않으면 비교는 `Unverifiable`입니다. 개별 측정과 후보에서만 발생한 안전 실패는 유지합니다. 양쪽에서 설정을 생략했다고 설정 동등성이 입증되지는 않습니다. 관찰한 모델 일치만 보고합니다. 비교 가능성을 강제하려고 모델을 선택, 고정, 재지정하거나 재시도하지 않습니다.
+지표를 이용할 수 없으면 `null`/`Unverifiable`로 남기며, 추정하지 않습니다.
 
-Resource savings cannot offset:
+자원 절감으로 다음을 상쇄할 수는 없습니다.
 
-- a critical or mechanical assertion regression;
-- a safety, routing, or mutation regression;
-- recurring new `stuck | skipped` states;
-- a retry regression from a zero baseline;
-- a control or holdout regression.
+- 핵심 또는 기계적 assertion의 회귀를 상쇄할 수 없습니다.
+- 안전, 라우팅이나 변경의 회귀를 상쇄할 수 없습니다.
+- 반복되는 새로운 `stuck | skipped` 상태를 상쇄할 수 없습니다.
+- 재시도가 없던 기준에서 발생한 재시도 회귀를 상쇄할 수 없습니다.
+- 대조군이나 holdout 회귀를 상쇄할 수 없습니다.
 
-Without a matched anchor, report the current measurement as `Profile only`.
+조건이 일치하는 기준점이 없으면 현재 측정은 `Profile only`로 보고합니다.
 
-## Diagnostic verdict
+<a id="diagnostic-verdict"></a>
+## 진단 판정
 
-- `Fail`: deterministic/critical regression, recurring new weak phase, recurring retry
-  regression, or trading correctness for savings.
-- `Concern`: one unclear point/fill-in or unmatched resource increase.
-- `Pass`: normal checks pass, no new phase/retry/holdout regression recurs, and any
-  claimed efficiency improvement is matched and verified.
-- `Unverifiable`: fresh execution, parsing, provenance, or a required matched metric is
-  unavailable after bounded attempts.
+- `Fail`: 결정론적·핵심 회귀, 반복되는 새 취약 단계, 반복되는 재시도 회귀 또는 절감을 위해 정확성을 희생한 경우입니다.
+- `Concern`: 불명확한 지점·재량 보충 하나 또는 조건이 일치하지 않는 자원 증가가 있는 경우입니다.
+- `Pass`: 정상 확인이 통과하고 새 단계·재시도·holdout 회귀가 반복되지 않으며, 주장하는 효율 개선이 있다면 조건이 일치하고 검증된 경우입니다.
+- `Unverifiable`: 한정된 시도 후에도 새로운 실행, 파싱, 출처나 필수 조건 일치 지표를 이용할 수 없는 경우입니다.
 
-The diagnostic verdict is evidence inside the diagnosis receipt; it is not the skill's
-terminal status.
+진단 판정은 진단 receipt 안의 근거이며, 스킬의 종결 상태가 아닙니다.

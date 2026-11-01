@@ -1,33 +1,30 @@
-# QA Sheet Data and Rendering
+<a id="qa-sheet-data-and-rendering"></a>
+# QA 시트 데이터와 렌더링
 
-Read for the default HTML sheet or an explicitly requested HTML sheet. Copy the bundled template, replace the
-`script#qa-data` JSON, then use the bundled helper to regenerate its static reading
-inventory from that data. The final file needs no external assets or runtime generator.
+기본 HTML 시트 또는 명시적으로 요청된 HTML 시트를 위해 읽습니다. 번들 템플릿을 복사하고 `script#qa-data` JSON을 교체한 후 번들 도우미로 해당 데이터에서 정적 읽기 인벤토리를 다시 생성합니다. 최종 파일에는 외부 자산이나 런타임 생성기가 필요하지 않습니다.
 
-## Authoring and inspection contract
+<a id="authoring-and-inspection-contract"></a>
+## 작성과 확인 계약
 
-Use this map without searching the template implementation. Keep its runtime renderer,
-styles and control wiring unchanged. These selectors inspect the generated sheet, not the
-product being checked; a match alone does not prove a passing runtime result.
+템플릿 구현을 검색하지 않고 이 대응표를 사용합니다. 런타임 렌더러, 스타일과 제어 요소 연결은 변경하지 않습니다. 이 selector는 점검 대상 제품이 아닌 생성된 시트를 확인합니다. 일치한다는 사실만으로 런타임 결과 통과가 입증되지는 않습니다.
 
-| Purpose | Contract or selector |
+| 용도 | 계약 또는 selector |
 | --- | --- |
-| Editable data | Replace only the JSON text in `script#qa-data` using a serializer and the escaping rule below. |
-| Browser tab title | Set JSON `title`; runtime sets `document.title` and `#title` from it. The static HTML `<title>` may also match that plain-text title with HTML escaping; do not edit renderer code. |
-| No-JS inventory | Regenerate `noscript#qa-static` with `scripts/render_static_inventory.py`; do not hand-edit it. |
-| Rendered heading and inventory | `#title`, `#main`; compare rendered text and row coverage with the final JSON. |
-| Editable checks | `#main li.check input[type="checkbox"]:not(:disabled)`; generated `data-id` values own persistence identity. |
-| Automated checks | `#main input[data-auto="true"]`; require checked and disabled state, including after reset. |
-| Unverified automatic criteria | `#main li.verification-gap`; require visible direction text and no checkbox. |
-| Filter and reset | `#onlyOpen`, `#reset`; inspect behavior as required below. |
-| Notes and save status | `#notes`, `#saved`; reload to test restoration rather than trusting a status label. |
-| Count and storage failure | `#count`, `#storage-warning`; verify counts against data and warning behavior when storage is denied. |
+| 편집 가능한 데이터 | serializer와 아래 이스케이프 규칙을 사용하여 `script#qa-data`의 JSON 텍스트만 교체합니다. |
+| 브라우저 탭 제목 | JSON `title`을 설정합니다. 런타임이 이 값에서 `document.title`과 `#title`을 설정합니다. 정적 HTML `<title>`도 HTML 이스케이프를 적용하여 같은 일반 텍스트 제목과 맞출 수 있습니다. 렌더러 코드는 편집하지 않습니다. |
+| JavaScript 없는 인벤토리 | `noscript#qa-static`을 `scripts/render_static_inventory.py`로 다시 생성하고 직접 편집하지 않습니다. |
+| 렌더링된 제목과 인벤토리 | `#title`, `#main`의 렌더링 텍스트와 행 범위를 최종 JSON과 비교합니다. |
+| 편집 가능한 점검 | `#main li.check input[type="checkbox"]:not(:disabled)`를 사용합니다. 생성된 `data-id` 값이 영속화 식별 정보를 소유합니다. |
+| 자동 점검 | `#main input[data-auto="true"]`는 초기화 후를 포함하여 체크되고 비활성화된 상태여야 합니다. |
+| 미검증 자동 기준 | `#main li.verification-gap`에는 안내 텍스트가 보여야 하고 체크박스가 없어야 합니다. |
+| 필터와 초기화 | `#onlyOpen`, `#reset`의 동작을 아래 요구사항에 따라 확인합니다. |
+| 메모와 저장 상태 | `#notes`, `#saved`의 상태 레이블을 믿는 대신 다시 로드하여 복원을 테스트합니다. |
+| 개수와 저장소 실패 | `#count`, `#storage-warning`의 개수를 데이터와 대조하고 저장소 접근 거부 시 경고 동작을 검증합니다. |
 
-Reuse these selectors as lookup points, not a new mandatory checklist; the existing self-check
-below owns required scenarios. A selector mismatch requires inspecting the installed template
-version rather than inventing a replacement contract.
+이 selector는 새로운 필수 체크리스트가 아니라 조회 지점으로 재사용합니다. 필수 시나리오는 아래 기존 자체 점검이 소유합니다. selector가 일치하지 않으면 대체 계약을 만들어 내지 말고 설치된 템플릿 버전을 확인합니다.
 
-## Data
+<a id="data"></a>
+## 데이터
 
 ```json
 {
@@ -73,156 +70,45 @@ version rather than inventing a replacement contract.
 }
 ```
 
-New sheets require a nonblank top-level `head` for the candidate whose impact inventory they
-represent. The renderer accepts a missing `head` only for older sheets; a browser verifier
-must treat that lineage as unknown and reconcile it before runtime. Require nonblank `title`,
-`storageKey`, group/item titles and check texts. Require a
-nonempty `groups` array and nonempty `items`; optional `legend`/`notes` are string arrays.
-`checks` absent or empty makes the item itself a check. `heading: true` creates no checkbox;
-require at least one real check per item. `indent` is an integer from 0 to 3.
+새 시트는 자신이 나타내는 영향 인벤토리의 후보를 가리키는 최상위 `head`가 공백이 아니어야 합니다. 렌더러는 이전 시트에만 `head` 생략을 허용합니다. 브라우저 검증기는 해당 계보를 알 수 없는 것으로 취급하고 런타임 전에 조정해야 합니다. `title`, `storageKey`, 그룹·항목 제목과 점검 텍스트는 공백이 아니어야 합니다. `groups` 배열과 `items`는 비어 있지 않아야 하며 선택적인 `legend`/`notes`는 문자열 배열입니다. `checks`가 없거나 비어 있으면 항목 자체가 점검 항목이 됩니다. `heading: true`는 체크박스를 만들지 않습니다. 항목마다 실제 점검이 하나 이상 있어야 합니다. `indent`는 0에서 3 사이의 정수입니다.
 
-`provenance` is `observed | code-only`; missing values default to `code-only`.
-A child is observed only if both its parent and the child are explicitly observed.
-An unsupported ancestor prevents the full check from becoming an observed navigation claim.
-Use backticks only for exact observed UI labels; source-only labels use plain text even
-when the source contains an exact string. Known routes may appear
-in code formatting as technical literals; disclose their status separately from navigation.
-List user-provided text and missing click connections explicitly in notes/legend/limitations.
+`provenance`는 `observed | code-only`이며 값이 없으면 기본값은 `code-only`입니다. 상위 항목과 하위 항목이 모두 명시적으로 관찰된 경우에만 하위 항목을 관찰된 것으로 봅니다. 근거 없는 상위 항목이 있으면 전체 점검을 관찰된 탐색 주장으로 만들 수 없습니다. 정확히 관찰한 UI 레이블에만 backtick을 사용합니다. 소스에 정확한 문자열이 있어도 소스만 있는 레이블은 일반 텍스트를 사용합니다. 알려진 route는 기술 literal로 코드 서식에 넣을 수 있으며 탐색과 별도로 그 상태를 알립니다. 사용자 제공 텍스트와 누락된 클릭 연결을 메모·범례·한계에 명시적으로 나열합니다.
 
-Every new check row has a stable `criterionId`: keep the impact-inventory/browser-verifier ID unchanged, or assign `QA-001`, `QA-002`, ... after splitting entry points when none was supplied. Preserve those IDs when regenerating the same task; IDs must be unique across the sheet. The renderer accepts omitted IDs only for older sheets. A `verification-gap` row must have an ID so a no-argument verifier run can target and return it. The renderer displays it beside the row. Its generated checkbox ID remains separate and content-bound.
+모든 새 점검 행에는 안정적인 `criterionId`가 있습니다. 영향 인벤토리·브라우저 검증기의 ID를 그대로 유지하거나, 제공된 ID가 없으면 진입점을 분리한 뒤 `QA-001`, `QA-002`, ...를 할당합니다. 같은 작업을 재생성할 때 ID를 보존하고 시트 전체에서 고유하게 유지합니다. 렌더러는 이전 시트에만 ID 생략을 허용합니다. `verification-gap` 행은 인자 없는 검증기 실행이 대상으로 삼고 반환할 수 있도록 ID가 있어야 합니다. 렌더러는 행 옆에 이를 표시합니다. 생성되는 체크박스 ID는 별도로 유지되며 콘텐츠에 연결됩니다.
 
-When consuming a verifier row map, copy `evidence_ref` to `evidence.ref` and `head` unchanged. Map `Pass` and `covered-by:<criterion_id>` to `auto-verified` only with the mapped evidence on that row ID; retain the equivalence rationale for `covered-by`. Keep `Fail` as `failed` on the same criterion. An authorized `out-of-scope` or `not-executed` row without a proven manual blocker becomes `verification-gap`; a proven blocker becomes `manual` with `reason` mapped to `manualReason`, `search_scope` to `searchScope`, and the concrete `unblock`.
+검증기 행 매핑을 사용할 때는 `evidence_ref`를 `evidence.ref`로 복사하고 `head`를 변경하지 않습니다. `Pass`와 `covered-by:<criterion_id>`는 해당 행 ID에 매핑된 근거가 있을 때만 `auto-verified`로 매핑하며 `covered-by`의 동등성 이유를 유지합니다. `Fail`은 같은 기준의 `failed`로 유지합니다. 승인된 `out-of-scope` 또는 `not-executed` 행에 입증된 수동 차단 요인이 없으면 `verification-gap`으로 바꿉니다. 입증된 차단 요인이 있으면 `manual`로 바꾸고 `reason`을 `manualReason`으로, `search_scope`를 `searchScope`로 매핑하며 구체적인 `unblock`을 포함합니다.
 
-`verification` is `manual | verification-gap | auto-verified | partial | failed`; missing values default to `manual` for older sheets. Use `verification-gap` for an unexecuted row that is within established authority and has no recorded execution, no recorded `searchScope`, and no verified capability gap. This state has no automated evidence and is displayed separately without an editable checkbox. It is not a human task.
-It applies to a standalone item or a non-heading child check and is independent from
-`provenance`. Items that contain child checks do not carry their own verification state.
-`auto-verified`, `partial`, and `failed` rows require an `evidence` object with nonblank `ref`
-and `head`: `ref` is the run ID or evidence path, and `head` is the commit head that
-evidence was bound to. Manual rows omit `evidence`. For every newly authored human-only `manual` row,
-set `manualReason` to `unauthorized-or-irreversible`, `data-unavailable-after-search`, or
-`verified-capability-gap`, and set `unblock` to its concrete next step. The latter two
-reasons require a nonblank `searchScope` describing the recorded search or attempted
-capability check. Missing/irreversible write authority is the only reason to exclude a write
-before an attempt. If a user explicitly asks for a human checklist, a gap may instead be an
-editable `manual` row with `automatable: true`; this is an explicit checklist exception and
-does not claim a human-only blocker. For backwards compatibility, the renderer
-accepts older manual rows with no `manualReason`, but new skill output must provide one.
-A manual row that was demoted because a
-later diff affected its screen may instead carry `previousEvidence` with the same `ref` and
-`head` shape. Never-exercised manual rows omit both fields, and `previousEvidence` never
-promotes a row to automatic verification.
+`verification`은 `manual | verification-gap | auto-verified | partial | failed`이며 이전 시트에서 값이 없으면 기본값은 `manual`입니다. `verification-gap`은 확립된 권한 안에 있지만 실행 기록, 기록된 `searchScope`와 검증된 기능 공백이 없는 미실행 행에 사용합니다. 이 상태에는 자동 근거가 없으며 편집 가능한 체크박스 없이 별도로 표시합니다. 사람에게 맡길 작업이 아닙니다.
+독립 항목이나 제목이 아닌 하위 점검에 적용되며 `provenance`와 독립적입니다. 하위 점검을 포함한 항목에는 자체 검증 상태를 두지 않습니다. `auto-verified`, `partial`, `failed` 행에는 `evidence` 객체가 필요하며 공백이 아닌 `ref`와 `head`를 가져야 합니다. `ref`는 실행 ID 또는 근거 경로이고 `head`는 근거가 연결된 commit head입니다. 수동 행은 `evidence`를 생략합니다. 새로 작성하는 사람 전용 `manual` 행은 모두 `manualReason`을 `unauthorized-or-irreversible`, `data-unavailable-after-search` 또는 `verified-capability-gap`으로 설정하고 `unblock`에는 구체적인 다음 단계를 설정합니다. 뒤의 두 사유에는 기록된 검색이나 시도한 기능 점검을 설명하는 공백 아닌 `searchScope`가 필요합니다. 쓰기 권한 누락·비가역성 문제만 시도 전에 쓰기를 제외할 수 있는 사유입니다. 사용자가 사람용 체크리스트를 명시적으로 요청하면 공백을 대신 편집 가능한 `manual` 행으로 만들고 `automatable: true`를 지정할 수 있습니다. 이는 명시적인 체크리스트 예외이며 사람만 할 수 있는 차단 요인이라고 주장하지 않습니다. 하위 호환성을 위해 렌더러는 `manualReason` 없는 이전 수동 행을 허용하지만 새 스킬 출력은 반드시 이를 제공해야 합니다.
+이후 diff가 화면에 영향을 주어 상태가 낮춰진 수동 행은 대신 `previousEvidence`를 가질 수 있으며 같은 `ref`와 `head` 구조를 사용합니다. 한 번도 실행하지 않은 수동 행은 두 필드를 모두 생략하며 `previousEvidence`는 행을 자동 검증으로 승격하지 않습니다.
 
-Set a verifier `Fail` row to `failed` without splitting it into a passed part and a manual
-remainder. Preserve the verifier evidence in `evidence`; the row remains in the editable manual
-list so a person can record a follow-up check, while the `failed` result and its evidence remain
-visible. A manual checkbox does not rewrite the verifier result.
+검증기의 `Fail` 행은 통과한 부분과 수동 나머지로 나누지 않고 `failed`로 설정합니다. 검증기 근거를 `evidence`에 보존합니다. 행은 편집 가능한 수동 목록에 남아 사람이 후속 점검을 기록할 수 있고 `failed` 결과와 근거도 계속 보입니다. 수동 체크박스가 검증기 결과를 다시 쓰지는 않습니다.
 
-Use `auto-verified` only for run-owned automated runtime evidence that exercised the same
-screen, entry path, trigger and expected result. Normally that evidence is on the current head.
-When the target head moves, inspect the diff from the evidence head to the current head. Treat a
-row as affected only when the diff touches that screen's render path or request path. If those
-paths are unchanged, the old evidence may remain `auto-verified`; keep its original head and
-report the path-based carry-forward rationale. If the row is affected, prefer recapturing it on
-the current head while the runtime session remains available. Otherwise demote it to `manual`
-and move the old run to `previousEvidence`. Evidence from another screen or entry path is
-`partial`; rewrite that row so its text describes only the unexercised part. Unit tests alone
-do not promote a screen check. A data-changing check may be `auto-verified` when its exact
-mutation was explicitly authorized and actually executed, and run-owned runtime evidence bound to
-the current head proves the same screen, entry path, trigger, operation, and expected saved result
-through an independent reread. Request-body capture without backend submission can auto-verify only
-the payload-construction check, never a saved-result check. Preserve evidence `ref` and `head`; the
-label records verification evidence and is not product acceptance. If authority or current-head
-evidence is missing, keep the data-changing result `manual`.
+같은 화면, 진입 경로, 트리거와 기대 결과를 실행한 실행 소유 자동 런타임 근거에만 `auto-verified`를 사용합니다. 일반적으로 해당 근거는 현재 head에 있습니다. 대상 head가 이동하면 근거 head에서 현재 head까지 diff를 확인합니다. diff가 해당 화면의 렌더링 경로나 요청 경로에 닿을 때만 행이 영향을 받는 것으로 취급합니다. 해당 경로가 그대로면 이전 근거는 계속 `auto-verified`일 수 있습니다. 원래 head를 유지하고 경로 기반의 계속 적용 이유를 보고합니다. 행이 영향을 받으면 런타임 세션이 남아 있는 동안 현재 head에서 다시 수집하는 것을 우선합니다. 그렇지 않으면 `manual`로 낮추고 이전 실행을 `previousEvidence`로 옮깁니다. 다른 화면이나 진입 경로의 근거는 `partial`이며 해당 행 텍스트가 실행하지 않은 부분만 설명하도록 다시 씁니다. 단위 테스트만으로 화면 점검을 승격하지 않습니다. 데이터를 변경하는 점검은 정확한 변경을 명시적으로 승인받고 실제 실행했으며, 현재 head에 연결된 실행 소유 런타임 근거가 독립적 재읽기를 통해 같은 화면, 진입 경로, 트리거, 작업과 기대 저장 결과를 입증할 때 `auto-verified`일 수 있습니다. backend 제출 없이 요청 본문만 수집했다면 payload 구성 점검만 자동 검증할 수 있고 저장 결과 점검은 자동 검증할 수 없습니다. 근거의 `ref`와 `head`를 보존합니다. 레이블은 검증 근거를 기록하며 제품 인수 판정이 아닙니다. 권한이나 현재 head 근거가 없으면 데이터 변경 결과를 `manual`로 유지합니다.
 
-The HTML renderer places `auto-verified` rows in a collapsed `Automated` group as checked,
-disabled controls with their evidence reference. `verification-gap` rows appear in a separate
-visible `자동 검증 필요` section without checkboxes, with a direction to run
-`/tk-browser-verify` without arguments and then regenerate the sheet. `partial`, `failed`, and
-`manual` rows remain editable in the manual list; `partial` and `failed` rows show current
-evidence, while head-demoted manual rows show `previousEvidence` with an explicit previous-head
-label. A `failed` row stays on that same criterion; a manual checkbox records follow-up work
-without changing the failed result.
+HTML 렌더러는 `auto-verified` 행을 접힌 `Automated` 그룹에 근거 참조와 함께 체크되고 비활성화된 제어 요소로 배치합니다. `verification-gap` 행은 체크박스 없는 별도의 보이는 `자동 검증 필요` 절에 표시하며 인자 없이 `/tk-browser-verify`를 실행한 후 시트를 재생성하라는 안내를 제공합니다. `partial`, `failed`, `manual` 행은 수동 목록에서 편집 가능하게 유지합니다. `partial`, `failed` 행은 현재 근거를 보여 주고, head 변경으로 낮춰진 수동 행은 이전 head임을 명시하는 레이블과 함께 `previousEvidence`를 보여 줍니다. `failed` 행은 같은 기준에 남습니다. 수동 체크박스는 실패 결과를 바꾸지 않고 후속 작업을 기록합니다.
 
-## Screen links
+<a id="screen-links"></a>
+## 화면 링크
 
-`environment` is optional; when supplied require nonblank `label` and an absolute HTTP(S)
-`baseUrl` without URL credentials. Optional item `url` is an absolute HTTP(S) landing URL
-in that environment's origin; links require `environment`. The template shows the named
-environment and a separate `화면 열기` link without toggling the checklist. Links open a new
-tab with `noopener noreferrer` and no referrer. Keep links outside quoted UI text.
+`environment`는 선택 사항입니다. 제공할 때는 공백이 아닌 `label`과 URL 자격 증명이 없는 절대 HTTP(S) `baseUrl`이 필요합니다. 선택적인 항목 `url`은 해당 환경 origin의 절대 HTTP(S) 도착 URL이며 링크에는 `environment`가 필요합니다. 템플릿은 환경 이름과 별도의 `화면 열기` 링크를 표시하며 체크리스트를 토글하지 않습니다. 링크는 `noopener noreferrer`와 referrer 없음으로 새 탭을 엽니다. 링크를 인용한 UI 텍스트 밖에 둡니다.
 
-Prefer a supported detail/section URL when the actual target ID and route/query/fragment
-are verified. If the ID is unavailable, use the known list URL and describe record selection
-as a manual check. Reuse the exact supported landing URL; do not invent an ID, fragment,
-host/port, or hash-router path. Unknown environment or landing route means omit the link
-and report the limitation. A link derived from known route/base evidence does not prove
-a clicked navigation connection. Preserve `code-only` status for unobserved labels.
-The producer must exclude secret-bearing/signed URLs and sensitive personal data;
-structural URL validation alone cannot establish publication safety.
+실제 대상 ID와 route/query/fragment를 검증한 경우 근거가 있는 상세·섹션 URL을 우선합니다. ID를 사용할 수 없으면 알려진 목록 URL을 사용하고 레코드 선택을 수동 점검으로 설명합니다. 근거가 있는 정확한 도착 URL을 재사용하고 ID, fragment, host/port 또는 hash-router 경로를 만들어 내지 않습니다. 환경이나 도착 route를 모르면 링크를 생략하고 한계를 보고합니다. 알려진 route·base 근거에서 도출한 링크는 클릭한 탐색 연결을 입증하지 않습니다. 관찰하지 않은 레이블에는 `code-only` 상태를 보존합니다. 생성자는 비밀이 포함되거나 서명된 URL과 민감한 개인정보를 제외해야 합니다. 구조적 URL 검증만으로 발행 안전성을 확립할 수는 없습니다.
 
-Serialize JSON with a real serializer, then replace every `<` with the JSON escape
-`\u003c` before embedding. This prevents `</script>` and HTML comment sequences from
-terminating the data block; HTML escaping JSON or manual string interpolation is unsafe.
-Verify parsing of the final embedded block and absence of sample task/area/trigger content.
+실제 serializer로 JSON을 직렬화한 후 삽입 전에 모든 `<`를 JSON 이스케이프 `\u003c`로 바꿉니다. 이는 `</script>`와 HTML comment 시퀀스가 데이터 블록을 끝내지 못하게 합니다. JSON을 HTML 이스케이프하거나 문자열을 수동 보간하는 것은 안전하지 않습니다. 최종 삽입 블록의 파싱과 예시 작업·영역·트리거 내용이 없음을 검증합니다.
 
-## Identity and persistence
+<a id="identity-and-persistence"></a>
+## 식별 정보와 영속화
 
-The check ID encodes the full JSON-serialized tuple of environment base URL, landing URL, group
-title, item title and child check text (or null for a standalone item). Tuple boundaries
-distinguish delimiter-containing labels and standalone/child checks. Changed environments
-or record links cannot reuse a previous check's completion. Full tuple encoding avoids
-short-hash aliases across regenerations. Identical tuples are rejected visibly before rendering; disambiguate genuinely separate
-checks with accurate contextual text rather than order-dependent IDs. Reordering identical
-content preserves IDs; changed text creates a new ID. Explain that limitation when rewriting
-an existing sheet. Reuse `storageKey` only for the same task and environment; a new task,
-environment or independently tested revision uses a new key for notes/filter as well.
+점검 ID는 환경 base URL, 도착 URL, 그룹 제목, 항목 제목과 하위 점검 텍스트(독립 항목이면 null)의 전체 JSON 직렬화 tuple을 인코딩합니다. tuple 경계는 구분자가 포함된 레이블과 독립·하위 점검을 구분합니다. 환경이나 레코드 링크가 바뀌면 이전 점검의 완료를 재사용할 수 없습니다. 전체 tuple 인코딩은 재생성 간 짧은 해시의 충돌을 피합니다. 동일한 tuple은 렌더링 전에 눈에 보이게 거부합니다. 실제로 별개인 점검은 순서에 의존하는 ID가 아닌 정확한 맥락 텍스트로 구분합니다. 동일한 콘텐츠의 순서 변경은 ID를 보존하고 텍스트 변경은 새 ID를 만듭니다. 기존 시트를 다시 쓸 때 이 한계를 설명합니다. 같은 작업과 환경에만 `storageKey`를 재사용합니다. 새 작업, 환경 또는 독립적으로 테스트하는 revision에는 메모·필터에도 새 키를 사용합니다.
 
-Storage keys serialize `["tk-qa-sheet", storageKey, role, 1]` as JSON, with role `checks`,
-`notes`, or `onlyOpen`. Keeping task and role as separate tuple fields prevents one task's
-name from aliasing another task's note/check key. Theme is intentionally outside task
-identity: the canonical shared theme control stores the raw `system | light | dark` value
-under `tigerkit-html-theme`, independent of `storageKey`. This lets the reader's explicit
-browser preference carry to other TigerKit HTML outputs that share the same browser/localStorage
-origin. The generated default comes separately from the shared user `settings.json` contract in
-`../../tk-writing/references/html-output.md`; a stored reader preference overrides that default at runtime. Do not
-promise cross-file persistence for `file:` URLs or across browsers because storage scoping is
-browser-defined there. Missing, invalid or unreadable theme storage starts in `system`;
-changing theme can still update the current page if a write is refused, but a reload may
-return to `system`. Check reset never clears the theme preference.
+저장 키는 `["tk-qa-sheet", storageKey, role, 1]`을 JSON으로 직렬화하며 role은 `checks`, `notes` 또는 `onlyOpen`입니다. 작업과 역할을 별도 tuple 필드로 두면 한 작업 이름이 다른 작업의 메모·점검 키와 충돌하지 않습니다. 테마는 의도적으로 작업 식별 정보 밖에 둡니다. 정본 공통 테마 제어 요소는 원시 `system | light | dark` 값을 `tigerkit-html-theme` 아래에 저장하며 `storageKey`와 독립적입니다. 이를 통해 독자의 명시적 브라우저 선호를 같은 브라우저/localStorage origin을 공유하는 다른 TigerKit HTML 출력에도 이어갈 수 있습니다. 생성 기본값은 공통 사용자 `settings.json` 계약인 `../../tk-writing/references/html-output.md`에서 별도로 가져오며 저장된 독자 선호가 런타임에서 해당 기본값을 덮어씁니다. `file:` URL이나 브라우저 간에는 저장 범위를 브라우저가 정의하므로 파일 간 영속화를 약속하지 않습니다. 테마 저장값이 없거나 유효하지 않거나 읽을 수 없으면 `system`으로 시작합니다. 쓰기가 거부되어도 테마 변경으로 현재 페이지를 갱신할 수 있지만 다시 로드하면 `system`으로 돌아갈 수 있습니다. 점검 초기화는 테마 선호를 지우지 않습니다.
 
-Reads/writes tolerate unavailable storage and malformed stored data. Auto-verified rows are
-not persisted as user completion: the renderer clears any old stored completion for an item
-while it is auto-verified, so a later demotion to manual cannot resurrect a stale manual
-check. Failed writes display a warning without preventing in-memory interaction. Notes save after
-400 ms and flush on page exit. Reset confirms before clearing checks and preserves notes.
-Storage is local to the browser/profile and file/origin; moving the file or changing browser
-may lose access to existing state. Do not promise cross-file or multi-user persistence.
+읽기·쓰기는 사용할 수 없는 저장소와 형식이 잘못된 저장 데이터를 견딥니다. 자동 검증 행은 사용자 완료로 저장하지 않습니다. 렌더러는 항목이 자동 검증 상태인 동안 이전에 저장된 완료를 지우므로 이후 수동으로 낮춰져도 낡은 수동 체크가 되살아나지 않습니다. 쓰기가 실패하면 메모리 내 상호작용을 막지 않고 경고를 표시합니다. 메모는 400 ms 후 저장하고 페이지 종료 시 반영합니다. 초기화는 체크를 지우기 전에 확인하고 메모를 보존합니다. 저장소는 브라우저·프로필과 파일·origin에 한정됩니다. 파일 이동이나 브라우저 변경으로 기존 상태에 접근하지 못할 수 있습니다. 파일 간 또는 다중 사용자 영속화를 약속하지 않습니다.
 
-## Self-check
+<a id="self-check"></a>
+## 자체 점검
 
-After filling `qa-data`, run the package's `scripts/render_static_inventory.py` on the generated
-file. It replaces only `noscript#qa-static` from that same JSON, escaping prose and preserving
-the runtime renderer. Regenerate it whenever data changes; never maintain a second inventory.
-With JavaScript disabled, verify the final groups/items/checks are readable and controls are
-not presented as functional. Persistence remains a JavaScript-only capability, disclosed in
-the static view. Compare static coverage with the final JSON, not the bundled example.
+`qa-data`를 채운 뒤 생성한 파일에 패키지의 `scripts/render_static_inventory.py`를 실행합니다. 같은 JSON에서 `noscript#qa-static`만 교체하고 설명 텍스트를 이스케이프하며 런타임 렌더러를 보존합니다. 데이터가 바뀔 때마다 재생성하고 두 번째 인벤토리를 유지하지 않습니다. JavaScript를 끈 상태에서 최종 그룹·항목·점검을 읽을 수 있으며 제어 요소가 작동하는 것처럼 표시되지 않는지 검증합니다. 영속화는 JavaScript 전용 기능으로 유지하고 정적 보기에서 알립니다. 정적 범위는 번들 예시가 아닌 최종 JSON과 비교합니다.
 
-Use `tk-browser-verify` with the exact generated file, no auth/server, a disposable
-headless profile, and all mandatory [HTML output](../../tk-writing/references/html-output.md) render checks, plus any
-requested layout criteria. Every short sheet still needs desktop/mobile and light/dark coverage
-with numerical readability checks and inspected/missing-check reporting. Verify the visible
-segmented theme radios are ordered `system / light / dark`: `system` leaves `data-theme` unset and
-follows emulated light/dark OS preference, while manual light/dark choices override it and
-restore after reload when storage is available. Confirm check reset preserves the theme and
-storage refusal leaves the sheet readable with `system` as the next-load fallback. When at
-least two editable rows exist, verify that two rows plus a note survive reload. With fewer
-than two editable rows, verify note persistence and `auto-verified` immutability instead, and
-report the editable-row check as `not applicable`. IDs must be unique, counts accurate, code-only
-status visible, reset must retain the note, auto-verified rows must stay checked after reset
-without becoming editable, partial/manual rows must remain in the manual list, and
-`verification-gap` rows must appear outside it without checkboxes. The gap direction must be
-visible in both interactive and no-JS views. Verify
-evidence references and the collapsed Automated grouping from the final data, not just the
-bundled sample. Preserve actual
-failure/limitation evidence; remove only the run-owned profile. Storage-denied environments
-render normally but cannot satisfy persistence acceptance.
+정확한 생성 파일, 인증·서버 없음, 일회용 headless 프로필, 모든 필수 [HTML 출력](../../tk-writing/references/html-output.md) 렌더링 점검과 요청된 레이아웃 기준으로 `tk-browser-verify`를 사용합니다. 짧은 시트도 모두 수치 기반 가독성 점검과 확인한 점검·누락된 점검 보고를 포함하는 desktop/mobile, light/dark 범위가 필요합니다. 보이는 분할형 테마 라디오가 `system / light / dark` 순서인지 검증합니다. `system`은 `data-theme`를 설정하지 않고 에뮬레이션한 light/dark OS 선호를 따라야 하며 수동 light/dark 선택은 이를 덮어쓰고 저장소 사용 가능 시 다시 로드한 뒤 복원되어야 합니다. 점검 초기화가 테마를 보존하고 저장소 접근 거부 시에도 시트를 읽을 수 있으며 다음 로드에서는 `system`으로 돌아가는지 확인합니다. 편집 가능한 행이 두 개 이상이면 두 행과 메모가 다시 로드한 뒤 유지되는지 검증합니다. 두 개 미만이면 대신 메모 영속화와 `auto-verified` 불변성을 검증하고 편집 가능 행 점검은 `not applicable`로 보고합니다. ID는 고유하고 개수는 정확하며 code-only 상태는 보여야 합니다. 초기화는 메모를 유지하고 자동 검증 행은 초기화 후에도 체크된 채 편집 불가능해야 하며 partial/manual 행은 수동 목록에 남고 `verification-gap` 행은 체크박스 없이 그 밖에 표시되어야 합니다. 공백 안내는 대화형 보기와 JavaScript 없는 보기 양쪽에서 보여야 합니다. 번들 예시만 보지 말고 최종 데이터로 근거 참조와 접힌 Automated 그룹을 검증합니다. 실제 실패·한계 근거를 보존하고 실행 소유 프로필만 제거합니다. 저장소 접근이 거부된 환경은 정상 렌더링되지만 영속화 수용 기준을 충족할 수 없습니다.

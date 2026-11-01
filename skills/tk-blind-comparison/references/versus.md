@@ -1,44 +1,46 @@
-# Versus comparison
+<a id="versus-comparison"></a>
+# 일대일 비교
 
-Use only for an explicit head-to-head request. Build with `--mode versus`; choose `single`
-or `split` under the [manifest contract](manifest.md). This is a human selection interface,
-not a new candidate generator, objective ranking or memory backend. Keep producer identity
-and technique-to-sample mappings private even if recommendations and reasons were already
-shown. Explain residual style cues. Preference persistence belongs to an explicitly
-consented external memory owner, not browser comparison state.
+명시적인 일대일 비교 요청에만 사용합니다. `--mode versus`로 빌드하며 [manifest 계약](manifest.md)에
+따라 `single` 또는 `split`을 선택합니다. 이는 사람이 선택하는 인터페이스이며 새 후보 생성기,
+객관적 순위나 메모리 backend가 아닙니다. 권고와 이유를 이미 보여줬더라도 제작자 식별 정보와
+기법별 샘플 매핑은 비공개로 유지합니다. 남아 있는 스타일 단서를 설명합니다. 선호의 영구 저장은
+명시적 동의를 받은 외부 메모리 소유자의 소관이며 브라우저 비교 상태의 소관이 아닙니다.
 
-## Interaction and replay
+<a id="interaction-and-replay"></a>
+## 상호작용과 재생
 
-Each item starts in its existing deterministic, seeded opaque-card order. Adjacent surviving
-cards form a pair. Each card's `이 설명 선택` keeps that side (`left`/`right` events); `둘 다 진출` keeps both
-in the same order. A final odd card is shown alone: acknowledge it with `다음 라운드로` (`left` only) before
-its bye advances. There is no automatic tie breaker, loop that silently reduces ties, or
-forced single winner. Repeated both-advance rounds remain pending until a human chooses.
+각 항목은 기존의 결정적 시드 기반 익명 카드 순서로 시작합니다. 살아남은 인접 카드가 쌍을
+이룹니다. 각 카드의 `이 설명 선택`은 해당 쪽을 남기며(`left`/`right` 이벤트), `둘 다 진출`은
+같은 순서로 둘 다 남깁니다. 마지막 홀수 카드는 단독 표시됩니다. 부전승 진출 전에 `다음 라운드로`
+(`left`만 사용)로 이를 확인합니다. 자동 동률 해소, 동률을 조용히 줄이는 루프 또는 강제 단독
+우승자는 없습니다. 둘 다 진출하는 라운드가 반복되면 사람이 선택할 때까지 대기 상태를 유지합니다.
 
-`남은 후보 공동 1위` is available only at the start of a later round after every survivor
-has appeared in an acknowledged pair or bye. It requires explicit confirmation and selects
-all survivors. After a legitimate round leaves one survivor, that item is complete.
-`되돌리기` removes the current item's last event, including final or co-winner selection.
-`이전 항목` / `다음 항목` navigate independent transcripts. The large round heading uses bracket names (`16강 · 3/8`, `8강`, `4강`, `결승`) and a visible
-VS separates the current pair. Card selection buttons stay below each scrolling preview.
-Both sample cards have bounded, keyboard-focusable inner scrolling in the remaining viewport height; shared context
-remains above them. Long screenshots retain their aspect ratio at card width; the outer rounded card clips its
-inner scrollbar. Copy/export/import, key loading/reveal, item navigation, guidance and co-winner
-selection live inside the collapsed `관리` menu. Completion shows a winner message with result
-copy and an explicit `결과 보기` action; undo remains available after completion. Progress is not
-repeated in storage status. HTML previews use the on-demand sandbox contract in the manifest.
-At viewport heights of 560 CSS pixels or less, including zoom/landscape, page scrolling is
-an accessibility fallback so controls remain reachable.
+`남은 후보 공동 1위`는 모든 생존 후보가 확인된 쌍이나 부전승에 등장한 뒤, 이후 라운드의 시작에서만
+사용할 수 있습니다. 명시적인 확인이 필요하며 모든 생존 후보를 선택합니다. 정당한 라운드 후
+생존 후보가 하나 남으면 해당 항목은 완료됩니다. `되돌리기`는 최종 선택이나 공동 우승 선택을
+포함하여 현재 항목의 마지막 이벤트를 제거합니다. `이전 항목` / `다음 항목`은 독립적인 이벤트
+기록 사이를 탐색합니다. 큰 라운드 제목에는 대진 이름(`16강 · 3/8`, `8강`, `4강`, `결승`)을
+사용하고 현재 쌍 사이에 VS를 표시합니다. 카드 선택 버튼은 각 스크롤 미리보기 아래에 둡니다.
+두 샘플 카드 모두 남은 viewport 높이 안에서 크기가 제한되고 키보드 포커스를 받을 수 있는 내부
+스크롤을 제공하며, 공유 맥락은 그 위에 유지합니다. 긴 스크린샷은 카드 너비에서 종횡비를 유지하며
+바깥쪽 둥근 카드가 내부 스크롤바를 잘라냅니다. 복사/내보내기/가져오기, 키 불러오기/공개, 항목
+탐색, 안내와 공동 우승 선택은 접힌 `관리` 메뉴 안에 둡니다. 완료 시 결과 문구와 명시적인
+`결과 보기` 동작을 포함한 우승 메시지를 표시하며, 완료 후에도 되돌리기를 사용할 수 있습니다.
+저장 상태에 진행 상황을 반복하지 않습니다. HTML 미리보기는 manifest의 요청 시 sandbox 계약을
+사용합니다. 확대/가로 모드를 포함하여 viewport 높이가 560 CSS 픽셀 이하이면 컨트롤에 계속
+도달할 수 있도록 접근성 대안으로 페이지 스크롤을 사용합니다.
 
-Failed outputs stay in the item's failure list, full exported roster and summary counts,
-with private diagnostics only in the answer key. They do not enter the bracket. Fewer than
-two successful outputs makes an item `incomparable`; it has no winner and accepts no events.
-Initial empty events on a comparable item are `pending`, never an inferred winner.
+실패 출력은 항목의 실패 목록, 전체 내보내기 명단과 요약 개수에 남기며, 비공개 진단은 정답표에만
+둡니다. 대진에는 넣지 않습니다. 성공 출력이 둘 미만이면 항목은 `incomparable`이며 우승자가
+없고 이벤트를 받지 않습니다. 비교 가능한 항목의 초기 빈 이벤트는 `pending`이며 우승자를
+추론하지 않습니다.
 
-## Export contract
+<a id="export-contract"></a>
+## 내보내기 계약
 
-Copy and file export produce the same `blind-versus.json` payload. The existing gallery's
-`schema: 1` ratings format is unchanged. A versus payload is distinguished by `mode: "versus"`:
+복사와 파일 내보내기는 같은 `blind-versus.json` 페이로드를 생성합니다. 기존 갤러리의
+`schema: 1` 평점 형식은 바꾸지 않습니다. 일대일 비교 페이로드는 `mode: "versus"`로 구별합니다.
 
 ```json
 {
@@ -62,67 +64,67 @@ Copy and file export produce the same `blind-versus.json` payload. The existing 
 }
 ```
 
-The example shows field shapes, not a valid playable roster/transcript. Real exports include
-every item and every card, including failures, in build order. `active` is a zero-based item
-index. Events are ordered action literals; a bye accepts only `left`. Do not fabricate events
-from a requested outcome. Actual media, candidate names, answer keys and private diagnostics
-are excluded. Schema, nonblank evaluator, boolean reveal/failure fields, item/card membership,
-order, fingerprints, valid action sequence and completion boundaries are checked before import.
-Malformed imports leave current choices and saved bytes unchanged. Recorded exposure is never
-reset by undo or an imported `revealed: false`. Existing nonempty choices reject a different
-evaluator; imports replace one evaluator's transcript, not merge multiple raters.
+예시는 필드 형태를 보여주며 실제 재생 가능한 명단/이벤트 기록은 아닙니다. 실제 내보내기는 실패를
+포함한 모든 항목과 카드를 빌드 순서대로 포함합니다. `active`는 0부터 시작하는 항목 인덱스입니다.
+이벤트는 순서 있는 동작 리터럴이며 부전승은 `left`만 받습니다. 요청한 결과에서 이벤트를 만들어
+내지 않습니다. 실제 미디어, 후보 이름, 정답표와 비공개 진단은 제외합니다. 가져오기 전에 스키마,
+비어 있지 않은 평가자, boolean 공개/실패 필드, 항목/카드 구성원, 순서, fingerprint, 유효한 동작
+시퀀스와 완료 경계를 확인합니다. 잘못된 가져오기는 현재 선택과 저장된 바이트를 변경하지 않습니다.
+기록된 노출은 되돌리기나 가져온 `revealed: false`로 초기화하지 않습니다. 기존에 비어 있지 않은
+선택이 있으면 다른 평가자를 거부합니다. 가져오기는 한 평가자의 이벤트 기록을 교체하며 여러
+평가자를 병합하지 않습니다.
 
-`revision` binds study/version, shared title and transformations, item context, seeded roster
-order and every output fingerprint. Reuse `--previous-key` for stable opaque identities.
-Unlike independent gallery scores, a bracket depends on its entire field: changed content,
-context, candidate set/order or version requires fresh choices. Preserve the old export/key
-for replay in its exact old build; never silently reuse it against a new revision. Single and
-split delivery of the same comparison share a revision.
+`revision`은 study/version, 공유 제목과 변환, 항목 맥락, 시드 기반 명단 순서와 모든 출력
+fingerprint를 결합합니다. 안정적인 익명 식별자에는 `--previous-key`를 재사용합니다. 독립적인
+갤러리 점수와 달리 대진은 전체 참가 집합에 의존합니다. 콘텐츠, 맥락, 후보 집합/순서나 버전이
+바뀌면 새 선택이 필요합니다. 정확히 이전 빌드에서 재생할 수 있도록 기존 내보내기/키를 보존하고,
+새 revision에 조용히 재사용하지 않습니다. 같은 비교의 single과 split 전달은 revision을 공유합니다.
 
-Reload restores the same revision's choices and active item. Local-file storage remains
-browser-dependent. Corrupt/refused storage is not overwritten; live choices remain exportable.
-Clipboard failure retains all choices and offers JSON file export. For untrusted replay work,
-both browser and summary parser reject more than 100000 events per item without truncating
-or discarding the last valid state. This event budget is not a media-size cutoff.
+다시 불러오면 같은 revision의 선택과 활성 항목을 복원합니다. 로컬 파일 저장은 여전히 브라우저에
+따라 다릅니다. 손상되거나 거부된 저장소는 덮어쓰지 않으며, 현재 선택은 계속 내보낼 수 있습니다.
+클립보드 실패 시 모든 선택을 유지하고 JSON 파일 내보내기를 제공합니다. 신뢰할 수 없는 재생
+작업에서는 브라우저와 요약 파서 모두 항목당 100000개가 넘는 이벤트를 거부하며, 잘라내거나 마지막
+유효 상태를 버리지 않습니다. 이 이벤트 한도는 미디어 크기 제한이 아닙니다.
 
-## Summary parser
+<a id="summary-parser"></a>
+## 요약 파서
 
 ```bash
 python3 <package>/scripts/build_gallery.py summarize blind-versus.json --key <matching-run-directory>/answer-key.json --blind
 python3 <package>/scripts/build_gallery.py summarize - --key <matching-run-directory>/answer-key.json --blind
 ```
 
-The same command recognizes `mode: "versus"`, verifies `key.comparison.revision` and its
-full roster, and replays events before producing results. No output directory means stdout
-only. `--output <new-evidence-directory>` writes `summary.json` and `summary.md` as before.
-The JSON includes `mode`, `revision`, `evaluators: 1`, `revealed`, candidate `wins`, `co_wins`
-and `failures`, and per-item `status`, `round`, `events`, `winners`, `winner_names`, `failures`.
-Statuses are `complete`, `pending` and `incomparable`. `totals` contains `items`, `complete`,
-`pending`, `incomparable`, `failures`, `outputs`; the three item statuses sum to `items`.
-A co-win also counts as a win. These counts summarize human actions, not statistical superiority.
-Do not compare them as means or pool repeated exports as independent evaluators.
+같은 명령이 `mode: "versus"`를 인식하고 `key.comparison.revision`과 전체 명단을 검증한 뒤,
+결과를 만들기 전에 이벤트를 재생합니다. 출력 디렉터리가 없으면 stdout만 사용합니다.
+`--output <new-evidence-directory>`는 이전과 같이 `summary.json`과 `summary.md`를 씁니다.
+JSON에는 `mode`, `revision`, `evaluators: 1`, `revealed`, 후보의 `wins`, `co_wins`,
+`failures`와 항목별 `status`, `round`, `events`, `winners`, `winner_names`, `failures`가
+포함됩니다. 상태는 `complete`, `pending`, `incomparable`입니다. `totals`에는 `items`,
+`complete`, `pending`, `incomparable`, `failures`, `outputs`가 있으며 세 항목 상태의 합은
+`items`입니다. 공동 우승은 우승으로도 계산합니다. 이 개수는 사람의 행동을 요약하며 통계적
+우월성을 나타내지 않습니다. 평균으로 비교하거나 반복 내보내기를 독립 평가자로 합산하지 않습니다.
 
 
-## Result disclosure
+<a id="result-disclosure"></a>
+## 결과 공개
 
-Single delivery defaults to an encoded embedded minimal key under the manifest contract;
-`--answer-key separate` and split delivery keep the key outside evaluator files. Both paths
-use the same study/version/revision/roster/fingerprint validator. Embedded names never enter
-the visible DOM, table, exports or browser storage before explicit disclosure. Encoding does
-not protect against source analysis. Keep separate keys private for external evaluators.
+single 전달은 manifest 계약에 따라 인코딩되어 내장된 최소 키를 기본으로 사용합니다.
+`--answer-key separate`와 split 전달은 평가자 파일 밖에 키를 둡니다. 두 경로는 같은
+study/version/revision/roster/fingerprint 검증기를 사용합니다. 명시적 공개 전에는 내장 이름이
+보이는 DOM, 표, 내보내기 또는 브라우저 저장소에 들어가지 않습니다. 인코딩은 소스 분석을 막지
+못합니다. 외부 평가자에게는 분리된 키를 비공개로 유지합니다.
 
-`결과 보기` on a completed item is one explicit action: validate the embedded key and render
-the table, or explain and open the separate-key picker. A matching file chosen from this action
-continues disclosure without another click. Key-file cancellation/validation failure is not
-consent to reveal. An unfinished study still requires the existing partial-reveal confirmation.
-Manual `정답표 선택` in management prepares a key without revealing; reload/import exposure
-history does not auto-reveal. Retain the hide-results toggle and sticky `revealed` history.
+완료된 항목의 `결과 보기`는 하나의 명시적 동작입니다. 내장 키를 검증하고 표를 렌더링하거나,
+설명한 뒤 별도 키 선택기를 엽니다. 이 동작에서 일치하는 파일을 선택하면 추가 클릭 없이 공개를
+이어갑니다. 키 파일 선택 취소/검증 실패는 공개 동의가 아닙니다. 미완료 연구에는 여전히 기존의
+부분 공개 확인이 필요합니다. 관리 메뉴의 수동 `정답표 선택`은 공개 없이 키를 준비합니다.
+다시 불러오기/가져오기 노출 이력은 자동 공개하지 않습니다. 결과 숨기기 토글과 지속되는
+`revealed` 이력을 유지합니다.
 
-Show one row per active-item candidate (including failures), with anonymous sample label,
-revealed technique/name and reached round. Derive reached rounds during the same `replay`
-walk as live choices: an acknowledged pair/bye records its current bracket size, subsequent
-rounds replace that candidate's stage, and final/co-winner events produce winner labels.
-Unplayed, failed and incomparable candidates are marked honestly. Do not infer missing
-choices, force a winner or translate these stages into scores. Repeated both-advance rounds
-retain the existing rules. Undo/import/navigation recompute the table from the transcript;
-no new persistent score/ranking field is introduced. Clear/hide the table when names are hidden.
+실패를 포함한 활성 항목의 후보마다 익명 샘플 레이블, 공개한 기법/이름과 도달 라운드를 한 행으로
+표시합니다. 현재 선택과 같은 `replay` 순회에서 도달 라운드를 도출합니다. 확인된 쌍/부전승은
+현재 대진 크기를 기록하고, 이후 라운드는 해당 후보의 단계를 교체하며, 최종/공동 우승 이벤트는
+우승 레이블을 만듭니다. 미진행, 실패와 비교 불가능 후보를 정직하게 표시합니다. 누락된 선택을
+추론하거나 우승자를 강제하거나 이러한 단계를 점수로 바꾸지 않습니다. 둘 다 진출하는 라운드가
+반복되어도 기존 규칙을 유지합니다. 되돌리기/가져오기/탐색은 이벤트 기록에서 표를 다시 계산하며,
+새 영구 점수/순위 필드를 도입하지 않습니다. 이름을 숨기면 표를 지우거나 숨깁니다.

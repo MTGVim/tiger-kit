@@ -1,21 +1,23 @@
-# Video explanation
+<a id="video-explanation"></a>
+# 영상 설명
 
-Before handing off, read [media choices](../../tk-writing/references/media-preferences.md) and resolve missing narration,
-presentation and the default-save offer in one round, or delegate that whole round to `tk-video`
-before any production. Pass resolved values, their sources and save-offer disposition; reuse
-answered/saved choices. Selecting video or a preferred voice is not narration consent.
+인계하기 전에 [미디어 선택](../../tk-writing/references/media-preferences.md)을 읽고 누락된 내레이션,
+표현 방식과 기본 저장 제안을 한 번의 질문 라운드에서 확정하거나, 제작을 시작하기 전에
+그 라운드 전체를 `tk-video`에 위임합니다. 확정한 값, 그 출처와 저장 제안의 처리 결과를 전달하고,
+이미 답변했거나 저장된 선택을 재사용합니다. 영상이나 선호 음성을 선택한 것은 내레이션 동의가 아닙니다.
 
-Keep concept understanding, causality, prerequisites, sources and caveats in this skill. Give
-`tk-video` an ordered scene list with captions, labeled rendered-card sources and any explicitly
-selected narration. Re-author page explanations as dedicated video slides: do not crop page
-panels or reuse dense document cards. Give each narration sentence/beat one message, large text
-and a lower safe region at 1080p. The video owner applies its slide-authoring/copy checks and
-resolved light/dark theme before rendering; preserve both comparison subjects in the opening
-scene rather than fading one away. Keep assembler zoom for selected capture regions by default. Use explainer holds rather than pretending presentation time is observed
-software time. Approved existing assertion screenshots may be reused without retouching them.
-If actual app states are needed, the matching verifier owns their capture and mutation boundaries.
-The video owner returns finished media checks and actual inspection limits; do not promote them
-into application verification or understanding. Return the requested video link; preserve sources
-and material caveats in its captions/scene source or a requested accompanying explanation.
-If `tk-video` is unavailable, preserve the explanation and report the missing selected format.
-Do not silently substitute HTML for an explicitly requested movie. No installs or uploads.
+개념 이해, 인과관계, 선수 지식, 출처와 주의사항은 이 스킬에서 담당합니다.
+`tk-video`에는 캡션, 표시가 붙은 렌더링 카드 출처와 명시적으로 선택한 내레이션을 포함하여
+순서대로 정리한 장면 목록을 전달합니다. 페이지 설명을 영상 전용 슬라이드로 다시 작성합니다.
+페이지 패널을 잘라 쓰거나 정보가 빽빽한 문서 카드를 재사용하지 않습니다. 각 내레이션 문장이나
+단위에는 하나의 메시지, 큰 글씨와 1080p 기준 하단 안전 영역을 배정합니다. 영상 담당자는 렌더링 전에
+슬라이드 작성·문구 점검과 확정한 밝은/어두운 테마를 적용합니다. 도입 장면에서는 비교 대상 하나를
+페이드아웃하지 말고 두 대상을 모두 유지합니다. 기본적으로 선택한 캡처 영역에 대한 조립기의 확대를 유지합니다.
+발표 시간을 관찰한 소프트웨어 실행 시간처럼 표현하지 말고 설명을 위한 정지 시간을 사용합니다.
+승인된 기존 assertion 스크린샷은 보정 없이 재사용할 수 있습니다.
+실제 앱 상태가 필요하면 해당 검증 담당자가 캡처와 변경 경계를 담당합니다.
+영상 담당자는 완성된 미디어 점검 결과와 실제 검사 한계를 반환합니다. 이를 애플리케이션 검증이나
+이해의 근거로 확대 해석하지 않습니다. 요청받은 영상 링크를 반환하고, 출처와 중요한 주의사항은
+캡션·장면 출처 또는 요청받은 부가 설명에 보존합니다.
+`tk-video`를 사용할 수 없으면 설명을 보존하고 선택한 형식을 제공할 수 없음을 보고합니다.
+명시적으로 요청받은 동영상을 알리지 않고 HTML로 대체하지 않습니다. 설치하거나 업로드하지 않습니다.

@@ -1,63 +1,63 @@
-# Tutorial input displays
+<a id="tutorial-input-displays"></a>
+# 튜토리얼 입력 표시
 
-Use only when the selected video needs cursor, click, key or region displays. Evaluate this
-package's [capture overlay](../scripts/capture_overlay.js) in the already selected provider's
-page context. It injects an isolated, pointer-transparent, aria-hidden shadow layer; product
-source stays untouched. Record `capture_only_mutation`, its installation/removal and limitations
-in capture provenance. Full navigation needs reinjection; SPA navigation does not.
+선택한 동영상에 커서, 클릭, 키 또는 영역 표시가 필요할 때만 사용합니다. 이미 선택한 제공자의
+페이지 컨텍스트에서 이 패키지의 [캡처 오버레이](../scripts/capture_overlay.js)를 평가합니다.
+이 도우미는 격리되어 포인터를 통과시키고 aria-hidden인 shadow 계층을 주입하며, 제품 소스는
+변경하지 않습니다. 캡처 출처에 `capture_only_mutation`, 설치/제거와 제한을 기록합니다.
+전체 탐색 후에는 다시 주입해야 하지만 SPA 탐색 후에는 필요하지 않습니다.
 
-The helper follows mouse moves, animates clicks and shows keycaps beside the cursor, clamped
-to the viewport. Letters within 900ms group; repeated special keys show `×n`; displays expire
-after 1.8s. Password, OTP, card-number and `[data-tigerkit-sensitive]` targets mask their labels
-before DOM/grouping state; opaque custom-element targets are also masked. Other private fields require existing redaction or disabling input
-displays; this helper does not certify a page safe to publish.
+도우미는 마우스 이동을 따라가고 클릭을 애니메이션으로 표시하며 커서 옆에 키캡을 표시하되
+viewport 안으로 위치를 제한합니다. 900ms 이내의 문자는 묶고, 반복된 특수 키는 `×n`으로
+표시하며, 표시는 1.8초 뒤 사라집니다. 비밀번호, OTP, 카드 번호와 `[data-tigerkit-sensitive]`
+대상의 레이블은 DOM/그룹 상태에 넣기 전에 마스킹하며, 내부를 알 수 없는 custom-element 대상도
+마스킹합니다. 그 밖의 비공개 필드에는 기존 비식별화 또는 입력 표시 비활성화가 필요합니다.
+이 도우미는 페이지를 공개해도 안전하다고 보증하지 않습니다.
 
-`window.__tigerkitCapture.highlight(element)` marks a measured element rectangle;
-`clear()` clears highlights. Refresh them after scrolling/layout changes. Before a cropped
-scene, first mark its region in the full view. `remove()` releases all owned nodes, listeners
-and timers; verify removal before an assertion screenshot and on every capture exit, even failure.
-No overlay frame substitutes for that independent screenshot.
+`window.__tigerkitCapture.highlight(element)`는 측정한 요소 사각형을 표시하고,
+`clear()`는 강조 표시를 지웁니다. 스크롤/레이아웃 변경 후 이를 갱신합니다. 잘라낸 장면 전에
+먼저 전체 보기에서 해당 영역을 표시합니다. `remove()`는 소유한 모든 노드, 리스너와 타이머를
+해제합니다. assertion 스크린샷 전에, 그리고 실패를 포함한 모든 캡처 종료 시 제거를 검증합니다.
+어떤 오버레이 프레임도 해당 독립 스크린샷을 대신하지 않습니다.
 
-Use the provider's actual input API. On an already approved CDP surface, interpolate
-`Input.dispatchMouseEvent` mouse moves over roughly 500-1500ms (about 30ms steps), then pause
-briefly before the press/release at a freshly measured target center. Do not use DOM `.click()`
-as proof of real pointer input. Character `Input.dispatchKeyEvent` uses `keyDown` with `text`;
-special keys use `rawKeyDown`, followed by `keyUp`. `Input.insertText`/IME does not produce the
-same keydown sequence: use `text(approvedPublicLiteral, target)` only when a visible label is
-needed, never read or echo a secret field. Composition events are otherwise omitted.
+제공자의 실제 입력 API를 사용합니다. 이미 승인된 CDP 표면에서는 `Input.dispatchMouseEvent`
+마우스 이동을 약 500~1500ms에 걸쳐 보간하고(약 30ms 간격), 새로 측정한 대상 중심에서
+누르기/떼기를 하기 전에 잠시 멈춥니다. DOM `.click()`을 실제 포인터 입력의 증거로 사용하지
+않습니다. 문자 `Input.dispatchKeyEvent`는 `text`와 함께 `keyDown`을 사용하며, 특수 키는
+`rawKeyDown` 다음에 `keyUp`을 사용합니다. `Input.insertText`/IME는 같은 keydown 시퀀스를
+생성하지 않습니다. 표시할 레이블이 필요할 때만 `text(approvedPublicLiteral, target)`를 사용하며,
+비밀 필드를 읽거나 되풀이하지 않습니다. 그 밖의 composition 이벤트는 생략합니다.
 
-For segmented inputs such as `type=time`, establish focus and the intended initial segment
-from current provider behavior before sending keys; do not rely on a click offset or a fixed
-arrow sequence across locales. Privately assert the resulting value immediately and stop on
-mismatch. Record only publication-safe observed values. Use one clock for scene/frame times,
-normalizing all timestamps to the first frame; wait only the remainder of a measured narration
-hold after actions, rather than adding the full hold again. Deliberate waits are not latency proof.
+`type=time` 같은 분할 입력에서는 키를 보내기 전에 현재 제공자 동작으로 포커스와 의도한 초기
+세그먼트를 확립합니다. 로케일이 달라도 클릭 오프셋이나 고정된 방향키 순서에 의존하지 않습니다.
+결과 값을 즉시 비공개로 검증하고 불일치하면 중단합니다. 공개해도 안전한 관찰 값만 기록합니다.
+장면/프레임 시간에는 하나의 시계를 사용하고 모든 타임스탬프를 첫 프레임 기준으로 정규화합니다.
+동작 후에는 측정한 내레이션 유지 시간에서 남은 시간만 기다리며 전체 유지 시간을 다시 더하지
+않습니다. 의도적인 대기는 지연 시간의 증거가 아닙니다.
 
 
-For narrated beats, clear prior cues at each boundary and draw only the named targets on the
-capture-only layer; use distinct colors and labels for groups. Mark a disappearing target before
-its action and draw a badge at its prior position only after runtime confirms disappearance.
-Keep the layer separate from assertion screenshots and record its mutations and cleanup.
+내레이션 구간에서는 경계마다 이전 시각 단서를 지우고 캡처 전용 계층에 지정된 대상만 그립니다.
+그룹마다 구별되는 색상과 레이블을 사용합니다. 사라질 대상은 동작 전에 표시하고, 런타임에서
+사라짐을 확인한 뒤에만 이전 위치에 배지를 그립니다. 이 계층을 assertion 스크린샷과 분리하고
+변경과 정리를 기록합니다.
 
-After actions bring the narrated result into the viewport. Before page-wheel input, position the
-pointer outside nested scroll containers; after scrolling remeasure the target with
-`getBoundingClientRect()` and fail the capture step if it is still outside the viewport. Verify
-beat targets are visible at beat end, not merely that scrolling stopped.
+동작 후에는 내레이션으로 설명한 결과를 viewport 안으로 가져옵니다. 페이지 휠 입력 전에 중첩
+스크롤 컨테이너 밖으로 포인터를 옮깁니다. 스크롤 후 `getBoundingClientRect()`로 대상을 다시
+측정하고 여전히 viewport 밖에 있으면 캡처 단계를 실패 처리합니다. 스크롤이 멈췄는지만 보지 말고
+구간이 끝날 때 구간 대상이 보이는지 검증합니다.
 
-For selected overlay captions, keep narrated targets outside the bottom 15% caption-safe region
-while capturing. Remeasure after scrolling and after the resulting layout settles; if the target
-cannot fit, retain the limitation and let the video author choose band captions or another view.
-Return each beat's observed times, target identities/group counts and measured `cue_targets`
-rectangles with viewport dimensions, screenshot scale and any crop offset. The video author can
-derive `highlights` and nearby `callouts` from this handoff without guessing coordinates or click
-times. Split a beat's geometry when it changes; keep disappearance confirmations separate from
-authored captions and cards.
+오버레이 자막을 선택했다면 캡처 중 내레이션 대상이 하단 15% 자막 안전 영역 밖에 있도록 합니다.
+스크롤 후와 그에 따른 레이아웃이 안정된 뒤 다시 측정합니다. 대상을 넣을 수 없으면 제한을 보존하고
+동영상 작성자가 밴드 자막이나 다른 보기를 선택하도록 합니다. 각 구간의 관찰 시간, 대상 식별 정보/
+그룹 수, 측정한 `cue_targets` 사각형을 viewport 크기, 스크린샷 배율과 자르기 오프셋과 함께
+반환합니다. 동영상 작성자는 이 인계에서 좌표나 클릭 시간을 추측하지 않고 `highlights`와 인접
+`callouts`를 도출할 수 있습니다. 구간의 기하가 바뀌면 분리하고, 사라짐 확인을 작성된 자막 및
+카드와 구분해 둡니다.
 
-For an action with a known associated network request, track request IDs and completion or
-failure using provider network events (CDP `Network.requestWillBeSent`, `loadingFinished`,
-`loadingFailed`); account for concurrent relevant requests and redirects. Show a centered,
-indeterminate spinner and accurate label only if the actual request remains pending for over one
-second, and remove it on completion/failure. No request means no loading indicator. If request
-association or completion cannot be observed, disclose the limitation rather than inventing a
-loading state. Record each wait's observed duration, indicator visibility and reason in capture
-provenance; narration holds are separate from measured request time.
+연관 네트워크 요청이 알려진 동작에서는 제공자의 네트워크 이벤트(CDP `Network.requestWillBeSent`,
+`loadingFinished`, `loadingFailed`)로 요청 ID와 완료 또는 실패를 추적합니다. 동시에 발생하는
+관련 요청과 리디렉션도 고려합니다. 실제 요청이 1초 넘게 대기 중일 때만 중앙에 불확정 스피너와
+정확한 레이블을 표시하고 완료/실패 시 제거합니다. 요청이 없으면 로딩 표시도 없습니다. 요청
+연결이나 완료를 관찰할 수 없으면 로딩 상태를 만들어 내지 말고 제한을 공개합니다. 캡처 출처에
+각 대기의 관찰 시간, 표시기 노출 여부와 이유를 기록하며, 내레이션 유지 시간은 측정한 요청 시간과
+구분합니다.

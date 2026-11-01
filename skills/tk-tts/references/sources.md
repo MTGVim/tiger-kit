@@ -1,50 +1,26 @@
-# TTS Sources and Distillation
+<a id="tts-sources-and-distillation"></a>
+# TTS 출처와 증류
 
-- TigerKit `68b14419cdef1ac9c2c93766c3926f0a192e2098`: extract existing Qwen CLI, pinning,
-  MLX/PyTorch, cache/offline, decode and non-silence contracts without duplicating engines.
+- TigerKit `68b14419cdef1ac9c2c93766c3926f0a192e2098`: 엔진을 중복하지 않고 기존 Qwen CLI, 고정, MLX/PyTorch, 캐시/오프라인, 디코딩과 무음이 아님을 확인하는 계약을 추출합니다.
 - [Qwen CustomVoice MLX 5bit](https://huggingface.co/mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-5bit/tree/ea57eb1094e142071162f79568581c9315dfd2e7):
-  adapt as Apple Silicon recommendation. Small-file SHA256 computed from pinned bytes; large
-  weight hashes from official LFS metadata. Retain explicit 8bit compatibility at
-  `049ef77fe8816b536193c0c25f9a214d17921282` and official PyTorch pins.
+  Apple Silicon 권장 경로로 적용합니다. 작은 파일의 SHA256은 고정된 바이트에서 계산했고 큰 weight 해시는 공식 LFS 메타데이터에서 가져왔습니다. `049ef77fe8816b536193c0c25f9a214d17921282`의 명시적 8bit 호환성과 공식 PyTorch 고정을 유지합니다.
 - [ppaso](https://huggingface.co/akamotaco/ppaso-tts-v1/tree/53d09664c4f636a5fb6f2ebe3ec22cd83ee249b9):
-  adapt its ONNX CPU/core Korean synthesis only. Keep exact model/runtime/lexicon bytes and
-  Apache/MIT/BSD notices. Omit sample avatars, optional graphics, RKNN, lipsync and server.
-- [Supertonic 3 archived model](https://huggingface.co/supertone-oss-archive/supertonic-3/tree/aafc6e32416a594460b32413efc49d7fe4ce6d46)
-  and [official Python helper/example](https://github.com/supertone-oss-archive/supertonic/tree/1e9799e964ea4c0dad7cde993b65c3c813a7b373/py):
-  keep CPUExecutionProvider, Korean/F1, native chunking, eight steps and speed 1.05. Adapt pinned
-  offline loading and crop each decoded chunk before concatenation. Inspect helper, example,
-  requirements, model card and both licenses at these revisions; model/runtime SHA256 values
-  and platform wheel metadata live in `supertonic3-files.json`. Keep OpenRAIL-M Attachment A(e)
-  disclosure as user guidance and receipt fields, not a downstream labeling claim. The code
-  upstream is archived with development/support ended. Omit SDK/server, auto-download, cloning,
-  other languages/presets and video validators. Source inspection and adapter tests do not prove
-  acoustic quality; report native smoke and human listening separately.
-- The supplied 2026-10-21/22 user experiment chose Qwen5bit and ppaso after one listener and one
-  sample per sentence. This informs support policy, not a universal quality ranking. Its actual
-  model revisions were absent; do not label these latest source pins as benchmark-tested pins.
-- [NeMo Korean cardinal and counter normalization](https://github.com/NVIDIA/NeMo-text-processing/blob/ddadfb2a38d2bc6b8cc6232c4f915eb60f500688/nemo_text_processing/text_normalization/ko/taggers/cardinal.py#L277-L374)
-  and its [cardinal fixtures](https://github.com/NVIDIA/NeMo-text-processing/blob/ddadfb2a38d2bc6b8cc6232c4f915eb60f500688/tests/nemo_text_processing/ko/data_text_normalization/test_cases_cardinal.txt):
-  adapt context-based quantity/digit/counter distinctions to authored spoken-script preparation.
-  Keep source literals and raw benchmark inputs; do not copy its fixed zero/separator rules.
-- NeMo at the same revision, [measure implementation](https://github.com/NVIDIA/NeMo-text-processing/blob/ddadfb2a38d2bc6b8cc6232c4f915eb60f500688/nemo_text_processing/text_normalization/ko/taggers/measure.py)
-  and [measure fixtures](https://github.com/NVIDIA/NeMo-text-processing/blob/ddadfb2a38d2bc6b8cc6232c4f915eb60f500688/tests/nemo_text_processing/ko/data_text_normalization/test_cases_measure.txt):
-  adapt separate numeric/unit interpretation. Its [unit lexicon](https://github.com/NVIDIA/NeMo-text-processing/blob/ddadfb2a38d2bc6b8cc6232c4f915eb60f500688/nemo_text_processing/text_normalization/ko/data/measure/unit.tsv)
-  lacks `ms` and `GB`; do not infer support for those examples. Omit external normalizers,
-  WFST runtime, Cloud calls, SSML and global replacement rules. Source/comments/fixtures were
-  read at the verified 2026-10-23 main revision; upstream tests and acoustic A/B were not run.
+  ONNX CPU/핵심 한국어 합성만 적용합니다. 정확한 모델/런타임/lexicon 바이트와 Apache/MIT/BSD 고지를 유지합니다. 샘플 avatar, 선택적 그래픽, RKNN, lipsync와 서버는 제외합니다.
+- [Supertonic 3 보관 모델](https://huggingface.co/supertone-oss-archive/supertonic-3/tree/aafc6e32416a594460b32413efc49d7fe4ce6d46)
+  및 [공식 Python 도우미/예시](https://github.com/supertone-oss-archive/supertonic/tree/1e9799e964ea4c0dad7cde993b65c3c813a7b373/py):
+  CPUExecutionProvider, 한국어/F1, native chunk 분할, 8단계와 speed 1.05를 유지합니다. 고정된 오프라인 로딩을 적용하고 디코딩한 각 chunk를 자른 후 연결합니다. 이 revision의 도우미, 예시, requirements, 모델 카드와 두 라이선스를 검사합니다. 모델/런타임 SHA256 값과 플랫폼 wheel 메타데이터는 `supertonic3-files.json`에 있습니다. OpenRAIL-M Attachment A(e) 고지는 사용자 안내와 receipt 필드로 유지하며 후속 표시를 주장하지 않습니다. 코드 upstream은 보관 처리되었으며 개발/지원이 종료되었습니다. SDK/서버, 자동 다운로드, 복제, 다른 언어/preset과 영상 validator는 제외합니다. 소스 검사와 adapter 테스트는 음향 품질을 입증하지 않습니다. Native smoke와 사람의 청취를 별도로 보고합니다.
+- 제공된 2026-10-21/22 사용자 실험은 청취자 1명과 문장당 샘플 1개를 바탕으로 Qwen5bit와 ppaso를 선택했습니다. 이는 지원 정책의 참고이며 보편적인 품질 순위가 아닙니다. 실제 모델 revision은 없었습니다. 이 최신 소스 고정값을 벤치마크로 테스트한 고정값이라고 표시하지 않습니다.
+- [NeMo 한국어 기수와 단위 명사 정규화](https://github.com/NVIDIA/NeMo-text-processing/blob/ddadfb2a38d2bc6b8cc6232c4f915eb60f500688/nemo_text_processing/text_normalization/ko/taggers/cardinal.py#L277-L374)
+  및 [기수 fixture](https://github.com/NVIDIA/NeMo-text-processing/blob/ddadfb2a38d2bc6b8cc6232c4f915eb60f500688/tests/nemo_text_processing/ko/data_text_normalization/test_cases_cardinal.txt):
+  맥락에 따른 수량/개별 숫자/단위 명사 구별을 직접 작성하는 낭독 원고 준비에 적용합니다. 소스 literal과 원시 벤치마크 입력을 유지합니다. 고정된 0/구분자 규칙을 복사하지 않습니다.
+- 동일 revision의 NeMo [측정값 구현](https://github.com/NVIDIA/NeMo-text-processing/blob/ddadfb2a38d2bc6b8cc6232c4f915eb60f500688/nemo_text_processing/text_normalization/ko/taggers/measure.py)
+  및 [측정값 fixture](https://github.com/NVIDIA/NeMo-text-processing/blob/ddadfb2a38d2bc6b8cc6232c4f915eb60f500688/tests/nemo_text_processing/ko/data_text_normalization/test_cases_measure.txt):
+  숫자/단위의 분리 해석을 적용합니다. [단위 lexicon](https://github.com/NVIDIA/NeMo-text-processing/blob/ddadfb2a38d2bc6b8cc6232c4f915eb60f500688/nemo_text_processing/text_normalization/ko/data/measure/unit.tsv)에는 `ms`와 `GB`가 없습니다. 해당 예시의 지원을 추론하지 않습니다. 외부 normalizer, WFST 런타임, Cloud 호출, SSML과 전역 치환 규칙은 제외합니다. 소스/주석/fixture는 검증된 2026-10-23 main revision에서 읽었습니다. Upstream 테스트와 음향 A/B는 실행하지 않았습니다.
 
-Keep longest-input/equal-cache smoke and actual/expected runtime diagnostics. Omit automatic ASR,
-model/engine fallback, untested short-utterance retry rules and a new blind-gallery skill.
-Actual model synthesis/listening on target hardware must be reported separately from mocked
-adapter tests, source/pin inspection and missing-runtime diagnostics.
+최장 입력/동일 캐시 smoke와 실제/기대 런타임 진단을 유지합니다. 자동 ASR, 모델/엔진 fallback, 테스트하지 않은 짧은 발화 재시도 규칙과 새 블라인드 갤러리 스킬은 제외합니다. 대상 하드웨어에서의 실제 모델 합성/청취는 mocked adapter 테스트, 소스/고정 검사와 런타임 부재 진단과 별도로 보고해야 합니다.
 
 
-## Setup transparency (2026-10-29)
+<a id="setup-transparency-2026-10-29"></a>
+## 설정 투명성(2026-10-29)
 
-Inspected the current package-local `ppaso-files.json` core dependency/wheel hashes and
-`list_options.py` discovery behavior at TigerKit `e672abcc0fedc8b91766266c8117a21496f02cbe`.
-Keep the five core pins; disclose the absence of a complete transitive lock rather than inventing
-hashes or claiming full reproducibility. Adapt the supplied macOS arm64/Python 3.12 observation
-(about 406MB venv plus model) as a clearly attributed footprint reference; it is not a fresh native
-installation measurement. Omit model/runtime upgrades, hidden engine exclusion and automatic
-setup merely to obtain a size. Option discovery remains offline and imports no engine.
+TigerKit `e672abcc0fedc8b91766266c8117a21496f02cbe`에서 현재 패키지 로컬 `ppaso-files.json`의 핵심 의존성/wheel 해시와 `list_options.py` 탐색 동작을 검사했습니다. 핵심 고정값 5개를 유지합니다. 해시를 만들어 내거나 완전한 재현성을 주장하는 대신 완전한 하위 의존성 lock이 없음을 고지합니다. 제공된 macOS arm64/Python 3.12 관찰값(venv와 모델 약 406MB)을 출처가 명확한 용량 참고값으로 적용합니다. 이는 새로 수행한 native 설치 측정이 아닙니다. 모델/런타임 업그레이드, 숨겨진 엔진 제외와 크기 확인만을 위한 자동 설정은 제외합니다. 선택지 탐색은 오프라인으로 유지하며 엔진을 import하지 않습니다.

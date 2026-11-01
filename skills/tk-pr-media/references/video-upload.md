@@ -1,42 +1,45 @@
-# Native video attachments
+<a id="native-video-attachments"></a>
+# 기본 동영상 첨부
 
-Read only for an explicitly selected MP4 or optional motion supplement; the existing image/GIF
-extension and CDP routes keep their own guards. Accept H.264 MP4 with optional AAC mono audio.
-Inspect local MIME/container, dimensions/duration and decoded frames before upload. Preserve the
-selected PR/comment and actual write authority. Default video budget is 10MB unless the target
-owner's paid-plan allowance is proved; image/GIF limits and encoding targets are different.
+명시적으로 선택한 MP4나 선택적 동작 보충 자료에 대해서만 읽습니다. 기존 이미지·GIF
+확장 기능과 CDP 경로는 각자의 보호 조건을 유지합니다. H.264 MP4를 허용하며 AAC 모노 오디오는 선택 사항입니다.
+업로드 전에 로컬 MIME·컨테이너, 크기·재생 시간과 디코딩한 프레임을 확인합니다. 선택한
+PR·댓글과 실제 쓰기 권한을 유지합니다. 대상 소유자의 유료 요금제 허용량이 입증되지 않았다면
+기본 동영상 한도는 10MB입니다. 이미지·GIF의 제한과 인코딩 목표는 이와 다릅니다.
 
-## Native CLI route
+<a id="native-cli-route"></a>
+## 기본 CLI 경로
 
-Inspect the host's actual `gh pr edit --help` and authentication before choosing the built-in
-`--attach` capability. The extension command `gh attach` is a different interface. Do not install
-or upgrade gh implicitly. Native CLI attachment supports the PR body here; do not use `--edit-last`
-to guess a selected comment. For a comment target use only an explicitly selected capable CDP route
-or report the missing capability. Never create a new comment as a workaround.
+내장 `--attach` 기능을 선택하기 전에 호스트의 실제 `gh pr edit --help`와
+인증을 확인합니다. 확장 명령 `gh attach`는 다른 인터페이스입니다. gh를 암묵적으로
+설치하거나 업그레이드하지 않습니다. 여기서 기본 CLI 첨부는 PR 본문을 지원합니다. `--edit-last`로
+선택된 댓글을 추측하지 않습니다. 댓글 대상에는 명시적으로 선택한 기능을 갖춘 CDP 경로만
+사용하거나, 필요한 기능이 없다고 보고합니다. 우회하려고 새 댓글을 만들지 않습니다.
 
-For an existing PR body, write a run-owned UTF-8 body file preserving all unrelated bytes and the
-existing screenshot section/pairs. Add a separate motion section with observed-flow captions and
-one video placeholder alone in its paragraph:
+기존 PR 본문에는 무관한 모든 바이트와 기존 스크린샷 섹션·쌍을 보존하는
+실행 소유 UTF-8 본문 파일을 작성합니다. 관찰된 흐름을 설명하는 캡션과 문단에 단독으로 놓인
+동영상 자리표시자 하나가 있는 별도의 동작 섹션을 추가합니다.
 
-Use a Markdown image reference with empty alt text and the actual absolute video path;
-keep the entire reference alone in its paragraph before the command.
+빈 대체 텍스트와 실제 동영상 절대 경로가 있는 Markdown 이미지 참조를 사용합니다.
+명령 실행 전에 참조 전체를 문단에 단독으로 유지합니다.
 
-Run `gh pr edit <number> --repo <owner/repo> --body-file <file> --attach <exact-video>`.
-This command uploads AND changes the body; do not perform a second body replacement afterward.
-Use the native CLI's documented video rewrite, not an image table or inline paragraph link.
-Never copy the extension's `refs/uploads/issues` reachability test to native attachments.
-This route has no such ref. A failed command may already have changed remote state: reread it
-and report partial success before any retry; never switch routes silently.
+`gh pr edit <number> --repo <owner/repo> --body-file <file> --attach <exact-video>`를 실행합니다.
+이 명령은 업로드와 본문 변경을 함께 수행합니다. 이후 본문을 두 번째로 교체하지 않습니다.
+이미지 표나 문단 내 링크 대신 기본 CLI에 문서화된 동영상 재작성 방식을 사용합니다.
+확장 기능의 `refs/uploads/issues` 도달 가능성 검사를 기본 첨부에 복사하지 않습니다.
+이 경로에는 그런 ref가 없습니다. 명령이 실패해도 원격 상태가 이미 바뀌었을 수 있습니다. 재시도 전에
+다시 읽고 부분 성공을 보고하며, 알리지 않고 경로를 바꾸지 않습니다.
 
-## Verification
+<a id="verification"></a>
+## 검증
 
-Reread the raw body and require one reference to each uploaded object in the intended standalone
-position. Authenticated-fetch the exact object, require nonempty `video/mp4` bytes and decode them
-with an available trusted media decoder. Check expected duration/dimensions, video and selected
-audio streams. Then inspect the rendered player: metadata loads and currentTime advances after
-playback. An HTML video element alone does not prove playback. When browser playback is unavailable,
-report upload-byte verification separately and playback as `Unverifiable`, not a full media Pass.
-Keep signed fetch values private and never feed redacted diagnostic URLs back into the body.
-Clean only this run's staging/body files. Optional media failure does not invalidate the independently
-verified application or required screenshot publication; an explicitly requested media delivery
-remains incomplete and must be reported as such.
+원시 본문을 다시 읽고, 의도한 독립 위치에 업로드 객체마다 참조가 하나씩 있어야 합니다.
+인증된 요청으로 정확한 객체를 가져와 비어 있지 않은 `video/mp4` 바이트인지 확인하고,
+사용 가능한 신뢰할 수 있는 미디어 디코더로 디코딩합니다. 예상 재생 시간·크기, 동영상과 선택된
+오디오 스트림을 확인합니다. 그다음 렌더링된 플레이어를 확인합니다. 메타데이터가 로드되고 재생 후
+currentTime이 증가해야 합니다. HTML video 요소만으로는 재생을 입증할 수 없습니다. 브라우저 재생을 사용할 수 없다면,
+전체 미디어 Pass가 아니라 업로드 바이트 검증을 별도로 보고하고 재생은 `Unverifiable`로 보고합니다.
+서명된 fetch 값은 비공개로 유지하고 마스킹한 진단 URL을 본문에 다시 넣지 않습니다.
+이번 실행의 staging·본문 파일만 정리합니다. 선택적 미디어 실패는 독립적으로 검증된
+애플리케이션이나 필수 스크린샷 발행을 무효로 만들지 않습니다. 명시적으로 요청된 미디어 전달은
+미완료로 남으며 그대로 보고해야 합니다.

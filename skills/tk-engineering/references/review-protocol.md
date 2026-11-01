@@ -1,196 +1,77 @@
-# Independent review protocol
+<a id="independent-review-protocol"></a>
+# 독립 리뷰 프로토콜
 
-Read this for every direct exact-change, SDD Unit, SDD whole-change, or explicit
-`tk-review` review. The controller owns target binding, dispatch, aggregation,
-candidate verification, remediation routing, and final output. Discovery reviewers and
-finding verifiers are read-only leaves and never redispatch.
+모든 직접 실행의 정확한 변경 리뷰, SDD Unit 리뷰, SDD 전체 변경 리뷰 또는 명시적 `tk-review` 리뷰에서 읽습니다. 컨트롤러는 대상 결합, 디스패치, 취합, 후보 검증, 수정 라우팅과 최종 출력을 담당합니다. 탐색 리뷰어와 발견 사항 검증자는 읽기 전용 리프이며 재디스패치하지 않습니다.
 
-## Delegation permissions
+<a id="delegation-permissions"></a>
+## 위임 권한
 
-Before dispatching any implementer, reviewer, verifier, diagnostic leaf, or delegated controller,
-verify from current host/tool evidence that its effective tool and data access is the same as or
-narrower than the parent/controller's for the same target environment. Preserve `deny | ask | allow`,
-read/path restrictions, approval scope, and publication/destructive-action authority. A read-only
-role, prompt instruction, provider name, or static allowlist alone does not prove enforcement.
+구현자, 리뷰어, 검증자, 진단 리프 또는 위임된 컨트롤러를 디스패치하기 전에 현재 호스트·도구 근거로 동일한 대상 환경에 대한 실효 도구·데이터 접근 범위가 부모·컨트롤러와 같거나 더 좁음을 검증합니다. `deny | ask | allow`, 읽기·경로 제한, 승인 범위와 발행·파괴적 행동 권한을 보존합니다. 읽기 전용 역할, 프롬프트 지시, 제공자 이름이나 정적 허용 목록만으로는 강제가 입증되지 않습니다.
 
-Bind that evidence to the actual workspace/worktree, repository root, sandbox/container, filesystem
-restrictions, remote target, and account/connector context as applicable. Recheck when the environment,
-policy, or requested access changes, including on resume. Prior approval, cached decisions, and
-review results do not transfer automatically across environments or authorize wider subsequent access.
-Do not turn parent `deny` or `ask` into child `allow`; preserve the existing supported approval route
-or stop the affected action, without adding automatic elevation or a new approval lifecycle.
+해당하는 경우 이 근거를 실제 workspace/worktree, 저장소 루트, sandbox/container, 파일시스템 제한, 원격 대상과 계정·커넥터 맥락에 결합합니다. 재개 시를 포함해 환경, 정책이나 요청 접근이 바뀌면 다시 확인합니다. 이전 승인, 캐시한 결정과 리뷰 결과는 환경 사이에서 자동으로 이전되지 않으며 이후의 더 넓은 접근을 승인하지 않습니다. 부모의 `deny`나 `ask`를 자식의 `allow`로 바꾸지 않습니다. 자동 권한 상승이나 새로운 승인 생명주기를 추가하지 않고 기존의 지원되는 승인 경로를 보존하거나 영향받는 행동을 중단합니다.
 
-Read restrictions cover indirect shell/Git reads and material embedded in prompts, diffs, or tool
-results as well as direct file tools. Reuse existing bounded review transport with only authorized
-material; filtering a brief does not make broader child tool access safe. Include the applicable
-boundary and current evidence in the child brief; leaves stop and return a mismatch to the controller.
+읽기 제한은 직접 파일 도구뿐 아니라 간접 shell·Git 읽기와 프롬프트, diff 또는 도구 결과에 포함된 자료에도 적용됩니다. 승인된 자료만으로 기존의 한정된 리뷰 전달 방식을 재사용합니다. 브리프 필터링이 더 넓은 자식 도구 접근을 안전하게 만들지는 않습니다. 자식 브리프에 적용되는 경계와 현재 근거를 포함합니다. 리프는 불일치가 있으면 중단하고 컨트롤러에 반환합니다.
 
-If safe inheritance/narrowing cannot be established and broader access is possible, do not dispatch.
-Use an already-authorized controller path only when it preserves the restrictions and role obligations;
-otherwise return `Blocked | Unverifiable` for the affected work. Controller self-review cannot satisfy
-required independent coverage. With verified same-or-narrower access, proceed without extra approval,
-a permission registry, durable environment ledger, or re-dispatch ceremony.
+안전한 상속·축소를 입증할 수 없고 더 넓은 접근이 가능하다면 디스패치하지 않습니다. 제한과 역할 의무를 보존하는 경우에만 이미 승인된 컨트롤러 경로를 사용합니다. 그렇지 않으면 영향받는 작업에 `Blocked | Unverifiable`을 반환합니다. 컨트롤러 자체 리뷰는 필수 독립 검토 범위를 충족할 수 없습니다. 같거나 더 좁은 접근이 검증되면 추가 승인, 권한 registry, 영구 환경 장부나 재디스패치 의식 없이 진행합니다.
 
-## Inputs and evidence authority
+<a id="inputs-and-evidence-authority"></a>
+## 입력과 근거의 권위
 
-When repository instructions, the task or its plan name project rules, read
-[project rule selection](project-rules.md); revalidate selection against the actual
-diff and pinned baseline before judging compliance.
+저장소 지침, 작업이나 계획이 프로젝트 규칙을 명시하면 [프로젝트 규칙 선택](project-rules.md)을 읽습니다. 준수 여부를 판정하기 전에 실제 diff와 고정된 기준선에 비추어 선택을 재검증합니다.
 
-Bind every seat to the same exact repository/range or worktree fingerprint, original task or
-incident when one exists, expected scenario, approved decisions and AC, repository rules,
-exact diff, and already-collected test/build/runtime/browser evidence for that exact
-target, including command, output, and exit state. Read that evidence before considering
-a rerun; stale or missing evidence is a gap, not a passing claim.
+모든 리뷰 역할을 동일하고 정확한 저장소·범위 또는 worktree 지문, 존재하는 경우 원래 작업이나 사건, 예상 시나리오, 승인된 결정과 AC, 저장소 규칙, 정확한 diff와 해당 정확한 대상에 대해 이미 수집한 테스트·빌드·런타임·브라우저 근거에 결합합니다. 근거에는 명령, 출력과 종료 상태를 포함합니다. 재실행을 고려하기 전에 이 근거를 읽습니다. 오래되거나 누락된 근거는 공백이며 통과 주장이 아닙니다.
 
-When a supplied diff is a file path, inspect its `diff --git` boundaries and read each needed
-section once in chunks within the current tool's read/output limit. Split an oversized file
-section at hunk boundaries; retain every needed hunk, rename, binary-change notice and cross-file
-risk edge. Reviewers choose relevant sections themselves rather than accepting a dispatcher
-file subset as complete coverage. Reuse already supplied inline/read content; do not regenerate
-the whole diff through Git or repeat whole-file reads to bypass a limit. A specific relationship,
-finding check or lost/truncated context can justify a bounded reread; name that reason and recover
-only the missing section. Incomplete coverage remains `Unverifiable`, never a cost-saving Pass.
+제공된 diff가 파일 경로이면 `diff --git` 경계를 검사하고 현재 도구의 읽기·출력 한도 안에서 필요한 각 섹션을 한 번씩 나누어 읽습니다. 너무 큰 파일 섹션은 hunk 경계에서 나눕니다. 필요한 모든 hunk, 이름 변경, 바이너리 변경 고지와 파일 간 위험 경계를 유지합니다. 리뷰어는 디스패처가 고른 파일 일부를 완전한 검토 범위로 받아들이지 말고 관련 섹션을 직접 선택합니다. 이미 제공된 인라인·읽기 콘텐츠를 재사용합니다. 한도를 우회하려고 Git으로 전체 diff를 재생성하거나 전체 파일 읽기를 반복하지 않습니다. 특정 관계, 발견 사항 검사 또는 유실·잘린 맥락은 한정된 재읽기의 근거가 될 수 있습니다. 이유를 명시하고 누락된 섹션만 복구합니다. 불완전한 검토 범위는 `Unverifiable`로 남으며 비용 절약을 위한 Pass가 될 수 없습니다.
 
-For implementation-owning flows, add a post-implementation retro that states the behavior
-actually changed, Seed deviations and reasons, newly discovered risks, verification
-observations, and unresolved limitations. Treat it as an untrusted claim bundle below the
-original behavior, approved decisions, repository contracts, exact code/diff, and runtime
-evidence. A standalone review remains valid without a retro and discloses missing intent
-instead of inventing it.
+구현을 담당하는 흐름에는 실제로 바뀐 동작, Seed 이탈과 이유, 새로 발견한 위험, 검증 관찰과 미해결 한계를 명시하는 구현 후 회고를 추가합니다. 이를 원래 동작, 승인된 결정, 저장소 계약, 정확한 코드·diff와 런타임 근거보다 낮은 신뢰할 수 없는 주장 묶음으로 취급합니다. 독립 실행 리뷰는 회고 없이도 유효하며 의도를 만들어 내는 대신 누락된 의도를 공개합니다.
 
-Each discovery seat first receives and inspects the original evidence and exact change without the
-retro. After the seat records its blind observations, the controller resumes that same read-only
-leaf with the retro so it can confirm or falsify the material claims. Do not place the retro in the
-initial discovery payload or use implementer rationale or claimed test success as proof.
+각 탐색 리뷰 역할은 먼저 회고 없이 원래 근거와 정확한 변경을 받아 검사합니다. 해당 역할이 사전 정보 없는 관찰을 기록한 뒤 컨트롤러는 같은 읽기 전용 리프를 회고와 함께 재개하여 중요한 주장을 확인하거나 반증하게 합니다. 초기 탐색 payload에 회고를 넣거나 구현자 논리나 주장된 테스트 성공을 증거로 사용하지 않습니다.
 
-Keep context-isolated seats parallel, but serialize shared heavyweight execution through
-the controller. Discovery seats and finding verifiers must not start full-suite tests,
-builds, dev servers, or other shared heavyweight processes in the same workspace.
-A narrowly focused check may resolve one specific unanswered question only after the
-controller reserves execution for that leaf and confirms no other seat or controller
-check/heavyweight process overlaps; release that reservation after exit/cleanup. Generic
-permission to run tests does not waive this boundary. When needed evidence is unavailable
-or a check cannot safely run, request it from the controller or retain `Unverifiable`;
-the controller collects necessary broader evidence serially within existing authority.
+맥락이 격리된 리뷰 역할은 병렬로 유지하되 공유하는 무거운 실행은 컨트롤러를 통해 직렬화합니다. 탐색 리뷰 역할과 발견 사항 검증자는 같은 workspace에서 전체 테스트 모음, 빌드, 개발 서버나 기타 공유 무거운 프로세스를 시작해서는 안 됩니다. 좁게 집중한 검사는 컨트롤러가 해당 리프에 실행을 예약하고 다른 역할이나 컨트롤러 검사·무거운 프로세스가 겹치지 않음을 확인한 뒤에만 특정 미해결 질문 하나를 해결할 수 있습니다. 종료·정리 후 예약을 해제합니다. 일반적인 테스트 실행 권한은 이 경계를 면제하지 않습니다. 필요한 근거가 없거나 검사를 안전하게 실행할 수 없다면 컨트롤러에 요청하거나 `Unverifiable`을 유지합니다. 컨트롤러가 기존 권한 안에서 필요한 더 넓은 근거를 직렬로 수집합니다.
 
-When a leaf reports waiting on a long-running process, inspect its actual process/session,
-elapsed time, CPU and output progress before relaying the status or waiting again.
-CPU inactivity alone does not prove a stall. If a review-owned process is confirmed
-stalled, stop it through its owning session, confirm cleanup, and continue from valid
-exact-target evidence or retain the missing evidence as `Unverifiable`. Do not terminate
-unrelated processes. If liveness cannot be inspected, disclose that gap instead of
-repeating an unverified waiting claim or ending the turn with an unmanaged review process.
+리프가 오래 실행되는 프로세스를 기다린다고 보고하면 상태를 전달하거나 다시 기다리기 전에 실제 프로세스·세션, 경과 시간, CPU와 출력 진행 상황을 검사합니다. CPU 비활성만으로 정체를 입증할 수는 없습니다. 리뷰 소유 프로세스의 정체가 확인되면 소유 세션을 통해 중단하고 정리를 확인한 뒤 유효한 정확한 대상 근거에서 계속하거나 누락된 근거를 `Unverifiable`로 유지합니다. 무관한 프로세스를 종료하지 않습니다. 실행 상태를 검사할 수 없다면 검증되지 않은 대기 주장을 반복하거나 관리되지 않는 리뷰 프로세스를 남긴 채 턴을 끝내지 말고 해당 공백을 공개합니다.
 
-## Discovery seats and walks
+<a id="discovery-seats-and-walks"></a>
+## 탐색 리뷰 역할과 검토 경로
 
-One seat completes both judgment axes and both procedural walks:
+하나의 리뷰 역할은 두 판정 축과 두 절차적 검토 경로를 모두 완료합니다.
 
-1. **Fidelity/replay**: replay the original incident or expected scenario; check AC omissions,
-   excess behavior, implementation deviations, and whether protection covers the real behavior.
-2. **Change-risk**: inspect removed or `must-not-change` behavior, error/state/lifecycle paths,
-   caller/callee and producer/consumer contracts, and change-owned cross-cutting risk.
+1. **충실도·재현**: 원래 사건이나 예상 시나리오를 재현합니다. AC 누락, 과도한 동작, 구현 이탈과 보호가 실제 동작을 다루는지 확인합니다.
+2. **변경 위험**: 제거된 동작이나 `must-not-change` 동작, 오류·상태·생명주기 경로, 호출자·피호출자와 생성자·소비자 계약 및 변경에 귀속되는 횡단 위험을 검사합니다.
 
-When the change substantially rewrites or relocates skill instructions, use the existing
-independent seat to read the changed prose in context against the prior text. For a body
-restructure, read the whole always-loaded body and its moved sections; inspect copied text
-once. Quote wording that leaves the actor, condition, exception, approval authority, failure
-state or rule precedence ambiguous, and show any changed behavior. Distinguish intended,
-approved contract changes from accidental meaning drift. Clear wording and explicit unknowns
-are valid; stylistic preference alone is not a finding. Restore the missing meaning plainly
-or fix placement and its read trigger rather than compressing again. Small edits that do
-not affect a behavior contract need no extra reader pass. This is part of fidelity/replay
-and change-risk inspection, not another seat or a `tk-rewrite` invocation.
+변경이 스킬 지침을 상당 부분 다시 쓰거나 이동한다면 기존 독립 리뷰 역할이 이전 텍스트와 대조하며 맥락 속에서 변경된 문장을 읽게 합니다. 본문을 재구성한 경우 항상 불러오는 본문 전체와 이동된 섹션을 읽습니다. 복사된 텍스트는 한 번 검사합니다. 행위자, 조건, 예외, 승인 권한, 실패 상태나 규칙 우선순위를 모호하게 만드는 문구를 인용하고 바뀐 동작을 보여 줍니다. 의도하고 승인한 계약 변경과 우발적인 의미 변화를 구별합니다. 명확한 문구와 명시적인 미확인 사항은 유효합니다. 문체 선호만으로는 발견 사항이 아닙니다. 다시 압축하기보다 누락된 의미를 명료하게 복구하거나 배치와 읽기 조건을 수정합니다. 동작 계약에 영향을 주지 않는 작은 편집에는 추가 읽기 검토가 필요하지 않습니다. 이는 충실도·재현과 변경 위험 검사의 일부이며 추가 리뷰 역할이나 `tk-rewrite` 호출이 아닙니다.
 
-During change-risk inspection, when the diff derives identity, ownership, provenance,
-or routing from a string's shape (name equality, prefix/suffix, split, path position,
-compound or normalized key), construct two distinct valid entities that the actual
-predicate conflates and trace their decisions. Do not stop at a yes/no collision question
-or accept a misidentification because the brief requested that lookup. Check that focused
-regression evidence protects observable separation; prefer existing canonical identity,
-explicit fields, or an unambiguous representation. Display-only formatting, directly
-compared canonical typed IDs, and a verified injective repository contract need no
-collision exercise. Keep this within the existing walk, without a new review phase.
+변경 위험 검사 중 diff가 문자열 형태(이름 일치, 접두사·접미사, 분할, 경로 위치, 복합 키나 정규화한 키)에서 식별 정보, 소유권, 출처 또는 라우팅을 도출한다면 실제 술어가 혼동하는 서로 다른 유효한 개체 두 개를 구성하고 그 결정을 추적합니다. 충돌 여부만 묻고 멈추거나 브리프가 해당 조회를 요청했다는 이유로 오식별을 받아들이지 않습니다. 집중 회귀 근거가 관찰 가능한 분리를 보호하는지 확인합니다. 기존 정본 식별 정보, 명시적 필드 또는 모호하지 않은 표현을 우선합니다. 표시 전용 서식, 직접 비교하는 정본 타입 ID와 검증된 단사 저장소 계약에는 충돌 검사가 필요하지 않습니다. 새 리뷰 단계 없이 기존 검토 경로 안에서 수행합니다.
 
-An SDD Unit review uses one fresh discovery seat. A direct final review uses one fresh discovery
-seat only when the exact diff and evidence establish a bounded, reversible change with understood
-callers, focused behavior protection (or justified testing `N/A`), and no material unresolved risk.
-Use two context-isolated discovery seats for direct changes involving security/permissions,
-persisted data or migrations, public-contract compatibility, cross-boundary state/lifecycle,
-or complex interactions. Unknown impact or a required testing exception also requires two;
-small file count, a `direct` label, or unavailable reviewer capacity never proves low risk.
-Honor a stricter approved or repository review requirement. Reassess the exact candidate after
-material changes and increase coverage when the one-seat conditions no longer hold.
+SDD Unit 리뷰는 새로운 탐색 리뷰 역할 하나를 사용합니다. 직접 실행 최종 리뷰는 정확한 diff와 근거로 범위가 한정되고 가역적인 변경, 이해된 호출자, 집중된 동작 보호 또는 정당한 테스트 `N/A`, 중대하고 미해결된 위험의 부재가 입증될 때만 새로운 탐색 리뷰 역할 하나를 사용합니다. 보안·권한, 영속 데이터나 마이그레이션, 공개 계약 호환성, 경계를 넘는 상태·생명주기 또는 복잡한 상호작용이 있는 직접 변경에는 맥락이 격리된 탐색 리뷰 역할 두 개를 사용합니다. 알 수 없는 영향이나 필수 테스트 예외도 두 개를 요구합니다. 파일 수가 적거나, `direct`라는 표시가 있거나, 리뷰어 자원이 부족하다는 사실은 낮은 위험을 입증하지 않습니다. 더 엄격한 승인된 리뷰 요구나 저장소 리뷰 요구를 준수합니다. 중대한 변경 후 정확한 후보를 재평가하고 한 역할의 조건이 더 이상 성립하지 않으면 검토 범위를 늘립니다.
 
-SDD whole-change final review and explicit `tk-review` continue to use two context-isolated
-discovery seats. Every seat uses the same target, evidence, axes, finding gate, and severity
-rubric and completes both walks. With two seats, one starts with fidelity/replay and the other
-with change-risk; neither sees the other's findings or verdict before returning. One seat still
-requires the blind pass, retro check, and separate verification of reportable candidates below.
+SDD 전체 변경 최종 리뷰와 명시적 `tk-review`는 계속 맥락이 격리된 탐색 리뷰 역할 두 개를 사용합니다. 각 역할은 같은 대상, 근거, 판정 축, 발견 사항 기준과 심각도 기준을 사용하고 두 검토 경로를 모두 완료합니다. 두 역할에서는 하나가 충실도·재현으로 시작하고 다른 하나가 변경 위험으로 시작합니다. 어느 쪽도 반환 전에 상대의 발견 사항이나 판정을 보지 않습니다. 한 역할이어도 아래의 사전 정보 없는 검토, 회고 확인과 보고 가능한 후보의 별도 검증이 필요합니다.
 
-A current invocation may occupy one final seat only when it did not author or modify the target
-and has not seen another seat's result. An implementation or controller context is never an
-independent seat. If the host cannot supply the required fresh contexts, perform the strongest
-available exact-scope review, report supported defects, and mark the missing independent
-coverage `Unverifiable`; never claim that serial passes in one context are independent.
+현재 호출은 대상을 작성하거나 수정하지 않았고 다른 역할의 결과를 보지 않은 경우에만 최종 리뷰 역할 하나를 맡을 수 있습니다. 구현 또는 컨트롤러 맥락은 독립 리뷰 역할이 될 수 없습니다. 호스트가 필요한 새 맥락을 제공하지 못한다면 가능한 가장 강한 정확한 범위의 리뷰를 수행하고 근거 있는 결함을 보고하며 누락된 독립 검토 범위를 `Unverifiable`로 표시합니다. 한 맥락의 직렬 검토가 독립적이라고 주장하지 않습니다.
 
-Use `appear | disappear | change | preserve | defect-fix` intent. Do not fabricate a prior
-incident for a new feature or refactor; use expected scenarios and `must-not-change` surfaces.
+`appear | disappear | change | preserve | defect-fix` 의도를 사용합니다. 새 기능이나 리팩터링에 이전 사건을 만들어 내지 않습니다. 예상 시나리오와 `must-not-change` 지점을 사용합니다.
 
-## Reviewer evidence and bounded recovery
+<a id="reviewer-evidence-and-bounded-recovery"></a>
+## 리뷰어 근거와 한정된 복구
 
-Starting a review leaf is not a review result. Before accepting a seat, verify it
-actually inspected the exact bound diff or target (for example: observed diff read,
-target-linked findings, or a supported inspection receipt); a generic success,
-empty completion, unrelated response or process startup is not evidence. Do not
-promote a seat with missing/incorrect target evidence to Pass.
+리뷰 리프 시작은 리뷰 결과가 아닙니다. 역할의 결과를 받아들이기 전에 정확히 결합된 diff나 대상을 실제로 검사했는지 검증합니다. 예를 들어 관찰된 diff 읽기, 대상에 연결된 발견 사항 또는 뒷받침되는 검사 receipt를 사용합니다. 일반적 성공, 빈 완료, 무관한 응답 또는 프로세스 시작은 근거가 아닙니다. 대상 근거가 없거나 잘못된 역할을 Pass로 승격하지 않습니다.
 
-If a leaf fails before inspecting the target, one fresh independent substitute may
-be attempted within the **same approved scope and effective permissions**, provided
-that host capacity genuinely supports an independent seat. Do not rerun the same
-failed seat, expand to parallel seat storms or consume another owner's worktree.
-If the substitute also fails or exact inspection cannot be observed, keep missing
-coverage `Unverifiable`; do not claim two independent reviews, block needed
-findings, or quietly fall back to controller self-review. Recover only the missing
-seat, not completed verified work.
+리프가 대상 검사 전에 실패하면 호스트 자원이 실제로 독립 리뷰 역할을 지원하는 경우 **동일하게 승인된 범위와 실효 권한** 안에서 새로운 독립 대체 역할을 한 번 시도할 수 있습니다. 같은 실패한 역할을 다시 실행하거나, 병렬 역할을 무더기로 늘리거나, 다른 담당자의 worktree를 사용하지 않습니다. 대체 역할도 실패하거나 정확한 검사를 관찰할 수 없다면 누락된 검토 범위를 `Unverifiable`로 유지합니다. 독립 리뷰 두 번을 주장하거나, 필요한 발견 사항을 막거나, 조용히 컨트롤러 자체 리뷰로 대체하지 않습니다. 완료하고 검증한 작업이 아니라 누락된 역할만 복구합니다.
 
-## Aggregation and candidate verification
+<a id="aggregation-and-candidate-verification"></a>
+## 취합과 후보 검증
 
-Aggregate the union of discovery candidates. A clean seat cannot cancel another seat's
-candidate. Deduplicate only when evidence proves the same causal root, correction boundary, and
-failure class.
+탐색 후보의 합집합을 취합합니다. 깨끗한 결과를 낸 역할이 다른 역할의 후보를 취소할 수는 없습니다. 근거로 동일한 인과적 근원, 수정 경계와 실패 유형이 입증될 때만 중복을 제거합니다.
 
-Send every candidate that could be reported as `Critical | Important` to a fresh verifier.
-Shard only when needed for complete attention and never cap the reportable findings. A verifier
-may reject a candidate only with direct contradictory evidence, such as a covering guard, an
-invariant that makes the state impossible, a runtime witness, or proof that the behavior is
-unchanged and unobservable. `Speculative`, confidence alone, or another seat's `Pass` is not a
-rejection reason.
+`Critical | Important`로 보고할 수 있는 모든 후보를 새로운 검증자에게 보냅니다. 완전한 주의 집중을 위해 필요한 경우에만 분할하고 보고 가능한 발견 사항 수에 상한을 두지 않습니다. 검증자는 해당 경로를 막는 가드, 그 상태를 불가능하게 하는 불변식, 런타임 관찰 증거 또는 동작이 변경되지 않았고 관찰 불가능하다는 증명처럼 직접적인 반대 근거가 있을 때만 후보를 기각할 수 있습니다. `Speculative`, 확신도만의 판단 또는 다른 역할의 `Pass`는 기각 사유가 아닙니다.
 
-Report verified candidates. When verification can neither confirm nor contradict a material
-candidate, retain the exact uncertainty under `Unresolved`; do not lower severity to encode
-confidence.
+검증된 후보를 보고합니다. 검증으로 중요한 후보를 확인하지도 반박하지도 못하면 정확한 불확실성을 `Unresolved`에 유지합니다. 확신도를 표현하기 위해 심각도를 낮추지 않습니다.
 
-## Evidence-only response to a reported finding
+<a id="evidence-only-response-to-a-reported-finding"></a>
+## 보고된 발견 사항에 대한 근거만의 응답
 
-During bounded remediation, the controller may send concrete direct counter-evidence for one existing finding
-back through the fresh-verifier boundary above. First verify that `HEAD` still equals the reviewed revision
-and that the reviewed working-tree/index content has not changed; an uncommitted fix is still a code change.
-Bind the original finding, reviewed target, and cited current guard, invariant, source contract, runtime witness,
-or focused test output. Preference or an unsupported denial does not qualify.
+한정된 수정 중 컨트롤러는 기존 발견 사항 하나의 구체적이고 직접적인 반대 근거를 위의 새 검증자 경계를 통해 다시 보낼 수 있습니다. 먼저 `HEAD`가 여전히 리뷰한 revision과 같고 리뷰한 작업 트리·인덱스 내용이 바뀌지 않았는지 검증합니다. commit하지 않은 수정도 코드 변경입니다. 원래 발견 사항, 리뷰 대상과 인용한 현재 가드, 불변식, 소스 계약, 런타임 관찰 증거 또는 집중 테스트 출력을 결합합니다. 선호나 근거 없는 부인은 해당하지 않습니다.
 
-Keep the finding open while the fresh verifier independently checks only that finding and its new evidence,
-including reachable callers or contracts needed to decide it. The implementer and controller cannot self-dismiss.
-If accepted, close only the disproved finding as `DISPROVED`, with the verifier's contradictory evidence; keep
-unrelated findings unchanged. Rejected or unverifiable rebuttals return to normal remediation with the exact
-reason or uncertainty. Missing independent verification leaves the finding open, never implicitly accepted.
+새 검증자가 해당 발견 사항과 새 근거만 독립적으로 확인하는 동안 발견 사항을 열린 상태로 유지합니다. 판단에 필요한 도달 가능한 호출자나 계약도 포함합니다. 구현자와 컨트롤러는 스스로 기각할 수 없습니다. 반대 근거가 수락되면 반증된 발견 사항만 검증자의 반대 근거와 함께 `DISPROVED`로 닫고 무관한 발견 사항은 그대로 둡니다. 기각되거나 검증할 수 없는 반박은 정확한 이유나 불확실성과 함께 정상 수정으로 돌아갑니다. 독립 검증이 없으면 발견 사항은 열린 상태로 남으며 암묵적으로 수락되지 않습니다.
 
-This branch needs no empty fix commit, empty `FIX_BASE..HEAD` package, or protection-test rerun solely for
-ceremony. A focused check may resolve a concrete remaining doubt. Any actual code change, including an
-uncommitted one, follows normal protection tests and scoped fix review. Do not restart broad discovery.
-Use this branch at most once per finding at that reviewed revision. When an active remediation owner has a
-round cap, count the attempt within that owner's cap and stop under its contract. A standalone `tk-review`
-does not start a remediation loop. Keep pending identity/verdict in transient controller
-state. Only if optional recovery is already active and interruption requires persistence, retain the minimum
-finding reference, reviewed revision, pending verifier identity and consumed attempt in that existing state;
-reconcile before redispatch. Add no new finding-ID scheme, ledger, artifact, or reviewer lifecycle.
+이 분기에는 형식만을 위한 빈 수정 commit, 빈 `FIX_BASE..HEAD` 패키지나 보호 테스트 재실행이 필요하지 않습니다. 집중 검사로 구체적인 남은 의문을 해결할 수 있습니다. commit하지 않은 변경을 포함한 실제 코드 변경은 정상적인 보호 테스트와 범위가 정해진 수정 리뷰를 따릅니다. 넓은 탐색을 다시 시작하지 않습니다. 리뷰한 해당 revision에서 발견 사항마다 이 분기를 최대 한 번 사용합니다. 활성 수정 담당자에게 회차 상한이 있으면 그 상한에 시도를 포함하고 해당 계약에 따라 중단합니다. 독립 실행 `tk-review`는 수정 루프를 시작하지 않습니다. 대기 중인 식별 정보·판정은 일시적인 컨트롤러 상태에 유지합니다. 선택적 복구가 이미 활성화되어 있고 중단으로 영구 보존이 필요할 때만 기존 상태에 최소 발견 사항 참조, 리뷰한 revision, 대기 중인 검증자 식별 정보와 소모한 시도를 유지합니다. 재디스패치 전에 대조하여 확정합니다. 새 발견 사항 ID 체계, 장부, 산출물이나 리뷰어 생명주기를 추가하지 않습니다.

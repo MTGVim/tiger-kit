@@ -1,15 +1,14 @@
 <!-- tigerkit:`shared-execution-protocol`; `canonical`=skills/tk-engineering/references/sdd.md -->
 
-# High-fidelity private SDD procedure
+<a id="high-fidelity-private-sdd-procedure"></a>
+# 높은 충실도의 비공개 SDD 절차
 
-This document is the private behavioral canonical source shared by `tk-prep` and
-`tk-pr-respond`. Only a controller that actually selected SDD reads it. Do not create a
-public skill, global scheduler, or provider-routing state.
+이 문서는 `tk-prep`과 `tk-pr-respond`가 공유하는 비공개 동작 정본입니다. 실제로 SDD를 선택한 컨트롤러만 읽습니다. 공개 스킬, 전역 scheduler 또는 제공자 라우팅 상태를 만들지 않습니다.
 
-## Entry conditions and `Seed` grammar
+<a id="entry-conditions-and-seed-grammar"></a>
+## 진입 조건과 `Seed` 문법
 
-SDD requires an approved Ready `.tigerkit/seed.md` whose current task identifier
-matches. Use the following grammar exactly once outside code fences.
+SDD에는 현재 작업 식별자가 일치하는 승인된 Ready `.tigerkit/seed.md`가 필요합니다. 코드 fence 밖에서 다음 문법을 정확히 한 번 사용합니다.
 
 ```md
 ## Execution
@@ -29,244 +28,140 @@ Execution shape: SDD
 - Acceptance criteria
 ```
 
-For a behavior-preserving refactoring Unit, keep the `Expected RED` field and state that RED is not applicable,
-with the pre-edit GREEN command, protected invariants, and matching post-edit verification required by [testing](testing.md).
-This records the normal refactoring path, not a testing waiver.
+동작 보존 리팩터링 Unit에서는 `Expected RED` 필드를 유지하고 RED가 적용되지 않음을 명시합니다. [테스트](testing.md)에서 요구하는 편집 전 GREEN 명령, 보호하는 불변식과 대응하는 편집 후 검증도 명시합니다.
+이는 정상적인 리팩터링 경로를 기록하며 테스트 면제가 아닙니다.
 
-`## Execution` and `Execution shape: SDD` must each occur exactly once.
-`### Global constraints` must occur exactly once before `Unit` 1. `Unit` numbering must
-start at 1, be unique and contiguous, and each unit ends at the next `Unit` or next
-level-two heading. Ignore fake headings inside code fences. On duplicates, numbering
-gaps, empty names, or missing obligations, return `Blocked` before dispatch and repair
-the `Seed`.
+`## Execution`과 `Execution shape: SDD`는 각각 정확히 한 번 나와야 합니다.
+`### Global constraints`는 `Unit` 1 전에 정확히 한 번 나와야 합니다. `Unit` 번호는 1에서 시작하고, 중복 없이 연속되어야 하며, 각 unit은 다음 `Unit`이나 다음 2단계 제목에서 끝납니다. 코드 fence 안의 가짜 제목은 무시합니다. 중복, 번호 누락, 빈 이름 또는 의무 누락이 있으면 디스패치 전에 `Blocked`를 반환하고 `Seed`를 수정합니다.
 
-Keep Unit content decision-dense within this unchanged grammar: exact interfaces, spec-fixed values,
-invariants, dependencies, test assertions, acceptance and verification commands/results. Reference
-current paths/symbols instead of duplicating ordinary implementation bodies or another Unit's code.
-Retain minimal algorithm/ordering structure only when it is itself an approved material decision.
-Before finalizing Execution, compare it with the issue/spec and compress code-dominated, unusually
-expanded or repeated implementation prose while preserving self-contained scope, identity, BASE and
-recovery obligations. Use no fixed size ratio, new reviewer or artifact. Executors reread current
-source; ordinary detail drift does not trigger reapproval, but approved-contract drift still does.
+이 문법을 바꾸지 않으면서 Unit 내용에 결정을 밀도 있게 담습니다. 정확한 인터페이스, 명세로 고정한 값, 불변식, 의존성, 테스트 단언, 인수 판정과 검증 명령·결과를 담습니다. 일반적인 구현 본문이나 다른 Unit의 코드를 복제하지 말고 현재 경로·심볼을 참조합니다. 최소한의 알고리즘·순서 구조는 그 자체가 승인된 중요한 결정일 때만 유지합니다. Execution을 확정하기 전에 이슈·명세와 비교하고, 독립적으로 이해할 수 있는 범위, 식별 정보, BASE와 복구 의무를 보존하면서 코드가 지배적이거나 이례적으로 확장되거나 반복된 구현 설명을 압축합니다. 고정 크기 비율, 새 리뷰어나 산출물을 사용하지 않습니다. 실행자는 현재 소스를 다시 읽습니다. 일반적인 세부 사항의 차이는 재승인을 유발하지 않지만 승인된 계약의 차이는 여전히 재승인을 유발합니다.
 
-Group small same-shape changes into one `Unit` when they need no separate judgment,
-testing, or review surface. Split work only when interfaces, risk, testing obligations,
-or independent judgment genuinely differ. If two proposed Units would receive the same
-implementation/test/review judgment, keep them in one Unit instead of creating review
-ceremony.
+같은 형태의 작은 변경에 별도 판단, 테스트나 리뷰 지점이 필요하지 않다면 하나의 `Unit`으로 묶습니다. 인터페이스, 위험, 테스트 의무나 독립 판단이 실제로 다를 때만 작업을 나눕니다. 제안한 두 Unit이 동일한 구현·테스트·리뷰 판정을 받는다면 리뷰 의식을 만들지 말고 하나의 Unit으로 유지합니다.
 
-When natural behavior slices exist, prefer vertical `Unit`s that can be reviewed and
-verified independently. This is `vertical-first`, not `vertical-only`. Do not force a
-`Cross-cutting refactor` or `wide migration` into artificial behavior slices.
+자연스러운 동작 단위가 있으면 독립적으로 리뷰하고 검증할 수 있는 수직 `Unit`을 우선합니다. 이는 `vertical-first`이지 `vertical-only`가 아닙니다. `Cross-cutting refactor`나 `wide migration`을 인위적인 동작 단위로 강제하지 않습니다.
 
-When safe, divide a `Wide migration` into `expand → migrate batch(es) → contract`, and
-size migration batches by `blast radius` and verifiability. Keep every stage `green`.
-Only when independent `green` is structurally impossible, state the integration and
-final-verification boundary in the `Seed`; do not turn that into a general exception.
+안전하다면 `Wide migration`을 `expand → migrate batch(es) → contract`로 나누고 마이그레이션 배치 크기를 `blast radius`와 검증 가능성에 맞춥니다. 모든 단계를 `green`으로 유지합니다. 독립적인 `green`이 구조적으로 불가능할 때만 `Seed`에 통합과 최종 검증 경계를 명시합니다. 이를 일반적인 예외로 만들지 않습니다.
 
-## Controller and leaf roles
+<a id="controller-and-leaf-roles"></a>
+## 컨트롤러와 리프 역할
 
-Only the controller owns `Unit` dispatch, review dispatch, remediation-loop routing,
-`Ruling:`, and recovery state. Controller-to-controller delegation is allowed, but
-implementers, reviewers, and re-reviewers are leaves; no helper or review agent
-redispatches. Do not run multiple implementers concurrently.
+컨트롤러만 `Unit` 디스패치, 리뷰 디스패치, 수정 루프 라우팅, `Ruling:`과 복구 상태를 담당합니다. 컨트롤러 간 위임은 허용되지만 구현자, 리뷰어와 재리뷰어는 리프입니다. 도우미나 리뷰 에이전트는 재디스패치하지 않습니다. 구현자를 여러 명 동시에 실행하지 않습니다.
 
-When host-native multi-agent execution is unavailable, perform the same `Unit` and
-review sequence serially in the current isolated execution checkout while preserving
-role-specific evidence and exact scope. Do not silently downgrade SDD semantics into
-direct execution.
+호스트 기본 다중 에이전트 실행을 사용할 수 없다면 현재의 격리된 실행 checkout에서 같은 `Unit`과 리뷰 순서를 직렬로 수행하고 역할별 근거와 정확한 범위를 보존합니다. SDD 의미를 조용히 직접 실행으로 낮추지 않습니다.
 
-Before every child dispatch or resumed action with changed access/environment, apply
-[delegation permissions](review-protocol.md#delegation-permissions) to implementers, reviewers,
-verifiers, diagnostic leaves, and delegated controllers. Include the verified boundary in the brief.
+모든 자식 디스패치 전 또는 접근·환경이 바뀐 재개 행동 전에 구현자, 리뷰어, 검증자, 진단 리프와 위임된 컨트롤러에 [위임 권한](review-protocol.md#delegation-permissions)을 적용합니다. 검증한 경계를 브리프에 포함합니다.
 
-### User interaction ownership
+<a id="user-interaction-ownership"></a>
+### 사용자 상호작용 담당
 
-The root controller owns intent, scope/AC, Seed changes and new authority. Ordinary approved
-non-interactive tool calls and reversible leaf decisions proceed locally. Before any child asks
-for user input or continues a host interaction, read [child interaction](sdd-interaction.md):
-verify the supported route, request binding, same-or-narrower permissions and safe continuation.
-Unknown capability stops only that interaction and returns it to the controller. Never answer
-for the user, collect secrets in a handoff or treat authentication as new task authority.
-Every child brief must carry these boundaries, known capability evidence (or its unknown state),
-the exact accessible path to that reference with its before-input read condition, and the controller
-fallback for unsupported input. An isolated child must read it before any elicitation or continuation.
+루트 컨트롤러는 의도, 범위·AC, Seed 변경과 새로운 권한을 담당합니다. 일반적인 승인된 비대화형 도구 호출과 가역적 리프 결정은 로컬에서 진행합니다. 자식이 사용자 입력을 요청하거나 호스트 상호작용을 계속하기 전에 [자식 상호작용](sdd-interaction.md)을 읽습니다. 지원 경로, 요청 결합, 같거나 더 좁은 권한과 안전한 계속 실행을 검증합니다. 기능 지원 여부를 알 수 없으면 해당 상호작용만 중단하고 컨트롤러에 반환합니다. 사용자를 대신해 응답하거나, 인계에서 비밀을 수집하거나, 인증을 새로운 작업 권한으로 취급하지 않습니다. 모든 자식 브리프에는 이 경계, 알려진 기능 근거 또는 알 수 없다는 상태, 입력 전 읽기 조건이 있는 해당 참조의 정확하고 접근 가능한 경로, 지원되지 않는 입력의 컨트롤러 대체 경로를 담아야 합니다. 격리된 자식은 입력 요청이나 계속 실행 전에 이를 읽어야 합니다.
 
-## Failure diagnosis routing
+<a id="failure-diagnosis-routing"></a>
+## 실패 진단 라우팅
 
-During a `Unit` check or binding verification, keep an obvious failure with an exact RED seam owned by the
-current `Unit` in the existing implementer/testing path. If the cause is unknown, intermittent/flaky,
-environment-dependent, or appears outside the current `Unit`, the controller records only the exact symptom,
-failing evidence, and observed scope, then dispatches one fresh diagnostic leaf that follows
-[Difficult bug diagnosis](diagnosis.md) through cause, ownership, and red-capable seam discovery. The leaf
-returns those findings without product remediation or redispatch; the controller decides whether to route them
-to current-Unit remediation or back to preparation/reapproval. Do not create diagnosis state merely for this
-branch.
+`Unit` 검사나 구속력 있는 검증 중, 현재 `Unit`이 소유하며 정확한 RED 지점이 있는 명백한 실패는 기존 구현자·테스트 경로에 유지합니다. 원인이 불명확하거나, 간헐적·불안정하거나, 환경에 의존하거나, 현재 `Unit` 밖으로 보이면 컨트롤러는 정확한 증상, 실패 근거와 관찰한 범위만 기록한 뒤 새로운 진단 리프 하나를 디스패치합니다. 해당 리프는 [어려운 버그 진단](diagnosis.md)에 따라 원인, 소유권과 red-capable 지점을 발견합니다. 리프는 제품 수정이나 재디스패치 없이 그 결과를 반환합니다. 컨트롤러는 현재 Unit 수정으로 보낼지 준비·재승인으로 되돌릴지 결정합니다. 이 분기만을 위해 진단 상태를 만들지 않습니다.
 
-## Recovery state
+<a id="recovery-state"></a>
+## 복구 상태
 
-Seed, current context and local commits are the normal recovery sources; create no routine ledger.
-Before enabling durable recovery, resuming an interrupted run, or handling an empty/malformed/unbound
-terminal child return, read [recovery](sdd-recovery.md). Until identity, prior mutations and child lifecycle
-are reconciled, never replay work, assume success/failure, advance or replace an implementer. A pending
-child is not a terminal empty result. Unknown outcomes remain `Blocked | Unverifiable`.
-Read that same reference before updating or deleting an active recovery ledger; retain uniquely owned
-material rulings and preserve all remaining review/verification obligations.
+Seed, 현재 맥락과 로컬 commit이 일반적인 복구 소스입니다. 일상적인 장부를 만들지 않습니다.
+영구 복구 활성화 전, 중단된 실행 재개 전 또는 비어 있거나 형식이 잘못되었거나 결합되지 않은 자식 종료 반환을 처리하기 전에 [복구](sdd-recovery.md)를 읽습니다. 식별 정보, 이전 변경과 자식 생명주기를 대조하여 확정하기 전까지 작업을 재실행하거나, 성공·실패를 가정하거나, 진행하거나, 구현자를 교체하지 않습니다. 대기 중인 자식은 비어 있는 종료 결과가 아닙니다. 알 수 없는 결과는 `Blocked | Unverifiable`로 남습니다.
+활성 복구 장부를 갱신하거나 삭제하기 전에도 같은 참조를 읽습니다. 해당 장부만이 소유한 중요한 판정을 유지하고 남은 모든 리뷰·검증 의무를 보존합니다.
 
-## Artifact transport
+<a id="artifact-transport"></a>
+## 산출물 전달
 
-Prefer faithful direct host payloads and child returns. Only when a file path or bounded file transport
-is actually required, read [artifact transport](sdd-transport.md) before writing. Keep it run-owned and
-ignored under `.tigerkit/`, with no secrets or external temporary fallback; transport grants no new authority.
+충실한 직접 호스트 payload와 자식 반환을 우선합니다. 파일 경로나 한정된 파일 전달이 실제로 필요한 경우에만 쓰기 전에 [산출물 전달](sdd-transport.md)을 읽습니다. 비밀이나 외부 임시 대체 경로 없이 `.tigerkit/` 아래에서 실행이 소유하고 무시되도록 유지합니다. 전달은 새로운 권한을 부여하지 않습니다.
 
-## Evidence-backed preflight
+<a id="evidence-backed-preflight"></a>
+## 근거 기반 사전 점검
 
-For a multi-PR Seed, read [multi-PR delivery safety](../../tk-pr-guidance/references/multi-pr-delivery.md), recheck its
-Global constraints group mapping and intermediate-state checks, and preserve them in
-Unit dispatch and the publication handoff. Single-PR execution skips this branch.
+다중 PR Seed에서는 [다중 PR 전달 안전성](../../tk-pr-guidance/references/multi-pr-delivery.md)을 읽고 Global constraints 그룹 매핑과 중간 상태 검사를 다시 확인하며 Unit 디스패치와 발행 인계에 이를 보존합니다. 단일 PR 실행에서는 이 분기를 건너뜁니다.
 
-Before `Unit` 1, read the Seed once and check:
+`Unit` 1 전에 Seed를 한 번 읽고 다음을 확인합니다.
 
-- every producer/consumer `Unit` pair sharing files or interfaces, and whether they agree;
-- internal consistency among requested files, code, tests, and AC for each `Unit`;
-- conflicts between global constraints and each `Unit`;
-- unresolved findings and decision rationale.
+- 파일이나 인터페이스를 공유하는 모든 생성자·소비자 `Unit` 쌍과 그 일치 여부를 확인합니다.
+- 각 `Unit`의 요청 파일, 코드, 테스트와 AC 사이의 내부 일관성을 확인합니다.
+- 전역 제약과 각 `Unit` 사이의 충돌을 확인합니다.
+- 미해결 발견 사항과 결정 근거를 확인합니다.
 
-Keep this in controller state by default. Record only unresolved or recovery-relevant
-items when a durable ledger is actually active; do not create a table or ledger to say
-that everything is clean. A conflict that changes the goal, scope, approved decisions,
-ACs, security, or required verification returns to the preparation owner and reapproval.
-The controller may resolve only reversible engineering ambiguity with a `Ruling:` that
-includes the cost if wrong.
+기본적으로 컨트롤러 상태에 유지합니다. 영구 장부가 실제로 활성화된 경우에만 미해결 항목이나 복구 관련 항목을 기록합니다. 모두 문제없다는 사실을 적기 위해 표나 장부를 만들지 않습니다. 목표, 범위, 승인된 결정, AC, 보안 또는 필수 검증을 바꾸는 충돌은 준비 담당자와 재승인으로 돌아갑니다. 컨트롤러는 틀렸을 때의 비용을 포함하는 `Ruling:`으로 가역적 엔지니어링 모호함만 해결할 수 있습니다.
 
-When the approved runtime verification plan requires a pre-edit baseline, invoke its planned verifier
-(`tk-browser-verify` or `tk-app-verify`) before the first
-Unit implementation. A successful baseline result must carry `phase: baseline`, `baseline_capture: Pass`,
-`verification_complete: false`, `resume_parent: required`, the run/replay identity, and `next_required`, after which the controller resumes
-Unit 1 in the same approved execution. It is never a completed Unit or completed SDD result.
-After the implementation Units, obtain the matching after comparison before whole-change review,
-binding verification, or completion. Pause only on the approved limitation and safety boundaries.
+승인된 런타임 검증 계획에 편집 전 기준선이 필요하면 첫 Unit 구현 전에 계획된 검증자(`tk-browser-verify` 또는 `tk-app-verify`)를 호출합니다. 성공한 기준선 결과는 `phase: baseline`, `baseline_capture: Pass`, `verification_complete: false`, `resume_parent: required`, 실행·재현 식별 정보와 `next_required`를 담아야 합니다. 이후 컨트롤러는 동일하게 승인된 실행에서 Unit 1을 재개합니다. 이는 완료된 Unit이나 완료된 SDD 결과가 아닙니다.
+구현 Unit 이후 전체 변경 리뷰, 구속력 있는 검증 또는 완료 전에 대응하는 변경 후 비교를 확보합니다. 승인된 한계와 안전 경계에서만 일시 중지합니다.
 
-## Host and semantic routing
+<a id="host-and-semantic-routing"></a>
+## 호스트와 의미 기반 라우팅
 
-The `Seed` may contain only semantic recommendations such as
-`cheap/mechanical | standard integration/debugging | strong architecture/final review`. Do not store
-provider model IDs or reasoning intensity in durable artifacts.
+`Seed`에는 `cheap/mechanical | standard integration/debugging | strong architecture/final review`와 같은 의미 기반 권고만 담을 수 있습니다. 영구 산출물에 제공자 모델 ID나 추론 강도를 저장하지 않습니다.
 
-On a host that supports child dispatch, read the current allowlist and capabilities and
-use explicit controls for every role. When Codex supports `model` and
-`reasoning_effort`, specify both and use isolated context through `fork_turns: "none"`
-or the current equivalent. Do not inject only one. Do not invent a reasoning-intensity
-control for Claude or Hermes when none exists. Use long bounded event-driven waits,
-not short polling loops.
+자식 디스패치를 지원하는 호스트에서는 현재 허용 목록과 기능을 읽고 모든 역할에 명시적 제어를 사용합니다. Codex가 `model`과 `reasoning_effort`를 지원하면 둘 다 지정하고 `fork_turns: "none"` 또는 현재 동등한 기능으로 격리된 맥락을 사용합니다. 하나만 넣지 않습니다. Claude나 Hermes에 추론 강도 제어가 없다면 만들어 내지 않습니다. 짧은 폴링 루프가 아니라 길고 한정된 이벤트 기반 대기를 사용합니다.
 
-## `Unit` implementer
+<a id="unit-implementer"></a>
+## `Unit` 구현자
 
-Immediately before dispatch, record `BASE = git rev-parse HEAD`; persist the active-dispatch
-identity first when the optional recovery ledger is active, as specified in [recovery](sdd-recovery.md). Give the implementer:
+디스패치 직전에 `BASE = git rev-parse HEAD`를 기록합니다. 선택적 복구 장부가 활성화되어 있으면 [복구](sdd-recovery.md)에 명시된 대로 활성 디스패치 식별 정보를 먼저 영구 기록합니다. 구현자에게 다음을 제공합니다.
 
-- the task-local `Unit` summary as direct content, or its path only when file transport is required;
-- binding global constraints and prior interface decisions;
-- a short return contract, plus a report path only when durable/file transport is required;
-- the rule that the implementer is a leaf with no subagents;
-- approved local mutation and commit boundaries.
+- 작업 로컬 `Unit` 요약을 직접 콘텐츠로 제공하거나, 파일 전달이 필요한 경우에만 경로로 제공합니다.
+- 구속력 있는 전역 제약과 이전 인터페이스 결정을 제공합니다.
+- 짧은 반환 계약과, 영구·파일 전달이 필요한 경우에만 보고서 경로를 제공합니다.
+- 구현자는 서브에이전트가 없는 리프라는 규칙을 제공합니다.
+- 승인된 로컬 변경과 commit 경계를 제공합니다.
 
-The implementer changes only the summary scope and follows [Behavior-first testing](testing.md):
-RED → GREEN → REFACTOR for changed behavior, or pre-edit GREEN → refactor → matching GREEN for preserved behavior. It runs focused tests and required
-related suites, performs self-review and mutation checks, then creates a local commit.
-Self-review removes unnecessary abstraction or indirection, speculative flexibility,
-dead or redundant branches, custom logic replacing repository-native helpers, and
-production API expansion used only by tests.
-For meaningful abstractions introduced by this change, align names with existing
-repository vocabulary for the same concept; use a plain, accurate name when the
-concept is genuinely new. Limit this pass to shared domain-like objects, workflow,
-service and data/request/result concepts, not ordinary local variables. Rename a
-clearly equivalent internal symbol within approved scope without a new checkpoint.
-Before renaming, check public APIs, serialized values, schema names, URLs/paths,
-config/environment keys and externally consumed event fields; preserve those
-contracts unless their change is already approved, and use a symbol-aware refactor
-rather than blind text replacement. Raise a naming choice through the existing
-question contract only when its meaning requires a product/domain decision.
-The return/report records implementation, changed files, commit, concerns, test commands
-and output, and applicable RED/GREEN evidence. Remote publication is forbidden.
+구현자는 요약 범위만 변경하고 [동작 우선 테스트](testing.md)를 따릅니다. 변경된 동작에는 RED → GREEN → REFACTOR를, 보존되는 동작에는 편집 전 GREEN → 리팩터링 → 대응하는 GREEN을 적용합니다. 집중 테스트와 필수 관련 테스트 모음을 실행하고 자체 리뷰와 변이 검사를 수행한 뒤 로컬 commit을 만듭니다.
+자체 리뷰에서는 불필요한 추상화나 간접 계층, 추측성 유연성, 죽은 분기나 중복 분기, 저장소 기본 도우미를 대체하는 사용자 정의 로직과 테스트에서만 쓰는 운영 API 확장을 제거합니다.
+이 변경이 도입한 의미 있는 추상화의 이름은 같은 개념에 대한 기존 저장소 용어에 맞춥니다. 실제로 새 개념이면 평이하고 정확한 이름을 사용합니다. 이 검토는 공유 도메인 성격의 객체, workflow, 서비스와 데이터·요청·결과 개념으로 한정하며 일반 지역 변수에는 적용하지 않습니다. 명확히 동등한 내부 심볼은 새 확인 지점 없이 승인된 범위에서 이름을 바꿉니다. 이름 변경 전에 공개 API, 직렬화 값, 스키마 이름, URL·경로, 설정·환경 키와 외부에서 소비하는 이벤트 필드를 확인합니다. 변경이 이미 승인되지 않았다면 해당 계약을 보존하고, 무작정 텍스트를 치환하지 말고 심볼을 인식하는 리팩터링을 사용합니다. 이름의 의미에 제품·도메인 결정이 필요할 때만 기존 질문 계약을 통해 이름 선택을 제기합니다.
+반환·보고서에는 구현, 변경 파일, commit, 우려 사항, 테스트 명령과 출력 및 적용 가능한 RED/GREEN 근거를 기록합니다. 원격 발행은 금지됩니다.
 
-## Exact `Unit` review
+<a id="exact-unit-review"></a>
+## 정확한 `Unit` 리뷰
 
-After implementation, record `HEAD` and always review the complete `BASE..HEAD`. Do not
-assume `HEAD~1`. Provide the commit list, change statistics, and full net diff with
-enough context directly when possible; materialize a bundle only when transport requires
-it.
+구현 후 `HEAD`를 기록하고 항상 전체 `BASE..HEAD`를 리뷰합니다. `HEAD~1`을 가정하지 않습니다. 가능하면 충분한 맥락이 있는 commit 목록, 변경 통계와 전체 순수 diff를 직접 제공합니다. 전달에 필요한 경우에만 묶음을 파일로 만듭니다.
 
-The one fresh Unit discovery seat first receives:
+새로운 Unit 탐색 리뷰 역할 하나에 먼저 다음을 제공합니다.
 
-- the `Unit` summary and binding global constraints;
-- the original incident or expected scenario, approved decisions and AC, and relevant test/runtime/browser evidence;
-- the exact `BASE..HEAD` evidence.
+- `Unit` 요약과 구속력 있는 전역 제약을 제공합니다.
+- 원래 사건 또는 예상 시나리오, 승인된 결정과 AC 및 관련 테스트·런타임·브라우저 근거를 제공합니다.
+- 정확한 `BASE..HEAD` 근거를 제공합니다.
 
-Do not include the implementer report in that initial payload. After the seat records its blind observations, resume the
-same read-only leaf with the implementer report as an untrusted retro claim bundle. The seat then confirms or falsifies
-its material claims without replacing the blind observations.
+초기 payload에 구현자 보고서를 넣지 않습니다. 해당 역할이 사전 정보 없는 관찰을 기록한 뒤 같은 읽기 전용 리프를 신뢰할 수 없는 회고 주장 묶음인 구현자 보고서와 함께 재개합니다. 해당 역할은 사전 정보 없는 관찰을 대체하지 않고 중요한 주장을 확인하거나 반증합니다.
 
-The read-only leaf reviewer records two independent verdicts in one review surface. A
-clean verdict on either axis never offsets a failure on the other:
+읽기 전용 리프 리뷰어는 한 리뷰 지점에 두 개의 독립 판정을 기록합니다. 어느 한 축의 깨끗한 판정이 다른 축의 실패를 상쇄하지는 않습니다.
 
-1. **Spec/AC**: omissions, excess, misunderstanding, and exact acceptance compliance;
-2. **Quality/Standards**: correctness, maintainability, structure, testing/TDD
-   protection, mutation gaps, scope, agreement between listed files and changes, and
-   the same unnecessary-complexity or test-only production-API risks required by
-   implementer self-review.
+1. **Spec/AC**: 누락, 과잉, 오해와 정확한 인수 기준 준수 여부를 판정합니다.
+2. **Quality/Standards**: 정확성, 유지보수성, 구조, 테스트·TDD 보호, 변이 공백, 범위, 나열한 파일과 변경의 일치 및 구현자 자체 리뷰에서 요구한 동일한 불필요한 복잡성·테스트 전용 운영 API 위험을 판정합니다.
 
-Apply [independent review protocol](review-protocol.md) and [finding quality](finding-quality.md) to every `Unit` and
-whole-change review. Read
-[TypeScript](typescript.md), [React](react.md), and [security](security.md) only when the reviewed scope meets those
-references' conditions. A conditional lens does not add a reviewer or pass.
+모든 `Unit`과 전체 변경 리뷰에 [독립 리뷰 프로토콜](review-protocol.md)과 [발견 사항 품질](finding-quality.md)을 적용합니다.
+리뷰 범위가 각 참조의 조건을 충족할 때만 [TypeScript](typescript.md), [React](react.md)와 [보안](security.md)을 읽습니다. 조건부 관점은 리뷰어나 추가 검토를 더하지 않습니다.
 
-An SDD Unit uses this one fresh discovery seat for both axes and both walks. Aggregate its candidates and send every
-candidate that could be reported as `Critical | Important` to a separate fresh verifier before remediation or reporting.
+SDD Unit은 이 새로운 탐색 리뷰 역할 하나로 두 판정 축과 두 검토 경로를 모두 수행합니다. 후보를 취합하고 수정이나 보고 전에 `Critical | Important`로 보고할 수 있는 모든 후보를 별도의 새 검증자에게 보냅니다.
 
-Do not sweep the whole repository without a specifically named risk or unconditionally
-rerun suites already present in the report. Re-read available evidence before concluding
-that claimed evidence is absent, and run only focused checks for concrete doubts.
+구체적으로 명명한 위험 없이 저장소 전체를 훑거나 보고서에 이미 있는 테스트 모음을 무조건 다시 실행하지 않습니다. 주장된 근거가 없다고 결론 내리기 전에 이용 가능한 근거를 다시 읽고 구체적인 의문에 대해서만 집중 검사를 실행합니다.
 
-## Remediation loop
+<a id="remediation-loop"></a>
+## 수정 루프
 
-Handle `Critical`/`Important` findings or confirmed real gaps for at most five rounds.
+`Critical`/`Important` 발견 사항이나 확인된 실제 공백은 최대 다섯 회차까지 처리합니다.
 
-- Rounds 1–3: resume the same implementer.
-- Rounds 4–5: use a fresh implementer with stronger available semantic capability.
-- Evidence-only responses at an unchanged reviewed target follow the [review protocol](review-protocol.md#evidence-only-response-to-a-reported-finding). Accepted counter-evidence closes only that finding as `DISPROVED`; it does not manufacture a fix round.
-- Every code-change round: record `FIX_BASE = git rev-parse HEAD`, provide open findings, rerun
-  protection tests for remediation code, update the return/report, and provide the exact
-  `FIX_BASE..HEAD` evidence directly or through file transport only when required.
-- Scoped re-review: read the original open findings, remediation diff, and only unchanged
-  caller/callee or producer/consumer contracts that the remediation can directly affect, then
-  classify each original finding as `ADDRESSED | NOT ADDRESSED`. Reuse the review protocol's
-  change-risk walk for that affected boundary; do not restart broad discovery.
-- Add only new `Critical`/`Important` findings causally attributable to the remediation to
-  the open list, whether the evidence is in the diff or its directly affected unchanged boundary.
+- 1~3회차에는 같은 구현자를 재개합니다.
+- 4~5회차에는 이용 가능한 더 강한 의미 기반 역량을 갖춘 새 구현자를 사용합니다.
+- 리뷰한 대상이 변경되지 않은 상태의 근거만의 응답은 [리뷰 프로토콜](review-protocol.md#evidence-only-response-to-a-reported-finding)을 따릅니다. 수락한 반대 근거는 해당 발견 사항만 `DISPROVED`로 닫으며 수정 회차를 만들어 내지 않습니다.
+- 모든 코드 변경 회차에서 `FIX_BASE = git rev-parse HEAD`를 기록하고, 열린 발견 사항을 제공하고, 수정 코드의 보호 테스트를 다시 실행하고, 반환·보고서를 갱신하며, 정확한 `FIX_BASE..HEAD` 근거를 직접 제공하거나 필요한 경우에만 파일 전달로 제공합니다.
+- 범위가 정해진 재리뷰에서는 원래 열린 발견 사항, 수정 diff와 수정이 직접 영향을 줄 수 있는 변경되지 않은 호출자·피호출자 또는 생성자·소비자 계약만 읽고 각 원래 발견 사항을 `ADDRESSED | NOT ADDRESSED`로 분류합니다. 영향받는 경계에 리뷰 프로토콜의 변경 위험 검토 경로를 재사용합니다. 넓은 탐색을 다시 시작하지 않습니다.
+- 근거가 diff 안에 있든 직접 영향받는 변경되지 않은 경계에 있든, 수정에 인과적으로 귀속되는 새로운 `Critical`/`Important` 발견 사항만 열린 목록에 추가합니다.
 
-If findings remain after round five, stop dispatch and have the controller judge each
-one. A material `Seed` conflict returns for reapproval; a reversible residual issue may
-be deferred or accepted only with an explicit `Ruling:` and risk. Do not repeat the same
-failure indefinitely.
+다섯 번째 회차 후에도 발견 사항이 남으면 디스패치를 중단하고 컨트롤러가 각각을 판정하게 합니다. 중요한 `Seed` 충돌은 재승인으로 돌아갑니다. 가역적인 잔여 문제는 명시적인 `Ruling:`과 위험이 있을 때만 유예하거나 수락할 수 있습니다. 같은 실패를 무한히 반복하지 않습니다.
 
-## Completion
+<a id="completion"></a>
+## 완료
 
-Each `Unit` is complete only with a clean work review and recorded commit. After all `Unit`s, construct a whole-change
-implementation retro from the Unit returns and exact final diff, then perform exactly one whole-change review using two
-context-isolated discovery seats under [independent review protocol](review-protocol.md). Withhold the retro until each
-seat records its blind pass. Both seats record independent `Spec/AC` and `Quality/Standards` verdicts and inspect:
+각 `Unit`은 작업 리뷰에 문제가 없고 commit이 기록된 경우에만 완료됩니다. 모든 `Unit` 후에는 Unit 반환과 정확한 최종 diff로 전체 변경 구현 회고를 구성한 뒤 [독립 리뷰 프로토콜](review-protocol.md)에 따라 맥락이 격리된 탐색 리뷰 역할 두 개로 전체 변경 리뷰를 정확히 한 번 수행합니다. 각 역할이 사전 정보 없는 검토를 기록할 때까지 회고를 제공하지 않습니다. 두 역할 모두 독립적인 `Spec/AC`와 `Quality/Standards` 판정을 기록하고 다음을 검사합니다.
 
-- cross-`Unit` integration and full AC/specification scope;
-- changed-behavior protection and mutation gaps;
-- accidental scope expansion and cross-cutting risk;
-- preservation of UI strings that must remain verbatim.
+- `Unit` 간 통합과 전체 AC·명세 범위를 검사합니다.
+- 변경 동작 보호와 변이 공백을 검사합니다.
+- 우발적 범위 확대와 횡단 위험을 검사합니다.
+- 원문을 유지해야 하는 UI 문자열의 보존을 검사합니다.
 
-Aggregate the union of both result sets and send every reportable candidate to a separate fresh verifier. A clean seat
-cannot cancel another seat's candidate. Missing host support for the required independent contexts is `Unverifiable`, not
-a silently downgraded single-review success.
+두 결과 집합의 합집합을 취합하고 보고 가능한 모든 후보를 별도의 새 검증자에게 보냅니다. 깨끗한 결과를 낸 역할이 다른 역할의 후보를 취소할 수는 없습니다. 필수 독립 맥락에 대한 호스트 지원이 없으면 `Unverifiable`이며 조용히 한 번의 리뷰 성공으로 낮추지 않습니다.
 
-Then run binding verification. For browser-visible targets, obtain `tk-browser-verify`
-execution evidence separately from automated regression protection. When the
-`tk-pr-respond` SDD path completed this final whole-change review, do not repeat a
-generic second review. Clean up only run-owned optional ledger/transport artifacts that satisfy the [recovery](sdd-recovery.md) retention rule. No SDD or local commit expands `push`, `merge`, or publication authority.
+그다음 구속력 있는 검증을 실행합니다. 브라우저에서 보이는 대상은 자동화 회귀 보호와 별개로 `tk-browser-verify` 실행 근거를 확보합니다. `tk-pr-respond` SDD 경로에서 이 최종 전체 변경 리뷰를 완료했다면 일반적인 두 번째 리뷰를 반복하지 않습니다. [복구](sdd-recovery.md) 보존 규칙을 충족하는 실행 소유 선택적 장부·전달 산출물만 정리합니다. SDD나 로컬 commit은 `push`, `merge` 또는 발행 권한을 넓히지 않습니다.

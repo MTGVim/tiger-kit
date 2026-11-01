@@ -1,27 +1,17 @@
-## Execution under Sweep
+<a id="execution-under-sweep"></a>
+## Sweep 아래에서의 실행
 
-For an exact PR handed off by an active `tk-pr-sweep`, do not ask again about material decisions already approved by the parent.
-The child confirms the PR fresh state and parent-approved scope, then proceeds immediately when they match.
-Include the applicable execution/authority contract text, source revision, exact PR/head, approved
-actions, workspace provenance and pending evidence in the handoff. A fresh child must receive
-the actual applicable rules, not an "already read" claim. A fork may reuse rules actually inherited
-and still present at the same revision; otherwise read the missing owning sections. A leaf with
-a complete task-local contract need not reload the whole controller SKILL.md merely for context;
-this never waives required conditional references, fresh-state checks or leaf/authority boundaries.
-If the parent did not approve the rebase route and its bounded history-rewrite publication, return the newly discovered conflict or base-drift decision to the parent instead of adding it to the approved work.
+활성 `tk-pr-sweep`에서 인계한 정확한 PR에서는 부모가 이미 승인한 중요 결정을 다시 묻지 않습니다.
+자식은 PR 최신 상태와 부모가 승인한 범위를 확인하고 일치하면 즉시 진행합니다.
+인계에는 적용되는 실행/권한 계약의 본문, 소스 revision, 정확한 PR/head, 승인된 행동, workspace 출처와 대기 중인 근거를 포함합니다. 새 자식에게는 실제 적용 규칙을 전달해야 하며 "이미 읽었다"는 주장으로 대신하지 않습니다. fork는 실제로 상속되어 같은 revision으로 여전히 존재하는 규칙을 재사용할 수 있습니다. 그렇지 않으면 누락된 담당 절을 읽습니다. 완전한 작업 로컬 계약을 가진 leaf는 맥락만을 위해 컨트롤러 SKILL.md 전체를 다시 읽을 필요가 없습니다. 이것이 필수 조건부 참조, 최신 상태 확인 또는 leaf/권한 경계를 면제하지는 않습니다.
+부모가 rebase 경로와 한정된 이력 재작성 발행을 승인하지 않았다면 새로 발견한 충돌이나 base 변경 결정을 승인된 작업에 추가하지 말고 부모에게 돌려보냅니다.
 
-Reply-only handoffs need no workspace solely for isolation. An explicitly approved index-only handoff uses the exact
-PR/head/row identity and run ownership under [code-change execution](code-change.md), without a workspace path.
-Other code-changing handoffs must include a newly established
-dedicated workspace path, exact PR head, and enough provenance to prove it belongs to that row. "Newly established" may
-mean a host-native workspace or a safe manual Git fallback; it never requires a nested manual worktree inside an already
-proven host-managed workspace. If the path/HEAD/provenance is missing or not fresh, return `Blocked` before mutation. Run
-the code-changing child from that workspace; never switch the parent `main` or `develop` checkout to the PR branch.
+답글만 수행하는 인계에는 격리만을 위한 workspace가 필요하지 않습니다. 명시적으로 승인된 index-only 인계는 workspace 경로 없이 [코드 변경 실행](code-change.md)에 따른 정확한 PR/head/행 식별 정보와 실행 소유권을 사용합니다.
+다른 코드 변경 인계에는 새로 확립한 전용 workspace 경로, 정확한 PR head와 해당 행 소유임을 입증할 충분한 출처가 포함되어야 합니다. "새로 확립한"은 호스트 네이티브 workspace 또는 안전한 수동 Git 대체 경로를 뜻할 수 있습니다. 이미 입증된 호스트 관리 workspace 안에 중첩된 수동 worktree를 요구하는 뜻은 아닙니다. 경로/HEAD/출처가 없거나 최신이 아니면 변경 전에 `Blocked`를 반환합니다. 코드 변경 자식은 해당 workspace에서 실행합니다. 부모의 `main` 또는 `develop` checkout을 PR 브랜치로 전환하지 않습니다.
 
-If new feedback or head drift materially changes the approved scope, escalate only that PR back to the parent.
-Do not create `pr-sweep.md`, `pr-respond.md`, or worker receipt Markdown.
-For a code-changing PR that needs durable context, only `seed.md` in the proven dedicated workspace may be used as task context.
+새 피드백이나 head 변경이 승인된 범위를 실질적으로 바꾸면 해당 PR만 부모에게 다시 올립니다.
+`pr-sweep.md`, `pr-respond.md` 또는 worker 영수증 Markdown을 만들지 않습니다.
+지속 맥락이 필요한 코드 변경 PR에서는 입증된 전용 workspace의 `seed.md`만 작업 맥락으로 사용할 수 있습니다.
 
-The Respond controller may select SDD for its own PR. Normal implementer/reviewer/re-reviewer children remain leaf and may
-not recursively delegate. The parent Sweep decides cross-PR scheduling; this child never starts another PR controller.
+Respond 컨트롤러는 자신의 PR에 SDD를 선택할 수 있습니다. 일반 구현자/검토자/재검토자 자식은 leaf로 남으며 재귀적으로 위임할 수 없습니다. 부모 Sweep이 PR 간 일정을 결정하며 이 자식은 다른 PR 컨트롤러를 시작하지 않습니다.
 

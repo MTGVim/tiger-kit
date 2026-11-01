@@ -1,17 +1,10 @@
-# Security review
+<a id="security-review"></a>
+# 보안 리뷰
 
-Read this only when review scope reaches authentication or authorization, attacker-controlled input/file/path/command/URL,
-secrets or sensitive data, an API endpoint, payment, webhook, external integration, or security configuration.
+리뷰 범위가 인증이나 인가, 공격자가 제어하는 입력·파일·경로·명령·URL, 비밀이나 민감한 데이터, API 엔드포인트, 결제, webhook, 외부 연동 또는 보안 설정에 이르렀을 때만 읽습니다.
 
-Trace an attacker-controlled source to the sensitive sink and verify the repository/runtime guard before reporting. Check
-object-level authorization; SSRF across redirects and resolved destinations; path traversal and symlinks; command/query
-injection; XSS through framework escape hatches; secret leakage in logs, URLs, or artifacts; webhook signature, replay,
-and idempotency; and race/TOCTOU/transaction/lock boundaries when the touched behavior makes them reachable.
+공격자가 제어하는 소스에서 민감한 sink까지 추적하고 보고 전에 저장소·런타임 가드를 검증합니다. 변경한 동작으로 도달 가능해지는 경우 객체 수준 인가, 리다이렉트와 해석된 목적지를 거치는 SSRF, 경로 순회와 심볼릭 링크, 명령·쿼리 주입, 프레임워크 우회 기능을 통한 XSS, 로그·URL·산출물의 비밀 유출, webhook 서명·재생·멱등성과 경쟁·TOCTOU·트랜잭션·잠금 경계를 확인합니다.
 
-When the changed behavior reaches browser messages, DOM escape hatches, browser persistence,
-or model/retrieval/tool execution, read [browser and agent boundaries](security-boundaries.md)
-and trace only the affected branch and its direct consumers.
+변경된 동작이 브라우저 메시지, DOM 우회 기능, 브라우저 영속 저장 또는 모델·검색·도구 실행에 이르면 [브라우저와 에이전트 경계](security-boundaries.md)를 읽고 영향받는 분기와 그 직접 소비자만 추적합니다.
 
-Do not impose universal rate limiting, CSRF, storage, dependency scanning, or sanitization rules. Framework defaults,
-deployment topology, repository policy, and the concrete exploit path decide whether a finding exists. Never introduce a
-new scanner or dependency merely to complete review.
+보편적인 속도 제한, CSRF, 저장소, 의존성 스캔이나 입력 정제 규칙을 강요하지 않습니다. 프레임워크 기본값, 배포 토폴로지, 저장소 정책과 구체적인 악용 경로가 발견 사항의 존재를 결정합니다. 리뷰를 완료하기 위해 새 스캐너나 의존성을 도입하지 않습니다.

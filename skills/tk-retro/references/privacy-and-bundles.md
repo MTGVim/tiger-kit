@@ -1,68 +1,43 @@
-# Private Evidence and Requested Bundles
+<a id="private-evidence-and-requested-bundles"></a>
+# 비공개 근거와 요청된 묶음
 
-Read before writing an upstream issue draft or reusable attachment. Conversation remains the
-retrospective report; files carry proposals, not implementation or publication authority.
+upstream 이슈 초안이나 재사용 가능한 첨부 파일을 쓰기 전에 읽습니다. 회고 보고서는 계속 대화로 전달합니다. 파일은 제안을 담으며 구현·발행 권한을 담지 않습니다.
 
-## Requested attachments
+<a id="requested-attachments"></a>
+## 요청된 첨부 파일
 
-When the session produced a reusable reference, script, file set or skill draft and the user
-requests it, save it beside the issue draft and bundle both with `MANIFEST.md` into
-`<YYYY-MM-DD>-<topic-slug>.zip`. Without that request, keep the issue draft as the only file output.
-Use the same upstream package scope and Artifact Paths checks for all files and the archive.
-Exclude raw session evidence, scanner input, unrelated files and secrets from the bundle.
+세션에서 재사용 가능한 참조, 스크립트, 파일 집합이나 스킬 초안을 만들었고 사용자가 이를 요청하면, 이슈 초안 옆에 저장하고 둘을 `MANIFEST.md`와 함께 `<YYYY-MM-DD>-<topic-slug>.zip`으로 묶습니다. 그러한 요청이 없으면 이슈 초안만 파일로 출력합니다. 모든 파일과 아카이브에 같은 upstream 패키지 범위와 산출물 경로 확인을 적용합니다. 원시 세션 근거, 스캐너 입력, 무관한 파일과 비밀은 묶음에서 제외합니다.
 
-For each file, the manifest names one level and concrete evidence:
+manifest는 파일마다 수준 하나와 구체적인 근거를 명시합니다.
 
-| Level | Required evidence |
+| 수준 | 필수 근거 |
 |---|---|
-| `field-tested` | The skill loaded this exact file in a real run and the result was accepted. |
-| `applied-once` | Its rules were applied by hand to one output and the result was accepted. |
-| `unverified` | A draft only, without the above execution evidence. |
+| `field-tested` | 스킬이 실제 실행에서 이 정확한 파일을 로드했고 결과가 수용되었습니다. |
+| `applied-once` | 규칙을 출력 하나에 수동으로 적용했고 결과가 수용되었습니다. |
+| `unverified` | 위 실행 근거가 없는 초안일 뿐입니다. |
 
-Never raise a level because a reviewer approved the text or a static check passed. Record
-unperformed checks, hypotheses, and source/license attribution for distilled external material.
-Do not copy private examples into an otherwise generic attachment.
+리뷰어가 텍스트를 승인했거나 정적 확인을 통과했다는 이유로 수준을 높이지 않습니다. 실행하지 않은 확인, 가설과 증류한 외부 자료의 출처·라이선스 표시를 기록합니다. 그 밖에는 일반적인 첨부 파일이라도 비공개 예시를 복사하지 않습니다.
 
-## Privacy checks
+<a id="privacy-checks"></a>
+## 개인정보 확인
 
-Before writing, inventory private terms by category: organizations, products/domains,
-repositories, ticket keys, people, hosts/IPs, channels and local paths. Preserve public upstream
-names, revisions and skill-internal paths. Replace private terms and verbatim requests with
-neutral descriptions, including in topic slugs, examples and attachment names.
+쓰기 전에 비공개 용어를 범주별로 목록화합니다. 조직, 제품·도메인, 저장소, 티켓 키, 사람, 호스트·IP, 채널과 로컬 경로가 대상입니다. 공개 upstream 이름, revision과 스킬 내부 경로는 보존합니다. 주제 slug, 예시와 첨부 파일 이름을 포함하여 비공개 용어와 요청 원문을 중립적인 설명으로 바꿉니다.
 
-Check the final draft and every attachment, including the manifest:
+manifest를 포함한 최종 초안과 모든 첨부 파일을 확인합니다.
 
-1. Fixed-string identifier scan against the inventory; repair until no private terms match.
-2. Verbatim scan against available user messages with [the scanner](../scripts/scan_verbatim.py).
-   Review shared runs of at least 10 characters; neutralize copied private wording. Only verified
-   public names, code literals and generic phrases may be exempted, with a reason. Check examples
-   against available source artifacts too: a generic-looking copied incident is still private.
-3. A separate read-only reviewer with fresh context reads only the deliverables, without the
-   session or private term inventory. Ask it to flag identifying details, distinctive real incidents
-   or examples that appear copied from private work. Repair and repeat for the current files.
-   Do not spawn more reviewers from that review. If unavailable, label the pending check
-   `Unverifiable` and withhold the file delivery; still return sanitized conversational findings.
+1. 목록에 대해 고정 문자열 식별자 검사를 수행하고, 비공개 용어가 더 이상 일치하지 않을 때까지 수정합니다.
+2. [스캐너](../scripts/scan_verbatim.py)로 이용 가능한 사용자 메시지와 원문 일치 검사를 수행합니다. 10자 이상 연속으로 공유하는 문자열을 검토하고, 복사된 비공개 문구를 중립화합니다. 검증된 공개 이름, 코드 리터럴과 일반적인 표현만 이유를 붙여 예외로 둘 수 있습니다. 이용 가능한 출처 산출물과도 예시를 대조합니다. 일반적으로 보이는 복사된 사고도 여전히 비공개입니다.
+3. 새로운 맥락의 별도 읽기 전용 리뷰어가 세션이나 비공개 용어 목록 없이 전달 파일만 읽습니다. 식별 가능한 세부 정보, 특징적인 실제 사고나 비공개 작업에서 복사한 것으로 보이는 예시를 표시하도록 요청합니다. 수정한 뒤 현재 파일에 대해 반복합니다. 그 리뷰에서 추가 리뷰어를 생성하지 않습니다. 이용할 수 없으면 보류된 확인을 `Unverifiable`로 표시하고 파일 전달을 보류합니다. 민감한 정보를 제거한 대화형 발견 사항은 계속 반환합니다.
 
-All three checks must pass before delivering a draft or bundle. If needed evidence is unavailable,
-report that gap instead of recording zero matches. A reviewer cannot prove anonymization alone.
-Record scanned categories, repaired match counts, reviewed public/generic exceptions and reviewer
-verdict in the manifest, or briefly in conversation without a bundle. Never record private terms
-themselves. Apply the same sanitization to conversational findings.
+초안이나 묶음을 전달하기 전에 세 확인이 모두 통과해야 합니다. 필요한 근거를 이용할 수 없으면 일치 항목이 0개라고 기록하지 말고 그 공백을 보고합니다. 리뷰어만으로는 익명화를 입증할 수 없습니다. 검사한 범주, 수정한 일치 개수, 검토한 공개·일반 표현 예외와 리뷰어 판정을 manifest에 기록하거나 묶음이 없으면 대화에서 간단히 기록합니다. 비공개 용어 자체는 기록하지 않습니다. 대화형 발견 사항에도 같은 민감 정보 제거를 적용합니다.
 
-## Scanner use
+<a id="scanner-use"></a>
+## 스캐너 사용
 
-In an ignored run-owned restricted file, provide UTF-8 JSON with `messages` (separate strings),
-`terms` (private strings), and optional `allow` (reviewed public/generic exact strings).
-Include source-artifact example text as an additional message when available. Keep actual values
-out of command arguments, logs and bundles. Run:
+무시되는 실행 소유의 접근 제한 파일에 `messages`(분리된 문자열), `terms`(비공개 문자열), 선택적인 `allow`(검토한 공개·일반 표현의 정확한 문자열)를 담은 UTF-8 JSON을 제공합니다. 이용할 수 있으면 출처 산출물의 예시 텍스트를 추가 메시지로 포함합니다. 실제 값은 명령 인수, 로그와 묶음에 넣지 않습니다. 다음을 실행합니다.
 
 ```bash
 python3 <package>/scripts/scan_verbatim.py --input <private-input.json> <draft.md> <attachment.md>
 ```
 
-The scanner normalizes Unicode and whitespace for wording comparison, scans each message
-separately and reports only counts and normalized offsets by file number. It does not print
-matched text. Exit 0 means no mechanical matches, 1 means review/repair required, and 2 means
-invalid input or read failure. This is not a semantic review or an automatic privacy verdict.
-Delete only the run-owned temporary input after consumption, including a failed scan; do not
-delete original evidence. Recreate it only when another repair pass needs it.
+스캐너는 문구 비교를 위해 Unicode와 공백을 정규화하고, 메시지마다 별도로 검사하며, 파일 번호별 개수와 정규화된 오프셋만 보고합니다. 일치한 텍스트는 출력하지 않습니다. 종료 코드 0은 기계적 일치가 없음을, 1은 검토·수정이 필요함을, 2는 잘못된 입력이나 읽기 실패를 뜻합니다. 이는 의미 검토나 자동 개인정보 판정이 아닙니다. 검사에 실패한 경우를 포함하여 소비 후에는 실행 소유 임시 입력만 삭제합니다. 원본 근거는 삭제하지 않습니다. 추가 수정 단계에서 필요할 때만 다시 만듭니다.

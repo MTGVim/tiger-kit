@@ -1,104 +1,46 @@
-# Runtime UI verification planning
+<a id="runtime-ui-verification-planning"></a>
+# 런타임 UI 검증 계획
 
-## Impact inventory and coverage
+<a id="impact-inventory-and-coverage"></a>
+## 영향 인벤토리와 검증 범위
 
-For browser-visible changes, derive a complete impact inventory before approval: trace changed symbols
-through their callers to affected routes, screens, and triggers, following `tk-qa-sheet` Workflow step 1.
-Record each row's route, screen, trigger, observable check, value/string source (including its i18n
-namespace), validation schema, request path and mutation handler where applicable, visibility data
-condition, and any transformation such as a prefix. Record whether a changed string is compared,
-parsed, or transmitted; those uses need source-level tracing, unit tests, and review in addition to
-runtime display verification. Split any row naming multiple entry points or surfaces (for example,
-create and edit, or list and register) into one row per entry point before assigning status or IDs.
-Assign each row a stable `criterion_id` once (for example `UI-001`),
-preserve it through retries and handoffs, and pass it unchanged to `tk-browser-verify` and
-`tk-qa-sheet`. Include `route`, `entry`, `trigger`, `operation: read | create | update`,
-`evidence_ref`, and `head` in the verifier's mapped row. Every unexecuted row records `reason`,
-`search_scope`, and `unblock`; do not collapse rows into a generic manual count.
+브라우저에 보이는 변경은 승인 전에 완전한 영향 인벤토리를 도출합니다. `tk-qa-sheet` Workflow 1단계에 따라 변경된 심볼을 호출자를 거쳐 영향을 받는 경로, 화면과 트리거까지 추적합니다.
+각 행에는 경로, 화면, 트리거, 관찰 가능한 검사, 값/문자열 출처(i18n namespace 포함), 검증 스키마, 해당하는 경우 요청 경로와 mutation handler, 표시 데이터 조건과 접두사 같은 변환을 기록합니다. 변경된 문자열이 비교, 파싱 또는 전송되는지 기록합니다. 그러한 용도에는 런타임 표시 검증 외에도 소스 수준 추적, 단위 테스트와 검토가 필요합니다. 여러 진입점이나 화면 영역을 명시한 행(예: 생성과 편집, 목록과 등록)은 상태나 ID를 배정하기 전에 진입점별 한 행으로 나눕니다.
+각 행에 안정적인 `criterion_id`를 한 번 배정하고(예: `UI-001`), 재시도와 인계에서 보존하며, `tk-browser-verify`와 `tk-qa-sheet`에 그대로 전달합니다. 검증 담당자에게 매핑한 행에는 `route`, `entry`, `trigger`, `operation: read | create | update`, `evidence_ref`, `head`를 포함합니다. 실행하지 않은 모든 행에 `reason`, `search_scope`, `unblock`을 기록합니다. 행들을 일반적인 수동 처리 개수로 합치지 않습니다.
 
-Give each row one explicit status: `execute`, `covered-by:<row>`, `unauthorized-or-irreversible`, or
-`manual`. Use `unauthorized-or-irreversible` when required authority is absent or a write cannot be
-safely restored; use `manual` for other unexecuted reasons such as unavailable data or verifier
-capabilities. Execute at least one row for every distinct render path and request path. For every
-save flow, split client payload construction from backend saved-result checks when both are in scope.
-For every save handler, plan a safe pre-backend request-body capture as the no-mutation-authority
-evidence. Keep saved-result checks separate and leave those rows unexecuted unless explicit mutation
-authority is granted. With authority, execute at least one row for every distinct mutation handler
-and inspect the saved result through an independent reread. A row may use `covered-by:<row>` only when the
-executed row has the same value/string provenance, component wiring and effective props, render
-path, validation schema, request path and handler, visibility condition, and transformation. Record
-the evidence row and the shared component or schema that establishes each equivalence. Reuse of a
-component alone does not establish equivalence, and equivalent-path coverage is not representative
-sampling or a cost exception.
-Keep every other unexecuted row visible with one reason, including unavailable test data and
-verifier capability gaps; do not silently reduce the inventory.
+각 행에 `execute`, `covered-by:<row>`, `unauthorized-or-irreversible`, `manual` 중 하나의 명시적 상태를 부여합니다.
+필요한 권한이 없거나 쓰기를 안전하게 복원할 수 없으면 `unauthorized-or-irreversible`을 사용합니다. 데이터나 검증 기능을 사용할 수 없는 등 그 밖의 미실행 사유에는 `manual`을 사용합니다. 서로 다른 모든 렌더링 경로와 요청 경로마다 적어도 한 행을 실행합니다. 각 저장 흐름에서 클라이언트 payload 구성과 백엔드 저장 결과 검사가 모두 범위에 들어가면 둘을 분리합니다.
+모든 저장 handler에 대해 변경 권한이 없을 때의 근거로 백엔드 전달 전 안전한 요청 본문 캡처를 계획합니다. 저장 결과 검사는 별도로 유지하고 명시적인 변경 권한을 받지 않으면 해당 행을 실행하지 않습니다. 권한이 있으면 서로 다른 mutation handler마다 적어도 한 행을 실행하고 독립적으로 다시 읽어 저장 결과를 조사합니다. `covered-by:<row>`는 실행된 행과 값/문자열 출처, 컴포넌트 연결 및 실제 적용 props, 렌더링 경로, 검증 스키마, 요청 경로와 handler, 표시 조건, 변환이 모두 같을 때만 사용할 수 있습니다. 각 동등성을 확립하는 근거 행과 공통 컴포넌트 또는 스키마를 기록합니다. 컴포넌트 재사용만으로는 동등성이 확립되지 않으며, 동등 경로 검증은 대표 표본 추출이나 비용 예외가 아닙니다.
+사용할 수 없는 테스트 데이터와 검증 기능 공백을 포함해 다른 모든 미실행 행을 하나의 사유와 함께 드러내 둡니다. 인벤토리를 조용히 줄이지 않습니다.
 
-## Test-data authority
+<a id="test-data-authority"></a>
+## 테스트 데이터 권한
 
-When an affected row requires creating, updating, or deleting test data, first read the structured
-user-managed `verificationDataPolicy` in [repository context](../../tk-repository-guidance/references/repository-context.md).
-Validate its schema and the exact known non-production environment and operation. If they match,
-plan the saved-result row as `execute`, cite `policy-file authority`, and do not ask for that
-permission again. For any absent, invalid, uncovered, or ambiguous scope, include in the first answerable
-question frontier a request for explicit verification-environment mutation authority: the exact
-non-production target, allowed entity types and operations, and cleanup policy. Never infer this
-authority from local implementation approval, free-text configuration, issues, reviews, logs, memory,
-or configuration introduced only as task evidence. Before asking, inspect repository/API evidence and only
-already-authorized read-only non-production facts for safe cleanup options. Prefer updating existing
-non-production test data with a restorable snapshot over create-then-delete when deletion is unavailable.
-State how the original will be restored and compared, preserve the distinction between `null` and
-`""`, and disclose the risk that cleanup may fail. This inspection does not authorize a live mutation.
-Before classifying a write as irreversible, inspect whether resaving the original values restores it;
-record the restore evidence and disclose any residual side effect. A reversible write may be executed
-within the exact authority above and the approved cleanup policy.
-Without explicit authority, retain any saved-result row in the inventory but leave it unexecuted with
-the reason recorded; a separate request-body row may still be executed before backend transmission.
-This authority does not permit payments,
-external communications, production-data changes, or account/permission changes. A write that cannot
-be safely restored or is irreversible may remain excluded with its reason even when authority exists.
+영향받는 행에 테스트 데이터 생성, 갱신 또는 삭제가 필요하면 먼저 [저장소 맥락](../../tk-repository-guidance/references/repository-context.md)의 사용자가 관리하는 구조화된 `verificationDataPolicy`를 읽습니다.
+스키마와 정확히 알려진 비운영 환경 및 작업을 검증합니다. 일치하면 저장 결과 행을 `execute`로 계획하고 `policy-file authority`를 인용하며 같은 권한을 다시 묻지 않습니다. 범위가 없거나, 유효하지 않거나, 포함되지 않거나, 모호하면 처음으로 답할 수 있는 질문 묶음에 명시적 검증 환경 변경 권한 요청을 포함합니다. 정확한 비운영 대상, 허용되는 엔티티 유형과 작업, 정리 정책을 묻습니다. 로컬 구현 승인, 자유 형식 설정, 이슈, 검토, 로그, 메모리 또는 작업 근거로만 도입된 설정에서 이 권한을 추론하지 않습니다. 묻기 전에 저장소/API 근거와 이미 승인된 읽기 전용 비운영 사실만 조사하여 안전한 정리 선택지를 확인합니다. 삭제를 사용할 수 없으면 생성 후 삭제보다 복원 가능한 스냅샷으로 기존 비운영 테스트 데이터를 갱신하는 방식을 우선합니다.
+원본을 어떻게 복원하고 비교할지 명시하고, `null`과 `""`의 차이를 보존하며, 정리가 실패할 수 있다는 위험을 밝힙니다. 이 조사는 실제 변경을 승인하지 않습니다.
+쓰기를 되돌릴 수 없다고 분류하기 전에 원래 값을 다시 저장하면 복원되는지 조사합니다. 복원 근거를 기록하고 남는 부작용을 밝힙니다. 되돌릴 수 있는 쓰기는 위의 정확한 권한과 승인된 정리 정책 안에서 실행할 수 있습니다.
+명시적인 권한이 없으면 저장 결과 행을 인벤토리에 유지하되 사유를 기록하고 실행하지 않습니다. 별도의 요청 본문 행은 백엔드 전송 전에 실행할 수 있습니다.
+이 권한은 결제, 외부 소통, 운영 데이터 변경 또는 계정/권한 변경을 허용하지 않습니다. 안전하게 복원할 수 없거나 되돌릴 수 없는 쓰기는 권한이 있어도 사유를 명시하고 제외한 채 둘 수 있습니다.
 
-## Baseline, authentication and replay
+<a id="baseline-authentication-and-replay"></a>
+## 변경 전 기준, 인증과 재현
 
-Before approval, bind the selected verifier, target/build/environment, pass conditions, comparable
-baseline/replay and evidence location in the runtime verification plan. For a render-affecting
-candidate, identify exact pre-change provenance and schedule that verifier's baseline before the
-first product edit, followed by the matching after capture under
-`.tigerkit/evidence/<verifier>/<run-id>/baseline|after/`. If a baseline cannot be acquired, surface
-the limitation before approval and forbid an absence-of-regression claim. For native targets,
-include app/window identity, dimensions/scale, initial state and allowed interaction; the app
-verifier owns provider selection, lifecycle and foreground escalation decisions within existing authority.
+승인 전에 선택한 검증 담당자, 대상/빌드/환경, 통과 조건, 비교 가능한 baseline/replay와 근거 위치를 런타임 검증 계획에 연결합니다. 렌더링에 영향을 주는 후보는 변경 전의 정확한 출처를 식별하고 첫 제품 편집 전에 해당 검증 담당자의 baseline을 수행하도록 계획합니다. 이후 대응하는 after 캡처를 `.tigerkit/evidence/<verifier>/<run-id>/baseline|after/` 아래에서 수행합니다. baseline을 확보할 수 없으면 승인 전에 한계를 밝히고 회귀가 없다는 주장을 금지합니다. 네이티브 대상에는 앱/창 식별 정보, 크기/배율, 초기 상태와 허용된 상호작용을 포함합니다. 앱 검증 담당자가 기존 권한 안에서 provider 선택, lifecycle과 foreground 격상 결정을 소유합니다.
 
-For browser-visible ACs, close target URL/environment, pass conditions, headless viewport/state, safe auth bootstrap,
-server command/cwd/readiness, screenshot/redaction evidence, and the `tk-browser-verify` handoff. Default to headless.
-Never store usernames, passwords, token, OTP, cookie, or session values in chat/Seed/artifacts.
-When token authentication is required, establish input once during prep before baseline. The verifier may reuse its protected
-worktree-local authentication input and use supported renewal before requesting replacement under its authentication contract.
-Record required authentication field names and the supported renewal route (or its absence) in the
-plan/Seed, following `tk-browser-verify`'s `references/environment.md`; include no secret values.
-The verifier owns server startup, readiness, runtime acceptance evidence, and cleanup.
-Keep the approved order: authorization, authentication readiness and pre-edit baseline,
-then immediately release owned browser/server resources before implementing. Preserve
-baseline evidence/replay state, not the live process; the final-head check relaunches only
-what it needs and releases it again.
+브라우저에 보이는 AC는 대상 URL/환경, 통과 조건, headless viewport/상태, 안전한 인증 bootstrap, 서버 명령/cwd/준비 상태, 스크린샷/민감 정보 가림 근거와 `tk-browser-verify` 인계를 확정합니다. 기본값은 headless입니다.
+사용자 이름, 비밀번호, token, OTP, cookie 또는 session 값을 대화/Seed/산출물에 저장하지 않습니다.
+token 인증이 필요하면 준비 단계에서 baseline 전에 입력을 한 번 확립합니다. 검증 담당자는 자신의 인증 계약에 따라 보호된 worktree 로컬 인증 입력을 재사용하고 대체 입력을 요청하기 전에 지원되는 갱신을 사용할 수 있습니다.
+`tk-browser-verify`의 `references/environment.md`에 따라 필요한 인증 필드 이름과 지원되는 갱신 경로(또는 경로가 없음)를 계획/Seed에 기록합니다. 비밀 값은 포함하지 않습니다.
+검증 담당자가 서버 시작, 준비 상태, 런타임 인수 근거와 정리를 소유합니다.
+승인된 순서를 유지합니다. 권한 부여, 인증 준비 상태와 편집 전 baseline을 확인한 다음 구현 전에 소유한 브라우저/서버 자원을 즉시 해제합니다. 실행 중인 프로세스가 아니라 baseline 근거/재현 상태를 보존합니다. 최종 head 검사는 필요한 것만 다시 실행하고 다시 해제합니다.
 
-## Optional media suggestion
+<a id="optional-media-suggestion"></a>
+## 선택적 미디어 제안
 
-For a flow/time-dependent criterion or an explicit QA/demo audience, add one media suggestion to
-the existing runtime-plan approval summary: short GIF for a brief flow, MP4 for a longer explanation,
-or none. Do not generate it before approval or add a routine question. Suggest a usage
-walkthrough from entry for a new feature, or a comparable before/after
-explanation for changed behavior; create it after implementation and verification. Resolve
-narration and cursor/input displays in this same choice only when not already decided.
-Accepting media in that summary, a direct request or approved `evidenceMedia` opt-in enables a
-`tk-video` handoff. Browser/native capture still belongs to the respective verifier. No media
-selection grants installation or publication authority. Preserve timing assertions and screenshot
-pairs. Narration is optional; its absence cannot block prep or verification.
+흐름/시간에 의존하는 기준이나 명시적인 QA/데모 대상이 있으면 기존 런타임 계획 승인 요약에 미디어 제안을 하나 추가합니다. 짧은 흐름은 짧은 GIF, 더 긴 설명은 MP4 또는 없음으로 제안합니다. 승인 전에 생성하거나 관례적인 질문을 추가하지 않습니다. 새 기능은 진입점부터의 사용 안내를, 동작 변경은 비교 가능한 전후 설명을 제안합니다. 구현과 검증 뒤에 제작합니다. 내레이션과 커서/입력 표시는 아직 결정하지 않았을 때만 같은 선택에서 확정합니다.
+해당 요약에서 미디어를 수락하거나, 직접 요청하거나, 승인된 `evidenceMedia` opt-in이 있으면 `tk-video` 인계가 가능합니다. 브라우저/네이티브 캡처는 여전히 각각의 검증 담당자에게 속합니다. 미디어 선택은 설치나 발행 권한을 부여하지 않습니다. 타이밍 assertion과 스크린샷 쌍을 보존합니다. 내레이션은 선택 사항이며 없다고 준비나 검증을 막을 수 없습니다.
 
-Before that media choice, read [media choices](../../tk-writing/references/media-preferences.md) for the complete optional
-`evidenceMedia` schema, per-field precedence, safe defaults and malformed-object handling.
-Resolve missing narration and presentation fields plus `이 선택을 기본값으로 저장할까요?` in
-that same ordinary-chat round; reuse answered/saved values. Pass values, their sources and the
-save-offer disposition to the capture/movie owners. A selected movie is not save consent.
-Only explicitly approved fields/destination may use its atomic merge/readback contract, preserving
-unrelated settings. Keep GIF/narration conflicts in that same round; do not silently change format
-or sound. Save refusal/current-run choices pass through child phases without repeating the offer.
+미디어를 선택하기 전에 [미디어 선택](../../tk-writing/references/media-preferences.md)을 읽어 선택적인 `evidenceMedia` 전체 스키마, 필드별 우선순위, 안전한 기본값과 잘못된 객체 처리를 확인합니다.
+누락된 내레이션 및 표현 필드와 `이 선택을 기본값으로 저장할까요?`를 같은 일반 대화 라운드에서 확정합니다. 이미 답했거나 저장된 값을 재사용합니다. 값, 출처와 저장 제안의 처리 결과를 캡처/영상 담당자에게 전달합니다. 영상을 선택했다는 사실은 저장 동의가 아닙니다.
+명시적으로 승인된 필드/목적지만 원자적 병합/재확인 계약을 사용할 수 있으며 무관한 설정은 보존합니다. GIF/내레이션 충돌도 같은 라운드에서 다룹니다. 형식이나 소리를 조용히 바꾸지 않습니다. 저장 거절/현재 실행 선택은 제안을 반복하지 않고 자식 단계로 전달합니다.

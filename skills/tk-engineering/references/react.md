@@ -1,12 +1,11 @@
-# React review
+<a id="react-review"></a>
+# React 리뷰
 
-Read this only when React component, hook, JSX, or React Server Component semantics are in review scope.
+React 컴포넌트, hook, JSX 또는 React Server Component 의미가 리뷰 범위에 있을 때만 읽습니다.
 
-- Follow actual closures and lifecycle for effect dependencies, cleanup, subscriptions, timers, and requests. Report a
-  missing dependency or cleanup only when it changes reachable behavior.
-- Check stale closures, duplicated derived state, effect chains, and synchronization for a concrete inconsistent state.
-- Judge list keys and identity from possible insertion, reorder, and stateful children; a static list is not a defect.
-- Trace server/client boundaries for serializable data, secret exposure, and server-action authorization.
-- For changed interaction, check the semantic control, accessible label, keyboard path, and necessary ARIA.
-- Do not request memoization, virtualization, smaller components, or shallower props from a numeric threshold. Require an
-  observed hot path or concrete correctness, accessibility, or maintenance failure.
+- effect 의존성, 정리, 구독, 타이머와 요청에서 실제 클로저와 생명주기를 추적합니다. 도달 가능한 동작을 바꿀 때만 의존성이나 정리 누락을 보고합니다.
+- 오래된 클로저, 중복 파생 상태, effect 연쇄와 동기화에서 구체적으로 불일치하는 상태가 있는지 확인합니다.
+- 가능한 삽입, 재정렬과 상태를 가진 자식을 바탕으로 목록 키와 식별성을 판정합니다. 정적 목록은 결함이 아닙니다.
+- 직렬화 가능한 데이터, 비밀 노출과 server-action 인가를 위해 서버·클라이언트 경계를 추적합니다.
+- 변경된 상호작용에서는 의미에 맞는 컨트롤, 접근 가능한 레이블, 키보드 경로와 필요한 ARIA를 확인합니다.
+- 수치 임계값을 근거로 메모이제이션, 가상화, 더 작은 컴포넌트나 더 얕은 props를 요구하지 않습니다. 관찰된 빈번한 실행 경로나 구체적인 정확성·접근성·유지보수 실패가 있어야 합니다.

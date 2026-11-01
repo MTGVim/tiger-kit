@@ -1,15 +1,16 @@
-# Instruction economy audit
+<a id="instruction-economy-audit"></a>
+# 지침 경제성 감사
 
-Read this only when the approved grooming scope includes existing skill or persistent-instruction load, description shortcuts, conditional references, environment caches, no-op instructions, or stale sediment.
+승인된 grooming 범위가 기존 스킬이나 지속 지침의 로드, description 우회, 조건부 참조, 환경 cache, no-op 지침 또는 오래된 누적 지침을 포함할 때만 읽습니다.
 
-- Treat a description or conditional reference link as a context pointer. A useful pointer names the material and the distinct branch that needs it; a workflow summary is not stronger.
-- Treat package/config values, directory inventory, and host/tool capability as cache candidates only when a cheap fresh lookup is the source of truth. Owned contract literals are not stale merely because they are concrete.
-- Keep a deliberate copy of external tool/plugin/host behavior when a fresh lookup on each invocation is impractical. Compare its declared baseline version with the same component's installed identity/version, not the latest remote release.
-- A version mismatch is a `stale override` candidate: record both versions and evidence paths in Basis, reread the relevant installed rule without executing it, and report its actual difference (or no difference). Mismatch alone does not prove a behavioral conflict or authorize rewriting the copy. A matching version remains `keep` with no extra version-only finding/row.
-- A missing baseline version is a finding with a `tighten` proposal to add verified provenance; never invent the version or mechanically relabel an unverified copy as current. If installation identity/version or the relevant rule cannot be checked, mark that comparison `Unverifiable` and preserve the copy.
-- Call an instruction a behavioral no-op only when removing it preserves observable behavior against a no-skill or prior-skill baseline. Prose style, source presence, line count, token reduction, and trigger success do not prove that.
-- Move branch-specific material only when a precise pointer still causes the relevant branch to read and apply it. Keep always-needed authority, safety, freshness, and cross-scope guards inline.
-- Treat long-but-live instructions as `keep`; `sprawl` or `sediment` requires evidence that material is irrelevant, duplicated, stale, or on the wrong branch.
-- Treat a skill as the current behavior owner only when package and installation evidence establish it. Compare exact applicability before classifying persistent context as `stale override`; recency, specificity, or load order alone is insufficient.
+- description이나 조건부 참조 링크를 맥락 pointer로 취급합니다. 유용한 pointer는 자료와 그 자료가 필요한 고유한 분기를 명시합니다. workflow 요약이 더 나은 것은 아닙니다.
+- 저렴한 최신 조회가 정본인 경우에만 패키지·설정 값, 디렉터리 목록과 호스트·도구 기능을 cache 후보로 취급합니다. 소유한 계약의 literal은 구체적이라는 이유만으로 오래된 것이 아닙니다.
+- 호출할 때마다 최신 조회를 하는 것이 비현실적이면 외부 도구·plugin·호스트 동작을 의도적으로 복사한 내용을 유지합니다. 선언한 기준 버전을 최신 원격 릴리즈가 아니라 같은 구성 요소의 설치된 식별 정보·버전과 비교합니다.
+- 버전 불일치는 `stale override` 후보입니다. 두 버전과 근거 경로를 Basis에 기록하고, 관련 설치 규칙을 실행하지 않고 다시 읽으며, 실제 차이 또는 차이가 없음을 보고합니다. 불일치만으로 동작 충돌이 입증되거나 사본을 다시 쓸 권한이 생기지 않습니다. 버전이 일치하면 별도의 버전 전용 발견 사항이나 행 없이 `keep`으로 유지합니다.
+- 기준 버전이 없으면 검증된 출처를 추가하는 `tighten` 제안과 함께 발견 사항으로 기록합니다. 버전을 만들어 내거나 검증하지 않은 사본에 기계적으로 최신이라는 표시를 붙이지 않습니다. 설치 식별 정보·버전이나 관련 규칙을 확인할 수 없으면 해당 비교를 `Unverifiable`로 표시하고 사본을 보존합니다.
+- 지침을 제거해도 스킬이 없는 기준 또는 이전 스킬 기준과 비교해 관찰 가능한 동작이 유지될 때만 동작상 no-op이라고 부릅니다. 문체, 출처의 존재, 줄 수, 토큰 감소와 트리거 성공은 이를 입증하지 않습니다.
+- 정확한 pointer가 관련 분기에서 자료를 읽고 적용하도록 여전히 유도할 때만 분기 전용 자료를 옮깁니다. 항상 필요한 권한, 안전, 최신성과 범위 간 경계는 본문에 유지합니다.
+- 길어도 유효한 지침은 `keep`으로 취급합니다. `sprawl`이나 `sediment`에는 자료가 무관하거나 중복되거나 오래되었거나 잘못된 분기에 있다는 근거가 필요합니다.
+- 패키지와 설치 근거가 입증할 때만 스킬을 현재 동작의 소유자로 취급합니다. 지속 맥락을 `stale override`로 분류하기 전에 정확한 적용 조건을 비교합니다. 최신성, 구체성이나 로드 순서만으로는 충분하지 않습니다.
 
-Before proposing `tighten`, compare prior and candidate behavior. Description changes need train/validation routing and body behavior; pointer, cache, or no-op changes need both the branch that requires the rule and one that does not. Preserve valid behavior and pressure-tested guards. If behavior would change, leave an exact recommendation for the authorized implementation owner instead of applying it here. Use `tk-retro` when causal session evidence needs investigation.
+`tighten`을 제안하기 전에 이전 동작과 후보 동작을 비교합니다. description 변경에는 학습·검증 라우팅과 본문 동작 확인이 필요합니다. pointer, cache나 no-op 변경에는 해당 규칙이 필요한 분기와 필요하지 않은 분기가 모두 필요합니다. 유효한 동작과 압박 조건에서 검증한 경계를 보존합니다. 동작이 바뀐다면 여기서 적용하지 말고 권한을 가진 구현 담당자에게 정확한 권고를 남깁니다. 인과관계를 밝히는 세션 근거를 조사해야 할 때는 `tk-retro`를 사용합니다.

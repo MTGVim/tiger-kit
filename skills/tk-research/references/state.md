@@ -1,45 +1,48 @@
-# Durable research
+<a id="durable-research"></a>
+# 지속 조사
 
-Create a resumable state file at `.tigerkit/research/<slug>/state.md` only when persistent research is actually needed. An explicit conversation-only/no-save request skips it. Before any write, apply Artifact Paths. If experiments create evidence that must survive, keep only those artifacts under `.tigerkit/research/<slug>/experiments/<EXP-ID>/`; do not create a directory for every run.
+지속 조사가 실제로 필요할 때만 `.tigerkit/research/<slug>/state.md`에 재개 가능한 상태 파일을 만듭니다. 대화만 하거나 저장하지 말라는 명시적 요청이 있으면 만들지 않습니다. 쓰기 전에 산출물 경로 기준을 적용합니다. 실험에서 보존해야 할 근거가 생기면 해당 산출물만 `.tigerkit/research/<slug>/experiments/<EXP-ID>/` 아래에 둡니다. 실행마다 디렉터리를 만들지 않습니다.
 
-Keep state a small hot index: record only applicable decision-relevant fields and link long evidence instead of repeating it. For a small persistent finding, one state update may contain its checkpoint and handoff; separate files are needed only when the evidence is substantial or independently reusable.
+상태는 자주 참조하는 작은 색인으로 유지합니다. 적용되는 결정 관련 필드만 기록하고, 긴 근거는 반복하지 않고 링크합니다. 작은 지속 발견 사항은 한 번의 상태 갱신에 체크포인트와 인계를 포함할 수 있습니다. 근거가 상당하거나 독립적으로 재사용할 수 있을 때만 별도 파일이 필요합니다.
 
-The canonical state retains stable `researchId`, research-home worktree/branch, last checkpoint ID, optional experiment commit, and the last terminal-transaction state fingerprint/HEAD when available, plus:
+정본 상태에는 안정적인 `researchId`, 조사 홈 worktree·branch, 마지막 체크포인트 ID, 선택적 실험 commit, 가능한 경우 마지막 종결 트랜잭션의 상태 fingerprint·HEAD와 함께 다음을 보존합니다.
 
-- repository/worktree identity and research identity;
-- research goal, downstream decision, constraints and excluded scope;
-- direction portfolio, known facts and settled decisions;
-- user-stated premises and preferences that change research judgment, recorded when stated;
-- pending user decisions with the exact question, and prior external-authority facts (scope, systems and when granted), never standing authority for a fresh session;
-- handoff portfolio: stable `HO-<NNN>` IDs, supporting finding/experiment IDs when applicable, specification location, dependencies/overlaps and `ready | handed-off | deferred | superseded` state;
-- open items, fog, dependencies and current frontier, including each blocked/waiting item's checkable reopen condition and how to check it;
-- last frontier regeneration result: candidates and ranks, candidates set aside with reasons, and the evidence/premises against which it remains valid; record any explicit research-home designation;
-- findings with `KEEP`/`REJECT`/`INCONCLUSIVE`/`BLOCKED` and provenance;
-- experiment index with artifact paths;
-- evaluation contract and its identity when metric/mechanical evaluation applies, with protected/editable surfaces, dev/acceptance evidence roles and any replication or contamination limits;
-- convergence state and one next action.
+- 저장소·worktree 식별 정보와 조사 식별 정보를 보존합니다.
+- 조사 목표, 후속 결정, 제약과 제외 범위를 보존합니다.
+- 방향 포트폴리오, 알려진 사실과 확정 결정을 보존합니다.
+- 조사 판단을 바꾸는 사용자 진술의 전제와 선호를 진술 시점에 기록합니다.
+- 보류 중인 사용자 결정과 정확한 질문, 이전 외부 권한 사실(범위, 시스템과 부여 시점)을 보존합니다. 새로운 세션의 상시 권한으로 사용하지 않습니다.
+- 인계 포트폴리오에는 안정적인 `HO-<NNN>` ID, 해당하는 경우 뒷받침하는 발견 사항·실험 ID, 명세 위치, 의존성·중복과 `ready | handed-off | deferred | superseded` 상태를 보존합니다.
+- 미해결 항목, 불명확한 영역, 의존성과 현재 탐색 범위를 보존합니다. 각 차단·대기 항목의 확인 가능한 재개 조건과 확인 방법을 포함합니다.
+- 마지막 탐색 범위 재생성 결과에는 후보와 순위, 제외해 둔 후보와 이유, 결과가 유효한 근거·전제를 보존합니다. 명시적인 조사 홈 지정을 기록합니다.
+- 발견 사항에는 `KEEP`/`REJECT`/`INCONCLUSIVE`/`BLOCKED`와 출처를 보존합니다.
+- 실험 색인에는 산출물 경로를 보존합니다.
+- 지표·기계적 평가가 적용되면 평가 계약과 그 식별 정보를 보존합니다. 보호·편집 가능 영역, 개발·승인 근거의 역할과 복제·오염 한계를 포함합니다.
+- 수렴 상태와 다음 행동 하나를 보존합니다.
 
-Preserve rejected directions and failed experiments with their reason. Keep budget/priority/resource deferrals separate from observed negative evidence, preserving rank, reactivation conditions and any partial observations without inventing a failure verdict. Link raw evidence instead of copying transcripts.
+기각한 방향과 실패한 실험을 이유와 함께 보존합니다. 예산·우선순위·자원 때문에 미룬 항목과 관찰한 부정적 근거를 구분합니다. 실패 판정을 만들어 내지 않고 순위, 재활성화 조건과 부분 관찰을 보존합니다. 대화 기록을 복사하지 않고 원시 근거를 링크합니다.
 
-## Optional lineage and reusable lessons
+<a id="optional-lineage-and-reusable-lessons"></a>
+## 선택적 계보와 재사용 가능한 교훈
 
-Use one optional `parent` or `derivedFrom` link on a concrete item when its origin matters: reference the existing direction, finding or observation by stable ID and retain its evidence provenance. Siblings derived from the same observation can share that source link. Add source IDs only when needed for durable traceability; do not require both fields, convert every item into a tree node, or create a separate tree runtime.
+구체적인 항목의 기원이 중요할 때는 선택적인 `parent` 또는 `derivedFrom` 링크 하나를 사용합니다. 기존 방향, 발견 사항이나 관찰을 안정적인 ID로 참조하고 근거 출처를 보존합니다. 같은 관찰에서 파생한 형제 항목은 그 출처 링크를 공유할 수 있습니다. 지속적인 추적에 필요할 때만 출처 ID를 추가합니다. 두 필드를 모두 요구하거나 모든 항목을 트리 노드로 바꾸거나 별도 트리 런타임을 만들지 않습니다.
 
-After resolving a linked item, preserve any reusable lesson in its parent direction's findings/provenance with the originating item/experiment and evidence IDs. Keep the lesson's scope and uncertainty: a child result updates parent confidence only when evidence tests a shared premise, and a parent's failure does not automatically reject its children. A budget cut yields no failure lesson. Consult relevant positive and negative lessons before sibling/new candidate generation; revisit a known failure only with a changed premise or explicit evidence-backed counter. Keep useful children only when they have realistic information value, and do not reopen a converged branch to maintain tree shape.
+연결된 항목을 해결한 뒤에는 재사용 가능한 교훈을 부모 방향의 발견 사항·출처에 원래 항목·실험과 근거 ID를 함께 보존합니다. 교훈의 범위와 불확실성을 유지합니다. 자식 결과는 근거가 공유 전제를 시험할 때만 부모의 확신도를 갱신하며, 부모의 실패가 자식을 자동으로 기각하지는 않습니다. 예산 삭감은 실패 교훈을 만들지 않습니다. 형제·새 후보를 생성하기 전에 관련된 긍정적·부정적 교훈을 확인합니다. 알려진 실패는 전제가 바뀌거나 명시적인 근거 기반 반증이 있을 때만 다시 검토합니다. 현실적인 정보 가치가 있는 유용한 자식만 유지하고, 트리 형태를 유지하려고 수렴한 분기를 다시 열지 않습니다.
 
-On resume, restore relevant origin links and parent lessons through the existing state/findings index. Preserve the canonical single research home and missing-state boundary; consult history by ID when needed rather than replaying every branch.
+재개할 때는 기존 상태·발견 사항 색인을 통해 관련 기원 링크와 부모 교훈을 복원합니다. 정본 단일 조사 홈과 상태 누락 경계를 유지합니다. 모든 분기를 재실행하지 말고 필요할 때 ID로 이력을 확인합니다.
 
-## Resume
+<a id="resume"></a>
+## 재개
 
-`--resume` resolves canonical `.tigerkit/research/*/state.md` from the current or linked homes for this same repository, including an identity-verified legacy migration through [persistence](persistence.md); match by stable researchId and research identity. When exactly one valid research home matches, continue there automatically. If several distinct valid research projects exist, ask the user to choose among those concrete projects. Verify repository/worktree identity, research identity, current goal and constraints, then check every recorded reopen condition first, within current authority. Return items whose condition now holds to the frontier; for each still-waiting item record the observation keeping it waiting. An unauthorized external check remains pending rather than assumed unchanged. Then refresh only material evidence that can have changed. Restore recorded user premises/preferences and pending exact questions; include unresolved questions in the next necessary user-decision round without asking settled ones again. Preserve unaffected findings and continue from the stored frontier; apply required frontier regeneration when its prior result is absent or no longer valid, without restarting the setup interview, replacing settled findings, or asking the user to restate the operating protocol.
+`--resume`은 현재 홈이나 같은 저장소의 연결된 홈에서 정본 `.tigerkit/research/*/state.md`를 찾습니다. 여기에는 [지속성](persistence.md)을 통한 식별 검증된 기존 형식 마이그레이션도 포함됩니다. 안정적인 researchId와 조사 식별 정보로 대조합니다. 유효한 조사 홈이 정확히 하나 일치하면 그곳에서 자동으로 계속합니다. 서로 다른 유효한 조사 프로젝트가 여러 개 있으면 그 구체적인 프로젝트 중에서 사용자가 선택하도록 묻습니다. 저장소·worktree 식별 정보, 조사 식별 정보, 현재 목표와 제약을 검증한 다음, 현재 권한 안에서 기록된 모든 재개 조건을 먼저 확인합니다. 조건이 이제 성립하는 항목은 탐색 범위로 돌려놓습니다. 계속 대기하는 각 항목에는 대기를 유지하게 하는 관찰을 기록합니다. 승인되지 않은 외부 확인은 변경이 없다고 가정하지 않고 보류 상태로 남깁니다. 그런 다음 바뀌었을 수 있는 중요한 근거만 갱신합니다. 기록된 사용자 전제·선호와 보류 중인 정확한 질문을 복원합니다. 다음에 필요한 사용자 결정 라운드에 미해결 질문을 포함하되, 확정된 질문은 다시 묻지 않습니다. 영향을 받지 않은 발견 사항을 보존하고 저장된 탐색 범위에서 계속합니다. 이전 재생성 결과가 없거나 더 이상 유효하지 않으면 필요한 탐색 범위 재생성을 적용합니다. 설정 인터뷰를 다시 시작하거나 확정된 발견 사항을 교체하거나 사용자에게 운영 절차를 다시 진술하도록 요청하지 않습니다.
 
-If no valid state exists in the current or linked worktrees, or a found state belongs to another repository/project, do not guess from memory, chat history, GitHub issues or arbitrary nearby files. Report the exact mismatch and ask one material question: start a new project here or choose one of the actual state-owning worktrees.
+현재 또는 연결된 worktree에 유효한 상태가 없거나 찾은 상태가 다른 저장소·프로젝트에 속한다면, 기억, 채팅 이력, GitHub 이슈나 임의의 인접 파일로 추측하지 않습니다. 정확한 불일치를 보고하고 중요한 질문 하나를 합니다. 여기서 새 프로젝트를 시작할지, 실제로 상태를 소유한 worktree 중 하나를 선택할지 묻습니다.
 
-`--resume` under a concrete user resume request or user-configured external loop carries the same standard local research authority in the owning worktree without replaying old approvals. Model selection alone is not that request. The saved state identifies the research project and prior evidence; it does not expand authority beyond the standard local boundary. Protected/operational data, secrets, paid or state-changing external services, remote Git publication and destructive/irreversible actions still require explicit authority when needed. A fresh session resumes from the research home alone, without depending on conversation history. Prior external-authority facts are context, not fresh-session authorization; reuse authority already established in the active session. When only a prior session authorized upcoming external work, continue independent local-only items first, then ask one scope-specific re-confirmation covering all pending external needs. Persist local results in the same batch and end only when remaining useful work depends on that decision; never query the external systems before authority is established.
+구체적인 사용자 재개 요청이나 사용자가 설정한 외부 루프에 따른 `--resume`은 이전 승인을 반복하지 않고 담당 worktree에서 동일한 표준 로컬 조사 권한을 이어받습니다. 모델 선택만으로는 그 요청이 성립하지 않습니다. 저장된 상태는 조사 프로젝트와 이전 근거를 식별하며, 표준 로컬 경계 너머로 권한을 확대하지 않습니다. 보호·운영 데이터, 비밀, 유료 또는 상태 변경 외부 서비스, 원격 Git 발행과 파괴적·비가역적 행동에는 필요할 때 여전히 명시적 권한이 필요합니다. 새 세션은 대화 이력에 의존하지 않고 조사 홈만으로 재개합니다. 이전 외부 권한 사실은 맥락이며 새 세션의 승인이 아닙니다. 현재 세션에서 이미 확립된 권한은 재사용합니다. 앞으로 할 외부 작업을 이전 세션에서만 승인했다면 독립적인 로컬 전용 항목부터 계속한 다음, 보류된 모든 외부 필요를 포함하는 범위별 재확인 하나를 요청합니다. 같은 묶음 안에서 로컬 결과를 지속 저장하고, 남은 유용한 작업이 그 결정에 의존할 때만 종료합니다. 권한이 확립되기 전에는 외부 시스템에 질의하지 않습니다.
 
-At batch start capture the canonical state fingerprint and research-home HEAD. Before allocating final IDs or writing a terminal material outcome, reread both and apply the persistence concurrent-run guard. Write state atomically and reread it. Use monotonically increasing `CHK-<NNN>` and `EXP-<NNN>` identifiers from the current research project; never reuse an ID after a rejected or reverted attempt. Checkpoint knowledge persistence is defined by [research persistence](persistence.md). When no frontier action has realistic information gain, apply the persistent-research.md convergence and blocker rules before choosing an outcome. An unchanged resume returns `NO-DELTA` without fabricating a checkpoint or repeating a final handoff only when no reopen condition now holds, the stored frontier has no actionable item, and the last regeneration found none against unchanged evidence, premises, goal, steering and environment. This no-candidate proof can be reused after those checks; a result that previously held candidates is invalid once its last actionable candidate is consumed. Otherwise continue an actionable item or regenerate in this invocation. Recheck an essential blocker before choosing `BLOCKED`, not `CONCLUDE` or `NO-DELTA`. Record a new no-candidate regeneration in canonical state without creating a material checkpoint solely for that record.
+묶음을 시작할 때 정본 상태 fingerprint와 조사 홈 HEAD를 확보합니다. 최종 ID를 할당하거나 중요한 종결 결과를 쓰기 전에 둘 다 다시 읽고 지속성의 동시 실행 방어 조건을 적용합니다. 상태를 원자적으로 쓰고 다시 읽습니다. 현재 조사 프로젝트에서 단조 증가하는 `CHK-<NNN>`과 `EXP-<NNN>` 식별자를 사용합니다. 시도가 기각되거나 되돌려져도 ID를 재사용하지 않습니다. 체크포인트 지식의 지속 저장은 [조사 지속성](persistence.md)에서 정의합니다. 탐색 범위의 어떤 행동에도 현실적인 정보 획득 가능성이 없으면 결과를 선택하기 전에 persistent-research.md의 수렴·차단 규칙을 적용합니다. 변경 없는 재개는 이제 성립하는 재개 조건이 없고, 저장된 탐색 범위에 실행 가능한 항목이 없으며, 마지막 재생성이 변경 없는 근거, 전제, 목표, 지시와 환경에서 후보를 찾지 못했을 때만 체크포인트를 꾸며 내거나 최종 인계를 반복하지 않고 `NO-DELTA`를 반환합니다. 이 확인 후에는 후보 없음 증명을 재사용할 수 있습니다. 이전에 후보가 있던 결과는 마지막 실행 가능한 후보를 소진하면 무효입니다. 그 밖에는 이번 호출에서 실행 가능한 항목을 계속하거나 재생성합니다. `CONCLUDE`나 `NO-DELTA`가 아니라 `BLOCKED`를 선택하기 전에 필수 차단 요인을 다시 확인합니다. 새 후보 없음 재생성은 정본 상태에 기록하되, 그 기록만을 위해 중요한 체크포인트를 만들지는 않습니다.
 
-Do not maintain a database, scheduler, execution cursor, worker queue, per-run transcript or global cross-repository research memory. Do not use GitHub issues or PRs as the raw research ledger. Promote a converged engineering action separately through its owning TigerKit workflow.
+데이터베이스, scheduler, 실행 cursor, worker queue, 실행별 대화 기록이나 전역 교차 저장소 조사 memory를 유지하지 않습니다. GitHub 이슈나 PR을 원시 조사 원장으로 사용하지 않습니다. 수렴한 엔지니어링 행동은 담당 TigerKit 워크플로를 통해 별도로 승격합니다.
 
-Tested-and-rejected directions stay in the rejected record, never in the deferred candidate list.
-A reopened rejected direction requires changed premises/evidence and retains its prior verdict.
+시험 후 기각한 방향은 기각 기록에 남기며, 보류 후보 목록에 넣지 않습니다.
+기각한 방향을 다시 열려면 전제·근거가 바뀌어야 하며, 이전 판정을 유지합니다.

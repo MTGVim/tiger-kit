@@ -1,80 +1,84 @@
-# Explanation renderer contract
+<a id="explanation-renderer-contract"></a>
+# 설명 렌더러 계약
 
-## Route by selected form
+<a id="route-by-selected-form"></a>
+## 선택한 형식에 따른 분기
 
-`tk-explain` uses archify for the archify panel board and for a single explanation without a
-technique-specific form. Explicit technique forms and requested variants may use independently
-authored single HTML files under the common contract below. This is not a fallback for missing
-archify: a selected archify variant still needs its dependency. `tk-research` keeps archify for
-all research pages; the technique-specific branch belongs only to `tk-explain`.
+`tk-explain`은 archify 패널 보드와 기법별 형식이 없는 단일 설명에
+archify를 사용합니다. 명시적인 기법 형식과 요청한 변형에는 아래 공통 계약에 따라
+독립적으로 작성한 단일 HTML 파일을 사용할 수 있습니다. 이것은 archify가 없을 때의
+대체 경로가 아닙니다. 선택한 archify 변형에는 여전히 해당 의존성이 필요합니다. `tk-research`는
+모든 조사 페이지에 archify를 유지합니다. 기법별 분기는 `tk-explain`에만 속합니다.
 
-## Common single HTML contract
+<a id="common-single-html-contract"></a>
+## 공통 단일 HTML 계약
 
-Every page is one offline HTML with inline CSS/JS and embedded assets, without external requests
-at startup or interaction. Clickable source URLs are references, not fetched resources. Include a
-meaningful `<title>`, document language, semantic headings, accessible names, visible keyboard
-focus, light/dark tokens and reduced-motion handling. Honor the user's language and HTML theme
-preferences for authored technique pages; archify retains its own theme contract.
-Core facts and every step remain readable without JavaScript. Use native `<details><summary>`
-for answer disclosure; inline JS may enhance focus/scroll emphasis but cannot hide the only copy
-of required content. Inline SVG needs meaningful labels and correct geometry. Copy code excerpts
-literally from pinned head bytes and show `path:line @ sha`; qualify base/diff snapshots separately.
+모든 페이지는 인라인 CSS/JS와 내장 자산을 포함하는 하나의 오프라인 HTML이며, 시작하거나
+상호작용할 때 외부 요청을 보내지 않습니다. 클릭할 수 있는 출처 URL은 참조이며 가져오는 리소스가 아닙니다. 의미 있는
+`<title>`, 문서 언어, 의미론적 제목, 접근 가능한 이름, 눈에 보이는 키보드
+포커스, 밝은·어두운 테마 토큰과 동작 줄이기 처리를 포함합니다. 작성한 기법 페이지는 사용자의 언어와 HTML 테마
+선호를 따릅니다. archify는 자체 테마 계약을 유지합니다.
+핵심 사실과 모든 단계는 JavaScript 없이도 읽을 수 있어야 합니다. 답변을 펼쳐 보여 줄 때는 기본 `<details><summary>`를
+사용합니다. 인라인 JS로 포커스·스크롤 강조를 향상할 수 있지만 필수 콘텐츠의 유일한 사본을
+숨길 수는 없습니다. 인라인 SVG에는 의미 있는 레이블과 올바른 기하 구조가 필요합니다. 코드 발췌는
+고정한 head 바이트에서 그대로 복사하고 `path:line @ sha`를 표시합니다. base·diff 스냅샷은 별도로 구분하여 표시합니다.
 
-Use the same `evidence.md`, `scripts/visible_text.py` author check, source bindings and applicable
-independent accuracy review for every renderer and variant. Statically inspect final bytes for
-external URL/resource loads in HTML/CSS/JS, a nonempty `<title>`, and a first-child nonempty
-`<summary>` for each `<details>`; verify the no-JS reading path and source excerpts. Record
-candidate identity and check findings in run evidence. Static inspection is not browser evidence;
-requested interaction checks still go to `tk-browser-verify`. Only selected archify pages additionally
-run `finalize`; independently authored HTML needs no archify installation or receipt.
+모든 렌더러와 변형에 동일한 `evidence.md`, `scripts/visible_text.py` 작성자 점검, 출처 연결과 해당되는
+독립 정확성 검토를 사용합니다. 최종 바이트를 정적으로 검사하여
+HTML/CSS/JS에 외부 URL·리소스 로드가 있는지, `<title>`이 비어 있지 않은지, 비어 있지 않은
+`<summary>`가 각 `<details>`의 첫 자식인지 확인합니다. no-JS 읽기 경로와 출처 발췌를 검증합니다.
+후보 식별 정보와 점검 결과를 실행 근거에 기록합니다. 정적 검사는 브라우저 근거가 아닙니다.
+요청한 상호작용 점검은 여전히 `tk-browser-verify`로 전달합니다. 선택한 archify 페이지만 추가로
+`finalize`를 실행합니다. 독립적으로 작성한 HTML에는 archify 설치나 receipt가 필요하지 않습니다.
 
-## Selected archify branch
+<a id="selected-archify-branch"></a>
+## 선택한 archify 분기
 
-Dependency: `archify >= 3.2.0` (stable SemVer), from `tt-a1i/archify`.
-Verified upstream: `d6059331abbddb49bca380ff46dca8ce33158b04`, version `3.2.0`.
-Use the host's installed skill location and read its `skill-release.json` and `SKILL.md`;
-verify `skillId`, repository identity and version rather than inferring them from a folder.
-Unknown or incomparable metadata is not a pass. Missing/older dependencies return `Blocked`
-with installed/required versions and a `tk-wizard` install/update handoff. Do not install,
-update or vendor archify. Selected archify explanation pages and research pages never fall back to TigerKit's
-legacy document builder/report template, including when interaction is requested.
+의존성은 `archify >= 3.2.0`(stable SemVer)이며, 출처는 `tt-a1i/archify`입니다.
+검증한 upstream은 `d6059331abbddb49bca380ff46dca8ce33158b04`이며 버전은 `3.2.0`입니다.
+호스트에 설치된 스킬 위치를 사용하고 그곳의 `skill-release.json`과 `SKILL.md`를 읽습니다.
+폴더 이름에서 추론하지 말고 `skillId`, 저장소 식별 정보와 버전을 검증합니다.
+알 수 없거나 비교할 수 없는 메타데이터는 통과가 아닙니다. 의존성이 없거나 오래되었으면 `Blocked`를
+설치된 버전·필수 버전 및 `tk-wizard` 설치·업데이트 인계와 함께 반환합니다. archify를 설치하거나,
+업데이트하거나, vendoring하지 않습니다. 선택한 archify 설명 페이지와 조사 페이지는 상호작용을 요청한 경우를 포함하여 TigerKit의
+기존 문서 빌더·보고서 템플릿으로 절대 대체하지 않습니다.
 
-Read the installed `references/explainer-authoring.md` before drafting. Work entirely in
-the calling owner's `.tigerkit/tmp/<skill>/<run-id>/`; use unique panel/block IDs and same-directory image/spec
-files. Respect installed syntax rather than copying implementation or a cached example.
-Run:
+초안을 작성하기 전에 설치된 `references/explainer-authoring.md`를 읽습니다. 모든 작업은
+호출 담당자의 `.tigerkit/tmp/<skill>/<run-id>/` 안에서 수행합니다. 고유한 패널·블록 ID와 같은 디렉터리의 이미지·spec
+파일을 사용합니다. 구현이나 캐시된 예시를 복사하지 말고 설치된 구문을 따릅니다.
+다음을 실행합니다.
 
 ```sh
 node <archify>/bin/archify.mjs finalize explainer candidate.archify.md <final.html> --json
 ```
 
-Use `--repo-root <repo>` for committed code excerpts and verified repository references.
-The `@code` source must exist at the pinned commit/path/lines. Do not present worktree bytes
-or base lines as head excerpts; use version-qualified sources and literal diff/code blocks
-when one document spans snapshots. Add the matching revision to repository metadata.
-Explainer 3.2.0 finalize runs validate/deliver/check, not a browser gate. Save its receipt;
-never claim browser execution from finalize alone. Regenerate after corrections. Confirm
-single-file/offline output, including images; retain source URLs as references only.
+commit된 코드 발췌와 검증한 저장소 참조에는 `--repo-root <repo>`를 사용합니다.
+`@code` 출처는 고정한 commit·경로·행에 존재해야 합니다. worktree 바이트나
+base 행을 head 발췌로 제시하지 않습니다. 하나의 문서가 여러 스냅샷을 다루면 버전을 명시한 출처와 원문 그대로의 diff·코드 블록을
+사용합니다. 저장소 메타데이터에 일치하는 revision을 추가합니다.
+Explainer 3.2.0의 finalize는 validate/deliver/check를 실행하며 브라우저 관문은 아닙니다. receipt를 저장합니다.
+finalize만으로 브라우저 실행을 주장하지 않습니다. 수정한 뒤에는 다시 생성합니다.
+이미지를 포함한 단일 파일·오프라인 출력을 확인하고, 출처 URL은 참조로만 유지합니다.
 
-Consume finalize's update receipt instead of issuing a duplicate update check. If an update
-notice is required, show it once; prefer the user's verified bulk-update routine when known.
-Never execute an update. A sufficiently new version is not proof its generated output passed.
-The archify page owns its theme and does not read TigerKit `html.theme`; that preference
-continues to apply to separate QA, gallery, prototype and visual-question interfaces.
+중복 업데이트 점검을 실행하지 말고 finalize의 업데이트 receipt를 사용합니다. 업데이트
+안내가 필요하면 한 번만 보여 줍니다. 사용자의 검증된 일괄 업데이트 절차를 알고 있다면 이를 우선합니다.
+업데이트를 절대로 실행하지 않습니다. 버전이 충분히 새롭다고 해서 생성된 출력이 통과했다는 증거는 아닙니다.
+archify 페이지는 자체 테마를 소유하며 TigerKit의 `html.theme`를 읽지 않습니다. 이 선호값은
+별도의 QA, 갤러리, prototype과 시각적 질문 인터페이스에 계속 적용됩니다.
 
-For requested interaction, read [interactive examples](interactive-examples.md). Native
-diagram selection, guided steps, focus and route exploration remain live in archify;
-do not flatten them into images. Image conversion is for spatial figures the native
-diagram grammar cannot express, under [scene figures](scene-figures.md).
+상호작용을 요청받으면 [상호작용 예시](interactive-examples.md)를 읽습니다. 기본
+다이어그램 선택, 안내 단계, 포커스와 경로 탐색은 archify 안에서 작동하는 상태로 유지합니다.
+이미지로 평면화하지 않습니다. 이미지 변환은 기본
+다이어그램 문법으로 표현할 수 없는 공간 그림에 사용하며, [장면 그림](scene-figures.md)을 따릅니다.
 
-For non-software subjects, begin with native `@diagram` plus meaningful `meta.legend`
-entries (or the supported explicit hidden legend), using the installed schema. Compact
-software defaults can teach false categories. Do not wait for that error before choosing
-custom labels. Verify every node label; an ID is not an explanatory label.
+소프트웨어가 아닌 주제에서는 설치된 스키마를 사용하여 기본 `@diagram`과 의미 있는 `meta.legend`
+항목(또는 지원되는 명시적 숨김 범례)으로 시작합니다. 축약된
+소프트웨어 기본값은 잘못된 범주를 가르칠 수 있습니다. 그러한 오류가 발생하기를 기다리지 말고
+사용자 정의 레이블을 선택합니다. 모든 노드 레이블을 검증합니다. ID는 설명용 레이블이 아닙니다.
 
-Known 3.2.0 limits: explainer chrome falls back to English outside Chinese; compact workflow
-branch lanes can contain Chinese; compact semantic legends are software-oriented; `@image`
-accepts PNG/JPEG/GIF/WebP, not SVG. Embed a scene PNG using `path`, `alt`, `caption`.
-Record immutable UI wording as renderer-owned P/R findings. Fix authored labels/meaning,
-not upstream dictionaries or the user's register. Preserve finalize writing diagnostics,
-but reject a proposed wording fix that removes a factual qualification.
+알려진 3.2.0 제한은 다음과 같습니다. explainer chrome은 중국어 이외의 언어에서 영어로 대체됩니다. 축약된 workflow
+분기 lane에는 중국어가 포함될 수 있습니다. 축약된 의미 범례는 소프트웨어 중심입니다. `@image`는
+PNG/JPEG/GIF/WebP를 허용하며 SVG는 허용하지 않습니다. `path`, `alt`, `caption`을 사용하여 장면 PNG를 삽입합니다.
+바꿀 수 없는 UI 문구는 렌더러 소유의 P/R 발견 사항으로 기록합니다. upstream 사전이나 사용자의 언어 사용역이 아니라
+작성한 레이블·의미를 수정합니다. finalize의 글쓰기 진단은 보존하되,
+사실의 한정 조건을 제거하는 문구 수정 제안은 거절합니다.

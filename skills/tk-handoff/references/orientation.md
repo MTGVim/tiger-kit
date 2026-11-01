@@ -1,8 +1,9 @@
-# Conversation-only orientation
+<a id="conversation-only-orientation"></a>
+# 대화만으로 현황 파악하기
 
-Restore the reader's place in the current task, using only this conversation and evidence already available. If repository or branch identity is needed and not established, use one cheap read of current Git state. Do not investigate implementation details, enumerate other sessions/worktrees/repositories, or query remote PRs for a status recap. A requested comparison may use summaries the user supplied, with unknown or stale state labeled explicitly; never merge their goals or approvals.
+이 대화와 이미 확보된 근거만으로 현재 작업에서 독자가 어디까지 진행했는지 복원합니다. 저장소나 branch 식별 정보가 필요한데 아직 확인되지 않았다면 현재 Git 상태를 한 번 간단히 읽습니다. 상태 요약을 위해 구현 세부사항을 조사하거나 다른 세션·worktree·저장소를 열거하거나 원격 PR을 조회하지 않습니다. 요청받은 비교에는 사용자가 제공한 요약을 사용할 수 있으며, 알 수 없거나 오래된 상태를 명시적으로 표시합니다. 목표나 승인을 합치지 않습니다.
 
-Give one compact card in the user's language; for a requested comparison, give one labeled card per supplied session. Translate the field labels to that language. Prefer these five short lines, omitting an empty field rather than filling a quota:
+사용자 언어로 간결한 카드 하나를 제공합니다. 비교 요청이면 제공된 세션마다 이름을 붙인 카드 하나를 제공합니다. 필드 레이블은 해당 언어로 번역합니다. 다음의 짧은 다섯 줄을 권장하며, 개수를 채우기보다는 빈 필드를 생략합니다.
 
 ```text
 📍 <repository / branch when known> · <task goal>
@@ -12,9 +13,9 @@ Give one compact card in the user's language; for a requested comparison, give o
 내가 할 일: <only required user action, or 없음>
 ```
 
-Distinguish executed work from a plan, capture success from final verification, and local commits from confirmed publication. If context is missing, say what is unknown; ask only for the minimal task identifier needed for a useful answer. Do not invent percentages, timings, completed tests, or access to other sessions. Never infer medical status from this request.
+실행한 작업과 계획, 캡처 성공과 최종 검증, 로컬 commit과 확인된 발행을 구분합니다. 맥락이 부족하면 무엇을 모르는지 말하고, 유용한 답변에 필요한 최소 작업 식별 정보만 질문합니다. 비율, 소요 시간, 완료한 테스트나 다른 세션 접근 가능 여부를 만들어 내지 않습니다. 이 요청에서 의료 상태를 추론하지 않습니다.
 
-A status request pauses task execution for orientation. Present the card as the final response and end the turn, even when an earlier task approval includes implementation, verification, commits or publication. Do not resume that work, dispatch workers, start checks, or schedule background continuation after the card. The next-action line is a suggestion for later, not execution authority. Wait for a subsequent user instruction to resume; do not add a routine approval question. This explicit reporting boundary takes precedence over an owner's ordinary phase-continuation rule. It does not revoke earlier scope approval: a later resume instruction can reuse it when the task still matches. This format does not persist to every future reply or truncate a requested detailed explanation.
+상태 요청은 현황 파악을 위해 작업 실행을 일시 중단합니다. 이전 작업 승인이 구현, 검증, commit이나 발행을 포함하더라도 카드를 최종 응답으로 제시하고 턴을 끝냅니다. 카드 뒤에 해당 작업을 재개하거나 worker를 배정하거나 점검을 시작하거나 백그라운드 지속 작업을 예약하지 않습니다. 다음 행동 줄은 나중을 위한 제안이며 실행 권한이 아닙니다. 이후 사용자의 재개 지시를 기다리고, 관례적인 승인 질문을 덧붙이지 않습니다. 이 명시적인 보고 경계는 담당자의 일반적인 단계 연속성 규칙보다 우선합니다. 기존 범위 승인을 철회하는 것은 아니므로, 작업이 여전히 일치하면 이후 재개 지시에서 재사용할 수 있습니다. 이 형식이 앞으로 모든 응답에 지속 적용되거나 요청받은 상세 설명을 줄이는 것은 아닙니다.
 
-Create no status ledger or handoff file, mutate no repository/remote state for the recap, and grant no additional authority. Durable handoff creation/resume belongs to `tk-handoff`; this branch only restores conversational orientation.
+상태 대장이나 인수인계 파일을 만들지 않고, 요약을 위해 저장소·원격 상태를 변경하지 않으며, 추가 권한을 부여하지 않습니다. 지속 보존할 인수인계 생성·재개는 `tk-handoff`가 담당합니다. 이 분기는 대화에서 현황을 파악하도록 돕는 역할만 합니다.
 

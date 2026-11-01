@@ -1,81 +1,62 @@
-# Business policy lens
+<a id="business-policy-lens"></a>
+# 비즈니스 정책 관점
 
-## Target
+<a id="target"></a>
+## 대상
 
-Look for logic whose primary purpose is to decide a business policy, eligibility,
-permission, availability, approval, visibility, pricing rule, state transition guard, or
-similar outcome from multiple facts. Boolean-returning code is a strong signal, not a
-requirement.
+여러 사실로부터 비즈니스 정책, 자격, 권한, 가용성, 승인, 가시성, 가격 규칙, 상태 전이 guard 또는 이와 유사한 결과를 결정하는 것이 주목적인 로직을 찾습니다. boolean을 반환하는 코드는 강한 신호이지만 필수 조건은 아닙니다.
 
-Distinguish business policy from ordinary control flow. Loops, error handling, resource
-cleanup, orchestration order, parsing, one-off guards, framework lifecycle branches, and
-straightforward validation should normally stay ordinary code unless the domain meaning is
-the actual source of complexity.
+비즈니스 정책과 일반 제어 흐름을 구분합니다. loop, 오류 처리, 자원 정리, orchestration 순서, parsing, 일회성 guard, framework 수명 주기 분기와 단순 검증은 복잡성의 실제 원인이 도메인 의미가 아닌 한 보통 일반 코드로 유지해야 합니다.
 
-Read only enough call sites, types, tests, domain context, and neighboring rules to answer:
+다음 질문에 답하는 데 필요한 만큼만 호출 지점, type, 테스트, 도메인 맥락과 인접 규칙을 읽습니다.
 
-- what business statement the code represents;
-- whether callers need only `true/false` or also a reason, priority, or matched rule;
-- whether conditions are reused independently;
-- whether combinations are sparse, tabular, ordered, or stateful;
-- how often policy changes and who owns those changes;
-- what existing repository abstraction already expresses similar rules.
+- 코드가 어떤 비즈니스 명제를 표현하는지 확인합니다.
+- 호출자가 `true/false`만 필요로 하는지 아니면 사유, 우선순위나 일치한 규칙도 필요로 하는지 확인합니다.
+- 조건을 독립적으로 재사용하는지 확인합니다.
+- 조합이 희소한지, 표 형태인지, 순서가 있는지 또는 상태를 갖는지 확인합니다.
+- 정책이 얼마나 자주 바뀌고 누가 변경을 소유하는지 확인합니다.
+- 저장소의 어떤 기존 추상화가 유사한 규칙을 이미 표현하는지 확인합니다.
 
-Prefer repository precedent over introducing a new local vocabulary.
+새로운 로컬 용어를 도입하기보다 저장소의 선례를 우선합니다.
 
-## Minimal abstraction ladder
+<a id="minimal-abstraction-ladder"></a>
+## 최소 추상화 단계
 
-Choose the least powerful structure that materially improves readability, change safety,
-and testability. Consider candidates in this order and stop when one is sufficient:
+가독성, 변경 안전성과 테스트 가능성을 실질적으로 개선하는 가장 단순한 구조를 선택합니다. 다음 순서로 후보를 고려하고 하나로 충분하면 멈춥니다.
 
-1. keep the current code;
-2. extract clearly named predicates;
-3. compose predicates with small `all` / `any` / `not` helpers;
-4. use a Specification-style object only when named reusable rule composition needs richer
-   domain identity or behavior;
-5. use a Decision Table when combinations are naturally tabular and policy rows are easier
-   to review than branching control flow;
-6. use a Rules Engine or Policy-as-Code only when policy volume, independent runtime change,
-   external ownership, or auditability genuinely requires it.
+1. 현재 코드를 유지합니다.
+2. 이름이 명확한 predicate를 추출합니다.
+3. 작은 `all` / `any` / `not` helper로 predicate를 조합합니다.
+4. 이름이 있는 재사용 가능한 규칙 조합에 더 풍부한 도메인 식별 정보나 동작이 필요할 때만 Specification 스타일 객체를 사용합니다.
+5. 조합이 자연스럽게 표 형태이고 분기 제어 흐름보다 정책 행을 검토하기 쉬우면 Decision Table을 사용합니다.
+6. 정책의 양, 독립적인 런타임 변경, 외부 소유권이나 감사 가능성에 실제로 필요할 때만 Rules Engine 또는 Policy-as-Code를 사용합니다.
 
-Do not create a custom DSL merely to remove `if` statements. Do not replace readable early
-returns with combinators when the result becomes harder to debug. Do not introduce a shared
-abstraction until at least two real policies need the same semantics and the common shape is
-supported by repository evidence.
+`if` 문을 없애려는 이유만으로 custom DSL을 만들지 않습니다. 결과를 debug하기 더 어려워진다면 읽기 쉬운 조기 반환을 combinator로 대체하지 않습니다. 최소 두 개의 실제 정책에 같은 의미가 필요하고 저장소 근거가 공통 형태를 뒷받침하기 전에는 공통 추상화를 도입하지 않습니다.
 
-## Semantics and explainability
+<a id="semantics-and-explainability"></a>
+## 의미와 설명 가능성
 
-A structural refactor must preserve behavior. Identify the existing tests or observable
-invariants that would prove equivalence before recommending implementation. If coverage is
-insufficient, name the smallest characterization tests needed before changing structure.
-Do not recommend breaking working code just to manufacture a failing test for a
-behavior-preserving refactor.
+구조 리팩터링은 동작을 보존해야 합니다. 구현을 권고하기 전에 동등성을 입증할 기존 테스트나 관찰 가능한 불변 조건을 식별합니다. 검증 범위가 부족하면 구조 변경 전에 필요한 최소 characterization test를 명시합니다. 동작을 보존하는 리팩터링을 위해 실패하는 테스트를 만들겠다는 이유만으로 정상 동작 코드를 깨뜨리라고 권고하지 않습니다.
 
-When callers or operators need to know why a decision failed or which rule matched, do not
-hide that information behind an opaque boolean combinator. Prefer an explicit decision
-result, reason code, matched specification, or another repository-consistent diagnostic
-shape. Short-circuit order is behavior when predicates have cost, side effects, or priority;
-preserve or explicitly model it instead of assuming pure commutativity.
+호출자나 운영자가 결정이 실패한 이유나 어떤 규칙이 일치했는지 알아야 한다면 불투명한 boolean combinator 뒤에 정보를 숨기지 않습니다. 명시적인 결정 결과, reason code, 일치한 specification 또는 저장소 관례에 맞는 다른 진단 형태를 우선합니다. predicate에 비용, 부작용이나 우선순위가 있으면 단락 평가 순서도 동작입니다. 순수한 교환법칙을 가정하지 말고 순서를 보존하거나 명시적으로 모델링합니다.
 
-## Candidate quality
+<a id="candidate-quality"></a>
+## 후보 품질
 
-A candidate is worthwhile only when the proposed structure improves at least one material
-maintenance property without creating a larger abstraction tax. Check whether it:
+더 큰 추상화 비용을 만들지 않으면서 중요한 유지보수 특성을 적어도 하나 개선할 때만 제안 구조에 가치가 있습니다. 다음을 점검합니다.
 
-- makes the business statement easier to understand from code;
-- reduces the edit surface for adding or removing a rule;
-- enables focused tests of individual rules and their composition;
-- reduces duplicated policy meaning;
-- preserves useful failure explanations and debugging paths;
-- matches the repository's abstraction level and ownership boundaries.
+- 코드에서 비즈니스 명제를 더 쉽게 이해하게 하는지 확인합니다.
+- 규칙을 추가하거나 제거할 때 수정 범위를 줄이는지 확인합니다.
+- 개별 규칙과 조합을 집중적으로 테스트할 수 있게 하는지 확인합니다.
+- 중복된 정책 의미를 줄이는지 확인합니다.
+- 유용한 실패 설명과 debug 경로를 보존하는지 확인합니다.
+- 저장소의 추상화 수준과 소유권 경계에 맞는지 확인합니다.
 
-No candidate is a valid result. Do not produce a refactoring quota.
+후보가 없어도 유효한 결과입니다. 리팩터링 할당량을 만들지 않습니다.
 
-## Audit integration
+<a id="audit-integration"></a>
+## 감사 통합
 
-Use the owning audit's `AUD-*` finding contract, including evidence, impact, effort, fix risk, confidence,
-verification baseline and next route. Put the chosen minimal structure and why simpler options are insufficient
-in the fix sketch. Include explainability, evaluation order, side effects and characterization tests when relevant.
-A sound policy with no material maintenance problem yields no finding, not a style or abstraction quota.
-Keep recommendations local unless multiple policies justify a repository-wide abstraction. This lens grants no
-implementation or automatic dispatch authority and creates no separate report, ID system or durable lifecycle.
+근거, 영향, 노력, 수정 위험, 확신도, 검증 기준과 다음 경로를 포함하는 소유 감사의 `AUD-*` 발견 사항 계약을 사용합니다. 선택한 최소 구조와 더 단순한 대안이 불충분한 이유를 수정 개요에 넣습니다. 관련이 있으면 설명 가능성, 평가 순서, 부작용과 characterization test를 포함합니다.
+유지보수상 중요한 문제가 없는 건전한 정책에서는 발견 사항을 만들지 않습니다. 스타일이나 추상화 할당량을 만들지 않습니다.
+여러 정책이 저장소 전체 추상화를 정당화하지 않는 한 권고는 로컬 범위로 유지합니다. 이 관점은 구현이나 자동 배정 권한을 부여하지 않으며 별도의 보고서, ID 체계나 지속적인 수명 주기를 만들지 않습니다.

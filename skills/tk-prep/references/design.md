@@ -1,75 +1,53 @@
-# Conditional design comparison
+<a id="conditional-design-comparison"></a>
+# 조건부 설계 비교
 
-Read this document only for `material architecture uncertainty` that
-`Repository precedent` and `current evidence` do not resolve. Unless all four conditions hold,
-recommend repository precedent or the simplest reversible choice and continue
-preparation without extra procedure.
+`Repository precedent`와 `current evidence`로 해결되지 않는 `material architecture uncertainty`가 있을 때만 이 문서를 읽습니다. 네 조건을 모두 충족하는 경우가 아니면 저장소 선례나 가장 단순하고 되돌릴 수 있는 선택을 권고하고 추가 절차 없이 준비를 계속합니다.
 
-1. The choice is difficult to reverse, such as an `interface/seam/schema/architecture/migration`.
-2. At least two genuinely viable designs exist.
-3. A wrong choice has meaningful rework, compatibility, data, or testing cost.
-4. Current repository evidence does not sufficiently determine one option.
+1. `interface/seam/schema/architecture/migration`처럼 선택을 되돌리기 어렵습니다.
+2. 실제로 실행 가능한 설계가 적어도 두 가지 있습니다.
+3. 잘못된 선택에 따른 재작업, 호환성, 데이터 또는 테스트 비용이 상당합니다.
+4. 현재 저장소 근거만으로는 한 선택지를 충분히 결정할 수 없습니다.
 
-## Comparison
+<a id="comparison"></a>
+## 비교
 
-The controller creates at least two brief `materially different design`s. Renamed
-variants do not count. Compare each option using:
+컨트롤러는 짧은 `materially different design`을 적어도 두 개 만듭니다. 이름만 바꾼 변형은 인정하지 않습니다. 각 선택지를 다음 기준으로 비교합니다.
 
-- existing reuse and repository fit;
-- simplicity and the complexity it hides;
-- observable testing `seam`s;
-- `blast radius` and dependency impact;
-- migration, rollback, and compatibility cost;
-- `cost-if-wrong`.
+- 기존 요소의 재사용과 저장소 적합성을 비교합니다.
+- 단순성과 그 안에 숨겨진 복잡성을 비교합니다.
+- 관찰 가능한 테스트 `seam`을 비교합니다.
+- `blast radius`와 의존성 영향을 비교합니다.
+- 마이그레이션, 롤백과 호환성 비용을 비교합니다.
+- `cost-if-wrong`을 비교합니다.
 
-Recommend the option with the strongest evidence and explain why instead of listing a
-menu. A hybrid that combines advantages from different options is allowed when it is
-actually simpler. If repository precedent is found, stop the comparison and recommend
-that precedent.
+선택지 목록만 제시하지 말고 근거가 가장 강한 선택지를 권고하고 이유를 설명합니다. 실제로 더 단순해진다면 여러 선택지의 장점을 결합한 혼합안도 허용합니다. 저장소 선례를 찾으면 비교를 중단하고 그 선례를 권고합니다.
 
-## Runtime system lens
+<a id="runtime-system-lens"></a>
+## 런타임 시스템 관점
 
-When the material choice changes live traffic/data flow, asynchronous processing,
-distributed components, external dependencies, or failure containment, compare the
-candidate designs against the runtime requirements that can actually change topology
-or limits. Establish only relevant constraints and do not invent precision:
+중요한 선택이 실제 트래픽/데이터 흐름, 비동기 처리, 분산 구성 요소, 외부 의존성 또는 장애 격리를 바꾸면 실제로 토폴로지나 한계를 바꿀 수 있는 런타임 요구사항에 따라 후보 설계를 비교합니다. 관련 제약만 확립하고 정밀도를 만들어 내지 않습니다.
 
-- steady/peak/burst load, data volume, and bounded resource use;
-- latency or freshness expectations and acceptable degradation;
-- availability, durability, ordering, duplication, or loss guarantees when applicable;
-- security/privacy boundaries and sensitive-data retention;
-- observability, incident-debugging path, operational complexity, and cost.
+- 정상/최대/순간 부하, 데이터 양과 제한된 자원 사용량을 확인합니다.
+- 지연 시간이나 최신성 기대치와 허용 가능한 성능 저하를 확인합니다.
+- 해당하는 경우 가용성, 내구성, 순서, 중복 또는 손실 보장을 확인합니다.
+- 보안/개인정보 경계와 민감 데이터 보존을 확인합니다.
+- 관찰 가능성, 장애 디버깅 경로, 운영 복잡성과 비용을 확인합니다.
 
-For each candidate, trace relevant failure modes instead of evaluating only the happy
-path. Consider component crash/restart, dependency latency/outage, overload and
-backpressure, retry amplification, queue lag, partial failure, duplicate/lost/out-of-order
-delivery, stale state, observability/notification failure, and abuse only when the design
-can realistically encounter them. For each material mode, establish:
+각 후보에 대해 정상 경로만 평가하지 말고 관련 실패 모드를 추적합니다. 구성 요소의 중단/재시작, 의존성 지연/장애, 과부하와 backpressure, 재시도 증폭, 큐 지연, 부분 실패, 중복/손실/순서가 뒤바뀐 전달, 오래된 상태, 관찰/알림 실패와 악용은 설계에서 현실적으로 발생할 수 있을 때만 고려합니다. 각 중요한 모드에 대해 다음을 확립합니다.
 
-1. `effect`: what user/system behavior degrades or fails;
-2. `containment`: what prevents propagation or unbounded resource growth;
-3. `detection`: what runtime evidence lets an operator recognize it promptly;
-4. `recovery`: automatic recovery, fallback, rollback, replay, or explicit manual action;
-5. `validation`: a test, load experiment, fault injection, replay, or measurable production check.
+1. `effect`: 어떤 사용자/시스템 동작이 저하되거나 실패하는지 확인합니다.
+2. `containment`: 무엇이 전파나 무제한 자원 증가를 막는지 확인합니다.
+3. `detection`: 어떤 런타임 근거로 운영자가 신속히 인지할 수 있는지 확인합니다.
+4. `recovery`: 자동 복구, 대체 수단, 롤백, 재실행 또는 명시적인 수동 행동을 확인합니다.
+5. `validation`: 테스트, 부하 실험, 장애 주입, 재실행 또는 측정 가능한 운영 확인을 확인합니다.
 
-Prefer keeping telemetry, monitoring, notification, and other control-plane paths off the
-request critical path unless requirements demand otherwise. Reuse existing trustworthy
-telemetry/queues before creating a duplicate observation path. If incident response depends
-on delayed durable logs, identify what bounded, redacted evidence is available immediately
-and how it correlates with later durable records.
+요구사항이 달리 요구하지 않으면 telemetry, 모니터링, 알림과 다른 control-plane 경로는 요청의 critical path에서 분리하는 편을 우선합니다. 관찰 경로를 중복 생성하기 전에 기존의 신뢰할 수 있는 telemetry/큐를 재사용합니다. 장애 대응이 지연되는 지속 로그에 의존하면, 즉시 이용할 수 있는 한정되고 민감 정보가 가려진 근거가 무엇이며 나중의 지속 기록과 어떻게 연계되는지 식별합니다.
 
-Do not turn this lens into a mandatory distributed-systems checklist. Skip irrelevant
-constraints and failure modes, and surface only findings that change the recommendation,
-AC, validation plan, rollback, or accepted risk.
+이 관점을 필수 분산 시스템 체크리스트로 만들지 않습니다. 관련 없는 제약과 실패 모드는 건너뛰고 권고, AC, 검증 계획, 롤백 또는 수용한 위험을 바꾸는 발견 사항만 제시합니다.
 
-## Optional exploration and review protection
+<a id="optional-exploration-and-review-protection"></a>
+## 선택적 탐색과 검토 보호
 
-Choose subagent `fan-out` only for a complex case where at least two independent
-explorations materially improve confidence. If the current host lacks `fan-out`, the
-controller performs the same comparison; this is not `Blocked`. Do not persist agent
-count, provider, model, or reasoning values in this reference or the `Seed`.
+독립적인 탐색이 적어도 두 개 이상이면 확신을 실질적으로 높일 수 있는 복잡한 경우에만 서브에이전트 `fan-out`을 선택합니다. 현재 호스트에 `fan-out` 기능이 없으면 컨트롤러가 같은 비교를 수행합니다. 이것은 `Blocked`가 아닙니다. 이 참조나 `Seed`에 에이전트 수, provider, model 또는 reasoning 값을 영속화하지 않습니다.
 
-This heuristic is a proposal and exploration aid. Reviewers do not use design terms as
-independent failure criteria unless they were actually promoted into repository
-standards, approved `Seed` decisions, or ACs. Do not create a TigerKit-owned design
-ledger or new public workflow.
+이 휴리스틱은 제안과 탐색을 돕는 수단입니다. 설계 용어가 실제로 저장소 표준, 승인된 `Seed` 결정 또는 AC로 채택되지 않았다면 검토자는 그 용어를 독립적인 실패 기준으로 사용하지 않습니다. TigerKit 소유 설계 원장이나 새로운 공개 워크플로를 만들지 않습니다.

@@ -1,42 +1,44 @@
-# Plain-chat Question Rounds
+<a id="plain-chat-question-rounds"></a>
+# 일반 채팅 질문 라운드
 
-Apply when a prerequisite fails or a question genuinely belongs to the user; this reference adds no interview,
-shared-understanding gate, or new authority to its caller.
+선행 조건을 충족하지 못했거나 질문이 실제로 사용자에게 속할 때 적용합니다. 이 참조는 호출자에게 질의 과정,
+상호 이해 확인 관문이나 새 권한을 추가하지 않습니다.
 
-1. Investigate safely answerable facts from current evidence instead of asking for them.
-2. The current frontier is every unresolved user-owned decision answerable now without guessing
-   another unresolved answer. Preserve earlier and parent-owned approvals; do not re-ask them.
-3. Ask the whole frontier in one plain-chat round, grouping independent decisions. Defer dependent
-   questions until their prerequisites settle; impose no fixed count or round size.
-4. Include a recommendation and reason when supported. Wait for user answers, update the decisions
-   and evidence, then recompute the frontier. An empty frontier needs no invented question ceremony.
+1. 안전하게 답을 확인할 수 있는 사실은 묻지 말고 현재 근거에서 조사합니다.
+2. 현재 질문 집합은 다른 미해결 답을 추측하지 않고 지금 답할 수 있는 모든
+   사용자 소유의 미해결 결정입니다. 이전 승인과 상위 작업이 보유한 승인을 보존하고 다시 묻지 않습니다.
+3. 현재 질문 집합 전체를 한 번의 일반 채팅 라운드에 묻고 독립적인 결정을 묶습니다. 의존하는
+   질문은 선행 조건이 확정될 때까지 미룹니다. 질문 수나 라운드 크기를 고정하지 않습니다.
+4. 근거가 있으면 추천과 이유를 포함합니다. 사용자의 답을 기다리고 결정과
+   근거를 갱신한 뒤 현재 질문 집합을 다시 계산합니다. 현재 질문 집합이 비어 있으면 불필요한 질문 절차를 만들어 내지 않습니다.
 
-## Unmet prerequisites
+<a id="unmet-prerequisites"></a>
+## 충족하지 못한 선행 조건
 
-Hold only the affected action; continue independent authorized work. Investigate safe facts and apply remedies already covered by the active authorization. This reference grants no installation, repository initialization, permission expansion, safety bypass or publication authority.
+영향받는 행동만 보류하고 독립적인 승인 작업은 계속합니다. 안전하게 확인할 수 있는 사실을 조사하고 현재 승인에 이미 포함된 해결책을 적용합니다. 이 참조는 설치, 저장소 초기화, 권한 확대, 안전 조건 우회나 발행 권한을 부여하지 않습니다.
 
-When recovery needs a user choice or additional authority, present available concrete options with their exact target, proposed change and impact, and request only the missing decision or permission using the question format below. For a missing tool, inspect available supported alternatives first; request installation when needed instead of installing automatically or silently substituting a different deliverable. For insufficient permissions, identify the required target and access; do not bypass restrictions. If no safe remedy is available, report the specific blocked action and smallest missing input.
+복구에 사용자의 선택이나 추가 권한이 필요하면 가능한 구체적 선택지를 정확한 대상, 제안하는 변경 및 영향과 함께 제시하고, 아래 질문 형식으로 누락된 결정이나 권한만 요청합니다. 도구가 없으면 먼저 사용 가능한 지원 대안을 확인합니다. 자동으로 설치하거나 다른 산출물로 말없이 대체하지 말고 필요할 때 설치를 요청합니다. 권한이 부족하면 필요한 대상과 접근 권한을 밝히며 제한을 우회하지 않습니다. 안전한 해결책이 없으면 구체적으로 막힌 행동과 필요한 최소 입력을 보고합니다.
 
-After approval, recheck the prerequisite and resume the original requested work through completion, including its file deliverable. Setup alone or a chat explanation does not complete a requested artifact. Reuse an existing approval for the same remedy and target; recheck state without asking again. Repeated requests or frustration are not permission to bypass a safety condition. If recovery is declined, preserve the affected branch as blocked and continue independent work; disclose what remains undelivered. Resume only when the active host permits execution; do not promise background or automatic cross-session continuation.
+승인 후에는 선행 조건을 다시 확인하고 원래 요청 작업을 재개하여 파일 산출물을 포함해 완료까지 진행합니다. 설정만 하거나 채팅으로 설명하는 것으로는 요청된 산출물이 완료되지 않습니다. 같은 해결책과 대상에 대한 기존 승인은 재사용하며, 다시 묻지 않고 상태를 재확인합니다. 반복 요청이나 답답함은 안전 조건을 우회할 권한이 아닙니다. 복구가 거절되면 영향받는 분기는 차단 상태로 유지하고 독립적인 작업을 계속하며, 전달하지 못한 내용을 밝힙니다. 현재 호스트가 실행을 허용할 때만 재개합니다. 백그라운드나 세션을 넘나드는 자동 재개를 약속하지 않습니다.
 
-Use the caller's language and this scannable format:
+호출자의 언어로 다음과 같이 훑어보기 쉬운 형식을 사용합니다.
 
-Start the question block with a standalone horizontal rule (`---`) after the preceding
-context. Do not add a `## Questions` or `## 질문` heading. Apply the same format to every
-round, including a single clarification or approval question. Separate questions with blank
-lines and bold `❓ **Q<n> · ...**` title lines, without horizontal rules between questions.
+앞선 맥락 뒤에 독립된 수평선(`---`)으로 질문 블록을 시작합니다.
+`## Questions`나 `## 질문` 제목은 추가하지 않습니다. 확인이나 승인 질문 하나뿐이어도
+모든 라운드에 같은 형식을 적용합니다. 질문 사이에는 수평선을 넣지 않고 빈 줄과
+굵은 `❓ **Q<n> · ...**` 제목 줄로 구분합니다.
 
-When handing control back for answers, finish analysis, context, recommendations, limitations and
-plans before the frontier. The question frontier must be the final substantive block. Keep each
-question's choices and recommendation inside that block, and put any short reply-format hint at
-its end. Add no analysis, reference note, suggestion, execution plan, or redundant promise after
-it. This also applies to a single clarification or approval question; preserve `Q1`, `Q2`, ...
-and the prerequisite-aware batching above.
+답변을 받기 위해 제어를 돌려줄 때는 현재 질문 집합을 제시하기 전에 분석, 맥락, 추천, 한계와
+계획을 마칩니다. 현재 질문 집합은 마지막 실질적 블록이어야 합니다. 각 질문의
+선택지와 추천을 그 블록 안에 두고, 짧은 답변 형식 안내가 있으면
+끝에 둡니다. 그 뒤에 분석, 참조 메모, 제안, 실행 계획이나 중복된 약속을 덧붙이지
+않습니다. 확인이나 승인 질문 하나뿐이어도 마찬가지입니다. `Q1`, `Q2`, ...와
+위의 선행 조건을 고려한 묶기 원칙을 유지합니다.
 
-If the narrow structured-input exception below applies, complete explanatory text before the
-required tool call and append no follow-up explanation afterward. A technically required fixed
-host/system warning may follow only when its exact source mandates that placement; ordinary
-writing convenience is not an exception.
+아래의 좁은 구조화 입력 예외에 해당하면 필수 도구 호출 전에 설명문을 마치고
+호출 뒤에는 후속 설명을 덧붙이지 않습니다. 기술적으로 필수인 고정
+호스트나 시스템 경고는 정확한 출처에서 그 배치를 요구할 때만 뒤에 올 수 있습니다. 일반적인
+글쓰기 편의는 예외가 아닙니다.
 
 ```text
 ---
@@ -50,12 +52,12 @@ writing convenience is not an exception.
 ➡️ <recommended answer and reason, when supported>
 ```
 
-Do not call `AskUserQuestion`, `request_user_input`, or `clarify` for TigerKit clarification,
-selection, approval, scope, publication, product or engineering decisions. They are neither
-preferred tools nor fallbacks. The sole exception is an actual host/system contract technically
-requiring structured input that plain chat cannot represent with the same meaning and authority.
-Before using it, identify that exact requirement and document and verify its bounded scope.
-Convenient controls, option display and ordinary approval confirmation do not qualify.
+TigerKit의 확인, 선택, 승인, 범위, 발행, 제품이나 엔지니어링 결정을 위해
+`AskUserQuestion`, `request_user_input` 또는 `clarify`를 호출하지 않습니다. 이들은
+우선 도구도 대체 수단도 아닙니다. 유일한 예외는 실제 호스트나 시스템 계약에서 일반 채팅으로는
+같은 의미와 권한을 표현할 수 없는 구조화 입력을 기술적으로 요구하는 경우입니다.
+사용 전에 그 정확한 요구 사항을 식별하고 제한된 범위를 문서화하여 확인합니다.
+편리한 컨트롤, 선택지 표시와 일반적인 승인 확인은 해당하지 않습니다.
 
-Distilled from TigerKit's `tk-grill` and `mattpocock/skills` grilling at
-`d81f3a183412e71a5b1e84ca21bc1a35eea03a60`; the original MIT notice is in the calling package's `LICENSE.txt`.
+TigerKit의 `tk-grill`과 `mattpocock/skills`의 grilling,
+`d81f3a183412e71a5b1e84ca21bc1a35eea03a60`에서 증류했습니다. 원본 MIT 고지는 호출 패키지의 `LICENSE.txt`에 있습니다.

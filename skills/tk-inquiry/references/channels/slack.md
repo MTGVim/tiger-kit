@@ -1,19 +1,22 @@
 # Slack
 
-## Draft shape
+<a id="draft-shape"></a>
+## 초안 구성
 
-- For a DM or thread reply, use a few short connected paragraphs in the requester's established voice. Give the minimum context and evidence before the ask; omit headings, bold section labels and bullets by default. Use a short list only when several independent answers need separating.
-- If the source discussion is in a thread, read that thread before drafting and write a reply suited to it.
-- Use inline code formatting for identifiers only when it will render on the actual destination after paste; otherwise use plain text. Describe the behavior first and put any needed code identifier in parentheses. Use a code block only for longer snippets.
+- DM이나 스레드 답글은 요청자가 평소 사용하는 어조로 짧고 서로 연결되는 몇 개의 문단으로 작성합니다. 요청 전에 최소한의 맥락과 근거를 제시합니다. 기본적으로 제목, 굵은 구획 이름과 글머리표를 생략합니다. 독립적인 답변 여러 개를 구분해야 할 때만 짧은 목록을 사용합니다.
+- 원본 논의가 스레드에 있다면 초안을 작성하기 전에 해당 스레드를 읽고 그에 맞는 답글을 작성합니다.
+- 붙여 넣은 뒤 실제 목적지에서 렌더링되는 경우에만 식별자에 인라인 코드 서식을 사용합니다. 그렇지 않으면 일반 텍스트를 사용합니다. 동작을 먼저 설명하고 필요한 코드 식별자는 괄호 안에 넣습니다. 긴 발췌에만 코드 블록을 사용합니다.
 
-## Formatting and mentions
+<a id="formatting-and-mentions"></a>
+## 서식과 멘션
 
-- Slack's composer supports bold, italics, strikethrough, code, code blocks, quotes and ordered or bulleted lists. Its markup preference uses `*bold*`, `_italic_`, `~strikethrough~`, backticks and fenced code blocks. The default composer may apply formatting through its toolbar, so do not assume copied markup will render the same way in every workspace.
-- Avoid report-style headings and decorative lead-in markers. Follow the main skill evidence-link rule, including its contradiction exception.
-- Write numeric ranges with a hyphen, such as `3-5`. In markup mode, tildes delimit strikethrough text.
-- Include a mention only for a verified member or group. A name must resolve to the intended entry in Slack's autocomplete; when it is ambiguous or unverified, leave `[select recipient in Slack]` and tell the user to choose the exact entry before sending.
+- Slack 작성기는 굵게, 기울임, 취소선, 코드, 코드 블록, 인용과 번호·글머리표 목록을 지원합니다. 마크업 설정에서는 `*bold*`, `_italic_`, `~strikethrough~`, 백틱과 fenced code block을 사용합니다. 기본 작성기는 도구 모음으로 서식을 적용할 수 있으므로, 복사한 마크업이 모든 workspace에서 동일하게 렌더링된다고 가정하지 않습니다.
+- 보고서식 제목과 장식적인 도입 표식을 피합니다. 모순 예외를 포함하여 본 스킬의 근거 링크 규칙을 따릅니다.
+- 숫자 범위는 `3-5`처럼 하이픈으로 씁니다. 마크업 모드에서 물결표는 취소선 텍스트의 경계로 사용됩니다.
+- 검증된 구성원이나 그룹만 멘션합니다. Slack 자동 완성에서 이름이 의도한 항목으로 식별되어야 합니다. 이름이 모호하거나 검증되지 않았다면 `[select recipient in Slack]`을 남기고 사용자에게 전송 전에 정확한 항목을 선택하도록 안내합니다.
 
-## Official references
+<a id="official-references"></a>
+## 공식 참조
 
-- [Format your messages with markup](https://slack.com/help/articles/360039953113-Format-your-messages-in-Slack-with-markup)
-- [Use mentions in Slack](https://slack.com/help/articles/205240127-Use-mentions-in-Slack)
+- [마크업으로 메시지 서식 지정하기](https://slack.com/help/articles/360039953113-Format-your-messages-in-Slack-with-markup)
+- [Slack에서 멘션 사용하기](https://slack.com/help/articles/205240127-Use-mentions-in-Slack)

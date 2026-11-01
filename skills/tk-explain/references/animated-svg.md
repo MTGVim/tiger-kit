@@ -1,67 +1,38 @@
-# Explicit standalone animated SVG
+<a id="explicit-standalone-animated-svg"></a>
+# 명시적으로 요청한 독립 애니메이션 SVG
 
-Read only for an explicitly requested single looping SVG explanation. The explanation owner,
-source investigation, clear writing and independent content review remain `tk-explain`; no new
-skill, player, daemon or browser startup is needed. Static diagrams remain static by default.
-Use HTML for reader-controlled interactions or a document, `tk-explain` change mode for a change, and
-`tk-video` for requested audio/video. Never infer an animated-SVG request from a generic diagram.
+반복 재생되는 단일 SVG 설명을 명시적으로 요청한 경우에만 읽습니다. 설명 담당, 소스 조사, 명료한 글쓰기와 독립 콘텐츠 리뷰는 계속 `tk-explain`이 맡습니다. 새 스킬, 플레이어, daemon이나 브라우저 시작은 필요하지 않습니다. 정적 다이어그램은 기본적으로 정적 상태를 유지합니다.
+독자가 제어하는 상호작용이나 문서에는 HTML을, 변경에는 `tk-explain`의 변경 모드를, 요청한 오디오·동영상에는 `tk-video`를 사용합니다. 일반적인 다이어그램 요청에서 애니메이션 SVG 요청을 추론하지 않습니다.
 
-Choose one mechanism whose event order, wait or propagation needs motion. Establish the actual
-actors, initial state, events and causal dependencies from source evidence; label hypothetical
-timing as illustrative. Keep the nodes, directed connectors and complete ordered event captions
-understandable without motion. A packet is emphasis, not the only source of meaning. Preserve a
-readable static frame for reduced-motion and image-only readers. Do not turn a loop into a claim
-that the production system repeats or completes at the illustrative speed.
+이벤트 순서, 대기나 전파를 표현하는 데 움직임이 필요한 메커니즘 하나를 선택합니다. 소스 근거로 실제 행위자, 초기 상태, 이벤트와 인과 의존성을 확립합니다. 가정한 타이밍은 설명용임을 표시합니다. 움직임 없이도 노드, 방향성 연결선과 완전한 순서의 이벤트 캡션을 이해할 수 있게 유지합니다. 패킷은 강조 수단이며 의미를 전달하는 유일한 수단이 아닙니다. 움직임 줄이기와 이미지만 보는 독자를 위해 읽을 수 있는 정적 프레임을 보존합니다. 반복 재생을 운영 시스템이 반복되거나 설명용 속도로 완료된다는 주장으로 바꾸지 않습니다.
 
-Use the existing artifact-path/durable-root checks and choice. An explicit `.svg` target wins.
-Otherwise obtain the explanation directory from `scripts/durable_artifacts.py resolve`; select a
-new `<topic-slug>.svg` there with a numeric suffix on collision, without creating a dummy HTML.
-Recheck the final SVG path and parent under the same safety/ignore rules; the returned HTML
-filename is only a location hint for this branch. Keep the small editable scene JSON beside the
-SVG when useful, or in run-owned scratch when only the SVG was requested. Do not overwrite either
-file without authority, commit, publish, auto-open a browser or install a renderer.
+기존 산출물 경로·durable-root 검사와 선택을 사용합니다. 명시적인 `.svg` 대상이 우선합니다.
+그 외에는 `scripts/durable_artifacts.py resolve`에서 설명 디렉터리를 얻고, 더미 HTML을 만들지 않은 채 그곳에 새 `<topic-slug>.svg`를 선택하며 충돌 시 숫자 접미사를 붙입니다.
+같은 안전·ignore 규칙에 따라 최종 SVG 경로와 부모를 다시 확인합니다. 반환된 HTML 파일명은 이 분기에서는 위치 힌트일 뿐입니다. 유용하면 작고 편집 가능한 장면 JSON을 SVG 옆에 유지하고, SVG만 요청했다면 실행 소유 임시 공간에 유지합니다. 권한 없이 어느 파일도 덮어쓰지 않으며 commit, 발행, 브라우저 자동 열기나 렌더러 설치를 수행하지 않습니다.
 
-## Scene and shared clock
+<a id="scene-and-shared-clock"></a>
+## 장면과 공통 시계
 
-The optional stdlib-only `scripts/build_animated_svg.py` compiles one scene. Its exact JSON keys:
+표준 라이브러리만 사용하는 선택적 `scripts/build_animated_svg.py`는 장면 하나를 컴파일합니다. 정확한 JSON 키는 다음과 같습니다.
 
-- `title`, `description`: grounded text for the visible title and accessible whole-story description.
-- `width`, `height`, `loop`: numeric canvas dimensions and a common loop duration in seconds.
-- `nodes`: objects with `id`, `label`, `x`, `y`, `width`, `height`.
-- `edges`: objects with `id`, `from`, `to`, `points`; points are orthogonal `[x,y]` coordinates
-  touching their named node boundaries. Route around unrelated nodes and text.
-- `events`: objects with `id`, `edge`, `label`, `travel` and exactly one of `at` or `after`.
-  `after` names an earlier event; optional non-negative `gap` is added after its arrival.
+- `title`, `description`은 보이는 제목과 접근 가능한 전체 이야기 설명에 사용할 근거 있는 텍스트입니다.
+- `width`, `height`, `loop`는 숫자형 캔버스 크기와 초 단위의 공통 반복 주기입니다.
+- `nodes`는 `id`, `label`, `x`, `y`, `width`, `height`를 가진 객체입니다.
+- `edges`는 `id`, `from`, `to`, `points`를 가진 객체입니다. 점은 지정한 노드 경계에 닿는 직교 `[x,y]` 좌표입니다. 무관한 노드와 텍스트를 피해서 경로를 배치합니다.
+- `events`는 `id`, `edge`, `label`, `travel`과 `at` 또는 `after` 중 정확히 하나를 가진 객체입니다.
+  `after`는 앞선 이벤트를 가리킵니다. 선택적인 음이 아닌 `gap`은 해당 이벤트 도착 후에 더해집니다.
 
-Use concise real names, one shared clock and a rest gap. The helper limits scenes to 9 nodes,
-12 edges and 8 events; split larger mechanisms instead of shrinking labels. Its visible static
-sequence includes actor names, event labels and start/arrival times. Repeated traversal of an
-edge may show retry/backoff; explicitly simultaneous `at` values may show fan-out. Node geometry,
-event text and edge crossings remain author decisions, not an automatic layout-quality proof.
+간결한 실제 이름, 공통 시계 하나와 휴지 구간을 사용합니다. 도우미는 장면을 노드 9개, 간선 12개와 이벤트 8개로 제한합니다. 레이블을 줄이는 대신 더 큰 메커니즘을 나눕니다. 보이는 정적 순서에는 행위자 이름, 이벤트 레이블과 시작·도착 시간이 포함됩니다. 한 간선의 반복 이동은 재시도·backoff를 나타낼 수 있으며 명시적으로 동시인 `at` 값은 fan-out을 나타낼 수 있습니다. 노드 기하 구조, 이벤트 텍스트와 간선 교차는 작성자의 결정이며 자동 레이아웃 품질 증명이 아닙니다.
 
-Generate with `python3 <package>/scripts/build_animated_svg.py --spec <scene.json> --output <new.svg>`.
-Validate the saved output with the same command plus `--check`. The checker compares the exact
-deterministic SVG to the validated scene; it is not a sanitizer for arbitrary edited SVG. Revise
-the JSON and regenerate to a new approved target. IDs/numbers are constrained and text is escaped;
-the emitted file has one style block, CSS keyframes, accessible title/description, static captions
-and a reduced-motion rule that hides packets. It contains no script, SMIL, external font/image,
-foreign object or network reference. The Python helper is needed for authoring, never playback.
+`python3 <package>/scripts/build_animated_svg.py --spec <scene.json> --output <new.svg>`로 생성합니다.
+같은 명령에 `--check`를 더해 저장된 출력을 검증합니다. 검사기는 정확하고 결정적인 SVG를 검증된 장면과 비교합니다. 임의로 편집한 SVG를 위한 sanitizer가 아닙니다. JSON을 수정하고 새로 승인된 대상에 다시 생성합니다. ID·숫자는 제약되며 텍스트는 이스케이프됩니다. 출력 파일에는 스타일 블록 하나, CSS keyframes, 접근 가능한 제목·설명, 정적 캡션과 패킷을 숨기는 움직임 줄이기 규칙이 있습니다. script, SMIL, 외부 글꼴·이미지, foreign object나 네트워크 참조는 없습니다. Python 도우미는 작성에 필요하며 재생에는 필요하지 않습니다.
 
-## Verify and deliver
+<a id="verify-and-deliver"></a>
+## 검증과 전달
 
-Check the saved XML, complete keyframes and schedule, causal order, rest gap, self-containment and
-static frame. Inspect Korean labels, named endpoints, arrow directions, unrelated crossings and
-caption fit. The helper's conservative text-space guards cannot establish actual font metrics or
-visual clarity. Run the existing independent content review on the exact SVG and scene, including
-the static sequence and motion logic, before delivery; keep missing review evidence `Unverifiable`.
+저장된 XML, 완전한 keyframes와 일정, 인과 순서, 휴지 구간, 자체 완결성과 정적 프레임을 확인합니다. 한국어 레이블, 명명된 끝점, 화살표 방향, 무관한 교차와 캡션 배치를 검사합니다. 도우미의 보수적인 텍스트 공간 가드는 실제 글꼴 메트릭이나 시각적 명료함을 입증할 수 없습니다. 전달 전에 정적 순서와 움직임 로직을 포함해 정확한 SVG와 장면에 기존 독립 콘텐츠 리뷰를 수행합니다. 누락된 리뷰 근거는 `Unverifiable`로 유지합니다.
 
-Browser rendering/playback checks run only when explicitly requested. For this branch's initial
-capability validation, verify browser playback, reduced motion and SVG-in-image embedding when a
-local renderer is available. A static rasterizer cannot prove animation; XML/keyframe success
-cannot prove GitHub's image proxy or sanitization behavior. Preserve failed evidence and distinguish
-executed browser/GitHub checks from unavailable ones. Do not promise that all Markdown hosts,
-mobile apps, email clients or social services retain SVG animation. Do not publish a fixture just
-to test GitHub without publication authority. Offer `tk-video` only for an accepted video need.
+브라우저 렌더링·재생 검사는 명시적으로 요청한 경우에만 실행합니다. 이 분기의 최초 기능 검증에서는 로컬 렌더러를 사용할 수 있으면 브라우저 재생, 움직임 줄이기와 SVG 이미지 삽입을 검증합니다. 정적 rasterizer는 애니메이션을 입증할 수 없으며 XML·keyframe 성공은 GitHub의 이미지 프록시나 정제 동작을 입증할 수 없습니다. 실패 근거를 보존하고 실행한 브라우저·GitHub 검사와 사용할 수 없었던 검사를 구별합니다. 모든 Markdown 호스트, 모바일 앱, 이메일 클라이언트나 소셜 서비스가 SVG 애니메이션을 유지한다고 약속하지 않습니다. 발행 권한 없이 GitHub 테스트만을 위해 fixture를 발행하지 않습니다. 수락된 동영상 필요가 있을 때만 `tk-video`를 제안합니다.
 
-Return the standalone SVG link, optional editable scene and concise actual verification limits.
-Do not silently wrap the requested SVG in HTML or assert playback from static checks alone.
+독립 SVG 링크, 선택적인 편집 가능 장면과 간결한 실제 검증 한계를 반환합니다.
+요청한 SVG를 조용히 HTML로 감싸거나 정적 검사만으로 재생을 주장하지 않습니다.

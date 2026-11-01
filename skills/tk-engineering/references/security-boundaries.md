@@ -1,46 +1,24 @@
-# Browser and Agent Trust Boundaries
+<a id="browser-and-agent-trust-boundaries"></a>
+# 브라우저와 에이전트 신뢰 경계
 
-Read only for scoped browser trust decisions or LLM/Agent/MCP execution. Use the
-owning audit/review's evidence, finding and read-only rules; these lenses add no
-scanner, remote test, mutation authority or separate review procedure.
+범위가 정해진 브라우저 신뢰 결정이나 LLM/Agent/MCP 실행에 대해서만 읽습니다. 담당 감사·리뷰의 근거, 발견 사항과 읽기 전용 규칙을 사용합니다. 이 관점은 스캐너, 원격 테스트, 변경 권한이나 별도의 리뷰 절차를 추가하지 않습니다.
 
-## Browser code
+<a id="browser-code"></a>
+## 브라우저 코드
 
-- For `postMessage`, connect a reachable sender to a sensitive receiver action or
-  disclosure. Check exact allowed origins and the expected `event.source` when
-  same-origin frames have different trust. A substring origin match or `*` target
-  matters only with an unintended recipient or reachable sensitive action.
-- For Service Worker caches, Storage and cross-tab messages, trace writer, reader,
-  account/tenant key and logout/account-switch/offline/stale-tab lifecycle. Require
-  another account or less-trusted context to receive data or stale authority;
-  storing a token or registering a worker alone is not a finding.
-- For DOM/XSS, trace untrusted content into an executing sink or framework escape
-  hatch. Framework interpolation escaping and effective browser policy are controls.
-  For prototype pollution, require both a prototype-changing write and a reachable
-  security-relevant consumer (gadget); parsing JSON or a gadget-free write is insufficient.
+- `postMessage`에서는 도달 가능한 발신자를 민감한 수신자 동작이나 정보 공개에 연결합니다. 같은 출처의 프레임 사이에 신뢰 수준이 다르면 정확한 허용 출처와 예상 `event.source`를 확인합니다. 부분 문자열 출처 일치나 `*` 대상은 의도하지 않은 수신자 또는 도달 가능한 민감한 동작이 있을 때만 의미가 있습니다.
+- Service Worker 캐시, Storage와 탭 간 메시지에서는 작성자, 독자, 계정·테넌트 키와 로그아웃·계정 전환·오프라인·오래된 탭의 생명주기를 추적합니다. 다른 계정이나 신뢰 수준이 낮은 맥락이 데이터 또는 오래된 권한을 받는 경로가 있어야 합니다. 토큰을 저장하거나 worker를 등록하는 것만으로는 발견 사항이 아닙니다.
+- DOM/XSS에서는 신뢰할 수 없는 콘텐츠가 실행 sink나 프레임워크 우회 기능으로 들어가는 경로를 추적합니다. 프레임워크 보간 이스케이프와 유효한 브라우저 정책은 통제 수단입니다. 프로토타입 오염에는 프로토타입을 변경하는 쓰기와 도달 가능한 보안 관련 소비자(gadget)가 모두 필요합니다. JSON 파싱이나 gadget이 없는 쓰기만으로는 불충분합니다.
 
-## Model and tool code
+<a id="model-and-tool-code"></a>
+## 모델과 도구 코드
 
-- Trace writable documents, retrieval, memory or tool/MCP responses through the model
-  to the handler's side effect. Name the requester, affected principal, effective
-  execution identity, target and action. Prompt injection text alone is not a finding;
-  identify the code-level authority, data or action-binding failure and its effect.
-- Check handler-side requester/resource authorization after arguments are final.
-  A shared service credential can be safe with enforced per-user scope. A schema or
-  guardrail prompt does not establish resource permission or safe sink semantics.
-- Compare the intentionally requested/approved action with the normalized tool name,
-  complete arguments, requester and target actually executed. Valid resource permission
-  alone does not authorize an attacker-induced action. Follow queue, retry, resume and
-  batch paths for changed arguments or duplicate side effects and their idempotency guard.
-- For retrieval/memory, connect an attacker-controlled write with a cross-user/tenant
-  read or privileged decision, including query filters and cache keys. For tool schema
-  disagreement, trace coercions, aliases or defaults into a different security-relevant
-  handler value; accepting structured output alone proves neither safety nor a defect.
+- 쓰기 가능한 문서, 검색, 메모리 또는 도구·MCP 응답이 모델을 거쳐 핸들러의 부수 효과에 이르는 경로를 추적합니다. 요청자, 영향받는 주체, 유효 실행 식별 정보, 대상과 행동을 명시합니다. 프롬프트 주입 텍스트만으로는 발견 사항이 아닙니다. 코드 수준의 권한, 데이터 또는 행동 결합 실패와 그 영향을 식별합니다.
+- 인수가 확정된 뒤 핸들러 측 요청자·리소스 인가를 확인합니다. 사용자별 범위가 강제된다면 공유 서비스 자격 증명도 안전할 수 있습니다. 스키마나 guardrail 프롬프트는 리소스 권한이나 안전한 sink 의미를 입증하지 않습니다.
+- 의도적으로 요청·승인된 행동을 실제 실행한 정규화된 도구 이름, 전체 인수, 요청자와 대상에 비교합니다. 유효한 리소스 권한만으로 공격자가 유도한 행동이 승인되지는 않습니다. 큐, 재시도, 재개와 배치 경로에서 변경된 인수나 중복 부수 효과 및 그 멱등성 가드를 추적합니다.
+- 검색·메모리에서는 쿼리 필터와 캐시 키를 포함하여 공격자가 제어하는 쓰기를 사용자·테넌트 간 읽기 또는 특권 결정에 연결합니다. 도구 스키마 불일치에서는 형 변환, 별칭 또는 기본값이 보안상 다른 핸들러 값으로 이어지는지 추적합니다. 구조화된 출력을 수락하는 것만으로 안전성이나 결함 어느 쪽도 입증되지 않습니다.
 
-## Evidence limits
+<a id="evidence-limits"></a>
+## 근거의 한계
 
-Check existing guards before raising a candidate and retain a safe counterexample.
-Use bounded local evidence with dummy identities when execution is needed. If a required
-browser policy, deployed header, provider identity or external routing fact cannot be
-observed, mark that premise `Unverifiable` and name the missing check; do not label the
-path confirmed. This does not authorize production probing or broader access.
+후보를 제기하기 전에 기존 가드를 확인하고 안전한 반례를 유지합니다. 실행이 필요하면 더미 식별 정보로 범위가 한정된 로컬 근거를 사용합니다. 필요한 브라우저 정책, 배포된 헤더, 제공자 식별 정보 또는 외부 라우팅 사실을 관찰할 수 없다면 해당 전제를 `Unverifiable`로 표시하고 누락된 검사를 명시합니다. 그 경로를 확인된 것으로 표시하지 않습니다. 이는 운영 환경 탐침이나 더 넓은 접근을 승인하지 않습니다.

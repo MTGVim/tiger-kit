@@ -1,5 +1,6 @@
-# Semantic Review Plan
+<a id="semantic-review-plan"></a>
+# 의미 중심 리뷰 계획
 
-Before approval, keep a semantic review plan covering the change intent, original incident or expected scenario, expected changed outcome, `must-not-change` behavior or visual regions, change-owned risk edges, required automated/runtime/browser evidence, and known pre-implementation uncertainty. Preserve it in every code-changing Ready Seed; a direct/no-Seed path keeps the same approved obligations in the current interaction.
+승인 전에 변경 의도, 원래 사건 또는 예상 시나리오, 기대하는 변경 결과, `must-not-change` 동작이나 시각 영역, 변경에 귀속되는 위험 경계, 필요한 자동화·런타임·브라우저 근거와 구현 전에 알려진 불확실성을 다루는 의미 중심 리뷰 계획을 유지합니다. 코드를 변경하는 모든 Ready Seed에 이를 보존합니다. direct/no-Seed 경로에서는 동일하게 승인된 의무를 현재 상호작용에 유지합니다.
 
-Do not store reviewer count, provider/model identity, worker routing, or review transcripts in the Seed. The execution shape and [independent review protocol](review-protocol.md) determine the seats after the exact diff exists.
+Seed에 리뷰어 수, 제공자·모델 식별 정보, 작업자 라우팅이나 리뷰 대화록을 저장하지 않습니다. 정확한 diff가 존재한 뒤 실행 구조와 [독립 리뷰 프로토콜](review-protocol.md)이 리뷰 역할 수를 결정합니다.

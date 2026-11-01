@@ -1,35 +1,20 @@
-# Results
+<a id="results"></a>
+# 결과
 
-Accept pasted rating JSON from the copy button exactly as a file export. For a chat-only
-answer, use `summarize - --key <matching-key> --blind` with JSON on stdin and no `--output`;
-keep key-derived identities hidden unless the user authorized disclosure. A `revealed` flag
-records prior exposure, not current permission. Apply Artifact Paths only if saving is needed.
-Use the matching study/revision answer key and the bundled `summarize` command. Validate the
-export schema, evaluator ID, item/candidate membership, content fingerprint, score range,
-favorite validity and duplicate ratings. Reject mismatched or malformed input without replacing
-it. A score is a human response, not an automatic quality measurement. Failed generations are
-counted separately, never converted into zero or silently dropped. Empty scores are missing.
-Return the partial counts and anonymous score summary before discussing remaining evaluations
-or gallery UX. Check `rated + missing + failures == total`; empty and omitted rows remain
-missing. Request a file only if the pasted export cannot be parsed completely and accurately.
+복사 버튼에서 붙여넣은 평가 JSON을 파일 내보내기와 똑같이 받아들입니다. 채팅으로만 답변할 때는 JSON을 stdin으로 전달하고 `--output` 없이 `summarize - --key <matching-key> --blind`를 사용합니다. 사용자가 공개를 승인하지 않았다면 키에서 파악한 신원을 숨깁니다. `revealed` flag는 이전 노출을 기록하며 현재의 허가를 뜻하지 않습니다. 저장이 필요한 경우에만 산출물 경로 기준을 적용합니다.
+해당 연구와 revision에 맞는 정답 키 및 패키지에 포함된 `summarize` 명령을 사용합니다. 내보내기 schema, 평가자 ID, 항목/후보 소속, 콘텐츠 fingerprint, 점수 범위, 선호 후보의 유효성과 중복 평가를 검증합니다. 일치하지 않거나 형식이 잘못된 입력은 대체하지 말고 거부합니다. 점수는 사람의 응답이며 자동 품질 측정값이 아닙니다. 생성 실패는 별도로 집계하며 0점으로 바꾸거나 말없이 제외하지 않습니다. 빈 점수는 누락입니다.
+남은 평가나 갤러리 UX를 논의하기 전에 부분 집계와 익명 점수 요약을 반환합니다. `rated + missing + failures == total`을 확인합니다. 빈 행과 생략된 행은 계속 누락으로 취급합니다. 붙여넣은 내보내기를 완전하고 정확하게 파싱할 수 없는 경우에만 파일을 요청합니다.
 
-With `--output`, the helper saves `summary.json` and `summary.md`: candidate mean/count, all item/candidate
-scores and notes, favorites, generation failures and missing ratings. It supports one export
-from one browser evaluator, not live collection. Report `evaluators: 1`; do not infer independent
-raters from browser IDs or repeated exports. A later multi-rater workflow needs explicit identity
-and duplicate-export handling before pooling. Explain that unequal coverage can change the rank;
-compare common rated items when relevant rather than announcing a winner from unequal means.
-If the identity toggle was used, disclose the export's `revealed` flag and possible bias.
-Objective metrics, if provided, belong in a separate sourced comparison beside low-scoring items;
-do not fabricate metrics or add significance tests.
+`--output`을 사용하면 도우미는 후보별 평균/개수, 모든 항목/후보 점수와 메모, 선호 후보, 생성 실패와 누락된 평가를 `summary.json`과 `summary.md`에 저장합니다. 이 도우미는 한 브라우저 평가자의 내보내기 하나를 지원하며 실시간 수집은 지원하지 않습니다. `evaluators: 1`로 보고합니다. 브라우저 ID나 반복 내보내기로 독립 평가자를 추론하지 않습니다. 이후 여러 평가자를 사용하는 워크플로에서는 집계 전에 명시적인 신원 처리와 중복 내보내기 처리가 필요합니다. 평가 범위가 다르면 순위가 바뀔 수 있음을 설명합니다. 평균의 평가 범위가 다른데도 우승자를 선언하지 말고, 필요한 경우 공통으로 평가한 항목을 비교합니다.
+신원 표시 toggle을 사용했다면 내보내기의 `revealed` flag와 편향 가능성을 공개합니다.
+객관적 지표가 제공되었다면 낮은 점수 항목 옆에 출처를 갖춘 별도 비교로 제시합니다. 지표를 지어내거나 유의성 검정을 추가하지 않습니다.
 
 
-## Versus exports
+<a id="versus-exports"></a>
+## Versus 내보내기
 
-For `mode: "versus"`, read [versus](versus.md) and use the same `summarize` command;
-never reinterpret choices as numeric scores or send them through a ratings-only parser.
-It verifies the revision-bound roster and replays each transcript against the matching key.
-Report complete, pending, incomparable and failure counts before discussing selected candidates.
-Co-winners are explicit human choices, not an automatic quality ranking. Zero/one successful
-output is incomparable, not a default winner. Preserve the single-evaluator and reveal-history
-limitations above. `--blind` also hides the versus summary's item/candidate identities.
+`mode: "versus"`에서는 [versus](versus.md)를 읽고 같은 `summarize` 명령을 사용합니다.
+선택을 숫자 점수로 재해석하거나 평가 점수 전용 parser에 전달하지 않습니다.
+이 명령은 revision에 연결된 명단을 검증하고 각 transcript를 일치하는 키에 대조해 재생합니다.
+선택된 후보를 논의하기 전에 완료, 대기, 비교 불가와 실패 개수를 보고합니다.
+공동 우승자는 사람의 명시적인 선택이며 자동 품질 순위가 아닙니다. 성공한 출력이 0개나 1개라면 기본 우승자가 아니라 비교 불가로 처리합니다. 위의 단일 평가자와 공개 이력 한계를 유지합니다. `--blind`는 versus 요약의 항목/후보 신원도 숨깁니다.

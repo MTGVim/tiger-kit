@@ -1,49 +1,53 @@
-# Artifact Paths
+<a id="artifact-paths"></a>
+# 산출물 경로
 
-Default repository-owned output to `.tigerkit/`: transient files in `tmp/<skill>/<run-id>/`, verification evidence in `evidence/<skill>/<run-id>/`, explanations in `explanations/`, and retrospectives in `retro/`. Preserve existing owner-specific paths and explicit user-selected final destinations. Create artifacts only when the active task calls for them. For repository-local artifacts, before writing, verify the repository root, no tracked `.tigerkit` paths, and safe nonsymlink destinations. From the repository root, run `git ls-files -- .tigerkit .tigerkit/` to check tracking, then `git check-ignore -q -- .tigerkit/` to check effective exclusion. Exit 0 means leave ignore files unchanged, including when exclusion comes from `core.excludesFile` (such as configured `~/.gitignore`), the default global ignore file, or `.git/info/exclude`; a missing repository `.gitignore` or missing literal entry is not evidence of missing coverage. Only exit 1 permits creating the root `.gitignore` or appending `/.tigerkit/`, preserving existing bytes and line endings, then rerunning the same check before writing. Any other exit status or command failure blocks the file branch without an ignore edit. Use `git check-ignore -v -- .tigerkit/` only to diagnose the source; a printed negated pattern is not proof of exclusion. This narrow ignore setup is part of an authorized artifact write even for a read-only task; it grants no other source/config/index/commit/publication authority. Existing effective ignore rules need no edit. Do not untrack files or follow a symlinked/nonregular `.gitignore`; if unsafe, unwritable, still unignored, or no repository is identified, hold only the file branch as `Blocked | Unverifiable` and follow the recovery procedure below, without an OS-temp fallback. Briefly report an ignore edit; never stage or commit it solely for setup. Atomic replacement may use a run-owned sibling temporary file on the destination filesystem; clean it after success. External tool caches and isolated test fixtures retain their tool-owned lifecycle.
-
-
-## Optional durable final artifacts
-
-Only `tk-explain` may use `artifacts.durableRoot` for final explanations. Explicit destinations win; transient
-`tmp/` and `evidence/` stay repository-local. Before the first eligible artifact, run the
-package-local `scripts/durable_artifacts.py status`. If `durableRoot` is absent and an
-interactive question is possible, ask once before saving whether to use an outside-repository
-location, suggesting `~/.tigerkit` and explaining that removing a worktree also removes its
-ignored `.tigerkit/` files. Use the accepted path, not an inferred preference.
-After the answer, record only that answer using `choose --root <path> --repo <repository>`
-or `choose --disable --repo <repository>`. If another writer changes settings before the
-choice is recorded, re-read status and preserve any existing choice; do not overwrite it. If the
-key remains absent, retry using the already approved answer. A null choice means deliberately
-disabled; do not ask again when the key exists. If questioning is unavailable, use the existing default
-without recording a choice. Preserve other settings and never replace malformed settings.
-
-For an eligible final artifact, use `resolve --repo <repository> --kind explanations
---slug <safe-topic-slug>`. Pass `--explicit <path>` for a user-selected destination; a slug is unnecessary in that case. A configured
-root yields `<root>/<repo-key>/explanations/<slug>.html`;
-otherwise use the existing owner default. Use `--create` only when ready to create an authorized
-durable destination. The helper derives the key from the actual Git common directory, rejects
-symlink paths and roots within any worktree, and creates new directories with private mode.
-For a durable path, verify repository identity and safe destination but skip `.tigerkit/` Git
-ignore setup solely for that final path. Apply ordinary exclusion checks to any local scratch.
-Existing default targets get numeric suffixes; explicit targets require overwrite authority.
-Invalid configuration falls back without modifying it; report its warning once. Do not move or
-copy existing artifacts. Existing teach homes remain where they are and are identity-checked
-before continuation; use the owner's resume procedure to inspect durable and legacy candidates.
+저장소 소유 출력은 기본적으로 `.tigerkit/`에 둡니다. 임시 파일은 `tmp/<skill>/<run-id>/`, 검증 근거는 `evidence/<skill>/<run-id>/`, 설명은 `explanations/`, 회고는 `retro/`에 둡니다. 기존 담당자별 경로와 사용자가 명시적으로 선택한 최종 목적지를 보존합니다. 현재 작업에 필요할 때만 산출물을 만듭니다. 저장소 로컬 산출물은 쓰기 전에 저장소 루트, 추적 중인 `.tigerkit` 경로가 없다는 점, 심볼릭 링크가 아닌 안전한 목적지를 확인합니다. 저장소 루트에서 `git ls-files -- .tigerkit .tigerkit/`를 실행해 추적 여부를 확인한 다음 `git check-ignore -q -- .tigerkit/`로 실제 제외 여부를 확인합니다. 종료 코드 0이면 ignore 파일을 그대로 둡니다. `core.excludesFile`(예: 설정된 `~/.gitignore`), 기본 전역 ignore 파일이나 `.git/info/exclude`에서 제외되는 경우도 포함합니다. 저장소 `.gitignore`나 리터럴 항목이 없다는 사실은 제외가 누락되었다는 근거가 아닙니다. 종료 코드 1일 때만 루트 `.gitignore`를 만들거나 `/.tigerkit/`를 추가할 수 있습니다. 기존 바이트와 줄바꿈을 보존하고 쓰기 전에 같은 점검을 다시 실행합니다. 그 밖의 종료 상태나 명령 실패는 ignore 편집 없이 파일 분기를 중단합니다. `git check-ignore -v -- .tigerkit/`는 제외 출처를 진단할 때만 사용합니다. 부정 패턴이 출력되었다고 해서 제외를 증명하는 것은 아닙니다. 이 좁은 ignore 설정은 읽기 전용 작업에서도 승인된 산출물 쓰기의 일부입니다. 다른 소스·설정·인덱스·커밋·발행 권한은 부여하지 않습니다. 이미 유효한 ignore 규칙은 편집할 필요가 없습니다. 파일의 추적을 해제하거나 심볼릭 링크이거나 일반 파일이 아닌 `.gitignore`를 따라가지 않습니다. 안전하지 않거나, 쓸 수 없거나, 여전히 제외되지 않거나, 저장소를 식별하지 못했으면 파일 분기만 `Blocked | Unverifiable`로 보류하고 OS 임시 경로로 우회하지 않은 채 아래 복구 절차를 따릅니다. ignore 편집은 짧게 보고합니다. 설정만을 위해 이를 스테이징하거나 커밋하지 않습니다. 원자적 교체에는 목적지 파일시스템의 실행 소유 형제 임시 파일을 사용할 수 있습니다. 성공 후 정리합니다. 외부 도구 캐시와 격리된 테스트 픽스처는 해당 도구 소유의 수명주기를 유지합니다.
 
 
-## Recovering a blocked file branch
+<a id="optional-durable-final-artifacts"></a>
+## 선택적 지속 최종 산출물
 
-Apply [prerequisite recovery](../../tk-questioning/references/questions.md#unmet-prerequisites) within existing authority. If no Git repository is identified, hold artifact writes and offer two concrete options: initialize the current folder, naming its absolute path and the new local Git metadata, or create the artifact in an existing repository selected by the user. Obtain separate explicit approval for initialization unless the same target and action were already approved; an artifact request alone is not initialization approval. Do not automatically initialize, use a temporary directory to bypass checks, commit, or publish. After approval, recheck the selected folder, initialize only if still needed and approved, then verify the repository root and all exclusion/safe-path checks above before completing the original artifact. A missing exclusion alone follows the already-authorized minimal ignore setup above; it needs no extra approval. If recovery is declined or unavailable, continue independent work and report the undelivered file and missing decision.
+`tk-explain`만 최종 설명에 `artifacts.durableRoot`를 사용할 수 있습니다. 명시적 목적지가 우선하며, 임시
+`tmp/`와 `evidence/`는 계속 저장소 로컬에 둡니다. 첫 해당 산출물 전에
+패키지 로컬 `scripts/durable_artifacts.py status`를 실행합니다. `durableRoot`가 없고
+대화형 질문이 가능하면, 저장 전에 저장소 밖 위치를 사용할지 한 번 묻습니다.
+`~/.tigerkit`를 제안하고 worktree를 제거하면 그 안의
+무시된 `.tigerkit/` 파일도 사라진다고 설명합니다. 추정한 선호가 아니라 수락된 경로를 사용합니다.
+답변 뒤에는 `choose --root <path> --repo <repository>`나
+`choose --disable --repo <repository>`로 그 답변만 기록합니다. 선택을
+기록하기 전에 다른 작성자가 설정을 바꾸면 상태를 다시 읽고 기존 선택을 보존합니다. 덮어쓰지 않습니다.
+키가 여전히 없으면 이미 승인된 답변으로 재시도합니다. null 선택은 의도적인
+비활성화를 뜻합니다. 키가 있으면 다시 묻지 않습니다. 질문이 불가능하면 선택을 기록하지 않고
+기존 기본값을 사용합니다. 다른 설정을 보존하고 형식이 잘못된 설정은 절대 교체하지 않습니다.
 
-Keep the shell working directory at the repository root while addressing run-owned files with absolute paths or `git -C`; use a subshell only when a tool requires a different cwd. Never `cd` into a run-owned directory that will be deleted, and never delete the current working directory or one of its ancestors. Run cleanup from the repository root.
-Write every cleanup deletion with the literal, fully resolved absolute run-owned path already recorded in this run. Never derive a deletion target from command substitution, a path file read back, or a glob piped through `head` or `tail`. If the exact literal path is unknown, list the candidate paths and stop instead of deleting.
+해당하는 최종 산출물에는 `resolve --repo <repository> --kind explanations
+--slug <safe-topic-slug>`를 사용합니다. 사용자가 선택한 목적지에는 `--explicit <path>`를 전달합니다. 이 경우 slug는 필요하지 않습니다. 설정된
+루트가 있으면 `<root>/<repo-key>/explanations/<slug>.html`을 사용하고,
+그렇지 않으면 기존 담당자의 기본값을 사용합니다. 승인된
+지속 목적지를 만들 준비가 되었을 때만 `--create`를 사용합니다. 도우미는 실제 Git 공통 디렉터리에서 키를 도출하고,
+심볼릭 링크 경로와 모든 worktree 내부의 루트를 거부하며, 새 디렉터리를 비공개 권한으로 만듭니다.
+지속 경로에는 저장소 식별과 안전한 목적지를 검증하되, 그 최종 경로에 한해서만 `.tigerkit/` Git
+ignore 설정을 생략합니다. 로컬 임시 작업에는 일반 제외 점검을 적용합니다.
+기본 목적지가 이미 존재하면 숫자 접미사를 붙입니다. 명시적 목적지는 덮어쓰기 권한이 필요합니다.
+잘못된 설정은 수정하지 않고 대체 동작으로 처리합니다. 경고는 한 번 보고합니다. 기존 산출물을 이동하거나
+복사하지 않습니다. 기존 학습 공간은 원래 위치에 두고 계속하기 전에 식별을 확인합니다.
+지속 경로와 레거시 후보는 담당자의 재개 절차로 조사합니다.
 
-Git exclusion does not guarantee exclusion from build tools that scan the worktree: [Tailwind v4 automatic source detection](https://tailwindcss.com/docs/detecting-classes-in-source-files#which-files-are-scanned) excludes paths in `.gitignore`, while user-level excludes alone left `.tigerkit/` in the confirmed build scan. Build-scan exclusions are a separate repository-local decision; this fact does not change the exit-0 no-edit rule above.
 
-## User-editable temporary input
+<a id="recovering-a-blocked-file-branch"></a>
+## 차단된 파일 분기 복구
 
-Apply this branch only when the task requires the user to supply values through a newly created temporary file. Use a UTF-8 `input.json` containing a pretty-printed plain JSON object with double-quoted, task-specific keys; initialize missing text values to `""` and prefill only confirmed non-secret defaults. Include only fields needed for the pending step. For a single token, create:
+기존 권한 안에서 [선행 조건 복구](../../tk-questioning/references/questions.md#unmet-prerequisites)를 적용합니다. Git 저장소를 식별하지 못하면 산출물 쓰기를 보류하고 두 가지 구체적 선택지를 제시합니다. 현재 폴더를 초기화하되 그 절대 경로와 새 로컬 Git 메타데이터를 밝히거나, 사용자가 선택한 기존 저장소에 산출물을 만듭니다. 같은 대상과 행동이 이미 승인된 경우가 아니면 초기화에는 별도의 명시적 승인을 받습니다. 산출물 요청만으로 초기화가 승인되지는 않습니다. 자동 초기화, 임시 디렉터리를 통한 점검 우회, 커밋이나 발행을 하지 않습니다. 승인 후에는 선택한 폴더를 다시 확인하고, 여전히 필요하고 승인된 경우에만 초기화한 다음 저장소 루트와 위의 모든 제외·안전 경로 점검을 검증한 뒤 원래 산출물을 완성합니다. 제외만 누락된 경우에는 위의 이미 승인된 최소 ignore 설정을 따릅니다. 추가 승인은 필요하지 않습니다. 복구가 거절되거나 불가능하면 독립적인 작업을 계속하고 전달하지 못한 파일과 누락된 결정을 보고합니다.
+
+셸의 작업 디렉터리는 저장소 루트에 두고 실행 소유 파일은 절대 경로나 `git -C`로 지정합니다. 도구가 다른 cwd를 요구할 때만 서브셸을 사용합니다. 삭제할 실행 소유 디렉터리로 `cd`하지 않으며, 현재 작업 디렉터리나 그 상위 디렉터리를 삭제하지 않습니다. 정리는 저장소 루트에서 실행합니다.
+모든 정리용 삭제에는 이번 실행에서 이미 기록한, 완전히 해석된 실행 소유 절대 경로를 문자열 그대로 씁니다. 명령 치환, 다시 읽은 경로 파일, `head`나 `tail`로 파이프한 glob에서 삭제 대상을 도출하지 않습니다. 정확한 경로 문자열을 모르면 삭제하지 말고 후보 경로를 나열한 뒤 중단합니다.
+
+Git 제외는 worktree를 스캔하는 빌드 도구에서도 제외된다는 보장이 아닙니다. [Tailwind v4 자동 소스 탐지](https://tailwindcss.com/docs/detecting-classes-in-source-files#which-files-are-scanned)는 `.gitignore`의 경로를 제외하지만, 사용자 수준 제외만 사용했을 때는 확인된 빌드 스캔에 `.tigerkit/`가 남았습니다. 빌드 스캔 제외는 별도의 저장소 로컬 결정입니다. 이 사실은 위의 종료 코드 0일 때 편집하지 않는 규칙을 바꾸지 않습니다.
+
+<a id="user-editable-temporary-input"></a>
+## 사용자가 편집하는 임시 입력
+
+작업상 사용자가 새로 만든 임시 파일을 통해 값을 제공해야 할 때만 이 분기를 적용합니다. 큰따옴표로 감싼 작업별 키를 가진 일반 JSON 객체를 보기 좋게 들여쓴 UTF-8 `input.json`을 사용합니다. 누락된 텍스트 값은 `""`로 초기화하고 확인된 비밀이 아닌 기본값만 미리 채웁니다. 대기 중인 단계에 필요한 필드만 포함합니다. 토큰 하나라면 다음과 같이 만듭니다.
 
 ```json
 {
@@ -51,16 +55,16 @@ Apply this branch only when the task requires the user to supply values through 
 }
 ```
 
-Use the same object shape for one or several fields. Keep field meanings, required types and editing instructions outside the file; do not use JSON-LD, comments, trailing commas, instructional placeholder values or a zero-byte/raw-text file. This rule does not convert existing user files, final documents, code/config files, machine transport, or conversational questions into JSON and grants no new write authority.
+필드가 하나든 여러 개든 같은 객체 형태를 사용합니다. 필드 의미, 필수 타입과 편집 지침은 파일 밖에 둡니다. JSON-LD, 주석, 후행 쉼표, 지침용 자리표시자 값, 0바이트·일반 텍스트 파일은 사용하지 않습니다. 이 규칙은 기존 사용자 파일, 최종 문서, 코드·설정 파일, 기계 간 전달이나 대화형 질문을 JSON으로 바꾸지 않으며 새 쓰기 권한도 부여하지 않습니다.
 
-Put ordinary input in `.tigerkit/tmp/<skill>/<run-id>/input.json`. If any field is secret, keep the entire object in `.tigerkit/secret-input/<skill>-<run-id>/input.json` with directory `0700` and file `0600`. Apply the exclusion, nonsymlink and ownership checks above; create exclusively and never overwrite an unrelated existing file. Require a regular file with one hard link, inside the safe run-owned directory. Reuse an existing run-owned pending file without resetting entered values. Never prefill secrets or expose their contents in chat, commands, logs, receipts or parser errors.
+일반 입력은 `.tigerkit/tmp/<skill>/<run-id>/input.json`에 둡니다. 비밀 필드가 하나라도 있으면 전체 객체를 `.tigerkit/secret-input/<skill>-<run-id>/input.json`에 두고 디렉터리는 `0700`, 파일은 `0600`으로 설정합니다. 위의 제외·심볼릭 링크 아님·소유권 점검을 적용합니다. 배타적으로 생성하고 무관한 기존 파일을 덮어쓰지 않습니다. 안전한 실행 소유 디렉터리 안의 하드 링크 수가 하나인 일반 파일이어야 합니다. 실행 소유의 기존 대기 파일은 입력된 값을 초기화하지 않고 재사용합니다. 비밀을 미리 채우거나 내용을 대화·명령·로그·영수증·파서 오류에 노출하지 않습니다.
 
-Before the handoff, finish preparation and release this run's waiting-related server/browser resources using their owning cleanup procedure; never stop user-owned or other-run resources. Do not start or hold servers or browsers while waiting for input. Record initial metadata privately and start a bounded, run-owned change watcher in the background before presenting the paths, only when the host supports it across the turn boundary. This is a finite input wait, not a daemon or scheduled task. A normal final-message handoff is not cancellation: preserve the pending file for the supported wait or later resumption. If the host cannot sustain it or resume on completion, disclose the limitation and exact resumption step; preserve the same pending file and never promise automatic continuation.
+인계 전에 준비를 마치고, 담당 정리 절차로 이번 실행의 대기 관련 서버·브라우저 자원을 해제합니다. 사용자 소유나 다른 실행의 자원은 중지하지 않습니다. 입력을 기다리는 동안 서버나 브라우저를 시작하거나 유지하지 않습니다. 초기 메타데이터는 비공개로 기록하고, 호스트가 턴 경계를 넘어 지원할 때만 경로를 제시하기 전에 기간이 제한된 실행 소유 변경 감시기를 백그라운드에서 시작합니다. 이는 유한한 입력 대기이지 데몬이나 예약 작업이 아닙니다. 일반적인 최종 메시지 인계는 취소가 아닙니다. 지원되는 대기나 이후 재개를 위해 대기 파일을 보존합니다. 호스트가 대기를 유지하거나 완료 시 재개할 수 없으면 그 제약과 정확한 재개 단계를 밝힙니다. 같은 대기 파일을 보존하고 자동 계속 진행을 약속하지 않습니다.
 
-Present the input handoff as the final user-visible text message of the turn, then end the turn with no further tool calls. Do not deliver it only as a progress/thinking update that the host may summarize. Put each actual path alone on its own line, complete and unabbreviated, with no trailing particle or punctuation. Show both repository-relative and absolute paths, the secret-free initial template, and which fields the user must fill and save. Offer a host-appropriate clipboard-to-field command only when useful; it must JSON-serialize the clipboard value into the named field while preserving other fields, never overwrite the object with raw clipboard text or place values in arguments/history. Do not automatically launch an editor, opener, GUI, terminal UI or change focus. Open the shown path only on explicit user request.
+입력 인계는 그 턴에서 사용자에게 보이는 마지막 텍스트 메시지로 제시한 뒤, 추가 도구 호출 없이 턴을 끝냅니다. 호스트가 요약할 수 있는 진행·생각 업데이트로만 전달하지 않습니다. 각 실제 경로는 완전하고 줄임 없는 형태로 한 줄씩 단독으로 적으며, 뒤에 조사나 구두점을 붙이지 않습니다. 저장소 상대 경로와 절대 경로, 비밀이 없는 초기 템플릿, 사용자가 채우고 저장해야 하는 필드를 모두 보여 줍니다. 유용한 경우에만 호스트에 맞는 클립보드 값을 필드에 넣는 명령을 제시합니다. 이 명령은 다른 필드를 보존하면서 클립보드 값을 지정한 필드에 JSON 직렬화해야 합니다. 객체를 클립보드 원문으로 덮어쓰거나 값을 인수·기록에 넣지 않습니다. 편집기, 파일 열기 도구, GUI, 터미널 UI를 자동 실행하거나 포커스를 바꾸지 않습니다. 명시적인 사용자 요청이 있을 때만 표시한 경로를 엽니다.
 
-The watcher uses bounded metadata-change polling without reporting content or metadata values. File existence, non-zero size or modification alone is not completion: the seeded template is already non-empty. After a change, a trusted local reader may parse without returning contents, validate the exact requested keys/types and nonblank required text fields, and report only `Pending | Ready | Unsafe`. Reject duplicate or unexpected keys. An unchanged template, missing/blank field, malformed or partly saved JSON stays `Pending`; preserve the user's bytes and wait for the next change. Explain only the missing field name or syntax requirement, never raw values or parser excerpts. Before use, recheck safe path, ownership and secret permissions and reparse the current file; validate and consume the same snapshot. Unsafe replacement stops the file branch as `Blocked | Unverifiable`.
+감시기는 내용이나 메타데이터 값을 보고하지 않는, 기간이 제한된 메타데이터 변경 폴링을 사용합니다. 파일 존재, 0이 아닌 크기나 수정 사실만으로 완료가 되지 않습니다. 초기 템플릿은 이미 비어 있지 않습니다. 변경 후에는 신뢰할 수 있는 로컬 판독기가 내용을 반환하지 않고 파싱하여, 정확히 요청된 키·타입과 비어 있지 않은 필수 텍스트 필드를 검증하고 `Pending | Ready | Unsafe`만 보고할 수 있습니다. 중복되거나 예상하지 않은 키는 거부합니다. 변경되지 않은 템플릿, 누락·공백 필드, 형식이 잘못되었거나 저장 중인 JSON은 `Pending`으로 유지합니다. 사용자 바이트를 보존하고 다음 변경을 기다립니다. 누락된 필드 이름이나 구문 요구사항만 설명하며, 원시 값이나 파서 발췌는 절대 보여 주지 않습니다. 사용 전에 안전한 경로, 소유권과 비밀 권한을 다시 확인하고 현재 파일을 다시 파싱합니다. 같은 스냅샷을 검증하고 소비합니다. 안전하지 않은 교체는 파일 분기를 `Blocked | Unverifiable`로 중단합니다.
 
-When ready and the host can resume execution, continue the exact authorized pending step without requesting a separate user completion message. Renew bounded waits only while the host-supported task remains active; if the host cannot wait, preserve the same run-owned path and explain resumption. On resumption, privately validate the existing run-owned file once before waiting for another change. Pass only validated fields to the approved consumer, never the JSON wrapper as a credential. Delete one-time secret input and its run directory immediately after consumption on success, failure or exception and verify no residue. Application authentication follows the scoped exception below; ordinary input follows its run-owned temporary lifecycle. Preserve the existing host-native hidden-input option when safer.
+준비되었고 호스트가 실행을 재개할 수 있으면, 별도의 사용자 완료 메시지를 요청하지 않고 정확히 승인된 대기 단계를 계속합니다. 호스트가 지원하는 작업이 활성 상태인 동안에만 기간이 제한된 대기를 갱신합니다. 호스트가 기다릴 수 없으면 같은 실행 소유 경로를 보존하고 재개 방법을 설명합니다. 재개 시에는 다른 변경을 기다리기 전에 실행 소유의 기존 파일을 비공개로 한 번 검증합니다. 검증된 필드만 승인된 소비자에게 전달하고, JSON 래퍼 자체를 자격 증명으로 전달하지 않습니다. 일회용 비밀 입력과 그 실행 디렉터리는 성공·실패·예외에 관계없이 소비 직후 삭제하고 잔여물이 없는지 검증합니다. 애플리케이션 인증은 아래의 제한된 예외를 따릅니다. 일반 입력은 실행 소유의 임시 수명주기를 따릅니다. 더 안전한 경우에는 기존 호스트 기본 숨김 입력 옵션을 보존합니다.
 
-For application authentication, read [worktree-local authentication](authentication.md) only when that branch is needed.
+애플리케이션 인증은 해당 분기가 필요할 때만 [worktree 로컬 인증](authentication.md)을 읽습니다.

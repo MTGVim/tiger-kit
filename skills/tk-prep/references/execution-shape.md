@@ -1,21 +1,21 @@
-# Adaptive execution shape
+<a id="adaptive-execution-shape"></a>
+# 작업에 맞는 실행 형태
 
-Choose only after repository investigation establishes a concrete implementation topology; tell the user the practical consequence, not a classification report.
-Ticket length, raw file count, or the presence of both UI and API work never decides the shape.
+저장소 조사를 통해 구체적인 구현 구조를 확립한 뒤에만 선택합니다. 사용자에게는 분류 보고서가 아니라 실질적인 영향을 설명합니다.
+티켓 길이, 단순 파일 수 또는 UI 작업과 API 작업이 모두 있다는 사실로 형태를 결정하지 않습니다.
 
-Only for planned multi-PR delivery, read [merge safety](../../tk-pr-guidance/references/multi-pr-delivery.md) before approval.
-Bind whole Units to PR groups, verify intermediate merge states and retain the grouping for publication.
+여러 PR로 전달할 계획이 있을 때만 승인 전에 [병합 안전성](../../tk-pr-guidance/references/multi-pr-delivery.md)을 읽습니다.
+완전한 Unit 단위로 PR 그룹에 배정하고, 중간 병합 상태를 검증하며, 발행 시에도 그룹 구성을 유지합니다.
 
-- durable context `none`: same-session task is small/clear and conversation + repository state are sufficient;
-- durable context `seed`: new-session handoff, compaction recovery, lower-capability execution, SDD, or complex
-  verification benefits from a self-contained contract;
-- execution `direct`: one coherent implementation/test/review judgment surface, including small same-shape changes that can be reviewed together, with or without a Seed;
-- execution `sdd`: multiple material Units need independent implementation/test/review judgment loops; requires a Ready Seed;
-- execution `handoff`: prepare a Ready Seed and stop for another session/executor.
+- 지속 맥락 `none`: 같은 세션의 작업이 작고 명확하며 대화와 저장소 상태만으로 충분합니다.
+- 지속 맥락 `seed`: 새 세션으로의 인계, 맥락 압축 후 복구, 역량이 더 낮은 실행자, SDD 또는 복잡한 검증에 독립적으로 이해할 수 있는 계약이 도움이 됩니다.
+- 실행 `direct`: 구현/테스트/검토를 하나의 일관된 판단 범위로 다룰 수 있습니다. 함께 검토할 수 있는 작고 같은 형태의 변경도 포함하며 Seed 유무와 관계없습니다.
+- 실행 `sdd`: 여러 실질적인 Unit에 독립적인 구현/테스트/검토 판단 반복이 필요합니다. Ready Seed가 필수입니다.
+- 실행 `handoff`: Ready Seed를 준비하고 다른 세션/실행자를 위해 중단합니다.
 
-Complexity may raise safeguards only: inline direct → Seed direct → SDD/re-prep. Never silently downgrade for convenience.
-Direct/no-Seed never loads SDD guidance. Load [private SDD](../../tk-engineering/references/sdd.md) only after SDD is selected.
+복잡성은 보호 수준을 높이는 방향으로만 작용할 수 있습니다. 순서는 대화 내 direct → Seed direct → SDD/재준비입니다. 편의를 위해 조용히 낮추지 않습니다.
+Direct/no-Seed는 SDD 지침을 읽지 않습니다. SDD를 선택한 뒤에만 [비공개 SDD](../../tk-engineering/references/sdd.md)를 읽습니다.
 
-When durable context is `seed`, execution is `sdd`, or the outcome is `handoff`, read the [Ready Seed contract](seed.md)
-before approval. Preserve any existing Seed before approval; direct/no-Seed does not load the Seed contract merely to create ceremony.
+지속 맥락이 `seed`이거나, 실행이 `sdd`이거나, 결과가 `handoff`이면 승인 전에 [Ready Seed 계약](seed.md)을 읽습니다.
+승인 전에는 기존 Seed를 보존합니다. direct/no-Seed에서는 형식적인 절차를 만들기 위해 Seed 계약을 읽지 않습니다.
 

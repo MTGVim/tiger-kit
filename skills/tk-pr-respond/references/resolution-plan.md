@@ -1,38 +1,30 @@
-# Resolution plan details
+<a id="resolution-plan-details"></a>
+# 해결 계획의 세부 사항
 
-At minimum, cover:
+최소한 다음을 포함합니다.
 
-- each finding's disposition, causal evidence, and whether it changes code
-- implementation approach and existing code to reuse
-- how unnecessary complexity will be avoided
-- regression and new-test plan
-- any approved follow-up issue creation; otherwise state that follow-ups will not be ticketed
-- any special security or user-experience concerns
-- the `tk-browser-verify` plan for browser-visible changes
-- bounded publication scope for push/reply/resolve/re-review
-- whether the exact PR needs a base update or rebase, with the evidence and route if included
-- practical execution shape: reply-only, direct, or SDD
+- 각 지적의 처리 분류, 인과적 근거와 코드 변경 여부를 포함합니다.
+- 구현 접근법과 재사용할 기존 코드를 포함합니다.
+- 불필요한 복잡성을 피할 방법을 포함합니다.
+- 회귀 및 새 테스트 계획을 포함합니다.
+- 승인된 후속 이슈 생성을 포함합니다. 그 밖에는 후속 항목을 티켓으로 만들지 않을 것임을 명시합니다.
+- 특별한 보안 또는 사용자 경험 우려를 포함합니다.
+- 브라우저에 보이는 변경에 대한 `tk-browser-verify` 계획을 포함합니다.
+- push/답글/해결 처리/재검토의 한정된 발행 범위를 포함합니다.
+- 정확한 해당 PR에 base 업데이트나 rebase가 필요한지와, 포함한다면 근거 및 경로를 포함합니다.
+- 답글만 수행, direct 또는 SDD 중 실질적인 실행 형태를 포함합니다.
 
-When the plan covers two or more findings, present them as one narrow GFM table with
-columns for location, finding, kind (`종류` in Korean output), disposition and approach. For kind, reuse the
-reviewer's own category when present; otherwise use one of comment, refactor, test,
-logic, type or conflict. Keep long evidence below the table instead of inside cells.
+계획이 두 개 이상의 지적을 다루면 위치, 지적, 종류(한국어 출력에서는 `종류`), 처리 분류와 접근법 열이 있는 하나의 좁은 GFM 표로 제시합니다. 종류는 검토자가 분류를 제공했다면 그대로 재사용하고, 없으면 comment, refactor, test, logic, type 또는 conflict 중 하나를 사용합니다. 긴 근거는 셀 안이 아니라 표 아래에 둡니다.
 
-For every code-changing route, keep the semantic Review Plan from the code-change reference in the approved current
-interaction even when no Seed is needed. Do not expose reviewer/model/worker routing as part of the user plan.
+모든 코드 변경 경로에서 Seed가 필요하지 않더라도 코드 변경 참조의 의미 중심 Review Plan을 현재 승인된 대화에 유지합니다. 검토자/model/worker routing을 사용자 계획의 일부로 노출하지 않습니다.
 
-For a code-changing plan, inspect the actual repository test surface and use [behavior-first testing](../../tk-engineering/references/testing.md)
-to resolve RED feasibility or pre-edit GREEN for behavior-preserving refactoring, the focused command, required suite,
-realistic mutation, and any `N/A` or engineering exception.
-Explain the practical route among reply-only, direct+TDD, and SDD+TDD without exposing an internal classification form.
-Once a code-changing route is selected, read [code-change execution](code-change.md) before requesting approval;
-use its workspace and Seed sections for the plan, but perform no mutation until approval.
+코드 변경 계획에서는 실제 저장소 테스트 범위를 조사하고 [동작 우선 테스트](../../tk-engineering/references/testing.md)를 사용하여 RED 가능 여부 또는 동작 보존 리팩터링의 편집 전 GREEN, 집중 명령, 필수 suite, 현실적인 mutation과 `N/A` 또는 엔지니어링 예외를 확정합니다.
+내부 분류 양식을 노출하지 말고 답글만 수행, direct+TDD, SDD+TDD 중 실질적인 경로를 설명합니다.
+코드 변경 경로를 선택하면 승인 요청 전에 [코드 변경 실행](code-change.md)을 읽습니다. 계획에는 그 workspace와 Seed 절을 사용하되 승인 전에는 변경을 수행하지 않습니다.
 
-Send feedback/CI failures with an obvious cause and exact regression seam directly through the existing testing path.
-Lazy-load [shared diagnosis](../../tk-engineering/references/diagnosis.md) only for unknown-cause, intermittent/flaky, performance, or
-difficult-to-reproduce hard CI/regression cases, and establish a red-capable feedback loop before a fix hypothesis.
-Do not lock the first guess into a change without evidence that such a loop cannot be established.
+원인이 명백하고 정확한 회귀 테스트 지점이 있는 피드백/CI 실패는 기존 테스트 경로로 바로 보냅니다.
+원인 불명, 간헐적/flaky, 성능 또는 재현하기 어려운 까다로운 CI/회귀 사례에서만 [공통 진단](../../tk-engineering/references/diagnosis.md)을 필요할 때 읽고, 수정 가설 전에 실패를 드러낼 수 있는 피드백 반복을 확립합니다.
+그러한 반복을 확립할 수 없다는 근거 없이 첫 추측을 변경으로 확정하지 않습니다.
 
-TigerKit decides only `reply-only | direct | SDD`; host/user model selection remains outside durable artifacts.
-Do not mark the task `Blocked` merely because model-control capability is unavailable.
-
+TigerKit은 `reply-only | direct | SDD`만 결정합니다. 호스트/사용자의 모델 선택은 지속 산출물 밖에 둡니다.
+모델 제어 기능이 없다는 이유만으로 작업을 `Blocked`로 표시하지 않습니다.

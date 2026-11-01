@@ -1,46 +1,49 @@
-# PR Base and Rebase Readiness
+<a id="pr-base-and-rebase-readiness"></a>
+# PR base와 rebase 준비 상태
 
-Use this reference before recommending or executing a base update for one exact pull request. It assesses purpose and base readiness; it does not authorize a rebase, push, reply, closure, or resolution.
+특정 pull request 하나의 base 업데이트를 권고하거나 실행하기 전에 이 참조를 사용합니다. 목적과 base 준비 상태를 평가하며, rebase, push, 답글, 종료나 해결 처리를 허용하지는 않습니다.
 
-## Fresh evidence
+<a id="fresh-evidence"></a>
+## 최신 근거
 
-Read the current open pull request from GitHub by exact repository and number. Capture the base repository/ref/SHA, head repository/ref/SHA, and fresh `mergeable` and `mergeable_state` values. If mergeability is `null` or `unknown`, reread that same pull request once after a short wait. Do not substitute a cached state or a local branch name for the remote PR head.
+정확한 저장소와 번호로 GitHub에서 현재 열린 pull request를 읽습니다. base 저장소/ref/SHA, head 저장소/ref/SHA와 최신 `mergeable`, `mergeable_state` 값을 확보합니다. merge 가능성이 `null`이나 `unknown`이면 잠시 기다린 뒤 같은 pull request를 한 번 다시 읽습니다. 원격 PR head를 캐시된 상태나 로컬 브랜치 이름으로 대체하지 않습니다.
 
-When the mergeability state does not settle the base status, read the current base ref SHA and compare that exact SHA with the exact PR head SHA in the base repository. Use the comparison only if GitHub returns evidence for both commits; a cross-fork or unavailable comparison is not evidence that the branch is current.
+merge 가능 상태만으로 base 상태를 확정할 수 없다면 현재 base ref SHA를 읽고, base 저장소에서 그 정확한 SHA를 정확한 PR head SHA와 비교합니다. GitHub가 두 커밋 모두의 근거를 반환한 경우에만 비교를 사용합니다. fork 간 비교이거나 비교가 불가능한 경우에는 브랜치가 최신이라는 근거가 되지 않습니다.
 
-## Purpose before refresh
+<a id="purpose-before-refresh"></a>
+## 갱신 전 목적 확인
 
-First summarize the PR's goal from its diff and linked intent. Compare the fresh base's
-changes since the merge-base with the PR's touched paths, including deleted or renamed
-ancestor directories of newly added files. Age and commits behind alone do not justify
-a full history investigation. If the paths and behavior are unaffected, keep this check
-brief. If overlap, removed architecture, changed ownership/API, a possible replacement,
-or an explicit reassessment request exists, inspect the relevant base commits and search
-open/merged replacement PRs by purpose and paths. An open alternative alone does not
-prove the goal is already fulfilled. If comparison or intent evidence is unavailable,
-mark the purpose assessment `Unverifiable` and stop the update rather than infer validity.
+먼저 PR의 diff와 연결된 의도에서 목표를 요약합니다. 최신 base에서 merge-base 이후 발생한
+변경을 PR이 건드린 경로와 비교하며, 새 파일의 상위 디렉터리가 삭제되거나 이름이 바뀐 경우도
+포함합니다. 경과 시간과 뒤처진 커밋 수만으로 전체 이력 조사를 정당화하지 않습니다.
+경로와 동작이 영향을 받지 않았다면 이 검사는 간단히 유지합니다. 겹치는 변경, 제거된 아키텍처,
+바뀐 소유권·API, 대체 가능성이나 명시적 재평가 요청이 있다면 관련 base 커밋을 살펴보고
+목적과 경로를 기준으로 열려 있거나 merge된 대체 PR을 검색합니다. 열린 대안이 있다는 사실만으로
+목표가 이미 충족되었다고 볼 수는 없습니다. 비교나 의도 근거를 확보할 수 없다면
+목적 평가를 `Unverifiable`로 표시하고, 유효성을 추론하지 말고 업데이트를 중단합니다.
 
-Bind the decision to the exact base/head SHAs before any rebase or refresh:
+rebase나 갱신 전에 결정을 정확한 base/head SHA에 연결합니다.
 
-- `Update`: the goal remains needed and the approach fits the current structure;
-  continue to the base assessment and existing approval/lease gates.
-- `Rework`: the goal remains needed, but a mechanical update would restore removed
-  structure or preserve an obsolete approach. Explain the smallest current-structure
-  change and stop the ordinary update route for a scope decision.
-- `Close`: verified replacement or deliberate removal has made the goal unnecessary.
-  Cite that evidence and recommend closure; this verdict never closes the PR itself.
+- `Update`: 목표가 여전히 필요하며 접근 방식이 현재 구조에 맞습니다.
+  base 평가와 기존 승인·lease 관문으로 진행합니다.
+- `Rework`: 목표가 여전히 필요하지만 기계적인 업데이트가 제거된 구조를 복원하거나
+  낡은 접근 방식을 유지하게 됩니다. 현재 구조에서 필요한 최소 변경을 설명하고,
+  범위 결정을 위해 일반 업데이트 경로를 중단합니다.
+- `Close`: 검증된 대체 구현이나 의도적인 제거로 목표가 불필요해졌습니다.
+  근거를 인용하고 종료를 권고합니다. 이 판정 자체로 PR을 종료하지는 않습니다.
 
-Only `Update` proceeds through ordinary refresh. A conflict-free rebase is not evidence
-of purpose validity. Reassess when base/head changes or conflict resolution reveals new
-intent; compare the final diff/commit series before publication for restored removals,
-duplicated fixes or an empty result. Preserve the caller's freshness and authority rules.
+일반 갱신은 `Update`인 경우에만 진행합니다. 충돌 없는 rebase는 목적의 유효성을
+입증하지 않습니다. base/head가 바뀌거나 충돌 해결 중 새로운 의도가 드러나면 재평가합니다.
+발행 전에 최종 diff와 커밋 열을 비교하여 제거된 내용의 복원,
+중복 수정이나 빈 결과가 있는지 확인합니다. 호출자의 최신성·권한 규칙을 유지합니다.
 
-## Base assessment
+<a id="base-assessment"></a>
+## base 평가
 
-- `dirty` means GitHub reports a merge conflict. The branch needs an integration/update before it can merge. Use the `tk-pr-rebase` route when that route is approved, but do not claim that rebase is the only possible resolution unless repository policy requires rebase specifically.
-- `behind`, or a verified comparison with `behind_by > 0`, means the base contains commits absent from the PR head. Recommend updating the branch. Call that update mandatory only when verified branch protection or repository policy requires an up-to-date base. Rebase is the canonical TigerKit route when the user approves that operation; do not silently expand a review response into a history rewrite.
-- A fresh `clean` state with the exact base/head evidence means no rebase is indicated for base freshness.
-- `unstable`, `blocked`, `draft`, failing checks, unresolved feedback, or missing reviews do not by themselves prove that rebase is needed. Check the exact base status separately when it affects the decision.
-- If the state remains unknown and exact comparison is unavailable, report the rebase assessment as unverifiable. Never translate missing evidence into “no rebase needed.”
+- `dirty`는 GitHub가 merge 충돌을 보고했다는 뜻입니다. merge하려면 먼저 브랜치 통합·업데이트가 필요합니다. `tk-pr-rebase` 경로가 승인되었다면 사용하되, 저장소 정책이 rebase를 특정하여 요구하지 않는 한 rebase만이 유일한 해결책이라고 주장하지 않습니다.
+- `behind`이거나 검증된 비교에서 `behind_by > 0`이면 PR head에 없는 커밋이 base에 있다는 뜻입니다. 브랜치 업데이트를 권고합니다. 검증된 브랜치 보호나 저장소 정책이 최신 base를 요구하는 경우에만 필수 업데이트라고 표현합니다. 사용자가 해당 작업을 승인하면 rebase가 TigerKit의 정식 경로가 됩니다. 리뷰 대응을 알리지 않고 이력 재작성으로 확대하지 않습니다.
+- 정확한 base/head 근거와 함께 최신 `clean` 상태가 확인되면 base 최신성을 위한 rebase가 필요하다는 근거가 없습니다.
+- `unstable`, `blocked`, `draft`, 실패한 검사, 해결되지 않은 피드백이나 누락된 리뷰만으로는 rebase가 필요하다고 볼 수 없습니다. 결정에 영향을 준다면 정확한 base 상태를 별도로 확인합니다.
+- 상태가 계속 불명확하고 정확한 비교도 불가능하다면 rebase 평가를 검증 불가로 보고합니다. 근거가 없다는 사실을 “rebase가 필요하지 않다”로 바꾸지 않습니다.
 
-Explain the practical outcome in natural language: conflict, base is ahead, no rebase indicated, or status could not be verified. Keep the evidence tied to the exact PR and current SHAs.
+실질적인 결과를 자연어로 설명합니다. 충돌이 있는지, base가 앞서 있는지, rebase 필요성이 확인되지 않았는지, 상태를 검증하지 못했는지 설명합니다. 근거를 정확한 PR과 현재 SHA에 연결해 유지합니다.

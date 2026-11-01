@@ -1,27 +1,13 @@
-# Skill candidate criteria
+<a id="skill-candidate-criteria"></a>
+# 스킬 후보 기준
 
-Read only when a retrospective recommends creating, merging or semantically
-improving an Agent Skill. This is a **recommendation check**, not a writer/apply gate.
+회고에서 Agent Skill의 생성, 병합이나 의미 개선을 권고할 때만 읽습니다. 이는 **권고 확인**이며 작성·적용 관문이 아닙니다.
 
-- Check whether an existing skill, repo-native tool/test, user rule, or normal model
-  ability already covers the outcome. Prefer the smallest owner and a no-op when fit
-  is sufficient.
-- A candidate needs one adequate evidence route: a verified concrete gap with mature
-  upstream, a well-evidenced recurring failure, or explicit reusable workflow intent
-  supported by source material. Never require an arbitrary incident count.
-- Define a distinctive outcome, positive and negative triggers, inputs, owner,
-  minimal procedure, must-preserve guardrails and observable success/boundary cases.
-  Contrast with the existing/no-skill baseline. Shorter text alone is not success.
-- Promote mechanical violations to existing lint/test/CI/schema where practical;
-  judgement-dependent review criteria may merit a reviewer-facing instruction.
-- Treat description and reference links as **conditional context pointers**: a
-  pointer should say which branch needs the content. Prefer current environment
-  state over copied package/version/config facts.
-- A candidate that changes verified correctness, safety, privacy, scope or
-  host compatibility fails even when its token count is lower.
-- Label source decisions keep/adapt/omit when distilling public upstream examples.
-  Keep exact public provenance and summarize decisions without copying their
-  runtime, provider configuration or evaluation machinery.
-- Present target, reason, suggested text/contract, affected references, evaluation
-  scenarios, exclusions and owner. Do not write the canonical file or ask for
-  application permission within tk-retro.
+- 기존 스킬, 저장소 기본 도구·테스트, 사용자 규칙이나 일반적인 모델 능력이 이미 결과를 충족하는지 확인합니다. 적합성이 충분하면 가장 작은 담당 단위와 no-op을 우선합니다.
+- 후보에는 충분한 근거 경로 하나가 필요합니다. 성숙한 upstream이 있는 검증된 구체적 공백, 근거가 충분한 반복 실패 또는 출처 자료가 뒷받침하는 명시적 재사용 워크플로 의도 중 하나입니다. 임의의 사고 횟수를 요구하지 않습니다.
+- 고유한 결과, 긍정·부정 트리거, 입력, 담당자, 최소 절차, 반드시 보존할 방어 조건과 관찰 가능한 성공·경계 사례를 정의합니다. 기존 기준·스킬 미사용 기준과 대비합니다. 텍스트가 짧아지는 것만으로는 성공이 아닙니다.
+- 가능하면 기계적 위반은 기존 lint/test/CI/schema로 옮깁니다. 판단에 의존하는 리뷰 기준에는 리뷰어용 지침이 적합할 수 있습니다.
+- description과 참조 링크는 **조건부 맥락 포인터**로 취급합니다. 포인터는 어느 분기에서 그 내용이 필요한지 밝혀야 합니다. 복사한 패키지·버전·설정 사실보다 현재 환경 상태를 우선합니다.
+- 검증된 정확성, 안전, 개인정보 보호, 범위나 호스트 호환성을 바꾸는 후보는 토큰 수가 더 적어도 실패입니다.
+- 공개 upstream 예시를 증류할 때는 출처 결정을 keep/adapt/omit으로 표시합니다. 정확한 공개 출처를 유지하고, 런타임, 제공자 설정이나 평가 체계를 복사하지 않고 결정을 요약합니다.
+- 대상, 이유, 제안 문구·계약, 영향받는 참조, 평가 시나리오, 제외 사항과 담당자를 제시합니다. tk-retro 안에서 정본 파일을 쓰거나 적용 승인을 요청하지 않습니다.

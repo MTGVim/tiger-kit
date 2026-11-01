@@ -1,19 +1,19 @@
-# Optional contact sheet
+<a id="optional-contact-sheet"></a>
+# 선택적 콘택트 시트
 
-Read only when an overview of already indexed captures is explicitly requested. Keep this
-opt-in until a real comparison demonstrates useful navigation savings. This branch never
-starts a browser, expands verification scope, installs a dependency or uploads anything.
-Ordinary explain/diff/teach HTML creation retains its explicit browser-request boundary.
+이미 색인된 캡처의 개요를 명시적으로 요청했을 때만 읽습니다. 실제 비교로 유용한 탐색 비용 절감이
+입증될 때까지 이 기능은 선택적 사용으로 유지합니다. 이 분기에서는 브라우저를 시작하거나 검증
+범위를 넓히거나 의존성을 설치하거나 어떤 것도 업로드하지 않습니다. 일반적인 설명/차이/학습용
+HTML 생성에는 명시적인 브라우저 요청 경계를 그대로 적용합니다.
 
-Use only captures owned by the current approved run, reviewed as non-sensitive after the
-existing pre-capture mask/clip policy. Never compose a sensitive original or an unreviewed
-image. Labels must also be publication-safe; omit account details, origins and query values.
-The helper cannot detect secrets in pixels: `safe_for_sheet` records the verifier's completed
-safety review, not an automatic redaction claim.
+현재 승인된 실행이 소유하고, 기존 캡처 전 마스킹/클리핑 정책을 적용한 뒤 비민감 자료로 검토한
+캡처만 사용합니다. 민감한 원본이나 검토하지 않은 이미지를 합성하지 않습니다. 레이블도 공개해도
+안전해야 하며, 계정 세부 정보, origin과 쿼리 값은 생략합니다. 도우미는 픽셀 속 비밀을 탐지할 수
+없습니다. `safe_for_sheet`는 검증자가 안전 검토를 완료했다는 기록이며 자동 비식별화 주장이 아닙니다.
 
-In the existing evidence `README.md`, add one fenced `contact-sheet-captures` block containing
-a JSON array in capture order. This is an optional view of the same capture index, not a second
-manifest or state ledger. Every row uses exactly these keys, for example:
+기존 근거 `README.md`에 캡처 순서의 JSON 배열을 담은 `contact-sheet-captures` fenced block을
+하나 추가합니다. 이는 같은 캡처 색인의 선택적 보기이며, 두 번째 manifest나 상태 원장이 아닙니다.
+모든 행에는 다음 예시와 정확히 같은 키를 사용합니다.
 
 ```contact-sheet-captures
 [
@@ -22,24 +22,24 @@ manifest or state ledger. Every row uses exactly these keys, for example:
 ]
 ```
 
-Run the installed package's `scripts/contact_sheet.py --run-dir <absolute-run-directory>`.
-It uses optional existing Pillow, with no browser/canvas dependency or external service.
-Only ignored, untracked `.tigerkit/evidence/tk-browser-verify/<run-id>/` directories are accepted.
-Use concise ASCII labels (64 characters per metadata field, 160 for paths); retain complete
-human-readable provenance in the ordinary index. Paths must point to indexed PNGs under their
-matching `baseline/`, `after/` or `failed-<attempt>/` phase. Keep paired replay parity explicit
-in the ordinary index; placing two thumbnails together does not establish comparability.
+설치된 패키지의 `scripts/contact_sheet.py --run-dir <absolute-run-directory>`를 실행합니다.
+이 도우미는 선택적으로 기존 Pillow를 사용하며 브라우저/canvas 의존성이나 외부 서비스를 사용하지 않습니다.
+Git에서 무시되고 추적되지 않는 `.tigerkit/evidence/tk-browser-verify/<run-id>/` 디렉터리만 허용됩니다.
+간결한 ASCII 레이블을 사용하고(메타데이터 필드마다 64자, 경로는 160자), 사람이 읽을 수 있는 전체
+출처 정보는 일반 색인에 보존합니다. 경로는 각자 해당하는 `baseline/`, `after/` 또는
+`failed-<attempt>/` 단계 아래에 색인된 PNG를 가리켜야 합니다. 일반 색인에 쌍을 이루는 재생의
+동등 조건을 명시합니다. 썸네일 두 개를 함께 배치한다고 비교 가능성이 입증되지는 않습니다.
 
-The helper makes at most four tiles per sheet, preserves order and aspect ratio, links every
-tile to its original in the same README and creates unique outputs without overwriting files.
-It bounds input count/size and rejects unsafe paths, symlinks, sensitive flags and corrupt images.
-Zero/one capture is skipped; `--single` is only for an explicit one-capture request. Missing
-Pillow, invalid input or composition failure skips this optional view. Record that skip in the
-existing README, preserve originals and verdicts, and continue ordinary verification. Do not
-automatically install a tool, switch provider, rerun the browser or invent an acceptance failure.
+도우미는 콘택트 시트마다 최대 네 개의 타일을 만들고 순서와 종횡비를 보존하며, 같은 README에서 각
+타일을 원본에 연결하고 파일을 덮어쓰지 않는 고유한 출력을 생성합니다. 입력 개수/크기를 제한하고
+안전하지 않은 경로, 심볼릭 링크, 민감 표시와 손상된 이미지를 거부합니다. 캡처가 없거나 하나이면
+건너뜁니다. `--single`은 명시적으로 단일 캡처를 요청했을 때만 사용합니다. Pillow가 없거나 입력이
+잘못되었거나 합성에 실패하면 이 선택적 보기를 건너뜁니다. 기존 README에 건너뛴 사실을 기록하고
+원본과 판정을 보존한 뒤 일반 검증을 계속합니다. 도구 자동 설치, 제공자 전환, 브라우저 재실행을
+하거나 인수 검증 실패를 만들어 내지 않습니다.
 
-Inspect the generated sheet through the image tool to navigate, then inspect each required original through the existing
-image tool. Preserve `reread-image`, ordered capture/criterion rows, immutable failure evidence
-and per-AC verdicts. A sheet is not a PR acceptance image or proof of readable text, exact geometry,
-interaction or regression absence. Do not infer a Pass from thumbnails. Report only measured
-navigation/composition cost; synthetic images do not establish real-work speed improvements.
+이미지 도구로 생성된 콘택트 시트를 확인하여 탐색한 뒤, 기존 이미지 도구로 필요한 각 원본을 확인합니다.
+`reread-image`, 순서가 있는 캡처/기준 행, 변경 불가능한 실패 근거와 AC별 판정을 보존합니다.
+콘택트 시트는 PR 인수 검증 이미지도 아니며, 읽을 수 있는 텍스트, 정확한 기하, 상호작용 또는 회귀 부재의
+증거도 아닙니다. 썸네일로 Pass를 추론하지 않습니다. 측정한 탐색/합성 비용만 보고합니다.
+합성 이미지는 실제 작업 속도 개선을 입증하지 않습니다.

@@ -1,34 +1,14 @@
-# Selected prototype handoff
+<a id="selected-prototype-handoff"></a>
+# 선택한 프로토타입 인계
 
-Read this only when a prototype comparison informs the current implementation decision.
-The producer returns a compact selection record in its existing result; the preparation
-owner carries it in the current plan, or in the Ready Seed's decisions/evidence when a
-Seed is already required. Do not create a separate selection file or use `CONTEXT.md` as
-a task ledger. A recommendation is not a user selection; retain `unresolved` until the
-active user or an already-authorized decision owner selects an option.
+프로토타입 비교가 현재 구현 결정에 영향을 줄 때만 읽습니다.
+생성자는 기존 결과에 간결한 선택 기록을 반환합니다. 준비 담당자는 이를 현재 계획에 포함하거나, Seed가 이미 필요할 경우 Ready Seed의 결정·근거에 포함합니다. 별도 선택 파일을 만들거나 `CONTEXT.md`를 작업 장부로 사용하지 않습니다. 추천은 사용자의 선택이 아닙니다. 현재 사용자나 이미 승인된 결정 담당자가 옵션을 선택할 때까지 `unresolved`를 유지합니다.
 
-Preserve the task/repository identity, explicitly selected variant ID and original absolute
-run path, selection reason and material rejected alternative, the relevant screen/state,
-and the exact evidence/run-command locations with their verification status. Label paths
-as machine-local/best-effort and record whether each needed artifact remains accessible.
-Keep conclusions separate from fake integration and official product acceptance. Carry only
-decision-relevant details and citations, not the whole prototype, screenshot or transcript.
+작업·저장소 식별 정보, 명시적으로 선택한 변형 ID와 원래의 절대 실행 경로, 선택 이유와 중요한 기각 대안, 관련 화면·상태, 정확한 근거·실행 명령 위치 및 검증 상태를 보존합니다. 경로는 해당 기기에서만 유효하며 최선을 다해 제공된 것임을 표시하고, 필요한 각 산출물에 여전히 접근할 수 있는지 기록합니다. 결론을 가짜 연동과 공식 제품 인수 판정과 분리합니다. 전체 프로토타입, 스크린샷이나 대화록이 아니라 결정에 관련된 세부 사항과 인용만 전달합니다.
 
-Before implementation or child handoff, resolve the selected ID to its original run, inspect
-the relevant available evidence and verify access from the actual implementation checkout
-or child environment. A relative `.tigerkit/` path in another worktree does not identify the
-original run. Pass the same selection and minimum constraints to the executor; do not choose
-the newest file, another variant or a similarly named run. Preserve artifacts needed for the
-active handoff and do not commit prototypes or copy them into production to make them portable.
+구현이나 자식 인계 전에 선택한 ID를 원래 실행으로 해석하고 관련된 사용 가능 근거를 검사하며 실제 구현 checkout이나 자식 환경에서 접근할 수 있는지 검증합니다. 다른 worktree의 상대 `.tigerkit/` 경로는 원래 실행을 식별하지 못합니다. 같은 선택과 최소 제약을 실행자에게 전달합니다. 최신 파일, 다른 변형 또는 비슷한 이름의 실행을 선택하지 않습니다. 진행 중인 인계에 필요한 산출물을 보존하고, 이동 가능하게 만들기 위해 프로토타입을 commit하거나 운영 코드에 복사하지 않습니다.
 
-If evidence is inaccessible, report which path/state is missing and retain the selected ID
-and confirmed decision in the plan. Continue only when approved requirements and the retained
-constraints fully determine implementation without the missing artifact; otherwise mark the
-affected decision `Blocked | Unverifiable` and request only the missing evidence or decision.
-Never reconstruct a missing visual claim as verified or substitute another variant. Material
-conflict between the selection and approved requirements returns to the existing preparation
-boundary; missing optional reference media alone does not invalidate sufficient requirements.
+근거에 접근할 수 없다면 어떤 경로·상태가 누락되었는지 보고하고 선택한 ID와 확인된 결정을 계획에 유지합니다. 누락된 산출물 없이도 승인된 요구사항과 보존한 제약만으로 구현을 완전히 결정할 수 있을 때만 계속합니다. 그렇지 않다면 영향받는 결정을 `Blocked | Unverifiable`로 표시하고 누락된 근거나 결정만 요청합니다. 누락된 시각적 주장을 검증된 것으로 재구성하거나 다른 변형으로 대체하지 않습니다. 선택과 승인된 요구사항 사이에 중대한 충돌이 있으면 기존 준비 경계로 돌아갑니다. 선택적 참조 매체만 누락되었다고 충분한 요구사항이 무효가 되지는 않습니다.
 
-Selection does not approve implementation, publication, promotion or dependency changes.
-Reuse current explicit authorization; when implementation is not authorized, return the
-selection record and next decision without starting production work.
+선택은 구현, 발행, 승격 또는 의존성 변경을 승인하지 않습니다.
+현재의 명시적 승인을 재사용합니다. 구현이 승인되지 않았다면 제품 작업을 시작하지 않고 선택 기록과 다음 결정을 반환합니다.

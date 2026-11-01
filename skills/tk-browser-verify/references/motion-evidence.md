@@ -1,84 +1,83 @@
-# Optional capture for video
+<a id="optional-capture-for-video"></a>
+# 선택적 동영상용 캡처
 
-Read when a demo capture is requested or the current request, accepted runtime-plan summary or
-approved opt-in selects a GIF/MP4 supplement. Read [media choices](../../tk-writing/references/media-preferences.md) for
-all `evidenceMedia` field types, precedence, defaults and malformed-object handling. Pass the
-resolved format/narration/voice and presentation values, their sources and current choice/save
-disposition to `tk-video`; it resolves any still-missing presentation choices before production.
-Preferences grant no installs or publication, and a missing movie never blocks verification.
+데모 캡처를 요청했거나 현재 요청, 수락된 런타임 계획 요약 또는 승인된 선택에서 GIF/MP4 보충
+자료를 골랐을 때 읽습니다. 모든 `evidenceMedia` 필드 유형, 우선순위, 기본값과 잘못된 객체
+처리는 [미디어 선택](../../tk-writing/references/media-preferences.md)을 읽습니다. 확정된 형식/내레이션/음성과
+표현 값, 출처와 현재 선택/저장 처리를 `tk-video`에 전달합니다. 이 스킬은 제작 전에 아직 빠진
+표현 선택을 확정합니다. 선호 설정은 설치나 발행 권한을 부여하지 않으며, 동영상이 없어도 검증을
+차단하지 않습니다.
 
-## Media-only phase
+<a id="media-only-phase"></a>
+## 미디어 전용 단계
 
-Use `phase: media-capture` for `tk-video` demo or explanation captures without an acceptance basis,
-including a video-only joint invocation without a QA sheet, ticket criteria or Seed. Resolve the
-target and bounded scenario from the request/current change; resolve only material unknown choices
-with the user. Do not manufacture a QA inventory or pass self-authored acceptance criteria.
-Explicit acceptance verification uses the existing inventory and visual contract instead.
+인수 검증 기준이 없는 `tk-video` 데모 또는 설명 캡처에는 `phase: media-capture`를 사용합니다.
+QA 시트, 티켓 기준이나 Seed 없이 동영상만 공동 호출한 경우도 포함합니다. 요청/현재 변경에서
+대상과 제한된 시나리오를 확정하고, 중요한 미확정 선택만 사용자와 결정합니다. QA 인벤토리를
+만들어 내거나 직접 작성한 인수 기준을 전달하지 않습니다. 명시적인 인수 검증에는 기존 인벤토리와
+시각 계약을 대신 사용합니다.
 
-Retain headless/provider selection, authentication, safe inputs, approved data-mutation scope,
-server readiness, capture redaction and owned-resource cleanup. Follow environment, behavior,
-safety and session-lifecycle references when their branches apply. Capture actual states without
-acceptance outlines or assertion substitutions. Stop immediately when a required element/state
-cannot be found; retain partial captures and the concrete limitation rather than recording guesses.
-Record scene-boundary times and final DOM/runtime values separately from the movie.
+headless/제공자 선택, 인증, 안전한 입력, 승인된 데이터 변경 범위, 서버 준비 상태, 캡처 비식별화와
+소유 자원 정리를 유지합니다. 해당 분기가 적용되면 환경, 동작, 안전과 세션 수명주기 참조를
+따릅니다. 인수 검증 윤곽선이나 assertion 대체 없이 실제 상태를 캡처합니다. 필요한 요소/상태를
+찾을 수 없으면 즉시 중단하고, 추측을 녹화하지 말고 부분 캡처와 구체적인 제한을 보존합니다.
+장면 경계 시간과 최종 DOM/런타임 값은 동영상과 별도로 기록합니다.
 
-For selected human-facing input displays, read [tutorial overlays](tutorial-overlays.md) and
-inject this package's removable helper only for capture. Treat it as `capture_only_mutation`;
-remove it before any independent acceptance screenshot.
+사람이 보는 입력 표시를 선택했다면 [튜토리얼 오버레이](tutorial-overlays.md)를 읽고 이 패키지의
+제거 가능한 도우미를 캡처에만 주입합니다. `capture_only_mutation`으로 취급하고, 독립적인
+인수 검증 스크린샷 전에 제거합니다.
 
-Return only `phase: media-capture`, the capture manifest/provenance, observed final-state facts,
-limitations and actual cleanup/residue facts. An incomplete run retains its missing-capture reason
-and next required input. Do not emit `Status: Pass/Fail`, criterion verdicts, `visual_contract` or
-`verification_complete`; the capture is not an acceptance result. Return to `tk-video` for assembly.
+`phase: media-capture`, 캡처 manifest/출처, 관찰한 최종 상태 정보, 제한과 실제 정리/잔여물
+정보만 반환합니다. 불완전한 실행은 누락된 캡처의 이유와 다음에 필요한 입력을 보존합니다.
+`Status: Pass/Fail`, 기준별 판정, `visual_contract` 또는 `verification_complete`를 출력하지
+않습니다. 캡처는 인수 검증 결과가 아닙니다. 조립을 위해 `tk-video`로 돌아갑니다.
 
-## Capture and handoff
+<a id="capture-and-handoff"></a>
+## 캡처와 인계
 
-Keep screenshots, assertions, timing checks and publication manifests independent from media.
-Capture approved publication-safe states on the selected headless provider in the verification
-run only when its supported API permits sharing. Do not switch providers, install recorders or
-rerun a mutating scenario for a movie. Unsupported capture omits only media. Preserve actual
-monotonic timestamps, a fixed viewport, criterion/head provenance and a truthful final end time.
-No nearby screencast frame replaces the independent assertion screenshot; brief loading states
-and debounce claims still require direct runtime assertions.
+스크린샷, assertion, 타이밍 검사와 발행 manifest를 미디어와 독립적으로 유지합니다.
+지원 API가 공유를 허용할 때만 검증 실행에서 선택한 headless 제공자로 승인된 공개 안전 상태를
+캡처합니다. 동영상을 위해 제공자를 바꾸거나 기록기를 설치하거나 변경 시나리오를 재실행하지
+않습니다. 캡처 미지원이면 미디어만 생략합니다. 실제 단조 타임스탬프, 고정 viewport, 기준/head
+출처와 사실에 맞는 최종 종료 시간을 보존합니다. 근처 screencast 프레임은 독립 assertion
+스크린샷을 대체하지 못하며, 짧은 로딩 상태와 debounce 주장에도 직접적인 런타임 assertion이
+필요합니다.
 
-On the already selected CDP-capable provider, use `Page.startScreencast` (PNG/JPEG), consume
-`Page.screencastFrame`, and acknowledge every event using `Page.screencastFrameAck` with its
-`sessionId`. Stop the screencast on every exit. Verify supported protocol parameters rather than
-installing another recorder or switching providers. Preserve actual monotonic event timestamps;
-prefer PNG for text-heavy UI at the accepted viewport resolution and avoid extra lossy conversions.
-Use a reduced capture size only when selected; preserve any existing JPEG source as supplied.
-Normalize the first frame to zero and record the real capture end. A stable screen may send no
-new frames: hold its last frame until the next timestamp/end instead of fabricating frame times.
-The API has no crop-region option; apply approved post-capture crops, recording each scene's
-region and source provenance. Before a full-view-to-crop transition, highlight the next region
-in the full view. Normalize differing crops to one canvas without distorting aspect ratio.
-Do not replace this with repeated `Page.captureScreenshot` calls for
-movie frames or add Puppeteer just for `page.screencast()`. Other selected providers may use their
-existing supported capture API; unsupported capture remains a media limitation.
+이미 선택한 CDP 지원 제공자에서는 `Page.startScreencast`(PNG/JPEG)를 사용하고
+`Page.screencastFrame`을 수신하며, 각 이벤트를 해당 `sessionId`와 함께
+`Page.screencastFrameAck`로 확인 응답합니다. 모든 종료 경로에서 screencast를 중지합니다.
+다른 기록기를 설치하거나 제공자를 전환하지 말고 지원되는 프로토콜 매개변수를 검증합니다.
+실제 단조 이벤트 타임스탬프를 보존합니다. 수락된 viewport 해상도에서 텍스트가 많은 UI에는
+PNG를 우선하며, 추가 손실 변환을 피합니다. 선택된 경우에만 캡처 크기를 줄이고, 기존 JPEG
+소스는 제공된 그대로 보존합니다. 첫 프레임을 0으로 정규화하고 실제 캡처 종료를 기록합니다.
+안정된 화면에서는 새 프레임이 오지 않을 수 있습니다. 프레임 시간을 만들어 내지 말고 다음
+타임스탬프/종료까지 마지막 프레임을 유지합니다. API에는 자르기 영역 옵션이 없습니다. 승인된
+캡처 후 자르기를 적용하고 각 장면의 영역과 소스 출처를 기록합니다. 전체 보기에서 잘라낸 보기로
+전환하기 전에 전체 보기에서 다음 영역을 강조합니다. 서로 다른 자르기는 종횡비를 왜곡하지 않고
+하나의 캔버스로 정규화합니다. 이를 동영상 프레임용 반복 `Page.captureScreenshot` 호출로
+대체하거나 `page.screencast()`만을 위해 Puppeteer를 추가하지 않습니다. 다른 선택된 제공자는
+기존 지원 캡처 API를 사용할 수 있으며, 미지원 캡처는 미디어 제한으로 남깁니다.
 
-For narration-paced recapture, accept measured per-scene minimum holds only for an authorized
-non-mutating scenario. Record the new actual scene starts/end and diagnostic final values.
-Do not rerun a mutating flow, slow existing evidence or claim deliberate waits measure latency.
+내레이션 속도에 맞춘 재캡처에서는 승인된 비변경 시나리오에만 측정된 장면별 최소 유지 시간을
+수락합니다. 새로운 실제 장면 시작/종료와 진단용 최종 값을 기록합니다. 변경 흐름을 재실행하거나
+기존 근거를 느리게 하거나 의도적 대기가 지연 시간을 측정한다고 주장하지 않습니다.
 
-Write an ordered capture manifest in the owned evidence run: `mode: evidence`, `frames` with
-absolute PNG/JPEG `path` and `timestamp_ms` starting at zero, and `end_ms` after the last frame.
-Sort by the original event time before conversion to milliseconds; after rounding, collapse
-same-millisecond frames deterministically (retain the last observed state), verify strictly
-increasing timestamps and preserve the actual end after the final frame. Do not fabricate time
-or mask a clock discontinuity; report it and stop if ordering cannot be established.
-Include approved captions and capture identity in the handoff. Include `source_fps` only when
-the provider exposes a real capture-rate value; do not invent
-one from idle gaps or a requested output rate. Otherwise retain frame timestamps for estimation.
-Pass it to `tk-video` for selected assembly, narration and finished-media inspection,
-without importing its script path. A missing
-video skill or failed movie never changes the application verdict or required screenshots.
-Return the explicit movie limitation and keep the manifest for resumption.
+소유한 근거 실행에 순서 있는 캡처 manifest를 씁니다. `mode: evidence`, 절대 PNG/JPEG `path`와
+0에서 시작하는 `timestamp_ms`가 있는 `frames`, 마지막 프레임 뒤의 `end_ms`를 포함합니다.
+밀리초 변환 전에 원래 이벤트 시간으로 정렬합니다. 반올림 후 같은 밀리초의 프레임은 결정적으로
+합치고(마지막 관찰 상태를 유지), 타임스탬프가 엄격하게 증가하는지 검증하며 최종 프레임 뒤의
+실제 종료를 보존합니다. 시간을 만들어 내거나 시계 불연속을 숨기지 않습니다. 순서를 확립할 수
+없으면 보고하고 중단합니다. 인계에 승인된 자막과 캡처 식별 정보를 포함합니다. 제공자가 실제
+캡처 속도 값을 노출할 때만 `source_fps`를 포함하며, 유휴 간격이나 요청한 출력 속도에서 만들어
+내지 않습니다. 그렇지 않으면 추정을 위해 프레임 타임스탬프를 유지합니다. 스크립트 경로를
+가져오지 않고 `tk-video`에 전달하여 선택된 조립, 내레이션과 완성 미디어 검사를 맡깁니다.
+동영상 스킬 부재나 동영상 실패는 애플리케이션 판정이나 필수 스크린샷을 바꾸지 않습니다.
+명시적인 동영상 제한을 반환하고 재개할 수 있도록 manifest를 보존합니다.
 
-`tk-video` returns optional supplements separately from required screenshot manifests, including
-media type, path, timing, source/criterion IDs, warnings, inspection limits and publication choice.
-A generated movie is not selected for upload by default. `tk-pr-media` owns publication.
-Keep reusable frames, audio and manifests until the user explicitly confirms the selected result;
-report retained frame bytes while selection is pending. Only after that confirmation and successful
-decode/inspection, delete known owned transient frames that are not assertion/failure evidence.
-Encoding failure preserves inputs and prior valid outputs.
-This verifier owns capture/server cleanup on every exit and never deletes unrelated resources.
+`tk-video`는 미디어 유형, 경로, 타이밍, 소스/기준 ID, 경고, 검사 제한과 발행 선택을 포함한
+선택적 보충 자료를 필수 스크린샷 manifest와 별도로 반환합니다. 생성된 동영상은 기본적으로
+업로드 대상으로 선택되지 않습니다. 발행은 `tk-pr-media`가 소유합니다. 사용자가 선택한 결과를
+명시적으로 확인할 때까지 재사용 가능한 프레임, 오디오와 manifest를 보존하고, 선택 대기 중에는
+보존한 프레임 바이트 수를 보고합니다. 확인 및 성공적인 디코딩/검사 후에만 assertion/실패 근거가
+아닌, 소유권을 아는 임시 프레임을 삭제합니다. 인코딩 실패 시 입력과 이전 유효 출력을 보존합니다.
+이 검증자는 모든 종료 경로의 캡처/서버 정리를 소유하며 무관한 자원을 삭제하지 않습니다.

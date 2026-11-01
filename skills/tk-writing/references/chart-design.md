@@ -1,122 +1,115 @@
-# Chart design and interaction
+<a id="chart-design-and-interaction"></a>
+# 차트 설계와 상호작용
 
-Read only when the artifact needs a numeric chart or an inspectable relationship graph.
-Use [chart examples](../assets/chart-examples.html) as working, offline recipes: bar, line,
-area, scatter and a small directed relationship graph. The example data is synthetic.
-Reuse a relevant figure, scoped CSS and progressive enhancement, not the full gallery or its
-sample conclusions. This is a design reference, not a general chart framework or extraction tool.
+산출물에 수치 차트나 살펴볼 수 있는 관계 그래프가 필요할 때만 읽습니다.
+[차트 예제](../assets/chart-examples.html)를 작동하는 오프라인 작성 예시로 사용합니다. 막대, 선, 영역, 산점도와 작은 방향성 관계 그래프가 있습니다.
+예제 데이터는 합성 데이터입니다. 전체 갤러리나 예시 결론이 아니라 관련 도해, 범위가 한정된 CSS와 점진적 향상을 재사용합니다.
+이는 설계 참조이며 범용 차트 framework나 추출 도구가 아닙니다.
 
-## Select and prepare
+<a id="select-and-prepare"></a>
+## 선택과 준비
 
-Name the question, unit, population/time window, source and comparability limits first.
-Keep unknown values unknown; never convert missing data to zero, interpolate it silently,
-or remove incomplete records without disclosure. Preserve source precision in the value table
-and tooltip; rounding for axis ticks must not change the plotted position.
+먼저 질문, 단위, 모집단/시간 범위, 출처와 비교 가능성의 한계를 명시합니다.
+알 수 없는 값은 알 수 없는 상태로 유지합니다. 결측 데이터를 0으로 바꾸거나 조용히 보간하거나 공개 없이 불완전한 레코드를 제거하지 않습니다.
+값 표와 툴팁에 원본 정밀도를 보존합니다. 축 눈금 반올림으로 표시 위치를 바꾸면 안 됩니다.
 
-| Reader's question | Form | Contract |
+| 독자의 질문 | 형식 | 계약 |
 | --- | --- | --- |
-| Which category is larger? | Bar / horizontal bar | Include zero; use horizontal bars for long labels. |
-| How does a value change over time? | Line | Scale actual elapsed time; show gaps for missing samples. |
-| How does a nonnegative volume evolve? | Area | Fill to zero only when magnitude matters; no decorative fill. |
-| How do two numeric variables relate? | Scatter | Label both units; correlation does not prove causation. |
-| How did two endpoints change? | Dumbbell / slope | Shared unit and scale; label both endpoints. |
-| Which cells differ across two categories? | Heatmap | Stable color scale, numeric cells/table, missing-value key. |
-| How do signed contributions produce a total? | Waterfall | Reconcile start + contributions = end; preserve signs. |
-| How is a whole composed? | Stacked bar / donut | Same denominator; disclose exclusions; prefer bars for close values. |
-| Which entities are related, and why? | Directed graph | Verified edges, relationship labels and source/evidence details. |
+| 어느 범주가 더 큽니까? | 막대 / 가로 막대 | 0을 포함하고 긴 레이블에는 가로 막대를 사용합니다. |
+| 시간에 따라 값이 어떻게 바뀝니까? | 선 | 실제 경과 시간에 맞춰 축척을 정하고, 누락된 표본은 간격으로 표시합니다. |
+| 음수가 아닌 양이 어떻게 변화합니까? | 영역 | 크기가 중요할 때만 0까지 채우고 장식적인 채움을 사용하지 않습니다. |
+| 두 수치 변수는 어떤 관계입니까? | 산점도 | 두 단위를 모두 표시합니다. 상관관계는 인과관계를 증명하지 않습니다. |
+| 두 끝점은 어떻게 바뀌었습니까? | 덤벨 / 기울기 | 단위와 척도를 공유하고 양 끝점에 레이블을 붙입니다. |
+| 두 범주에 걸쳐 어떤 셀이 다릅니까? | 히트맵 | 안정적인 색 척도, 수치 셀/표와 결측값 범례를 제공합니다. |
+| 부호가 있는 기여분이 어떻게 합계를 만듭니까? | 워터폴 | 시작값 + 기여분 = 끝값을 대조하고 부호를 보존합니다. |
+| 전체는 어떻게 구성됩니까? | 누적 막대 / 도넛 | 같은 분모를 사용하고 제외 항목을 공개하며 값이 비슷하면 막대를 선호합니다. |
+| 어떤 개체들이 왜 관련됩니까? | 방향 그래프 | 검증된 간선, 관계 레이블과 출처/근거 세부 정보를 제공합니다. |
 
-Only the first four numeric forms and a small graph have bundled runnable recipes. Other forms
-require custom implementation and their own validation; do not imply the gallery implements them.
-Use prose for a single fact and a table for dense exact comparisons. Never discard records simply
-to fit a preset; split views or use a table.
+실행 가능한 작성 예시는 처음 네 수치 형식과 작은 그래프에만 포함되어 있습니다.
+다른 형식에는 맞춤 구현과 자체 검증이 필요합니다. 갤러리가 이를 구현한다고 암시하지 않습니다.
+단일 사실에는 산문을 사용하고 정확한 비교가 조밀하면 표를 사용합니다. 미리 정한 틀에 맞추려고 레코드를 버리지 말고 보기를 나누거나 표를 사용합니다.
 
-Choose form before color: one number uses a stat tile; observed-versus-baseline uses one emphasis
-color and gray baseline; more than seven categories uses a table. Use a fixed categorical order
-without cycling colors, one hue for sequential values, and two hues with a gray midpoint for
-diverging values. Status colors identify status only. Use one axis; split different units into
-small multiples. Use text tokens for labels, not series colors. Two or more series need a legend;
-up to four also need direct labels. Every chart includes a value-table alternative, a hover tooltip
-(at least SVG `<title>`) and non-color cues. Add one sentence explaining how to read each chart,
-including units and the comparison's meaning. Check contrast and color-vision-deficiency distinction;
-use an appropriately licensed tool or independently authored check, never copy a proprietary bundle.
-Do not invent charts, measurements or a passing palette check when the content/evidence lacks them.
+색보다 형식을 먼저 고릅니다. 숫자 하나에는 수치 타일을 사용하고, 관찰값 대 기준값에는 강조색 하나와 회색 기준값을 사용하며, 범주가 일곱 개를 넘으면 표를 사용합니다.
+색을 순환하지 않고 고정된 범주 순서를 사용합니다. 순차 값에는 한 색상을, 발산 값에는 회색 중간점과 두 색상을 사용합니다.
+상태 색은 상태만 나타냅니다. 축 하나를 사용하고 단위가 다르면 작은 다중 차트로 나눕니다.
+레이블에는 계열 색이 아니라 텍스트 토큰을 사용합니다. 계열이 둘 이상이면 범례가 필요하고, 최대 네 개까지는 직접 레이블도 필요합니다.
+모든 차트에 대체 값 표, 호버 툴팁(최소한 SVG `<title>`)과 색 이외의 단서를 포함합니다.
+각 차트의 단위와 비교 의미를 포함하여 읽는 방법을 한 문장으로 추가합니다.
+대비와 색각 이상에서의 구별 가능성을 확인합니다. 적절한 라이선스가 있는 도구나 독립적으로 작성한 검사를 사용하고 독점 번들을 복사하지 않습니다.
+내용/근거에 없는 차트, 측정값이나 팔레트 검사 통과를 만들지 않습니다.
 
-## Compose a polished figure
+<a id="compose-a-polished-figure"></a>
+## 완성도 있는 도해 구성
 
-Use one clear title, a short reading sentence and a source/limitation line outside the plot.
-Allocate room for the longest labels before drawing marks. Keep a coherent title/body/axis
-type hierarchy, spacious plot margins, subtle gridlines and few ticks. Use the document's
-semantic theme tokens and a stable series order. Put emphasis on the comparison that matters;
-do not give every mark a different color. Modest rounded bar ends and low-opacity gradients
-are optional polish; they must not move endpoints or obscure a zero/negative value.
+명확한 제목 하나, 짧은 읽기 안내 문장과 출처/한계 줄을 플롯 밖에 둡니다.
+표식을 그리기 전에 가장 긴 레이블을 위한 공간을 배정합니다.
+일관된 제목/본문/축 글자 계층, 넉넉한 플롯 여백, 은은한 격자선과 적은 눈금을 유지합니다.
+문서의 의미 기반 테마 토큰과 안정적인 계열 순서를 사용합니다. 중요한 비교를 강조하고 모든 표식을 다른 색으로 칠하지 않습니다.
+적당히 둥근 막대 끝과 낮은 불투명도의 그라데이션은 선택적 마감입니다. 끝점을 옮기거나 0/음수 값을 가리면 안 됩니다.
 
-Keep labels in text colors, not low-contrast series tints. Distinguish multiple series with
-solid/dashed strokes or marker shapes as well as color, with a visible legend and direct labels.
-Use system fonts. Do not import the upstream's brand palette, required fonts, maximum node
-counts, no-shadow rule or mandatory style onboarding. A restrained tooltip shadow is appropriate.
+레이블은 대비가 낮은 계열 색조가 아닌 텍스트 색으로 유지합니다.
+여러 계열을 색뿐 아니라 실선/파선이나 표식 모양으로도 구별하고, 보이는 범례와 직접 레이블을 제공합니다.
+시스템 글꼴을 사용합니다. upstream의 브랜드 팔레트, 필수 글꼴, 최대 노드 수, 그림자 금지 규칙이나 의무적인 스타일 설정 절차를 가져오지 않습니다.
+절제된 툴팁 그림자는 적절합니다.
 
-Calculate every coordinate from the data and a shared finite scale. Include zero for bars
-and area; signed bars extend from the same zero line. Provide a finite fallback domain for
-all-zero/constant data. Do not smooth sampled lines into invented extrema or force irregular
-dates to equal spacing. Split unlike units rather than adding a deceptive second value axis.
-Changing series visibility must not silently rescale the axes or change denominators.
+모든 좌표를 데이터와 공유하는 유한 척도로 계산합니다. 막대와 영역에는 0을 포함하며 부호가 있는 막대는 같은 0선에서 뻗습니다.
+전부 0이거나 상수인 데이터에는 유한한 대체 정의역을 제공합니다.
+표본 선을 매끄럽게 하여 존재하지 않는 극값을 만들거나 불규칙한 날짜를 같은 간격에 강제로 배치하지 않습니다.
+오해를 부르는 두 번째 값 축을 추가하지 말고 단위가 다르면 나눕니다.
+계열 가시성을 바꿀 때 조용히 축 척도나 분모를 바꾸면 안 됩니다.
 
-## Make interaction useful
+<a id="make-interaction-useful"></a>
+## 유용한 상호작용 만들기
 
-Author complete static SVG/HTML, captions and a semantic value table first. Embed scoped CSS
-and JavaScript into the delivered file; never leave empty plots or inert controls without JS.
-The gallery is standalone and deliberately contains its own small theme shell. In an existing
-document, use its theme control instead of adding a second global control. Prefix all figure,
-gradient, tooltip, description and table IDs when reusing a recipe more than once.
+완전한 정적 SVG/HTML, 캡션과 의미 있는 값 표를 먼저 작성합니다.
+전달 파일에 범위가 한정된 CSS와 JavaScript를 넣고, JS가 없을 때 빈 플롯이나 작동하지 않는 제어를 남기지 않습니다.
+갤러리는 독립형이며 의도적으로 자체의 작은 테마 셸을 포함합니다. 기존 문서에서는 두 번째 전역 제어를 추가하지 말고 문서의 테마 제어를 사용합니다.
+작성 예시를 두 번 이상 재사용할 때는 모든 도해, 그라데이션, 툴팁, 설명과 표 ID에 접두어를 붙입니다.
 
-Enhance only after listeners attach. A tooltip must show the item/series, exact value and unit
-on pointer hover, keyboard focus and touch activation. Keep it within the viewport, dismiss
-it with Escape, outside activation and scroll/resize, and never make it the sole source of
-essential data. Insert data as textContent or escaped text/attributes, never raw HTML.
-Give marks native titles and accessible names; keep the complete table available without JS.
+리스너가 연결된 뒤에만 기능을 향상합니다. 툴팁은 포인터 호버, 키보드 포커스와 터치 활성화 시 항목/계열, 정확한 값과 단위를 보여 줘야 합니다.
+뷰포트 안에 유지하고 Escape, 바깥쪽 활성화와 스크롤/크기 변경으로 닫히게 합니다. 필수 데이터의 유일한 출처로 만들지 않습니다.
+데이터는 원시 HTML이 아니라 textContent나 이스케이프한 텍스트/속성으로 삽입합니다.
+표식에 네이티브 제목과 접근 가능한 이름을 주고 JS 없이도 전체 표를 이용할 수 있게 합니다.
 
-Use native buttons with visible focus and aria-pressed for legend toggles; remove hidden series
-from focus order and restore them when shown. Show an explicit empty-selection state when
-all series are hidden. Do not add decorative filters, fake zoom/export buttons or animation.
-Add zoom/reset only when the actual data density needs it and verify range/state restoration.
-Honor reduced motion and retain a meaningful static state throughout any transition.
+범례 토글에는 보이는 포커스와 aria-pressed가 있는 네이티브 버튼을 사용합니다.
+숨긴 계열은 포커스 순서에서 제거하고 표시할 때 복원합니다. 모든 계열이 숨겨지면 선택이 비었음을 명시적으로 표시합니다.
+장식적 필터, 가짜 줌/내보내기 버튼이나 애니메이션을 추가하지 않습니다.
+실제 데이터 밀도에 필요할 때만 줌/초기화를 추가하고 범위/상태 복원을 검증합니다.
+동작 줄이기를 존중하고 모든 전환 내내 의미 있는 정적 상태를 유지합니다.
 
-For a relationship graph, keep node identities and edge directions stable. Let selection reveal
-adjacent relationships and their evidence in a persistent detail area; include a clear reset.
-Distinguish observed, inferred and unknown edges in wording and line style. Do not manufacture
-connections, confidence scores or clusters. Large graphs need a justified search/filter path
-and an accessible relationship list; the small static recipe is not a large-graph layout engine.
+관계 그래프에서는 노드 식별과 간선 방향을 안정적으로 유지합니다.
+선택하면 인접 관계와 그 근거를 지속적인 상세 영역에 표시하고 명확한 초기화를 포함합니다.
+관찰한 간선, 추론한 간선과 알 수 없는 간선을 문구와 선 스타일로 구별합니다. 연결, 신뢰도 점수나 군집을 만들지 않습니다.
+큰 그래프에는 정당한 검색/필터 경로와 접근 가능한 관계 목록이 필요합니다. 작은 정적 작성 예시는 대형 그래프 배치 엔진이 아닙니다.
 
-## Verify the adapted result
+<a id="verify-the-adapted-result"></a>
+## 적용한 결과 검증
 
-Follow HTML Output's owning screen-check scope. When browser checks are in scope, check
-desktop and narrow mobile widths in light and dark themes, with
-JavaScript both enabled and disabled. Inspect actual screenshots, not DOM existence alone.
-At narrow widths reflow long labels or keep a labeled, keyboard-accessible local plot scroller;
-do not shrink a fixed viewBox until labels become unreadable or overflow the whole document.
+HTML 출력 담당자의 화면 검사 범위를 따릅니다. 브라우저 검사가 범위에 있으면 밝은/어두운 테마에서 데스크톱과 좁은 모바일 너비를 검사하고 JavaScript를 켠 상태와 끈 상태를 모두 확인합니다.
+DOM 존재만 보지 말고 실제 스크린샷을 검사합니다.
+좁은 너비에서는 긴 레이블을 재배치하거나 레이블이 있고 키보드로 접근할 수 있는 플롯 내부 스크롤러를 유지합니다.
+고정 viewBox를 줄여 레이블을 읽을 수 없게 하거나 문서 전체가 넘치게 하지 않습니다.
 
-Reconcile every mark and tooltip with the same source row. Check minimum/maximum, zero,
-negative/constant values where supported, missing samples, long labels and duplicate figure IDs.
-For those screen/action checks, test hover, Tab/Enter/Space/Escape, touch activation, legend off/on, all-hidden state, reset,
-tooltip boundaries, and absence of external requests. Verify glyph/line contrast and non-color
-cues; do not claim full accessibility compliance from this limited inspection.
-The screenshot supplied by a user may guide visual treatment without supplying measurements:
-do not invent its unreadable values or claim pixel-exact fidelity unless actually compared.
+모든 표식과 툴팁을 같은 원본 행과 대조합니다.
+최솟값/최댓값, 0, 지원되는 경우 음수/상수 값, 누락된 표본, 긴 레이블과 중복 도해 ID를 확인합니다.
+해당 화면/행동 검사에서는 호버, Tab/Enter/Space/Escape, 터치 활성화, 범례 끄기/켜기, 모두 숨김 상태, 초기화, 툴팁 경계와 외부 요청 부재를 테스트합니다.
+글리프/선 대비와 색 이외의 단서를 검증하며, 이 제한적인 검사로 완전한 접근성 준수를 주장하지 않습니다.
+사용자가 제공한 스크린샷은 측정값 없이도 시각적 처리의 참고가 될 수 있습니다.
+읽을 수 없는 값을 만들거나 실제로 비교하지 않고 픽셀 단위로 정확히 일치한다고 주장하지 않습니다.
 
-## Sources and adaptation
+<a id="sources-and-adaptation"></a>
+## 출처와 적용
 
-Reviewed 2026-10-13:
+2026-10-13 검토:
 
 - `cathrynlavery/diagram-design@0a8ea20ae69b33a5edce6018eedd3a9d26e90c1c`, MIT:
   `skills/diagram-design/SKILL.md`, `references/type-bar.md`, `type-line.md`,
-  `type-scatter.md` and their example assets. Adapt question-led type selection, shared scales,
-  explicit endpoints, layout hierarchy and honest missing-data treatment. Keep the existing
-  Cathryn Lavery MIT notice in the package. Omit branded skins, fixed pixel/node quotas,
-  external fonts and mandatory style setup. The bundled gallery is independently authored.
+  `type-scatter.md`와 해당 예제 자산을 검토했습니다. 질문에 따른 형식 선택, 공유 척도,
+  명시적 끝점, 배치 계층과 정직한 결측 데이터 처리를 적용합니다. 패키지의 기존 Cathryn Lavery MIT 고지를 유지합니다.
+  브랜드 스킨, 고정 픽셀/노드 할당량, 외부 글꼴과 의무적인 스타일 설정은 제외합니다. 포함한 갤러리는 독립적으로 작성했습니다.
 - `Graphify-Labs/graphify@a9860f70dc3cc2e9c2d8cb923484cfa0592b9067`, Apache-2.0:
-  `graphify/skill.md` and `graphify/exporters/html.py`. Reference only: inspected the product's
-  node selection, neighbor detail and evidence distinctions. No upstream code, prose, palettes,
-  dependencies or assets are distributed. Implement the generic interaction independently;
-  omit extraction, persistent graphs, watchers, GraphRAG, service/provider setup and CDN runtime.
+  `graphify/skill.md`와 `graphify/exporters/html.py`를 검토했습니다. 참조만 합니다. 제품의 노드 선택,
+  이웃 상세 정보와 근거 구별을 검사했습니다. upstream 코드, 산문, 팔레트, 의존성이나 자산은 배포하지 않습니다.
+  일반적인 상호작용은 독립적으로 구현합니다. 추출, 영속 그래프, watcher, GraphRAG, 서비스/제공자 설정과 CDN 런타임은 제외합니다.
 
-These source inspections establish design provenance, not upstream runtime certification.
+이 출처 검사는 설계 출처를 확립하며 upstream 런타임 인증이 아닙니다.

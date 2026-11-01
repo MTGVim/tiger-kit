@@ -1,94 +1,53 @@
 <!-- tigerkit:`shared-execution-protocol`; `canonical`=skills/tk-engineering/references/diagnosis.md -->
 
-# Difficult bug diagnosis
+<a id="difficult-bug-diagnosis"></a>
+# 어려운 버그 진단
 
-Read after the first reproduction attempt misses the reported symptom, before communicating
-non-reproduction, or for an unknown cause, intermittent behavior, performance regression,
-environment/time/network/state dependence or multiple plausible causes. When repository evidence makes the cause clear and an
-`exact regression` RED can be written immediately at the current `observable seam`, skip this
-procedure and go directly to [Behavior-first testing](testing.md).
+첫 재현 시도에서 보고된 증상이 나타나지 않았을 때, 재현되지 않았다고 전달하기 전, 또는 원인이 불명확하거나 동작이 간헐적이거나 성능 회귀가 있거나 환경·시간·네트워크·상태에 의존하거나 가능한 원인이 여러 개일 때 읽습니다. 저장소 근거로 원인이 명확하고 현재 `observable seam`에서 `exact regression` RED를 즉시 작성할 수 있다면 이 절차를 건너뛰고 [동작 우선 테스트](testing.md)로 바로 진행합니다.
 
-The goal is not diagnosis ceremony. Before committing to the first unsupported
-`fix hypothesis`, establish a **`red-capable feedback loop` that judges the symptom itself**.
-Code, test, and `runtime` exploration to find a reproduction surface is allowed.
+목표는 형식적인 진단 절차가 아닙니다. 근거가 없는 첫 `fix hypothesis`를 채택하기 전에 **증상 자체를 판정하는 `red-capable feedback loop`**를 확립합니다.
+재현 지점을 찾기 위한 코드, 테스트, `runtime` 탐색은 허용됩니다.
 
-## Judgment loop
+<a id="judgment-loop"></a>
+## 판정 루프
 
-Choose the smallest applicable loop:
+적용할 수 있는 가장 작은 루프를 선택합니다.
 
-- a focused test or existing regression command;
-- CLI/`curl`, a browser probe, or saved-trace replay;
-- a one-off probe or `fuzz/property input`;
-- `git bisect` or a `known-good differential comparison`;
-- a performance baseline, profiler, or query plan.
+- 집중 테스트 또는 기존 회귀 명령을 사용합니다.
+- CLI/`curl`, 브라우저 탐침 또는 저장한 추적 재생을 사용합니다.
+- 일회성 탐침 또는 `fuzz/property input`을 사용합니다.
+- `git bisect` 또는 `known-good differential comparison`을 사용합니다.
+- 성능 기준선, 프로파일러 또는 쿼리 계획을 사용합니다.
 
-The loop must judge the `exact symptom`, be `deterministic` or have a fixed high
-reproduction rate, run quickly, and be `agent-runnable`. Preserve the command actually
-run and de-identified result as evidence. If it is slow or `flaky`, pin the
-`seed/input/environment` and reduce it to a minimal reproduction.
+루프는 `exact symptom`을 판정하고, `deterministic`이거나 고정된 높은 재현율을 가지며, 빠르게 실행되고, `agent-runnable`이어야 합니다. 실제 실행한 명령과 비식별화한 결과를 근거로 보존합니다. 느리거나 `flaky`하다면 `seed/input/environment`를 고정하고 최소 재현으로 축소합니다.
 
-Derive the judgment from the reporter's symptom, not a suspected cause. For an unclickable
-screen, try the blocked interaction on an unrelated control and check its event recipient
-or hit target; check focus/input or scrolling when that is the reported failure. A normal
-screenshot, responsive main thread or absent suspected overlay does not establish that
-clicks reach their intended target. Route browser probes through `tk-browser-verify`.
+판정 기준은 추정 원인이 아니라 제보자의 증상에서 도출합니다. 클릭할 수 없는 화면이라면 무관한 컨트롤에서도 차단된 상호작용을 시도하고 이벤트 수신 대상이나 적중 대상을 확인합니다. 보고된 실패가 포커스·입력이나 스크롤 문제라면 이를 확인합니다. 정상적인 스크린샷, 반응하는 메인 스레드 또는 의심한 오버레이의 부재만으로는 클릭이 의도한 대상에 도달한다고 입증할 수 없습니다. 브라우저 탐침은 `tk-browser-verify`를 통해 수행합니다.
 
-For intermittent behavior, a negative probe reports only the observed sample and rate,
-such as `0 failures in 40 trials`; without a known rate and adequate sample, classify it
-as not yet reproduced rather than refuted. When a rare failure occurs, preserve its run-owned
-logs, screenshots, dumps, and other artifacts before any rerun that could overwrite or delete
-them; without that evidence, keep the cause unproven. Configure probes to exclude secrets and
-sensitive inputs, then save each probe's complete safe raw output to a run-owned file before
-filtering or summarizing it. Preserve exit status and analyze that saved output if a filter fails;
-do not repeat a shared-test-data mutation merely to recover its lost judgment.
+간헐적 동작에서 음성 탐침 결과는 `0 failures in 40 trials`처럼 관찰한 표본과 비율만 보고합니다. 알려진 발생률과 충분한 표본이 없다면 반증이 아니라 아직 재현하지 못한 상태로 분류합니다. 드문 실패가 발생하면 이를 덮어쓰거나 삭제할 수 있는 재실행 전에 해당 실행이 소유한 로그, 스크린샷, 덤프와 기타 산출물을 보존합니다. 그 근거가 없으면 원인은 입증되지 않은 상태로 둡니다. 비밀과 민감한 입력을 제외하도록 탐침을 설정하고, 필터링하거나 요약하기 전에 각 탐침의 안전한 전체 원시 출력을 실행 소유 파일에 저장합니다. 종료 상태를 보존하고 필터가 실패하면 저장한 출력을 분석합니다. 잃어버린 판정을 복구하려고 공유 테스트 데이터를 변경하는 작업을 반복하지 않습니다.
 
-If no adequate loop can be built, record the attempted `seam`s, failure evidence, and
-remaining risk. A `Testability/architecture gap` may become a finding candidate, but do
-not replace it with an arbitrary abstraction or speculative fix.
+적절한 루프를 만들 수 없다면 시도한 `seam`, 실패 근거와 남은 위험을 기록합니다. `Testability/architecture gap`은 발견 사항 후보가 될 수 있지만, 이를 임의의 추상화나 추측성 수정으로 대체하지 않습니다.
 
-## Timing and environment after a missed reproduction
+<a id="timing-and-environment-after-a-missed-reproduction"></a>
+## 재현 실패 후의 타이밍과 환경
 
-When animation/transition, refetch, Suspense/lazy loading, debounce or retry can affect the
-symptom, treat latency and event order as variables. A dev server or proxy can move a request
-outside a race window; faster responses can expose a race that slower local responses hide.
-Before a non-reproduction conclusion or reporter-facing draft, inspect the reporter-matching
-build in an accessible deployed test environment. If unavailable or still inconclusive,
-change one timing variable in an authorized isolated local probe: lower request latency,
-add latency, or widen the transition window. Bypass a dev proxy only when the same test
-endpoint, account and access boundaries remain intact. Record actual request/transition
-timings, environment/build, the attempted interaction and its result.
+애니메이션·전환, refetch, Suspense/lazy loading, debounce 또는 재시도가 증상에 영향을 줄 수 있다면 지연 시간과 이벤트 순서를 변수로 취급합니다. 개발 서버나 프록시가 요청을 경쟁 구간 밖으로 이동시킬 수 있으며, 빠른 응답이 느린 로컬 응답에서 숨겨진 경쟁을 드러낼 수 있습니다. 재현되지 않았다고 결론을 내리거나 제보자에게 전달할 초안을 작성하기 전에, 접근 가능한 배포된 테스트 환경에서 제보자와 일치하는 빌드를 검사합니다. 해당 환경을 사용할 수 없거나 여전히 결론을 내릴 수 없다면 승인된 격리 로컬 탐침에서 타이밍 변수 하나를 바꿉니다. 요청 지연을 줄이거나, 지연을 추가하거나, 전환 구간을 늘립니다. 동일한 테스트 엔드포인트, 계정과 접근 경계가 유지될 때만 개발 프록시를 우회합니다. 실제 요청·전환 시간, 환경·빌드, 시도한 상호작용과 결과를 기록합니다.
 
-These are diagnostic probes, not product fixes or permission to mutate test data. Existing
-mutation/authentication rules still apply; never use production as the substitute. If neither
-test-environment access nor a safe local timing probe is available, report the precise gap
-and `not yet reproduced in the checked conditions`; do not fabricate a trial or refute the report.
+이는 진단 탐침이며 제품 수정이나 테스트 데이터 변경 권한이 아닙니다. 기존 변경·인증 규칙이 계속 적용됩니다. 운영 환경을 대체재로 사용하지 않습니다. 테스트 환경 접근과 안전한 로컬 타이밍 탐침을 모두 사용할 수 없다면 정확한 공백과 `not yet reproduced in the checked conditions`를 보고합니다. 시도를 꾸며 내거나 보고를 반박하지 않습니다.
 
-## Hypotheses and probes
+<a id="hypotheses-and-probes"></a>
+## 가설과 탐침
 
-Only after the loop is `red-capable`, rank a small set of evidence-backed
-`falsifiable hypothesis` candidates. Each probe distinguishes one prediction and changes one variable
-at a time. Discard hypotheses contradicted by results and keep reducing the reproduction.
+루프가 `red-capable`해진 뒤에만 근거가 있는 소수의 `falsifiable hypothesis` 후보에 우선순위를 매깁니다. 각 탐침은 예측 하나를 구별하고 한 번에 변수 하나만 바꿉니다. 결과와 모순되는 가설을 버리고 재현을 계속 축소합니다.
 
-Server logs constrain server-side hypotheses. Fast responses or missing server errors cannot
-disprove client-only rendering, focus, overlay or event-delivery symptoms; observe those in
-the client and retain the distinction between unobserved and absent.
+서버 로그는 서버 측 가설을 제약합니다. 빠른 응답이나 서버 오류의 부재로 클라이언트에서만 발생하는 렌더링, 포커스, 오버레이 또는 이벤트 전달 증상을 반증할 수는 없습니다. 이러한 증상은 클라이언트에서 관찰하고, 관찰하지 못한 것과 존재하지 않는 것을 구별합니다.
 
-Prefer `Targeted debugger/inspection`; add temporary logging only at required
-boundaries. Give every temporary log a unique searchable `prefix`. For a performance
-regression, prefer `baseline/profiler/bisect` over indiscriminate logging.
+`Targeted debugger/inspection`을 우선합니다. 임시 로깅은 필요한 경계에만 추가합니다. 모든 임시 로그에 고유하고 검색 가능한 `prefix`를 부여합니다. 성능 회귀에는 무차별적인 로깅보다 `baseline/profiler/bisect`를 우선합니다.
 
-When this procedure runs as an SDD diagnostic leaf, stop after establishing the evidence-backed cause or
-remaining uncertainty, ownership boundary, and red-capable seam. Return that bounded diagnosis to the
-controller before any product remediation; the controller owns routing back to the current `Unit` or
-preparation/reapproval.
+이 절차를 SDD 진단 리프에서 실행할 때는 근거가 있는 원인 또는 남은 불확실성, 소유권 경계와 red-capable 지점을 확립한 뒤 중단합니다. 제품을 수정하기 전에 이 한정된 진단을 컨트롤러에 반환합니다. 현재 `Unit` 또는 준비·재승인으로 되돌리는 라우팅은 컨트롤러가 담당합니다.
 
-## TDD convergence and cleanup
+<a id="tdd-convergence-and-cleanup"></a>
+## TDD 수렴과 정리
 
-After finding the correct `regression seam`, join RED → GREEN → REFACTOR in
-[Behavior-first testing](testing.md), apply the minimal fix, and verify the related
-suite. Before completion, search for the unique `prefix`, one-off probes, saved traces,
-and diagnostic artifacts; remove only those owned by this run.
+올바른 `regression seam`을 찾으면 [동작 우선 테스트](testing.md)의 RED → GREEN → REFACTOR에 합류하고, 최소 수정을 적용한 뒤 관련 테스트 모음을 검증합니다. 완료 전에 고유 `prefix`, 일회성 탐침, 저장한 추적과 진단 산출물을 검색하고 이번 실행이 소유한 것만 제거합니다.
 
-Do not place passwords, tokens, OTPs, cookies, sessions, credentials, or sensitive
-inputs in commands, logs, traces, or reports. De-identify required evidence. Do not
-create a new public skill, persistent diagnosis ledger, or global state.
+비밀번호, 토큰, OTP, 쿠키, 세션, 자격 증명이나 민감한 입력을 명령, 로그, 추적 또는 보고서에 넣지 않습니다. 필요한 근거는 비식별화합니다. 새로운 공개 스킬, 영구 진단 장부 또는 전역 상태를 만들지 않습니다.

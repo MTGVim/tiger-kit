@@ -1,29 +1,28 @@
-# Consumer setup handoffs
+<a id="consumer-setup-handoffs"></a>
+# 소비자 설정 인계
 
-Read this only when another skill delegates a human-only host setup, authentication,
-permission, or restart step. The consumer retains its target, operation, mutation authority,
-and verdict. Guide one current user action, observe its completion signal, then return the
-exact resume action.
+다른 스킬이 사람만 수행할 수 있는 호스트 설정, 인증, 권한이나 재시작 단계를 위임할 때만 읽습니다.
+소비자는 대상, 작업, 변경 권한과 판정을 유지합니다. 현재 사용자의 한 가지 행동을 안내하고 완료 신호를 관찰한 뒤 정확한 재개 행동을 반환합니다.
 
-Require a bounded handoff with:
+다음 항목을 포함한 범위가 제한된 인계를 요구합니다.
 
-- consumer and exact pending criterion;
-- detected host/client and current capability state;
-- missing or incompatible capability;
-- required and recommended properties;
-- verifiable completion signal;
-- exact resume action;
-- fallback eligibility and enabling evidence, when applicable.
+- 소비자와 정확한 대기 기준입니다.
+- 감지한 호스트/클라이언트와 현재 기능 상태입니다.
+- 누락되었거나 호환되지 않는 기능입니다.
+- 필수 속성과 권장 속성입니다.
+- 검증할 수 있는 완료 신호입니다.
+- 정확한 재개 행동입니다.
+- 해당하는 경우 대체 경로 자격과 이를 허용하는 근거입니다.
 
-Use installed/local host evidence before current official documentation. Derive the exact
-configuration file, scope, command shape, UI literal, and restart instruction; do not invent
-them. Preserve unrelated configuration and show the smallest user-controlled change. Never
-silently edit host configuration.
+최신 공식 문서보다 설치된/로컬 호스트 근거를 먼저 사용합니다.
+정확한 설정 파일, 범위, 명령 형태, UI literal과 재시작 지시를 도출하며 이를 만들지 않습니다.
+무관한 설정을 보존하고 사용자가 제어하는 최소 변경을 보여 줍니다. 호스트 설정을 조용히 편집하지 않습니다.
 
-## Browser provider setup
+<a id="browser-provider-setup"></a>
+## 브라우저 제공자 설정
 
-For a new Chrome DevTools MCP route, require effective headless mode and recommend an
-isolated provider profile. Use the consumer-provided conceptual default:
+새 Chrome DevTools MCP 경로에는 실제 적용되는 headless 모드를 요구하고 격리된 제공자 프로필을 권장합니다.
+소비자가 제공한 개념적 기본값을 사용합니다.
 
 ```json
 {
@@ -36,28 +35,23 @@ isolated provider profile. Use the consumer-provided conceptual default:
 }
 ```
 
-TigerKit installs no browser provider or upstream provider skills. Do not add
-`--browserUrl`, `--wsEndpoint`, a remote-debugging port, or port `9222` to an ordinary new
-setup. Offer attach only when the handoff contains observed managed/direct launch failure or
-equivalent sandbox/VM/container/host-boundary evidence. Before the user selects attach,
-explain that the external launcher owns headless mode, endpoint exposure, and profile data.
+TigerKit은 브라우저 제공자나 upstream 제공자 스킬을 설치하지 않습니다.
+일반적인 새 설정에는 `--browserUrl`, `--wsEndpoint`, 원격 디버깅 포트나 포트 `9222`를 추가하지 않습니다.
+인계에 관찰한 관리형/직접 실행 실패나 동등한 sandbox/VM/container/호스트 경계 근거가 있을 때만 attach를 제안합니다.
+사용자가 attach를 선택하기 전에 외부 실행기가 headless 모드, endpoint 노출과 프로필 데이터를 담당한다고 설명합니다.
 
-Preserve an existing MCP entry and unrelated settings. If effective headless mode is missing,
-guide only the smallest supported correction. Treat provider isolation as recommended: explain
-the persistence limitation if omitted, but do not present it as the headless safety gate.
+기존 MCP 항목과 무관한 설정을 보존합니다. 실제 적용되는 headless 모드가 없으면 지원되는 최소 수정만 안내합니다.
+제공자 격리는 권장 사항으로 취급합니다. 생략 시 지속성 한계를 설명하되 headless 안전 관문인 것처럼 제시하지 않습니다.
 
-If the client must restart, return `Status: Pending`, the observed completion signal so far,
-and the exact instruction that reruns `tk-browser-verify` for its original criterion. Do not
-claim that browser verification passed.
+클라이언트를 재시작해야 하면 `Status: Pending`, 지금까지 관찰한 완료 신호와 원래 기준에 대해 `tk-browser-verify`를 다시 실행하는 정확한 지시를 반환합니다.
+브라우저 검증을 통과했다고 주장하지 않습니다.
 
-## GitHub image upload setup
+<a id="github-image-upload-setup"></a>
+## GitHub 이미지 업로드 설정
 
-Accept only human actions such as host-level `gh` installation or repair when agent execution
-is inappropriate, interactive `gh auth login`, account/repository permission changes, or an
-explicitly selected CDP route's Chrome permission/restart step. Do not take over reviewed
-extension selection or installation, image staging/upload, PR mutation, or render verification.
+에이전트 실행이 부적절한 경우의 호스트 수준 `gh` 설치/복구, 대화형 `gh auth login`, 계정/저장소 권한 변경이나
+명시적으로 선택한 CDP 경로의 Chrome 권한/재시작 단계처럼 사람의 행동만 받습니다.
+검토된 확장 선택/설치, 이미지 준비/업로드, PR 변경이나 렌더링 검증을 대신 맡지 않습니다.
 
-After a completion signal that needs no client restart, return control to
-`tk-pr-media` with its original repository, PR/comment target, image set, and
-selected route intact. If restart is required, return `Status: Pending` and an exact resume
-action without claiming that any image was uploaded.
+클라이언트 재시작이 필요하지 않은 완료 신호를 받으면 원래 저장소, PR/댓글 대상, 이미지 집합과 선택한 경로를 그대로 유지하여 `tk-pr-media`에 제어를 돌려줍니다.
+재시작이 필요하면 이미지를 업로드했다고 주장하지 않고 `Status: Pending`과 정확한 재개 행동을 반환합니다.

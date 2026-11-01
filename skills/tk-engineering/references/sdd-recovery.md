@@ -1,65 +1,28 @@
-# SDD Recovery
+<a id="sdd-recovery"></a>
+# SDD 복구
 
-Read before starting optional durable recovery, on interruption, or on an empty/malformed/unbound terminal return.
+선택적 영구 복구를 시작하기 전, 중단 시 또는 종료 반환이 비어 있거나 형식이 잘못되었거나 식별 정보와 결합되지 않았을 때 읽습니다.
 
 
-The Ready Seed, current controller context, and local commits are the normal recovery
-sources. Do not create a progress ledger merely because execution shape is SDD.
+Ready Seed, 현재 컨트롤러 맥락과 로컬 commit이 일반적인 복구 소스입니다. 실행 구조가 SDD라는 이유만으로 진행 장부를 만들지 않습니다.
 
-If a terminal leaf return is empty, malformed, or cannot be bound to the expected Unit and
-dispatch/review identity, treat the mutation outcome and progress as unknown, not success or failure.
-Reconcile only against the exact Seed identifier/hash, Unit, BASE (FIX_BASE for remediation), and
-workspace already owned by the controller, using fresh run-owned Git/recovery evidence. Never infer
-identity from `cwd`, recent activity, another ledger, or nearby task state. If identity is unavailable
-or that evidence cannot prove the outcome, terminate as `Blocked | Unverifiable`.
+종료된 리프의 반환이 비어 있거나, 형식이 잘못되었거나, 예상 Unit 및 디스패치·리뷰 식별 정보와 결합할 수 없다면 변경 결과와 진행 상황을 성공이나 실패가 아니라 알 수 없는 상태로 취급합니다. 컨트롤러가 이미 소유한 정확한 Seed 식별자·해시, Unit, BASE(수정에서는 FIX_BASE)와 workspace에 대해서만 최신 실행 소유 Git·복구 근거를 사용해 대조하여 확정합니다. `cwd`, 최근 활동, 다른 장부나 인접 작업 상태로 식별 정보를 추론하지 않습니다. 식별 정보를 사용할 수 없거나 근거로 결과를 입증할 수 없다면 `Blocked | Unverifiable`로 종료합니다.
 
-Until reconciliation, do not blindly re-run the Unit, enter remediation/diagnosis on an assumed failure,
-or advance to the next Unit or phase. A recovered commit proves neither verification nor a clean review;
-resume only the remaining obligations supported by bound evidence. Reuse existing controller context
-and optional recovery/transport artifacts; add no result ledger, retry subsystem, or mandatory durable
-child report. A nonterminal launch acknowledgement or pending child is not an empty terminal result;
-continue the existing bounded wait.
+대조하여 확정하기 전까지 Unit을 맹목적으로 재실행하거나, 실패를 가정해 수정·진단에 들어가거나, 다음 Unit이나 단계로 진행하지 않습니다. 복구된 commit은 검증이나 문제없는 리뷰를 입증하지 않습니다. 결합된 근거가 뒷받침하는 남은 의무만 재개합니다. 기존 컨트롤러 맥락과 선택적 복구·전달 산출물을 재사용합니다. 결과 장부, 재시도 하위 시스템 또는 필수 영구 자식 보고서를 추가하지 않습니다. 종료되지 않은 실행 확인 응답이나 대기 중인 자식은 비어 있는 종료 결과가 아닙니다. 기존의 한정된 대기를 계속합니다.
 
-Create at most one ignored `.tigerkit/sdd.md` only when execution is likely to outlive
-the current controller context, the host cannot reliably retain Unit/review state, or an
-interrupted run actually needs durable recovery. When a ledger is needed, keep only:
+실행이 현재 컨트롤러 맥락보다 오래 지속될 가능성이 높거나, 호스트가 Unit·리뷰 상태를 안정적으로 유지할 수 없거나, 중단된 실행에 실제로 영구 복구가 필요할 때만 무시되는 `.tigerkit/sdd.md`를 최대 하나 만듭니다. 장부가 필요하면 다음만 유지합니다.
 
-- Ready `Seed` identifier and content hash;
-- preflight conflicts or rulings that are not already preserved in the Seed;
-- current `Unit` and completed commit SHAs;
-- active dispatch: full `BASE` SHA, exact workspace identity, and dispatch identity/phase bound to that Unit;
-- open review findings and remediation round when active;
-- temporary artifact identifiers and paths that are required for recovery.
+- Ready `Seed` 식별자와 콘텐츠 해시를 유지합니다.
+- Seed에 아직 보존되지 않은 사전 점검 충돌이나 판정을 유지합니다.
+- 현재 `Unit`과 완료된 commit SHA를 유지합니다.
+- 활성 디스패치의 전체 `BASE` SHA, 정확한 workspace 식별 정보와 해당 Unit에 결합된 디스패치 식별 정보·단계를 유지합니다.
+- 활성 상태일 때 미해결 리뷰 발견 사항과 수정 회차를 유지합니다.
+- 복구에 필요한 임시 산출물 식별자와 경로를 유지합니다.
 
-When this optional ledger is active, persist the active dispatch immediately before delegation;
-if that write fails, stop before dispatch. Keep its identity and BASE until the Unit outcome is
-reconciled, including remaining verification/review. For remediation, also persist `FIX_BASE` and
-the round before delegation; preserve the original Unit BASE for the complete Unit review.
+이 선택적 장부가 활성화되어 있으면 위임 직전에 활성 디스패치를 영구 기록합니다. 쓰기에 실패하면 디스패치 전에 중단합니다. 남은 검증·리뷰를 포함해 Unit 결과를 대조하여 확정할 때까지 식별 정보와 BASE를 유지합니다. 수정에서는 위임 전에 `FIX_BASE`와 회차도 영구 기록합니다. 전체 Unit 리뷰를 위해 원래 Unit BASE를 보존합니다.
 
-After interruption, validate the exact Seed identifier/hash, Unit, workspace, and dispatch identity
-before inspecting fresh run-owned Git evidence for the recorded `BASE..HEAD` (or `FIX_BASE..HEAD`).
-Verify that the recorded base exists and is an ancestor of the current HEAD; a missing base or
-ambiguous attribution is `Blocked | Unverifiable`, not permission to reconstruct it from recency.
-When applicable Unit work is proven, do not replay it; resume only the outstanding obligations.
-For an interaction-blocked partial implementation, prefer resuming the same child. If it cannot
-resume, a replacement may continue only the remaining approved implementation after bound evidence
-proves the prior mutations, exact remaining scope, and that the old child cannot still mutate the
-workspace. Preserve the original Unit BASE for the complete review, and bind the replacement dispatch
-to that same Unit/workspace; persist it before launch only when optional recovery state is active.
-Completed implementation resumes verification/review/remediation, never implementation replay.
-An empty commit range alone does not prove no work:
-check run-owned uncommitted changes and the prior child lifecycle as well. Re-dispatch the whole implementation only when
-bound evidence proves the prior dispatch produced no applicable work and cannot still mutate the
-workspace. A pending child uses the existing bounded wait; an unknown outcome remains
-`Blocked | Unverifiable`. Clear or advance active-dispatch state only after reconciliation, never
-merely on a child return or interruption. Do not create a ledger for ordinary same-context dispatch.
+중단 후에는 기록된 `BASE..HEAD` 또는 `FIX_BASE..HEAD`에 대한 최신 실행 소유 Git 근거를 검사하기 전에 정확한 Seed 식별자·해시, Unit, workspace와 디스패치 식별 정보를 검증합니다. 기록된 base가 존재하고 현재 HEAD의 조상인지 검증합니다. base 누락이나 귀속의 모호함은 `Blocked | Unverifiable`이며 최근 활동으로 재구성할 권한이 아닙니다. 적용 가능한 Unit 작업이 입증되면 이를 재실행하지 않고 남은 의무만 재개합니다. 상호작용으로 차단된 부분 구현에서는 같은 자식의 재개를 우선합니다. 재개할 수 없다면 결합된 근거로 이전 변경, 정확한 남은 범위와 이전 자식이 더 이상 workspace를 변경할 수 없음을 입증한 뒤에만 대체 자식이 남은 승인된 구현을 계속할 수 있습니다. 전체 리뷰를 위해 원래 Unit BASE를 보존하고 대체 디스패치를 같은 Unit·workspace에 결합합니다. 선택적 복구 상태가 활성화된 경우에만 실행 전에 이를 영구 기록합니다. 완료된 구현은 검증·리뷰·수정을 재개하며 구현을 재실행하지 않습니다.
+빈 commit 범위만으로 작업이 없었다고 입증할 수는 없습니다. 실행 소유의 commit되지 않은 변경과 이전 자식 생명주기도 확인합니다. 결합된 근거로 이전 디스패치가 적용 가능한 작업을 만들지 않았고 더 이상 workspace를 변경할 수 없음을 입증할 때만 구현 전체를 재디스패치합니다. 대기 중인 자식은 기존의 한정된 대기를 사용합니다. 알 수 없는 결과는 `Blocked | Unverifiable`로 남습니다. 자식 반환이나 중단만을 이유로 활성 디스패치 상태를 지우거나 진행시키지 말고, 대조하여 확정한 뒤에만 수행합니다. 같은 맥락의 일반적인 디스패치에는 장부를 만들지 않습니다.
 
-Do not copy stable Seed content or completed reports into the ledger. Do not resume a
-ledger with a different Seed identifier/hash or one from completed work. If it does not
-match the current Seed exactly, return `Blocked` before new dispatch and return to the
-preparation owner. Before deleting a run-owned ledger, inspect any material deferred or accepted `Ruling:` that
-it uniquely preserves. Delete the ledger only when binding acceptance is clean and every such ruling already
-exists in another durable owner; otherwise retain the existing ledger as the recovery record. Do not retain it
-solely for style/minor findings, completed reports, or rulings already preserved elsewhere, and do not create a
-follow-up artifact just to make cleanup possible.
+안정된 Seed 내용이나 완료된 보고서를 장부에 복사하지 않습니다. 다른 Seed 식별자·해시를 가진 장부나 완료된 작업의 장부를 재개하지 않습니다. 현재 Seed와 정확히 일치하지 않으면 새 디스패치 전에 `Blocked`를 반환하고 준비 담당자에게 돌아갑니다. 실행 소유 장부를 삭제하기 전에 해당 장부만이 보존하는 중요한 유예·수락 `Ruling:`을 검사합니다. 구속력 있는 인수 판정이 문제없고 이러한 모든 판정이 이미 다른 영구 소유 문서에 존재할 때만 장부를 삭제합니다. 그렇지 않으면 기존 장부를 복구 기록으로 유지합니다. 스타일·사소한 발견 사항, 완료된 보고서 또는 다른 곳에 이미 보존한 판정만을 위해 유지하지 않으며 정리를 가능하게 하려고 후속 산출물을 만들지 않습니다.
 

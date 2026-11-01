@@ -1,36 +1,22 @@
-# Synthesis and Inspection
+<a id="synthesis-and-inspection"></a>
+# 합성과 검사
 
-Preserve source/caption/UI literals and prepare a separate run-owned UTF-8 spoken script.
-Before synthesis, resolve numeric spans by meaning: quantities, currency, decimals and counters
-versus identifiers, telephone digits and version components. Preserve values, signs, precision,
-leading zeros and intended grouping. Expand units or abbreviations only with their context and
-case; resolve meaning-changing ambiguity in the affected passage while continuing unambiguous
-preparation. Review these spans source-to-spoken and pass the spoken script to the adapter.
-Raw-input benchmarks keep the approved text unchanged; a pronunciation-corrected comparison is
-a separate declared condition shared by every candidate. Use complete sentences; avoid splitting
-short interjections into independent requests without testing.
+원본/자막/UI literal을 보존하고 별도의 실행 소유 UTF-8 낭독 원고를 준비합니다. 합성 전에 숫자 구간의 의미를 확정합니다. 수량, 통화, 소수와 단위 명사를 식별자, 전화번호의 개별 숫자와 버전 구성 요소와 구별합니다. 값, 부호, 정밀도, 앞자리 0과 의도한 묶음을 보존합니다. 단위나 약어는 맥락과 대소문자에 따라서만 풀어 씁니다. 의미가 달라지는 모호성은 해당 구절에서 해결하면서 모호하지 않은 부분의 준비는 계속합니다. 원본과 낭독 원고 사이에서 이 구간을 대조 검토하고 낭독 원고를 adapter에 전달합니다. 원시 입력 벤치마크는 승인된 텍스트를 그대로 유지합니다. 발음 교정 비교는 모든 후보에 공통으로 적용하는 별도로 선언된 조건입니다. 완전한 문장을 사용합니다. 테스트 없이 짧은 감탄사를 독립 요청으로 나누는 것은 피합니다.
 
-These are script examples, not verified acoustic outputs or a fixed replacement dictionary.
+다음은 원고 예시이며 검증된 음향 출력이나 고정 치환 사전이 아닙니다.
 
-| Source context | Spoken-script example | Meaning to preserve |
+| 원본 맥락 | 낭독 원고 예시 | 보존할 의미 |
 |---|---|---|
-| `가격 2,048원` | `가격 이천사십팔 원` | Quantity and currency |
-| `인증코드 002048` | `인증코드 공 공 이 공 사 팔` | Leading zeros and individual digits |
-| `응답 시간 250ms` | `응답 시간 이백오십 밀리초` | Duration and time unit |
-| `MS 계정` | `엠에스 계정` | Abbreviation, not a time unit |
-| `0.5GB` | `영 점 오 기가바이트` | Decimal value and byte unit |
-| `버전 2.4.0` | `버전 이 점 사 점 영` | Version components and final zero |
+| `가격 2,048원` | `가격 이천사십팔 원` | 수량과 통화를 보존합니다. |
+| `인증코드 002048` | `인증코드 공 공 이 공 사 팔` | 앞자리 0과 개별 숫자를 보존합니다. |
+| `응답 시간 250ms` | `응답 시간 이백오십 밀리초` | 기간과 시간 단위를 보존합니다. |
+| `MS 계정` | `엠에스 계정` | 시간 단위가 아닌 약어를 보존합니다. |
+| `0.5GB` | `영 점 오 기가바이트` | 소수 값과 byte 단위를 보존합니다. |
+| `버전 2.4.0` | `버전 이 점 사 점 영` | 버전 구성 요소와 마지막 0을 보존합니다. |
 
-Verify claimed pronunciation improvements separately by listening to fresh before/after files
-with the same engine, voice and settings; script review alone is not acoustic evidence.
+발음이 개선되었다는 주장은 같은 엔진, 목소리와 설정으로 새로 만든 변경 전/후 파일을 청취하여 별도로 검증합니다. 원고 검토만으로는 음향 근거가 되지 않습니다.
 
-Qwen provides sohee (Korean default) and explicit serena;
-the 0.6B model ignores instruct. Do not offer unsupported styles or silently upgrade models.
-ppaso uses its model voice, not Qwen speaker IDs. Browser speech is never an exported WAV route.
-Supertonic 3 is an explicit Korean CPU/F1 alternative with fixed eight denoising steps and speed
-1.05. Its adapter uses the pinned official helper, crops each native chunk to its predicted
-duration before joining and preserves the helper's 0.3-second inter-chunk gap. It does not add
-gaps between authored sentences. No style, language or custom-voice controls are exposed.
+Qwen은 sohee(한국어 기본값)와 명시적으로 선택하는 serena를 제공합니다. 0.6B 모델은 instruct를 무시합니다. 지원하지 않는 style을 제안하거나 모델을 몰래 업그레이드하지 않습니다. ppaso는 Qwen speaker ID가 아니라 자체 모델 목소리를 사용합니다. 브라우저 발화는 내보낼 WAV 경로가 될 수 없습니다. Supertonic 3는 denoising 8단계와 speed 1.05가 고정된, 명시적으로 선택하는 한국어 CPU/F1 대안입니다. Adapter는 고정된 공식 도우미를 사용하고 각 native chunk를 예측 길이로 자른 뒤 연결하며 도우미의 chunk 사이 0.3초 간격을 보존합니다. 작성한 문장 사이에 간격을 추가하지 않습니다. Style, 언어나 사용자 지정 목소리 제어는 노출하지 않습니다.
 
 ```bash
 python -B scripts/qwen3.py --engine mlx --quantization 5 --text-file <script.txt> --output <new.wav> --speaker sohee
@@ -38,29 +24,10 @@ python -B scripts/ppaso.py --text-file <script.txt> --output <new.wav>
 python -B scripts/supertonic3.py --text-file <script.txt> --output <new.wav>
 ```
 
-Use a new WAV path after editing text; preserve existing output. Run synthesis in a fresh owned
-process with its own deadline and stall limit set before launch. Downloads/setup and smoke are
-separate from measurement. Include the longest planned input and use the same sentence/cache
-policy as the baseline in a comparison; measure models sequentially. MLX selects Metal GPU,
-cache_limit 0 and clears released sentence allocations. No silent CPU/engine fallback.
-Keep peak Mac process footprint distinct from RSS and MLX active allocation; unavailable values
-remain null. An observed run is not a general memory ceiling. No global watcher/benchmark runner.
+텍스트를 수정한 뒤에는 새 WAV 경로를 사용하고 기존 출력을 보존합니다. 시작 전에 자체 마감 시간과 정체 한계를 설정한 새 실행 소유 프로세스에서 합성합니다. 다운로드/설정과 smoke는 측정과 분리합니다. 비교에는 계획한 최장 입력을 포함하고 기준과 동일한 문장/캐시 정책을 사용합니다. 모델은 순차 측정합니다. MLX는 Metal GPU와 cache_limit 0을 선택하고 해제된 문장 할당을 정리합니다. CPU/엔진으로 몰래 fallback하지 않습니다. Mac 프로세스의 최대 footprint는 RSS와 MLX active allocation과 구별합니다. 확보할 수 없는 값은 null로 남깁니다. 관찰된 실행은 일반적인 메모리 상한이 아닙니다. 전역 watcher/벤치마크 runner는 두지 않습니다.
 
-Trim measured leading silence, validate consistent sample rate and write finite/non-silent mono
-PCM16 WAV. The receipt owns actual duration, trim, revision and human_action: listen. The limited
-cache inventory names new top-level entries and scan limits, not proof of ownership or a full
-recursive audit. Attribute unexpected entries before cleaning exact run-owned paths. Python -B
-prevents bytecode writes; PYTHONDONTWRITEBYTECODE alone is ignored by isolated Python -I.
-Supertonic 3 receipts also return `disclosure_required: true` and `disclosure_notice`. Tell the
-user to clearly disclose AI synthesis when providing the audio or a video using it, with the
-notice as suggested wording. The adapter does not insert a spoken notice, edit videos or verify
-downstream publication; keep that responsibility explicit alongside `human_action: listen`.
+측정한 앞부분 무음을 자르고 일관된 sample rate를 검증하며 유한 값으로 된 무음이 아닌 mono PCM16 WAV를 씁니다. 실제 길이, trim, revision과 human_action: listen은 receipt가 담당합니다. 제한된 캐시 목록은 새로운 최상위 항목과 스캔 한계를 명시하며 소유권의 증거나 완전한 재귀 감사가 아닙니다. 예상하지 못한 항목의 귀속을 확인한 뒤 정확한 실행 소유 경로를 정리합니다. Python -B는 bytecode 쓰기를 방지합니다. PYTHONDONTWRITEBYTECODE만으로는 격리된 Python -I에서 적용되지 않습니다. Supertonic 3 receipt는 `disclosure_required: true`와 `disclosure_notice`도 반환합니다. 사용자에게 오디오 또는 이를 사용하는 영상을 제공할 때 AI 합성을 명확히 고지하도록 알리고 해당 고지를 제안 문구로 제공합니다. Adapter는 음성 고지를 삽입하거나 영상을 편집하거나 후속 발행을 검증하지 않습니다. `human_action: listen`과 함께 그 책임을 명시적으로 유지합니다.
 
-Very short Qwen utterances can be silent or garbled depending on seed. Silence rejection does
-not catch garbling. Do not silently retry another engine/seed or merge sentences as a claimed
-fix: those policies need before/after evidence and listening. Return failure and retain the
-script and proper-name/number/ending listening checklist. No ASR or automatic download is added.
+매우 짧은 Qwen 발화는 seed에 따라 무음이 되거나 알아듣기 어려울 수 있습니다. 무음 거부는 알아듣기 어려운 발화를 잡아내지 못합니다. 다른 엔진/seed로 몰래 재시도하거나 문장을 합친 것을 해결책으로 주장하지 않습니다. 그런 정책에는 변경 전/후 근거와 청취가 필요합니다. 실패를 반환하고 원고와 고유 명사/숫자/끝부분 청취 checklist를 보존합니다. ASR이나 자동 다운로드는 추가하지 않습니다.
 
-The consumer chooses breathing gaps/scene alignment from measured WAV duration. Do not bake
-course-specific timing or video scene logic into the TTS adapter. A selected voice not delivered
-must stay failed/pending, never be relabeled as a finished silent preview.
+소비자는 측정한 WAV 길이를 바탕으로 호흡 간격/장면 정렬을 선택합니다. TTS adapter에 코스별 타이밍이나 영상 장면 로직을 넣지 않습니다. 선택한 목소리를 전달하지 못했다면 실패/대기 상태로 유지하며 완성된 무음 preview로 이름을 바꾸지 않습니다.

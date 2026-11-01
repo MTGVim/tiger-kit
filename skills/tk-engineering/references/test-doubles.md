@@ -1,18 +1,13 @@
 <!-- tigerkit:`shared-execution-protocol`; `canonical`=skills/tk-engineering/references/test-doubles.md -->
 
-# Test-double safeguards
+<a id="test-double-safeguards"></a>
+# 테스트 대역 안전장치
 
-Load this reference only when the actual task uses or proposes a mock, fake, stub, spy,
-or another test double. Continue to use [behavior-first testing](testing.md) for the
-test's falsifiability and mutation rules.
+실제 작업에서 mock, fake, stub, spy 또는 다른 테스트 대역을 사용하거나 제안할 때만 이 참조를 불러옵니다. 테스트의 반증 가능성과 변경 규칙에는 계속 [동작 우선 테스트](testing.md)를 사용합니다.
 
-- A double's existence or a mock-only assertion is not proof of product behavior.
-- Understand the real dependency's required side effects before replacing it. When
-  practical, mock only the slow or external layer and keep tested local behavior real.
-- When arguments, call counts, or call order are the contract, verify them specifically.
-- Preserve the real integration response shape; an oversimplified double creates false
-  confidence when downstream behavior depends on omitted fields.
-- Do not add production cleanup or reset APIs only for tests. Keep test-only cleanup in
-  test utilities unless the production component owns that lifecycle.
-- If double setup is more complex than the behavior, prefer a real component or a
-  narrower integration seam.
+- 대역의 존재나 mock만 확인하는 단언은 제품 동작의 증거가 아닙니다.
+- 실제 의존성을 대체하기 전에 필요한 부수 효과를 이해합니다. 실용적인 경우 느리거나 외부인 계층만 mock으로 대체하고 테스트하는 로컬 동작은 실제로 유지합니다.
+- 인수, 호출 횟수나 호출 순서가 계약이라면 이를 구체적으로 검증합니다.
+- 실제 연동 응답 형태를 보존합니다. 후속 동작이 생략된 필드에 의존하면 지나치게 단순한 대역은 잘못된 확신을 만듭니다.
+- 테스트만을 위해 운영 코드에 정리나 reset API를 추가하지 않습니다. 운영 컴포넌트가 해당 생명주기를 소유하지 않는 한 테스트 전용 정리는 테스트 유틸리티에 둡니다.
+- 대역 설정이 동작보다 복잡하다면 실제 컴포넌트나 더 좁은 연동 지점을 우선합니다.

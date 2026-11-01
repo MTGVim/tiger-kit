@@ -1,86 +1,67 @@
-# Reader Purpose: Diátaxis-Informed Documentation
+<a id="reader-purpose-diátaxis-informed-documentation"></a>
+# 독자의 목적: Diátaxis를 참고한 문서 작성
 
-Use this reference for substantive reader-facing lessons, explanations, change
-walkthroughs and research reports. It governs the reader's purpose and content
-order, not renderer implementation. Preserve the calling skill's scope, source
-evidence, explicit format and existing output contract. One primary purpose
-per unit is usually enough; another form may support that purpose.
+독자에게 제공하는 실질적인 수업, 설명, 변경 안내와 조사 보고서에 이 참조를 사용합니다.
+이 참조는 렌더러 구현이 아니라 독자의 목적과 내용 순서를 규정합니다. 호출한 스킬의 범위, 출처 근거, 명시한 형식과 기존 출력 계약을 보존합니다.
+대개 단위마다 주목적 하나면 충분하며 다른 형식이 그 목적을 보조할 수 있습니다.
 
-## Choose by what the reader needs next
+<a id="choose-by-what-the-reader-needs-next"></a>
+## 독자에게 다음으로 필요한 것을 기준으로 선택하기
 
-| Form | Reader's need | Author's primary job |
+| 형식 | 독자의 필요 | 작성자의 주요 역할 |
 | --- | --- | --- |
-| Tutorial (learning) | Acquire a skill by doing | Guide a feasible activity, show expected observations, offer a small changed case and reasoned feedback |
-| How-to (task) | Complete a specific real task | Give safe prerequisites, conditional actions and verifiable results without a whole beginner curriculum |
-| Reference (lookup) | Retrieve accurate facts while working | Organize precise fields, defaults, behavior and constraints by the thing described |
-| Explanation (understanding) | Understand why or how something happens | Connect a concrete mechanism to causes, context, alternatives, outcomes and evidence |
+| 튜토리얼(학습) | 직접 해 보며 기술을 익힙니다. | 실행 가능한 활동을 안내하고 예상 관찰을 보여 주며, 조금 바꾼 사례와 이유가 있는 피드백을 제공합니다. |
+| 방법 안내(작업) | 구체적인 실제 작업을 완료합니다. | 초보자 교육 과정 전체를 제공하지 않고 안전한 선행 조건, 조건부 행동과 검증할 수 있는 결과를 제공합니다. |
+| 참조(조회) | 작업 중 정확한 사실을 찾습니다. | 설명 대상별로 정확한 필드, 기본값, 동작과 제약을 정리합니다. |
+| 설명(이해) | 어떤 일이 왜 또는 어떻게 일어나는지 이해합니다. | 구체적인 메커니즘을 원인, 맥락, 대안, 결과와 근거에 연결합니다. |
 
-A numbered procedure is not necessarily a tutorial, and a table is not
-automatically reference. The reader's immediate goal matters more than the
-document extension, layout, skill name or presence of examples. The calling
-owner keeps its task: `tk-explain` explains concepts/pinned changes and continues from learner answers, and `tk-research`
-produces a decision-ready evidence report. Do not reroute the request,
-discard its constraints or relabel the work without an explicit reason.
+번호가 붙은 절차가 반드시 튜토리얼인 것은 아니며, 표가 자동으로 참조가 되는 것도 아닙니다.
+문서 확장자, 배치, 스킬 이름이나 예제 유무보다 독자의 당면 목표가 중요합니다.
+호출한 담당자는 자신의 작업을 유지합니다. `tk-explain`은 개념/고정한 변경을 설명하고 학습자 답변에서 이어가며, `tk-research`는 의사결정에 사용할 수 있는 근거 보고서를 만듭니다.
+명시적 이유 없이 요청을 다른 곳으로 돌리거나 제약을 버리거나 작업 이름을 바꾸지 않습니다.
 
-## Build the appropriate experience
+<a id="build-the-appropriate-experience"></a>
+## 목적에 맞는 경험 구성
 
-- **Tutorial:** Give the learner a reachable goal and only the prerequisites
-  required now. Demonstrate or prompt one meaningful choice, prediction,
-  trace or action with clear input. State what the learner should observe,
-  why it matters and how to check progress before the next attempt. Add
-  a changed-condition practice with grounded feedback and retry. Longer
-  background belongs where it helps; do not omit required mechanisms.
-  An offline prediction or annotated reasoning task is still practice
-  when execution is unavailable. Never invent runtime results, a submitted
-  learner answer, or demonstrated mastery.
-- **How-to:** State the concrete desired outcome, environment, permissions
-  and starting conditions. Provide dependency-ordered steps, real branches,
-  observable postconditions and safe recovery when supported. Distinguish
-  commands to perform from actions actually executed. Do not substitute a
-  broad lesson for the reader's immediate task.
-- **Reference:** Make exact information easy to locate. Use established
-  identifiers, units, types, defaults, version boundaries and exceptions
-  where supported. Keep facts tied to trustworthy sources. Avoid a long
-  narrative that makes lookup hard; missing information is not verified
-  completeness.
-- **Explanation:** Begin with the reader's question and a coherent example.
-  Trace relevant causal relations, design choices, boundaries and
-  consequences. Use figures, comparisons and optional understanding checks
-  where useful; action-based practice is not the goal by default.
+- **튜토리얼:** 학습자가 도달할 수 있는 목표와 지금 필요한 선행 조건만 제공합니다.
+  명확한 입력으로 의미 있는 선택, 예측, 추적이나 행동 하나를 시범 보이거나 요청합니다.
+  다음 시도 전에 학습자가 무엇을 관찰해야 하는지, 왜 중요한지, 진행을 어떻게 확인하는지 설명합니다.
+  조건을 바꾼 연습과 근거 있는 피드백 및 재시도를 추가합니다. 긴 배경 설명은 도움이 되는 곳에 두고 필요한 메커니즘을 생략하지 않습니다.
+  실행할 수 없을 때도 오프라인 예측이나 주석을 단 추론 작업은 연습에 해당합니다.
+  런타임 결과, 제출된 학습자 답변이나 입증된 숙련을 만들지 않습니다.
+- **방법 안내:** 구체적인 목표 결과, 환경, 권한과 시작 조건을 명시합니다.
+  의존 순서에 따른 단계, 실제 분기, 관찰할 수 있는 사후 조건과 지원되는 경우 안전한 복구를 제공합니다.
+  수행할 명령과 실제로 실행한 행동을 구별합니다. 독자의 당면 작업을 폭넓은 수업으로 대체하지 않습니다.
+- **참조:** 정확한 정보를 쉽게 찾을 수 있게 합니다. 근거가 있으면 정립된 식별자, 단위, 타입, 기본값, 버전 경계와 예외를 사용합니다.
+  사실을 신뢰할 수 있는 출처에 연결합니다. 조회를 어렵게 하는 긴 서술을 피합니다. 누락된 정보는 완전성이 검증되었다는 뜻이 아닙니다.
+- **설명:** 독자의 질문과 일관된 예제로 시작합니다. 관련된 인과관계, 설계 선택, 경계와 결과를 추적합니다.
+  유용한 경우 도해, 비교와 선택적 이해 확인을 사용합니다. 기본적으로 행동 기반 연습이 목표는 아닙니다.
 
-## Keep genre boundaries and navigation intentional
+<a id="keep-genre-boundaries-and-navigation-intentional"></a>
+## 장르 경계와 탐색을 의도적으로 구성하기
 
-A focused artifact can include a small supporting procedure, reference
-table or explanation, or link to a dedicated resource. Do not create four
-mandatory sections or redundant modes. A tutorial can be one scrollable
-HTML page; a genuine sequence of lessons can link previous/next files.
-Split pages only when the cognitive boundary and current collection
-contract justify it. Respect explicitly requested single-file formats
-and existing lessons. Do not force a stepper, video, course runtime,
-progress tracker, hidden tabs, file rewrite or browser verification.
-When the mechanism genuinely requires controlled intermediate states,
-reuse visual-grammar/interactive-example contracts, preserving the
-static explanation, accessibility and meaningful state changes.
+목적이 분명한 산출물에는 작은 보조 절차, 참조 표나 설명을 넣거나 전용 자원으로 연결할 수 있습니다.
+의무적인 네 개 섹션이나 중복 모드를 만들지 않습니다. 튜토리얼은 스크롤 가능한 HTML 한 페이지일 수 있고, 실제로 이어지는 수업은 이전/다음 파일로 연결할 수 있습니다.
+인지적 경계와 현재 모음의 계약이 정당화할 때만 페이지를 나눕니다. 명시적으로 요청한 단일 파일 형식과 기존 수업을 존중합니다.
+stepper, 영상, 코스 런타임, 진도 추적기, 숨겨진 탭, 파일 재작성이나 브라우저 검증을 강제하지 않습니다.
+메커니즘에 실제로 제어된 중간 상태가 필요하면 시각 문법/대화형 예제 계약을 재사용하고 정적 설명, 접근성과 의미 있는 상태 변화를 보존합니다.
 
-## Review within the existing owner workflow
+<a id="review-within-the-existing-owner-workflow"></a>
+## 기존 담당 워크플로 안에서 검토하기
 
-Check whether the document's title, content and reader activity serve
-the chosen need. For tutorials, can the reader attempt the first action,
-know the expected observation, and apply feedback to the next case?
-For how-to, can the stated goal be achieved with supported conditions
-and safe steps? For reference, are entries accurate, bounded, findable
-and versioned? For explanation, can a reader follow the actual mechanism
-without inventing hidden steps? Does supplementary content support rather
-than displace the main purpose? Keep authored checks, real execution,
-reader responses and mastery evidence distinct.
+문서 제목, 내용과 독자 활동이 선택한 필요에 부합하는지 확인합니다.
+튜토리얼에서는 독자가 첫 행동을 시도하고, 예상 관찰을 알고, 피드백을 다음 사례에 적용할 수 있습니까?
+방법 안내에서는 명시한 목표를 뒷받침되는 조건과 안전한 단계로 달성할 수 있습니까?
+참조에서는 항목이 정확하고 범위가 명확하며 찾기 쉽고 버전이 명시되어 있습니까?
+설명에서는 독자가 숨겨진 단계를 만들어 내지 않고 실제 메커니즘을 따라갈 수 있습니까?
+보조 내용이 주목적을 대체하지 않고 뒷받침합니까? 작성한 검사, 실제 실행, 독자 응답과 숙련 근거를 구별합니다.
 
-Use the calling owner's existing content review; this adds no new review
-agent, review report, scoring rubric or automatic browser matrix.
+호출한 담당자의 기존 내용 검토를 사용합니다. 새로운 검토 에이전트, 검토 보고서, 점수 기준표나 자동 브라우저 행렬을 추가하지 않습니다.
 
-## Origin
+<a id="origin"></a>
+## 기원
 
-Independent TigerKit synthesis informed by Daniele Procida's Diátaxis:
+Daniele Procida의 Diátaxis를 참고하여 독립적으로 구성한 TigerKit 종합입니다.
 https://diataxis.fr/ , https://diataxis.fr/tutorials/ ,
 https://diataxis.fr/how-to-guides/ , https://diataxis.fr/reference/ ,
-https://diataxis.fr/explanation/ . These are provenance links,
-not imported upstream prose, diagrams, assets or executable code.
+https://diataxis.fr/explanation/ . 이 링크는 출처 링크이며, upstream의 산문, 도해, 자산이나 실행 코드를 가져온 것이 아닙니다.

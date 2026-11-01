@@ -1,39 +1,36 @@
-# Author explanatory slides
+<a id="author-explanatory-slides"></a>
+# 설명 슬라이드 작성
 
-Re-author the explanation for listening and brief viewing; do not crop a document's long panels
-into cards. Use one message per narration sentence/beat, splitting dense scenes instead of
-shrinking text. Prefer a 1920x1080 canvas with large text (typically at least 40px for primary
-copy) and reserve the lower 15-20% for selected captions/player controls. Inspect at actual viewing
-size; these are authoring starting points, not proof of readability. Keep material caveats legible.
+듣기와 짧은 시청에 맞춰 설명을 다시 작성합니다. 문서의 긴 패널을 잘라 카드로 만들지 않습니다.
+내레이션 문장/구간마다 하나의 메시지를 사용하고, 글자를 줄이는 대신 밀도가 높은 장면을 나눕니다.
+큰 글자(주요 문구는 일반적으로 최소 40px)를 사용하는 1920x1080 캔버스를 선호하고, 아래쪽 15-20%는 선택한 자막/플레이어 제어를 위해 비워 둡니다.
+실제 시청 크기에서 검사합니다. 이 수치는 작성의 출발점이며 가독성의 증거가 아닙니다. 중요한 유의 사항을 읽을 수 있게 유지합니다.
 
-Follow the resolved `slideTheme`; absent a selected/saved value, recommend light and resolve it in
-the first media round. Use that light fallback when authorized to choose defaults. Inside slides,
-change only the currently narrated element's highlight, outline or marker. Keep both sides of a
-comparison identifiable from the first frame: if the narration says “look at B rather than A”,
-show and label A and B before emphasizing B; do not initially blur/fade A into apparent absence.
-Default assembler `highlights.zoom` to off for authored slides. Actual captured UI retains its
-selected highlight/crop/zoom treatment; an explicit slide zoom is a selected exception.
+결정한 `slideTheme`을 따릅니다. 선택하거나 저장한 값이 없으면 밝은 테마를 권하고 첫 미디어 질문 라운드에서 결정합니다.
+기본값을 선택할 권한이 있으면 이 밝은 테마 대체값을 사용합니다. 슬라이드 안에서는 현재 내레이션이 설명하는 요소의 강조, 외곽선이나 표시만 바꿉니다.
+비교하는 양쪽 대상을 첫 프레임부터 식별할 수 있게 유지합니다. 내레이션이 “A보다 B를 보세요”라고 말하면 B를 강조하기 전에 A와 B를 표시하고 레이블을 붙입니다.
+처음부터 A를 흐리게 하거나 희미하게 하여 없는 것처럼 보이게 하지 않습니다.
+직접 작성한 슬라이드에서는 조립기의 `highlights.zoom` 기본값을 꺼 둡니다. 실제 캡처 UI는 선택한 강조/자르기/줌 처리를 유지합니다.
+명시적인 슬라이드 줌은 선택한 예외입니다.
 
-## Check all authored copy before rendering
+<a id="check-all-authored-copy-before-rendering"></a>
+## 렌더링 전에 작성한 모든 문구 확인
 
-Collect every scene's title, body, labels, callouts, source tag, caption and corresponding narration
-in one scene-copy list. Read it across scenes before the first render, using these adapted
-clear-writing/reader-formatting criteria:
+모든 장면의 제목, 본문, 레이블, 콜아웃, 출처 태그, 자막과 해당 내레이션을 하나의 장면 문구 목록으로 모읍니다.
+첫 렌더링 전에 아래와 같이 적용한 명료한 글쓰기/독자용 서식 기준으로 장면 전체를 읽습니다.
 
-- Use concrete subjects and the reader's vocabulary; preserve facts, conditions, units and caveats.
-- Finish explanatory statements and scope notes with a predicate and sentence ending. Meaningful
-  short noun labels are allowed; dangling explanatory fragments such as `어떻게 달라지는지`,
-  `판단하기 쉬움` or `판단하지 않음` need the missing statement, for example
-  `어떻게 달라지는지 보여 줍니다`, `쉽게 판단할 수 있습니다` or `이 자료만으로는 판단하지 않습니다`.
-  Choose the correction supported by the source, not a mechanical suffix replacement.
-- Keep one register across scenes and match narration in terminology, claim strength and meaning.
-  Source/UI literals and deliberately short labels retain their exact form. Narration may verbalize
-  notation differently while conveying the same fact; do not force captions to mimic TTS spelling.
-- Name comparison subjects explicitly and compare one attribute at a time. Remove redundant badges;
-  reserve positive badge tones for supported positive facts.
+- 구체적인 주어와 독자의 어휘를 사용하고 사실, 조건, 단위와 유의 사항을 보존합니다.
+- 설명문과 범위 설명은 서술어와 종결어미로 끝맺습니다. 의미 있는 짧은 명사형 레이블은 허용합니다.
+  `어떻게 달라지는지`, `판단하기 쉬움`, `판단하지 않음`처럼 끝맺지 않은 설명에는 빠진 진술을 보충해야 합니다.
+  예를 들어 `어떻게 달라지는지 보여 줍니다`, `쉽게 판단할 수 있습니다`, `이 자료만으로는 판단하지 않습니다`와 같이 씁니다.
+  어미를 기계적으로 바꾸지 말고 출처가 뒷받침하는 수정을 선택합니다.
+- 장면 전체에서 문체를 통일하고 용어, 주장 강도와 의미를 내레이션과 맞춥니다.
+  출처/UI literal과 의도적으로 짧게 쓴 레이블은 정확한 형태를 유지합니다. 내레이션은 같은 사실을 전달하면서 표기를 다르게 읽을 수 있습니다.
+  자막이 TTS 표기를 흉내 내도록 강제하지 않습니다.
+- 비교 대상을 명시적으로 지칭하고 한 번에 한 속성을 비교합니다. 중복 배지를 제거하고, 긍정적인 배지 색조는 근거가 있는 긍정적 사실에만 사용합니다.
 
-Record the scene-copy list, checked source/candidate identity and findings/fixes or no-change
-result in the inspection evidence. After edits, recheck affected copy and its cross-scene register.
-Then render and inspect actual frames for clipping, reading size, safe region, comparison visibility,
-source tags and alignment with narration. Retain that result in the same inspection record.
-A text check is not factual independent review, decoded-frame inspection or listening approval.
+검사 근거에 장면 문구 목록, 확인한 원본/후보의 식별 정보와 발견 사항/수정 또는 변경 없음 결과를 기록합니다.
+수정 후에는 영향을 받은 문구와 장면 간 문체를 다시 확인합니다.
+그런 다음 렌더링하고 실제 프레임에서 잘림, 읽기 크기, 안전 영역, 비교 대상 가시성, 출처 태그와 내레이션 정렬을 검사합니다.
+이 결과도 같은 검사 기록에 남깁니다.
+텍스트 검사는 사실에 대한 독립 검토, 디코딩한 프레임 검사나 청취 승인이 아닙니다.

@@ -1,5 +1,5 @@
 # Markdown
 
-- Write a self-contained questionnaire with a title, context, numbered questions and instructions for how to answer.
-- Use ordinary Markdown only. Do not rely on channel-specific mentions, platform notifications or rendering extensions.
-- Include source links only when the destination, identity and relevant location have been verified.
+- 제목, 맥락, 번호를 붙인 질문과 답변 방법을 포함하여 독립적으로 이해할 수 있는 질문서를 작성합니다.
+- 일반 Markdown만 사용합니다. 채널 전용 멘션, 플랫폼 알림이나 렌더링 확장 기능에 의존하지 않습니다.
+- 목적지, 식별 정보와 관련 위치가 검증된 경우에만 출처 링크를 포함합니다.

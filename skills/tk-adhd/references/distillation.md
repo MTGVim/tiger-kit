@@ -1,17 +1,13 @@
-# Distillation provenance
+<a id="distillation-provenance"></a>
+# 증류 출처
 
-Reviewed 2026-10-07 at `ayghri/i-have-adhd@723af7d9afaf43eb871dbcce6129e2bf80de90d5`:
-`skills/i-have-adhd/SKILL.md`, `README.md`, `evals/rubric.md` and `LICENSE`.
-The implementation, rationale and blind quality rubric were inspected. Upstream judge/runtime
-execution and comparative efficacy are unverified; they are not TigerKit improvement evidence.
+2026-10-07에 `ayghri/i-have-adhd@723af7d9afaf43eb871dbcce6129e2bf80de90d5`의 다음 파일을 검토했습니다.
+`skills/i-have-adhd/SKILL.md`, `README.md`, `evals/rubric.md`, `LICENSE`를 검토했습니다.
+구현, 설계 근거와 블라인드 품질 평가 기준을 확인했습니다. upstream의 judge/runtime 실행과 비교 효능은 검증하지 않았으며 TigerKit의 개선 근거로 삼지 않습니다.
 
-- `keep`: easily found action/answer, numbered user steps, calm errors and visible verified results.
-- `adapt`: bounded visible groups retain complete reasoning, alternatives, caveats and sources;
-  explicit detail/format and agent-owned execution take priority over presentation preferences.
-- `omit`: medical inference, guessed times/progress, persistent mode, mandatory status restatement,
-  fixed list cap and a fabricated next user task when the agent can finish or no action remains.
+- `keep`: 행동과 답변을 쉽게 찾을 수 있도록 하고, 사용자 단계에 번호를 붙이며, 오류를 차분하게 설명하고 검증된 결과를 눈에 보이게 제시합니다.
+- `adapt`: 눈에 보이는 묶음의 범위를 제한하되 추론, 대안, 주의 사항과 출처를 모두 유지합니다. 명시적인 상세도와 형식, 에이전트가 담당하는 실행이 표현 선호보다 우선합니다.
+- `omit`: 의료적 추론, 추측한 시간과 진행률, 지속 모드, 의무적인 상태 재진술, 고정된 목록 개수 제한, 에이전트가 끝낼 수 있거나 남은 행동이 없는데도 만들어낸 다음 사용자 작업은 제외합니다.
 
-This supersedes the former orientation-only interpretation. `tk-handoff` now owns the unchanged
-conversation-only orientation procedure and its migrated regression cases. `tk-adhd` owns only
-current-response presentation and grants no execution, artifact or publication authority.
-The original MIT notice remains in this package and the orientation consumer's `LICENSE.txt`.
+이 해석은 이전의 현황 파악 전용 해석을 대체합니다. 변경되지 않은 대화 전용 현황 파악 절차와 이전된 회귀 사례는 이제 `tk-handoff`가 소유합니다. `tk-adhd`는 현재 응답의 표현만 담당하며 실행, 산출물 또는 발행 권한을 부여하지 않습니다.
+원래 MIT 고지는 이 패키지와 현황 파악 기능을 사용하는 스킬의 `LICENSE.txt`에 남아 있습니다.

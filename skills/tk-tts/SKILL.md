@@ -10,58 +10,30 @@ metadata:
     relationship: native
 ---
 
-# Generate Local Narration
+<a id="generate-local-narration"></a>
+# 로컬 내레이션 생성
 
-## Shared References
+<a id="shared-references"></a>
+## 공통 참조
 
-Read branch-triggered criteria from the current installed owners. A missing/mismatched
-owner or resource blocks that action: use `tk-setup-skills`, not memory, another installation
-or unapproved installs. Reading grants no workflow or mutation authority.
+현재 설치된 소유 스킬에서 해당 분기의 조건에 따라 기준을 읽습니다. 소유 스킬이나 자원이 없거나 식별이 다르면 해당 행동을 중단합니다. 기억, 다른 설치본이나 승인되지 않은 설치로 대신하지 말고 `tk-setup-skills`를 사용합니다. 참조 읽기는 워크플로 실행이나 변경 권한을 부여하지 않습니다.
 
-- For a user-owned decision, missing approval or unmet prerequisite, read [question rounds](../tk-questioning/references/questions.md).
-- Before a user-facing completion report, artifact-path handoff or multi-attribute chat comparison, read [chat delivery](../tk-writing/references/delivery.md). The task's specific output contract wins.
+- 사용자가 결정해야 하거나 승인이 없거나 선행 조건이 충족되지 않았다면 [질문 라운드](../tk-questioning/references/questions.md)를 읽습니다.
+- 사용자에게 완료 보고를 하거나 산출물 경로를 인계하거나 채팅에서 여러 속성을 비교하기 전에 [채팅 전달](../tk-writing/references/delivery.md)을 읽습니다. 해당 작업의 구체적인 출력 계약이 우선합니다.
 
-Own script-to-WAV synthesis, pinned models/runtime, approved cache reuse and audio validation.
-`tk-video` owns scenes/encoding; the teaching caller owns lesson content. Return ordinary audio and
-measured duration; do not import or modify sibling packages. Creation grants no publication.
+원고에서 WAV로의 합성, 고정된 모델/런타임, 승인된 캐시 재사용과 오디오 검증을 담당합니다. `tk-video`는 장면/인코딩을 담당하며 교육 작업의 호출자는 수업 내용을 담당합니다. 일반 오디오와 측정한 길이를 반환합니다. 형제 패키지를 import하거나 수정하지 않습니다. 생성은 발행 권한을 부여하지 않습니다.
 
-Run `scripts/list_options.py` for supported local routes without importing engines. Compare the
-actual device/dependencies/cache before proposing options: Qwen3 0.6B CustomVoice MLX 5bit is the
-Apple Silicon recommendation, ppaso ONNX CPU the lightweight Korean option; retain explicit
-Qwen MLX 8bit and official PyTorch. Discovery is not runtime/model readiness or a quality ranking.
-Supertonic 3 ONNX CPU/F1 is an explicit alternative, not a new default. Its upstream is archived.
-When selected, tell the user that AI-synthesis disclosure is required and return the receipt's
-`disclosure_required` and `disclosure_notice`; do not claim the audio/video was automatically labeled.
-Present every `list_options.py` route with its device/platform, voices and dependency/cache setup
-status; past evaluations affect recommendations only, never which engines are shown. Reuse the
-ordinary-chat question rounds and retain unsupported/uninstalled routes with their limits.
-Read [installation and pins](references/installation.md) before verification, download or synthesis.
-Reuse verified setup and matching approval. Resolve material engine/voice choices before work;
-never silently switch engines after a failure or install into a global environment.
+엔진을 import하지 않고 지원되는 로컬 경로를 확인하려면 `scripts/list_options.py`를 실행합니다. 선택지를 제안하기 전에 실제 장치/의존성/캐시를 비교합니다. Qwen3 0.6B CustomVoice MLX 5bit는 Apple Silicon 권장 경로이고 ppaso ONNX CPU는 경량 한국어 선택지입니다. 명시적인 Qwen MLX 8bit와 공식 PyTorch도 유지합니다. 탐색은 런타임/모델 준비 완료나 품질 순위를 의미하지 않습니다. Supertonic 3 ONNX CPU/F1은 명시적으로 선택하는 대안이며 새로운 기본값이 아닙니다. 해당 upstream은 보관 처리되었습니다. 선택되면 사용자에게 AI 합성 고지가 필요하다고 알리고 receipt의 `disclosure_required`와 `disclosure_notice`를 반환합니다. 오디오/영상에 자동으로 표시했다고 주장하지 않습니다. `list_options.py`의 모든 경로를 장치/플랫폼, 목소리와 의존성/캐시 준비 상태와 함께 제시합니다. 과거 평가는 권고에만 영향을 주며 표시할 엔진을 제한하지 않습니다. 일반 채팅의 질문 라운드를 재사용하고, 지원되지 않거나 설치되지 않은 경로도 한계와 함께 유지합니다. 검증, 다운로드나 합성 전에 [설치와 고정 버전](references/installation.md)을 읽습니다. 검증된 설정과 일치하는 승인을 재사용합니다. 작업 전에 중요한 엔진/목소리 선택을 확정합니다. 실패 후 엔진을 몰래 바꾸거나 전역 환경에 설치하지 않습니다.
 
-Read [synthesis and inspection](references/synthesis.md) for selected synthesis. Use authored UTF-8
-pronunciation-corrected text, complete sentences, sequential requests and a new WAV path. Keep
-captions/UI literals faithful separately. Run only the selected local adapter in a fresh owned
-process with a bounded deadline/stall check. Decode and reject invalid/nonfinite/silent audio;
-return measured duration, engine/model revision, sentence/cache/memory facts and
-`human_action: listen`. Actual meaning, pronunciation, proper names/numbers and clipped endings
-remain pending until heard. Non-silence is not intelligibility. Do not add ASR, voice cloning,
-paid/cloud synthesis, a resident server or an automatic engine fallback.
+선택한 합성에는 [합성과 검사](references/synthesis.md)를 읽습니다. 직접 작성한 UTF-8 발음 교정 텍스트, 완전한 문장, 순차 요청과 새로운 WAV 경로를 사용합니다. 자막/UI literal은 별도로 충실하게 보존합니다. 제한된 마감 시간/정체 점검을 적용한 새 실행 소유 프로세스에서 선택한 로컬 adapter만 실행합니다. 오디오를 디코딩하고 유효하지 않거나 비유한 값이 있거나 무음인 오디오는 거부합니다. 측정한 길이, 엔진/모델 revision, 문장/캐시/메모리 사실과 `human_action: listen`을 반환합니다. 실제 의미, 발음, 고유 명사/숫자와 잘린 끝부분은 직접 들을 때까지 확인 대기 상태로 남습니다. 무음이 아니라는 사실이 알아들을 수 있다는 뜻은 아닙니다. ASR, 목소리 복제, 유료/클라우드 합성, 상주 서버나 자동 엔진 fallback을 추가하지 않습니다.
 
-For multi-clip narration, read [audio postprocessing](references/postprocessing.md) before delivery.
-Normalize the batch into new files, preserve raw WAVs and return the measured treatment/limits.
+여러 클립으로 구성된 내레이션은 전달 전에 [오디오 후처리](references/postprocessing.md)를 읽습니다. 일괄 정규화한 결과를 새 파일에 저장하고 원본 WAV를 보존하며, 측정한 처리 내용/한계를 반환합니다.
 
-Report unavailable prerequisites with safe module or actual/expected version details and the
-approved recovery route. Preserve original audio/cache bytes and clean only proven run-owned
-transients. Return concise paths and actual validation/remaining listening limits. Existing
-explicit narration choices need no second question; a voice preference alone does not select TTS.
+사용할 수 없는 선행 조건은 안전한 모듈 정보 또는 실제/기대 버전 상세와 승인된 복구 경로를 함께 보고합니다. 원본 오디오/캐시 바이트를 보존하고 실행 소유가 입증된 임시 자료만 정리합니다. 간결한 경로와 실제 검증 결과/남은 청취 한계를 반환합니다. 이미 명시한 내레이션 선택을 다시 질문할 필요는 없습니다. 목소리 선호만으로 TTS가 선택되지는 않습니다.
 
-For source provenance and deliberate omissions, see [sources](references/sources.md).
+출처와 의도적으로 제외한 사항은 [출처](references/sources.md)를 참조합니다.
 
-## Artifact Paths
+<a id="artifact-paths"></a>
+## 산출물 경로
 
-Before authorized artifact writes, checkout/transport/ignore setup or temporary-input consumption,
-read [artifact paths](../tk-artifacts/references/artifact-paths.md). Use safe owned nonsymlink paths
-and proven Git exclusion for repository scratch; failed checks stop that file branch. Preserve
-explicit final destinations and owner-specific defaults. Prefilled input is not completed input.
-Cleanup targets only recorded literal resolved absolute run-owned paths, never cwd-relative paths or globs.
+승인된 산출물 쓰기, checkout/전송/제외 설정 또는 임시 입력 소비 전에 [산출물 경로](../tk-artifacts/references/artifact-paths.md)를 읽습니다. 저장소 임시 자료에는 소유권이 확인된 안전한 nonsymlink 경로와 입증된 Git 제외를 사용합니다. 점검 실패 시 해당 파일 분기를 중단합니다. 명시한 최종 목적지와 소유자별 기본값을 보존합니다. 미리 채운 입력은 입력 완료가 아닙니다. 정리 대상은 기록된 literal 형태의 해석된 절대 경로 중 실행 소유 경로로만 제한하며, cwd 상대 경로나 glob을 사용하지 않습니다.

@@ -1,6 +1,7 @@
-# Email
+<a id="email"></a>
+# 이메일
 
-- Include a subject that names the decision or fact being requested.
-- Use a greeting, a short context paragraph, numbered questions, clear response instructions and a closing.
-- Restate the context the recipient needs; do not assume they saw a prior thread.
-- Include a deadline or requested response format only when it is known. Never invent a recipient address, deadline or commitment.
+- 요청하는 결정이나 사실을 명시하는 제목을 포함합니다.
+- 인사말, 짧은 맥락 설명 문단, 번호를 붙인 질문, 명확한 응답 지침과 맺음말을 사용합니다.
+- 수신자에게 필요한 맥락을 다시 설명합니다. 수신자가 이전 스레드를 보았다고 가정하지 않습니다.
+- 기한이나 요청하는 응답 형식은 알고 있을 때만 포함합니다. 수신자 주소, 기한이나 약속을 만들어 내지 않습니다.

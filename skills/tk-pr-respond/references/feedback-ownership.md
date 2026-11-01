@@ -1,6 +1,7 @@
-# Feedback ownership
+<a id="feedback-ownership"></a>
+# 피드백의 책임 귀속
 
-Attribute each finding before proposing a code change. Compare its anchor (`path`, side, current/original line, and outdated state when available) with the fresh PR diff. An unchanged-line anchor is strong evidence for a `follow-up`, not a conclusive rule: the anchor may describe behavior caused elsewhere, and a changed-line anchor may still point to an unrelated concern.
+코드 변경을 제안하기 전에 각 지적의 책임을 귀속합니다. 앵커(`path`, 측면, 현재/원래 줄, 확인 가능한 경우 오래된 상태)를 최신 PR diff와 비교합니다. 변경되지 않은 줄의 앵커는 `follow-up`을 뒷받침하는 강한 근거이지만 확정 규칙은 아닙니다. 앵커는 다른 곳에서 유발된 동작을 설명할 수 있고, 변경된 줄의 앵커도 무관한 우려를 가리킬 수 있습니다.
 
-Keep the finding in the current PR when the PR introduced, exposed, or worsened the behavior, when the acceptance criteria require it, or when the evidence may involve runtime breakage, security, payment, data loss, permissions/account access, or public API compatibility. Do not automatically defer these cases because the comment anchor is unchanged. Ask for a user decision when causal ownership remains ambiguous or the consequence is high risk.
+PR이 해당 동작을 도입하거나 드러내거나 악화했을 때, 인수 조건에서 요구할 때, 또는 근거가 런타임 고장, 보안, 결제, 데이터 손실, 권한/계정 접근이나 공개 API 호환성과 관련될 수 있을 때에는 해당 지적을 현재 PR에서 처리합니다. 코멘트 앵커가 변경되지 않았다는 이유로 이 경우를 자동으로 미루지 않습니다. 인과적 책임 귀속이 여전히 모호하거나 결과의 위험이 크면 사용자에게 결정을 요청합니다.
 

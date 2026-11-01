@@ -1,137 +1,63 @@
-# Video assembly
+<a id="video-assembly"></a>
+# 영상 조립
 
-- [Inputs and timing](#inputs-and-timing)
-- [Continuous rendered video](#continuous-rendered-video)
-- [Optional captions, callouts and zoom](#optional-captions-callouts-and-zoom)
-- [Quality and recovery](#quality-and-recovery)
+- [입력과 타이밍](#inputs-and-timing)
+- [연속 렌더링 영상](#continuous-rendered-video)
+- [선택적 자막, 콜아웃과 확대](#optional-captions-callouts-and-zoom)
+- [품질과 복구](#quality-and-recovery)
 
-Use this package's `scripts/build_movie.py` with already installed ffmpeg and ffprobe. Never
-install tools automatically. The safe input/output rules apply independently of package location.
+이미 설치된 ffmpeg와 ffprobe로 이 패키지의 `scripts/build_movie.py`를 사용합니다. 도구를 자동으로 설치하지 않습니다. 안전한 입력/출력 규칙은 패키지 위치와 독립적으로 적용됩니다.
 
-## Inputs and timing
+<a id="inputs-and-timing"></a>
+## 입력과 타이밍
 
-Use an absolute, regular nonsymlink JSON manifest and nonempty PNG/JPEG frames within its owned
-run directory. Shared capture input may retain the producing verifier's run directory when that
-handoff authorizes the output there. For combined sources, copy approved frame bytes into one
-video run and preserve their original paths/hashes in the handoff. Do not recapture a mutating flow.
+절대 경로의 일반 nonsymlink JSON manifest와 그 실행 소유 디렉터리 안의 비어 있지 않은 PNG/JPEG frame을 사용합니다. 공통 캡처 입력은 인계가 해당 위치의 출력을 허용할 때 생성 검증 담당자의 실행 디렉터리에 그대로 둘 수 있습니다. 출처를 결합할 때는 승인된 frame 바이트를 하나의 영상 실행으로 복사하고 인계에 원래 경로/해시를 보존합니다. 상태를 변경하는 흐름을 다시 캡처하지 않습니다.
 
-An observed capture keeps the existing schema and actual elapsed time:
+관찰 캡처는 기존 schema와 실제 경과 시간을 유지합니다.
 
 ```json
 {"mode":"evidence","frames":[{"path":"/absolute/run/frame-0.png","timestamp_ms":0},{"path":"/absolute/run/frame-1.png","timestamp_ms":100}],"end_ms":1000,"captions":[{"start_ms":0,"end_ms":1000,"text":"Observed result"}]}
 ```
 
-MP4 uses optional positive numeric `source_fps` from actual capture metadata, capped at 30fps.
-Without it, estimate the cadence from the median adjacent frame-timestamp interval (excluding
-the final hold); report `fps_source: timestamps` and the event-driven/idle-capture uncertainty.
-Fewer than three frames cannot establish cadence and fall back to 10fps with a warning. GIF and
-`explainer` default to 10fps; a still's hold is not a capture-rate measurement.
-`--fps <number>` explicitly selects a positive output rate up to 30 for either format without
-changing source timestamps, scene holds or audio offsets. The result distinguishes measured
-encoded `fps`, `selected_fps`, `fps_source` and `encoded_duration_ms` from the manifest's duration.
-Fractional rates remain fractional. Encoding quantizes the final endpoint to a frame interval;
-retain duration/decode checks with tolerance of at most the greater of 150ms and one frame.
-The private generated concat list uses a microsecond image time base so 25fps image defaults
-cannot discard sub-40ms capture intervals before the selected-rate filter runs.
+MP4는 실제 캡처 메타데이터의 선택적 양수 숫자 `source_fps`를 사용하며 최대 30fps로 제한합니다. 값이 없으면 마지막 hold를 제외한 인접 frame timestamp 간격의 중앙값으로 주기를 추정합니다. `fps_source: timestamps`와 event-driven/idle 캡처의 불확실성을 보고합니다. Frame이 3개 미만이면 주기를 확립할 수 없으므로 경고와 함께 10fps로 대체합니다. GIF와 `explainer` 기본값은 10fps입니다. 정지 이미지의 hold는 캡처 rate 측정값이 아닙니다. `--fps <number>`는 두 format 모두에서 최대 30의 양수 출력 rate를 명시적으로 선택하며 원본 timestamp, 장면 hold나 오디오 offset을 바꾸지 않습니다. 결과는 측정한 인코딩 `fps`, `selected_fps`, `fps_source`와 `encoded_duration_ms`를 manifest 길이와 구별합니다. 분수 rate는 분수로 유지합니다. 인코딩은 최종 끝점을 frame 간격으로 양자화합니다. 150ms와 한 frame 중 더 큰 값 이하의 허용 오차로 길이/디코딩 점검을 유지합니다. 비공개로 생성한 concat 목록은 마이크로초 이미지 time base를 사용하여 선택 rate filter가 실행되기 전에 25fps 이미지 기본값이 40ms 미만 캡처 간격을 버리지 못하게 합니다.
 
-A stills explanation uses explicit holds. Without a hold, use the greatest of 3000ms,
-125ms per caption character and measured narration plus 800ms. This reading-time heuristic
-needs audience inspection; an explicit selected hold still wins:
+정지 이미지 설명에는 명시적 hold를 사용합니다. Hold가 없으면 3000ms, 자막 글자당 125ms와 측정 내레이션에 800ms를 더한 값 중 최댓값을 사용합니다. 이 읽기 시간 경험칙은 독자 관점의 검사가 필요합니다. 명시적으로 선택한 hold는 여전히 우선합니다.
 
 ```json
 {"mode":"explainer","frames":[{"path":"/absolute/run/diagram.png","source_kind":"rendered","source_in_picture":true,"caption":"The request enters the queue","hold_ms":3000},{"path":"/absolute/run/actual-state.png","source_kind":"capture","caption":"Observed result","hold_ms":4000}]}
 ```
 
-For rendered cards, `source_in_picture: true` declares an inspected source tag already present
-in the image and suppresses the caption prefix. The declaration never marks the frame as capture.
-Without it, `source_label` supplies a nonempty label in the audience's language; the Korean default
-is `렌더링 장면`. Empty narration captions still fail the subtitle coverage check even when
-source provenance appears in the image, unless the user explicitly selected `caption_style: none`.
-With captions disabled, keep the source tag inside every rendered card.
+Render된 카드의 `source_in_picture: true`는 이미지에 이미 존재하며 검사된 출처 tag를 선언하고 자막 prefix를 생략합니다. 이 선언은 frame을 캡처로 표시하지 않습니다. 값이 없으면 `source_label`로 독자 언어의 비어 있지 않은 label을 제공합니다. 한국어 기본값은 `렌더링 장면`입니다. 이미지에 출처가 나타나더라도 사용자가 `caption_style: none`을 명시적으로 선택하지 않았다면 빈 내레이션 자막은 여전히 자막 범위 점검에 실패합니다. 자막이 비활성화되면 모든 render 카드 안에 출처 tag를 유지합니다.
 
-For observed per-scene narration, add `scenes: [{"start_ms": 0, "audio_path": "/absolute/run/scene.wav"}]`
-to the `evidence` manifest. Starts must be strictly increasing actual scene boundaries inside
-`end_ms`; measured clips must fit before the next scene/end. Initial gaps and silent scenes are
-preserved. Do not assign scene audio to individual evidence frames. Narration-paced recapture
-belongs to the capture owner and is limited to authorized non-mutating scenarios.
+관찰된 장면별 내레이션은 `evidence` manifest에 `scenes: [{"start_ms": 0, "audio_path": "/absolute/run/scene.wav"}]`를 추가합니다. 시작점은 `end_ms` 안의 실제 장면 경계이며 엄격히 증가해야 합니다. 측정한 클립은 다음 장면/종료 전까지 들어맞아야 합니다. 초기 간격과 무음 장면을 보존합니다. 개별 evidence frame에 장면 오디오를 할당하지 않습니다. 내레이션 속도에 맞춘 재캡처는 캡처 담당자에게 속하며 승인된 비변경 시나리오로 제한됩니다.
 
-For per-scene audio in `explainer`, add `audio_path` to that frame. The helper measures its
-actual duration and defaults the hold using the reading/narration rule above, pads each scene
-to its hold and joins the clips in order. Explicit holds shorter than their audio are rejected.
-`narration_requested: true` retains a failed media result for missing or silent selected narration;
-use false only when narration was not selected or a caption-only fallback was accepted.
-Do not combine scene audio with the separate full-track `--audio` input. Never guess duration
-from character count. Bind audio only to accepted current scene text and ensure
-captions cover it when enabled. No narration failure authorizes invented observed waiting time. `evidence`
-returns `timing: observed`; `explainer` returns `timing: presentation`. Neither is a timing assertion.
+`explainer`의 장면별 오디오는 해당 frame에 `audio_path`를 추가합니다. 도우미는 실제 길이를 측정하고 위 읽기/내레이션 규칙으로 기본 hold를 정하며 각 장면을 hold까지 채우고 클립을 순서대로 연결합니다. 오디오보다 짧은 명시적 hold는 거부합니다. `narration_requested: true`는 선택한 내레이션이 없거나 무음일 때 실패 미디어 결과를 유지합니다. 내레이션을 선택하지 않았거나 자막 전용 fallback을 수용한 경우에만 false를 사용합니다. 장면 오디오와 별도의 전체 track `--audio` 입력을 결합하지 않습니다. 글자 수로 길이를 추측하지 않습니다. 수용된 현재 장면 텍스트에만 오디오를 연결하고 자막이 켜져 있으면 이를 모두 다루도록 합니다. 내레이션 실패는 어떤 경우에도 관찰 대기 시간을 만들어 낼 권한을 주지 않습니다. `evidence`는 `timing: observed`를 반환하고 `explainer`는 `timing: presentation`을 반환합니다. 어느 쪽도 타이밍 판정이 아닙니다.
 
-Keep frames, scene WAVs and output inside the manifest directory; output must be a new path.
-Run `python3 <loaded-package>/scripts/build_movie.py --manifest <json> --output <owned.mp4-or.gif>`.
-Optional `--audio <wav>` accepts a separately prepared track. The assembler has no engine import. `--ffmpeg <path>` overrides `TIGERKIT_FFMPEG` and
-automatic discovery. It checks PATH first and, when subtitles are missing and no override was
-selected, an installed Homebrew `ffmpeg-full` keg via `brew --prefix ffmpeg-full`. It never installs
-a package or changes PATH. Receipts report `ffmpeg_path` and `ffprobe_path`.
-A mismatched or too-long optional track is omitted with a warning; retain any selected-but-missing
-narration limitation. Retain original sources independently of output and screenshot manifests.
+Frame, 장면 WAV와 출력은 manifest 디렉터리 안에 둡니다. 출력은 새 경로여야 합니다. `python3 <loaded-package>/scripts/build_movie.py --manifest <json> --output <owned.mp4-or.gif>`를 실행합니다. 선택적 `--audio <wav>`는 별도로 준비한 track을 받습니다. Assembler는 엔진을 import하지 않습니다. `--ffmpeg <path>`는 `TIGERKIT_FFMPEG`와 자동 탐색보다 우선합니다. 먼저 PATH를 확인하고 자막이 없으며 override를 선택하지 않았다면 `brew --prefix ffmpeg-full`로 설치된 Homebrew `ffmpeg-full` keg를 확인합니다. 패키지를 설치하거나 PATH를 바꾸지 않습니다. Receipt는 `ffmpeg_path`와 `ffprobe_path`를 보고합니다. 일치하지 않거나 너무 긴 선택적 track은 경고와 함께 생략합니다. 선택했지만 누락된 내레이션의 한계는 유지합니다. 출력 및 screenshot manifest와 독립적으로 원본 소스를 보존합니다.
 
-## Continuous rendered video
+<a id="continuous-rendered-video"></a>
+## 연속 렌더링 영상
 
-After the selected [Manim route](manim.md), use a regular MP4 inside this run instead of
-extracting PNG frames. This route consumes one complete constant-frame-rate render; compose
-multiple beats there. Mixed frame/video manifests and authored `end_ms` are rejected. Variable
-or ambiguous rates need an explicitly selected conversion, not guessing. This is rendered
-animation, never observed application timing.
+선택한 [Manim 경로](manim.md) 이후에는 PNG frame을 추출하는 대신 이 실행 안의 일반 MP4를 사용합니다. 이 경로는 완전한 고정 frame rate render 하나를 소비합니다. 여러 beat는 그 안에서 구성합니다. Frame/영상 혼합 manifest와 직접 작성한 `end_ms`는 거부합니다. 가변적이거나 모호한 rate에는 추측이 아니라 명시적으로 선택한 변환이 필요합니다. 이는 render된 animation이며 관찰된 애플리케이션 타이밍이 아닙니다.
 
 ```json
 {"mode":"animation","video_path":"/absolute/run/render.mp4","caption_delivery":"soft","captions":[{"start_ms":0,"end_ms":2000,"text":"Version 2 and DOM"}]}
 ```
 
-Default MP4 FPS comes from the stream, including fractional rates and rates above 30. Preserve
-duration/resolution; H.264/yuv420p pads odd dimensions to even pixels and reports it. Explicit
-`--fps` conversion and GIF's 10fps/audio omission are reported too. Video re-encodes at selected
-CRF: this is not byte-identical/lossless output. Receipts separate `source_video`, actual output
-geometry/rate/duration and rendered timing.
+기본 MP4 FPS는 분수 rate와 30 초과 rate를 포함하여 stream에서 가져옵니다. 길이/해상도를 보존합니다. H.264/yuv420p는 홀수 치수를 짝수 픽셀로 채우고 이를 보고합니다. 명시적 `--fps` 변환과 GIF의 10fps/오디오 생략도 보고합니다. 영상은 선택한 CRF로 재인코딩합니다. 바이트 동일/무손실 출력이 아닙니다. Receipt는 `source_video`, 실제 출력 기하/rate/길이와 render 타이밍을 구별합니다.
 
-Embedded audio uses stream copy, retaining channels rather than silently downmixing/replacing
-it. Additional `scenes` narration or `--audio` conflicts and fails; select one audio source.
-Without embedded audio, reuse measured scene offsets or a full track. Too-long/unavailable
-animation audio fails rather than being silently omitted. Silent selected narration and short
-subtitle coverage remain failures. No TTS engine is imported.
+내장 오디오는 stream copy를 사용하여 몰래 downmix/교체하지 않고 channel을 유지합니다. 추가 `scenes` 내레이션이나 `--audio`는 충돌하여 실패합니다. 오디오 출처 하나를 선택합니다. 내장 오디오가 없으면 측정 장면 offset이나 전체 track을 재사용합니다. 너무 길거나 사용할 수 없는 animation 오디오는 몰래 생략하지 않고 실패합니다. 선택한 내레이션이 무음이거나 자막 범위가 부족하면 계속 실패입니다. TTS 엔진은 import하지 않습니다.
 
-Resolve `caption_delivery: none | soft | hard` in the existing media-choice round. Animation
-defaults enabled captions to `soft`; frame routes retain their hard-caption default.
-`caption_style: none` or delivery `none` disables tracks/sidecars, not narration guards. Do not
-combine enabled delivery with style `none`. Animation captions are ordered, nonoverlapping and
-inside measured duration. Screen text keeps notation, not TTS spelling.
+기존 미디어 선택 라운드에서 `caption_delivery: none | soft | hard`를 확정합니다. Animation은 활성화된 자막의 기본값으로 `soft`를 사용하고 frame 경로는 기존 hard 자막 기본값을 유지합니다. `caption_style: none`이나 delivery `none`은 track/sidecar를 비활성화하며 내레이션 guard를 비활성화하지 않습니다. 활성화된 delivery와 style `none`을 결합하지 않습니다. Animation 자막은 순서가 있고 겹치지 않으며 측정 길이 안에 있어야 합니다. 화면 텍스트는 TTS 철자가 아니라 원래 표기를 유지합니다.
 
-Soft MP4 has an unforced `mov_text` track and SRT/WebVTT sidecars, needs no libass and does not
-burn text into pixels. Deliver selected sidecars with the movie. Muxers/players can mark a track
-default; report measured `subtitle_default`, not promised initial hiding. Browsers generally
-need a same-origin WebVTT `<track>`, not only embedded MP4 text. Verify cue loading and actual
-on/off controls in the selected player. Use an owned local HTTP origin when file-origin rules
-block WebVTT; otherwise report that player unsupported and retain separate files. No universal
-player UI is added. Explicit hard delivery uses selected style and the existing libass/fallback
-contract; missing support stays blocked. Differing sidecars, movies and contact sheets are
-never overwritten.
+Soft MP4에는 강제 표시되지 않는 `mov_text` track과 SRT/WebVTT sidecar가 있으며 libass가 필요하지 않고 픽셀에 텍스트를 입히지 않습니다. 선택한 sidecar를 영상과 함께 전달합니다. Muxer/player는 track을 기본값으로 표시할 수 있습니다. 처음에 숨겨진다고 약속하지 말고 측정한 `subtitle_default`를 보고합니다. 브라우저는 일반적으로 내장 MP4 텍스트만이 아니라 same-origin WebVTT `<track>`이 필요합니다. 선택한 player에서 cue 로딩과 실제 on/off control을 검증합니다. File-origin 규칙이 WebVTT를 막으면 소유권이 확인된 로컬 HTTP origin을 사용합니다. 그렇지 않으면 해당 player를 미지원으로 보고하고 별도 파일을 보존합니다. 범용 player UI는 추가하지 않습니다. 명시적 hard delivery에는 선택한 style과 기존 libass/fallback 계약을 사용합니다. 지원 누락은 계속 blocked입니다. 서로 다른 sidecar, 영상과 contact sheet를 덮어쓰지 않습니다.
 
-Animation hard captions without an explicit style use `overlay-rounded` and keep the source canvas.
-Hard delivery does not authorize a letterbox, appended band or aspect-ratio change. Select `band`
-only when the user separately requests that placement; when overlays collide, shorten/split captions
-or reauthor the diagram's safe region rather than silently switching to a band.
-For animation's explicit hard `band`, preserve the full source rectangle and append a black
-caption-only band, sized for up to three lines plus breathing room. Width, FPS and timing stay
-unchanged; report the added output height. Inspect every cue, especially the longest and transitions:
-shorten/split authored text or adjust `--caption-size` if glyphs leave the band. Author readable
-word-boundary line breaks; SRT/WebVTT retain them while discarding blank lines that would split a cue.
-A geometry receipt does not prove no overlap. Soft/off animation keeps its original dimensions; this does not change
-the default delivery or the user's selected style.
+명시적 style이 없는 animation hard 자막은 `overlay-rounded`를 사용하고 원본 canvas를 유지합니다. Hard delivery는 letterbox, 추가 band나 종횡비 변경을 허용하지 않습니다. 사용자가 해당 배치를 별도로 요청한 경우에만 `band`를 선택합니다. Overlay가 충돌하면 몰래 band로 전환하지 말고 자막을 줄이거나 나누거나 diagram의 안전 영역을 다시 작성합니다. Animation에 명시적인 hard `band`를 사용할 때는 전체 원본 사각형을 보존하고 최대 3줄과 여유 공간을 담을 크기의 검정 자막 전용 band를 추가합니다. 너비, FPS와 타이밍은 바꾸지 않습니다. 추가된 출력 높이를 보고합니다. 특히 가장 긴 cue와 전환을 포함한 모든 cue를 검사합니다. 글리프가 band를 벗어나면 작성한 텍스트를 줄이거나 나누거나 `--caption-size`를 조정합니다. 읽기 쉬운 단어 경계 줄바꿈을 작성합니다. SRT/WebVTT는 이를 유지하되 cue를 나누게 될 빈 줄은 제거합니다. 기하 receipt는 겹침이 없음을 입증하지 않습니다. Soft/off animation은 원래 치수를 유지합니다. 이는 기본 delivery나 사용자가 선택한 style을 바꾸지 않습니다.
 
-## Optional captions, callouts and zoom
+<a id="optional-captions-callouts-and-zoom"></a>
+## 선택적 자막, 콜아웃과 확대
 
-Resolve these fields before production through [media choices](../../tk-writing/references/media-preferences.md), including
-saved values and the first-round save offer. Use them only for the selected presentation treatment. Defaults retain the existing
-`band` captions and untransformed frames. A single evaluator's variant preferences support that
-creator's choice, not a universal default or evidence of improved learning.
+저장된 값과 첫 라운드 저장 제안을 포함하여 제작 전에 [미디어 선택](../../tk-writing/references/media-preferences.md)으로 이 필드를 확정합니다. 선택한 표현 처리에만 사용합니다. 기본값은 기존 `band` 자막과 변환하지 않은 frame을 유지합니다. 평가자 한 명의 변형 선호는 해당 제작자의 선택을 뒷받침하며 보편적 기본값이나 학습 개선의 근거가 아닙니다.
 
 ```json
 {
@@ -141,87 +67,25 @@ creator's choice, not a universal default or evidence of improved learning.
 }
 ```
 
-All coordinates are pixels in equal-sized original capture frames, before even padding, zoom or
-caption band. Convert the recorder's viewport `cue_targets` using its actual screenshot scale,
-crop origin and frame dimensions; retain that mapping and capture-only provenance. Reuse observed
-beat times and refresh coordinates after scroll/layout changes. Split intervals when geometry
-changes; a stale rectangle cannot protect a moving target. `rects` describe already captured
-highlights; assembly does not invent UI state or draw disappearance badges. Include any required
-in-picture source tag in the protected rectangles or retain a source label in the captions.
+모든 좌표는 짝수 padding, zoom이나 자막 band 적용 전의 동일 크기 원본 캡처 frame 안의 픽셀입니다. 기록기의 viewport `cue_targets`는 실제 screenshot 배율, crop 원점과 frame 치수로 변환합니다. 이 매핑과 캡처 전용 출처를 보존합니다. 관찰한 beat 시간을 재사용하고 scroll/레이아웃 변경 후 좌표를 갱신합니다. 기하 구조가 바뀌면 구간을 나눕니다. 오래된 사각형은 움직이는 대상을 보호할 수 없습니다. `rects`는 이미 캡처한 강조 영역을 설명합니다. 조립은 UI 상태를 만들어 내거나 사라짐 badge를 그리지 않습니다. 필요한 이미지 내 출처 tag를 보호 사각형에 포함하거나 자막에 출처 label을 유지합니다.
 
-- `caption_style`: `none` (explicit user choice: no hard/soft captions, band or SRT),
-  `band` (default), `overlay` (square 50% black libass box) or
-  `overlay-rounded` (50% black ASS vector box and white text). Overlays preserve source height
-  except existing even padding. Default text size is 5% of that height; `--caption-size` still
-  applies. Boxes sit 6% above the bottom. SRT sidecars remain unchanged by styling.
-  With `none`, keep `narration_requested: true` for selected narration; only subtitle coverage
-  is skipped. Missing/silent audio still fails. The receipt returns `subtitles: none`,
-  `subtitles_reason: user-disabled`, `captions_path: null` and no sidecar. Caption-only reading time is excluded from default holds; measured audio plus
-  breathing room and explicit holds still apply. Authored caption text
-  may remain in the source but is not rendered. Callouts remain separately selected and still
-  need libass; captions-off does not disable selected callouts or their checks.
-- `callouts`: original-frame top-left `x/y`, plain `text`, observed interval and optional nominal
-  `size` (default 2.5% of source height, minimum 12px). Render a white card with a thin border,
-  left accent, dark text and light shadow. Actual libass glyph bounds determine wrapping and
-  padding; no extra imaging library is needed. Overlarge cards, missing glyphs, overlapping
-  cards or a card covering an active target fail with an authoring correction.
-- `highlights`: ordered, nonoverlapping intervals; combine simultaneous groups in one `rects`
-  list. `zoom` defaults to true; false protects targets from captions without enlargement.
-  Union every rectangle and every callout that overlaps the interval, add `margin` (default
-  32px, at least 2px internally for integer cropping), fit the output aspect ratio and clamp
-  to the source. Scale is capped by the region fit and `max_scale` (default 2, allowed 1-10).
-  Fixed-size `zoompan` uses input frame number/output fps, with 500ms smoothstep at each end;
-  intervals shorter than one second use half their duration per transition. No source timing
-  is stretched. Integer cropping can still cause slight motion jitter. RGB cropping with bounded, upward-rounded
-  origins retains borders flush with the source edge before final 4:2:0 encoding.
+- `caption_style`: `none`(사용자의 명시적 선택: hard/soft 자막, band와 SRT 없음), `band`(기본값), `overlay`(모서리가 각진 50% 검정 libass 상자) 또는 `overlay-rounded`(50% 검정 ASS vector 상자와 흰 텍스트)입니다. Overlay는 기존 짝수 padding을 제외하고 원본 높이를 보존합니다. 기본 글자 크기는 그 높이의 5%이며 `--caption-size`도 계속 적용됩니다. 상자는 하단에서 6% 위에 놓입니다. Style은 SRT sidecar를 변경하지 않습니다. `none`일 때도 선택한 내레이션에는 `narration_requested: true`를 유지합니다. 자막 범위만 건너뛰며 누락/무음 오디오는 여전히 실패합니다. Receipt는 `subtitles: none`, `subtitles_reason: user-disabled`, `captions_path: null`을 반환하며 sidecar는 없습니다. 기본 hold에서 자막 전용 읽기 시간은 제외하지만 측정 오디오와 여유 공간 및 명시적 hold는 계속 적용됩니다. 작성한 자막 텍스트는 원본에 남을 수 있으나 render되지 않습니다. Callout은 별도로 선택된 상태를 유지하고 여전히 libass가 필요합니다. 자막 끄기는 선택한 callout이나 그 점검을 비활성화하지 않습니다.
+- `callouts`: 원본 frame의 왼쪽 위 `x/y`, 일반 `text`, 관찰 구간과 선택적 명목 `size`(기본값은 원본 높이의 2.5%, 최소 12px)입니다. 얇은 테두리, 왼쪽 강조선, 어두운 텍스트와 옅은 그림자가 있는 흰 카드를 render합니다. 실제 libass 글리프 경계로 줄바꿈과 padding을 결정하며 추가 이미지 library는 필요하지 않습니다. 너무 큰 카드, 누락 글리프, 겹치는 카드나 활성 대상을 가리는 카드는 실패하며 작성 수정이 필요합니다.
+- `highlights`: 순서가 있고 겹치지 않는 구간입니다. 동시 group은 하나의 `rects` 목록에 결합합니다. `zoom` 기본값은 true이며 false는 확대하지 않고 대상을 자막으로부터 보호합니다. 모든 사각형과 구간에 겹치는 모든 callout의 합집합에 `margin`(기본값 32px, 정수 crop을 위해 내부적으로 최소 2px)을 더하고 출력 종횡비에 맞춘 뒤 원본 범위로 제한합니다. 배율은 영역 맞춤과 `max_scale`(기본값 2, 허용 1-10)로 제한됩니다. 고정 크기 `zoompan`은 입력 frame 번호/출력 fps를 사용하며 양 끝에 500ms smoothstep을 적용합니다. 1초 미만 구간은 각 전환에 길이의 절반을 사용합니다. 원본 타이밍을 늘이지 않습니다. 정수 crop에도 약간의 움직임 떨림이 생길 수 있습니다. 원점을 범위 제한하고 올림 처리한 RGB crop은 최종 4:2:0 인코딩 전에 원본 가장자리에 맞닿은 테두리를 보존합니다.
 
-The filter order is fps/even padding, callouts, fixed-canvas zoom, optional band, then captions;
-cards scale with the UI while captions keep their size. Variable-size `scale` followed by `crop`
-can reinitialize filters and reset their time/frame counters; do not use it for animated zoom.
+Filter 순서는 fps/짝수 padding, callout, 고정 canvas zoom, 선택적 band, 자막 순입니다. 카드는 UI와 함께 확대되지만 자막 크기는 유지됩니다. 가변 크기 `scale` 뒤의 `crop`은 filter를 재초기화하고 시간/frame counter를 재설정할 수 있습니다. Animation zoom에 사용하지 않습니다.
 
-For each overlay caption, test protected target/card geometry across its full interval and zoom
-transitions, using effective ASS centisecond boundaries (reported alongside requested times).
-If the lower box intersects it, use the upper position and record
-`caption moved to top to keep highlights visible: <time>`. If both positions collide, fail and
-use `band` or recapture with a clear safe region. Read the returned `presentation` geometry and
-inspect decoded frames: a geometry check cannot prove cue facts, glyph readability or aesthetics.
-Check each callout's middle frame and each zoom's transition/middle frames; compare actual box
-padding (caption left/right difference at most 30% of text size, card top/bottom at most 20%).
-Keep the original capture frames for alternate styling. Missing libass blocks required text
-effects and dependent zooms; it never authorizes installing dependencies or claiming completion.
+각 overlay 자막은 실제 ASS centisecond 경계(요청 시간과 함께 보고됨)를 사용하여 전체 구간과 zoom 전환에 걸쳐 보호 대상/카드 기하 구조를 점검합니다. 아래 상자가 겹치면 위 위치를 사용하고 `caption moved to top to keep highlights visible: <time>`을 기록합니다. 두 위치 모두 충돌하면 실패 처리하고 `band`를 사용하거나 명확한 안전 영역으로 다시 캡처합니다. 반환된 `presentation` 기하 정보를 읽고 디코딩 frame을 검사합니다. 기하 점검은 cue 사실, 글리프 가독성이나 미관을 입증하지 못합니다. 각 callout의 중간 frame과 각 zoom의 전환/중간 frame을 확인합니다. 실제 상자 padding을 비교합니다(자막 좌우 차이는 글자 크기의 최대 30%, 카드 상하 차이는 최대 20%). 다른 style을 위해 원본 캡처 frame을 보존합니다. libass가 없으면 필수 텍스트 효과와 그에 의존하는 zoom을 차단합니다. 의존성 설치나 완료 주장 권한을 부여하지 않습니다.
 
-## Quality and recovery
+<a id="quality-and-recovery"></a>
+## 품질과 복구
 
-MP4 uses `libx264`, `yuv420p` and explicit CRF 18. `--crf <integer>` selects 0-51 for MP4 only;
-lower values retain more detail at potentially larger size. GIF rejects an explicit `--crf`.
-For equal-sized source frames, retain their dimensions with only even-dimension padding and the
-default evidence caption band (selected overlay styles omit it); avoid resolution changes during authoring or capture. The receipt reports `encoder`, requested `crf`, encoded `width`/`height`
-and `pixel_format`. CRF is an encoder setting, not a measured visual-quality score or lossless claim;
-4:2:0 color conversion can soften fine colored text even at CRF 0. Inspect the actual cut.
+MP4는 `libx264`, `yuv420p`와 명시적 CRF 18을 사용합니다. `--crf <integer>`는 MP4에만 0-51을 선택합니다. 낮은 값은 더 많은 세부를 보존하지만 크기가 커질 수 있습니다. GIF는 명시적 `--crf`를 거부합니다. 동일 크기 원본 frame에는 짝수 치수 padding과 기본 evidence 자막 band만 적용하여 치수를 유지합니다(선택한 overlay style은 band를 생략합니다). 작성이나 캡처 중 해상도 변경을 피합니다. Receipt는 `encoder`, 요청한 `crf`, 인코딩된 `width`/`height`와 `pixel_format`을 보고합니다. CRF는 encoder 설정이며 측정한 시각 품질 점수나 무손실 주장이 아닙니다. 4:2:0 색 변환은 CRF 0에서도 가느다란 유색 텍스트를 흐리게 할 수 있습니다. 실제 편집본을 검사합니다.
 
-The helper checks actual codec, duration and full decode, and reports media quality separately
-from the legacy `verification_status: not-assessed` application field. It cannot judge factual
-content or prove that a person heard the narration. Inspect the contact sheet and actual frames.
-Repeated-frame warnings concern `evidence`; holding stills in `explainer` is intentional.
+도우미는 실제 codec, 길이와 전체 디코딩을 확인하고 미디어 품질을 기존 애플리케이션 필드 `verification_status: not-assessed`와 별도로 보고합니다. 사실 내용을 판단하거나 사람이 내레이션을 들었음을 입증할 수는 없습니다. Contact sheet와 실제 frame을 검사합니다. 반복 frame 경고는 `evidence`에 관한 것입니다. `explainer`에서 정지 이미지를 유지하는 것은 의도적입니다.
 
-For hard captions, preflight the actual `subtitles` filter and use its named `filename` option.
-Without the filter, exit 2 returns `media_status: blocked`, prerequisite
-`ffmpeg-subtitles-filter`, a matching SRT and decodable movie. MP4 also includes a soft subtitle
-track; GIF has only its sidecar. Those are recoverable outputs, not burned-caption success.
-Present the `tk-wizard` installation-guidance question with the exact missing capability before
-returning a blocked result or considering a workaround. Do not implement frame-composited captions. Inspect existing
-package/PATH conflicts before proposing a platform-specific package such as ffmpeg-full.
+Hard 자막에는 실제 `subtitles` filter를 사전 점검하고 이름이 지정된 `filename` 옵션을 사용합니다. Filter가 없으면 exit 2가 `media_status: blocked`, 선행 조건 `ffmpeg-subtitles-filter`, 일치하는 SRT와 디코딩 가능한 영상을 반환합니다. MP4에는 soft 자막 track도 포함되고 GIF에는 sidecar만 있습니다. 이는 복구 가능한 출력이며 화면에 입힌 자막 성공이 아닙니다. Blocked 결과를 반환하거나 우회책을 고려하기 전에 정확한 누락 capability로 `tk-wizard` 설치 안내 질문을 제시합니다. Frame 합성 자막을 구현하지 않습니다. ffmpeg-full 같은 플랫폼별 패키지를 제안하기 전에 기존 패키지/PATH 충돌을 검사합니다.
 
-For UI recordings (`evidence`), default hard captions use an appended black lower band (`pad`), preserving
-the complete UI. Default nominal text size is 5% of final output height; `--caption-size <px>`
-overrides it (positive, at most half the source height). The band holds two text heights, with
-a 48px minimum; the helper converts size and centered vertical margin into libass's 288-unit
-SRT coordinate system. Receipts expose nominal `caption_size_px` and `caption_band_px`;
-actual glyph bounds depend on the installed font. Soft captions remain player-styled.
-Inspect decoded frames for glyph support, wrapping and band overflow; shorten/split captions
-if needed. Rendered explainer cards retain their authored layout.
+UI 녹화(`evidence`)의 기본 hard 자막은 검정 하단 band(`pad`)를 추가하여 전체 UI를 보존합니다. 기본 명목 글자 크기는 최종 출력 높이의 5%입니다. `--caption-size <px>`로 재정의합니다(양수이며 최대 원본 높이의 절반). Band는 글자 높이 2개를 담으며 최소 48px입니다. 도우미는 크기와 가운데 정렬 세로 여백을 libass의 288-unit SRT 좌표계로 변환합니다. Receipt는 명목 `caption_size_px`와 `caption_band_px`를 노출합니다. 실제 글리프 경계는 설치 font에 따라 달라집니다. Soft 자막 style은 player가 계속 담당합니다. 디코딩 frame에서 글리프 지원, 줄바꿈과 band 넘침을 검사하고 필요하면 자막을 줄이거나 나눕니다. Render된 explainer 카드는 작성한 레이아웃을 유지합니다.
 
-Encoding failure returns exit 1 and bounded redacted diagnostics, preserving inputs and prior
-outputs. Ready output returns exit 0. Never overwrite an unrelated file or lose an oversized GIF:
-5MiB is a target with a visible warning. A prebuilt inspected GIF uploads through `tk-pr-media`
-as an image; extension-side `--gif` assembly requires separately selected publication.
+인코딩 실패는 exit 1과 범위가 제한되고 민감 정보가 제거된 진단을 반환하며 입력과 이전 출력을 보존합니다. 준비된 출력은 exit 0을 반환합니다. 무관한 파일을 덮어쓰거나 용량이 큰 GIF를 잃지 않습니다. 5MiB는 목표이며 눈에 보이는 경고를 제공합니다. 미리 만들어 검사한 GIF는 `tk-pr-media`를 통해 이미지로 업로드합니다. Extension 측 `--gif` 조립에는 별도로 선택한 발행이 필요합니다.

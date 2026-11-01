@@ -11,119 +11,128 @@ metadata:
     upstream-skill: grilling
 ---
 
-# Decision Grilling
+<a id="decision-grilling"></a>
+# 의사결정 심층 검토
 
-## Shared References
+<a id="shared-references"></a>
+## 공통 참조
 
-Read branch-triggered criteria from the current installed owners. A missing/mismatched
-owner or resource blocks that action: use `tk-setup-skills`, not memory, another installation
-or unapproved installs. Reading grants no workflow or mutation authority.
+현재 설치된 담당 스킬에서 분기 조건에 해당하는 기준을 읽습니다. 담당 스킬이나 자원이 없거나
+일치하지 않으면 해당 행동을 중단합니다. 기억, 다른 설치본이나 승인받지 않은 설치로
+우회하지 말고 `tk-setup-skills`를 사용합니다. 참조 읽기는 업무 실행이나 변경 권한을 부여하지 않습니다.
 
-- For a user-owned decision, missing approval or unmet prerequisite, read [question rounds](../tk-questioning/references/questions.md).
-- Before a user-facing completion report, artifact-path handoff or multi-attribute chat comparison, read [chat delivery](../tk-writing/references/delivery.md). The task's specific output contract wins.
+- 사용자가 결정해야 할 사항, 누락된 승인이나 충족하지 못한 선행 조건이 있으면 [질문 라운드](../tk-questioning/references/questions.md)를 읽습니다.
+- 사용자에게 완료 보고, 산출물 경로 인계나 여러 속성을 비교하는 채팅을 전달하기 전에 [채팅 전달](../tk-writing/references/delivery.md)을 읽습니다. 해당 작업의 구체적인 출력 계약이 우선합니다.
 
-Start only through an explicit `/tk-grill`, `$tk-grill`, or host skill selection. Do not
-invoke automatically when the user asks for a quick opinion, ordinary brainstorming,
-repository explanation, or implementation planning.
+명시적인 `/tk-grill`, `$tk-grill` 또는 호스트의 스킬 선택으로만 시작합니다. 사용자가
+간단한 의견, 일반적인 브레인스토밍, 저장소 설명이나 구현 계획을 요청했을 때
+자동으로 호출하지 않습니다.
 
-## Boundary
+<a id="boundary"></a>
+## 경계
 
-Own the interview from a rough idea, decision, or plan through confirmed shared
-understanding. Keep all state in the current conversation.
+대략적인 아이디어, 결정이나 계획에서 출발하여 서로 같은 내용을 이해했는지 확인할 때까지
+질의 과정을 담당합니다. 모든 상태는 현재 대화에만 둡니다.
 
-Do not create or modify source, tests, config, Git state, tickets, `Seed`, SDD, domain
-artifacts, general scratch files, ledgers, or task graphs. The Visual questions branch alone permits one HTML comparison under `.tigerkit/tmp/tk-grill/<run-id>/` and its required ignore setup. Do not invoke another skill or begin
-implementation automatically. After synthesis, offer only relevant optional routes:
+소스, 테스트, 설정, Git 상태, 티켓, `Seed`, SDD, 도메인 산출물, 일반 임시 파일,
+원장이나 작업 그래프를 만들거나 수정하지 않습니다. 시각 질문 분기에서만 `.tigerkit/tmp/tk-grill/<run-id>/` 아래 HTML 비교 자료 하나와 그에 필요한 제외 설정을 허용합니다. 다른 스킬을 호출하거나
+구현을 자동으로 시작하지 않습니다. 종합한 뒤에는 관련 있는 선택적 경로만 제안합니다.
 
-- `tk-prep` when the result has become an implementation request or ticket;
-- `tk-domain` when the user wants repository-native vocabulary or a durable decision;
-- stop when no further action is needed.
+- 결과가 구현 요청이나 티켓이 되었으면 `tk-prep`을 제안합니다.
+- 사용자가 저장소 고유 용어나 지속해서 보존할 결정을 원하면 `tk-domain`을 제안합니다.
+- 더 할 일이 없으면 중단합니다.
 
-For a user-only next skill, give one line with `/<skill>` and say that the current
-conversation carries over. Supply a full handoff prompt only for a different session;
-respect `disable-model-invocation` without attempting the call or simulating its procedure.
+사용자만 호출할 수 있는 다음 스킬은 `/<skill>`을 넣어 한 줄로 안내하고 현재
+대화가 이어진다고 알립니다. 다른 세션으로 넘길 때만 전체 인계 프롬프트를 제공합니다.
+호출을 시도하거나 절차를 흉내 내지 말고 `disable-model-invocation`을 준수합니다.
 
-## Decision tree and frontier
+<a id="decision-tree-and-frontier"></a>
+## 결정 트리와 현재 질문 집합
 
-Map the subject as a decision tree. A branch may become answerable only after its
-prerequisites are settled. The current **frontier** is every unresolved decision that can
-be answered now without guessing at another unresolved answer.
+검토할 주제를 결정 트리로 정리합니다. 어떤 분기는 선행 조건이 확정된 뒤에야
+답할 수 있습니다. **현재 질문 집합**은 다른 미해결 답을 추측하지 않고 지금
+답할 수 있는 모든 미해결 결정입니다.
 
-Work in rounds:
+다음 순서로 라운드를 진행합니다.
 
-1. Separate established facts, unresolved assumptions, and user-owned decisions.
-2. Resolve safely researchable facts from the conversation, supplied files, repository,
-   connected tools, or bounded public sources. Do not ask the user for a fact that
-   available evidence can answer. Bind shell lookups to the verified repository root;
-   quote search globs (for example `rg --glob '*.ts'` or `grep --include='*.ts'`)
-   and omit separator-only commands, especially unquoted words starting with `=` in zsh.
-3. Ask the whole current frontier in one round. Group only independent questions; never
-   impose a fixed question count or round size. Before the first question round in this
-   turn, read [question rounds](../tk-questioning/references/questions.md) and apply its format to every
-   round. If any frontier question compares layout, hierarchy, density or navigation
-   alternatives, attach the [visual question aid](../tk-questioning/references/visual-questions.md) in this same round.
-4. Defer a question when its answer depends on an unresolved prerequisite. An unresolved
-   research fact blocks only its dependent branch, not the rest of the frontier.
-5. After the user answers, update the tree, identify contradictions or newly exposed
-   assumptions, recompute the frontier, and continue.
+1. 확인된 사실, 해결되지 않은 가정과 사용자가 결정해야 할 사항을 구분합니다.
+2. 대화, 제공된 파일, 저장소, 연결된 도구나 범위가 제한된 공개 출처에서 안전하게
+   조사할 수 있는 사실을 확인합니다. 이용 가능한 근거로 답할 수 있는 사실을
+   사용자에게 묻지 않습니다. 셸 조회는 확인된 저장소 루트에 한정하고,
+   검색 glob은 따옴표로 감쌉니다. 예를 들면 `rg --glob '*.ts'` 또는 `grep --include='*.ts'`입니다.
+   구분자만 있는 명령은 생략하며, 특히 zsh에서 `=`로 시작하는 단어를 따옴표 없이 사용하지 않습니다.
+3. 현재 질문 집합 전체를 한 라운드에 묻습니다. 독립적인 질문만 묶고,
+   질문 수나 라운드 크기를 고정하지 않습니다. 이번 턴의 첫 질문 라운드 전에
+   [질문 라운드](../tk-questioning/references/questions.md)를 읽고 그 형식을 모든
+   라운드에 적용합니다. 현재 질문 중 레이아웃, 계층, 밀도나 탐색 대안을 비교하는 질문이 하나라도 있으면
+   같은 라운드에 [시각 질문 보조 자료](../tk-questioning/references/visual-questions.md)를 첨부합니다.
+4. 답이 미해결 선행 조건에 의존하는 질문은 미룹니다. 조사할 사실이 미해결이면
+   그 사실에 의존하는 분기만 막히며, 나머지 현재 질문은 막히지 않습니다.
+5. 사용자가 답하면 트리를 갱신하고 모순이나 새롭게 드러난 가정을 찾아
+   현재 질문 집합을 다시 계산한 뒤 계속 진행합니다.
 
-Do not turn fact-finding into unbounded research. Investigate only facts that can
-materially change the current decision tree.
+사실 확인을 끝없는 조사로 확대하지 않습니다. 현재 결정 트리를 실질적으로
+바꿀 수 있는 사실만 조사합니다.
 
-For a consequential choice between alternatives, test the recommendation against
-its decisive assumptions and priorities: identify an evidence-supported change in
-conditions that would favor another option, when one is known. Research checkable
-constraints rather than asking the user; ask only for user-owned priorities. If the
-turning condition is unknown, retain that uncertainty rather than inventing a threshold.
-Skip this analysis for minor, easily reversible choices.
+결과에 중요한 영향을 주는 대안 선택에서는 추천을 좌우하는 가정과 우선순위에 비추어
+추천을 검토합니다. 다른 선택이 더 나아지는 조건의 변화를 알고 있다면
+근거에 따라 그 변화를 밝힙니다. 확인할 수 있는 제약은 사용자에게 묻지 말고
+조사하며, 사용자에게 속한 우선순위만 묻습니다. 선택이 바뀌는 조건을 모르면
+임계값을 지어내지 말고 불확실성을 유지합니다.
+사소하고 쉽게 되돌릴 수 있는 선택에는 이 분석을 생략합니다.
 
-## Visual questions
+<a id="visual-questions"></a>
+## 시각 질문
 
-For unresolved spatial alternatives, read [visual questions](../tk-questioning/references/visual-questions.md) and attach one HTML comparison to the numbered text round. Keep every decision complete in chat; the aid also collects nonvisual choices from that same round. The Boundary permits only this question aid and its canonical artifact setup.
+해결되지 않은 공간적 대안이 있으면 [시각 질문](../tk-questioning/references/visual-questions.md)을 읽고 번호가 붙은 텍스트 질문 라운드에 HTML 비교 자료 하나를 첨부합니다. 모든 결정은 채팅만으로도 완결되게 제시하며, 보조 자료에서도 같은 라운드의 비시각적 선택을 수집합니다. 경계 절에서는 이 질문 보조 자료와 정해진 산출물 설정만 허용합니다.
 
-## Question contract
+<a id="question-contract"></a>
+## 질문 계약
 
-Goals, priorities, trade-off preferences, scope, meaning, tone, and accepted risk belong
-to the user. Never silently choose one. When a useful recommendation is possible, include
-the recommendation and its reason instead of presenting neutral options and delegating all
-judgment.
+목표, 우선순위, 절충에 대한 선호, 범위, 의미, 어조와 수용할 위험은 사용자가
+결정합니다. 이를 말없이 대신 선택하지 않습니다. 유용한 추천이 가능하면
+중립적인 선택지만 나열하여 모든 판단을 떠넘기지 말고 추천과 그 이유를
+함께 제시합니다.
 
-When a recommendation depends on an existing mechanism or on when data is present,
-cite the `path:line` that establishes it; otherwise investigate before recommending.
+추천이 기존 메커니즘이나 데이터가 존재하는 시점에 의존하면,
+이를 입증하는 `path:line`을 인용합니다. 그렇지 않으면 추천 전에 조사합니다.
 
-Do not ask downstream questions merely to appear thorough. Relentless means leaving no
-silent decision branch, not maximizing question volume.
+철저해 보이려고 후속 질문을 묻지 않습니다. 집요함은 질문량을 최대화하는 것이 아니라
+말없이 남겨 둔 결정 분기가 없게 하는 것입니다.
 
-## Completion
+<a id="completion"></a>
+## 완료
 
-When the frontier appears empty:
+현재 질문 집합이 비어 있는 것으로 보이면 다음을 수행합니다.
 
-1. Check the whole tree for an unvisited branch, hidden assumption, contradiction, or
-   intentionally open risk.
-2. Summarize the current understanding briefly and ask the user to confirm that it is
-   shared and complete.
-3. Do not act on the result before confirmation. If the user corrects it, update the tree
-   and continue from the new frontier.
-4. After confirmation, return a compact synthesis of the purpose or conclusion, key
-   decisions and reasons, intentionally open assumptions or risks, and optional next
-   routes. Include a material turning condition when identified. Create no additional
-   artifact; keep only an already-authorized visual question aid.
+1. 전체 트리에서 살펴보지 않은 분기, 숨은 가정, 모순이나
+   의도적으로 열어 둔 위험이 있는지 확인합니다.
+2. 현재 이해한 내용을 짧게 요약하고, 서로 같은 내용을 이해했으며 빠진 내용이 없는지
+   사용자에게 확인을 요청합니다.
+3. 확인 전에는 결과에 따라 행동하지 않습니다. 사용자가 정정하면 트리를 갱신하고
+   새 현재 질문 집합에서 이어갑니다.
+4. 확인 후에는 목적이나 결론, 주요 결정과 그 이유,
+   의도적으로 열어 둔 가정이나 위험, 선택적인 다음 경로를 간결하게 종합하여
+   반환합니다. 중요한 전환 조건을 파악했다면 포함합니다. 추가 산출물은
+   만들지 않고, 이미 승인된 시각 질문 보조 자료만 유지합니다.
 
-## Source
+<a id="source"></a>
+## 출처
 
-Adapted the decision-tree, prerequisite-aware frontier, whole-frontier rounds,
-fact-versus-decision ownership, recommendations, and shared-understanding gate from
-`mattpocock/skills` `skills/productivity/grilling` at commit
-`6654f6b60cd9d5be8b54c6fafe44346dabeb3b76`.
+결정 트리, 선행 조건을 고려한 현재 질문 집합, 현재 질문 집합 전체를 묻는 라운드,
+사실과 결정의 소유권 구분, 추천과 상호 이해 확인 관문은
+`mattpocock/skills`의 `skills/productivity/grilling`, 커밋
+`6654f6b60cd9d5be8b54c6fafe44346dabeb3b76`에서 가져와 조정했습니다.
 
-TigerKit removes mandatory subagent runtime assumptions, wrappers such as `grill-me` and
-`grill-with-docs`, automatic implementation transition, and persistent state. The original
-copyright and MIT notice are in [LICENSE.txt](LICENSE.txt).
+TigerKit에서는 필수 하위 에이전트 런타임 가정, `grill-me`와
+`grill-with-docs` 같은 래퍼, 자동 구현 전환과 영속 상태를 제거합니다. 원본
+저작권 및 MIT 고지는 [LICENSE.txt](LICENSE.txt)에 있습니다.
 
-## Artifact Paths
+<a id="artifact-paths"></a>
+## 산출물 경로
 
-Before authorized artifact writes, checkout/transport/ignore setup or temporary-input consumption,
-read [artifact paths](../tk-artifacts/references/artifact-paths.md). Use safe owned nonsymlink paths
-and proven Git exclusion for repository scratch; failed checks stop that file branch. Preserve
-explicit final destinations and owner-specific defaults. Prefilled input is not completed input.
-Cleanup targets only recorded literal resolved absolute run-owned paths, never cwd-relative paths or globs.
+승인된 산출물 쓰기, 체크아웃, 전송, 제외 설정이나 임시 입력 소비 전에
+[산출물 경로](../tk-artifacts/references/artifact-paths.md)를 읽습니다. 저장소 임시 파일에는 소유권이 확인된 안전한 비심볼릭 링크 경로와
+입증된 Git 제외를 사용합니다. 검사에 실패하면 해당 파일 분기를 중단합니다. 명시된
+최종 목적지와 담당 스킬별 기본값을 보존합니다. 미리 채운 입력은 완료된 입력이 아닙니다.
+정리는 경로 해석이 완료되어 기록된 실행 소유 절대 경로 문자열만 그대로 대상으로 삼습니다. 현재 작업 디렉터리 기준 상대 경로나 glob은 대상으로 삼지 않습니다.

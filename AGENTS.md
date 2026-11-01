@@ -17,7 +17,7 @@ TigerKit은 조합 가능한 Agent Skills 저장소입니다. workflow runner, p
 - TigerKit의 구체적인 차이와 `keep | adapt | omit` 판단을 기록합니다. 행동 계약과 실패 조건만 증류하고 제공자·모델 선택, 실행 framework, workspace나 전역 상태를 복사하지 않습니다. 차이가 입증되지 않으면 더 단순한 기존 계약을 유지합니다.
 - 항상 필요한 안전·권한 조건은 짧게 본문에 둡니다. 일부 분기만 필요한 기준은 그 분기의 정확한 pointer 뒤로 내립니다. description과 pointer는 본문을 요약하지 않고 읽을 조건을 명시합니다.
 - 환경·설정·명령을 한 번의 저렴한 fresh lookup으로 알 수 있으면 문서에 목록을 복제하지 않습니다. 줄 수나 토큰 목표를 맞추려고 필요한 실패·승인 guard를 없애지 않습니다.
-- 사용자-facing 문서는 한국어를 기본으로 하되 exact ID/path/status/command는 유지합니다. `SKILL.md`와 패키지 참조의 model-facing 제목·지시문은 영어로 씁니다. frontmatter description과 정확한 사용자 발화·출력 literal만 한국어를 허용합니다.
+- 사용자용 문서와 사람이 검수하는 `SKILL.md` 및 패키지 참조의 자연어 제목·실행 지침은 한국어를 기본으로 작성합니다. exact ID/path/status/command, 기계 판독 문자열, 코드, 외부 인용과 라이선스 고지는 원문을 유지합니다. 지침 작성 언어와 결과물의 출력 언어는 별개이며, 기존 출력 언어 계약을 바꾸지 않습니다. 전환 원칙과 예외는 [ADR 0005](docs/adr/0005-korean-skill-instructions.md)를 따릅니다.
 - 공개 동작·명령·경로·설치 계약을 바꾸면 그 사실을 소유한 기존 문서만 같은 변경에서 갱신합니다. 의례적인 변경 문서·상태표·새 lifecycle을 만들지 않습니다.
 - 대화 형식과 결과 전달 기준은 `tk-writing`, 질문·승인 기준은 `tk-questioning`이 소유합니다. 실제 업무의 더 구체적인 미리보기·출력 계약이 우선합니다.
 

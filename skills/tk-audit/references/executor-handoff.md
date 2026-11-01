@@ -1,22 +1,12 @@
-# Finding handoff
+<a id="finding-handoff"></a>
+# 발견 사항 인계
 
-Write each `AUD-*` finding so the next executor or `tk-prep` can understand the work
-without this conversation or the audit session.
+다음 실행자나 `tk-prep`이 이 대화나 감사 세션 없이도 작업을 이해할 수 있도록 각 `AUD-*` 발견 사항을 작성합니다.
 
-- **Self-contained context**: Include exact paths/symbols, current evidence,
-  repository rules, and relevant exemplars.
-- **Boundaries**: Include in/out scope, assumptions, dependencies, and concrete
-  `STOP/report-back` conditions.
-- **Verification**: Include commands, expected results, the audited HEAD, any pinned
-  documentation comparison commit, and drift handling. Recheck upstream-only findings
-  against the executor's actual target; they do not establish a local HEAD defect.
-- **Safety**: Include only secret locations and credential types. Do not copy values,
-  cookies, tokens, or private identity data.
+- **독립적으로 이해할 수 있는 맥락**: 정확한 경로/symbol, 현재 근거, 저장소 규칙과 관련 선례를 포함합니다.
+- **경계**: 포함/제외 범위, 가정, 의존성과 구체적인 `STOP/report-back` 조건을 포함합니다.
+- **검증**: 명령, 예상 결과, 감사한 HEAD, 고정된 문서 비교 commit이 있다면 해당 commit 및 변경 처리 방식을 포함합니다. upstream에서만 성립하는 발견 사항은 실행자의 실제 대상에 대조해 다시 확인합니다. 그런 발견 사항은 로컬 HEAD의 결함을 입증하지 않습니다.
+- **안전**: 비밀 위치와 인증 정보 유형만 포함합니다. 값, cookie, token이나 비공개 신원 데이터를 복사하지 않습니다.
 
-These quality criteria adapt `shadcn/improve` at source snapshot
-`03369ee6d7cafbfcecc4346539b05b3dc0a603bb`; they do not create a second plan lifecycle.
-`tk-audit` does not write `plans/`, implementation code, execution units, or remote
-issues. When an executable task contract, AC, and verification plan are needed,
-`tk-prep` re-reads current evidence and prepares the Seed in `.tigerkit/seed.md`. A finding only prepares
-reusable evidence; it grants no implementation, execution-unit, or remote publication
-authority.
+이 품질 기준은 `shadcn/improve`의 소스 snapshot `03369ee6d7cafbfcecc4346539b05b3dc0a603bb`에서 적응했으며 두 번째 계획 수명 주기를 만들지 않습니다.
+`tk-audit`는 `plans/`, 구현 코드, 실행 단위나 원격 issue를 작성하지 않습니다. 실행 가능한 작업 계약, AC와 검증 계획이 필요하면 `tk-prep`이 현재 근거를 다시 읽고 `.tigerkit/seed.md`에 Seed를 준비합니다. 발견 사항은 재사용 가능한 근거만 준비하며 구현, 실행 단위 또는 원격 발행 권한을 부여하지 않습니다.

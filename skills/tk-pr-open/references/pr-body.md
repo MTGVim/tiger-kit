@@ -1,44 +1,43 @@
 ## `PR template`
 
-Before creating any `PR body`, check supported template locations on the default branch.
+`PR body`를 만들기 전에 기본 브랜치에서 지원되는 템플릿 위치를 확인합니다.
 
-- Root
-- `docs/`
-- `.github/`
-- `PULL_REQUEST_TEMPLATE/` under each location
+- 루트를 확인합니다.
+- `docs/`를 확인합니다.
+- `.github/`를 확인합니다.
+- 각 위치 아래의 `PULL_REQUEST_TEMPLATE/`를 확인합니다.
 
-If exactly one template applies, preserve its heading order, checklists, HTML comments, and required sections.
-If multiple templates exist and there is no basis for choosing one, explain the candidates with one recommendation and ask the user to choose before publication approval.
-If the template cannot be read, do not invent a body.
+적용되는 템플릿이 정확히 하나라면 제목 순서, 체크리스트, HTML 주석과 필수 섹션을 보존합니다.
+템플릿이 여러 개이고 선택 근거가 없다면 후보와 권고 하나를 설명하고 발행 승인 전에 사용자에게 선택을 요청합니다.
+템플릿을 읽을 수 없다면 본문을 만들어 내지 않습니다.
 
-Choose title guidance in this order: explicit repository instruction, normative current PR template or maintainer
-documentation, verified recent merged-PR convention, then the existing fallback. History can establish a convention only
-when no higher-authority current guidance applies. Surface a conflict instead of silently overriding the stronger source.
+제목 지침은 명시적인 저장소 지침, 현재 규범적인 PR 템플릿이나 유지보수자
+문서, 검증된 최근 merge PR 관례, 기존 대체 기준 순으로 선택합니다. 더 높은 권한의 현행 지침이
+적용되지 않을 때만 이력으로 관례를 정할 수 있습니다. 더 강한 출처를 알리지 않고 덮어쓰지 말고 충돌을 드러냅니다.
 
-Describe the change by reviewable concern (behavior, module or contract), derived from `base...HEAD`,
-not by commit order. Do not list commit SHAs or one bullet per commit unless the template or repository
-instruction asks for it; the PR's commit list already carries that history. Recent merged-PR bodies
-inform tone and section use, not commit-by-commit structure. When updating an existing PR after new
-commits, re-derive the affected sections from the current `base...HEAD` instead of appending per-commit lines.
+변경은 커밋 순서가 아니라 `base...HEAD`에서 도출한 리뷰 가능한 관심사(동작, 모듈이나 계약)별로
+설명합니다. 템플릿이나 저장소 지침이 요구하지 않는 한 커밋 SHA를 나열하거나 커밋마다 항목을 하나씩
+작성하지 않습니다. PR의 커밋 목록에 이미 해당 이력이 있습니다. 최근 merge PR의 본문은
+어조와 섹션 사용을 참고하는 자료이며 커밋별 구조의 기준이 아닙니다. 새 커밋이 추가된 기존 PR을
+업데이트할 때는 커밋별 줄을 덧붙이지 말고 현재 `base...HEAD`에서 영향받는 섹션을 다시 도출합니다.
 
-Before finalizing a body whose architecture, flow, state transition, dependency or migration
-relationship is materially easier to review visually, read [GitHub-native PR visuals](../../tk-pr-guidance/references/github-visuals.md).
-Use Mermaid selectively and evidence-first; prefer a table for exact numeric comparisons and keep
-material meaning available in prose.
+아키텍처, 흐름, 상태 전이, 의존성이나 마이그레이션 관계를 시각적으로 제시하면
+리뷰가 실질적으로 쉬워지는 본문을 확정하기 전에 [GitHub 기본 기능을 활용한 PR 시각 자료](../../tk-pr-guidance/references/github-visuals.md)를 읽습니다.
+Mermaid는 근거를 우선하여 선택적으로 사용합니다. 정확한 수치 비교에는 표를 우선하고,
+중요한 의미는 글로도 전달합니다.
 
-Before finalizing the body, assess material reversibility and blast radius from the verified publication input: affected callers, users, surfaces, data and contracts; the concrete rollback or recovery path; and any destructive migration, irreversible external side effect or compatibility break. Reverting code does not restore deleted data or undo external actions. Preserve unknown recovery evidence instead of describing the change as cheaply reversible. Put useful facts in the template's existing risk, rollback, migration or deployment section; preserve its headings, order, comments and checklists, without adding a duplicate section. If no template or stronger format applies, the fallback body may include a compact risk/recovery section when it adds information. Low-risk changes need no empty risk prose or decorative one-way/two-way labels. This assessment grants no implementation or new investigation authority.
+본문을 확정하기 전에 검증된 발행 입력에서 중요한 가역성과 영향 범위를 평가합니다. 영향받는 호출자, 사용자, 화면·접점, 데이터와 계약, 구체적인 롤백·복구 경로, 파괴적 마이그레이션, 되돌릴 수 없는 외부 부작용이나 호환성 파괴를 살펴봅니다. 코드를 되돌려도 삭제된 데이터가 복원되거나 외부 행동이 취소되지는 않습니다. 적은 비용으로 되돌릴 수 있다고 서술하지 말고 알 수 없는 복구 근거를 그대로 남깁니다. 유용한 사실은 템플릿의 기존 위험, 롤백, 마이그레이션이나 배포 섹션에 넣습니다. 제목, 순서, 주석과 체크리스트를 보존하고 중복 섹션을 추가하지 않습니다. 템플릿이나 더 강한 형식이 적용되지 않는다면 정보를 더하는 경우 대체 본문에 간결한 위험·복구 섹션을 포함할 수 있습니다. 위험이 낮은 변경에는 빈 위험 설명이나 장식적인 단방향·양방향 라벨이 필요하지 않습니다. 이 평가는 구현이나 새로운 조사 권한을 부여하지 않습니다.
 
-Apply UI Evidence to PR bodies and QA steps. Before publication, reconcile each required UI literal and navigation claim against the supplied evidence. Include a compact UI evidence gap report in the preparation output: item, source/status (observed, render-bound source, user-provided, or `Unverifiable`), limitation, and requested input. State explicitly when no required gaps remain; use N/A only when there are no UI claims. Keep user-provided text distinct from independent observation and retain unresolved items in the PR/QA limitations. Ask for the missing exact label, contextual capture, or connection evidence item by item; incorporate supplied answers only for the claims they support. Do not start a new investigation from this publication-only phase.
+PR 본문과 QA 단계에 UI 근거 기준을 적용합니다. 발행 전에 필요한 각 UI 리터럴과 탐색 주장을 제공된 근거와 대조합니다. 준비 출력에 간결한 UI 근거 공백 보고를 포함합니다. 항목, 출처·상태(직접 관찰, 렌더링과 연결된 소스, 사용자 제공 또는 `Unverifiable`), 제한 사항과 요청 입력을 기록합니다. 필요한 공백이 남지 않았다면 명시적으로 밝히고, UI 주장이 전혀 없을 때만 N/A를 사용합니다. 사용자 제공 텍스트를 독립적인 관찰과 구분하고, 해결되지 않은 항목은 PR·QA 제한 사항에 유지합니다. 누락된 정확한 라벨, 맥락이 포함된 캡처나 연결 근거를 항목별로 요청하고, 제공된 답변은 그 답변이 뒷받침하는 주장에만 반영합니다. 발행만 담당하는 이 단계에서 새 조사를 시작하지 않습니다.
 
-Use an entry path only when every step is verified; breadcrumb-only evidence permits a hierarchy description, not click instructions. If a required QA step or publication evidence depends on an unresolved item, stop publication as `Blocked | Unverifiable` and return the concrete input request. Optional gaps may remain only as explicit limitations, without invented labels or executable path guidance.
+모든 단계가 검증되었을 때만 진입 경로를 사용합니다. breadcrumb만 있는 근거로는 계층을 설명할 수 있지만 클릭 지침은 작성할 수 없습니다. 필수 QA 단계나 발행 근거가 해결되지 않은 항목에 의존하면 발행을 `Blocked | Unverifiable`로 중단하고 구체적인 입력 요청을 반환합니다. 선택적인 공백은 명시적 제한 사항으로만 남길 수 있으며, 라벨을 만들거나 실행 가능한 경로 안내를 작성하지 않습니다.
 
-When a title or body summarizes or interprets repository behavior, requirements, ownership, impact, or domain meaning,
-lazy-load [domain context](../../tk-repository-guidance/references/domain-context.md) when repository-owned context exists. Read only the relevant
-mapped context, preserve canonical vocabulary, and never replace verified UI literals with glossary terms.
+제목이나 본문에서 저장소 동작, 요구사항, 소유권, 영향이나 도메인 의미를 요약하거나 해석할 때,
+저장소 소유 맥락이 있다면 [도메인 맥락](../../tk-repository-guidance/references/domain-context.md)을 필요 시 읽습니다. 관련된
+대응 맥락만 읽고 정식 용어를 보존하며, 검증된 UI 리터럴을 용어집 표현으로 대체하지 않습니다.
 
-For a stack, apply the same title/template rules to every layer. Each layer body must explain only that layer's review surface and, when useful, its dependency on the preceding layer rather than duplicating the full feature summary into every PR.
+스택에서는 모든 계층에 같은 제목·템플릿 규칙을 적용합니다. 각 계층 본문은 전체 기능 요약을 모든 PR에 복제하지 말고 해당 계층의 리뷰 범위만 설명하며, 유용하다면 앞선 계층에 대한 의존성을 설명해야 합니다.
 
-Source: the reversibility/blast-radius safeguard adapts `mattpocock/skills@d81f3a183412e71a5b1e84ca21bc1a35eea03a60`, `skills/engineering/pr/SKILL.md`. Keep TigerKit's template, evidence and publication contracts; omit the mandatory upstream body and labels. Original MIT notice: [LICENSE.txt](../LICENSE.txt).
+출처: 가역성·영향 범위 보호 조건은 `mattpocock/skills@d81f3a183412e71a5b1e84ca21bc1a35eea03a60`의 `skills/engineering/pr/SKILL.md`를 적응시켰습니다. TigerKit의 템플릿, 근거와 발행 계약은 유지하고 upstream의 필수 본문과 라벨은 제외합니다. 원본 MIT 고지: [LICENSE.txt](../LICENSE.txt).
 
-For a user-owned QA inventory, recommend explicit `/tk-qa-sheet` outside this publication-only phase and consume only its returned Markdown section; never auto-invoke the user-only skill or start its investigation here.
-
+사용자가 소유하는 QA 목록이 필요하다면 발행만 담당하는 이 단계 밖에서 명시적인 `/tk-qa-sheet` 사용을 권고하고, 반환된 Markdown 섹션만 소비합니다. 사용자 전용 스킬을 자동 호출하거나 여기서 그 조사를 시작하지 않습니다.

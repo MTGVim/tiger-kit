@@ -1,122 +1,124 @@
-# Browser Evidence and Results
+<a id="browser-evidence-and-results"></a>
+# 브라우저 근거와 결과
 
-Read before storing runtime evidence or returning an executed verification phase.
+런타임 근거를 저장하거나 실행한 검증 단계를 반환하기 전에 읽습니다.
 
-Before the first write under `.tigerkit/evidence/`, verify that
-`git ls-files -- .tigerkit/` returns no tracked path and
-`git check-ignore -q -- .tigerkit/` succeeds. Record only the matching source class and
-pattern from `git check-ignore -v`, redacting an absolute user-level path. Apply [artifact paths](../../tk-artifacts/references/artifact-paths.md)
-ignore setup when coverage is missing. If checks still fail, do not write or use an external
-fallback; return `Unverifiable`.
+`.tigerkit/evidence/` 아래에 처음 쓰기 전에
+`git ls-files -- .tigerkit/`가 추적 경로를 하나도 반환하지 않고
+`git check-ignore -q -- .tigerkit/`가 성공하는지 확인합니다. `git check-ignore -v`에서는 일치한 출처 유형과
+패턴만 기록하고 사용자 수준의 절대 경로는 가립니다. 제외 범위가 부족하면 [산출물 경로](../../tk-artifacts/references/artifact-paths.md)의
+제외 설정을 적용합니다. 그래도 검사가 실패하면 파일을 쓰거나 외부 대체 경로를 사용하지 말고
+`Unverifiable`을 반환합니다.
 
-Binary evidence may be stored in run-owned `.tigerkit/evidence/tk-browser-verify/<run-id>/`. Baseline comparisons use
-`baseline/`, `after/`, and immutable `failed-<attempt>/` subdirectories. The required bounded `README.md` maps each
-AC to its screenshot, exact publication-safe `display_route`, replay procedure, and disclosed capture-only or
-nondeterministic exclusions; it is an evidence index, not a lifecycle ledger.
-Do not place other Markdown files there.
-An explicitly requested [contact sheet](contact-sheet.md) may add derived PNGs and tile-to-original
-links to this same README. Record generation skips there without changing verification status.
-Do not move user fixtures. Use sensitive captures as evidence only after verifying redaction and absence of residue.
-If any failure appears, whether deterministic, rare, or flaky, preserve its run-owned screenshot, trace, log, or dump
-before a rerun that could overwrite or delete it. Keep baseline comparison failures in a new unique `failed-<attempt>/` path,
-not the later `after/` path. A later negative sample does not erase the observed failure.
+바이너리 근거는 이번 실행이 소유한 `.tigerkit/evidence/tk-browser-verify/<run-id>/`에 저장할 수 있습니다. 변경 전 기준 비교에는
+`baseline/`, `after/`와 변경 불가능한 `failed-<attempt>/` 하위 디렉터리를 사용합니다. 필수로 작성하는 제한된 범위의 `README.md`에는 각
+AC를 해당 스크린샷, 발행해도 안전한 정확한 `display_route`, 재실행 절차와 공개된 캡처 전용 또는
+비결정적 제외 사항에 대응시킵니다. 이는 근거 색인이지 수명 주기 기록부가 아닙니다.
+그곳에 다른 Markdown 파일을 두지 않습니다.
+명시적으로 요청받은 [콘택트 시트](contact-sheet.md)는 파생 PNG와 타일에서 원본으로 가는 링크를
+같은 README에 추가할 수 있습니다. 생성 생략 사항은 검증 상태를 바꾸지 않고 그곳에 기록합니다.
+사용자 픽스처를 옮기지 않습니다. 민감한 캡처는 가림 처리를 검증하고 잔여물이 없음을 확인한 뒤에만 근거로 사용합니다.
+결정적이든, 드물든, 간헐적이든 어떤 실패라도 나타나면 이를 덮어쓰거나 삭제할 수 있는 재실행 전에 이번 실행 소유의
+스크린샷, 추적, 로그나 덤프를 보존합니다. 변경 전 기준 비교의 실패는 새로운 고유 `failed-<attempt>/` 경로에
+보존하며, 이후의 `after/` 경로에는 두지 않습니다. 나중에 실패가 나타나지 않은 표본이 나와도 이미 관찰한 실패가 사라지지는 않습니다.
 
-Require these contract fields in nested and standalone results; keep nested results limited to:
+중첩 결과와 독립 결과에는 다음 계약 필드가 필요합니다. 중첩 결과는 다음 항목으로만 제한합니다.
 
 - status
-- `contract: <metadata.tigerkit.version>`; the current contract is `1.2.0`
-- `scope: full-inventory | explicitly-scoped`; when scoped, identify the user's exact scope
-- `coverage: planned <N> / executed <n> / covered-by <c> / out-of-scope <o> / not-executed <m>`; the counts must reconcile to the full discovered inventory
-- `human_action: none | <N> (criterion IDs, reason and next action)`; nested returns use `none` when the parent owns all remaining work
-- `phase: baseline | after | acceptance`; for a successful pre-edit baseline also return `baseline_capture: Pass`,
-  `verification_complete: false`, `run_id`, `replay_procedure`, and the exact `next_required`; include
-  `resume_parent: required` when the active parent has approved implementation remaining
-- `visual_contract: applied | n/a`; `n/a` requires a reason proving no visual-reference, baseline/after,
-  multi-capture, visual/responsive, or render-affecting branch applies
-- `capture_only_mutation: <description> | none`, also in the evidence index; include outlines/labels,
-  hiding/removal, and runtime mocks, or explicitly `none` when no capture-only mutation occurred
-- one fact row per approved criterion with `criterion_id`, `result`, `route`, `entry`, `trigger`, `operation: read | create | update`, `input`, `evidence_kind`, `evidence_ref`, and `head`
-- use `result: out-of-scope` for inventory rows omitted only by explicit user scope; keep their IDs and scope reason in the full row map
-- use `result: covered-by:<criterion_id>` for covered rows, with the referenced row's `evidence_ref` and `head`; preserve the equivalence rationale in the full row map
-- `input: trusted | synthetic(<reason>) | not-run`; product interaction cannot Pass on synthetic input. Synthetic evidence is allowed only when the criterion itself permits a non-interaction probe
-- `evidence_kind`: one or more of `blocked-intercept | request+response | reread-runtime | reread-image | visual-pair | trace | accessibility | dom-runtime | none`; use `none` and `evidence_ref: none` when no attempt produced evidence
-- for every `create` or `update` row, `Pass` requires `reread-runtime` on the same screen and field. If `reread-image` is used, the inspected image must show the field being judged
-- for every unexecuted row: `reason`, `search_scope` (page, filters, data conditions or the exact preflight boundary), and `unblock` (the concrete step that would permit execution)
-- non-sensitive auth mode
-- absolute evidence directory
-- baseline provenance and replay procedure when a visual pair is required
-- one ordered row per inspected screenshot with its path, exact origin-free `display_route` or explicit omission,
-  criterion, state/region, `capture_method`, effective viewport, role, and comparison result; otherwise the direct trace/a11y/DOM/runtime/request evidence
-- the same per-capture method/effective viewport in the evidence index, including reason and effect for exceptions
-- per visual capture, `annotation: visible (pixel-checked) | none (remain unchanged) | none (target absent by intent)`
-  for the target outline, and `target in frame: yes | no`; an absent target needs its appear/disappear intent and visible surrounding context
-- for sensitive screens, the capture plan's sensitive region and pre-capture clip/mask; never retain a full-page/raw original
+- `contract: <metadata.tigerkit.version>`. 현재 계약은 `1.2.0`입니다.
+- `scope: full-inventory | explicitly-scoped`. 범위를 제한했다면 사용자가 지정한 정확한 범위를 식별합니다.
+- `coverage: planned <N> / executed <n> / covered-by <c> / out-of-scope <o> / not-executed <m>`. 개수는 조사한 전체 항목 목록과 일치하도록 대조해야 합니다.
+- `human_action: none | <N> (criterion IDs, reason and next action)`. 남은 작업을 모두 상위 작업이 담당하면 중첩 반환에서는 `none`을 사용합니다.
+- `phase: baseline | after | acceptance`. 편집 전 변경 전 기준 캡처에 성공했다면 `baseline_capture: Pass`,
+  `verification_complete: false`, `run_id`, `replay_procedure`와 정확한 `next_required`도 반환합니다.
+  활성 상위 작업에 승인된 구현 작업이 남아 있다면 `resume_parent: required`를 포함합니다.
+- `visual_contract: applied | n/a`. `n/a`에는 시각 참조, 변경 전/후,
+  여러 캡처, 시각/반응형 또는 렌더링 영향 분기가 어느 것도 해당하지 않음을 입증하는 사유가 필요합니다.
+- `capture_only_mutation: <description> | none`은 근거 색인에도 기록합니다. 외곽선/레이블,
+  숨김/제거와 런타임 모의를 포함하고, 캡처 전용 변경이 없었다면 `none`을 명시합니다.
+- 승인된 기준 항목마다 `criterion_id`, `result`, `route`, `entry`, `trigger`, `operation: read | create | update`, `input`, `evidence_kind`, `evidence_ref`와 `head`를 포함한 사실 행 하나
+- 사용자의 명시적인 범위 제한만을 이유로 제외한 항목 목록 행에는 `result: out-of-scope`를 사용합니다. 전체 행 대응표에 해당 ID와 범위 제외 사유를 유지합니다.
+- 다른 행으로 검증이 충족되는 행에는 `result: covered-by:<criterion_id>`를 사용하고, 참조한 행의 `evidence_ref`와 `head`를 포함합니다. 전체 행 대응표에 동등성 근거를 보존합니다.
+- `input: trusted | synthetic(<reason>) | not-run`. 합성 입력으로 수행한 제품 상호작용은 Pass가 될 수 없습니다. 합성 근거는 기준 항목 자체가 상호작용 없는 탐침을 허용할 때만 허용됩니다.
+- `evidence_kind`: `blocked-intercept | request+response | reread-runtime | reread-image | visual-pair | trace | accessibility | dom-runtime | none` 중 하나 이상. 어느 시도에서도 근거를 얻지 못했다면 `none`과 `evidence_ref: none`을 사용합니다.
+- 모든 `create` 또는 `update` 행의 `Pass`에는 같은 화면의 같은 필드에서 수행한 `reread-runtime`이 필요합니다. `reread-image`를 사용하면 검사한 이미지에 판정할 필드가 보여야 합니다.
+- 실행하지 않은 모든 행의 `reason`, `search_scope`(페이지, 필터, 데이터 조건이나 정확한 사전 점검 경계), `unblock`(실행을 가능하게 할 구체적인 단계)
+- 민감하지 않은 인증 모드
+- 근거 디렉터리의 절대 경로
+- 시각 비교 쌍이 필요할 때는 변경 전 기준의 출처 정보와 재실행 절차
+- 검사한 스크린샷마다 순서대로 한 행씩 기록한 경로, 오리진을 제외한 정확한 `display_route` 또는 명시적인 생략,
+  기준 항목, 상태/영역, `capture_method`, 실제 적용된 뷰포트, 역할과 비교 결과. 그 외에는 직접적인 추적/접근성/DOM/런타임/요청 근거
+- 예외의 사유와 영향을 포함하여 근거 색인에도 같은 캡처별 방법/실제 적용 뷰포트 기록
+- 시각 캡처마다 대상 외곽선에 대한 `annotation: visible (pixel-checked) | none (remain unchanged) | none (target absent by intent)`와
+  `target in frame: yes | no`. 대상이 없다면 나타남/사라짐 의도와 화면에 보이는 주변 맥락이 필요합니다.
+- 민감한 화면은 캡처 계획의 민감 영역과 캡처 전 자르기/마스킹. 전체 페이지/가공 전 원본은 절대로 보존하지 않습니다.
 - limitation
-- cleanup fact, including exact run-owned server/browser shutdown, recorded launch PID/handle and confirmed exit and any verified residue; no baseline-to-final-head process hold
-- `automated_regression: protected | N/A | exception | unknown` as supplied/verified parent disposition
+- 정확한 실행 소유 서버/브라우저 종료, 기록된 시작 PID/핸들, 확인된 종료와 검증된 잔여물을 포함한 정리 사실. 변경 전 기준부터 최종 헤드까지 프로세스를 유지하지 않습니다.
+- 상위 작업의 제공되거나 검증된 처리 방침인 `automated_regression: protected | N/A | exception | unknown`
 
-Use the parent-provided or discovered inventory row ID verbatim as `criterion_id`. For direct calls without IDs, assign `BV-001`, `BV-002`, ... once in inventory order and preserve that mapping across retries and phases. A standalone no-argument or scope-only call discovers and reconciles the full same-task inventory before runtime startup; explicit narrowing records excluded rows as `out-of-scope`. `tk-prep` assigns IDs before handoff. Keep the same ID in the QA sheet's `criterionId`; map `evidence_ref` to the sheet's `evidence.ref`, and copy `head` unchanged. Never create a second criterion for a failed part of one row.
+상위 작업이 제공하거나 조사로 얻은 항목 목록 행 ID를 그대로 `criterion_id`로 사용합니다. ID가 없는 직접 호출에서는 항목 목록 순서대로 `BV-001`, `BV-002`, ...를 한 번만 부여하고 재시도와 단계 사이에 그 대응을 유지합니다. 인자 없이 또는 범위만 지정한 독립 호출은 런타임 시작 전에 같은 작업의 전체 항목 목록을 조사하고 대조합니다. 명시적인 범위 축소로 제외한 행은 `out-of-scope`로 기록합니다. `tk-prep`은 인계 전에 ID를 부여합니다. QA 시트의 `criterionId`에도 같은 ID를 유지하고, `evidence_ref`를 시트의 `evidence.ref`에 대응시키며, `head`를 변경 없이 복사합니다. 한 행의 일부가 실패했다고 두 번째 기준 항목을 만들지 않습니다.
 
-When runtime evidence exists, maintain one bounded run-owned `README.md` as the evidence index and canonical full row map. Include each row's full fields above, detailed facts, capture mapping and any non-executed-row details. A standalone chat result may show only the compact row summary below and substitute the README's complete absolute path for the full map. Do not add other Markdown files to the evidence directory.
+런타임 근거가 있으면 범위를 한정한 실행 소유 `README.md` 하나를 근거 색인과 전체 행 대응표의 정본으로 유지합니다. 각 행에 위의 모든 필드, 상세 사실, 캡처 대응 관계와 실행하지 않은 행의 세부 사항을 포함합니다. 독립 대화 결과에는 아래의 간결한 행 요약만 보여 주고 전체 대응표 대신 README의 완전한 절대 경로를 제시할 수 있습니다. 근거 디렉터리에 다른 Markdown 파일을 추가하지 않습니다.
 
-For a baseline/after comparison, use one compact row per scene:
-`scene | baseline observed value | after observed value | verdict`. Read observed values from
-the DOM/runtime at capture time; use exactly that phase's observed-value text as its capture
-label, preserving required redaction. Use `match`, `intended change` or `pre-existing issue` only
-when supported; report `regression` or `unverifiable` for an unexpected change or missing evidence.
-These scene descriptions never replace criterion statuses or turn a pre-existing issue into `Pass`.
-Pixel-check labels even when the intent requires no target outline; disclose labels in
-`capture_only_mutation`. A capture whose criterion target is out of frame cannot support that
-visual criterion, even when DOM evidence exists. For appear/disappear's absent side, prove the
-expected absence in the visible surrounding context rather than inventing an off-screen target.
+변경 전/후 비교에는 장면마다 간결한 행 하나를 사용합니다.
+`scene | baseline observed value | after observed value | verdict`. 관찰값은 캡처 시점의
+DOM/런타임에서 읽습니다. 해당 단계의 관찰값 문구를 정확히 그대로 캡처 레이블로 사용하고
+필수 가림 처리를 유지합니다. 근거가 있을 때만 `match`, `intended change`나 `pre-existing issue`를 사용합니다.
+예상하지 못한 변경이나 누락된 근거는 `regression` 또는 `unverifiable`로 보고합니다.
+이 장면 설명은 기준 항목 상태를 대신하거나 기존 문제를 `Pass`로 바꾸지 않습니다.
+의도상 대상 외곽선이 필요하지 않더라도 레이블은 픽셀로 확인하고,
+`capture_only_mutation`에 레이블을 공개합니다. 기준 대상이 프레임 밖에 있는 캡처는 DOM 근거가 있더라도
+해당 시각 기준을 뒷받침할 수 없습니다. 나타남/사라짐 비교에서 대상이 없는 쪽은 화면 밖 대상을 만들어 내지 말고,
+화면에 보이는 주변 맥락에서 예상된 부재를 입증합니다.
 
-An optional HTML gallery or contact sheet is a derived view and never replaces the required
-`README.md` or inspection of originals. Return absolute evidence paths; do not open files,
-galleries or pages in the user's own browser or through a desktop opener unless the user
-explicitly asks. This does not prevent the run-owned headless capture/replay required by verification.
+선택적 HTML 갤러리나 콘택트 시트는 파생 보기이며, 필수 `README.md`나 원본 검사를 대신하지 않습니다.
+근거의 절대 경로를 반환합니다. 사용자가 명시적으로 요청하지 않았다면 사용자 소유 브라우저나
+데스크톱 열기 도구로 파일, 갤러리나 페이지를 열지 않습니다.
+이 금지는 검증에 필요한 실행 소유 헤드리스 캡처/재실행을 막지 않습니다.
 
-A successful baseline is intermediate evidence, never acceptance. The verifier must release
-its owned server, context and browser before returning phase evidence to the parent. A later
-final-head replay uses new run-owned runtime resources and the saved baseline/replay conditions;
-the parent must preserve evidence provenance, not PID or live browser handles.
+성공한 변경 전 기준은 중간 근거일 뿐 최종 판정이 아닙니다. 검증기는 상위 작업에 단계 근거를 반환하기 전에
+자신이 소유한 서버, 컨텍스트와 브라우저를 해제해야 합니다. 이후 최종 헤드 재실행에는 새로운 실행 소유
+런타임 자원과 저장된 변경 전 기준/재실행 조건을 사용합니다. 상위 작업은 PID나 살아 있는 브라우저 핸들이
+아니라 근거의 출처 정보를 보존해야 합니다.
 
-Missing required identity/provenance or return metadata makes the phase `Unverifiable`, even when a screenshot
-was inspected. Report the missing fields and collect them before returning phase `Pass`; a limitation note
-or `verification_complete: false` does not waive the required evidence contract.
+필수 식별 정보/출처 정보나 반환 메타데이터가 없으면 스크린샷을 검사했더라도 해당 단계는 `Unverifiable`입니다.
+단계 `Pass`를 반환하기 전에 누락된 필드를 보고하고 수집합니다. 한계 메모나
+`verification_complete: false`는 필수 근거 계약을 면제하지 않습니다.
 
-A successful pre-edit baseline proves only that the reference capture exists. Return
-`next_required: implement candidate, then start fresh runtime resources and capture after with the saved baseline/replay`; do not use aggregate completion wording.
-For nested results, use the phase fields without a standalone `## Verdict` or user-facing completion summary;
-`status: Pass` describes only the requested phase. `resume_parent` is an instruction to the owner, not a scheduler signal.
-When the user requested only standalone capture, finish that bounded request without inventing a parent or implementation approval.
-Only the matching after comparison or standalone acceptance phase may set `verification_complete: true` when every
-criterion is covered. An after result binds the same `run_id`, `baseline_provenance`, and `replay_procedure`. A
-baseline-only result cannot satisfy final acceptance or authorize product edits, commits, or publication by itself.
+성공한 편집 전 변경 전 기준은 참조 캡처가 존재한다는 사실만 입증합니다.
+`next_required: implement candidate, then start fresh runtime resources and capture after with the saved baseline/replay`를 반환하고 종합 완료 표현을 사용하지 않습니다.
+중첩 결과에서는 독립 결과용 `## Verdict`나 사용자 대상 완료 요약 없이 단계 필드를 사용합니다.
+`status: Pass`는 요청된 단계만 설명합니다. `resume_parent`는 담당자에 대한 지시이지 스케줄러 신호가 아닙니다.
+사용자가 독립 캡처만 요청했다면 상위 작업이나 구현 승인을 만들어 내지 말고 그 한정된 요청을 끝냅니다.
+일치하는 변경 후 비교나 독립 최종 판정 단계에서 모든 기준 항목이 충족될 때만
+`verification_complete: true`를 설정할 수 있습니다. 변경 후 결과는 같은 `run_id`, `baseline_provenance`와
+`replay_procedure`에 연결됩니다. 변경 전 기준만 있는 결과는 최종 판정을 충족하거나 그 자체로 제품 편집, 커밋이나 발행을 승인할 수 없습니다.
 
-When an inspected image is required for PR publication and its represented criterion is `Pass`, return the
-producer-neutral manifest from [publication evidence](../../tk-verification-guidance/references/publication-evidence.md); do not upload it. Direct
-trace, accessibility-tree, DOM/runtime, and request/response evidence remains in the ordinary verifier result and does
-not trigger the image uploader. If a parent specifically requires an image that cannot directly prove the criterion, do
-not create a ceremonial screenshot; return the image-publication requirement as `Blocked | Unverifiable`. For any
-non-`Pass` criterion, preserve owned failure evidence, return its real status, and never emit a `verification_status:
-Pass` manifest entry for it.
+검사한 이미지가 PR 발행에 필요하고 그 이미지가 나타내는 기준 항목이 `Pass`이면
+[발행 근거](../../tk-verification-guidance/references/publication-evidence.md)의 생성자 중립 매니페스트를 반환합니다. 업로드하지 않습니다.
+직접적인 추적, 접근성 트리, DOM/런타임과 요청/응답 근거는 일반 검증기 결과에 남기며
+이미지 업로더를 작동시키지 않습니다. 상위 작업이 기준 항목을 직접 입증할 수 없는 이미지를 구체적으로 요구해도
+형식적인 스크린샷을 만들지 않습니다. 이미지 발행 요구 사항을 `Blocked | Unverifiable`로 반환합니다.
+`Pass`가 아닌 기준 항목은 소유한 실패 근거를 보존하고 실제 상태를 반환하며, 이에 대해 절대로
+`verification_status:
+Pass` 매니페스트 항목을 출력하지 않습니다.
 
-A standalone result, with no active owner task to resume, starts with required `## Verdict` and
-exact `Status: <token>`. Preserve the contract, head/environment identity, scope and coverage
-counts. Summarize actual verification, material limits, cleanup or residue and outstanding user
-actions without empty sections. Keep the complete criterion row map in the evidence README.
+재개할 활성 담당 작업이 없는 독립 결과는 필수 제목인 `## Verdict`와
+정확한 `Status: <token>`으로 시작합니다. 계약, 헤드/환경 식별 정보, 범위와 검증 범위 개수를 보존합니다.
+빈 절 없이 실제 검증, 실질적 한계, 정리나 잔여물과 사용자에게 남은 행동을 요약합니다.
+완전한 기준 항목 행 대응표는 근거 README에 유지합니다.
 
-For each unexecuted row, put its reason, `search_scope`, and `unblock` in the full map, and include
-its ID and next action when the user must act. Preserve any owning contract's exact status footer.
-Standalone baseline success remains capture-only with `verification_complete: false`.
-Never promote a result to `Pass` without required runtime evidence.
+실행하지 않은 각 행의 사유, `search_scope`와 `unblock`을 전체 대응표에 넣고,
+사용자가 행동해야 할 때는 해당 ID와 다음 행동을 포함합니다. 담당 계약에 정확한 상태 꼬리말이 있으면 이를 보존합니다.
+독립적인 변경 전 기준 성공은 여전히 캡처 전용이며 `verification_complete: false`를 유지합니다.
+필수 런타임 근거 없이 결과를 절대로 `Pass`로 올리지 않습니다.
 
-| Status | Meaning |
+| 상태 | 의미 |
 | --- | --- |
-| `Pass` | Current inspected evidence covers every approved browser criterion; if `scope` is `explicitly-scoped`, this is not a full-inventory pass |
-| `Fail` | Current runtime evidence violates a criterion |
-| `Blocked` | A user-owned safety or target decision is required before execution |
-| `Unverifiable` | Required headless auth, environment, or evidence cannot be established |
+| `Pass` | 현재 검사한 근거가 승인된 모든 브라우저 기준 항목을 충족합니다. `scope`가 `explicitly-scoped`이면 전체 항목 목록의 통과는 아닙니다. |
+| `Fail` | 현재 런타임 근거가 기준 항목을 위반합니다. |
+| `Blocked` | 실행 전에 사용자가 안전이나 대상에 관한 결정을 내려야 합니다. |
+| `Unverifiable` | 필수 헤드리스 인증, 환경이나 근거를 수립할 수 없습니다. |
 
-Do not cause unauthorized payments, external communications, destructive mutations, production-data mutations, or account/permission changes.
+승인받지 않은 결제, 외부 통신, 파괴적 변경, 운영 데이터 변경이나 계정/권한 변경을 일으키지 않습니다.
 

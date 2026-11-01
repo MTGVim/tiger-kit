@@ -1,45 +1,43 @@
-# Code and Reference Components
+<a id="code-and-reference-components"></a>
+# 코드와 참조 구성 요소
 
-Use only for the components present in the artifact; HTML Output owns the shared shell.
+산출물에 있는 구성 요소에만 사용합니다. 공통 셸은 HTML 출력이 담당합니다.
 
-## Code excerpts
+<a id="code-excerpts"></a>
+## 코드 발췌
 
-Generate static code markup with [the code helper](../scripts/highlight_code.py):
+[코드 도우미](../scripts/highlight_code.py)로 정적 코드 마크업을 생성합니다.
 `python3 <tk-writing>/scripts/highlight_code.py source.kt --language kotlin --line-start 1`.
-Resolve `<tk-writing>` to that owner in the current installed collection. Use `.ht-code` with unchanged shared CSS/script.
-Color known Kotlin, JavaScript/TypeScript, Python and JSON tokens; mark `diff` additions/deletions.
-Leave unknown languages plain. This lexical aid does not validate syntax. Line numbers are CSS
-metadata. Compare parsed code `textContent` with the exact source before/after generation and
-interaction. Explicitly normalize CR/CRLF/NUL before establishing that baseline: HTML cannot
-preserve them. Preserve cited line numbers.
+`<tk-writing>`은 현재 설치된 모음의 해당 소유 스킬로 해석합니다. 변경하지 않은 공통 CSS/script와 함께 `.ht-code`를 사용합니다.
+알려진 Kotlin, JavaScript/TypeScript, Python과 JSON 토큰에 색을 입히고 `diff` 추가/삭제를 표시합니다.
+알 수 없는 언어는 일반 텍스트로 둡니다. 이 어휘 보조 기능은 구문을 검증하지 않습니다. 줄 번호는 CSS 메타데이터입니다.
+생성 및 상호작용 전후에 파싱한 코드 `textContent`를 정확한 원본과 비교합니다.
+기준을 정하기 전에 CR/CRLF/NUL을 명시적으로 정규화합니다. HTML은 이를 보존할 수 없습니다. 인용한 줄 번호를 보존합니다.
 
-Default to horizontal scrolling. The shared script adds one header with a `data-label` filename
-or label (fallback: numbered code label), a copy icon and a `줄바꿈` icon. Both buttons have
-accessible names; copy announces success/failure through `aria-live` and preserves the exact
-source including trailing newlines. Wrap has `aria-pressed` and hanging indentation; keep no
-page-wide preference. Lexical roles include calls, properties/keys, types, literals, punctuation
-and JavaScript/TypeScript template interpolation; ambiguous syntax is not parser-validated. Without JS,
-retain static colors and scrolling with no inert buttons. Check long/blank lines, diff and unknown
-languages, wrap-mode overflow and token contrast >=4.5 against `--code-bg` in both themes.
+기본적으로 가로 스크롤을 사용합니다. 공통 script는 `data-label` 파일명이나 레이블(대체값: 번호가 붙은 코드 레이블), 복사 아이콘과 `줄바꿈` 아이콘이 있는 헤더 하나를 추가합니다.
+두 버튼 모두 접근 가능한 이름이 있습니다. 복사는 `aria-live`로 성공/실패를 알리고 끝의 줄바꿈을 포함한 정확한 원본을 보존합니다.
+줄바꿈에는 `aria-pressed`와 내어쓰기가 있으며 페이지 전체 선호를 유지하지 않습니다.
+어휘 역할에는 호출, 속성/키, 타입, literal, 문장부호와 JavaScript/TypeScript 템플릿 보간이 포함됩니다.
+모호한 구문은 파서로 검증하지 않습니다. JS가 없으면 작동하지 않는 버튼 없이 정적 색과 스크롤을 유지합니다.
+긴 줄/빈 줄, diff와 알 수 없는 언어, 줄바꿈 모드 넘침과 두 테마에서 `--code-bg`에 대한 토큰 대비 >=4.5를 확인합니다.
 
-## Citations and references
+<a id="citations-and-references"></a>
+## 인용과 참조
 
-For document prose, place numbered superscript citations beside claims where the reader needs
-an immediate source, especially disputed, consequential or precisely quoted claims. Collect
-verified titles, links and relevant date/revision metadata in a numbered bottom `참고문헌`
-section. For other sourced explanation, name the supported section or exact claim in the reference
-metadata; use a citation beside the claim whenever section-level binding would be ambiguous.
-Keep every external claim traceable; a source list without that binding is insufficient.
-Research reports retain their checker-owned requirement that each entry has citation backlinks. Reuse a source number, assigning a unique ID to each citation occurrence.
-For a source cited once, use native `<sup id="cite-1-1"><a href="#ref-1" aria-label="참고문헌 1">[1]</a></sup>`.
-For repeated citations, keep source 1 but show occurrence labels `[1.1]`, `[1.2]` in both the
-body superscripts and matching backlinks; accessible names identify source and occurrence.
-Default each entry to two logical rows: a linked title followed by a muted `.ht-ref-meta`
-block with needed institution/version/date, source line range, supported section or claim and
-short backlinks for actual citation occurrences. Let long titles and metadata wrap naturally;
-never truncate, clamp to two physical lines or use `white-space: nowrap`.
-Keep internal inspection/adoption notes in source records and reader-relevant limits beside claims.
-An entry with section-level support only needs no fabricated citation or backlink.
+문서 산문에서는 독자에게 즉각적인 출처가 필요한 주장, 특히 논쟁적이거나 영향이 크거나 정확히 인용한 주장 옆에 번호가 붙은 위첨자 인용을 둡니다.
+검증한 제목, 링크와 관련 날짜/revision 메타데이터를 하단의 번호가 붙은 `참고문헌` 섹션에 모읍니다.
+그 밖의 출처 기반 설명은 참조 메타데이터에 뒷받침하는 섹션이나 정확한 주장을 명시합니다.
+섹션 수준 연결이 모호할 때는 주장 옆에 인용을 사용합니다. 모든 외부 주장을 추적할 수 있게 유지합니다. 이러한 연결 없는 출처 목록만으로는 부족합니다.
+조사 보고서는 각 항목에 인용 역링크가 있어야 한다는 검사 담당자의 요구를 유지합니다.
+출처 번호를 재사용하고 각 인용 위치에 고유 ID를 부여합니다.
+한 번 인용한 출처에는 네이티브 `<sup id="cite-1-1"><a href="#ref-1" aria-label="참고문헌 1">[1]</a></sup>`를 사용합니다.
+반복 인용은 출처 1을 유지하되 본문 위첨자와 대응 역링크 양쪽에 위치 레이블 `[1.1]`, `[1.2]`를 표시합니다.
+접근 가능한 이름은 출처와 위치를 식별합니다.
+기본적으로 각 항목은 논리적인 두 행으로 구성합니다. 링크된 제목 뒤에 필요한 기관/버전/날짜, 원본 줄 범위,
+뒷받침하는 섹션이나 주장과 실제 인용 위치의 짧은 역링크를 담은 은은한 `.ht-ref-meta` 블록을 둡니다.
+긴 제목과 메타데이터는 자연스럽게 줄바꿈합니다. 잘라내거나 실제 두 줄로 제한하거나 `white-space: nowrap`을 사용하지 않습니다.
+내부 검사/채택 메모는 출처 기록에 두고 독자에게 필요한 한계는 주장 옆에 둡니다.
+섹션 수준의 뒷받침만 있는 항목에는 가짜 인용이나 역링크가 필요하지 않습니다.
 
 ```html
 <li id="ref-1"><a href="https://example.org/guide">자료 제목</a>
@@ -49,38 +47,32 @@ An entry with section-level support only needs no fabricated citation or backlin
 <a href="#cite-1-2" aria-label="참고문헌 1의 두 번째 인용으로 복귀">[1.2]</a>
 </span></span></li>
 ```
-For repeated glossary/appendix links, number occurrences per destination in document order:
-`<a id="mention-foo-1" href="#foo">FOO<sup>[1]</sup></a>`, then `[2]`. Put matching native
-backlinks `[1]`, `[2]` inside `.ht-backlinks[data-ht-backlinks="foo"]` by the explanation
-(inside the `dd` for a `dt`). The attribute names the destination ID, without `#`.
-With only one occurrence, omit the occurrence number and label the backlink `본문으로 돌아가기`.
-Keep all numbers, IDs and return links in authored HTML, not JS-generated markup. The shared
-script adds `읽던 곳` only to the matching backlink after a same-tab forward activation;
-fresh loads/deep links have no inferred origin. It clears the marker on return/other navigation
-and preserves native history, keyboard activation and no-JS links. Backlink previews show the
-origin section and surrounding sentence. Check repeated terms and sources, single occurrences,
-switching origins, reload, history, modified clicks and no-JS return navigation.
-Render each reference item slightly smaller than body text, at `.875em` relative to the body
-with `line-height: 1.55`; keep the text readable and allow long titles and URLs to wrap. Keep its
-return link visible without letting it dominate the source details. Verify every forward/back target
-and claim-source relationship; a bibliography alone is not attribution. Keep code evidence bound to its base/head SHA and `path:line` in the referenced entry;
-do not require full diff/source duplication. A supplied explanation target is content, not a
-replacement for citations. For document HTML, inline the shared theme script and CSS so that
-hovering over a numbered citation, glossary/appendix item or citation backlink, or focusing it
-with the keyboard, previews its destination in a bounded, viewport-safe tooltip. Links to `dt`
-and `li` targets opt in automatically; use `data-ht-preview` on other same-document links.
-Use a one-line title and roughly 200-character summary derived from the target (a term uses
-its definition; a backlink uses its surrounding sentence). Essential explanation stays inline. Exclude return links from its displayed
-text, preserve existing `aria-describedby` values, and derive text from the rendered reference
-rather than injecting external HTML. Escape closes the preview; touching or clicking the native
-link still navigates to the full reference, including with JavaScript disabled. On a backlink
-return, suppress the outline on the citation superscript alone, without suppressing the visible
-keyboard focus of its anchor or other interactive elements. Verify pointer, keyboard, mobile,
-no-JavaScript and forward/back navigation. Use independently authored assets: functional UX
-inspiration does not authorize copying another site's code, content, branding or visual skin.
+반복되는 용어집/부록 링크에는 목적지별로 문서 순서에 따라 위치 번호를 붙입니다.
+`<a id="mention-foo-1" href="#foo">FOO<sup>[1]</sup></a>` 다음에는 `[2]`를 사용합니다.
+설명 옆의 `.ht-backlinks[data-ht-backlinks="foo"]` 안에 대응하는 네이티브 역링크 `[1]`, `[2]`를 넣습니다(`dt`의 경우 `dd` 안에 둡니다).
+속성은 `#` 없이 목적지 ID를 지정합니다.
+위치가 하나뿐이면 위치 번호를 생략하고 역링크 레이블을 `본문으로 돌아가기`로 지정합니다.
+모든 번호, ID와 복귀 링크는 JS 생성 마크업이 아니라 작성한 HTML에 둡니다.
+공통 script는 같은 탭에서 정방향 링크를 활성화한 뒤 대응하는 역링크에만 `읽던 곳`을 추가합니다.
+새 로드/딥 링크에서는 출발점을 추론하지 않습니다. 복귀/다른 탐색 시 표시를 지우고 네이티브 이력, 키보드 활성화와 JS 없는 링크를 보존합니다.
+역링크 미리보기는 출발 섹션과 주변 문장을 보여 줍니다.
+반복 용어와 출처, 단일 위치, 출발점 전환, 새로고침, 이력, 보조키 클릭과 JS 없는 복귀 탐색을 확인합니다.
+각 참조 항목은 본문보다 약간 작은 본문 대비 `.875em`, `line-height: 1.55`로 렌더링합니다.
+텍스트를 읽을 수 있게 유지하고 긴 제목과 URL이 줄바꿈되게 합니다. 복귀 링크는 보이되 출처 상세 정보보다 두드러지지 않게 합니다.
+모든 정방향/역방향 대상과 주장-출처 관계를 검증합니다. 참고문헌만으로는 출처 표시가 되지 않습니다.
+코드 근거는 참조 항목의 base/head SHA와 `path:line`에 연결하고 전체 diff/원본 복제를 요구하지 않습니다.
+제공된 설명 대상은 내용이며 인용을 대체하지 않습니다.
+문서 HTML에서는 공통 테마 script와 CSS를 인라인으로 넣어 번호 인용, 용어집/부록 항목이나 인용 역링크에 호버하거나
+키보드로 포커스하면 범위가 제한되고 뷰포트에 안전한 툴팁으로 목적지를 미리 보여 줍니다.
+`dt`와 `li` 대상 링크는 자동으로 적용됩니다. 다른 동일 문서 링크에는 `data-ht-preview`를 사용합니다.
+대상에서 도출한 한 줄 제목과 약 200자 요약을 사용합니다(용어에는 정의를, 역링크에는 주변 문장을 사용합니다).
+필수 설명은 본문에 남깁니다. 표시 텍스트에서 복귀 링크를 제외하고 기존 `aria-describedby` 값을 보존하며 외부 HTML을 주입하지 않고 렌더링한 참조에서 텍스트를 도출합니다.
+Escape는 미리보기를 닫습니다. 네이티브 링크를 터치하거나 클릭하면 JavaScript가 꺼져 있어도 전체 참조로 계속 이동합니다.
+역링크로 복귀할 때는 인용 위첨자에만 외곽선이 생기지 않도록 하고, 앵커나 다른 상호작용 요소의 보이는 키보드 포커스를 억제하지 않습니다.
+포인터, 키보드, 모바일, JavaScript 없는 상태와 정방향/역방향 탐색을 검증합니다.
+독립적으로 작성한 자산을 사용합니다. 기능적 UX에서 영감을 받았다고 다른 사이트의 코드, 내용, 브랜드나 시각 스킨을 복사할 권한이 생기지는 않습니다.
 
-The shared script opens external HTTP(S) links in a new tab with `noopener noreferrer`, a
-visible marker and an accessible new-tab notice; same-origin links retain native behavior.
-Local `file://` documents hide sharing even if the browser advertises file-share support;
-download remains available. Other secure contexts still require successful capability detection.
-
+공통 script는 외부 HTTP(S) 링크를 `noopener noreferrer`, 보이는 표시와 접근 가능한 새 탭 안내가 있는 새 탭으로 엽니다.
+동일 origin 링크는 네이티브 동작을 유지합니다.
+로컬 `file://` 문서는 브라우저가 파일 공유 지원을 알리더라도 공유를 숨기며 다운로드는 계속 이용할 수 있습니다.
+다른 보안 컨텍스트에서도 기능 감지 성공이 필요합니다.

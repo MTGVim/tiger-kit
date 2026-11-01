@@ -1,34 +1,35 @@
-# Accuracy review rubric
+<a id="accuracy-review-rubric"></a>
+# 정확성 검토 기준
 
-Read this entire rubric. Review the exact saved artifact, extracted visible text including
-image alt text, figures/captures and pinned evidence. Receive the reader's goal, knowledge,
-constraints and supplied examples, not the author's intended verdict. Inspect actual content
-and any revealed answers; a successful renderer or attractive figure is not correctness.
+이 기준 전체를 읽습니다. 정확히 저장된 산출물, 이미지 대체 텍스트를 포함하여 추출한
+가시적 텍스트, 그림·캡처와 고정된 근거를 검토합니다. 작성자가 의도한 판정이 아니라 독자의 목표, 지식,
+제약과 제공된 예시를 전달받습니다. 실제 콘텐츠와
+공개된 답을 확인합니다. 렌더링 성공이나 보기 좋은 그림이 정확성을 뜻하지는 않습니다.
 
-| Code | Meaning | Check |
+| 코드 | 의미 | 확인 사항 |
 | --- | --- | --- |
-| H | Hallucination or unsupported claim | Evidence supports the actual assertion and version. |
-| B | Behavior or causal error | Calls, conditions, state, invariants and outcomes match sources. |
-| O | Omitted prerequisite/condition | The reader can follow the mechanism or first action. |
-| N | Name, number or notation error | Terms, units, labels and quantities are grounded. |
-| V | Visual/content mismatch | Geometry, arrows, positions and exercise inputs teach the same claim. |
-| P | Presentation issue | Readability, contrast or density; distinguish meaning loss from preference. |
-| R | Renderer-owned constraint | Fixed chrome, locale fallback or supported-format limitation. |
+| H | 환각 또는 근거 없는 주장 | 근거가 실제 주장과 버전을 뒷받침하는지 확인합니다. |
+| B | 동작 또는 인과 오류 | 호출, 조건, 상태, 불변 조건과 결과가 출처와 일치하는지 확인합니다. |
+| O | 빠진 선행 요건·조건 | 독자가 메커니즘이나 첫 행동을 따라갈 수 있는지 확인합니다. |
+| N | 이름, 숫자 또는 표기 오류 | 용어, 단위, 라벨과 수량에 근거가 있는지 확인합니다. |
+| V | 시각 요소와 콘텐츠의 불일치 | 기하 구조, 화살표, 위치와 연습 문제 입력이 같은 주장을 가르치는지 확인합니다. |
+| P | 표현 문제 | 가독성, 대비 또는 밀도를 확인하고, 의미 손실과 선호를 구별합니다. |
+| R | 렌더러 소유 제약 | 고정 UI, locale 대체 동작 또는 지원 형식의 한계를 확인합니다. |
 
-Use `high` for a materially wrong conclusion/action, `medium` for a misleading step or
-important missing condition, `low` for a localized factual error, and `suspect` when evidence
-cannot yet decide. Severity never exempts a supported H/B/O/N/V error from correction.
-Classify by consequence, not symbol intuition: a wrong author-drawn label is N/V, while
-immutable renderer UI is R. Do not count fixed renderer wording as an authored content error.
-A P/R limitation that makes required content unreadable still prevents successful delivery;
-an incidental untranslated control can be disclosed without inventing a factual defect.
+실질적으로 잘못된 결론·행동에는 `high`, 오해를 유발하는 단계나
+중요한 조건 누락에는 `medium`, 국소적인 사실 오류에는 `low`, 근거로
+아직 판단할 수 없으면 `suspect`를 사용합니다. 심각도와 관계없이 근거로 확인된 H/B/O/N/V 오류는 수정해야 합니다.
+기호에 대한 직관이 아니라 결과에 따라 분류합니다. 작성자가 그린 잘못된 라벨은 N/V이고,
+변경할 수 없는 렌더러 UI는 R입니다. 렌더러의 고정 문구를 작성 콘텐츠의 오류로 세지 않습니다.
+P/R 한계로 필수 콘텐츠를 읽을 수 없다면 여전히 성공적으로 전달할 수 없습니다.
+부수적으로 번역되지 않은 컨트롤은 사실 결함을 지어내지 않고 한계로 공개할 수 있습니다.
 
-For follow-up pages, judge each learner belief and its reasoning separately. A correct result
-with a wrong reason is not mastery; missing reasoning is unobserved. Verify whether the page
-corrects the supported common misconception and provides necessary conditions and a new
-transfer case. Do not infer learning from reading, agreement or revealing an answer.
+후속 페이지에서는 학습자의 각 생각과 그 추론을 별도로 판단합니다. 결과가 맞아도
+이유가 틀리면 숙달이 아닙니다. 추론이 빠져 있으면 미관찰입니다. 페이지가
+근거로 확인된 공통 오개념을 바로잡고 필요한 조건과 새로운
+전이 사례를 제공하는지 확인합니다. 읽기, 동의 또는 답 공개만으로 학습을 추론하지 않습니다.
 
-Return:
+다음을 반환합니다.
 
 ```text
 artifact path + SHA-256 / evidence snapshot:
@@ -37,9 +38,9 @@ location | code | severity | taught claim | evidence | reader consequence | mini
 renderer-owned limitations:
 ```
 
-Fix all supported content findings, including low ones. Investigate suspect findings or
-retain `Unverifiable`. High/medium/suspect corrections return to the same reviewer for changed
-scope, then one whole-artifact check. Verify low corrections against evidence and final bytes.
-Preserve unaffected titles, labels and register; review is not a Korean rewriting pass.
-Bound repair to three rounds; unresolved findings end as `Fail | Unverifiable`, not silent
-acceptance. An unavailable independent reviewer cannot be replaced by author self-approval.
+낮은 심각도를 포함하여 근거로 확인된 콘텐츠 발견 사항을 모두 수정합니다. 의심 사항을 조사하거나
+`Unverifiable`을 유지합니다. high/medium/suspect 항목을 수정하면 같은 검토자에게 변경된
+범위를 다시 검토받고, 이어서 산출물 전체를 한 번 확인합니다. low 항목의 수정은 근거와 최종 바이트에 대조하여 확인합니다.
+영향받지 않은 제목, 라벨과 문체를 보존합니다. 검토는 한국어 문장 다듬기 절차가 아닙니다.
+수정은 세 차례로 제한합니다. 미해결 발견 사항은 묵시적으로
+수용하지 않고 `Fail | Unverifiable`로 끝냅니다. 독립 검토자를 이용할 수 없다고 작성자의 자기승인으로 대체할 수 없습니다.

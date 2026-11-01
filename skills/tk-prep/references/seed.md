@@ -1,43 +1,28 @@
-# Ready Seed Contract
+<a id="ready-seed-contract"></a>
+# Ready Seed 계약
 
-Read this reference only when durable context is `seed`, execution is `sdd`, or the approved outcome is `handoff`.
+지속 맥락이 `seed`이거나, 실행이 `sdd`이거나, 승인된 결과가 `handoff`일 때만 이 참조를 읽습니다.
 
-Write only `.tigerkit/seed.md`, only after approval, atomically, and reread it. Every new Seed starts with
-`<!-- tigerkit:seed -->`, names a deterministic current-task identity, and is `Status: Ready`. It must be self-contained
-for a fresh lower-capability executor and preserve:
+승인 후에만 `.tigerkit/seed.md`만 원자적으로 쓰고 다시 읽습니다. 모든 새 Seed는 `<!-- tigerkit:seed -->`로 시작하고 결정적인 현재 작업 식별 정보를 명시하며 `Status: Ready` 상태여야 합니다. 새로 시작하는 역량이 더 낮은 실행자가 독립적으로 이해할 수 있어야 하며 다음을 보존해야 합니다.
 
-- source, goal/background, exact checkout or PR head, and current evidence/entry points;
-- scope, exclusions, do-not-change constraints, and approved material decisions with reasons;
-- selected prototype decisions and evidence citations, when relevant, following the already-loaded selection-handoff contract;
-- implementation direction and only material Reuse/Simplicity/Tests/Security/Experience gaps, exceptions, or decisions;
-- AC with per-AC verification, runtime verification plan (verifier, baseline/replay, evidence location), exceptions, traps, and exact UI literals;
-- a semantic Review Plan: change intent, original incident or expected scenario, expected changed outcome,
-  `must-not-change` behavior or visual regions, change-owned risk edges, required evidence, and known uncertainty;
-- execution recommendation and, for SDD, the private protocol's exact `## Execution` grammar.
+- 출처, 목표/배경, 정확한 checkout 또는 PR head, 현재 근거/진입점을 보존합니다.
+- 범위, 제외 사항, 변경 금지 제약과 승인된 중요 결정 및 이유를 보존합니다.
+- 관련이 있으면 이미 읽은 선택 인계 계약에 따라 선택한 프로토타입 결정과 근거 인용을 보존합니다.
+- 구현 방향과 중요한 Reuse/Simplicity/Tests/Security/Experience의 공백, 예외 또는 결정만 보존합니다.
+- AC별 검증이 있는 AC, 런타임 검증 계획(검증 담당자, baseline/replay, 근거 위치), 예외, 함정과 정확한 UI 리터럴을 보존합니다.
+- 의미 중심의 Review Plan을 보존합니다. 여기에는 변경 의도, 원래 사고 또는 예상 시나리오, 예상되는 변경 결과, `must-not-change` 동작이나 시각 영역, 변경 책임 범위의 위험 경계, 필수 근거와 알려진 불확실성이 포함됩니다.
+- 실행 권고와, SDD의 경우 비공개 프로토콜의 정확한 `## Execution` 문법을 보존합니다.
 
-Do not add readiness rows merely to state that an axis is ready or irrelevant. Never store reviewer count, transcript,
-provider/model ID, reasoning intensity, secrets, worker/wave routing, receipts, or progress in a Seed. Before approval, preserve an existing
-Ready Seed byte-for-byte and create no `Status: Pending` file. Replace only a proven TigerKit-owned Seed.
-Before consuming an existing Seed, establish its current-task identity; before replacing it, also establish ownership.
-If that required evidence is missing or ambiguous, preserve the file and return `Blocked` for the Seed-dependent path.
-The owning SKILL.md handles direct/no-Seed without loading this reference or consuming an existing Seed.
+어떤 축이 준비되었거나 관련 없음을 나타내기 위한 준비 상태 행을 추가하지 않습니다. Seed에 검토자 수, 대화 기록, provider/model ID, reasoning 강도, 비밀, worker/wave routing, 영수증 또는 진행 상황을 저장하지 않습니다. 승인 전에는 기존 Ready Seed를 바이트 단위로 보존하고 `Status: Pending` 파일을 만들지 않습니다. TigerKit 소유임이 입증된 Seed만 교체합니다.
+기존 Seed를 사용하기 전에 현재 작업 식별 정보를 확립합니다. 교체 전에는 소유권도 확립합니다.
+필수 근거가 없거나 모호하면 파일을 보존하고 Seed 의존 경로에 대해 `Blocked`를 반환합니다.
+담당 SKILL.md는 이 참조를 읽거나 기존 Seed를 사용하지 않고 direct/no-Seed를 처리합니다.
 
-## Decision density
+<a id="decision-density"></a>
+## 결정의 밀도
 
-Persist decisions the executor cannot safely reconstruct: exact interfaces/signatures, schemas,
-spec-fixed values, invariants, compatibility/migration constraints, test names and assertions,
-observable acceptance, verification commands and passing results, review risks and Unit dependencies.
-Point to current paths and symbols rather than copying ordinary function/component bodies, glue,
-mechanical mappings or the same implementation sequence into multiple Units. Self-contained means
-unambiguous constraints, not prewritten implementation. If an approved algorithm or ordering is
-itself material to correctness, security or compatibility, retain its minimum pseudocode,
-transitions or invariants without expanding unrelated boilerplate.
+실행자가 안전하게 재구성할 수 없는 결정을 영속화합니다. 정확한 인터페이스/시그니처, 스키마, 명세에서 고정한 값, 불변 조건, 호환성/마이그레이션 제약, 테스트 이름과 assertion, 관찰 가능한 인수 조건, 검증 명령과 통과 결과, 검토 위험과 Unit 의존성이 여기에 해당합니다.
+일반적인 함수/컴포넌트 본문, 연결 코드, 기계적 매핑이나 같은 구현 순서를 여러 Unit에 복사하지 말고 현재 경로와 심볼을 가리킵니다. 독립적으로 이해할 수 있다는 것은 제약이 명확하다는 뜻이며 구현을 미리 작성한다는 뜻이 아닙니다. 승인된 알고리즘이나 순서 자체가 정확성, 보안 또는 호환성에 중요하면 무관한 반복 코드를 늘리지 않고 최소한의 의사 코드, 전이 또는 불변 조건을 유지합니다.
 
-Before finalizing a Ready Seed or its Execution section, compare it with the source issue/spec:
-unusual growth, dominant code blocks, repeated decisions or fresh-readable source details call for
-compression into interfaces, invariants, assertions and verification. Preserve exact identity,
-scope, acceptance and recovery obligations; impose no fixed line/token budget or ratio and add no
-reviewer, skeleton or preview artifact. This check does not create a Seed for direct/no-Seed work.
-At execution, reread current repository evidence instead of following stale copied implementation
-prose. Implementation-detail drift alone needs no reapproval; material approved-contract drift
-still follows the existing re-prep/reapproval boundary.
+Ready Seed나 그 Execution 절을 확정하기 전에 원본 이슈/명세와 비교합니다. 비정상적인 분량 증가, 대부분을 차지하는 코드 블록, 반복되는 결정이나 새로 읽어 확인할 수 있는 소스 세부 사항이 있으면 인터페이스, 불변 조건, assertion과 검증으로 압축해야 합니다. 정확한 식별 정보, 범위, 인수 조건과 복구 의무를 보존합니다. 고정된 줄/토큰 예산이나 비율을 부과하지 않고 검토자, 뼈대 또는 미리보기 산출물을 추가하지 않습니다. 이 점검은 direct/no-Seed 작업에 Seed를 만들게 하지 않습니다.
+실행 시에는 오래된 복사 구현 설명을 따르지 말고 현재 저장소 근거를 다시 읽습니다. 구현 세부 사항의 변경만으로는 재승인이 필요하지 않습니다. 승인된 계약의 중요한 변경에는 기존 재준비/재승인 경계를 계속 적용합니다.

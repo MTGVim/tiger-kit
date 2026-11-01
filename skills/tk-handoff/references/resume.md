@@ -1,26 +1,27 @@
-# Handoff resume
+<a id="handoff-resume"></a>
+# 인수인계 재개
 
-Read only for explicit `--resume`; this does not authorize product, Git or remote mutation.
+명시적인 `--resume`에만 읽습니다. 제품, Git이나 원격 변경을 승인하는 것은 아닙니다.
 
-`--resume` requests resuming work by comparing the `handoff snapshot` against the current Git and files.
+`--resume`은 `handoff snapshot`을 현재 Git 및 파일과 비교하여 작업을 재개하도록 요청합니다.
 
-First, fresh-read:
+먼저 다음을 새로 읽습니다.
 
-- the exact `handoff` and its task-bound Seed when referenced; otherwise its self-contained no-Seed contract
+- 정확한 `handoff`와, 참조되어 있다면 해당 작업에 연결된 Seed를 읽습니다. 그렇지 않으면 독립적인 no-Seed 계약을 읽습니다.
 - `branch`/`HEAD`/`worktree`
-- changed files
-- relevant verification evidence
-- exact current remote state only when the next approved action depends on that PR; do not discover other open PRs
+- 변경 파일
+- 관련 검증 근거
+- 다음 승인된 행동이 해당 PR에 의존할 때만 정확한 현재 원격 상태를 읽습니다. 다른 열린 PR을 탐색하지 않습니다.
 
-Then classify drift.
+그런 다음 변동을 분류합니다.
 
-| Classification | Action |
+| 분류 | 행동 |
 | --- | --- |
-| None | Continue from `Next step` without additional questions unless `Next step` or `Open questions` still awaits a user decision. In that case, read [question rounds](../../tk-questioning/references/questions.md) before asking and end the resume report with that pending decision as its question block |
-| Nonessential `drift` | Record it and continue |
-| Significant progress `drift` | Update the `Handoff` from current evidence and confirm only the necessary decisions |
-| `Seed` contract `drift` | Do not resolve it in the `Handoff`; report that re-entering `tk-prep` is required |
-| Conflict | Show the incompatible evidence and mark `Blocked` |
-| unverified | If the required state cannot be confirmed, mark `Unverifiable` |
+| 없음 | `Next step`부터 추가 질문 없이 계속하되, `Next step`이나 `Open questions`가 여전히 사용자 결정을 기다리는 경우는 예외입니다. 사용자 결정을 기다리는 경우에는 질문 전에 [질문 라운드](../../tk-questioning/references/questions.md)를 읽고, 그 미결 결정을 질문 블록으로 삼아 재개 보고를 끝냅니다. |
+| 비본질적인 `drift` | 기록하고 계속합니다. |
+| 중대한 진행 상황 `drift` | 현재 근거로 `Handoff`를 갱신하고 필요한 결정만 확인합니다. |
+| `Seed` 계약 `drift` | `Handoff`에서 해결하지 말고 `tk-prep`으로 다시 진입해야 한다고 보고합니다. |
+| 충돌 | 양립할 수 없는 근거를 제시하고 `Blocked`로 표시합니다. |
+| 미검증 | 필요한 상태를 확인할 수 없으면 `Unverifiable`로 표시합니다. |
 
-`--resume` may authorize continuing the work, but it does not replace approval to change the `Seed`’s `goal/scope/decision/AC` or permission to publish remotely.
+`--resume`은 작업을 계속하도록 승인할 수 있지만, `Seed`의 `goal/scope/decision/AC` 변경 승인이나 원격 발행 권한을 대체하지 않습니다.

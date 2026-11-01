@@ -1,78 +1,34 @@
-# Documentation audit
+<a id="documentation-audit"></a>
+# 문서 감사
 
-Read for the `docs` focus or a `next` documentation-baseline opportunity. Run the full
-comparison only for `docs`, within the selected repository/package/branch scope;
-other audits retain their existing coverage. This reference grants no write authority.
-Propose instruction/rule-file text for the user to apply; never create, modify or move
-`AGENTS.md`, `CLAUDE.md` or rule files.
+`docs` 초점이나 `next`의 문서 기반 마련 기회에서 읽습니다. 전체 비교는 선택한 저장소/package/branch 범위 안에서 `docs`일 때만 실행합니다. 다른 감사는 기존 검증 범위를 유지합니다. 이 참조는 쓰기 권한을 부여하지 않습니다.
+사용자가 적용할 지침/규칙 파일 문구를 제안합니다. `AGENTS.md`, `CLAUDE.md`나 규칙 파일을 생성, 수정하거나 이동하지 않습니다.
 
-## Compare behavior claims
+<a id="compare-behavior-claims"></a>
+## 동작 주장 비교
 
-- Inventory tracked prose that asserts current behavior: guides, READMEs, instruction
-  files, skill/prompt bodies, test/eval expectations and fixtures, exported API
-  docstrings, and user-facing help or generated templates. Dated historical reports
-  are not current contracts. Untracked drafts are evidence, not owned documentation.
-- First compare every in-scope skill/prompt body with its own frontmatter, tests and
-  evals, including assertions and fixtures. Then compare guides with the code/config/CLI
-  they describe and instruction files with actual layout and commands. Include internal
-  contradictions, examples, referenced contracts and relevant decision records;
-  prioritize counterparts changed since the document. List uncompared documents and
-  unavailable counterparts instead of claiming complete coverage. Inline implementation
-  comments are related surfaces only when they repeat a confirmed wrong claim.
-- Record checked-out and available upstream refs. If the local branch is behind,
-  disclose it and check claims against the upstream ref with read-only `git show`;
-  label findings with the ref where they hold. Do not checkout, pull or repair the
-  audited tree. If fresh upstream evidence is unavailable, label that limitation.
-  Pin each upstream finding to its immutable comparison SHA while retaining the local
-  audited HEAD as session identity. Reproduce evidence at that SHA and recheck the ref
-  before saving; ref movement blocks the ledger until re-audited. Carry both commits
-  into handoff and revalidate against the executor's actual target before any fix.
-- Require an exact `file:line` and a contradiction with current implementation,
-  configuration or another owned statement, plus concrete impact. An omission needs
-  evidence that the list claims completeness; a table or numbered example alone does
-  not establish that. Exclude illustrative lists and historical claims.
+- 현재 동작을 주장하는 추적된 설명 문서를 조사합니다. 안내서, README, 지침 파일, skill/prompt 본문, test/eval 기대값과 fixture, 공개 API docstring, 사용자용 help나 생성 template을 포함합니다. 날짜가 있는 과거 보고서는 현재 계약이 아닙니다. 추적되지 않은 초안은 근거이며 소유 문서가 아닙니다.
+- 먼저 범위 내 모든 skill/prompt 본문을 각자의 frontmatter, 테스트와 eval에 대조하되 assertion과 fixture도 포함합니다. 다음으로 안내서를 설명 대상 code/config/CLI와 비교하고 지침 파일을 실제 배치와 명령에 비교합니다. 내부 모순, 예시, 참조된 계약과 관련 결정 기록을 포함하고, 문서 이후에 변경된 비교 대상을 우선합니다. 전체 범위를 확인했다고 주장하지 말고 비교하지 않은 문서와 사용할 수 없는 비교 대상을 나열합니다. 구현 내 인라인 주석은 확인된 잘못된 주장을 반복할 때만 관련 문서로 취급합니다.
+- checkout된 ref와 사용 가능한 upstream ref를 기록합니다. 로컬 branch가 뒤처져 있으면 공개하고 읽기 전용 `git show`로 upstream ref에 주장을 대조합니다. 발견 사항에는 성립하는 ref를 표시합니다. 감사 대상 tree를 checkout, pull하거나 복구하지 않습니다. 최신 upstream 근거를 사용할 수 없으면 한계를 표시합니다. 각 upstream 발견 사항은 불변 비교 SHA에 고정하되 로컬 감사 HEAD는 세션 식별 정보로 유지합니다. 해당 SHA에서 근거를 재현하고 저장 전에 ref를 다시 확인합니다. ref가 이동하면 재감사할 때까지 장부를 차단합니다. 두 commit을 모두 인계에 포함하고 수정 전에 실행자의 실제 대상에 대조해 재검증합니다.
+- 정확한 `file:line`, 현재 구현이나 설정 또는 소유된 다른 진술과의 모순, 구체적인 영향이 필요합니다. 누락을 지적하려면 목록이 완전성을 주장한다는 근거가 필요합니다. 표나 번호 예시만으로는 입증되지 않습니다. 설명용 목록과 과거의 주장은 제외합니다.
 
-## Prevent recurrence
+<a id="prevent-recurrence"></a>
+## 재발 방지
 
-For confirmed stale claims, attach the smallest justified sync mechanism to the fix
-sketch, or explain why recurrence does not warrant one. Describe shared mechanisms once
-and cross-reference them; do not turn every finding into an infrastructure project.
+낡은 것으로 확인된 주장에는 정당화되는 최소 동기화 수단을 수정 개요에 붙이거나, 재발 방지 수단이 필요하지 않은 이유를 설명합니다. 공통 수단은 한 번 설명하고 교차 참조합니다. 모든 발견 사항을 기반 체계 프로젝트로 만들지 않습니다.
 
-- **Change-to-document mapping** (default): seed rows from a confirmed contradiction
-  or observed source/document co-changes: changed source → owned statement to recheck.
-  Keep unverified candidate rows separate. Use an existing docs map or propose a row in
-  an instruction file. Prefer a pointer when the same fact is duplicated across files.
-- **Review criterion**: add only when a repository-wide checklist or automated review
-  actually runs, evidenced by a workflow or recent reviews. Configuration alone is
-  `unverified`; a single skill's completion step is not repository-wide enforcement.
-- **Path check**: use for moved/renamed/deleted paths, never as semantic-drift coverage.
-  Reuse an existing checker. Otherwise outline, without implementing, a check of tracked
-  document links/path literals with root-relative and document-relative resolution,
-  fenced-code/example exclusions and an explicit ignore escape. Require an actual
-  tracked-path candidate before flagging it. Suggest all-PR CI when CI already exists,
-  otherwise the existing verification command; never invent CI for a no-CI repository.
+- **변경과 문서의 대응 관계**(기본값): 확인된 모순이나 관찰된 소스/문서 동시 변경에서 행을 시작합니다. 변경된 소스 → 재확인할 소유 진술을 연결합니다. 검증되지 않은 후보 행은 분리합니다. 기존 문서 대응표를 사용하거나 지침 파일에 넣을 행을 제안합니다. 같은 사실이 여러 파일에 중복되면 pointer를 우선합니다.
+- **검토 기준**: workflow나 최근 검토로 입증된, 실제 실행되는 저장소 전체 checklist나 자동 검토가 있을 때만 추가합니다. 설정만 있으면 `unverified`입니다. 한 스킬의 완료 단계는 저장소 전체 강제 수단이 아닙니다.
+- **경로 점검**: 이동/이름 변경/삭제된 경로에 사용하며 의미 변화 검증으로 취급하지 않습니다. 기존 checker를 재사용합니다. 없다면 구현하지 않고 추적 문서의 링크/경로 literal 점검을 개괄합니다. 루트 상대 및 문서 상대 해석, fenced-code/예시 제외와 명시적인 ignore 탈출 수단을 포함합니다. 실제 추적 경로 후보가 있어야 문제로 표시합니다. CI가 이미 있으면 모든 PR의 CI를 제안하고, 없다면 기존 검증 명령을 제안합니다. CI가 없는 저장소에 CI를 지어내지 않습니다.
 
-A general prose reminder is not a verified sync mechanism. Keep audit findings and
-mechanism proposals separate from implementation or publication authority.
+일반적인 문구 알림은 검증된 동기화 수단이 아닙니다. 감사 발견 사항과 수단 제안은 구현이나 발행 권한과 구별합니다.
 
-## `next` documentation baseline
+<a id="next-documentation-baseline"></a>
+## `next` 문서 기반
 
-Use current paths, missing parts, change history and observed co-changes as why-now
-evidence. Propose only missing, justified parts; missing infrastructure alone creates no
-finding. For a dormant repository, lower priority and limit the immediate proposal to
-instruction-file setup. Determine activity from available upstream history, or disclose
-that only local history is available.
+현재 경로, 누락된 부분, 변경 이력과 관찰된 동시 변경을 지금 필요한 이유의 근거로 사용합니다. 빠져 있고 정당화되는 부분만 제안합니다. 기반 체계가 없다는 사실만으로 발견 사항을 만들지 않습니다. 휴면 저장소는 우선순위를 낮추고 즉시 제안 범위를 지침 파일 설정으로 제한합니다. 이용 가능한 upstream 이력으로 활동성을 판단하거나 로컬 이력만 사용할 수 있음을 공개합니다.
 
-- An automatically loaded instruction entry with setup/verification commands from
-  existing scripts, and pointers to decisions, pitfalls and affected documents. Run
-  proposed commands only when read-only and safe; report failures and unrun commands.
-  Check the current tool's actual loading/import rules before proposing migration;
-  keep tool-specific entries when needed. Put bootstrap/import guidance somewhere
-  already read, such as README setup, not solely inside a file that is not loaded.
-- Reuse existing decision/pitfall locations; propose minimal locations only when needed
-  for real records, check `git check-ignore`, and avoid backfilled history or empty trees.
-- Seed a mapping with evidence-qualified rows; do not invent documents for undocumented
-  code. Add path checks only where path drift warrants them under the rules above.
-- Preserve existing Diátaxis organization. Otherwise suggest a map labeling existing
-  tutorial/how-to/reference/explanation guides only when navigation difficulty warrants
-  it; no arbitrary document-count threshold or empty taxonomy directories.
+- 기존 script의 설정/검증 명령 및 결정, 함정과 영향받는 문서의 pointer를 담은 자동 로드 지침 항목을 제안합니다. 제안 명령은 읽기 전용이고 안전할 때만 실행합니다. 실패와 실행하지 않은 명령을 보고합니다. 마이그레이션을 제안하기 전에 현재 도구의 실제 로드/import 규칙을 확인하고 필요한 경우 도구별 항목을 유지합니다. bootstrap/import 안내는 로드되지 않는 파일 안에만 두지 말고 README 설정 절처럼 이미 읽히는 곳에 둡니다.
+- 기존 결정/함정 위치를 재사용합니다. 실제 기록에 필요할 때만 최소 위치를 제안하고 `git check-ignore`를 확인하며 과거 이력을 소급해 채우거나 빈 tree를 만들지 않습니다.
+- 근거 수준을 명시한 행으로 대응표를 시작합니다. 문서화되지 않은 코드를 위한 문서를 지어내지 않습니다. 위 규칙에 따라 경로 변화가 정당화할 때만 경로 점검을 추가합니다.
+- 기존 Diátaxis 구성을 보존합니다. 없다면 탐색 어려움이 정당화할 때만 기존 tutorial/how-to/reference/explanation 안내서에 분류를 붙인 지도를 제안합니다. 임의의 문서 개수 기준이나 빈 분류 디렉터리는 만들지 않습니다.

@@ -1,69 +1,75 @@
-# Reader Formatting
+<a id="reader-formatting"></a>
+# 독자를 위한 서식
 
-Use with clear writing when composing or revising explanatory prose. Clear writing owns
-sentence meaning; these defaults own document hierarchy. Explicit reader requirements and
-the calling owner's required evidence, warning or verification structure take precedence.
+설명문을 작성하거나 수정할 때 명확한 글쓰기 기준과 함께 사용합니다. 명확한 글쓰기 기준은
+문장 의미를 담당하고, 이 기본값은 문서 계층을 담당합니다. 독자의 명시적 요구 사항과
+호출 담당자의 필수 근거, 경고 또는 검증 구조가 우선합니다.
 
-## Density and repetition
+<a id="density-and-repetition"></a>
+## 밀도와 반복
 
-Keep sentences short, not the document: prefer one claim per sentence. Preserve needed scenarios,
-early figures, summary boxes, causal steps and chosen understanding checks; remove repetition
-instead. Summary boxes and checks remain optional under the caller's contract, never cut solely
-for brevity. When a realistic situation motivates the topic, put it before the mechanism and
-place the main figure beside it in reading order, without forcing horizontal layout.
-Separate sentences in explanatory paragraphs with `<br>` in HTML; let each reflow naturally.
-The summary identifies a point; the body develops its mechanism or evidence without copying it.
-Omit irrelevant decisions and rejected work unrelated to the question.
-Open with at most two short lede sentences and a compact account of the mechanism or decision.
-Use lists for parallel points, without replacing causal explanation with fragments. When the
-reader chooses between alternatives, include each option's main downside in the summary;
-recommend one only when the deciding conditions are known. Preserve the caller's learning
-objectives and required evidence rather than imposing a decision summary on every lesson.
+문서가 아니라 문장을 짧게 유지합니다. 문장마다 하나의 주장을 담는 편을 권장합니다. 필요한 상황 예시,
+초반 그림, 요약 상자, 인과 단계와 선택한 이해도 확인은 보존하고, 대신 반복을 제거합니다.
+요약 상자와 이해도 확인은 호출자 계약에서 계속 선택 사항이며, 짧게 만들기 위해서만 삭제하지 않습니다.
+현실적인 상황이 주제의 필요성을 설명한다면 작동 원리보다 앞에 두고,
+가로 배치를 강제하지 않으면서 읽기 순서상 주요 그림을 그 옆에 둡니다.
+HTML의 설명 단락에서는 문장을 `<br>`로 구분하고 각 문장이 자연스럽게 줄바꿈되도록 합니다.
+요약은 요점을 식별하고, 본문은 이를 복사하지 않으면서 그 작동 원리나 근거를 전개합니다.
+질문과 관련 없는 결정과 기각된 작업은 생략합니다.
+도입은 최대 두 개의 짧은 문장과 작동 원리 또는 결정에 대한 간결한 설명으로 시작합니다.
+병렬적인 요점에는 목록을 사용하되 인과 설명을 문장 조각으로 대체하지 않습니다. 독자가
+대안 중에서 선택할 때는 각 대안의 주요 단점을 요약에 포함하고,
+판단 조건을 알고 있을 때만 하나를 추천합니다. 모든 수업에 결정 요약을 강제하는 대신
+호출자의 학습 목표와 필수 근거를 보존합니다.
 
-After a substantive analogy, map its elements to actual actors, values or events in a compact
-two-column `비유 | 실제` table and state where the analogy stops matching. A passing comparison
-that adds no explanatory mapping needs neither an analogy nor a table.
+내용을 설명하는 비유 뒤에는 그 요소를 실제 행위자, 값이나 사건에 대응시키는 간결한
+2열 `비유 | 실제` 표를 두고 비유가 더 이상 일치하지 않는 지점을 명시합니다. 설명을 위한 대응 관계를
+추가하지 않는 짧은 비교에는 비유도 표도 필요하지 않습니다.
 
-## Visible priority
+<a id="visible-priority"></a>
+## 눈에 보이는 우선순위
 
-- Default to at most one bold conclusion sentence per section. Replace repeated
-  `**Label**: explanation` list prefixes with plain sentences, or a table for shared attributes.
-- Reserve inline code for literals the reader must copy, search or compare exactly. Merely mentioning
-  a product, version or file does not require code styling; preserve exact technical spelling.
-- Tables already separate attributes: omit decorative chips and repeated emphasis. Code or chips
-  may distinguish exact cell values being compared (hashes, versions, keys) from explanations.
-  Preserve meaningful status or warning distinctions.
-- Use code blocks for executable commands, configuration and diffs. Do not combine emphasis,
-  code and citation marks on ordinary sentences without a reader need. Audit authored `<strong>`,
-  `<code>` outside `<pre>` and `<sup>` uses; remove weak signals, not evidence or required warnings.
-- Citation placement and reference layout follow [HTML output](html-output.md); reducing marks
-  must retain an unambiguous claim-source relationship.
+- 기본적으로 절마다 굵게 표시한 결론 문장을 최대 하나만 둡니다. 반복되는
+  `**Label**: explanation` 목록 접두사는 평문 문장으로, 공통 속성은 표로 바꿉니다.
+- 인라인 코드는 독자가 정확히 복사하거나 검색하거나 비교해야 하는 리터럴에만 사용합니다. 제품,
+  버전이나 파일을 단순히 언급할 때 코드 스타일을 적용할 필요는 없습니다. 정확한 기술 표기는 보존합니다.
+- 표는 이미 속성을 구분하므로 장식용 칩과 반복적인 강조를 생략합니다. 코드나 칩은
+  비교하는 정확한 셀 값(hash, 버전, 키)을 설명과 구별하는 데 사용할 수 있습니다.
+  의미 있는 상태나 경고의 구별은 보존합니다.
+- 실행 명령, 설정과 diff에는 코드 블록을 사용합니다. 독자에게 필요한 이유 없이 일반 문장에 강조,
+  코드와 인용 표시를 조합하지 않습니다. 작성한 `<strong>`,
+  `<code>`(단, `<pre>` 밖에서 사용한 경우)와 `<sup>` 사용을 점검합니다. 근거나 필수 경고가 아니라 약한 신호를 제거합니다.
+- 인용 위치와 참고 자료 배치는 [HTML 출력](html-output.md)을 따릅니다. 표시를 줄이더라도
+  주장과 출처의 관계는 명확하게 유지해야 합니다.
 
-Spend emphasis where it carries information. Badges, cards, dividers and numbering need a
-semantic role; prefer spacing and typography to a badge per item or a card per section.
-Tooltips supplement the visible explanation rather than carrying required definitions.
+강조는 정보를 전달하는 곳에 사용합니다. 배지, 카드, 구분선과 번호에는
+의미상 역할이 필요합니다. 항목마다 배지나 절마다 카드를 두기보다 간격과 글꼴 구성을 우선합니다.
+툴팁은 눈에 보이는 설명을 보충하며, 필수 정의를 툴팁에 담지 않습니다.
 
-## Supporting headings
+<a id="supporting-headings"></a>
+## 보조 제목
 
-Name one category per supporting section: `제한 사항` for functional boundaries,
-`알려진 문제` for confirmed defects and workarounds, `주의 사항` for surprising behavior and
-its reason, or `확인하지 않은 항목` for unverified claims and the deciding check.
-Replace vague headings ending in `것` with the actual category; split mixed categories.
-For example, replace `도입하고 나서 신경 쓸 것` with the applicable named sections.
-Main explanatory headings still name the actual mechanism or subject; do not force these
-supporting categories onto the whole document or create empty sections.
+보조 절마다 하나의 범주를 제목으로 사용합니다. 기능 경계에는 `제한 사항`,
+확인된 결함과 우회 방법에는 `알려진 문제`, 예상하기 어려운 동작과
+그 이유에는 `주의 사항`, 검증하지 않은 주장과 판단에 필요한 점검에는 `확인하지 않은 항목`을 사용합니다.
+`것`으로 끝나는 모호한 제목을 실제 범주로 바꾸고, 섞인 범주는 나눕니다.
+예를 들어 `도입하고 나서 신경 쓸 것`은 해당하는 이름을 가진 절들로 바꿉니다.
+주요 설명 제목은 여전히 실제 작동 원리나 주제를 나타냅니다. 이 보조 범주를
+문서 전체에 강제하거나 빈 절을 만들지 않습니다.
 
-## Figure boundaries
+<a id="figure-boundaries"></a>
+## 그림 경계
 
-Frame a composed explanatory figure, caption included, with one thin token-colored border
-so its full extent is visible. Use `.ht-figure` on the owning `<figure>`; do not frame only
-one inner row unless that box has a distinct meaning. Label each meaningful lane, row or panel
-visibly, not only in SVG metadata or the caption. Reuse one box style for one meaning.
-The shared stack keeps children shrinkable; retain a bounded inner scroller for wide figures.
-Do not add nested decorative frames around tables, ordinary prose or every section.
+구성된 설명 그림은 캡션까지 포함하여 하나의 얇은 토큰 색상 테두리로 둘러싸
+전체 범위가 보이게 합니다. `.ht-figure`를 소유 `<figure>`에 사용합니다. 내부 행 하나만
+둘러싸지 않습니다. 단, 그 상자에 별도 의미가 있으면 예외입니다. 의미 있는 각 lane, 행이나 패널에는
+SVG 메타데이터나 캡션에만 두지 말고 눈에 보이는 레이블을 붙입니다. 하나의 의미에는 하나의 상자 스타일을 재사용합니다.
+공유 스택은 자식 요소가 줄어들 수 있도록 유지합니다. 넓은 그림에는 범위가 제한된 내부 스크롤러를 유지합니다.
+표, 일반 본문이나 모든 절 주위에 중첩된 장식 테두리를 추가하지 않습니다.
 
-## Provenance
+<a id="provenance"></a>
+## 출처 이력
 
-The supplied 2026-10-26 proposal was manually accepted once (`applied-once`). Its first comparative
-skill run was rejected; the revised run awaits reader judgment. Do not label it `field-tested`.
-Source verification and keep/adapt/omit decisions are in `sources.md`.
+제공된 2026-10-26 제안은 수동으로 한 번 수락되었습니다(`applied-once`). 첫 번째 비교
+스킬 실행은 거절되었고, 수정한 실행은 독자의 판단을 기다리고 있습니다. 이를 `field-tested`로 표시하지 않습니다.
+출처 검증과 keep/adapt/omit 판단은 `sources.md`에 있습니다.

@@ -1,63 +1,29 @@
-# SDD User Interaction
+<a id="sdd-user-interaction"></a>
+# SDD 사용자 상호작용
 
-Read only when a child needs user input or a host interaction.
+자식에게 사용자 입력이나 호스트 상호작용이 필요할 때만 읽습니다.
 
 
-The root controller owns user intent, product/scope/acceptance decisions, Seed changes,
-new authority (including destructive or publication authority), and host-defined root-only
-permission/approval APIs. Leaves return these needs to their controller; a delegated
-controller forwards unresolved root-owned needs to the root. A tool form does not turn
-such a decision into leaf authority, even on a host with child-safe elicitation.
+루트 컨트롤러는 사용자 의도, 제품·범위·인수 결정, Seed 변경, 새로운 권한(파괴적 행동이나 발행 권한 포함)과 호스트가 정의한 루트 전용 권한·승인 API를 담당합니다. 리프는 이러한 필요를 자신의 컨트롤러에 반환합니다. 위임된 컨트롤러는 해결되지 않은 루트 소유 요구를 루트에 전달합니다. 자식에게 안전한 입력 요청 기능이 있는 호스트에서도 도구 양식이 이러한 결정을 리프 권한으로 바꾸지는 않습니다.
 
-For a bounded interaction within the approved Unit, a leaf may use the host's supported
-child-local elicitation only when current host/tool evidence establishes all of:
+승인된 Unit 안의 한정된 상호작용에서, 리프는 현재 호스트·도구 근거로 다음 조건이 모두 입증될 때만 호스트가 지원하는 자식 로컬 입력 요청을 사용할 수 있습니다.
 
-- the exact interaction route supports child elicitation;
-- the prompt belongs to this leaf's exact pending request;
-- the response is bound only to that request, without expanding scope or authority;
-- the same approval/security policy applies on the child path;
-- the same child execution can safely resume after the response;
-- the interaction stays within the approved Unit and the leaf's role authority.
+- 정확한 상호작용 경로가 자식 입력 요청을 지원합니다.
+- 프롬프트가 이 리프의 정확한 대기 중 요청에 속합니다.
+- 응답은 범위나 권한을 넓히지 않고 해당 요청에만 결합됩니다.
+- 자식 경로에도 동일한 승인·보안 정책이 적용됩니다.
+- 응답 후 동일한 자식 실행을 안전하게 재개할 수 있습니다.
+- 상호작용이 승인된 Unit과 리프 역할의 권한 안에 머뭅니다.
 
-Read the current host/tool contract or verified runtime evidence; provider names, an
-empty form, automatic permission settings, or an upstream implementation alone do not
-prove that this route is supported here. Do not create a durable capability registry.
-When all conditions hold, let the host surface the connector authentication, browser
-sign-in continuation, or tool-defined form and receive its bound response; never answer
-for the user or collect credentials/OTPs in chat or handoff. Honor decline, cancellation,
-and policy denial without retrying or changing routes to bypass them. After a verified
-successful outcome, continue the same Unit in the same child without a parent round-trip,
-extra approval, or re-dispatch. Authentication acceptance alone does not prove successful
-sign-in: follow the supported continuation and verify the resulting state. Preserve the
-browser owner's headless and secret-handling constraints and remaining review obligations.
+현재 호스트·도구 계약이나 검증된 런타임 근거를 읽습니다. 제공자 이름, 빈 양식, 자동 권한 설정 또는 upstream 구현만으로 이 경로가 현재 환경에서 지원됨을 입증할 수는 없습니다. 영구 기능 registry를 만들지 않습니다. 모든 조건이 충족되면 호스트가 커넥터 인증, 브라우저 로그인 후속 절차 또는 도구 정의 양식을 표시하고 결합된 응답을 받도록 합니다. 사용자를 대신해 응답하거나 채팅·인계에서 자격 증명·OTP를 수집하지 않습니다. 거절, 취소와 정책 거부를 존중하고 이를 우회하려고 재시도하거나 경로를 바꾸지 않습니다. 성공한 결과가 검증된 뒤에는 부모와의 왕복, 추가 승인이나 재디스패치 없이 같은 자식에서 같은 Unit을 계속합니다. 인증 수락만으로 로그인 성공이 입증되지는 않습니다. 지원되는 후속 절차를 따르고 결과 상태를 검증합니다. 브라우저 담당자의 headless·비밀 처리 제약과 남은 리뷰 의무를 보존합니다.
 
-If any condition is unknown or unmet, stop the affected interaction and use the existing
-controller handoff in this reference. This also applies when request/response provenance or safe
-resume becomes uncertain after interruption; use [recovery](sdd-recovery.md) to reconcile mutations
-before retry or replacement. Normal same-child continuation needs no durable state.
+어느 조건이든 알 수 없거나 충족되지 않으면 영향받는 상호작용을 중단하고 이 참조의 기존 컨트롤러 인계를 사용합니다. 중단 후 요청·응답 출처나 안전한 재개 여부가 불확실해진 경우에도 적용됩니다. 재시도나 교체 전에 [복구](sdd-recovery.md)를 사용해 변경 결과를 대조하여 확정합니다. 같은 자식의 정상적인 계속 실행에는 영구 상태가 필요하지 않습니다.
 
-Include in the existing child return: Unit and role, exact blocker, requested user
-action or decision, non-secret evidence/current state, whether mutation already
-occurred (or is unknown), and the safe resume condition. Stop the blocked action;
-never include credentials, OTPs, tokens, or session secrets in the handoff.
+기존 자식 반환에 Unit과 역할, 정확한 차단 요인, 요청하는 사용자 행동이나 결정, 비밀이 아닌 근거·현재 상태, 변경이 이미 발생했는지 여부 또는 알 수 없다는 사실, 안전한 재개 조건을 포함합니다. 차단된 행동을 중단합니다. 자격 증명, OTP, 토큰이나 세션 비밀을 인계에 넣지 않습니다.
 
-For escalated interactions, the controller checks existing authorization and resolves
-repository/host facts before asking the user. Handle root-owned or unsupported child input
-in the root context, using `tk-wizard` only for its existing provisioning/authentication/permission
-scope; product decisions stay with the preparation owner. Existing approval avoids
-reapproval of the same intent, but does not supply missing human input or override a
-host denial. Preserve the browser owner's headless and secret-handling constraints.
+상위로 넘긴 상호작용에서는 컨트롤러가 사용자에게 질문하기 전에 기존 승인을 확인하고 저장소·호스트 사실을 해결합니다. 루트 소유 입력이나 지원되지 않는 자식 입력은 루트 맥락에서 처리하며, `tk-wizard`는 기존 provisioning·인증·권한 범위에만 사용합니다. 제품 결정은 준비 담당자에게 남습니다. 기존 승인은 같은 의도의 재승인을 피하게 하지만 누락된 사람의 입력을 제공하거나 호스트 거부를 무효화하지는 않습니다. 브라우저 담당자의 headless·비밀 처리 제약을 보존합니다.
 
-After the blocker is verifiably resolved, resume the existing child within the same
-approved Unit. If it cannot resume, reconcile prior mutations and child lifecycle
-under [recovery](sdd-recovery.md) before dispatching only the remaining bounded work. Preserve
-Seed/Unit/BASE/workspace identity and existing review/verification obligations; an
-unknown outcome blocks retry. Reuse active optional recovery state without creating
-an interaction ledger, durable receipt, or new lifecycle state.
+차단 요인이 해결되었음을 검증한 뒤 같은 승인된 Unit 안에서 기존 자식을 재개합니다. 재개할 수 없다면 [복구](sdd-recovery.md)에 따라 이전 변경과 자식 생명주기를 대조하여 확정한 뒤 남은 한정된 작업만 디스패치합니다. Seed/Unit/BASE/workspace 식별 정보와 기존 리뷰·검증 의무를 보존합니다. 결과를 알 수 없으면 재시도가 차단됩니다. 상호작용 장부, 영구 receipt나 새로운 생명주기 상태를 만들지 않고 활성화된 선택적 복구 상태를 재사용합니다.
 
-Approved non-interactive tool calls, host-authorized automatic permission handling,
-read-only reviewer judgments, repository facts available within the brief, and
-reversible engineering choices within leaf authority continue locally. They do not
-require parent mediation or user reapproval; existing controller `Ruling:` boundaries
-still apply.
+승인된 비대화형 도구 호출, 호스트가 승인한 자동 권한 처리, 읽기 전용 리뷰어 판정, 브리프에서 이용 가능한 저장소 사실과 리프 권한 안의 가역적 엔지니어링 선택은 로컬에서 계속합니다. 부모 중재나 사용자 재승인은 필요하지 않습니다. 기존 컨트롤러 `Ruling:` 경계는 계속 적용됩니다.
 

@@ -1,9 +1,5 @@
-# Text display copies
+<a id="text-display-copies"></a>
+# 텍스트 표시용 사본
 
-Use inline plain text with one shared font, size, spacing and whitespace policy. Render through
-text nodes/HTML escaping, never executable HTML/Markdown. Remove producer/model/version headers
-and self-identifying boilerplate in copies; record exact edits privately. Inspect both literal
-identifiers and semantic self-identification. Preserve substantive wording, factual errors and
-length when those are under comparison. Do not rewrite all candidates into the same answer.
-Keep shared item descriptions free of producer hints. Exact-name screening is only a guard;
-manual review is still required. Mark residual stylistic cues rather than promising perfect blinding.
+하나의 공통 글꼴, 크기, 간격과 공백 정책을 적용한 인라인 일반 텍스트를 사용합니다. 실행 가능한 HTML/Markdown 대신 text node/HTML escaping으로 렌더링합니다. 사본에서 제작자/모델/버전 헤더와 자기 식별용 상투 문구를 제거하고, 정확한 편집 내용은 비공개로 기록합니다. 문자 그대로의 식별자와 의미상 자기 식별을 모두 확인합니다. 실질적인 문구, 사실 오류와 길이가 비교 대상이면 이를 보존합니다. 모든 후보를 같은 답변으로 다시 쓰지 않습니다.
+공통 항목 설명에 제작자 단서를 넣지 않습니다. 정확한 이름 검사는 보호 수단일 뿐이며 수동 검토가 여전히 필요합니다. 완벽한 블라인드 처리를 약속하지 말고 남은 문체 단서를 표시합니다.

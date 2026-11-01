@@ -1,29 +1,31 @@
-## Parent Handoff
+<a id="parent-handoff"></a>
+## 상위 작업 인계
 
-Use parent-provided values when available:
+상위 작업이 제공한 값이 있으면 사용합니다.
 
-- exact criterion, target/environment, and current candidate;
-- headless authentication and secret-free bootstrap method;
-- viewport, initial state, and server command/cwd/readiness;
-- screenshot mapping, replay procedure, nondeterministic exclusions, and allowed capture-only adjustments;
-- any approved test-data mutation scope: exact non-production environment, allowed entity types and create/update/delete
-  operations, and cleanup policy; absent or ambiguous scope means no data-changing interaction;
-- exact UI strings or verified entry paths;
-- exact visual reference or pre-change provenance and comparable viewport/DPR/zoom/font state when a design node,
-  mockup, baseline screenshot, as-is/to-be comparison, or render-affecting candidate exists;
-- redaction rule, `Pass` condition, and automated-regression disposition.
+- 정확한 기준 항목, 대상/환경과 현재 후보
+- 헤드리스 인증과 비밀을 포함하지 않는 초기 인증 방법
+- 뷰포트, 초기 상태와 서버 명령/작업 디렉터리/준비 상태
+- 스크린샷 대응 관계, 재실행 절차, 비결정적 제외 사항과 허용된 캡처 전용 조정
+- 승인된 테스트 데이터 변경 범위가 있다면 정확한 비운영 환경, 허용된 엔터티 유형과 생성/수정/삭제
+  작업, 정리 정책. 범위가 없거나 모호하면 데이터를 바꾸는 상호작용을 하지 않습니다.
+- 정확한 UI 문자열이나 검증된 진입 경로
+- 디자인 노드, 목업, 변경 전 기준 스크린샷, 현재/목표 상태 비교나 렌더링에 영향을 주는 후보가 있다면
+  정확한 시각 참조 또는 변경 전 출처 정보와 비교 가능한 뷰포트/DPR/확대 배율/글꼴 상태
+- 가림 처리 규칙, `Pass` 조건과 자동 회귀 방지에 대한 처리 방침
 
-If the Ready Seed already owns this information, do not ask for the same decisions again.
-If required values are missing but can be safely determined from repository evidence, fill them in.
-Return only outcome-changing user-owned decisions to the parent owner.
+Ready Seed가 이미 이 정보를 관리하고 있다면 같은 결정을 다시 요청하지 않습니다.
+필수 값이 빠져 있어도 저장소 근거에서 안전하게 확인할 수 있다면 채웁니다.
+결과를 바꾸는, 사용자가 결정해야 할 사항만 상위 작업 담당자에게 반환합니다.
 
-## Read-only UI evidence discovery
+<a id="read-only-ui-evidence-discovery"></a>
+## 읽기 전용 UI 근거 조사
 
-An evidence-discovery request may identify a known target URL, environment, role, and the missing label/path as its
-question; the unknown label is not a prerequisite for this mode. Keep all provider, headless, authentication, readiness,
-and interaction boundaries. Inspect visible text and navigation connections without submitting business mutations.
-After entry and initial rendering, perform the UI Evidence text inventory before selector-level lookup; use the safe scoped fallback when full-body output would expose sensitive data. Capture visible breadcrumbs/headers, then verify actual menu clicks separately when a traversed path is required.
-Return observed literals, displayed hierarchy, and actually traversed connections separately with provenance, plus an itemized list of unresolved labels/connections, limitations, and requested inputs. A successful locator match
-or accessible name alone does not prove visible wording; inspect the actual visible text. This discovery is not a
-Content comparison pass and never invents the parent's missing acceptance basis. Return evidence to the requesting owner.
+근거 조사 요청에서는 알려진 대상 URL, 환경, 역할과 누락된 레이블/경로를 질문으로 지정할 수 있습니다.
+이 모드에서는 알려지지 않은 레이블이 선행 조건이 아닙니다. 제공자, 헤드리스 실행, 인증, 준비 상태와
+상호작용 경계를 모두 유지합니다. 업무 데이터 변경 요청을 제출하지 않고 화면에 보이는 문구와 탐색 연결을 검사합니다.
+진입과 초기 렌더링이 끝나면 선택자 수준으로 조회하기 전에 UI 근거의 문구 목록을 수집합니다. 전체 본문 출력이 민감한 데이터를 노출할 수 있으면 안전하게 범위를 제한한 대체 방식을 사용합니다. 화면에 보이는 이동 경로/헤더를 캡처한 뒤, 실제로 거친 경로가 필요하면 메뉴를 직접 클릭하여 별도로 검증합니다.
+관찰한 리터럴, 표시된 계층과 실제로 거친 연결을 출처 정보와 함께 구분하여 반환합니다. 해결되지 않은 레이블/연결, 한계와 요청할 입력도 항목별 목록으로 반환합니다. 선택자가 일치하거나
+접근성 이름을 찾았다는 사실만으로는 화면에 보이는 문구가 입증되지 않습니다. 실제 표시 문구를 검사합니다. 이 조사는
+Content 비교 통과가 아니며, 상위 작업에 누락된 최종 판정 근거를 만들어 내지 않습니다. 요청한 담당자에게 근거를 반환합니다.
 

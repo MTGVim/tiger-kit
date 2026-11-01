@@ -1,42 +1,26 @@
-# Persistent context audit
+<a id="persistent-context-audit"></a>
+# 지속 맥락 감사
 
-Use this branch only for repository/user rules, imported instructions, auto memory, or
-user-corrected behavior plausibly influenced by them.
+저장소·사용자 규칙, 가져온 지침, auto memory 또는 이들의 영향을 받았을 가능성이 있는 사용자 교정 행동에만 이 분기를 사용합니다.
 
-Plugin hook-injected instructions are persistent-context candidates when their actual
-loading and content are evidenced; do not execute the hook to discover them.
+plugin hook이 주입한 지침은 실제 로드와 내용에 대한 근거가 있을 때 지속 맥락 후보입니다. 이를 발견하려고 hook을 실행하지 않습니다.
 
-## Evidence chain
+<a id="evidence-chain"></a>
+## 근거 연결
 
-1. Identify the behavior and the user's correction without converting either into a
-   general rule.
-2. Resolve the active host, exact loaded paths, imports, directory scope, symlinks, and
-   ownership. A familiar filename or remembered host convention is not evidence.
-3. Identify the current behavior owner, such as an installed current skill, from package,
-   version, source, or installation evidence.
-4. Compare exact applicable statements. Classify an entry as `stale override` only when
-   its required behavior contradicts the established current owner and can plausibly
-   account for the observed behavior.
-5. Record `behavior -> persistent statement -> current owner statement -> conflict`.
-   File presence, age, load order, and model speculation cannot replace this chain.
+1. 행동과 사용자의 교정을 식별하되 어느 쪽도 일반 규칙으로 바꾸지 않습니다.
+2. 활성 호스트, 정확한 로드 경로, import, 디렉터리 범위, symlink와 소유권을 확인합니다. 익숙한 파일명이나 기억하는 호스트 관례는 근거가 아닙니다.
+3. 패키지, 버전, 출처나 설치 근거로 현재 설치된 스킬과 같은 현행 동작 소유자를 식별합니다.
+4. 정확히 적용되는 문장을 비교합니다. 항목이 요구하는 동작이 확인된 현행 소유자의 동작과 모순되고 관찰된 행동을 설명할 가능성이 있을 때만 `stale override`로 분류합니다.
+5. `behavior -> persistent statement -> current owner statement -> conflict`를 기록합니다. 파일의 존재, 연식, 로드 순서와 모델에 대한 추측은 이 연결을 대체할 수 없습니다.
 
-Use `duplicate` when statements have the same meaning, `conflict` when both remain
-current but disagree, `stale override` when an obsolete statement conflicts with the
-current owner, and `keep` when no outcome-changing conflict is proven.
+문장의 의미가 같으면 `duplicate`, 둘 다 현행이지만 내용이 다르면 `conflict`, 폐기된 문장이 현행 소유자와 충돌하면 `stale override`, 결과를 바꾸는 충돌이 입증되지 않으면 `keep`을 사용합니다.
 
-## Mutation boundary
+<a id="mutation-boundary"></a>
+## 변경 경계
 
-Default to report-only. Show the exact entry, path, ownership, conflicting current source,
-and proposed replacement or deletion. Require item-level active-task approval before
-deleting or semantically rewriting any rule or auto-memory entry, even with initial
-`--apply`. Preserve unrelated entries and file structure. Never rewrite generated,
-vendor-managed, or unknown-ownership context.
+기본은 보고 전용입니다. 정확한 항목, 경로, 소유권, 충돌하는 현행 출처와 제안하는 대체 내용이나 삭제를 보여 줍니다. 최초 `--apply`가 있더라도 규칙이나 auto-memory 항목을 삭제하거나 의미상 다시 쓰기 전에는 항목 단위의 현재 작업 승인이 필요합니다. 무관한 항목과 파일 구조를 보존합니다. 생성된 맥락, vendor 관리 맥락이나 소유권을 알 수 없는 맥락을 다시 쓰지 않습니다.
 
-After an approved edit, reread effective context and forward-test the original corrected
-scenario. A text deletion alone does not prove that the stale behavior is gone. If the
-same behavior remains, report `Fail` without broadening cleanup.
+승인된 수정 뒤에는 실제 적용되는 맥락을 다시 읽고, 원래 교정된 시나리오를 실제로 시험합니다. 텍스트 삭제만으로 오래된 동작이 사라졌다고 입증할 수 없습니다. 같은 동작이 남아 있으면 정리 범위를 확대하지 말고 `Fail`을 보고합니다.
 
-When no persistent statement is attributable, keep the context and propose
-`tk-retro`. When the current skill is the defective owner, preserve persistent
-context and use `tk-retro` for evidence-backed prevention proposals, not mutation.
-Do not invoke it automatically.
+원인으로 연결할 수 있는 지속 문장이 없으면 맥락을 유지하고 `tk-retro`를 제안합니다. 현행 스킬 자체가 결함의 소유자이면 지속 맥락을 보존하고, 변경 대신 근거에 기반한 예방 제안을 위해 `tk-retro`를 사용합니다. 자동으로 호출하지 않습니다.

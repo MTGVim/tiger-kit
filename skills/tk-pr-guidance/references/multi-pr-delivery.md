@@ -1,46 +1,46 @@
-# Multi-PR delivery safety
+<a id="multi-pr-delivery-safety"></a>
+# 다중 PR 전달의 안전
 
-Read only when the task is planned or handed off as several PRs. A single PR needs no
-grouping or extra artifact. Use the existing conversation or Ready Seed, not a new ledger.
+작업을 여러 PR로 계획하거나 인계할 때만 읽습니다. 단일 PR에는 그룹화나 추가
+산출물이 필요하지 않습니다. 새 기록부 대신 기존 대화나 Ready Seed를 사용합니다.
 
-Before implementation, bind each whole Unit to exactly one PR group and name the groups
-it waits on. For SDD, keep the existing contiguous Unit headings and put the group mapping
-in Global constraints; do not nest, duplicate or renumber Units. For direct work, use the
-same ownership and dependency facts without inventing SDD. Cite repository branching and
-migration conventions instead of copying them.
+구현 전에 각 Unit 전체를 정확히 하나의 PR 그룹에 연결하고, 해당 그룹이 기다리는 그룹의
+이름을 명시합니다. SDD에서는 기존의 연속된 Unit 제목을 유지하고 그룹 대응 관계를
+Global constraints에 넣습니다. Unit을 중첩하거나 복제하거나 번호를 다시 매기지 않습니다.
+직접 작업에서는 SDD를 새로 만들지 않고 같은 소유권·의존성 사실을 사용합니다. 저장소의 브랜치와
+마이그레이션 관례는 복사하지 말고 인용합니다.
 
-Check the proposed groups against these conditions:
+제안한 그룹이 다음 조건을 충족하는지 확인합니다.
 
-- Each shared schema, type, migration or config key has one creating Unit/PR; consumers
-  belong to that group or depend on it. Do not create competing definitions.
-- After every dependency-ordered merge, identify the reachable capability, its callers,
-  and the permission, limit or other guard that makes that state safe. A guard delivered
-  later or deferred out of scope cannot protect an earlier capability. Restrict access
-  to callers the absent guard would not limit, or keep the capability unreachable.
-- Groups without a dependency must merge safely in either order, both semantically and
-  without conflicting shared changes. Check each valid dependency prefix and either
-  order of independent groups, not just the completed feature.
+- 공유 스키마, 타입, 마이그레이션이나 설정 키마다 이를 생성하는 Unit/PR이 하나만 있어야 합니다.
+  소비자는 해당 그룹에 속하거나 그 그룹에 의존해야 합니다. 서로 경쟁하는 정의를 만들지 않습니다.
+- 의존성 순서에 따른 매 merge 후 도달 가능한 기능과 호출자,
+  해당 상태를 안전하게 만드는 권한, 제한이나 그 밖의 보호 장치를 식별합니다. 나중에 전달하거나
+  범위 밖으로 미룬 보호 장치는 앞서 제공한 기능을 보호할 수 없습니다. 부재한 보호 장치가
+  제한하지 않을 호출자에게만 접근을 허용하거나, 해당 기능에 도달할 수 없게 유지합니다.
+- 의존성이 없는 그룹은 어느 순서로 merge하더라도 의미상 안전해야 하며,
+  공유 변경의 충돌도 없어야 합니다. 완성된 기능만 확인하지 말고 유효한 각 의존성 순서의 접두 구간과
+  독립적인 그룹의 양방향 순서를 확인합니다.
 
-For each group, record the resulting exposure, its smallest deciding check and one of
-`Safe`, `Needs gating`, or `Must merge together`. `Needs gating` is unresolved until its
-concrete minimal gate is part of that group and its intermediate state is verified.
-`Must merge together` requires regrouping before implementation, not a plan to merge
-unsafe PRs quickly. Missing evidence or an unresolved unsafe state blocks that split.
-Material product/security changes return to the existing approval owner.
+그룹마다 그 결과로 노출되는 기능, 안전 여부를 결정하는 최소한의 검사와
+`Safe`, `Needs gating`, `Must merge together` 중 하나를 기록합니다. `Needs gating`은
+구체적인 최소 보호 장치가 해당 그룹에 포함되고 중간 상태가 검증될 때까지 해결되지 않은 상태입니다.
+`Must merge together`는 구현 전에 그룹을 다시 구성해야 한다는 뜻이며, 안전하지 않은 PR을
+빠르게 merge하겠다는 계획을 뜻하지 않습니다. 근거가 없거나 안전하지 않은 상태가 해결되지 않았다면
+해당 분할을 중단합니다. 중대한 제품·보안 변경은 기존 승인 담당자에게 돌려보냅니다.
 
-Carry the approved group-to-Unit mapping, dependencies, sole creators, gates and
-intermediate-state checks through implementation and the `tk-pr-open` handoff. At
-publication preflight, compare actual commits/paths and layer order with that plan.
-Keep one planned group per layer; do not silently collapse groups into one PR, split
-Units or reassign owners. A non-linear plan cannot be represented as the existing
-linear stack without revising the plan and obtaining the required exact approval.
-Publication does not authorize new gates or product edits. Recheck each reconstructed
-layer and preserve the existing exact final-tree, source-branch and remote-approval guards.
+승인된 그룹과 Unit의 대응 관계, 의존성, 단일 생성 주체, 보호 장치와
+중간 상태 검사를 구현과 `tk-pr-open` 인계 전반에 유지합니다. 발행 사전 점검에서
+실제 커밋·경로와 계층 순서를 해당 계획과 비교합니다.
+계층마다 계획한 그룹 하나를 유지합니다. 알리지 않고 그룹을 단일 PR로 합치거나 Unit을 분할하거나
+담당자를 재배정하지 않습니다. 비선형 계획은 계획을 수정하고 필요한 정확한 승인을 받지 않으면
+기존 선형 스택으로 표현할 수 없습니다. 발행은 새 보호 장치나 제품 수정을 허용하지 않습니다.
+재구성한 각 계층을 다시 확인하고 기존의 정확한 최종 트리, 소스 브랜치와 원격 승인 보호 조건을 유지합니다.
 
-Sources: `obra/superpowers@2ce8aa15d05bd57213e6f746f953aafb7ded7a8b`
-(`writing-plans`, SDD preflight) and
+출처: `obra/superpowers@2ce8aa15d05bd57213e6f746f953aafb7ded7a8b`
+(`writing-plans`, SDD 사전 점검) 및
 `EveryInc/compound-engineering-plugin@33e76fa8a5ac02c3bdc5d2ede2e3924a345ffdbe`
-(`ce-plan` structure/final review, `lfg` shipping; PRs #1948/#1950), MIT.
-Adapt the safety and handoff conditions, retain TigerKit's Unit grammar and publication
-owner, omit upstream runtime/workspace/branch automation. No upstream benchmark result
-establishes TigerKit behavior; local cases own that evidence.
+(`ce-plan` 구조·최종 리뷰, `lfg` 배포, PR #1948/#1950), MIT입니다.
+안전·인계 조건을 적응시키고 TigerKit의 Unit 문법과 발행 담당자를 유지하며,
+upstream의 런타임·워크스페이스·브랜치 자동화는 제외합니다. upstream 벤치마크 결과는
+TigerKit 동작의 근거가 되지 않으며, 그 근거는 로컬 사례에서 확보합니다.

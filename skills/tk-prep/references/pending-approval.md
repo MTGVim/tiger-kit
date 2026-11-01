@@ -1,9 +1,7 @@
-# Replies while approval is pending
+<a id="replies-while-approval-is-pending"></a>
+# 승인 대기 중의 응답
 
-While a concrete proposal is awaiting genuinely missing approval, start every response
-(including side answers and progress replies) with one short user-language line stating
-that implementation has not started and approval is pending. For example:
+구체적인 제안에 실제로 필요한 승인을 기다리는 동안에는 모든 응답을 사용자의 언어로 된 짧은 한 줄로 시작하여 구현을 시작하지 않았고 승인을 기다리고 있음을 알립니다. 곁가지 질문에 대한 답변과 진행 응답도 포함합니다. 예를 들면 다음과 같습니다.
 `아직 파일을 수정하지 않았으며, 실행 승인을 기다리고 있습니다.`
-Stop this notice once that scope is approved. A brief affirmative answer to a side question
-resolves only that question; require clear assent to the concrete execution proposal.
+해당 범위가 승인되면 이 안내를 중단합니다. 곁가지 질문에 대한 짧은 긍정 답변은 그 질문만 해소합니다. 구체적인 실행 제안에는 명확한 동의가 필요합니다.
 

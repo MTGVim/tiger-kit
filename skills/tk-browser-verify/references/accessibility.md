@@ -1,28 +1,27 @@
-# Conditional accessibility verification
+<a id="conditional-accessibility-verification"></a>
+# 조건부 접근성 검증
 
-Apply this only when the current scope includes a form, dialog, navigation, keyboard
-shortcut, or focus behavior. Do not impose a complete checklist on a visual-only
-layout check.
+현재 범위에 양식, 대화상자, 탐색, 키보드 단축키 또는 포커스 동작이 포함될 때만 적용합니다.
+시각적 레이아웃만 확인하는 작업에 전체 체크리스트를 요구하지 않습니다.
 
-## Evidence
+<a id="evidence"></a>
+## 근거
 
-- **Keyboard path:** Use the trusted `Tab`, `Shift+Tab`, `Enter`, `Space`, `Escape`,
-  and arrow-key inputs required by the actual flow.
-- **Focus:** Verify visible focus, a reasonable initial dialog target, return to the
-  trigger after close, and modal focus containment.
-- **Accessible name:** Observe whether controls, links, and dialogs expose names that
-  explain their purpose.
-- **Errors:** Verify that a validation error is associated with its field and can be
-  discovered through focus or announcement.
-- **State:** Verify that expanded, selected, checked, and disabled visual states agree
-  with their semantic states.
+- **키보드 경로:** 실제 흐름에 필요한 신뢰할 수 있는 `Tab`, `Shift+Tab`, `Enter`, `Space`, `Escape`와
+  방향키 입력을 사용합니다.
+- **포커스:** 눈에 보이는 포커스, 적절한 대화상자 초기 대상, 닫은 뒤 트리거로의 복귀와
+  모달 내부 포커스 유지를 검증합니다.
+- **접근 가능한 이름:** 컨트롤, 링크와 대화상자가 목적을 설명하는 이름을 노출하는지 관찰합니다.
+- **오류:** 유효성 검사 오류가 해당 필드에 연결되어 있고 포커스나 알림을 통해 발견할 수 있는지
+  검증합니다.
+- **상태:** 펼침, 선택, 체크와 비활성화의 시각적 상태가 의미적 상태와 일치하는지 검증합니다.
 
-A screenshot supports visible-focus and layout claims, but does not prove keyboard
-reachability, accessible names, or error association. DOM/accessibility-tree evidence
-alone does not prove visible focus.
+스크린샷은 눈에 보이는 포커스와 레이아웃에 관한 주장을 뒷받침하지만, 키보드로 도달할 수 있는지,
+접근 가능한 이름이 있는지 또는 오류가 연결되어 있는지를 입증하지는 않습니다.
+DOM/접근성 트리 근거만으로는 눈에 보이는 포커스를 입증할 수 없습니다.
 
-## Scope facts
+<a id="scope-facts"></a>
+## 범위 정보
 
-Record the inspected flow, keyboard path, focus results, semantic evidence, findings,
-and exclusions. Do not claim full WCAG or product-wide accessibility conformance from
-a limited rule set or a single flow.
+확인한 흐름, 키보드 경로, 포커스 결과, 의미적 근거, 발견 사항과 제외 사항을 기록합니다.
+제한된 규칙 집합이나 단일 흐름만으로 전체 WCAG 준수 또는 제품 전반의 접근성 준수를 주장하지 않습니다.

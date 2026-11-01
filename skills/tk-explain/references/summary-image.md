@@ -1,36 +1,37 @@
-# Summary image for PRs and issues
+<a id="summary-image-for-prs-and-issues"></a>
+# PR과 이슈용 요약 이미지
 
-Produce one compact static PNG when the requested infographic/summary is destined for a
-PR body or issue. Reuse the pinned evidence and audience; do not first build a long page or
-ask the user to choose PNG versus an artifact link. An explicit page request wins.
+요청된 인포그래픽·요약의 목적지가 PR 본문이나 이슈라면 간결한 정적 PNG 하나를
+만듭니다. 고정된 근거와 대상 독자를 재사용합니다. 먼저 긴 페이지를 만들거나
+사용자에게 PNG와 산출물 링크 중 하나를 고르도록 묻지 않습니다. 명시적인 페이지 요청이 우선합니다.
 
-Choose a bounded canvas (typically 1200 wide, 500-800 high), a conclusion-led title, two to
-four groups of the essential measurements or relationships, and readable labels. Keep units,
-baselines, denominator, measured versus illustrative status, and material limitations next to
-claims. Preserve conditions that change the conclusion; reduce scope rather than shrink text
-or crop away qualifications. Do not invent measurements to complete a layout.
+크기가 제한된 캔버스(보통 너비 1200, 높이 500-800), 결론을 먼저 제시하는 제목, 핵심 측정값이나
+관계를 담은 2~4개 그룹과 읽기 쉬운 라벨을 선택합니다. 단위,
+기준선, 분모, 측정값인지 예시값인지의 구분과 중요한 한계는 주장 옆에 둡니다.
+결론을 바꾸는 조건을 보존합니다. 글자를 줄이거나 한정 조건을 잘라내는 대신 범위를
+줄입니다. 배치를 완성하려고 측정값을 지어내지 않습니다.
 
-Author a static self-contained SVG or HTML in the run's temporary directory. SVG follows
-[scene figures](../../tk-writing/references/scene-figures.md)'s inert asset restrictions; use explicit dimensions and
-installed `tk-writing`'s [SVG rasterizer](../../tk-writing/scripts/svg_to_png.mjs). For bounded HTML use
-`node <tk-writing>/scripts/capture_page.mjs input.html new-output.png [width] [height]`, for example
-`node <tk-writing>/scripts/capture_page.mjs input.html new-output.png 1200 580`. Resolve `<tk-writing>`
-to that owner in the current installed collection. Height is optional:
-without it the viewport fits the document, including documents shorter than 900px; explicit
-height fixes the viewport while capture still includes the whole document. Give a height for
-viewport-dependent layouts that cannot converge. Constrain the document to the intended
-canvas and check the actual PNG dimensions. These
-image paths do not require archify, its author-check HTML or its finalize command.
+실행의 임시 디렉터리에 정적 독립형 SVG 또는 HTML을 작성합니다. SVG는
+[장면 그림](../../tk-writing/references/scene-figures.md)의 비활성 자산 제한을 따릅니다. 명시적인 크기와
+설치된 `tk-writing`의 [SVG 래스터 변환기](../../tk-writing/scripts/svg_to_png.mjs)를 사용합니다. 크기가 제한된 HTML에는
+`node <tk-writing>/scripts/capture_page.mjs input.html new-output.png [width] [height]`를 사용합니다. 예를 들면
+`node <tk-writing>/scripts/capture_page.mjs input.html new-output.png 1200 580`입니다. `<tk-writing>`은
+현재 설치된 컬렉션의 해당 소유 스킬로 해석합니다. 높이는 선택 사항입니다.
+생략하면 900px보다 짧은 문서를 포함하여 뷰포트가 문서에 맞춰집니다. 높이를 명시하면
+뷰포트가 고정되지만 캡처에는 여전히 문서 전체가 포함됩니다. 수렴하지 않는
+뷰포트 의존 배치에는 높이를 지정합니다. 문서를 의도한
+캔버스에 맞게 제한하고 실제 PNG 크기를 확인합니다. 이러한
+이미지 경로에는 archify, archify의 author-check HTML 또는 finalize 명령이 필요하지 않습니다.
 
-Inspect the final decoded PNG for clipping, readable text at PR display size, contrast and
-agreement with the pinned numbers, units, labels and relationships. Perform the clear-writing
-and reader-formatting checks on authored text. Apply step 4's independent accuracy review
-policy, including the default review for change explanations, to the final PNG and its evidence.
-Bind all checks/rechecks to final bytes. Missing Chrome or unavailable required review is
-Blocked/Unverifiable, never a successful image or a silent HTML substitution.
+최종 디코딩된 PNG를 확인하여 잘림, PR 표시 크기에서의 텍스트 가독성, 대비와
+고정된 숫자·단위·라벨·관계의 일치를 검사합니다. 작성한 텍스트에 명료한 글쓰기
+검사와 독자용 서식 검사를 수행합니다. 변경 설명의 기본 검토를 포함한
+4단계의 독립 정확성 검토 정책을 최종 PNG와 그 근거에 적용합니다.
+모든 검사와 재검사를 최종 바이트에 결합합니다. Chrome이 없거나 필수 검토를 수행할 수 없으면
+Blocked/Unverifiable이며, 성공한 이미지로 처리하거나 조용히 HTML로 대체하지 않습니다.
 
-Deliver the PNG with a concise description suitable for alt text and actual verification.
-Keep source/evidence in the run directories; create no extra explanation page by default.
-Creation does not upload an attachment or open a PR. Pass the verified local image and
-its evidence to the authorized `tk-pr-open`/`tk-pr-media` owner; respect its manifest contract
-when requested, without claiming that an infographic substitutes for required runtime evidence.
+PNG와 함께 대체 텍스트로 적합한 간결한 설명과 실제 검증 결과를 전달합니다.
+원본과 근거는 실행 디렉터리에 둡니다. 기본적으로 추가 설명 페이지를 만들지 않습니다.
+제작은 첨부 파일 업로드나 PR 열기를 뜻하지 않습니다. 검증된 로컬 이미지와
+근거를 권한을 받은 `tk-pr-open`/`tk-pr-media` 담당자에게 전달합니다. 요청된 경우 해당 담당자의 manifest 계약을
+준수하며, 인포그래픽이 필수 런타임 근거를 대신한다고 주장하지 않습니다.

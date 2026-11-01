@@ -1,28 +1,14 @@
-# Narration loudness postprocessing
+<a id="narration-loudness-postprocessing"></a>
+# 내레이션 음량 후처리
 
-After selected synthesis and validation, normalize a course/video's sentence-clip batch before
-handing ordinary WAVs to its owner. Keep engine choice and raw outputs; do not overwrite sources
-or normalize the same output repeatedly. Use one consistent batch target, then listen across
-adjacent clips for joins, clipping and unexpected emphasis. A normalized waveform does not prove
-pronunciation, natural prosody or equal perceived loudness for every utterance.
+선택한 합성과 검증을 마친 후, 일반 WAV를 담당자에게 전달하기 전에 코스/영상의 문장 클립 묶음을 정규화합니다. 엔진 선택과 원본 출력을 유지합니다. 원본을 덮어쓰거나 동일 출력을 반복 정규화하지 않습니다. 묶음 전체에 일관된 목표값 하나를 사용한 뒤 인접 클립을 이어 들으며 연결부, clipping과 예상하지 못한 강조를 확인합니다. 정규화된 파형은 발음, 자연스러운 운율이나 모든 발화의 동일한 체감 음량을 입증하지 않습니다.
 
-Run the packaged helper with explicit source paths and a new safe output directory:
+명시적인 원본 경로와 새로운 안전한 출력 디렉터리로 패키지 도우미를 실행합니다.
 
 ```bash
 python3 scripts/normalize_audio.py --inputs <raw-01.wav> <raw-02.wav> --output-dir <new-normalized-directory>
 ```
 
-It requires local FFmpeg and mono PCM16 WAVs, uses two-pass EBU R128 `loudnorm` at -18 LUFS,
--1.5 dBTP and LRA 7, and returns source/output paths, measurements, duration checks and
-`human_action: listen`. These are consistent narration defaults, not a universal broadcast
-requirement. For video narration, `--target-lufs -23` is an alternative batch target;
-measure and listen to the result. Missing FFmpeg is a readiness problem; installation retains its own authority.
-Invalid, silent, unsafe or overwritten inputs/targets fail without replacing source files.
+도우미에는 로컬 FFmpeg와 mono PCM16 WAV가 필요합니다. -18 LUFS, -1.5 dBTP, LRA 7의 2-pass EBU R128 `loudnorm`을 사용하며 원본/출력 경로, 측정값, 길이 점검 결과와 `human_action: listen`을 반환합니다. 이 값은 일관된 내레이션 기본값이며 보편적인 방송 요구 사항이 아닙니다. 영상 내레이션에는 `--target-lufs -23`을 대안적인 일괄 목표값으로 사용할 수 있습니다. 결과를 측정하고 청취합니다. FFmpeg 부재는 준비 상태의 문제이며 설치에는 그에 해당하는 별도 권한이 적용됩니다. 유효하지 않거나 무음이거나 안전하지 않거나 덮어쓰게 되는 입력/대상은 원본 파일을 교체하지 않고 실패합니다.
 
-Very short or ungated clips can yield nonfinite LUFS measurements. The helper explicitly reports
-bounded RMS/peak fallback with at most 20 dB gain and a -1.5 dBFS sample-peak ceiling; it does not claim
-that such a clip met a LUFS target. Reauthor/resynthesize an unsuitable fragment when listening
-finds a mismatch. Retain complete text and natural sentence endings; segmentation comes from
-the author's sentence/phrase boundaries, never guessed timestamps. Consumers update media paths
-to the returned normalized files and retain raw sources for recovery. Keep synthesis in this
-package and assembly/compression in the consuming owner; no sibling code imports.
+매우 짧거나 gate가 적용되지 않은 클립에서는 비유한 LUFS 측정값이 나올 수 있습니다. 도우미는 최대 20 dB gain과 -1.5 dBFS sample-peak 상한을 적용한 제한된 RMS/peak fallback을 명시적으로 보고하며, 해당 클립이 LUFS 목표를 충족했다고 주장하지 않습니다. 청취 중 불일치가 발견되면 부적합한 구간을 다시 작성/합성합니다. 완전한 텍스트와 자연스러운 문장 끝을 유지합니다. 분할은 작성자의 문장/구 경계에 따르며 추측한 timestamp에 따르지 않습니다. 소비자는 미디어 경로를 반환된 정규화 파일로 갱신하고 복구용 원본을 보존합니다. 합성은 이 패키지에서, 조립/압축은 소비하는 담당자 측에서 유지합니다. 형제 코드 import는 하지 않습니다.

@@ -1,189 +1,202 @@
-# Explanation Technique Reference
+<a id="explanation-technique-reference"></a>
+# 설명 기법 참조
 
-Read only an entry needed for a requested or unfamiliar presentation. Prose and semantic tables
-need no technique assignment. Choose by the reader's question: compare states, trace an order,
-inspect a boundary or change an input. Shared offline HTML, citation, accessibility, evidence and
-shell rules remain in html-output.md; diagram relationships and layout belong to visual-grammar.md.
-Treat this personal collection's user's first-hand feedback as evidence for that user, without
-generalizing it to other readers. Honor an explicit fitting format preference; do not infer learning
-styles. Sketch comedy, Feynman and social-thread formats remain request-only.
-The selection owner separates technique, output format and diagram detail. Stable IDs remain
-addressable after relocation: #13/#14 are diagram details; #17/#27/#29/#30 are formats, not
-first-round technique recommendations. Explicit requests for these entries remain supported.
+요청받았거나 익숙하지 않은 표현에 필요한 항목만 읽습니다. 산문과 의미 기반 표에는 기법을 지정할 필요가 없습니다.
+상태 비교, 순서 추적, 경계 검사나 입력 변경 등 독자의 질문에 따라 고릅니다.
+공통 오프라인 HTML, 인용, 접근성, 근거와 셸 규칙은 html-output.md에 남고, 도해 관계와 배치는 visual-grammar.md가 담당합니다.
+이 개인 모음 사용자의 직접 피드백은 그 사용자에 대한 근거로 취급하고 다른 독자에게 일반화하지 않습니다.
+적합한 형식을 명시적으로 선호하면 존중하고 학습 스타일을 추론하지 않습니다. 짧은 코미디, Feynman과 소셜 스레드 형식은 요청할 때만 사용합니다.
+선택 담당자는 기법, 출력 형식과 도해 세부 사항을 구별합니다. 이동 후에도 안정적인 ID로 접근할 수 있습니다.
+#13/#14는 도해 세부 사항이고 #17/#27/#29/#30은 형식이며 첫 라운드 기법 추천이 아닙니다.
+이 항목을 명시적으로 요청하는 경우는 계속 지원합니다.
 
-## 01. Five-Step Ladder
-- Use when beginners and practitioners need the same document at different depths.
-- Start with one sentence and no jargon. Add no more than one new term at each step. Make every step
-  independently understandable.
-- Avoid for a mechanism whose timing is essential; the ladder has no timeline by itself.
+<a id="01-five-step-ladder"></a>
+## 01. 다섯 단계 설명
+- 초보자와 실무자에게 같은 문서를 서로 다른 깊이로 제공해야 할 때 사용합니다.
+- 전문 용어 없이 한 문장으로 시작합니다. 단계마다 새 용어를 하나 이하로 추가하고, 각 단계를 독립적으로 이해할 수 있게 합니다.
+- 타이밍이 핵심인 메커니즘에는 피합니다. 이 단계 구성 자체에는 타임라인이 없습니다.
 
-## 02. Hands-on Simulator or Calculator
-- Use when changing one input should change a numeric or behavioral result.
-- Limit controls to one to three variables. Derive the drawing, values, and explanation from one
-  pure model. Begin from a sourced value or an explicitly labeled illustrative baseline.
-- Name the simplifications and assumptions. Do not present a model value as a measurement. Avoid
-  when the topic has no meaningful variable to change.
+<a id="02-hands-on-simulator-or-calculator"></a>
+## 02. 직접 조작하는 시뮬레이터 또는 계산기
+- 입력 하나를 바꾸면 수치나 동작 결과가 바뀌어야 할 때 사용합니다.
+- 제어를 변수 한 개에서 세 개로 제한합니다. 하나의 순수 모델에서 그림, 값과 설명을 도출합니다.
+  출처가 있는 값이나 예시임을 명시한 기준값에서 시작합니다.
+- 단순화와 가정을 명시합니다. 모델 값을 측정값으로 제시하지 않습니다. 바꿀 만한 의미 있는 변수가 없는 주제에는 피합니다.
 
-## 03. Real Output
-- Use when the actual output, log, response, or generated artifact is visible in the sources.
-- Show source output. Label any shortened excerpt as a summary.
-- Define unfamiliar terms before they block understanding. Never fabricate output.
+<a id="03-real-output"></a>
+## 03. 실제 출력
+- 실제 출력, 로그, 응답이나 생성된 산출물이 출처에 보일 때 사용합니다.
+- 원본 출력을 보여 줍니다. 줄인 발췌는 요약이라고 표시합니다.
+- 낯선 용어는 이해를 막기 전에 정의합니다. 출력을 조작하지 않습니다.
 
-## 04. Zine Comic
-- Use when an idea can be divided into a small number of visual panels.
-- Give each panel one idea and keep dialogue to a few lines. Use 1px panel rules.
-- Let panel count and size follow the explanation. Split where a question, event or state changes;
-  keep longer sequences navigable without shrinking meaning or lettering into a preset grid.
-- If an image is unavailable, preserve the explanatory relationships with accessible text, tables
-  or HTML/SVG shapes; dialogue alone cannot replace information carried by the drawing.
+<a id="04-zine-comic"></a>
+## 04. 소책자 만화
+- 아이디어를 소수의 시각 패널로 나눌 수 있을 때 사용합니다.
+- 패널마다 하나의 아이디어를 담고 대사는 몇 줄로 제한합니다. 1px 패널 구분선을 사용합니다.
+- 설명에 맞춰 패널 개수와 크기를 정합니다. 질문, 사건이나 상태가 바뀌는 곳에서 나눕니다.
+  긴 시퀀스도 미리 정한 격자에 맞추려고 의미나 글자를 줄이지 않고 탐색할 수 있게 합니다.
+- 이미지를 이용할 수 없으면 접근 가능한 텍스트, 표나 HTML/SVG 도형으로 설명 관계를 보존합니다.
+  대사만으로는 그림이 전달하는 정보를 대체할 수 없습니다.
 
-## 05. Scrollytelling
-- Use when a process changes state in a meaningful order.
-- Keep the diagram stable and explain one or two sentences per step. The initial diagram state must
-  match the first step.
-- Provide a static step table when JavaScript is unavailable. Avoid excessive empty space.
+<a id="05-scrollytelling"></a>
+## 05. 스크롤텔링
+- 과정의 상태가 의미 있는 순서로 바뀔 때 사용합니다.
+- 도해를 안정적으로 유지하고 단계마다 한두 문장으로 설명합니다. 도해의 초기 상태는 첫 단계와 일치해야 합니다.
+- JavaScript를 이용할 수 없을 때 정적 단계 표를 제공합니다. 과도한 빈 공간을 피합니다.
 
-## 06. Misconception Correction
-- Use when a common misconception materially changes how readers understand or operate something.
-- State a plausible misconception, mark it with text and strikethrough, then correct it with evidence.
-  Explain what part was partly true when that matters.
-- The section must still provide the basic mechanism. Do not invent a misconception.
+<a id="06-misconception-correction"></a>
+## 06. 오해 바로잡기
+- 흔한 오해가 독자의 이해나 조작에 실질적인 영향을 줄 때 사용합니다.
+- 그럴듯한 오해를 제시하고 텍스트와 취소선으로 표시한 뒤 근거로 바로잡습니다. 중요하다면 부분적으로 맞았던 부분도 설명합니다.
+- 해당 섹션은 기본 메커니즘도 제공해야 합니다. 오해를 만들지 않습니다.
 
-## 07. Group Chat
-- Use when several actors hand work to one another and their order matters.
-- Write short natural turns with reactions and chat bubbles. Label time boundaries when timing is
-  supported by evidence. Finish with a concise role summary when the conversation is long.
-- Keep definitions findable; precise facts and evidence may sit beside the conversation. Distinguish
-  observed times from illustrative scenarios.
+<a id="07-group-chat"></a>
+## 07. 그룹 채팅
+- 여러 행위자가 서로 작업을 넘기고 그 순서가 중요할 때 사용합니다.
+- 반응과 말풍선이 있는 짧고 자연스러운 발화를 씁니다. 근거가 뒷받침하면 시간 경계를 표시합니다.
+  대화가 길면 간결한 역할 요약으로 마칩니다.
+- 정의를 찾기 쉽게 유지합니다. 정확한 사실과 근거는 대화 옆에 둘 수 있습니다. 관찰 시간과 예시 시나리오를 구별합니다.
 
-## 08. Sketch Comedy
-- On request only.
-- Use for repeated, plausible misconceptions that can be corrected by another character with evidence.
-- Avoid for mechanisms that need a precise diagram or extensive technical detail.
+<a id="08-sketch-comedy"></a>
+## 08. 짧은 코미디
+- 요청할 때만 사용합니다.
+- 다른 인물이 근거로 바로잡을 수 있는 반복적이고 그럴듯한 오해에 사용합니다.
+- 정확한 도해나 광범위한 기술 세부 사항이 필요한 메커니즘에는 피합니다.
 
-## 09. Socratic Questions
-- Use when readers can derive a principle from a motivating problem.
-- Ask a focused question before revealing the answer. Keep the derivation short and grounded.
-- Avoid for facts that must be recalled exactly, such as a header name or threshold value.
+<a id="09-socratic-questions"></a>
+## 09. 소크라테스식 질문
+- 독자가 동기를 부여하는 문제에서 원리를 도출할 수 있을 때 사용합니다.
+- 답을 공개하기 전에 초점이 분명한 질문을 합니다. 도출 과정은 짧고 근거 있게 유지합니다.
+- 헤더 이름이나 임계값처럼 정확히 기억해야 하는 사실에는 피합니다.
 
-## 10. Incident Postmortem
-- Use when practical failure analysis is the clearest route to understanding.
-- Label fictional events, values, and identifiers as illustrative. Follow symptoms, timeline, cause,
-  and response in that order.
-- Do not invent remedies unsupported by sources.
+<a id="10-incident-postmortem"></a>
+## 10. 장애 사후 분석
+- 실용적인 실패 분석이 이해에 이르는 가장 명확한 경로일 때 사용합니다.
+- 허구의 사건, 값과 식별자는 예시라고 표시합니다. 증상, 타임라인, 원인, 대응 순서로 설명합니다.
+- 출처가 뒷받침하지 않는 해결책을 만들지 않습니다.
 
-## 11. Illustrated Intuition
-- Use to give an initial mental picture of a new concept.
-- Use one analogy per scene, state its boundary in the same scene, and connect it back to the actual
-  terms and mechanism.
-- Avoid when the analogy hides details that are central to the claim.
+<a id="11-illustrated-intuition"></a>
+## 11. 그림으로 전달하는 직관
+- 새 개념의 초기 심상을 제공할 때 사용합니다.
+- 장면마다 하나의 비유를 사용하고 같은 장면에서 그 한계를 밝힌 뒤 실제 용어와 메커니즘에 다시 연결합니다.
+- 비유가 주장의 핵심 세부 사항을 가리는 경우에는 피합니다.
 
-## 12. Choose-Your-Own Path
-- Use when a real policy or decision leads to different outcomes depending on a choice.
-- Make every outcome reachable by native links without JavaScript and compare each outcome with the
-  verified facts.
-- Avoid if there is no genuine choice or if branches imply unsupported facts.
+<a id="12-choose-your-own-path"></a>
+## 12. 경로 선택
+- 실제 정책이나 결정에서 선택에 따라 결과가 달라질 때 사용합니다.
+- JavaScript 없이 네이티브 링크로 모든 결과에 도달할 수 있게 하고 각 결과를 검증된 사실과 비교합니다.
+- 실제 선택이 없거나 분기가 근거 없는 사실을 암시하면 피합니다.
 
-## 13. Sequence Diagram
-- Axis: Diagram detail; choose automatically unless explicitly requested.
-- Use when three or four actors exchange messages in a known order.
-- Give each actor a lane, put messages in reading order, and split materially different situations
-  into separate scenes.
-- Vertical distance does not represent time unless a scale says so; state wait duration separately.
+<a id="13-sequence-diagram"></a>
+## 13. 시퀀스 다이어그램
+- 축: 도해 세부 사항입니다. 명시적 요청이 없으면 자동으로 선택합니다.
+- 세 명 또는 네 명의 행위자가 알려진 순서로 메시지를 교환할 때 사용합니다.
+- 각 행위자에 레인을 배정하고 메시지를 읽는 순서대로 배치하며, 실질적으로 다른 상황은 별도 장면으로 나눕니다.
+- 척도가 명시하지 않는 한 세로 거리는 시간을 나타내지 않습니다. 대기 시간은 따로 명시합니다.
 
-## 14. Waterfall Timeline
-- Axis: Diagram detail; choose automatically unless explicitly requested.
-- Use when elapsed time, overlap, or waiting is central.
-- Put units and one sentence on how to read the axis above the figure.
-- Explain the notation for readers who may not know waterfall charts.
+<a id="14-waterfall-timeline"></a>
+## 14. 워터폴 타임라인
+- 축: 도해 세부 사항입니다. 명시적 요청이 없으면 자동으로 선택합니다.
+- 경과 시간, 중첩이나 대기가 핵심일 때 사용합니다.
+- 단위와 축을 읽는 방법 한 문장을 도해 위에 둡니다.
+- 워터폴 차트를 모를 수 있는 독자에게 표기법을 설명합니다.
 
-## 15. Before/After Comparison
-- Use when the contrast between two states is the conclusion.
-- Show both states on the same time scale. Keep the comparison aligned and label the changed
-  condition.
-- Provide static snapshots without JavaScript. This comparison shows what changed, not necessarily
-  why it changed.
+<a id="15-beforeafter-comparison"></a>
+## 15. 전후 비교
+- 두 상태의 대비가 결론일 때 사용합니다.
+- 두 상태를 같은 시간 척도로 보여 줍니다. 비교를 정렬하고 바뀐 조건을 표시합니다.
+- JavaScript 없이 정적 스냅샷을 제공합니다. 이 비교는 무엇이 바뀌었는지 보여 주며 반드시 그 이유를 보여 주는 것은 아닙니다.
 
-## 16. Concept Map
-- Use when many terms have meaningful relationships.
-- Label every arrow with the relationship and provide a table alternative.
-- Avoid for time-ordered processes.
+<a id="16-concept-map"></a>
+## 16. 개념도
+- 많은 용어 사이에 의미 있는 관계가 있을 때 사용합니다.
+- 모든 화살표에 관계를 표시하고 대체 표를 제공합니다.
+- 시간 순서에 따른 과정에는 피합니다.
 
-## 17. Infographic Poster
-- Axis: Output format.
-- Use as a whole-document structure only when the user asks for a one-page summary.
-- Put the conclusion first and include a small set of key points.
-- Preserve links to evidence; avoid compressing every reason into an unreadable poster.
+<a id="17-infographic-poster"></a>
+## 17. 인포그래픽 포스터
+- 축: 출력 형식입니다.
+- 사용자가 한 페이지 요약을 요청할 때만 전체 문서 구조로 사용합니다.
+- 결론을 먼저 두고 소수의 핵심 사항을 포함합니다.
+- 근거 링크를 보존합니다. 모든 이유를 읽을 수 없는 포스터에 압축하지 않습니다.
 
-## 18. Animated Metaphor
-- Use when flow, capacity, or blockage can be represented accurately as motion.
-- List the limits of the analogy. Respect reduced motion and provide a readable static state.
-- Choose another technique if the list of limitations is longer or more important than the analogy.
+<a id="18-animated-metaphor"></a>
+## 18. 움직이는 비유
+- 흐름, 용량이나 막힘을 움직임으로 정확히 나타낼 수 있을 때 사용합니다.
+- 비유의 한계를 나열합니다. 동작 줄이기를 존중하고 읽을 수 있는 정적 상태를 제공합니다.
+- 한계 목록이 비유보다 길거나 중요하면 다른 기법을 고릅니다.
 
-## 19. Predict First
-- Use when intuition is likely to diverge from the verified result.
-- Ask for a prediction before revealing the answer. Explain why a plausible wrong prediction feels
-  reasonable.
-- Avoid when the reader lacks the prerequisites to make a meaningful prediction.
+<a id="19-predict-first"></a>
+## 19. 먼저 예측하기
+- 직관이 검증된 결과와 다를 가능성이 높을 때 사용합니다.
+- 답을 공개하기 전에 예측을 요청합니다. 그럴듯하지만 틀린 예측이 왜 합리적으로 느껴지는지 설명합니다.
+- 독자에게 의미 있는 예측을 할 선행 지식이 없으면 피합니다.
 
-## 20. Quiz
-- Use when a small set of core facts can be tested with immediate feedback.
-- Keep answers collapsed until an explicit reveal and end with a concise recap.
-- Do not use styling, order, or wording that leaks correctness. A standalone offline quiz is not
-  secure against source inspection.
+<a id="20-quiz"></a>
+## 20. 퀴즈
+- 소수의 핵심 사실을 즉각적인 피드백으로 확인할 수 있을 때 사용합니다.
+- 명시적으로 공개하기 전까지 답을 접어 두고 간결한 복습으로 마칩니다.
+- 정답을 드러내는 스타일, 순서나 문구를 사용하지 않습니다. 독립형 오프라인 퀴즈는 소스 검사로부터 안전하지 않습니다.
 
-## 21. Flashcards
-- Use when readers need to revisit a set of terms and definitions.
-- Keep each card focused and operable by keyboard.
-- Avoid when the relationships or process between terms matter more than recall.
+<a id="21-flashcards"></a>
+## 21. 플래시카드
+- 독자가 용어와 정의 모음을 다시 살펴봐야 할 때 사용합니다.
+- 카드마다 초점을 분명히 하고 키보드로 조작할 수 있게 합니다.
+- 암기보다 용어 간 관계나 과정이 중요할 때는 피합니다.
 
-## 22. Invent Before Reveal
-- Use when a design solution follows step by step from a stated problem.
-- Begin with the problem. Ask what constraint the next step must satisfy, then compare the derived
-  design with its actual name and implementation.
-- Reveal the real names before the end; readers cannot infer arbitrary terminology.
+<a id="22-invent-before-reveal"></a>
+## 22. 공개 전에 설계하기
+- 제시한 문제에서 설계 해법이 단계별로 도출될 때 사용합니다.
+- 문제로 시작합니다. 다음 단계가 어떤 제약을 충족해야 하는지 묻고 도출한 설계를 실제 이름과 구현에 비교합니다.
+- 끝나기 전에 실제 이름을 공개합니다. 독자는 임의의 용어를 추론할 수 없습니다.
 
-## 23. Feynman Technique
-- On request only.
-- Use a first explanation to reveal a gap, then repair that gap with evidence and a clearer second
-  explanation. A reader exercise may ask them to explain from memory.
-- Do not claim that self-explanation research alone proves this is a universally effective reader
-  format.
+<a id="23-feynman-technique"></a>
+## 23. Feynman 기법
+- 요청할 때만 사용합니다.
+- 첫 설명으로 공백을 드러낸 뒤 근거와 더 명확한 두 번째 설명으로 보완합니다. 독자 연습에서 기억에 의존해 설명하도록 요청할 수 있습니다.
+- 자기 설명 연구만으로 이 형식이 모든 독자에게 효과적임이 입증된다고 주장하지 않습니다.
 
-## 24. Hint Ladder
-- Use when the reader should solve a diagnostic question independently.
-- Reveal hints in order and provide a grounded final explanation.
-- Avoid when the hints require knowledge the document has not introduced.
+<a id="24-hint-ladder"></a>
+## 24. 단계별 힌트
+- 독자가 진단 질문을 독립적으로 풀어야 할 때 사용합니다.
+- 힌트를 순서대로 공개하고 근거 있는 최종 설명을 제공합니다.
+- 문서에서 소개하지 않은 지식이 힌트에 필요하면 피합니다.
 
-## 25. Cheat Sheet
-- Use for formulas, settings, commands, or queries that readers will revisit.
-- Group by task and include only sourced values.
-- Pair with explanatory sections when readers also need to know why the items work.
+<a id="25-cheat-sheet"></a>
+## 25. 치트 시트
+- 독자가 다시 찾을 수식, 설정, 명령이나 쿼리에 사용합니다.
+- 작업별로 묶고 출처가 있는 값만 포함합니다.
+- 항목이 작동하는 이유도 독자에게 필요하면 설명 섹션을 함께 제공합니다.
 
-## 26. Annotated Code
-- Use when configuration or code is the central evidence.
-- Align each explanation with the relevant code line or block and preserve exact identifiers.
-- Use another view for timing and concurrent activity that code alone cannot show.
+<a id="26-annotated-code"></a>
+## 26. 주석을 단 코드
+- 설정이나 코드가 핵심 근거일 때 사용합니다.
+- 각 설명을 관련 코드 줄이나 블록에 정렬하고 정확한 식별자를 보존합니다.
+- 코드만으로 보여 줄 수 없는 타이밍과 동시 활동에는 다른 보기를 사용합니다.
 
-## 27. Terminal Replay
-- Axis: Output format with exact source output.
-- Use when commands provide the clearest way to observe and diagnose a system.
-- Show only real documented or captured output, with its source and context.
-- Do not invent terminal output or replace a materially important output with an unsupported summary.
+<a id="27-terminal-replay"></a>
+## 27. 터미널 재생
+- 축: 정확한 원본 출력이 있는 출력 형식입니다.
+- 명령이 시스템을 관찰하고 진단하는 가장 명확한 방법일 때 사용합니다.
+- 실제로 문서화되었거나 캡처한 출력만 출처와 맥락과 함께 보여 줍니다.
+- 터미널 출력을 만들거나 실질적으로 중요한 출력을 근거 없는 요약으로 대체하지 않습니다.
 
-## 28. Failure Modes
-- Use when an incorrect setting can fail quietly or create a distinct failure state.
-- Organize by symptom and connect each one to its cause and a source-supported response.
-- Do not supply a fix that the available evidence does not support.
+<a id="28-failure-modes"></a>
+## 28. 실패 양상
+- 잘못된 설정이 조용히 실패하거나 별도의 실패 상태를 만들 수 있을 때 사용합니다.
+- 증상별로 구성하고 각 증상을 원인과 출처가 뒷받침하는 대응에 연결합니다.
+- 이용 가능한 근거가 뒷받침하지 않는 수정을 제공하지 않습니다.
 
-## 29. Slide Deck
-- Axis: Output format.
-- Use as a whole-document structure when the user requests a presentation.
-- Support keyboard navigation and leave all slides readable in document order without JavaScript.
-- Retain the connecting explanation needed for a standalone reader.
+<a id="29-slide-deck"></a>
+## 29. 슬라이드 덱
+- 축: 출력 형식입니다.
+- 사용자가 프레젠테이션을 요청하면 전체 문서 구조로 사용합니다.
+- 키보드 탐색을 지원하고 JavaScript 없이도 모든 슬라이드를 문서 순서대로 읽을 수 있게 합니다.
+- 독립적으로 읽는 독자에게 필요한 연결 설명을 유지합니다.
 
-## 30. Social Thread
-- Axis: Output format; request-only.
-- On request only.
-- Make it a separate sharing summary, not a substitute for the full explanation.
-- Do not imitate a named platform or account. Keep technical mechanisms in the full document.
+<a id="30-social-thread"></a>
+## 30. 소셜 스레드
+- 축: 출력 형식이며 요청할 때만 사용합니다.
+- 요청할 때만 사용합니다.
+- 전체 설명을 대체하지 않고 별도 공유용 요약으로 만듭니다.
+- 특정 플랫폼이나 계정을 모방하지 않습니다. 기술 메커니즘은 전체 문서에 유지합니다.

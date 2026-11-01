@@ -1,19 +1,20 @@
-# Follow-up from learner evidence
+<a id="follow-up-from-learner-evidence"></a>
+# 학습자 근거에 따른 후속 설명
 
-Use an actual supplied answer or observed execution result, never infer a response from
-opening HTML, reading or answer reveal. Restore the matching topic, page and notes from
-verified context; ask only when multiple homes remain plausible. Preserve existing learning
-homes and their format; do not migrate, rewrite their history or create a global learner store.
+실제로 제공된 답변이나 관찰한 실행 결과를 사용합니다. HTML을 열거나
+읽거나 답을 공개했다는 사실에서 응답을 추정하지 않습니다. 검증된 맥락에서 일치하는 주제, 페이지와 노트를
+복원합니다. 가능한 저장 위치가 여러 곳으로 남아 있을 때만 질문합니다. 기존 학습
+공간과 형식을 보존합니다. 이를 이전하거나 이력을 다시 쓰거나 전역 학습자 저장소를 만들지 않습니다.
 
-For each expressed belief, record correct/incorrect/partial/unobserved and the evidence.
-Distinguish result from reasoning: a right result with a wrong reason needs correction;
-a result without reasoning leaves that reasoning unobserved. Credit correct steps, identify
-missing conditions, and infer a common cause only when the actual answers support it.
-Teach one focused correction with a worked example and a changed-condition transfer case.
-Let the learner request a full solution, skip, or stop without mandatory retries.
+표현된 각 생각에 대해 정답·오답·부분 정답·미관찰 여부와 근거를 기록합니다.
+결과와 추론을 구별합니다. 결과가 맞아도 이유가 틀렸다면 바로잡아야 합니다.
+추론 없이 결과만 있다면 해당 추론은 미관찰 상태로 남습니다. 맞는 단계는 인정하고,
+빠진 조건을 짚으며, 실제 답변이 뒷받침할 때만 공통 원인을 추론합니다.
+완성된 풀이 예시와 조건을 바꾼 전이 사례로 하나의 핵심 교정 내용을 가르칩니다.
+학습자가 의무적인 재시도 없이 전체 해설을 요청하거나 건너뛰거나 중단할 수 있게 합니다.
 
-When a follow-up artifact is requested, use the same rendering/evidence/review rules and a
-fresh `<slug>-followup-<n>.html`; preserve earlier pages. Append to `<slug>.notes.md` only
-observed response, date, per-belief judgment, supported misconception, page link and next focus.
-No empty progress scaffold, course regeneration, automated mastery score or scheduled work.
-Ordinary answer feedback is chat-only unless continued teaching or saving is requested.
+후속 산출물을 요청하면 같은 렌더링·근거·검토 규칙과
+새 `<slug>-followup-<n>.html`을 사용합니다. 이전 페이지는 보존합니다. `<slug>.notes.md`에는
+관찰된 응답, 날짜, 생각별 판단, 근거로 뒷받침되는 오개념, 페이지 링크와 다음 집중 항목만 덧붙입니다.
+빈 진행 틀, 과정 재생성, 자동 숙달 점수 또는 예약 작업을 만들지 않습니다.
+일반적인 답변 피드백은 계속 가르치거나 저장해 달라는 요청이 없으면 대화로만 제공합니다.

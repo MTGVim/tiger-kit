@@ -10,19 +10,21 @@ metadata:
     role: reference
 ---
 
-# Shared PR Guidance
+<a id="shared-pr-guidance"></a>
+# 공통 PR 지침
 
-Read only references whose conditions below hold; return criteria and gaps to the caller,
-which retains scope, approvals and completion. References invoke no workflow and grant no
-installation, mutation, secret, Git or publication authority.
+아래 조건을 충족하는 참조만 읽고, 기준과 부족한 사항을 호출자에게 반환합니다.
+범위, 승인과 완료 책임은 호출자가 유지합니다. 참조는 어떤 워크플로도 호출하지 않으며,
+설치, 변경, 비밀 접근, Git 작업이나 발행 권한을 부여하지 않습니다.
 
-Resolve owners in the current installed skill collection (`dependencies.json`), not memory,
-another installation, hardcoded homes or a source-checkout fallback. A missing/mismatched
-owner or resource blocks the affected action: guide to `tk-setup-skills`, never silently install.
-`<package>`, "package-local" and "this package" mean the caller's installed package unless a link names another owner.
+현재 설치된 스킬 모음(`dependencies.json`)에서 소유자를 확인합니다. 기억,
+다른 설치본, 하드코딩한 홈 경로나 소스 checkout으로 우회하지 않습니다. 소유자나 자원이
+없거나 일치하지 않으면 해당 작업을 중단하고 `tk-setup-skills`를 안내하며, 알리지 않고 설치하지 않습니다.
+`<package>`, "package-local"과 "this package"는 링크가 다른 소유자를 명시하지 않는 한 호출자가 설치한 패키지를 뜻합니다.
 
-## Conditional references
+<a id="conditional-references"></a>
+## 조건부 참조
 
-- [github visuals](references/github-visuals.md): preparing visual evidence for a PR.
-- [multi pr delivery](references/multi-pr-delivery.md): the approved delivery is intentionally split across multiple PRs.
-- [rebase readiness](references/rebase-readiness.md): preparing an exact PR rebase or handing it to the rebase owner.
+- [GitHub 시각 자료](references/github-visuals.md): PR에 사용할 시각적 근거를 준비할 때 읽습니다.
+- [다중 PR 전달](references/multi-pr-delivery.md): 승인된 전달을 의도적으로 여러 PR로 나눌 때 읽습니다.
+- [rebase 준비 상태](references/rebase-readiness.md): 특정 PR의 rebase를 준비하거나 rebase 담당자에게 인계할 때 읽습니다.

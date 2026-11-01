@@ -1,14 +1,9 @@
-# Audio display copies
+<a id="audio-display-copies"></a>
+# 오디오 표시용 사본
 
-Inspect available local tools before conversion. Decode every source; preserve originals.
-Use WAV for local playback, not host-dependent FLAC links. For loudness-neutral comparison,
-measure integrated loudness and true peak with local ffmpeg `loudnorm` first, then apply the
-measured second pass to every clip with a shared target (for example -16 LUFS, -1.5 dBTP),
-mono/stereo policy and sample rate. Strip metadata with `-map_metadata -1`. Validate decoded
-samples, non-silence, duration and clipping after conversion. Very short/silent clips may
-not yield valid loudness measurements: record the limitation rather than fabricating values.
+변환 전에 사용 가능한 로컬 도구를 확인합니다. 모든 원본을 디코딩하고 원본은 보존합니다.
+로컬 재생에는 호스트에 따라 달라지는 FLAC 링크 대신 WAV를 사용합니다. 음량 차이를 배제한 비교에서는 먼저 로컬 ffmpeg `loudnorm`으로 통합 음량과 true peak를 측정한 다음, 공통 목표값(예: -16 LUFS, -1.5 dBTP), mono/stereo 정책과 sample rate를 적용해 모든 클립에 측정 기반 두 번째 처리를 수행합니다. `-map_metadata -1`로 메타데이터를 제거합니다. 변환 후 디코딩된 sample, 무음 여부, 길이와 clipping을 검증합니다. 매우 짧거나 무음인 클립에서는 유효한 음량 측정값을 얻지 못할 수 있으므로 값을 지어내지 말고 한계를 기록합니다.
 
-If loudness/dynamics are the variable under test, preserve them and disclose the exception.
-Never trim pronunciation/endings, denoise or synthesize replacement speech to improve a candidate.
-Review spoken self-identification manually. Put measured settings and any residual voice cues
-in neutral transformations, with engine-specific diagnostics only in the answer key.
+음량이나 dynamics가 시험 변수라면 이를 보존하고 예외를 공개합니다.
+후보를 개선하려고 발음이나 말끝를 잘라내거나, 잡음을 제거하거나, 대체 음성을 합성하지 않습니다.
+음성으로 자신을 식별하는 내용은 수동으로 검토합니다. 측정한 설정과 남아 있는 음성 단서는 중립적인 변환 기록에 넣고, 엔진별 진단은 정답 키에만 둡니다.

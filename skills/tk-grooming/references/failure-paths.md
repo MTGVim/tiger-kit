@@ -1,31 +1,17 @@
-# Grooming failure paths
+<a id="grooming-failure-paths"></a>
+# Grooming 실패 경로
 
-Read only when a grooming checkpoint fails.
+Grooming 체크포인트가 실패한 경우에만 읽습니다.
 
-- Missing/unreadable path: Mark only that area `Unverifiable`, keep other areas
-  read-only, and report the required access.
-- Unknown ownership: Do not create edit proposals or changes; return
-  `Partial/Blocked` with one ownership question.
-- Vendor ownership confirmed after classification: Convert every edit action to
-  `keep (vendor)`, preserve the artifact, and report the evidence.
-- Conflicting scope/apply authority: Make no changes and return `Partial/Blocked`
-  with the one required decision.
-- Referenced deletion/move target: Make no changes, change the proposal to
-  `keep | tighten`, and cite the reference.
-- Unproven no-op/cache/pointer claim: Keep the existing behavior and report the exact
-  missing behavioral evidence; do not make a speculative tightening edit.
-- Target drift after checkpoint: Make no changes, return `Partial/Blocked` with
-  current evidence, and require a new proposal.
-- Broken symlink, unknown shared target, or failed tracking probe: Mark the affected
-  tier `Unverifiable`; do not equate a Git error with an untracked file or approve
-  later tiers using stale evidence.
-- Missing durable T1/T2 backup or failed byte-equality check: Make no changes to that
-  target. Report the backup/access deficit; session-temp or auto-loaded storage is
-  not a recovery backup. Keep other approved independent targets within their scope.
-- Verification failure after apply: Never claim `Complete`. Restore/reverify only
-  when this run's delta is exactly reversible, then return `Fail` with evidence.
-  If preservation or restoration is uncertain, halt the mutation as `Unverifiable`
-  and report the checks, paths, and observed state.
-  Recheck the current real target and this run's delta before restoring; preserve
-  concurrent edits. Retain the durable backup and report its path and restoration
-  result. Do not continue dependent tiers after failed verification.
+- 경로가 없거나 읽을 수 없는 경우: 해당 영역만 `Unverifiable`로 표시하고, 다른 영역은 읽기 전용으로 유지하며, 필요한 접근 권한을 보고합니다.
+- 소유권을 알 수 없는 경우: 수정 제안이나 변경을 만들지 않습니다. 소유권 질문 하나와 함께 `Partial/Blocked`를 반환합니다.
+- 분류 후 vendor 소유권이 확인된 경우: 모든 수정 행동을 `keep (vendor)`로 전환하고, 산출물을 보존하며, 근거를 보고합니다.
+- 범위·적용 권한이 충돌하는 경우: 변경하지 않고 필요한 결정 하나와 함께 `Partial/Blocked`를 반환합니다.
+- 삭제·이동 대상이 참조되는 경우: 변경하지 않고 제안을 `keep | tighten`으로 바꾸며 해당 참조를 인용합니다.
+- 입증되지 않은 no-op·cache·pointer 주장인 경우: 기존 동작을 유지하고 정확히 어떤 동작 근거가 부족한지 보고합니다. 추측으로 지침을 다듬는 수정을 하지 않습니다.
+- 체크포인트 이후 대상이 달라진 경우: 변경하지 않고 현재 근거와 함께 `Partial/Blocked`를 반환하며 새 제안을 요구합니다.
+- symlink가 깨졌거나 공유 대상을 모르거나 추적 여부 조회가 실패한 경우: 영향을 받는 tier를 `Unverifiable`로 표시합니다. Git 오류를 미추적 파일과 동일시하거나 오래된 근거로 이후 tier를 승인하지 않습니다.
+- 지속 보존할 T1/T2 백업이 없거나 바이트 일치 점검이 실패한 경우: 해당 대상을 변경하지 않습니다. 백업·접근상의 부족을 보고합니다. 세션 임시 저장소나 자동 로드되는 저장소는 복구 백업이 아닙니다. 그 밖에 승인된 독립 대상은 승인된 범위 안에서 유지합니다.
+- 적용 후 검증이 실패한 경우: `Complete`라고 주장하지 않습니다. 이번 실행의 변경분을 정확히 되돌릴 수 있을 때만 복원·재검증한 뒤 근거와 함께 `Fail`을 반환합니다.
+  보존이나 복원이 불확실하면 변경을 `Unverifiable`로 중단하고 점검, 경로와 관찰한 상태를 보고합니다.
+  복원 전에 현재 실제 대상과 이번 실행의 변경분을 다시 확인하고 동시 편집을 보존합니다. 지속 백업을 유지하며 그 경로와 복원 결과를 보고합니다. 검증 실패 뒤에는 종속 tier를 계속하지 않습니다.

@@ -1,208 +1,197 @@
-# Visual evidence
+<a id="visual-evidence"></a>
+# 시각 근거
 
-Every approved visual claim requires a non-empty runtime screenshot and actual image
-inspection, except when an exact bounded-region candidate file is byte-identical to an
-already inspected comparable baseline under the contract below. DOM, accessibility-tree,
-network, or computed-style evidence cannot replace the image. Without comparable conditions
-or a required capture, return `Unverifiable`.
+승인된 모든 시각적 주장에는 비어 있지 않은 런타임 스크린샷과 실제 이미지 확인이 필요합니다.
+단, 아래 계약에 따라 정확히 한정된 영역의 후보 파일이 이미 확인한 비교 가능한 baseline과
+바이트 단위로 동일하면 예외입니다. DOM, 접근성 트리, 네트워크 또는 computed-style 근거는
+이미지를 대체할 수 없습니다. 비교 가능한 조건이나 필수 캡처가 없으면 `Unverifiable`을 반환합니다.
 
-When a design/screenshot basis exists, reproduce the approved viewport, DPR, browser,
-font, assets, and zoom before comparing only the named region/state. Classify a
-difference as a `defect`, approved deviation, environment issue, or `unverifiable`.
-Do not invent design intent or broaden the work into generic critique.
+디자인/스크린샷 기준이 있으면 승인된 viewport, DPR, 브라우저, 폰트, 자산과 확대율을 재현한 뒤
+지정된 영역/상태만 비교합니다. 차이는 `defect`, 승인된 차이, 환경 문제 또는 `unverifiable`로
+분류합니다. 디자인 의도를 만들어 내거나 작업을 일반적인 비평으로 넓히지 않습니다.
 
-## Visual intent and baseline pairs
+<a id="visual-intent-and-baseline-pairs"></a>
+## 시각적 의도와 baseline 쌍
 
-Classify each approved visual region before capture:
+캡처 전에 승인된 각 시각 영역을 분류합니다.
 
-| Intent | Baseline evidence | After evidence | Outline location |
+| 의도 | Baseline 근거 | After 근거 | 윤곽선 위치 |
 | --- | --- | --- | --- |
-| appear | surrounding context before insertion | new target and context | after only |
-| disappear | old target and context | surrounding context after removal | baseline only |
-| change | old target and context | new target and context | both corresponding targets |
-| remain unchanged | complete comparison region | complete comparison region | none |
+| appear | 삽입 전 주변 맥락 | 새 대상과 맥락 | after에만 표시합니다 |
+| disappear | 이전 대상과 맥락 | 제거 후 주변 맥락 | baseline에만 표시합니다 |
+| change | 이전 대상과 맥락 | 새 대상과 맥락 | 양쪽의 대응 대상에 표시합니다 |
+| remain unchanged | 전체 비교 영역 | 전체 비교 영역 | 표시하지 않습니다 |
 
-Judge the outlined `intended-change` region separately from the remaining `must-not-change` region.
-An observed difference in `must-not-change` is `Fail` unless explicitly approved as a deviation.
-Apply the capture-method prerequisites, annotation mechanics and comparison axes in this reference; finish every axis on the first attempt even after finding a mismatch.
-A behavior-preserving refactor may consist entirely of `remain unchanged`; the absence of a design
-node, mockup, or changed visual AC never disables this branch.
+윤곽선이 있는 `intended-change` 영역은 나머지 `must-not-change` 영역과 별도로 판정합니다.
+`must-not-change`에서 관찰된 차이는 명시적으로 승인된 차이가 아니면 `Fail`입니다.
+이 참조의 캡처 방식 선행 조건, 주석 기법과 비교 축을 적용하고, 불일치를 발견해도 첫 시도에서
+모든 축을 마칩니다. 동작 보존 refactor 전체가 `remain unchanged`일 수 있습니다. 디자인 노드,
+mockup이나 변경된 시각 AC가 없다고 이 분기를 비활성화하지 않습니다.
 
-Use a parent-supplied inspected baseline when its provenance and environment are comparable. When
-invoked before the first product edit, prove and record the current HEAD plus relevant worktree
-fingerprint, capture that exact current tree directly under `baseline/`, and preserve the run ID for
-the after call. When invoked after candidate edits without a baseline, identify the exact pre-change
-source from the approved change range and repository evidence, safely materialize it in a run-owned
-`.tigerkit/tmp/tk-browser-verify/<run-id>/baseline-source/` tree without modifying the current checkout, commits, refs, or shared Git metadata,
-and capture the baseline first. Do not guess the pre-change ref or silently compare against an
-unrelated branch. If pre-existing work makes that source ambiguous, the pre-change tree cannot be
-run, or comparable conditions cannot be reproduced, record that limitation and do not claim absence
-of visual regression.
+출처와 환경이 비교 가능하면 상위 작업이 제공한 확인된 baseline을 사용합니다. 첫 제품 편집 전에
+호출되면 현재 HEAD와 관련 worktree fingerprint를 입증하여 기록하고, 정확히 그 현재 트리를
+`baseline/` 아래에 직접 캡처하며 after 호출에 쓸 run ID를 보존합니다. 후보 편집 후 baseline 없이
+호출되면 승인된 변경 범위와 저장소 근거에서 정확한 변경 전 소스를 식별하고, 현재 checkout,
+commit, ref나 공유 Git 메타데이터를 수정하지 않은 채 실행 소유
+`.tigerkit/tmp/tk-browser-verify/<run-id>/baseline-source/` 트리에 안전하게 구체화한 뒤
+baseline을 먼저 캡처합니다. 변경 전 ref를 추측하거나 무관한 브랜치와 조용히 비교하지 않습니다.
+기존 작업 때문에 해당 소스가 모호하거나 변경 전 트리를 실행할 수 없거나 비교 가능한 조건을
+재현할 수 없으면 제한을 기록하고 시각적 회귀가 없다고 주장하지 않습니다.
 
-For a shared component, inventory affected consumers and sample by distinct layout context rather
-than prop pattern alone. Include at least one affected consumer for every present parent-sizing
-context such as flex item, grid cell, table cell, absolute positioning, or another size-constraining
-container. Record uncovered known contexts as limitations; do not generalize a sampled `Pass` to them.
+공유 컴포넌트에서는 영향받는 소비자를 목록화하고 prop 패턴뿐 아니라 서로 다른 레이아웃 맥락별로
+표본을 고릅니다. flex item, grid cell, table cell, absolute positioning이나 그 밖의 크기 제한
+컨테이너 등 존재하는 모든 부모 크기 결정 맥락마다 영향받는 소비자를 적어도 하나 포함합니다.
+확인하지 않은 알려진 맥락은 제한으로 기록하며, 표본의 `Pass`를 해당 맥락으로 일반화하지 않습니다.
 
-## Capture method and evidence map
+<a id="capture-method-and-evidence-map"></a>
+## 캡처 방식과 근거 매핑
 
-Prefer the smallest readable evidence that proves the AC while retaining enough surrounding
-layout context. Default to a normal viewport screenshot containing the criterion and its
-necessary context. If the criterion is below the fold, scroll to it and capture that viewport.
-When outlined targets and their labels exceed one viewport, consider the qualified `content-height`
-method below: temporarily grow the emulated height to fit their union, scroll it into view and take
-a normal viewport capture. Prefer this over `captureBeyondViewport` with `clip`, which can paint
-fixed navigation over the content. This preference never waives the resize prerequisites below;
-otherwise use multiple bounded captures. Record the effective height and restore the viewport.
-When one AC requires separated regions or states, use multiple ordered viewport captures and
-map every file to its AC, region/state, and order. Do not default to a context-destroying
-element-only crop or reuse undifferentiated captures for unrelated criteria.
+충분한 주변 레이아웃 맥락을 유지하면서 AC를 입증하는, 읽을 수 있는 최소 근거를 우선합니다.
+기본은 기준과 필요한 맥락을 포함한 일반 viewport 스크린샷입니다. 기준이 화면 아래에 있으면
+스크롤하여 해당 viewport를 캡처합니다. 윤곽선 대상과 레이블이 한 viewport를 넘으면 아래 조건을
+충족하는 `content-height` 방식을 고려합니다. 에뮬레이션 높이를 대상들의 합집합에 맞게 일시적으로
+늘리고, 화면 안으로 스크롤한 뒤 일반 viewport 캡처를 찍습니다. 콘텐츠 위에 고정 탐색 UI를 그릴
+수 있는 `clip`과 `captureBeyondViewport` 조합보다 이 방식을 우선합니다. 이 선호는 아래 크기
+조정 선행 조건을 면제하지 않으며, 조건을 충족하지 않으면 여러 제한된 캡처를 사용합니다.
+유효 높이를 기록하고 viewport를 복원합니다. 하나의 AC에 분리된 영역이나 상태가 필요하면 여러
+순서 있는 viewport 캡처를 사용하고 각 파일을 AC, 영역/상태와 순서에 매핑합니다. 맥락을 없애는
+요소 전용 자르기를 기본으로 사용하거나 구별되지 않는 캡처를 무관한 기준에 재사용하지 않습니다.
 
-Use `fullPage` only as an explicit exception when the AC itself requires page-wide composition
-or long-page continuity and bounded viewport captures cannot prove it. When fixed navigation or a
-sticky region would obscure that page-wide criterion, `content-height` (fitting viewport height to
-content) is allowed and preferred over hiding navigation, provided the prerequisites below hold.
-This method changes the viewport without mutating DOM; it can still change layout and visible state.
+`fullPage`는 AC 자체가 페이지 전체 구성이나 긴 페이지 연속성을 요구하고 제한된 viewport
+캡처로 이를 입증할 수 없을 때만 명시적 예외로 사용합니다. 고정 탐색 UI나 sticky 영역이 해당
+페이지 전체 기준을 가린다면 아래 선행 조건이 성립할 때 `content-height`(viewport 높이를
+콘텐츠에 맞춤)를 허용하며 탐색 UI 숨기기보다 우선합니다. 이 방식은 DOM 변경 없이 viewport를
+바꾸지만 레이아웃과 보이는 상태는 바꿀 수 있습니다.
 
-Before using `content-height`, verify from applicable styles, application code, and runtime behavior
-that the page does not depend on viewport-height units (`vh`, `svh`, `lvh`, `dvh`), height media queries,
-list virtualization, infinite scrolling, or scroll-triggered animation/reveal/lazy loading. Unknown
-or present dependencies rule out this method. Verify that the resize exposes the criterion without
-changing its layout/content/state; restore the approved viewport for responsive or sticky-behavior
-criteria, which an expanded capture cannot discharge. If the method cannot safely prove the AC,
-use bounded captures or the navigation procedure below, or return `Unverifiable`.
+`content-height`를 사용하기 전에 적용되는 스타일, 애플리케이션 코드와 런타임 동작에서 페이지가
+viewport 높이 단위(`vh`, `svh`, `lvh`, `dvh`), 높이 media query, 목록 가상화, 무한 스크롤 또는
+스크롤로 시작되는 애니메이션/표시/lazy loading에 의존하지 않음을 검증합니다. 의존성이 있거나
+알 수 없으면 이 방식을 사용할 수 없습니다. 크기 조정이 기준의 레이아웃/콘텐츠/상태를 바꾸지
+않으면서 드러내는지 검증합니다. 반응형이나 sticky 동작 기준은 확장 캡처로 충족할 수 없으므로
+승인된 viewport를 복원합니다. 이 방식으로 AC를 안전하게 입증할 수 없으면 제한된 캡처나 아래
+탐색 절차를 사용하거나 `Unverifiable`을 반환합니다.
 
-Label every capture with `capture_method` (such as `viewport`, `fullPage`, or `content-height`) and
-its measured effective viewport in both the evidence index and result. For either page-wide exception,
-record why bounded captures cannot prove the AC; for `content-height`, also record the prerequisite
-checks, original viewport, and observed resize effect. Use the identical method and effective viewport
-for baseline and after. If content heights differ, reproduce both source states at one common safe
-height and recheck prerequisites; do not compare independently auto-fitted heights. Preserve earlier
-failure evidence and restore viewport/state after capture. Store a bounded `README.md` beside the images with an
-AC-to-file/state table, capture order when relevant, source provenance, and a replay procedure.
-For each paired capture, record the safe replay target and the exact origin-free `display_route` from
-[publication evidence](../../tk-verification-guidance/references/publication-evidence.md), ordered navigation/input with stable selectors or
-verified element identity, scroll anchor and offset, capture boundary, viewport, DPR, zoom,
-completed font-loading state, browser, and UI state. Declare carousel slides, relative-time text,
-random ordering, animation, or other intrinsically nondeterministic regions before comparison and
-exclude only those exact regions with a reason. Record any capture-only element removal/hiding.
-This file is evidence metadata, not a progress ledger.
-Return the same explicit AC/file/state mapping and capture order in the verification result.
-Do not compress multiple captures into an undifferentiated path list: report one ordered row
-per capture with its AC, file, viewport, state/region, and inspected result.
-Each result row must state that the screenshot was non-empty after actual image inspection, or that
-the candidate bounded-region file was byte-identical to its named already-inspected baseline.
-For an explicitly requested overview of existing multiple captures, use the optional
-[contact sheet](contact-sheet.md). It is navigation only; inspect each required original
-and retain every AC row and its real verdict. A thumbnail cannot prove text, geometry or input.
-Use the mandatory `capture_only_mutation` field from [the evidence contract](results.md)
-in the index and result. An outline or label is an annotation, so annotated captures cannot report `none`.
+모든 캡처에 `capture_method`(예: `viewport`, `fullPage`, `content-height`)와 측정한 유효
+viewport를 근거 색인과 결과 양쪽에 표시합니다. 페이지 전체 예외 두 가지 모두 제한된 캡처로
+AC를 입증할 수 없는 이유를 기록합니다. `content-height`에는 선행 조건 검사, 원래 viewport와
+관찰된 크기 조정 효과도 기록합니다. baseline과 after에는 동일한 방식과 유효 viewport를 사용합니다.
+콘텐츠 높이가 다르면 두 소스 상태를 하나의 공통 안전 높이로 재현하고 선행 조건을 재확인합니다.
+각각 자동으로 맞춘 높이를 비교하지 않습니다. 이전 실패 근거를 보존하고 캡처 후 viewport/상태를
+복원합니다. AC와 파일/상태 간 표, 관련된 경우 캡처 순서, 소스 출처와 재생 절차를 담은 제한된
+`README.md`를 이미지 옆에 저장합니다.
+각 쌍의 캡처에 안전한 재생 대상과 [발행 근거](../../tk-verification-guidance/references/publication-evidence.md)의
+origin 없는 정확한 `display_route`, 안정적인 selector 또는 검증된 요소 식별 정보를 사용한
+순서 있는 탐색/입력, 스크롤 anchor와 offset, 캡처 경계, viewport, DPR, 확대율, 완료된 폰트
+로딩 상태, 브라우저와 UI 상태를 기록합니다. carousel slide, 상대 시간 텍스트, 무작위 순서,
+애니메이션 또는 본질적으로 비결정적인 다른 영역은 비교 전에 선언하고, 이유와 함께 정확히 그
+영역만 제외합니다. 캡처 전용 요소 제거/숨김도 기록합니다. 이 파일은 근거 메타데이터이며 진행
+원장이 아닙니다.
+검증 결과에도 같은 명시적 AC/파일/상태 매핑과 캡처 순서를 반환합니다. 여러 캡처를 구별 없는
+경로 목록으로 압축하지 않습니다. 캡처마다 AC, 파일, viewport, 상태/영역과 확인 결과를 담은
+순서 있는 행 하나를 보고합니다.
+각 결과 행에는 실제 이미지 확인 후 스크린샷이 비어 있지 않았다는 사실이나, 후보의 한정 영역
+파일이 명시한 이미 확인된 baseline과 바이트 단위로 동일했다는 사실을 밝혀야 합니다.
+기존 여러 캡처의 개요를 명시적으로 요청하면 선택적 [콘택트 시트](contact-sheet.md)를 사용합니다.
+이는 탐색 전용이며 필요한 각 원본을 확인하고 모든 AC 행과 실제 판정을 유지합니다.
+썸네일은 텍스트, 기하나 입력을 입증할 수 없습니다.
+색인과 결과에 [근거 계약](results.md)의 필수 `capture_only_mutation` 필드를 사용합니다.
+윤곽선이나 레이블은 주석이므로 주석을 단 캡처는 `none`으로 보고할 수 없습니다.
 
-Replay the same indexed procedure for baseline and after. A matching viewport alone is insufficient
-when navigation, scroll, state, font readiness, capture boundary, or deterministic content differs.
-When each phase builds from a worktree, verify parity of non-product untracked/ignored inputs and
-build-scan exclusions, including run-owned `.tigerkit/` files generated between phases. Prefer
-excluding those artifacts through existing repository-approved scan boundaries; otherwise record
-the identical scanned paths/content and disclose any difference from a clean CI checkout. Record
-the exclusion or input-parity evidence in the replay index and result. Git ignore success alone
-does not prove build-scan exclusion. Unproven parity makes the pair `Unverifiable`; restore
-comparable inputs through the implementation owner and rebuild both phases before comparing.
-The verifier does not edit source/config or move evidence to an external temporary path.
-Store paired captures under `baseline/` and `after/`. Before replacing a failed after capture,
-preserve the complete failing evidence in a new unique immutable `failed-<attempt>/` directory.
+baseline과 after에서 같은 색인 절차를 재생합니다. 탐색, 스크롤, 상태, 폰트 준비, 캡처 경계 또는
+결정적 콘텐츠가 다르면 viewport 일치만으로 충분하지 않습니다. 각 단계가 worktree에서 빌드되면
+단계 사이에 생성된 실행 소유 `.tigerkit/` 파일을 포함하여 비제품 untracked/ignored 입력과
+빌드 스캔 제외의 동등성을 검증합니다. 기존 저장소 승인 스캔 경계로 해당 산출물을 제외하는 것을
+우선합니다. 그렇지 않으면 동일한 스캔 경로/내용을 기록하고 깨끗한 CI checkout과의 차이를
+공개합니다. 재생 색인과 결과에 제외 또는 입력 동등성 근거를 기록합니다. Git 제외 성공만으로
+빌드 스캔 제외를 입증할 수 없습니다. 동등성을 입증하지 못하면 쌍은 `Unverifiable`입니다.
+구현 담당자를 통해 비교 가능한 입력을 복원하고 비교 전에 두 단계를 모두 다시 빌드합니다.
+검증자는 소스/설정을 편집하거나 근거를 외부 임시 경로로 옮기지 않습니다.
+쌍의 캡처는 `baseline/`과 `after/` 아래에 저장합니다. 실패한 after 캡처를 교체하기 전에
+새로운 고유한 변경 불가능 `failed-<attempt>/` 디렉터리에 전체 실패 근거를 보존합니다.
 
-Before capture, inspect whether an empty off-screen alert, toast, or similar framework
-container expands or contaminates the image. Remove only a verified empty, non-criterion
-container at runtime and disclose it in the evidence index. For annotations, attach an
-`outline` directly to an ordinary target element. If a framework-managed subtree reverts external
-edits, such as a contenteditable rich-text editor, do not mutate the target: inject a run-owned
-`<style>` into `head` with a selector verified to match exactly the intended target, and apply the
-outline through that rule. Revalidate the selector after rerender; do not add target attributes
-merely to select it. For a table clipped by an overflow wrapper, use a negative `outline-offset`
-so its outline stays inside the visible boundary. Remove the owned rule after capture and restore
-any ordinary target's prior inline style. Place the label as an absolute child of `body`
-and clamp its position to the page width so target `overflow: hidden` cannot clip it.
-Do not calculate a detached overlay from coordinates that may change during scrolling,
-`fullPage` layout, or capture.
-Inspect the decoded final image and confirm each required outline and label is actually visible
-and each criterion target is in frame. A missing/clipped outline or label is a failed capture,
-not a limitation that permits acceptance. Preserve it under `failed-<attempt>/` and recapture;
-DOM/computed-style evidence alone cannot satisfy this check.
+캡처 전에 화면 밖의 빈 alert, toast 또는 유사 framework 컨테이너가 이미지를 확장하거나
+오염시키는지 확인합니다. 비어 있고 기준과 무관함이 검증된 컨테이너만 런타임에 제거하고 근거
+색인에 공개합니다. 주석은 일반 대상 요소에 `outline`을 직접 붙입니다. contenteditable 리치 텍스트
+편집기처럼 framework 관리 하위 트리가 외부 편집을 되돌리면 대상을 변경하지 않습니다. 정확히
+의도한 대상에만 일치함을 검증한 selector로 실행 소유 `<style>`을 `head`에 주입하고 해당 규칙을
+통해 윤곽선을 적용합니다. 재렌더링 후 selector를 재검증하며 선택만을 위해 대상 속성을 추가하지
+않습니다. overflow wrapper에 잘린 테이블에는 음수 `outline-offset`을 사용하여 윤곽선이
+보이는 경계 안에 있도록 합니다. 캡처 후 소유 규칙을 제거하고 일반 대상의 이전 inline style을
+복원합니다. 레이블은 `body`의 절대 위치 자식으로 배치하고 페이지 너비 안으로 위치를 제한하여
+대상의 `overflow: hidden`에 잘리지 않게 합니다. 스크롤, `fullPage` 레이아웃이나 캡처 중
+바뀔 수 있는 좌표에서 분리된 오버레이를 계산하지 않습니다.
+디코딩한 최종 이미지를 확인하고 필요한 모든 윤곽선과 레이블이 실제로 보이며 각 기준 대상이
+프레임 안에 있는지 확인합니다. 누락되거나 잘린 윤곽선/레이블은 인수 허용의 제한 사항이 아니라
+캡처 실패입니다. `failed-<attempt>/`에 보존하고 재캡처합니다. DOM/computed-style 근거만으로는
+이 검사를 충족할 수 없습니다.
 
-If fixed navigation obscures the criterion, first prefer bounded captures; for a page-wide AC,
-consider the qualified `content-height` method above before hiding navigation. Otherwise use the
-framework's compact/collapsed mode and verify that content position remains unchanged. If it still
-obscures the criterion, hide only non-criterion navigation for capture, verify that this does not
-alter the judged content geometry/state, and disclose the change in both index and result. Restore
-it afterward. Never hide navigation whose visibility or overlap is itself under test.
+고정 탐색 UI가 기준을 가리면 먼저 제한된 캡처를 우선합니다. 페이지 전체 AC에는 탐색 UI를
+숨기기 전에 위의 조건을 충족하는 `content-height` 방식을 고려합니다. 그렇지 않으면 framework의
+축소/접힘 모드를 사용하고 콘텐츠 위치가 그대로인지 검증합니다. 그래도 기준을 가리면 캡처를 위해
+기준과 무관한 탐색 UI만 숨기고, 판정하는 콘텐츠의 기하/상태를 바꾸지 않는지 검증하며 색인과
+결과 양쪽에 변경을 공개합니다. 이후 복원합니다. 가시성이나 겹침 자체가 시험 대상인 탐색 UI는
+숨기지 않습니다.
 
-## Verbatim visual comparison axes
+<a id="verbatim-visual-comparison-axes"></a>
+## 원형 충실도 시각 비교 축
 
-For a `must-not-change` element or bounded region capture, first compare the exact files byte for
-byte only when encoding, capture boundary, and indexed replay conditions match. Byte identity is a
-sufficient one-way oracle for visual equality and discharges further axis inspection for that exact
-region. Non-identity does not prove a defect; inspect the eight axes below. Do not use byte identity
-as the primary oracle for a full viewport or a capture containing declared nondeterministic regions,
-animation, or environment-sensitive antialiasing.
+`must-not-change` 요소나 한정된 영역 캡처에서는 인코딩, 캡처 경계와 색인된 재생 조건이 일치할
+때만 정확한 파일을 먼저 바이트 단위로 비교합니다. 바이트 동일성은 시각적 동일성을 입증하는
+충분한 단방향 판별 기준이며 정확히 그 영역의 추가 축 검사를 충족합니다. 동일하지 않다는 사실은
+결함을 입증하지 않으므로 아래 여덟 축을 확인합니다. 전체 viewport나 선언된 비결정적 영역,
+애니메이션 또는 환경에 민감한 antialiasing이 포함된 캡처에는 바이트 동일성을 주 판별 기준으로
+사용하지 않습니다.
 
-For a verbatim/fidelity comparison against an approved reference, actually inspect
-reference and candidate screenshots under the same viewport, DPR, zoom, and completed
-font-loading state. Record each axis as `Pass | Fail | Unverifiable`. Do not replace an
-axis with a general visual impression or DOM presence. If any required axis remains
-unchecked, the aggregate result is not `Pass`.
+승인된 참조와 원형/충실도를 비교할 때는 같은 viewport, DPR, 확대율과 완료된 폰트 로딩 상태에서
+참조 및 후보 스크린샷을 실제로 확인합니다. 각 축을 `Pass | Fail | Unverifiable`로 기록합니다.
+축을 전반적인 시각 인상이나 DOM 존재로 대체하지 않습니다. 필수 축 하나라도 확인하지 않았으면
+종합 결과는 `Pass`가 아닙니다.
 
-1. **Asset presence/integrity**: Verify that logos, SVGs, icons, favicons, raster images,
-   and background images are not missing, substituted, or duplicated. For SVGs, inspect
-   the rendered shape, `viewBox`, aspect ratio, fill/stroke, and clipping through the
-   screenshot and computed evidence rather than checking only element presence.
-2. **Content**: Verify that visible text, labels, numbers, badges, and order match the
-   `reference` without omissions, additions, or typos. The basis must contain the exact
-   visible string. If it paraphrases an element name or contains only a `code identifier`
-   or `enum` value, do not guess the element; record `Unverifiable`.
-3. **Geometry/layout**: Compare position, dimensions, spacing, alignment, radius,
-   borders, overlap, clipping, wrapping, and crop for each named region.
-4. **Typography**: Compare loaded font family/fallback, weight, rendered font size,
-   line-height, letter-spacing, text transform, and wrapping.
-5. **Color/paint**: Compare computed values and rendered appearance for foreground,
-   background, border, SVG `fill`/`stroke`, opacity, shadow, and gradient.
-6. **Imagery**: Verify successful image request/load, source, intrinsic dimensions,
-   aspect ratio, `object-fit`/`object-position`, crop, and resolution.
-7. **Responsive**: Recheck the preceding axes for each approved viewport and breakpoint
-   edge, including overflow, wrapping, clipping, and off-screen controls.
-8. **State**: Recheck the preceding axes for each approved
-   hover/focus/active/disabled/loading/error state.
+1. **자산 존재/무결성**: 로고, SVG, 아이콘, favicon, 래스터 이미지와 배경 이미지가 누락되거나
+   대체되거나 중복되지 않았는지 검증합니다. SVG는 요소 존재만 확인하지 말고 스크린샷과 계산된
+   근거로 렌더링된 모양, `viewBox`, 종횡비, fill/stroke와 클리핑을 확인합니다.
+2. **콘텐츠**: 보이는 텍스트, 레이블, 숫자, 배지와 순서가 누락, 추가나 오타 없이 `reference`와
+   일치하는지 검증합니다. 기준에는 정확한 표시 문자열이 있어야 합니다. 요소 이름을 바꿔 말하거나
+   `code identifier` 또는 `enum` 값만 있으면 요소를 추측하지 말고 `Unverifiable`로 기록합니다.
+3. **기하/레이아웃**: 지정된 각 영역의 위치, 크기, 간격, 정렬, 반경, 테두리, 겹침, 클리핑,
+   줄바꿈과 자르기를 비교합니다.
+4. **타이포그래피**: 로드된 font family/fallback, 굵기, 렌더링 폰트 크기, line-height,
+   letter-spacing, text transform과 줄바꿈을 비교합니다.
+5. **색상/페인팅**: 전경, 배경, 테두리, SVG `fill`/`stroke`, 불투명도, 그림자와 그라데이션의
+   계산된 값과 렌더링된 외형을 비교합니다.
+6. **이미지**: 이미지 요청/로드 성공, 소스, 고유 크기, 종횡비, `object-fit`/`object-position`,
+   자르기와 해상도를 검증합니다.
+7. **반응형**: overflow, 줄바꿈, 클리핑과 화면 밖 컨트롤을 포함하여 승인된 각 viewport와
+   breakpoint 경계에서 앞선 축을 재확인합니다.
+8. **상태**: 승인된 각 hover/focus/active/disabled/loading/error 상태에서 앞선 축을 재확인합니다.
 
-Complete all required axes in the first attempt even when one already fails. For a new field that
-must match approved sibling fields, measure box presence/dimensions and text alignment (including
-glyph inset) together against those siblings; a missing box does not excuse skipping alignment.
+이미 실패한 축이 있어도 첫 시도에서 모든 필수 축을 완료합니다. 승인된 형제 필드와 일치해야
+하는 새 필드에서는 해당 형제들과 박스 존재/크기 및 텍스트 정렬(glyph inset 포함)을 함께
+측정합니다. 박스가 없다고 정렬 검사를 건너뛸 수는 없습니다.
 
-For geometry and typography, record the reference value, candidate measurement, and
-delta for every named element whose value can be measured. Report every measured
-mismatch regardless of magnitude; when tolerance is absent, do not silently accept it.
-If the repository has an appropriate design token but the candidate uses a different
-token or computed value, record a `Color/paint` mismatch even when the colors look close.
-Only an explicit approved deviation can convert a measured mismatch into acceptance.
+기하와 타이포그래피에서는 값을 측정할 수 있는 모든 지정 요소에 대해 참조 값, 후보 측정값과
+차이를 기록합니다. 크기에 관계없이 측정된 모든 불일치를 보고하며, 허용 오차가 없으면 조용히
+수락하지 않습니다. 저장소에 적절한 디자인 토큰이 있는데 후보가 다른 토큰이나 계산된 값을
+사용하면 색이 비슷해 보여도 `Color/paint` 불일치를 기록합니다. 명시적으로 승인된 차이만
+측정된 불일치를 인수 허용으로 바꿀 수 있습니다.
 
-For every finding, connect the axis, named element/region, reference observation,
-candidate observation, viewport/state, and inspected screenshot path. When the approved
-criteria do not define pixel-perfect tolerance, do not invent a threshold. Report clear
-mismatches and leave subtle differences as `Unverifiable`.
+모든 발견 사항에서 축, 지정 요소/영역, 참조 관찰, 후보 관찰, viewport/상태와 확인한 스크린샷
+경로를 연결합니다. 승인된 기준에 pixel-perfect 허용 오차가 정의되어 있지 않으면 임계값을
+만들어 내지 않습니다. 명백한 불일치는 보고하고 미묘한 차이는 `Unverifiable`로 남깁니다.
 
-For a responsive AC, measure the actual `window.innerWidth` and test the named width and
-breakpoint edge. Inspect overflow, clipping, overlap, wrapping, truncation, alignment,
-spacing, sticky/fixed elements, and off-screen controls only when approved criteria
-require them. Measure hover/focus after trusted input.
+반응형 AC에는 실제 `window.innerWidth`를 측정하고 지정 너비와 breakpoint 경계를 시험합니다.
+승인된 기준이 요구할 때만 overflow, 클리핑, 겹침, 줄바꿈, 생략, 정렬, 간격, sticky/fixed 요소와
+화면 밖 컨트롤을 확인합니다. hover/focus는 신뢰 입력 후 측정합니다.
 
-A temporary runtime-only DOM/response mock is allowed only when repository evidence
-proves the exact production envelope and the approved criterion concerns presentation
-rather than the mocked backend. Label and remove the bypass. Never modify source code
-for verification.
+임시 런타임 전용 DOM/응답 mock은 저장소 근거가 정확한 운영 envelope를 입증하고 승인된 기준이
+mock backend가 아닌 표현에 관한 것일 때만 허용합니다. 우회 사용을 표시하고 제거합니다.
+검증을 위해 소스 코드를 수정하지 않습니다.
 
-Record the baseline provenance, replay procedure, viewport, paired screenshot paths, inspected
-result, and limitation as concise facts.
-A causal regression claim requires comparable baseline runtime evidence; otherwise,
-report only the currently observed failure.
+baseline 출처, 재생 절차, viewport, 쌍의 스크린샷 경로, 확인 결과와 제한을 간결한 사실로 기록합니다.
+인과적인 회귀 주장에는 비교 가능한 baseline 런타임 근거가 필요합니다. 그렇지 않으면 현재
+관찰한 실패만 보고합니다.
 
-When the pair materially supports acceptance or regression preservation, return the producer-neutral
-PR evidence manifest from [publication evidence](../../tk-verification-guidance/references/publication-evidence.md). A `remain unchanged` result
-requires a labeled baseline/after pair even when it is byte-identical or all inspected axes pass.
+쌍이 인수 검증이나 회귀 방지를 실질적으로 뒷받침하면
+[발행 근거](../../tk-verification-guidance/references/publication-evidence.md)의 제작자 중립 PR 근거 manifest를 반환합니다.
+`remain unchanged` 결과에는 바이트 단위로 동일하거나 확인한 모든 축이 통과하더라도 레이블이
+있는 baseline/after 쌍이 필요합니다.

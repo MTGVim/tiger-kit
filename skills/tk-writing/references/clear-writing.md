@@ -1,44 +1,47 @@
-# Clear Writing
+<a id="clear-writing"></a>
+# 명확한 글쓰기
 
-These criteria govern explanatory prose and its refinement. The calling skill owns the task, evidence acquisition, output format, and mutation boundaries. Apply relevant criteria without exposing a checklist or imposing a fixed number of paragraphs, examples, scenes, or words.
+이 기준은 설명문과 그 다듬기에 적용합니다. 호출한 스킬이 작업, 근거 확보, 출력 형식과 변경 경계를 담당합니다. 체크리스트를 드러내거나 문단, 예시, 장면이나 단어 수를 고정하지 말고 관련 기준을 적용합니다.
 
-## Hard Invariants
+<a id="hard-invariants"></a>
+## 반드시 지킬 불변 조건
 
-Apply these within the calling skill's authorized editing scope, before and after contextual style edits. Frequency, density, or a low-severity label never relax them. Protected literals remain exact unless explicitly in scope.
+맥락에 맞는 문체 편집 전후에 호출한 스킬의 승인된 편집 범위 안에서 이 조건을 적용합니다. 빈도, 밀도나 낮은 심각도 표시는 이 조건을 완화하지 않습니다. 보호된 리터럴은 명시적으로 범위에 포함되지 않는 한 정확히 유지합니다.
 
-### Meaning Before Polish
+<a id="meaning-before-polish"></a>
+### 표현보다 의미 우선
 
-Make the actor, action, cause, conditions and unknowns clear. Introduce prerequisites this audience needs before relying on them. For standalone or shareable output, carry the context needed for its purpose without relying on the authoring conversation; definitions already present in the document need no repetition. For an explicit reply to an identified reader in a visible, directly linked thread, omit only background that reader already has there. Retain new information, changed scope, exceptions, verification results, and decision reasons. Being in the same chat alone does not establish shared context; when the audience or relevant thread is unclear, preserve needed background or ask for the missing context. Use concrete actors, stable terms, and actual causal or temporal relationships. Explain a concrete situation through actors, actions and causal outcomes before abstract distinctions. Warnings cannot replace this process. Resolve unseen referents from supplied context; explain a path's consequences rather than calling its arrow wrong. When supplied context identifies a department or position, name it instead of an ambiguous umbrella such as `현업`; preserve each actor's distinct responsibility. If the actor or cause is unknown, keep it unknown rather than guessing a department or position. Connect each main point with supporting facts or explanation. Keep useful headings, sequences, comparisons, and domain examples; avoid slogans and decorative structure.
+행위 주체, 행동, 원인, 조건과 모르는 것을 명확히 합니다. 독자가 알아야 할 선행 지식은 그것에 의존하기 전에 소개합니다. 독립적으로 읽거나 공유할 결과물에는 작성 대화에 의존하지 않고 목적에 필요한 맥락을 담습니다. 문서에 이미 있는 정의는 반복할 필요가 없습니다. 보이며 직접 연결된 스레드에서 특정 독자에게 명시적으로 답하는 경우에는 그 독자가 그곳에서 이미 알고 있는 배경만 생략합니다. 새 정보, 변경된 범위, 예외, 검증 결과와 결정 이유는 유지합니다. 같은 채팅에 있다는 사실만으로 공유 맥락이 성립하지는 않습니다. 독자나 관련 스레드가 불명확하면 필요한 배경을 보존하거나 빠진 맥락을 묻습니다. 구체적인 행위 주체, 일관된 용어와 실제 인과 또는 시간 관계를 사용합니다. 추상적인 구분에 앞서 행위 주체, 행동과 인과적 결과를 통해 구체적인 상황을 설명합니다. 경고로 이 과정을 대신할 수 없습니다. 제공된 맥락에서 드러나지 않은 지시 대상을 확인합니다. 경로의 화살표가 잘못됐다고 하는 대신 그 경로가 낳는 결과를 설명합니다. 제공된 맥락에서 부서나 직위를 식별할 수 있으면 `현업` 같은 모호한 포괄어 대신 그 이름을 쓰고, 각 행위 주체의 서로 다른 책임을 보존합니다. 행위 주체나 원인을 모르면 부서나 직위를 추측하지 말고 모르는 상태로 유지합니다. 각 요점을 뒷받침하는 사실이나 설명을 연결합니다. 유용한 제목, 순서, 비교와 도메인 예시는 유지하고 구호와 장식적인 구조는 피합니다.
 
-The calling skill determines which facts may be added. Rewriting preserves supplied facts and may restore supplied context; explaining may introduce supported general knowledge and clearly labeled illustrative examples. Neither may invent project history, measurements, decisions, causes, or evidence. Distinguish hypotheses, proposals, observed results, and completed actions. Keep numbers, negation, conditions, alternatives, decision owners, and certainty intact. Integrate conditions and uncertainty into the mechanism or a useful scope note on depicted/simplified content and its use. Keep standalone consequential safety/authority warnings prominent. Preserve limitations without vague disclaimers or invented benefits. When rewriting, preserve supported causal, contrastive, temporal, conditional, and conclusion relationships without strengthening, weakening, or inventing them through connectors, reordering, or new assertions. Mere adjacency is not evidence of a relationship. Preserve temporal state as part of meaning: ongoing or repeated action, completed result,
-planned action, and merely possible action are not interchangeable. Shortening an auxiliary
-or sentence ending must not turn an in-progress investigation into a habitual claim, a plan
-into a completed event, or a sustained condition into a one-time event.
+추가할 수 있는 사실은 호출한 스킬이 정합니다. 재작성은 제공된 사실을 보존하며 제공된 맥락을 복원할 수 있습니다. 설명은 근거가 있는 일반 지식과 예시임을 명확히 밝힌 설명용 사례를 도입할 수 있습니다. 어느 쪽도 프로젝트 이력, 측정값, 결정, 원인이나 근거를 지어내서는 안 됩니다. 가설, 제안, 관찰 결과와 완료된 행동을 구분합니다. 수치, 부정, 조건, 대안, 결정 담당자와 확실성을 그대로 유지합니다. 조건과 불확실성은 메커니즘 설명에 통합하거나, 묘사하거나 단순화한 내용과 그 사용에 관한 유용한 범위 메모에 담습니다. 독립적으로 제시하는 중대한 안전 및 권한 경고는 눈에 잘 띄게 유지합니다. 모호한 면책 문구나 지어낸 이점 없이 한계를 보존합니다. 재작성할 때는 연결어, 재배열이나 새 주장을 통해 관계를 강화하거나 약화하거나 지어내지 말고, 근거가 있는 인과, 대조, 시간, 조건과 결론 관계를 보존합니다. 단순히 이웃해 있다는 사실은 관계의 근거가 아닙니다. 시간적 상태도 의미의 일부로 보존합니다. 진행 중이거나 반복되는 행동, 완료된 결과,
+계획한 행동과 단지 가능한 행동은 서로 바꿀 수 없습니다. 보조 표현이나
+문장 끝을 줄이면서 진행 중인 조사를 일상적으로 하는 일이라는 주장으로, 계획을
+완료된 사건으로, 지속되는 조건을 일회성 사건으로 바꿔서는 안 됩니다.
 
-For rewriting-only requests, keep the result within the supplied text and context: do not invent recipients, delivery circumstances, follow-up operational advice, or predicted reactions or effects. Provide advice separately only when the user explicitly requests it, and keep unknown circumstances unknown.
+재작성만 요청받았다면 제공된 텍스트와 맥락 안에 결과를 한정합니다. 수신자, 전달 상황, 후속 운영 조언이나 예상 반응과 효과를 지어내지 않습니다. 사용자가 명시적으로 요청할 때만 조언을 별도로 제공하고 모르는 상황은 모르는 상태로 유지합니다.
 
-Assess technical knowledge and familiarity with this project separately: an expert may still need supplied project purpose and change context, while an explicitly familiar reader needs no repeated introduction. A style or voice sample guides expression, not facts: borrow rhythm, vocabulary, register and information order without importing sample-only events, numbers, experiences, claims, citations or project context unless separately supplied as factual source material for this task.
+기술 지식과 이 프로젝트에 대한 익숙함을 별도로 평가합니다. 전문가도 제공된 프로젝트 목적과 변경 맥락이 필요할 수 있고, 명시적으로 익숙한 독자에게는 소개를 반복할 필요가 없습니다. 문체나 목소리 견본은 사실이 아니라 표현의 지침입니다. 리듬, 어휘, 격식 수준과 정보 순서는 빌릴 수 있지만, 이 작업의 사실 출처 자료로 별도 제공되지 않은 견본 속 사건, 수치, 경험, 주장, 인용이나 프로젝트 맥락은 가져오지 않습니다.
 
-Preserve explicit ranking, comparison scope, simultaneity, and exclusivity when removing stylistic emphasis; restate the relation naturally rather than protecting particular words. A source-stated ranking is still a claim when its rationale is absent. Empty emphasis with no actual relation remains removable. Check both for lost relations and for relations introduced by the rewrite.
+문체상 강조를 없앨 때도 명시적인 순위, 비교 범위, 동시성과 배타성을 보존합니다. 특정 단어를 보호하기보다 그 관계를 자연스럽게 다시 표현합니다. 원문이 명시한 순위는 근거가 없더라도 여전히 하나의 주장입니다. 실제 관계가 없는 빈 강조는 제거할 수 있습니다. 빠진 관계와 재작성으로 새로 도입된 관계를 모두 확인합니다.
 
-Preserve evaluative intensity separately from epistemic certainty. A strongly positive or negative source evaluation must retain its degree in natural wording; do not weaken it merely to remove emphasis. Confidence that an effect exists does not establish its magnitude, and a large observed effect does not establish certainty. Preserve only the intensity actually supplied: add no unsupported praise, scale, or confidence. For example, `매우 만족했다` must not become `꽤 괜찮았다`, and `효과가 있을 것이라 확신한다` must not become `효과가 매우 크다`.
+평가 강도와 인식적 확실성을 별도로 보존합니다. 원문이 강하게 긍정하거나 부정한 평가는 자연스러운 표현으로 그 정도를 유지해야 합니다. 단지 강조를 없애려고 약화하지 않습니다. 효과가 존재한다는 확신이 그 효과의 크기를 입증하지는 않으며, 관찰된 효과가 크다고 확실성이 입증되는 것도 아닙니다. 실제로 제공된 강도만 보존하고 근거 없는 칭찬, 규모나 확신을 더하지 않습니다. 예를 들어 `매우 만족했다`를 `꽤 괜찮았다`로, `효과가 있을 것이라 확신한다`를 `효과가 매우 크다`로 바꿔서는 안 됩니다.
 
-Preserve meaningful modality in either direction: possibility, capability, permission, obligation, recommendation, and the strength of a claim or hedge are part of its meaning. A different hedge can still strengthen or weaken a claim; a recommendation must not become a requirement, nor a requirement optional advice. Repetition does not authorize either change. When equivalence is uncertain, retain the original modality and improve surrounding word order or sentence boundaries instead. Equivalent capability wording may change when the same actor, action, conditions, and strength remain intact; this is a semantic check, not a protected-word list. Compare each revised claim with its source, including meaning carried by endings and scope, rather than counting hedge markers.
+의미 있는 양태는 어느 방향으로도 바꾸지 않고 보존합니다. 가능성, 능력, 허가, 의무, 권고와 주장 또는 유보의 강도는 의미의 일부입니다. 다른 유보 표현으로도 주장을 강화하거나 약화할 수 있습니다. 권고를 의무로, 의무를 선택적 조언으로 바꿔서는 안 됩니다. 반복된다고 어느 쪽 변경도 허용되는 것은 아닙니다. 동등한지 확실하지 않으면 원래 양태를 유지하고 주변 어순이나 문장 경계를 개선합니다. 행위 주체, 행동, 조건과 강도가 모두 같다면 동등한 능력 표현으로 바꿀 수 있습니다. 이는 보호 단어 목록이 아니라 의미 검사입니다. 유보 표현 개수를 세는 대신, 어미와 범위에 담긴 의미까지 포함하여 수정한 각 주장을 원문과 대조합니다.
 
-Preserve the binding of each explicit citation, figure/table reference, number, result or measurement to the claim it supports, not just its literal text. When reordering, move evidence with its claim and retain its original scope; proximity to a different sentence never reassigns support. If the source scope is ambiguous, keep that uncertainty rather than broadening support. Ordinary prose without evidence pointers gains no new citation requirement or invented authority.
+명시적인 인용, 그림이나 표 참조, 수치, 결과나 측정값은 리터럴 텍스트뿐 아니라 그것이 뒷받침하는 주장과의 연결도 보존합니다. 순서를 바꿀 때는 근거를 그 주장과 함께 옮기고 원래 범위를 유지합니다. 다른 문장과 가까워졌다고 뒷받침할 대상이 바뀌지는 않습니다. 원문의 범위가 모호하면 뒷받침하는 범위를 넓히지 말고 그 불확실성을 유지합니다. 근거를 가리키는 표시가 없는 일반 글에 새 인용 의무나 지어낸 권위를 더하지 않습니다.
 
-Check quantitative and qualitative meaning separately from literal preservation. Without an explicit user-requested correction, do not add or drop a supplied quantity, date, duration, mechanism, actor, condition, or causal relationship even when the revised wording passes mechanical checks. Verify a requested correction against its supplied scope while preserving remaining meaning and attribution. Equivalent number spelling or unit notation may change in editable prose when the value and meaning stay the same; protected literals remain exact. A literal match or mechanical pass does not prove semantic fidelity. Compare the source and revision claim by claim within the existing internal passes. When the user explicitly requests a verification method that is unavailable or incomplete, state that limitation briefly; do not claim that method ran or report a full verification pass. Ordinary rewriting still returns one result without an audit report or an additional verification workflow.
+정량적 의미와 정성적 의미는 리터럴 보존과 별도로 확인합니다. 사용자가 명시적으로 수정을 요청하지 않았다면, 수정한 표현이 기계적 검사를 통과하더라도 제공된 수량, 날짜, 기간, 메커니즘, 행위 주체, 조건이나 인과관계를 추가하거나 빼지 않습니다. 요청된 수정은 제공된 범위에 비추어 확인하면서 나머지 의미와 출처 표시를 보존합니다. 편집 가능한 글에서는 값과 의미가 같다면 동등한 숫자 표기나 단위 표기로 바꿀 수 있지만 보호된 리터럴은 정확히 유지합니다. 리터럴 일치나 기계적 검사 통과만으로 의미 충실성이 입증되지는 않습니다. 기존 내부 검토 단계 안에서 원문과 수정문을 주장별로 대조합니다. 사용자가 명시적으로 요청한 검증 방법을 사용할 수 없거나 완전하게 수행할 수 없으면 그 한계를 짧게 밝힙니다. 그 방법을 실행했다고 주장하거나 전체 검증을 통과했다고 보고하지 않습니다. 일반적인 재작성은 여전히 감사 보고서나 추가 검증 워크플로 없이 결과 하나만 반환합니다.
 
-After polishing, compare each claim-evidence binding and the text with its source or supported explanation outline. Restore background or qualifications lost through shortening. Use existing technical terms, defining unfamiliar ones when needed. Keep code, commands, identifiers, links, quotations, and mandatory attribution exact. Do not treat AI-style removal as authorship concealment or AI-authorship detection.
+다듬은 뒤에는 주장과 근거의 각 연결 및 텍스트를 원문이나 근거가 있는 설명 개요와 대조합니다. 줄이는 동안 잃어버린 배경이나 한정 조건을 복원합니다. 기존 기술 용어를 사용하고 필요할 때 낯선 용어를 정의합니다. 코드, 명령, 식별자, 링크, 인용과 필수 출처 표시를 정확히 유지합니다. AI 문체 제거를 저자 은폐나 AI 작성 여부 탐지로 취급하지 않습니다.
 
 ### Content-led headings and labels
 
-Headings, labels, captions, callouts, and navigation text should name the content or action they
-represent. Do not use assistant narration or generic reading-order metadata as a substitute for
-the subject. Phrases such as `먼저 볼 것`, `먼저 확인할 것`, `처음 읽는 분께`, `여기서 중요한 점`
-or similar meta-headings are inappropriate when a specific heading such as the actual decision,
-background, constraint, evidence, or next action can be stated. A phrase is not banned from normal
-prose when it carries real meaning; the problem is using it as decorative structure.
+제목, 라벨, 캡션, 강조 상자와 탐색 문구는 그것이 나타내는 내용이나 행동을
+이름으로 삼는 것이 좋습니다. 주제 대신 어시스턴트의 진행 설명이나 일반적인 읽기 순서 메타데이터를
+사용하지 않습니다. `먼저 볼 것`, `먼저 확인할 것`, `처음 읽는 분께`, `여기서 중요한 점`
+같은 문구나 유사한 메타 제목은 실제 결정,
+배경, 제약, 근거나 다음 행동처럼 구체적인 제목을 쓸 수 있을 때 적절하지 않습니다. 실제
+의미를 전달한다면 그 문구를 일반 글에서 금지하지는 않습니다. 문제는 장식적인 구조로 사용하는 것입니다.
 
 ```text
 Before: 단계보다 흐름을 읽는 처리
@@ -47,22 +50,23 @@ After: 신청서를 제출하기 전에 확인할 항목
 Preserve: 정의한 처리 흐름을 추적하는 절의 제목인 '처리 흐름'
 ```
 
-For generated Korean reader-facing copy, run the final headings and prose through the same sentence
-clarity checks as the body text. A short heading may be a noun phrase, but the surrounding prose must
-still identify the subject and relation. Do not create fragmentary explanatory sentences merely to
-sound concise or polished.
+한국어 독자용 문구를 생성했다면 최종 제목과 글에도 본문과 같은 문장
+명확성 검사를 적용합니다. 짧은 제목은 명사구여도 되지만, 주변 글에서는
+여전히 주체와 관계를 밝혀야 합니다. 간결하거나 매끄럽게 들리게 하려고 불완전한 설명문을
+만들지 않습니다.
 
-### Korean Sentence Clarity
+<a id="korean-sentence-clarity"></a>
+### 한국어 문장의 명확성
 
-Apply this section only to Korean prose. Respect explicit user style requirements and the reader relationship; casual chat is not a writing sample. A supplied sample guides voice within those requirements. Keep formal endings consistent when the genre needs them, varying sentence structure rather than mechanically alternating registers. Sentence-ending variety is not itself an error: normalize it only for an explicit register request or a concrete audience, genre or consistency problem. Compare source and revision for unnecessary flattening and preserve the actor and force of commands, requests, questions, advice and obligations even when normalization is justified. Already uniform prose needs no artificial variety.
+이 절은 한국어 글에만 적용합니다. 명시적인 사용자 문체 요구와 독자 관계를 존중합니다. 일상적인 채팅은 글쓰기 견본이 아닙니다. 제공된 견본은 그 요구 안에서 목소리를 안내합니다. 장르에 격식 있는 어미가 필요하면 일관성을 유지하되, 말투를 기계적으로 번갈아 바꾸지 말고 문장 구조에 변화를 줍니다. 문장 종결의 다양성 자체는 오류가 아닙니다. 명시적인 격식 수준 요청이나 구체적인 독자, 장르 또는 일관성 문제가 있을 때만 통일합니다. 원문과 수정문을 대조하여 불필요한 평준화를 확인하고, 통일이 정당한 경우에도 명령, 요청, 질문, 조언과 의무의 행위 주체 및 강도를 보존합니다. 이미 통일된 글에 인위적인 변화를 줄 필요는 없습니다.
 
-Retain sentence components, particles, and endings needed to express the relationship. Replace noun piles and vague possessives with an explicit subject and verb. Concrete Sino-Korean and established technical vocabulary are useful when accurate; do not replace them just to use simpler words. Use customary translations or transliterations when clearer, and retain original terms otherwise. These rules do not translate code, comments, logs, commands, or commit messages.
+관계를 표현하는 데 필요한 문장 성분, 조사와 어미를 유지합니다. 명사를 쌓아 놓거나 모호한 소유 표현을 쓰는 대신 주어와 서술어를 명시합니다. 구체적인 한자어와 정착된 기술 용어는 정확할 때 유용하므로, 단지 쉬운 말을 쓰려고 바꾸지 않습니다. 관용적인 번역어나 음역이 더 명확하면 사용하고, 그렇지 않으면 원어를 유지합니다. 이 규칙은 코드, 주석, 로그, 명령이나 커밋 메시지를 번역하지 않습니다.
 
-After the final edit, reread the actual headings and sentences for typos, spacing, particles,
-collocations and verb/adjective conjugations, including errors introduced while polishing.
-Resolve a suspicious form from its intended word and sentence context, not a word blacklist;
-preserve valid forms, tense, modality and protected literals. Correct only a clear error;
-when meaning is ambiguous, retain it or ask rather than inventing a replacement.
+최종 편집 뒤에는 실제 제목과 문장을 다시 읽어 오타, 띄어쓰기, 조사,
+어울리는 단어 조합과 동사 및 형용사 활용을 확인합니다. 다듬는 동안 생긴 오류도 포함합니다.
+의심스러운 형태는 단어 금지 목록이 아니라 의도한 단어와 문장 맥락을 바탕으로 판단합니다.
+유효한 형태, 시제, 양태와 보호된 리터럴은 보존합니다. 명확한 오류만 고치고,
+의미가 모호하면 대체 표현을 지어내지 말고 유지하거나 묻습니다.
 
 ```text
 Incorrect: 검증을 거칠습니다.
@@ -76,12 +80,12 @@ Before: 정책 변경 영향 검토 후 반영 예정.
 After: 정책 변경이 미치는 영향을 검토한 뒤 변경 사항을 반영할 예정입니다.
 ```
 
-Complete sentences are for prose. Headings, table cells, diagram labels, and buttons may use concise phrases when the relationship is clear from the layout. Do not turn every visual label into a paragraph. A label such as `캐시 조회` can accompany a sentence explaining what is looked up and why.
+완전한 문장은 산문에 적용합니다. 제목, 표 셀, 다이어그램 라벨과 버튼은 레이아웃에서 관계가 명확하면 간결한 구절을 사용할 수 있습니다. 모든 시각 라벨을 문단으로 바꾸지 않습니다. `캐시 조회` 같은 라벨에는 무엇을 왜 조회하는지 설명하는 문장을 곁들일 수 있습니다.
 
-Choose Korean headings for the genre and content: a concise noun phrase, a supported conclusion
-or a meaningful reader question can work. Keep the subject and relationship clear; repair dangling
-endings when they obscure meaning rather than banning interrogative forms. Preserve established
-technical terms, verified UI literals and explicit user style.
+장르와 내용에 맞는 한국어 제목을 선택합니다. 간결한 명사구, 근거 있는 결론이나
+독자에게 의미 있는 질문을 사용할 수 있습니다. 주체와 관계를 명확히 유지합니다. 의문형을 금지하기보다,
+미완결 어미가 의미를 흐릴 때 이를 고칩니다. 정착된
+기술 용어, 확인된 UI 리터럴과 명시적인 사용자 문체를 보존합니다.
 
 ```text
 Before: 먼저 볼 것
@@ -101,15 +105,16 @@ After: 요청은 대기열에 쌓이고, 소비자가 하나씩 꺼내 처리합
        소비자가 멈춰 있다면 대기열에 들어간 요청도 처리되지 않고 기다립니다.
 ```
 
-Examples show relationships, not permission to infer absent details. If the actor or cause is unknown, keep it unknown. Passive sentences or `할 수 있습니다` can be precise for a capability or an unknown actor. Preserve distinct roles instead of treating administrator, customer, and operator as interchangeable synonyms.
+예시는 관계를 보여 주는 것이지, 없는 세부 사항을 추론할 권한이 아닙니다. 행위 주체나 원인을 모르면 모르는 상태로 유지합니다. 수동문이나 `할 수 있습니다`는 능력이나 알 수 없는 행위 주체를 정확히 나타낼 수 있습니다. 관리자, 고객과 운영자를 서로 바꿔 쓸 수 있는 동의어로 취급하지 말고 서로 다른 역할을 보존합니다.
 
-### Required Prose Notation
+<a id="required-prose-notation"></a>
+### 필수 산문 표기
 
-In ordinary explanatory prose, always replace an em dash (`—`) with a conjunction, colon, parentheses, or separate sentences that retain the relationship. Always replace a section sign such as `§3` with `section 3`, `3절`, or the actual section title, retaining the reference's target and precision. Preserve code, commands, URLs, direct quotations, official names, and notation required by the document's format or an explicit user request. Correct the prose relationship, not characters inside protected literals.
+일반 설명문에서는 항상 긴 대시(`—`)를 접속 표현, 콜론, 괄호나 관계를 유지하는 별도 문장으로 바꿉니다. `§3` 같은 절 기호는 항상 `section 3`, `3절`이나 실제 절 제목으로 바꾸되 참조 대상과 정확성을 유지합니다. 코드, 명령, URL, 직접 인용, 공식 명칭과 문서 형식이나 명시적인 사용자 요청에 필요한 표기는 보존합니다. 보호된 리터럴 안의 문자가 아니라 글의 관계를 바로잡습니다.
 
-In Korean prose, always replace middle-dot (`·`) noun stacking with an explicit relationship: commas for enumeration, `및` or `과/와` for conjunction, and a slash for an established pair such as `조회/취소`. Apply the protected-literal exceptions above, including official names and format-required notation, and preserve verified UI labels. Do not mechanically substitute a slash when the relationship is unclear; retain the uncertainty or ask for the missing context.
+한국어 글에서는 가운뎃점(`·`)으로 명사를 쌓아 놓은 표현을 항상 명시적인 관계로 바꿉니다. 나열에는 쉼표, 접속에는 `및`이나 `과/와`, `조회/취소`처럼 정착된 쌍에는 슬래시를 씁니다. 공식 명칭과 형식상 필수 표기를 포함한 위의 보호 리터럴 예외를 적용하고, 확인된 UI 라벨을 보존합니다. 관계가 불명확할 때 기계적으로 슬래시로 바꾸지 말고 불확실성을 유지하거나 빠진 맥락을 묻습니다.
 
-In Korean prose, always correct empty modifiers such as `주요`, `핵심`, `가장 중요한`, and `다양한` when they assert importance or scale without identifying the subjects or providing support. This includes modifiers already in the source. Put supplied concrete examples or the stated basis first; if neither is available, remove only the empty emphasis without inventing examples or broadening a limited subset into all items. Preserve a source-supported importance claim with its supporting reason, as well as protected literals and established technical terms. These are contextual judgments with mandatory correction, not a word blacklist.
+한국어 글에서는 `주요`, `핵심`, `가장 중요한`, `다양한`처럼 대상이나 근거를 밝히지 않은 채 중요성이나 규모를 주장하는 빈 수식어를 항상 바로잡습니다. 원문에 이미 있던 수식어도 포함합니다. 제공된 구체적 예시나 명시된 근거를 먼저 제시합니다. 둘 다 없으면 예시를 지어내거나 제한된 일부를 전체 항목으로 넓히지 말고 빈 강조만 없앱니다. 원문이 뒷받침하는 중요성 주장은 그 근거와 함께 보존하고, 보호된 리터럴과 정착된 기술 용어도 보존합니다. 이는 반드시 바로잡아야 하는 맥락적 판단이지 단어 금지 목록이 아닙니다.
 
 ```text
 Before: 주요 운영 화면의 언어별 입력 구조를 전환했습니다.
@@ -117,21 +122,22 @@ Context: 대상은 목록, 상세, 등록 화면입니다.
 After: 목록, 상세, 등록 화면의 언어별 입력 구조를 전환했습니다.
 ```
 
-For generated item markers in headings, lists, choices, tables, diagrams, and summaries, use ASCII `(1) Item`, `1. Item`, or `- Item`, with a space after the marker. Replace Unicode circled/enclosed numbers, single-character parenthesized numbers, and keycap emoji used as editable item markers; terminal renderers can overlap them with adjacent text. Keep the item order and reference targets intact. Protected literals and verified UI labels remain exact; use plain markers in the surrounding explanation.
+제목, 목록, 선택지, 표, 다이어그램과 요약에서 항목 표지를 생성할 때는 ASCII `(1) Item`, `1. Item` 또는 `- Item`을 사용하고 표지 뒤에 공백을 둡니다. 편집 가능한 항목 표지로 쓰인 유니코드 원문자나 둘러싸인 숫자, 단일 문자 괄호 숫자와 키캡 이모지는 바꿉니다. 터미널 렌더러에서 옆 텍스트와 겹칠 수 있습니다. 항목 순서와 참조 대상을 그대로 유지합니다. 보호된 리터럴과 확인된 UI 라벨은 정확히 유지하고, 주변 설명에는 일반 표지를 사용합니다.
 
-## Contextual Patterns
+<a id="contextual-patterns"></a>
+## 맥락에 따른 표현 패턴
 
-Only after the hard invariants are satisfied, assess expression in its actual genre and local context. These are editing decisions, not authorship signals or runtime scores:
+반드시 지킬 불변 조건을 충족한 뒤에만 실제 장르와 국소 맥락에서 표현을 평가합니다. 이는 편집 판단이지 저자를 나타내는 신호나 런타임 점수가 아닙니다.
 
-- **Strong artifact:** correct an unnatural construction immediately when it has no useful contextual function and correction preserves meaning.
-- **Repetition-sensitive expression:** preserve natural uses; when a repeated connector or construction creates mechanical rhythm in the relevant passage or a shared rhetorical pattern across sections, revise only enough occurrences to restore readable rhythm.
-- **Weak signal:** edit only when it combines with other patterns or makes the overall rhythm mechanical. An isolated occurrence needs no correction. Judge density within the relevant passage or shared rhetorical pattern, not by adding unrelated natural occurrences from independent sections. Distance alone neither proves nor rules out a shared pattern; inspect genuinely repeated document structure too. Use no fixed sentence window or occurrence threshold. Severity remains independent: a strong single defect still warrants correction, and hard invariants never depend on density.
+- **뚜렷한 문체 결함:** 맥락상 유용한 기능이 없고 수정해도 의미가 보존되는 부자연스러운 구문은 즉시 고칩니다.
+- **반복에 민감한 표현:** 자연스러운 용법은 보존합니다. 반복된 연결어나 구문이 관련 대목에서 기계적인 리듬을 만들거나 여러 절에 걸쳐 공통된 수사 패턴을 만들면 읽기 편한 리듬을 회복하는 데 필요한 횟수만 수정합니다.
+- **약한 신호:** 다른 패턴과 결합하거나 전체 리듬을 기계적으로 만들 때만 편집합니다. 한 번 나타난 것만으로는 고칠 필요가 없습니다. 서로 독립된 절의 관련 없는 자연스러운 용례를 더하지 말고, 관련 대목이나 공통 수사 패턴 안에서 밀도를 판단합니다. 거리만으로 공통 패턴이 입증되거나 배제되지는 않습니다. 실제로 반복되는 문서 구조도 살핍니다. 고정된 문장 구간이나 출현 횟수 임계값을 사용하지 않습니다. 심각도는 별개입니다. 강한 결함은 하나만 있어도 수정할 이유가 되며, 반드시 지킬 불변 조건은 밀도에 좌우되지 않습니다.
 
-When fixing an expression, check that the replacement does not introduce another contextual defect: translationese, stock phrasing, vague abstraction, unnecessary modifiers, or mechanical connectors. Judge the revised passage in context, not by a word blacklist. In expression refinement, a pattern match is only a candidate: edit a span only after confirming a contextual problem and authority within the current request, treating a requested register change as a valid reason. Keep unaffected passages unchanged rather than varying them for style alone, and return the source unchanged when no justified edit or requested structural transformation remains; the hard invariants above still apply. Normal expressions such as `~를 통해`, `~것이다`, passive voice, and capability wording are not banned words. When empirical evidence weakens a presumed style rule, narrow its application rather than adding prohibitions; observations from one genre or model do not establish a universal defect. Never change possibility into certainty to reduce repetition.
+표현을 고칠 때는 대체 표현이 번역투, 상투적인 표현, 모호한 추상화, 불필요한 수식어나 기계적인 연결어 같은 다른 맥락적 결함을 만들지 않는지 확인합니다. 단어 금지 목록이 아니라 맥락 안에서 수정한 대목을 판단합니다. 표현을 다듬을 때 패턴 일치는 후보일 뿐입니다. 현재 요청 안에서 맥락적 문제와 권한을 확인한 뒤에만 해당 부분을 편집하고, 요청된 격식 수준 변경은 정당한 이유로 취급합니다. 문체 변화만을 위해 영향 없는 대목을 바꾸지 말고 유지합니다. 정당한 편집이나 요청된 구조 변환이 남아 있지 않으면 원문을 그대로 반환하되 위의 불변 조건은 여전히 적용합니다. `~를 통해`, `~것이다`, 수동태와 능력 표현 같은 일반적인 표현은 금지어가 아닙니다. 경험적 근거가 가정했던 문체 규칙을 약화하면 금지를 더하지 말고 적용 범위를 좁힙니다. 한 장르나 모델의 관찰만으로 보편적인 결함이 성립하지는 않습니다. 반복을 줄이려고 가능성을 확실성으로 바꾸지 않습니다.
 
-Remove unsupported praise, vague authority, generic optimism, fake candor, and ceremonial padding when they add no meaning. Keep politeness and necessary uncertainty. Replace abstract or metaphor-swapped vocabulary with literal actions when clearer; retain established idioms and useful domain terminology.
+근거 없는 칭찬, 모호한 권위, 일반적인 낙관, 솔직한 척하는 표현과 의례적인 군더더기가 의미를 더하지 않으면 제거합니다. 예의와 필요한 불확실성은 유지합니다. 더 명확하다면 추상적이거나 비유로 바꿔 놓은 어휘를 문자 그대로의 행동으로 바꾸고, 정착된 관용구와 유용한 도메인 용어는 유지합니다.
 
-Inspect both clauses before revising a concession or contrast. Openers such as `다만`, `하지만`, `그럼에도`, or `Despite these challenges` alone establish no defect. Preserve a genuine source-supported concession and its concrete outcome; do not flatten it into unrelated parallel statements. Edit a hollow rhetorical frame only when its actual context warrants it, without inventing the missing challenge or response. Do not introduce an imagined overinterpretation merely to negate it before explaining the actual condition, action and consequence. Preserve negation when it resolves a real misconception or conveys a necessary limit; this is not a banned-word rule.
+양보나 대조를 수정하기 전에 양쪽 절을 모두 살핍니다. `다만`, `하지만`, `그럼에도`, `Despite these challenges` 같은 도입 표현만으로 결함이 성립하지는 않습니다. 원문이 뒷받침하는 진정한 양보 관계와 구체적인 결과를 보존하며, 이를 관련 없는 병렬 문장으로 평준화하지 않습니다. 실제 맥락상 필요할 때만 빈 수사적 틀을 편집하고, 빠진 어려움이나 대응을 지어내지 않습니다. 실제 조건, 행동과 결과를 설명하기에 앞서 상상한 과잉 해석을 도입한 뒤 부정하지 않습니다. 실제 오해를 풀거나 필요한 한계를 전달하는 부정은 보존합니다. 이는 금지어 규칙이 아닙니다.
 
 ```text
 Unnecessary lead-in: 이곳에 서면 곧바로 맞는다는 뜻은 아닙니다. 생존자는 판자를 쓰거나 다른 구간으로 떠날 수 있습니다.
@@ -146,8 +152,9 @@ After: 이 문제는 처음 설정할 때 발생할 수 있습니다.
 Unsupported additions: 자주 발생합니다. 오류 화면을 보내 주세요.
 ```
 
-Keep source-provided actions and deadlines explicit; do not invent support procedures to make a notice more actionable. Describe current behavior in product documentation, but preserve change history in release notes and migration guidance. Reduce overloaded parentheses, decorative emphasis, and repetitive short slogans only where they impair clarity, without removing useful structure.
+원문이 제공한 행동과 기한은 명시적으로 유지합니다. 공지를 더 실행하기 쉽게 만들려고 지원 절차를 지어내지 않습니다. 제품 문서에서는 현재 동작을 설명하되 릴리스 노트와 마이그레이션 안내에서는 변경 이력을 보존합니다. 과도한 괄호, 장식적인 강조와 반복적인 짧은 구호는 명확성을 해칠 때만 줄이며, 유용한 구조를 제거하지 않습니다.
 
-## Sources
+<a id="sources"></a>
+## 출처
 
-Upstream sources, pinned revisions and keep/adapt/omit dispositions for these criteria are kept in the calling package's provenance file (`references/sources.md` or `references/distillation.md`). Original MIT notices are in the calling package's `LICENSE.txt`.
+이 기준의 업스트림 출처, 고정 리비전과 keep/adapt/omit 판단은 호출 패키지의 출처 파일(`references/sources.md` 또는 `references/distillation.md`)에 보관합니다. 원본 MIT 고지는 호출 패키지의 `LICENSE.txt`에 있습니다.

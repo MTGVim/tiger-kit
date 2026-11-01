@@ -1,59 +1,58 @@
-# Usage evidence
+<a id="usage-evidence"></a>
+# 사용 근거
 
-Read only when usage frequency or inactivity is in the approved audit scope. Use
-read-only evidence from the current host; never enable telemetry, run audited code,
-refresh counters, or create a usage registry in `.tigerkit/`.
+승인된 감사 범위에 사용 빈도나 비활성이 있을 때만 읽습니다. 현재 호스트의 읽기 전용 근거를
+사용합니다. telemetry를 켜거나, 감사 대상 코드를 실행하거나, counter를 갱신하거나,
+`.tigerkit/`에 사용 registry를 만들지 않습니다.
 
-## Classify before interpreting
+<a id="classify-before-interpreting"></a>
+## 해석 전에 분류하기
 
-For each item, verify its identity and the signal's semantics from native metadata,
-diagnostic documentation or implementation. Distinguish execution-only counters,
-install/activation-prepopulated counters, session-history matches, and passive
-components with no execution signal (such as a display panel). A zero, missing field,
-disabled setting, file age, or absent session match alone does not prove inactivity.
+각 항목의 식별 정보와 신호의 의미를 네이티브 메타데이터, 진단 문서나 구현에서 검증합니다.
+실행 전용 counter, 설치·활성화 시 미리 채워지는 counter, 세션 이력 일치와 실행 신호가 없는
+수동적 구성 요소, 예를 들어 표시 패널을 구분합니다. 0, 누락된 필드, 꺼진 설정, 파일 연식이나
+세션 일치 없음만으로는 비활성을 입증하지 못합니다.
 
-Record source/path, counter semantics/value, last execution, installation or tracking
-start, resets/retention, observation interval and session search coverage. Match exact
-item identity and aliases; distinguish actual execution from a mention or installation.
-Do not expose raw session contents or credentials. Incomplete identity, unknown counter
-semantics, missing timestamps or reset/retention gaps make the affected inference
-`Unverifiable`, not zero usage.
+출처·경로, counter 의미·값, 마지막 실행, 설치 또는 추적 시작, 초기화·보존 기간, 관찰 구간과
+세션 검색 범위를 기록합니다. 정확한 항목 식별 정보와 별칭을 대조하고 실제 실행과 언급·설치를
+구분합니다. 원시 세션 내용이나 자격 증명을 노출하지 않습니다. 불완전한 식별 정보, 알 수 없는
+counter 의미, 누락된 시각이나 초기화·보존의 공백이 있으면 해당 추론은 사용 0이 아니라
+`Unverifiable`입니다.
 
-Use the requested inactivity interval, or 30 days when none is specified, and report
-that threshold. Propose `deprecate` only when verified execution tracking covers the
-whole interval and either (a) its execution-only counter is zero with no corroborating
-execution in available sessions, or (b) its last actual execution predates the interval
-and no later execution is recorded. For zero counters, verify tracking/installation
-started before the interval; for positive counters, a verified last-execution timestamp
-can establish inactivity. Resolve conflicting later session executions before proposing.
+요청받은 비활성 구간을 사용하고, 지정이 없으면 30일을 사용하며 그 임계값을 보고합니다.
+검증된 실행 추적이 구간 전체를 포함하고, (a) 실행 전용 counter가 0이며 사용 가능한 세션에도
+실행을 뒷받침하는 근거가 없거나, (b) 마지막 실제 실행이 구간보다 이전이며 이후 실행이 기록되지
+않았을 때만 `deprecate`를 제안합니다. counter가 0이면 추적·설치가 구간 시작 전에 이루어졌는지
+검증합니다. counter가 양수이면 검증된 마지막 실행 시각으로 비활성을 입증할 수 있습니다.
+제안 전에 충돌하는 이후 세션 실행을 해소합니다.
 
-Installation/activation counts cannot establish execution. Session search alone can
-support inactivity only with verified complete execution coverage for the whole interval;
-otherwise defer. A short recent-history sample cannot prove month-long inactivity or
-invalidate a longer verified counter history: state each source's coverage separately.
-For a passive component without a usage signal, leave a user question about actual use,
-not a data-based removal recommendation. Never classify a working panel as unused from
-its zero counter. Short observation periods defer the proposal.
+설치·활성화 횟수는 실행을 입증할 수 없습니다. 세션 검색만으로 비활성을 뒷받침하려면 구간 전체의
+실행을 완전히 포함한다는 검증이 필요합니다. 그렇지 않으면 판단을 미룹니다. 짧은 최근 이력 표본은
+한 달 동안의 비활성을 입증하거나 더 긴 검증된 counter 이력을 무효화할 수 없습니다.
+각 출처가 포함하는 범위를 따로 명시합니다. 사용 신호가 없는 수동적 구성 요소는 데이터 기반 제거
+권고 대신 실제 사용 여부에 대한 사용자 질문으로 남깁니다. 정상 작동하는 패널을 counter가 0이라는
+이유로 미사용으로 분류하지 않습니다. 관찰 기간이 짧으면 제안을 미룹니다.
 
-## Locate evidence on the current host only
+<a id="locate-evidence-on-the-current-host-only"></a>
+## 현재 호스트에서만 근거 찾기
 
-| Host | Read-only source discovery | Counter fallback |
+| 호스트 | 읽기 전용 출처 탐색 | counter 대안 |
 | --- | --- | --- |
-| Claude Code | Resolve the active configuration root and native diagnostics/history through installed help or metadata; inspect only verified in-scope sources. | Counter location/semantics are `Unverifiable` until confirmed locally; use available session evidence with its actual coverage. |
-| Codex | Resolve the active Codex home and exposed native session/history or diagnostic tools from current host evidence. | Same: never assume a skill counter exists or equate a skill-list entry with execution. |
-| Hermes | Resolve the active Hermes home and native diagnostic/session backend from installed help or metadata. | Same: confirm the installed backend/schema before reading a counter; never guess database tables. |
-| Other identified host | Read its exposed native diagnostics or verified metadata paths; if no location is verified, leave the source `Unverifiable`. | Use only accessible, verified session evidence; no cross-host probing. |
+| Claude Code | 설치된 도움말이나 메타데이터로 활성 설정 루트와 네이티브 진단·이력을 확인하고, 검증된 범위 내 출처만 검사합니다. | counter 위치·의미는 로컬에서 확인할 때까지 `Unverifiable`입니다. 사용 가능한 세션 근거를 실제 포함 범위와 함께 사용합니다. |
+| Codex | 현재 호스트 근거로 활성 Codex home과 노출된 네이티브 세션·이력 또는 진단 도구를 확인합니다. | 마찬가지로 스킬 counter가 존재한다고 가정하거나 스킬 목록 항목을 실행과 동일시하지 않습니다. |
+| Hermes | 설치된 도움말이나 메타데이터로 활성 Hermes home과 네이티브 진단·세션 backend를 확인합니다. | 마찬가지로 counter를 읽기 전에 설치된 backend·schema를 확인합니다. 데이터베이스 테이블을 추측하지 않습니다. |
+| 그 밖에 식별된 호스트 | 노출된 네이티브 진단이나 검증된 메타데이터 경로를 읽습니다. 검증된 위치가 없으면 출처를 `Unverifiable`로 남깁니다. | 접근 가능하고 검증된 세션 근거만 사용합니다. 다른 호스트를 조회하지 않습니다. |
 
-These are discovery routes, not claims that every host/version exposes counters.
-Read only necessary records within approved scope. An unavailable counter does not
-justify guessing its location or widening the audit to unrelated sessions.
+이들은 탐색 경로이며 모든 호스트·버전이 counter를 노출한다는 주장이 아닙니다.
+승인된 범위에서 필요한 기록만 읽습니다. counter를 사용할 수 없다는 이유로 위치를 추측하거나
+무관한 세션으로 감사를 확대할 수는 없습니다.
 
-## Report without changing host settings
+<a id="report-without-changing-host-settings"></a>
+## 호스트 설정을 바꾸지 않고 보고하기
 
-Put the threshold, signal semantics, coverage, values/last execution and evidence paths
-in the existing Disposition Basis; no extra ledger or report format is needed. For
-user-managed items, `deprecate` remains an exact pending recommendation to the owner.
-For vendor-managed items keep Action `keep (vendor)` and report only the usage finding;
-never propose editing the vendor package. Disabling skills/plugins, uninstalling,
-changing host settings or telemetry stays advice-only in every apply mode, including
-`--apply`. Preserve the ordinary ownership, tier and evidence-gap rules.
+임계값, 신호 의미, 포함 범위, 값·마지막 실행과 근거 경로를 기존 Disposition Basis에 넣습니다.
+별도 대장이나 보고 형식은 필요하지 않습니다. 사용자 관리 항목의 `deprecate`는 소유자에게 전달할
+정확한 보류 권고로 남습니다. vendor 관리 항목은 Action을 `keep (vendor)`로 유지하고 사용 관련
+발견 사항만 보고합니다. vendor 패키지 수정을 제안하지 않습니다. 스킬·plugin 비활성화, 제거,
+호스트 설정이나 telemetry 변경은 `--apply`를 포함한 모든 적용 모드에서 조언만 제공합니다.
+일반적인 소유권, tier와 근거 누락 규칙을 보존합니다.

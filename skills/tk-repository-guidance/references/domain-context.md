@@ -1,15 +1,16 @@
-# Domain Context
+<a id="domain-context"></a>
+# 도메인 맥락
 
-Use this reference for semantic repository work before the task has already recognized a domain term.
+의미를 다루는 저장소 작업에서는 작업이 도메인 용어를 이미 인식하기 전에 이 참조를 사용합니다.
 
-Before interpreting repository behavior, requirements, ownership, impact, or domain meaning, or writing implementation, review, or publication prose that depends on them, check for repository-owned context and load only the relevant context when present. Purely mechanical Git, ref, or formatting work does not need it.
+저장소의 동작, 요구사항, 소유권, 영향 또는 도메인 의미를 해석하거나, 이에 의존하는 구현·리뷰·발행 문구를 작성하기 전에 저장소가 소유한 맥락이 있는지 확인하고, 있다면 관련 맥락만 읽습니다. 순전히 기계적인 Git, ref 또는 서식 작업에는 필요하지 않습니다.
 
-1. If root `CONTEXT-MAP.md` exists, read only the mapped context relevant to the task.
-2. Otherwise read root `CONTEXT.md` only when it exists.
-3. Respect an established repository glossary convention instead of creating a duplicate artifact.
-4. Preserve canonical spelling, language, acronyms, and casing. Never substitute an `_Avoid_` term.
-5. Keep verified rendered UI literals separate: quoted UI text follows runtime/render-path evidence; domain prose follows the glossary.
-6. If fresher code or runtime evidence conflicts with the glossary, surface the conflict instead of silently choosing.
-7. If no glossary exists, continue quietly without setup prompts or automatic creation.
+1. 루트에 `CONTEXT-MAP.md`가 있으면 작업과 관련하여 매핑된 맥락만 읽습니다.
+2. 그렇지 않으면 루트에 `CONTEXT.md`가 있을 때만 읽습니다.
+3. 중복 산출물을 만들지 말고 저장소에 정착된 용어집 관례를 존중합니다.
+4. 정본의 철자, 언어, 약어와 대소문자를 보존합니다. `_Avoid_` 용어로 대체하지 않습니다.
+5. 검증된 렌더링 UI literal을 별도로 유지합니다. 인용한 UI 텍스트는 런타임 또는 렌더링 경로 근거를 따르고, 도메인 설명은 용어집을 따릅니다.
+6. 더 최신인 코드나 런타임 근거가 용어집과 충돌하면 조용히 하나를 선택하지 말고 충돌을 드러냅니다.
+7. 용어집이 없으면 설정을 요청하거나 자동으로 생성하지 말고 조용히 계속합니다.
 
-Do not read unrelated child contexts or copy glossary content into task artifacts unless the task needs that term.
+작업에 해당 용어가 필요하지 않은 한 관련 없는 하위 맥락을 읽거나 용어집 내용을 작업 산출물에 복사하지 않습니다.

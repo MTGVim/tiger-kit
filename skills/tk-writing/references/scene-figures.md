@@ -1,16 +1,17 @@
-# Scene figures
+<a id="scene-figures"></a>
+# 장면 그림
 
-Draw the actual spatial relationship, start positions, relevant actors, movement and result.
-Use a 560-960-wide SVG `viewBox`, text at least 14 SVG units, a transparent background and
-sufficient contrast on both light and dark panels. Use outlines/halos where necessary;
-color alone cannot distinguish actors. Keep comparable states at the same scale and frame.
-For two to four states, label their order visibly and show changed positions, not just captions.
-A schematic is not evidence of exact speed, distance or collision behavior.
+실제 공간 관계, 시작 위치, 관련 행위자, 이동과 결과를 그립니다.
+너비가 560-960인 SVG `viewBox`, 최소 14 SVG 단위의 텍스트, 투명 배경과
+밝고 어두운 패널 모두에서 충분한 대비를 사용합니다. 필요한 곳에는 외곽선·halo를 사용합니다.
+색만으로 행위자를 구별해서는 안 됩니다. 비교할 상태는 같은 축척과 프레임을 유지합니다.
+상태가 두 개에서 네 개라면 순서를 눈에 보이게 표시하고, 캡션뿐 아니라 달라진 위치도 보여 줍니다.
+모식도는 정확한 속도, 거리나 충돌 동작의 근거가 아닙니다.
 
-Use static SVG with no scripts, event handlers, foreign objects, external resources or fonts.
-Rasterize at 2x using `node <tk-writing>/scripts/svg_to_png.mjs input.svg output.png`.
-Resolve `<tk-writing>` to its current installed package, not the caller. The helper loads SVG as an image, with network blocked, so SVG scripts cannot execute.
-It requires installed Chrome/Chromium and Node 18+; set `CHROME_PATH` to an existing executable
-when discovery cannot find it. Missing Chrome is `Blocked`, not permission to install it.
-Inspect the result; embed each PNG with meaningful `@image alt=... caption=...`. Keep searchable
-explanation outside the raster image, and distinguish illustrative geometry from measured data.
+스크립트, 이벤트 핸들러, foreign object, 외부 리소스나 글꼴이 없는 정적 SVG를 사용합니다.
+`node <tk-writing>/scripts/svg_to_png.mjs input.svg output.png`로 2배 크기로 래스터화합니다.
+`<tk-writing>`은 호출자가 아니라 현재 설치된 해당 패키지로 해석합니다. 도우미는 네트워크를 차단한 상태에서 SVG를 이미지로 불러오므로 SVG 스크립트가 실행될 수 없습니다.
+설치된 Chrome/Chromium과 Node 18+가 필요합니다. 자동 탐색으로 찾지 못하면 기존 실행 파일을
+`CHROME_PATH`로 지정합니다. Chrome이 없으면 `Blocked`이며, 이를 설치할 권한이 부여되는 것은 아닙니다.
+결과를 검사하고 각 PNG를 의미 있는 `@image alt=... caption=...`로 삽입합니다. 검색 가능한
+설명은 래스터 이미지 밖에 두고, 예시 기하 구조와 측정 데이터를 구별합니다.
