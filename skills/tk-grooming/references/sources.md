@@ -35,3 +35,23 @@ TigerKit의 구체적인 부족은 임의적인 출력 제한과 서로 다른 �
 - `keep`: 조회 비용이 커서 의도적으로 만든 사본, 현재 호스트만의 탐색, 기존 보고 전용 호스트 설정·vendor 경계와 영속 TigerKit registry를 두지 않는 원칙을 유지합니다.
 - `adapt`: 버전 출처와 설치 규칙 비교를 지침 경제성 안에 두고, 사용 의미와 관찰 범위는 범위별 참조 pointer 하나 뒤에 둡니다.
 - `omit`: 모델 라우팅, 원시 세션 데이터, telemetry 수집, 자동 비활성화, 추측한 counter schema와 호스트 간 런타임을 제외합니다. 합성 평가 사례는 원래 환경의 세부사항을 공개하지 않고 결정 경계를 시험합니다.
+
+<a id="copied-external-skill-provenance"></a>
+## 복사 설치 외부 스킬의 출처와 변경
+
+[Skill Constellations](https://github.com/FahdSeddik/Skill-Constellations/tree/97a1a46783f77d2dc9c63c33bb102e11b9ed36d1)의
+고정 revision `97a1a46783f77d2dc9c63c33bb102e11b9ed36d1`에서 `README.md`, `LICENSE`와
+`ui/skillnet_ui/pages/replay.py`를 읽었습니다. README는 Git 이력으로 복사 계보를 재구성한 데이터와 viewer를
+설명합니다. replay는 미리 계산한 관찰·시뮬레이션을 보여 주며 개별 설치본의 revision 검증기는 아닙니다.
+코드는 MIT, 파생 데이터는 CC BY 4.0입니다. 코드·데이터는 가져오지 않았으며 논문의 정량 결과와
+upstream 시뮬레이션 재현은 `unverified`입니다. 이 자료로 보안 효과나 결함 확산 감소율을 주장하지 않습니다.
+
+현재 `tk-grooming/references/discovery.md`는 marketplace plugin의 버전·commit 최신성을 비교하지만
+일반 복사 설치본의 전체 파일 동일성과 로컬 변경을 구분하지 않습니다. `tk-setup-skills`는 식별·의존성
+호환성만 검증하고 내용 최신성을 보장하지 않습니다. `tk-skill-vet`는 고정된 snapshot과 변경 동작의
+정적 위험을 검토합니다. `tk-video/references/manim.md`는 이미 선택한 외부 스킬 tree의 경로·바이트를
+비교하고 설치 commit이 없으면 `content_matches_revision`만 기록합니다.
+
+- `keep`: Manim 절차의 선택한 스킬 tree 비교, 불변 revision과 내용 동일성의 구별, 수정본 보존과 자동 설치 금지를 유지합니다. Manim 런타임의 중단·오프라인 수용 조건은 그 소유자에게 남깁니다.
+- `adapt`: `B`(설치 당시 기준판)·`L`(현재 설치본)·`U`(고정 원본)를 분리하는 조건부 읽기 전용 감사를 `tk-grooming`에 둡니다. 기준판이 없으면 일치하는 현재 내용만 입증하며, 차이의 원인은 미확인으로 남깁니다. 중요한 diff의 정적 검토 필요성은 기존 `tk-skill-vet` 대상으로 표시합니다.
+- `omit`: 전역 복사 계보 수집, 시뮬레이터·viewer·데이터셋, 상시 감시·registry·자동 updater, 설치본 변경과 새 독립 스킬은 추가하지 않습니다. setup·vet·Manim의 절차를 재작성하거나 의존성을 추가하지 않습니다.

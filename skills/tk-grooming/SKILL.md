@@ -48,6 +48,8 @@ metadata:
 3. `evidence`: 모든 후보에 대해 영역별 관찰, 경로, 검증 상태와 소유권 근거를 기록합니다.
    marketplace vendor 후보로 확인되면 [최신성 근거](references/discovery.md#freshness-evidence-vendor)를 확인합니다.
    설치 스킬 의존성이 선언되어 있으면 해당 참조에 따라 최소 버전도 확인합니다.
+   사용자가 특정 복사 설치 외부 스킬의 출처·내용 변경 감사를 명시하면
+   [복사 설치 감사](references/copied-skill-audit.md)를 읽습니다. 일반 감사에서 자동으로 확대하지 않습니다.
    사용 빈도나 비활성이 범위에 있으면 [사용 근거](references/usage-evidence.md)를 읽습니다.
 4. `incident attribution`: 이전 행동이 잘못되었다는 사용자 피드백이 있으면 그 행동이 인용했거나
    관찰된 지침을 활성 스킬과 지속 맥락에 비교합니다. 현행 소유자와 충돌하는 것으로 입증된
