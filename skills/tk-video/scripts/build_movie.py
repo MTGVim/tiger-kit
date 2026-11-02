@@ -366,11 +366,13 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
     presentation_blocked = bool(callouts) and not caption_support
     presentation_receipt = {"caption_style": caption_style, "caption_boxes": [], "callout_boxes": [], "zoom_plan": []}
     # Conservative estimate only: font metrics and line breaking vary by renderer.
-    capacity = int(int(image_stream["width"]) * .85 / layout["size_px"] * 2)
     for index, caption in enumerate(captions, 1):
-        units = sum(2 if unicodedata.east_asian_width(c) in "WF" else 1 for c in caption["text"])
-        if burn and caption_style == "band" and units > capacity:
-            warnings.append(f"caption {index} may wrap or clip; inspect decoded frames and split or resize it")
+        units = max(sum(2 if unicodedata.east_asian_width(c) in "WF" else 1 for c in line)
+                    for line in caption["text"].split("\n"))
+        estimated_lines = max(len(caption["text"].split("\n")),
+                              math.ceil(units * layout["size_px"] / 2 / (source_width * .9)))
+        if burn and estimated_lines > 1:
+            warnings.append(f"caption {index}: caption_lines_estimate > 1 ({estimated_lines}); inspect decoded frames and split or resize it")
     sidecar = output.with_suffix(".srt") if captions else None
     vtt_sidecar = output.with_suffix(".vtt") if captions and delivery == "soft" else None
     if sidecar and (sidecar.resolve() != sidecar or (sidecar.exists() and not sidecar.is_file())):

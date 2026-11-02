@@ -89,3 +89,14 @@ upstream 기본 브랜치를 동일한 `cef045011722d285692e3381d12d4d637da56e18
 복사한 upstream 템플릿, 보편적인 Manim 선행 조건, 장식적 움직임 할당량과 애니메이션 개수에 따른 품질 주장은 제외합니다.
 전달한 두 영상은 실제 네이티브 렌더링 경로를 확립하며, 보편적으로 최대한 활용했다거나 학습이 향상되었다는 사실을 확립하지 않습니다.
 명시적 HTML/정지 이미지 출력과 관찰한 UI는 각각의 담당자와 승인 경계를 유지합니다.
+
+## 영상 피드백과 원고 점검 (2026-11-02)
+
+사용자가 제공한 review-loop 묶음을 참고 구현으로 검토했습니다. 외부 코드를 복사한 구현이 아닙니다.
+[Able Player](https://github.com/ableplayer/ableplayer/tree/3f174b22bd779e42db2959401f1bec003a5b2880)(MIT)의 대본 클릭 이동·현재 위치·키보드 조작과 [hyperaudio-lite](https://github.com/hyperaudio/hyperaudio-lite/tree/8747ce1d9aa607fc020239eb45c7bb3f3cc8775a)(MIT)의 대본 따라가기는 설계 참고입니다.
+YouTube·Udemy는 단축키·시각 노트 경험만 참고하며 해당 서비스 코드를 포함하지 않습니다.
+`keep`: 단독 MP4, 기존 자막 기본값, 사용자 선택·설치·청취·발행 경계입니다.
+`adapt`: 별도 로컬 피드백 HTML, 의미 단위 자막 분할, 사용자별 renderer와 Manim 도입부 선택입니다.
+`omit`: 보편적 Manim 기본값, 자동 자막 분할, 작은 SVG 객체 전체를 점으로 치환하는 규칙입니다.
+Manim upstream `cef045011722d285692e3381d12d4d637da56e18`의 composer와 narrative-patterns를 재확인했습니다.
+질문형 서사는 명시적 선택에만 적용하며 상위에서 확정한 순서를 보존합니다.

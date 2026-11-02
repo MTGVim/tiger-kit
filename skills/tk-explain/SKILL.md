@@ -102,7 +102,7 @@ archify에서만 설치된 패키지와 최소 버전을 검증합니다. 설치
 
 요청된 파일 산출물에만 다음 절차를 적용합니다. 명시적 목적지, `artifacts.durableRoot`, `.tigerkit/explanations/<slug>.html` 또는 요약 이미지의 `<slug>.png` 순서로 [산출물 경로](../tk-artifacts/references/artifact-paths.md)를 사용해 결정합니다.
 덮어쓰기 권한을 보존하고 기본 경로가 사용 중이면 숫자 접미사를 선택합니다.
-archify 작업 파일은 `.tigerkit/tmp/tk-explain/<run-id>/`에 유지합니다. `evidence.md`, receipt, 리뷰 기록과 캡처는 `.tigerkit/evidence/tk-explain/<run-id>/`에 유지합니다. 리뷰어와 같은 근거 스냅샷을 재사용합니다. PNG에는 HTML·archify 관문 대신 이미지 검사를 따릅니다. 최종 HTML은 외부 요청 없이 단독으로 열려야 합니다. 소스 링크는 시작 시 가져오지 않고 클릭 가능하게 둘 수 있습니다. 리뷰가 꺼져 있어도 내장 자산과 소스 결합을 확인합니다. 간결한 링크, 실제 검사와 중요한 한계를 반환합니다.
+archify 작업 파일은 `.tigerkit/tmp/tk-explain/<run-id>/`에 유지합니다. `evidence.md`, receipt, 리뷰 기록과 캡처는 `.tigerkit/evidence/tk-explain/<run-id>/`에 유지합니다. 리뷰어와 같은 근거 스냅샷을 재사용합니다. PNG에는 HTML·archify 관문 대신 이미지 검사를 따릅니다. 원본 HTML은 외부 요청 없이 단독으로 열려야 합니다. 설명 페이지를 만들었을 때만 [피드백 studio](references/feedback-studio.md)에 따라 `<stem>.studio.html`을 함께 만들고 이를 기본 열람본으로 안내합니다. 원본과 finalize receipt는 그대로 보존하며 studio를 finalize 통과 원본으로 보고하지 않습니다. studio도 최종 바이트의 정적 검사와 해당 상호작용 검사를 적용합니다. studio 생성 실패는 원본을 전달하며 사유를 보고합니다. 소스 링크는 시작 시 가져오지 않고 클릭 가능하게 둘 수 있습니다. 리뷰가 꺼져 있어도 내장 자산과 소스 결합을 확인합니다. 간결한 링크, 실제 검사와 중요한 한계를 반환합니다.
 추천안으로 제작한 산출물을 전달할 때는 고른 기법 ID·이름·이유와 성격이 다른 대안 두 개의 ID·이름을 한 줄로 덧붙입니다. 이는 질문이나 추가 제작 약속이 아니며 답변을 기다리지 않습니다. 요청 전용 기법은 자동 대안에서 제외합니다.
 파일 산출물의 `Pass`에는 저장된 산출물, 적용되는 렌더러·정적 관문 통과와 필수 리뷰가 필요합니다. 대화 완료에는 근거에 맞는 완결된 설명과 적용되는 정확성 확인이 필요하며, 요청하지 않은 HTML 미생성은 실패가 아닙니다. 누락된 근거나 미해결 콘텐츠 발견 사항을 성공으로 바꾸지 않습니다.
 생성은 commit, 발행, 설치나 무관한 편집을 허용하지 않습니다.

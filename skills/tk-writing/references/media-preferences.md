@@ -18,6 +18,7 @@
 | `emphasis` | `in-slide`, `zoom`, `none` | 작성한 슬라이드에는 `in-slide`를, 선택한 캡처 강조 영역에는 `zoom`을 사용합니다. |
 | `callouts` | boolean | `false` |
 | `slideTheme` | `light`, `dark` | `light` |
+| `explainerRenderer` | `cards`, `manim` | `cards` |
 
 사용하기 전에 객체와 필드 타입·enum을 검증합니다. 미디어 객체 형식이 잘못되면 이번 실행에서는 저장된 미디어
 설정을 사용할 수 없습니다. 이를 알리고 파일을 보존하며, 하위 계층의 참여 설정 대신
@@ -76,3 +77,5 @@ JSON·버전과 경로 소유권을 다시 검증합니다. 승인한 `evidenceM
 의도적으로 선택한 강조 영역에만 적용하며 모든 프레임에 자동 동작을 적용하지 않습니다. 작성한 슬라이드에 대한 명시적인
 zoom 요청은 선택된 예외로서 준수하고 검사해야 합니다.
 `none`은 강조 없음이라는 뜻입니다. 어떤 표현 방식을 사용하든 눈에 보이는 비교와 출처의 사실을 보존합니다.
+
+`explainerRenderer`는 직접 작성하는 설명 영상의 작성자에게 전달하며 ffmpeg manifest 필드로 복제하지 않습니다. 현재 명시적 형식·renderer 선택이 우선합니다. 저장 승인과 atomic merge/readback은 다른 미디어 필드와 동일합니다.
