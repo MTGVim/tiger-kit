@@ -20,7 +20,7 @@ metadata:
 해당 작업을 중단합니다. 기억, 다른 설치본이나 승인되지 않은 설치 대신 `tk-setup-skills`를 사용합니다.
 참조 읽기는 워크플로 실행이나 변경 권한을 부여하지 않습니다.
 
-- 사용자가 결정해야 할 사항, 누락된 승인이나 충족되지 않은 선행 조건이 있으면 [질문 라운드](../tk-questioning/references/questions.md)를 읽습니다.
+- 사용자 소유 결정·누락된 승인·미충족 선행 조건을 질문이나 질문 도구 입력으로 제시하기 직전에 [질문 라운드](../tk-questioning/references/questions.md)를 이번 작업에서 읽었는지 확인하고 누락했으면 먼저 읽습니다. 독립적인 결정과 승인은 각각 별도 질문으로 두며, 승인 선택지를 결정 질문에 섞지 않습니다.
 - 사용자에게 완료 보고, 산출물 경로 인계나 여러 속성을 비교하는 대화 응답을 전달하기 전에 [대화 전달](../tk-writing/references/delivery.md)을 읽습니다. 작업별 구체적인 출력 계약이 우선합니다.
 
 기존 GitHub PR에 대한 명시적인 로컬 이미지·동영상 근거 요청이나
@@ -81,11 +81,11 @@ CDP를 선택했거나 확장 경로가 대상 쓰기
    `tk-wizard`에 전달하고, 완료 신호 전에는 업로드하지 않습니다. 에이전트가 승인받아 수행하는 검토된
    확장 기능 설치는 여기서 계속 담당합니다. 마법사가 끝난 뒤 정확한 저장소, 대상, 이미지 집합과
    경로를 재개합니다.
-5. GitHub API나 동등한 수단으로 요청된 본문이나 댓글만 업데이트합니다.
+5. 본문·댓글을 쓰기 직전에 [GFM 렌더링](../tk-pr-guidance/references/gfm-rendering.md)을 읽고, 생성된 미디어 토큰까지 반영한 정확한 후보를 검사합니다. 미디어 섹션 삽입도 포함하며, 실패·확인 불가 상태에서는 해당 쓰기를 보류합니다. 업로드와 본문 변경이 결합된 경로는 같은 참조의 사전 작성 본문 확인·사후 토큰 치환 확인을 구분합니다. GitHub API나 동등한 수단으로 요청된 본문이나 댓글만 업데이트합니다.
    `Pass` 전에 대상을 다시 읽고, 생성된 모든 이미지 토큰이 바이트까지 일치하게 정확히 한 번 나타나는지,
    쌍의 역할·캡션이 올바르게 연결된 상태인지, 인증된 fetch에서 모든 자산이
-   디코딩 가능한 `image/*` 바이트인지, 연결된 모든 업로드 객체가 업로드 ref에서 도달 가능한지 검증합니다. 브라우저 세션 렌더링은
-   선택 사항입니다. `Pass`의 선행 조건으로 삼지 말고 검사 여부를 receipt에 보고합니다.
+   디코딩 가능한 `image/*` 바이트인지, 연결된 모든 업로드 객체가 업로드 ref에서 도달 가능한지 검증합니다. 브라우저에서 실제 페이지를 열어 보는 검사는
+   선택 사항이며, 쓰기 전 GFM 확인을 대신하거나 면제하지 않습니다. `Pass`의 선행 조건으로 삼지 말고 검사 여부를 receipt에 보고합니다.
 6. 모든 종료 경로에서 소유한 staging 파일만 제거합니다. 이번 실행에 이미 기록된 리터럴 형태의 완전히 해석된 실행 소유 staging 절대 경로를 각 삭제 명령에 씁니다. 명령 치환, 다시 읽은 경로 파일이나 `head` 또는 `tail`로 파이프한 glob에서 대상을 도출하지 않습니다. 정확한 리터럴 경로를 모르면 삭제하지 말고 후보를 나열한 뒤 중단합니다.
 
 <a id="execution-receipt--single-evidence-record"></a>
@@ -103,7 +103,7 @@ Route: gh-attach | CDP
 Entry: <exact reviewed command | browser route>
 Generated Markdown: <asset refs | none>
 Remote ref: <refs/uploads/issues/<pr-number> | none | unknown>
-Verification: image-token byte match and single occurrence: <Pass | Fail | unavailable>; image bytes/type: <Pass | Fail | unavailable>; upload ref reachability: <Pass | Fail | unavailable>; rendering: <checked | not performed | unavailable>
+Verification: image-token byte match and single occurrence: <Pass | Fail | unavailable>; image bytes/type: <Pass | Fail | unavailable>; upload ref reachability: <Pass | Fail | unavailable>; gfm: <Pass | Fail | unavailable; exact candidate or combined-route pre/post scope>; rendering: <checked | not performed | unavailable>
 Changed: <body/comment changed | unchanged | unknown>
 Cleanup: <owned staging path removed | failed | not applicable>
 Status: Pass | Fail | Pending | Blocked | Unverifiable
@@ -149,7 +149,7 @@ Status: Pass | Fail | Pending | Blocked | Unverifiable
 `tk-wizard` 완료 신호를 기다리는 동안에는 `Pending`을 반환합니다. 출처가 `unknown`이거나, 초안이 있거나,
 설치를 거부했고 선택된 CDP 경로도 없다면 `Blocked`를 반환합니다. 인증,
 이미지 바이트 검증이나 업로드 ref 도달 가능성을 확인할 수 없으면 `Unverifiable`을 반환합니다. 렌더링된 페이지
-근거는 선택 사항입니다. 업로드, 원격 ref
+근거는 선택 사항이며 GFM 확인과 구별합니다. GFM 실패·확인 불가로 본문 쓰기를 보류했다면 그 상태를 유지합니다. 업로드, 원격 ref
 검증이나 정리 오류에는 `Fail`을 반환합니다. 선택한 본문·댓글이 바뀌었는지와
 업로드 ref가 남아 있을 수 있는지를 명시합니다.
 

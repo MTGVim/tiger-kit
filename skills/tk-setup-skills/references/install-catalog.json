@@ -124,6 +124,7 @@
     "tk-pr-media": {
       "requires": [
         "tk-artifacts",
+        "tk-pr-guidance",
         "tk-questioning",
         "tk-writing"
       ]

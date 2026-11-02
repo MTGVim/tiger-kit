@@ -20,5 +20,5 @@ metadata:
 <a id="conditional-references"></a>
 ## 조건부 참조
 
-- [질문](references/questions.md): 사용자가 결정해야 할 사항, 누락된 승인 또는 충족되지 않은 선행 조건 때문에 질문이 필요할 때 읽습니다.
+- [질문](references/questions.md): 사용자 소유 결정, 누락된 승인이나 선행 조건을 질문·승인 제안·질문 도구 입력으로 제시하기 직전에 읽었는지 확인합니다. 네이티브 도구 우선순위, 결정·승인 분리와 포콕식 채팅 대체 형식의 정본입니다.
 - [시각적 질문](references/visual-questions.md): 미해결 레이아웃, 탐색 또는 시각적 선택에 질문 보조 자료가 필요할 때 읽습니다.

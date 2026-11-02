@@ -36,7 +36,7 @@ metadata:
 - [HTML 출력](references/html-output.md): HTML 산출물을 전달물로 선택했을 때 읽습니다.
 - [HTML reader](references/html-reader.md): 공통 reader 수업이나 변경 문서를 조립할 때 읽습니다.
 - [HTML 렌더링](references/html-render.md): 선택한 HTML 출력을 빌드, 패키징하거나 검사할 때 읽습니다.
-- [대화형 예제](references/interactive-examples.md): 사용자가 실시간 대화형 예제를 명시적으로 요청할 때 읽습니다.
+- [대화형 예제](references/interactive-examples.md): 명시적 요청이나 추천 선택에 따라 실시간 대화형 예제를 제공할 때 읽습니다.
 - [미디어 선호](references/media-preferences.md): 시각 자료나 미디어 형식/선호를 결정해야 할 때 읽습니다.
 - [독자용 서식](references/reader-formatting.md): 설명 문서에 작성한 산문의 서식을 정할 때 읽습니다.
 - [렌더러 계약](references/renderer-contract.md): 기존 학습 자료를 바꾸지 않고 지원되는 설명 렌더러를 선택할 때 읽습니다.

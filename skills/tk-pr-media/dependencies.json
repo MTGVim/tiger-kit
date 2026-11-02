@@ -2,6 +2,7 @@
   "version": 1,
   "requires": [
     "tk-artifacts",
+    "tk-pr-guidance",
     "tk-questioning",
     "tk-writing"
   ]

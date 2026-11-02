@@ -1,6 +1,6 @@
 ---
 name: tk-pr-guidance
-description: "[user/auto] PR 시각 자료·다중 PR 전달·rebase 준비 기준을 참조할 때 사용합니다. 실제 업무 실행이나 변경 권한을 부여하지 않습니다."
+description: "[user/auto] PR 본문 GFM·시각 자료·다중 PR 전달·rebase 준비 기준을 참조할 때 사용합니다. 실제 업무 실행이나 변경 권한을 부여하지 않습니다."
 disable-model-invocation: false
 metadata:
   tigerkit:
@@ -25,6 +25,7 @@ metadata:
 <a id="conditional-references"></a>
 ## 조건부 참조
 
+- [GFM 렌더링](references/gfm-rendering.md): PR 본문·선택된 댓글을 생성하거나 갱신하기 직전, 미디어 섹션을 삽입할 때 읽습니다.
 - [GitHub 시각 자료](references/github-visuals.md): PR에 사용할 시각적 근거를 준비할 때 읽습니다.
 - [다중 PR 전달](references/multi-pr-delivery.md): 승인된 전달을 의도적으로 여러 PR로 나눌 때 읽습니다.
 - [rebase 준비 상태](references/rebase-readiness.md): 특정 PR의 rebase를 준비하거나 rebase 담당자에게 인계할 때 읽습니다.

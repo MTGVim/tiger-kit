@@ -28,6 +28,34 @@ headless 모드와 외부 브라우저/프로필 소유권을 입증합니다. �
 근거가 아닙니다. 연결된 프로세스가 headed이거나 다른 실행 또는 사용자 소유이거나 소유권을
 알 수 없으면 페이지를 만들지 않고 `Unverifiable`을 반환합니다.
 
+<a id="direct-launch-endpoint-ownership"></a>
+## 직접 실행 endpoint의 소유권
+
+TCP/CDP로 직접 실행할 때는 `/json/*` 조회, WebSocket 연결과 첫 CDP 호출 **전에** 다음을 확인합니다.
+제공자가 소유한 pipe에는 TCP 포트 검사를 강제하지 말고 해당 전송 방식의 소유권 근거를 사용합니다.
+
+1. 실행 소유의 고유한 프로필과 실제 시작 PID/핸들, 시작 시각, 명령을 기록합니다. 래퍼가 브라우저를
+   자식으로 띄우면 그 시작과 연결된 자식 PID 및 프로필을 입증합니다. 사용자의 일반 프로필을 사용하지 않습니다.
+2. 선택한 제공자가 지원하면 `--remote-debugging-port=0`으로 브라우저가 포트를 정하게 하고,
+   이번 시작의 로그 또는 고유 프로필에서 새로 생성된 `DevToolsActivePort`로 실제 endpoint를 확인합니다.
+   고정 포트가 필요하면 시작 전에 `lsof -nP -iTCP:<port> -sTCP:LISTEN` 또는 IPv4·IPv6를 모두
+   보여 주는 동등한 호스트 도구로 확인합니다. `nc -z 127.0.0.1`만으로 빈 포트를 판정하지 않습니다.
+   사전 확인은 예약이나 실행 후 소유권 증명이 아니며, 점유된 포트의 프로세스는 보존합니다.
+3. 실제 endpoint의 주소·포트를 리슨하는 PID를 IPv4·IPv6 모두에서 다시 확인하고 기록한 브라우저
+   PID 또는 입증된 실행 소유 자식과 대조합니다. 프로세스 시작 시각·명령·고유 프로필도 맞아야 합니다.
+   container·sandbox의 실행 API와 OS 조회가 서로 다른 PID namespace를 사용하면 입증된 대응으로
+   같은 namespace에 맞춘 뒤 대조합니다. 숫자 일치만 추정하거나 대응을 확인할 수 없으면 중단합니다.
+   다른 실행의 리스너가 섞이거나 PID·주소·프로필을 입증할 수 없으면 `Unverifiable`로 중단합니다.
+   예상 포트의 `127.0.0.1`에 임의로 붙지 말고 검증한 실제 주소와 WebSocket 경로만 사용합니다.
+4. 디버깅 endpoint는 loopback이어야 합니다. 선택한 버전이 지원하면
+   `--remote-debugging-address=127.0.0.1`을 명시할 수 있지만, 이 옵션이나 정상 종료 코드·
+   `DevTools listening` 한 줄만으로 주소·소유권을 입증하지 않습니다. `Address already in use`,
+   주소 계열 전환이나 실제 포트 변경이 보이면 위 대조를 마치기 전에는 조회·탐색하지 않습니다.
+   프로세스나 endpoint가 교체되면 소유권을 다시 확인합니다.
+
+Chromium 버전에 따라 같은 포트의 IPv6로 옮기거나 다른 빈 포트를 선택할 수 있으므로, 특정 fallback을
+가정하지 않습니다. 실패 시 이번 실행 소유 자원만 정리하고 다른 브라우저나 서버를 종료하지 않습니다.
+
 <a id="provider-readiness"></a>
 ## 제공자 준비 상태
 
@@ -89,6 +117,15 @@ cwd, command, host/port와 제한된 로그 경로를 기록합니다. 가능하
 사용합니다. 제한된 시간 안에 HTTP 준비 상태와 현재 프로젝트 빌드 식별 정보를 독립적으로 확인합니다.
 worktree mutex, Git 공통 디렉터리 잠금, supervisor나 서버 lease는 없습니다.
 
+서버가 포트 충돌 시 자동으로 다른 포트로 이동할 수 있으면, 지원되는 strict-port 옵션을 사용하거나
+이번 시작 로그에서 실제 바인딩 URL을 읽습니다. HTTP 준비 상태 조회와 브라우저 탐색 전에 실제 포트의
+IPv4·IPv6 리스너 PID가 시작한 서버 또는 입증된 실행 소유 자식인지, 그 프로세스의 해석된 cwd가
+승인한 정확한 서버 cwd인지, 그 cwd의 Git/worktree 식별이 대상과 일치하는지 확인합니다. monorepo의
+승인된 하위 앱 cwd도 허용하며 worktree 루트와 문자열이 같을 필요는 없습니다. 다르면 원래 포트로
+접속하지 않고 `Unverifiable`로 중단합니다.
+그 뒤 기존의 프로젝트·bundle 식별 검사로 제공 버전까지 입증합니다. 실제 URL·포트·PID·cwd와 버전
+근거를 함께 보존하며, strict-port 옵션도 이 실행 후 확인을 면제하지 않습니다.
+
 각 캡처 단계 후에는 기록된 PID/핸들과 독립적으로 검증한 프로세스 식별 정보를 사용하여 해당
 시작이 만든 프로세스만 중지합니다. 자식을 만들면 시작 중에 소유 자식 PID/핸들을 기록하고 검증된
 자식만 중지합니다. 종료하려고 포트나 프로세스 이름으로 검색하지 않습니다. 이미 종료된 소유
@@ -126,3 +163,12 @@ API 대상을 확인하되 비밀 값은 노출하지 않습니다. 기본 포�
 
 브라우저/버전, 대상, 관련된 경우 viewport/DPR, 작업 트리, 서버 프로세스/cwd, 자산 파이프라인과
 제공 버전 입증을 간결한 사실로 기록합니다.
+
+## 출처와 확인 범위
+
+2026-11-02에 [Chromium `d7abebf49569e8b6d1cd24fba645b1dec8fd6bf6`](https://github.com/chromium/chromium/blob/d7abebf49569e8b6d1cd24fba645b1dec8fd6bf6/chrome/browser/devtools/remote_debugging_server.cc)의
+loopback socket factory·port fallback·포트 0 처리와 같은 revision의 `remote_debugging_server_unittest.cc`를
+읽었습니다. **keep:** 제공자의 전송 방식과 실제 endpoint를 유지합니다. **adapt:** 직접 실행의
+실행 소유 PID/프로필 대조를 연결 전 관문으로 구체화합니다. **omit:** 고정 포트·주소 옵션만으로
+소유권을 보장하는 가정과 새 실행 관리 체계를 도입하지 않습니다. Chromium 테스트 실행과 실제
+브라우저의 포트 충돌 재현은 이 문서 확인으로 입증되지 않습니다.

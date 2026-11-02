@@ -17,7 +17,7 @@
 
 | 분류 | 행동 |
 | --- | --- |
-| 없음 | `Next step`부터 추가 질문 없이 계속하되, `Next step`이나 `Open questions`가 여전히 사용자 결정을 기다리는 경우는 예외입니다. 사용자 결정을 기다리는 경우에는 질문 전에 [질문 라운드](../../tk-questioning/references/questions.md)를 읽고, 그 미결 결정을 질문 블록으로 삼아 재개 보고를 끝냅니다. |
+| 없음 | `Next step`부터 추가 질문 없이 계속하되, `Next step`이나 `Open questions`가 여전히 사용자 결정을 기다리는 경우는 예외입니다. 사용자 결정을 기다리는 경우에는 질문 전에 [질문 라운드](../../tk-questioning/references/questions.md)를 읽고, 그 미결 결정을 네이티브 질문 도구 또는 채팅 대체 형식으로 전달하여 재개 보고를 끝냅니다. |
 | 비본질적인 `drift` | 기록하고 계속합니다. |
 | 중대한 진행 상황 `drift` | 현재 근거로 `Handoff`를 갱신하고 필요한 결정만 확인합니다. |
 | `Seed` 계약 `drift` | `Handoff`에서 해결하지 말고 `tk-prep`으로 다시 진입해야 한다고 보고합니다. |

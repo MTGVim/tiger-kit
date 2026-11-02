@@ -50,7 +50,7 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 
 ### 이해·연구·학습
 
-개념·상황·코드 변경 설명과 실제 답변에 맞춘 후속 수업은 `tk-explain`을 사용합니다. `tk-explain`과 `tk-research`는 대화에서 필요한 배경·근거·한계까지 설명하며, HTML 등 별도 산출물은 요청한 경우에 만듭니다.
+개념·상황·코드 변경 설명과 실제 답변에 맞춘 후속 수업은 `tk-explain`을 사용합니다. 두 스킬은 일반 질문에 필요한 배경·근거·한계까지 대화로 설명합니다. `tk-explain`은 파일을 요청하거나 표현 선택을 위임하면 자료를 제작하고, `tk-research`는 별도 산출물을 요청한 경우에 제작합니다.
 
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
@@ -91,7 +91,7 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 | [tk-writing](skills/tk-writing/SKILL.md) | `hybrid` | 글쓰기·설명·HTML 기준과 공통 자원·도우미를 제공합니다. |
 | [tk-engineering](skills/tk-engineering/SKILL.md) | `hybrid` | 테스트·진단·리뷰·SDD 기준을 제공합니다. |
 | [tk-repository-guidance](skills/tk-repository-guidance/SKILL.md) | `hybrid` | 저장소 맥락·도메인 문서·외부 계약 기준을 제공합니다. |
-| [tk-pr-guidance](skills/tk-pr-guidance/SKILL.md) | `hybrid` | PR 전달·시각 자료·리베이스 준비 기준을 제공합니다. |
+| [tk-pr-guidance](skills/tk-pr-guidance/SKILL.md) | `hybrid` | PR 본문 GFM·전달·시각 자료·리베이스 준비 기준을 제공합니다. |
 | [tk-verification-guidance](skills/tk-verification-guidance/SKILL.md) | `hybrid` | 검증 제공자 선택·근거 기준과 registry·설정 도우미를 제공합니다. |
 
 ## 참고
