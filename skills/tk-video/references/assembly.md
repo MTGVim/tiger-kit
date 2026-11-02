@@ -73,7 +73,7 @@ Frame, 장면 WAV와 출력은 manifest 디렉터리 안에 둡니다. 출력은
 
 내장 오디오는 stream copy를 사용하여 몰래 downmix/교체하지 않고 channel을 유지합니다. 추가 `scenes` 내레이션이나 `--audio`는 충돌하여 실패합니다. 오디오 출처 하나를 선택합니다. 내장 오디오가 없으면 측정 장면 offset이나 전체 track을 재사용합니다. 너무 길거나 사용할 수 없는 animation 오디오는 몰래 생략하지 않고 실패합니다. 선택한 내레이션이 무음이거나 자막 범위가 부족하면 계속 실패입니다. TTS 엔진은 import하지 않습니다.
 
-기존 미디어 선택 라운드에서 `caption_delivery: none | soft | hard`를 확정합니다. Animation은 활성화된 자막의 기본값으로 `soft`를 사용하고 frame 경로는 기존 hard 자막 기본값을 유지합니다. `caption_style: none`이나 delivery `none`은 track/sidecar를 비활성화하며 내레이션 guard를 비활성화하지 않습니다. 활성화된 delivery와 style `none`을 결합하지 않습니다. Animation 자막은 순서가 있고 겹치지 않으며 측정 길이 안에 있어야 합니다. 화면 텍스트는 TTS 철자가 아니라 원래 표기를 유지합니다.
+직접 작성하는 설명 MP4는 별도 선택이 없으면 `caption_delivery: hard`를 사용합니다. 저수준 조립기의 animation 대체값 `soft`와 구별하여 manifest에 명시합니다. 명시적 `none | soft | hard` 선택을 보존하고 frame 경로는 기존 기본값을 유지합니다. `caption_style: none`이나 delivery `none`은 track/sidecar를 비활성화하며 내레이션 guard를 비활성화하지 않습니다. 활성화된 delivery와 style `none`을 결합하지 않습니다. Animation 자막은 순서가 있고 겹치지 않으며 측정 길이 안에 있어야 합니다. 화면 텍스트는 TTS 철자가 아니라 원래 표기를 유지합니다.
 
 Soft MP4에는 강제 표시되지 않는 `mov_text` track과 SRT/WebVTT sidecar가 있으며 libass가 필요하지 않고 픽셀에 텍스트를 입히지 않습니다. 선택한 sidecar를 영상과 함께 전달합니다. Muxer/player는 track을 기본값으로 표시할 수 있습니다. 처음에 숨겨진다고 약속하지 말고 측정한 `subtitle_default`를 보고합니다. 브라우저는 일반적으로 내장 MP4 텍스트만이 아니라 same-origin WebVTT `<track>`이 필요합니다. 선택한 player에서 cue 로딩과 실제 on/off control을 검증합니다. File-origin 규칙이 WebVTT를 막으면 소유권이 확인된 로컬 HTTP origin을 사용합니다. 그렇지 않으면 해당 player를 미지원으로 보고하고 별도 파일을 보존합니다. 범용 player UI는 추가하지 않습니다. 명시적 hard delivery에는 선택한 style과 기존 libass/fallback 계약을 사용합니다. 지원 누락은 계속 blocked입니다. 서로 다른 sidecar, 영상과 contact sheet를 덮어쓰지 않습니다.
 
@@ -82,7 +82,7 @@ Soft MP4에는 강제 표시되지 않는 `mov_text` track과 SRT/WebVTT sidecar
 <a id="optional-captions-callouts-and-zoom"></a>
 ## 선택적 자막, 콜아웃과 확대
 
-제작 전에 [미디어 선택](../../tk-writing/references/media-preferences.md)으로 이 필드를 확정합니다. 저장된 선택을 재사용하고 기본값 저장 승인은 정확한 값 확정 뒤 별도 질문으로 처리합니다. 선택한 표현 처리에만 사용합니다. 기본값은 기존 `band` 자막과 변환하지 않은 frame을 유지합니다. 평가자 한 명의 변형 선호는 해당 제작자의 선택을 뒷받침하며 보편적 기본값이나 학습 개선의 근거가 아닙니다.
+제작 전에 [미디어 선택](../../tk-writing/references/media-preferences.md)으로 이 필드를 확정합니다. 저장된 선택을 재사용하고 기본값 저장 승인은 정확한 값 확정 뒤 별도 질문으로 처리합니다. 선택한 표현 처리에만 사용합니다. 관찰 캡처·카드 대체값은 기존 `band`와 변환하지 않은 frame을 유지하고, Manim hard 자막의 대체값은 `overlay-rounded`입니다. 현재 명시적·저장된 style은 대체값보다 우선합니다. 평가자 한 명의 변형 선호는 해당 제작자의 선택을 뒷받침하며 보편적 기본값이나 학습 개선의 근거가 아닙니다.
 
 ```json
 {
@@ -142,7 +142,7 @@ python3 <loaded-package>/scripts/make_feedback_player.py --video <out.mp4> --cap
 생성 실패는 사유와 함께 보고하며 완성 영상 전달은 계속합니다.
 플레이어는 대본 클릭 이동·현재 cue 강조·대본 상자 안에서만 따라가기, 현재 자막과 배속(0.75×–2×),
 시스템/라이트/다크 테마와 좁은 화면의 1열 배치를 제공합니다. 영상 로드 실패 시 로컬 파일 선택을 제공합니다.
-입력 시작(focus 또는 첫 input)의 시각을 기록하고 기본적으로 일시정지합니다. 입력 중 seek는 기록 시각도 옮깁니다.
+입력 시작(focus 또는 첫 input)의 시각을 기록하고 기본적으로 일시정지합니다. 입력 중 seek는 기록 시각을 바꾸지 않습니다. 내용이 있고 현재 위치와 기록 시각이 1초 이상 다르면 `지금 위치(mm:ss)로 바꾸기` 버튼을 보여 줍니다. 버튼은 기록 시각과 자막만 바꾸고 쓴 내용과 입력 커서는 유지하며 툴팁으로 동작을 설명합니다.
 저장 버튼 또는 Ctrl/⌘+Enter로 누적하며 IME 조합 중에는 확정 뒤 저장합니다. 빈 내용은 거부합니다.
 목록은 시각순으로 선택·이동·삭제할 수 있고 선택 항목을 Markdown으로 복사합니다. 모두 지우기는 확인을 거칩니다.
 `localStorage` 키는 `video-feedback:<영상 경로>:<cue 해시 12자>`이며 저장 불가 시 복사를 안내하고 계속 동작합니다.
@@ -153,3 +153,23 @@ python3 <loaded-package>/scripts/make_feedback_player.py --video <out.mp4> --cap
 피드백 본문의 줄바꿈은 ` / `로 합칩니다. 붙여 넣은 피드백은 시각으로 beat을 찾고 같은 지적이
 다른 장면에도 해당하는지 원고 전체를 검색해 함께 고칩니다. 실제 OS 한글 입력기·클립보드와 브라우저별
 동작을 검사하지 않았다면 합성 이벤트나 문자열 확인을 실제 입력·복사 검증으로 보고하지 않습니다.
+
+<a id="narrated-output-bundle"></a>
+## 설명 MP4 전달 묶음
+
+내레이션이 있는 직접 작성 설명은 hard 자막 MP4, 자막 없는 MP4, SRT를 기본으로 전달합니다. 내레이션이 없으면 hard MP4와 SRT를 전달하며, 명시적 soft/off 요청이 우선합니다. 같은 렌더·오디오·타임라인에서 별도 출력 이름과 manifest 사본으로 조립하고 각 receipt의 실제 경로와 측정 길이를 대조합니다. 자막 없는 사본은 `caption_box_color`와 `caption_box_alpha`를 제거하고 `caption_delivery: none`과 `caption_style: none`으로 만들되 `narration_requested`와 `tts_receipts` 및 화면 고지는 보존합니다. 피드백 플레이어에는 자막 없는 MP4와 자막본의 SRT를 함께 넘깁니다.
+macOS에서는 먼저 설치된 FFmpeg의 `subtitles` 필터를 확인합니다. Homebrew 기본 빌드에 없다면 libass를 포함한 `ffmpeg-full`의 실제 실행 파일을 `--ffmpeg`로 지정할 수 있습니다. 새 설치는 별도 권한을 따릅니다. 반환값 `subtitles: hard`, `media_status: ready`와 경고를 확인한 뒤 프레임에서 자막을 확인합니다. 현재 receipt에는 `caption_delivery` 대신 `subtitles`가 실제 결과 필드입니다.
+
+<a id="tts-disclosure-gate"></a>
+## TTS 고지 게이트
+
+TTS를 사용한 모든 합성 receipt를 실행 소유 폴더로 복사하여 `tts_receipts: ["/absolute/run/tts.json"]`에 전달합니다. 하나라도 `disclosure_required: true`이면 그 receipt의 `disclosure_notice`가 전체 영상에 보이도록 작성합니다. 이는 라이선스가 표시 위치·전 구간을 지정했다는 뜻이 아니라 이 워크플로의 누락 방지 계약입니다. 조립기는 실제로 그리는 callout, hard 자막, 또는 `disclosure_scene: [{start_ms, end_ms, text}]` 선언만 인정합니다. soft/off 자막과 지원 부재로 그리지 못하는 효과는 고지가 아닙니다. 첫·끝의 최대 1초만 허용하며 중간 공백은 허용하지 않습니다. 요구 문구가 빠지거나 잘못된 receipt·구간이면 인코딩 전에 실패합니다.
+장면이 직접 그리면 조립기는 픽셀을 입증하지 못하므로 반환한 `disclosure.notices[].human_action`에 따라 첫·중간·끝 프레임을 직접 확인합니다. 기본 배치는 자막과 떨어진 하단 가는 경계선 아래의 읽을 수 있는 작은 한 줄이며 처음부터 끝까지 유지합니다. 본문보다 낮은 대비를 쓰되 읽을 수 없어서는 안 됩니다. 별도 자동 콜아웃 삽입으로 위치·겹침 점검을 우회하지 않습니다. SRT와 피드백 플레이어에 고지 반복을 강제하지 않습니다.
+
+<a id="feedback-revision-loop"></a>
+## 피드백을 반영하는 새 판
+
+새 판마다 이전 장면 코드·원고·측정 타이밍·수동 자막 분할 표를 보존하고 새 번호와 새 출력 경로를 사용합니다. 바뀐 문장만 재합성하고 나머지 오디오는 일반 파일로 복사합니다. 문장 시작과 측정 길이에 애니메이션을 묶고, 길이가 바뀌면 뒤 장면과 자막을 다시 계산합니다. 시작할 때마다 설치된 `tk-video`, `tk-writing`, `tk-tts`의 revision 또는 콘텐츠 해시/수정 시각을 이전 기록과 비교하고 달라진 관련 지침을 다시 읽어 적용합니다. 재합성 수·보존 파일·revision 비교를 기존 근거에 남깁니다.
+렌더를 중단하면 실행 소유 셸뿐 아니라 렌더·조립·인코딩 자식 프로세스의 종료까지 확인합니다. 기존 종료/정리 소유권 계약을 따르고 이전 출력은 보존하여 식별합니다. 같은 판 번호를 재사용하지 않습니다.
+
+`overlay-rounded`는 `caption_box_color: "RRGGBB"`와 `caption_box_alpha`(0은 투명, 1은 불투명)를 받을 수 있습니다. 대체값은 검정(`000000`), 0.5이며 다크 배경에서는 예를 들어 `5A5A5A`, 0.65부터 대비를 확인합니다. 다른 style에 두 필드를 넘기면 실패하며 자막 없는 사본에서는 제거합니다.

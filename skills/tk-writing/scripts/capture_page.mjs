@@ -1,12 +1,19 @@
 #!/usr/bin/env node
 import {writeFile, realpath} from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
-import {realpathSync} from 'node:fs';
+import {realpathSync, existsSync} from 'node:fs';
 import {withPage, evaluate} from './chrome_capture.mjs';
 
 export async function capture(input, output, width = 1440, viewportHeight) {
   if (!Number.isInteger(width) || width < 320 || width > 3840) throw new Error('Width must be 320-3840');
   if (viewportHeight !== undefined && (!Number.isInteger(viewportHeight) || viewportHeight < 1 || viewportHeight > 100000)) throw new Error('Height must be 1-100000');
+  if (existsSync(output)) {
+    // Fail before launching Chrome; a stale PNG left in place is easy to review by mistake.
+    const m = output.match(/^(.*?)(?:-(\d+))?(\.png)$/i);
+    let n = m && m[2] ? Number(m[2]) + 1 : 2, next;
+    do { next = m ? `${m[1]}-${n++}${m[3]}` : `${output}-${n++}`; } while (existsSync(next));
+    throw new Error(`Output exists and is never overwritten: ${output}\nRe-capture to a new name, e.g. ${next}, and review that file.`);
+  }
   const url = pathToFileURL(await realpath(input)).href;
   await withPage(async call => {
     // A one-pixel bootstrap measures short documents without a 900px viewport floor.

@@ -19,6 +19,6 @@ def options():
             if not found:missing.append(name)
         rows.append({'id':id,'model':d['repository'],'revision':d['revision'],'device':device,'platform_supported':apple if 'mlx' in id else True,'missing_modules':missing,'dependency_status':'missing' if missing else 'modules-present-unverified','model_cache_status':'not-inspected','runtime_verified':False,'speakers':speakers,'recommended':id==('qwen3-mlx-5bit' if apple else 'qwen3-pytorch'),'network_for_synthesis':False,'installation_or_model_download':'requires prior approval; inspect selected manifest and cache'})
         if id=='supertonic3-onnx':
-            rows[-1].update({'disclosure_required':True,'disclosure_notice':d['disclosure_notice'],'upstream_status':'archived'})
+            rows[-1].update({'disclosure_required':True,'disclosure_notice':d['disclosure_notice'],'upstream_status':'archived','selection_notice':'이 경로를 고르면 영상 전체에 작은 AI 합성 고지가 들어갑니다.'})
     return rows
 if __name__=='__main__':print(json.dumps({'options':options(),'note':'Module discovery is not runtime, model, pronunciation or license verification. Browser speech is a playback fallback, not an exported-audio engine.'},ensure_ascii=False,indent=2))

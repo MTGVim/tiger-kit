@@ -25,6 +25,9 @@ import unicodedata
 _presentation_spec = importlib.util.spec_from_file_location("movie_presentation", Path(__file__).with_name("presentation.py"))
 presentation = importlib.util.module_from_spec(_presentation_spec)
 _presentation_spec.loader.exec_module(presentation)
+_disclosure_spec = importlib.util.spec_from_file_location("movie_disclosure", Path(__file__).with_name("disclosure.py"))
+disclosure = importlib.util.module_from_spec(_disclosure_spec)
+_disclosure_spec.loader.exec_module(disclosure)
 
 
 def regular(path: Path, root: Path | None = None) -> Path:
@@ -310,6 +313,14 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
     root = manifest.parent
     frames, end, captions = timeline(data, root, ffprobe)
     mode = data.get("mode", "evidence")
+    receipt_paths = data.get("tts_receipts", [])
+    if not isinstance(receipt_paths, list) or any(not isinstance(p, str) for p in receipt_paths):
+        raise ValueError("tts_receipts must be a list of run-owned JSON paths")
+    tts_receipts = [json.loads(regular(Path(p), root).read_text(encoding="utf-8")) for p in receipt_paths]
+    disclosure_receipt = disclosure.check({**data, "captions": captions}, tts_receipts, end,
+        hard_captions=delivery == "hard" and caption_support,
+        callouts_rendered=caption_support)
+
     source_video = animation_source(data, root, ffprobe) if animation else None
     narration_requested = data.get("narration_requested", False)
     scenes = audio_scenes(data, frames, end, root, ffprobe)
@@ -578,7 +589,8 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
             "captions_path": str(sidecar) if sidecar else None,
             "captions_vtt_path": str(vtt_sidecar) if vtt_sidecar else None,
             "verification_status": "not-assessed", "source_frames_preserved": True,
-            "presentation": presentation_receipt}
+            "presentation": presentation_receipt, "disclosure": disclosure_receipt,
+            "tts_receipts": receipt_paths}
 
 
 def main() -> int:

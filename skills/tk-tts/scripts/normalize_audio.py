@@ -9,8 +9,12 @@ TARGET_I=-18
 TARGET_TP=-1.5
 TARGET_LRA=7
 
+def direct(path):
+    # The final component must not be a symlink; symlinked parents such as macOS /tmp -> /private/tmp are fine.
+    return not path.is_symlink() and path.parent.resolve()/path.name==path.resolve()
+
 def inspect(path):
-    if path.resolve()!=path.absolute() or not path.is_file():raise ValueError('use regular nonsymlink WAV inputs')
+    if not direct(path) or not path.is_file():raise ValueError('use regular nonsymlink WAV inputs; copy reused clips instead of linking them')
     if path.stat().st_size>500_000_000:raise ValueError('narration exceeds the per-file budget')
     with wave.open(str(path),'rb') as wav:
         if wav.getnchannels()!=1 or wav.getsampwidth()!=2 or wav.getcomptype()!='NONE':raise ValueError('expected mono PCM16 WAV')
@@ -30,7 +34,7 @@ def normalize(inputs,output,target_lufs=TARGET_I):
     if not isinstance(target_lufs,(int,float)) or isinstance(target_lufs,bool) or not math.isfinite(target_lufs) or not -70 <= target_lufs <= -5:raise ValueError("target LUFS must be finite and between -70 and -5")
     paths=[Path(p).absolute() for p in inputs];output=Path(output).absolute()
     if not paths or len(set(paths))!=len(paths):raise ValueError('supply unique WAV inputs')
-    if output.exists() or output.resolve()!=output or not output.parent.is_dir():raise ValueError('use a new safe output directory')
+    if output.exists() or not direct(output) or not output.parent.is_dir():raise ValueError('use a new safe output directory')
     info=[inspect(p) for p in paths]
     ffmpeg=shutil.which('ffmpeg')
     if not ffmpeg:raise ValueError('FFmpeg is required for loudness normalization; do not install implicitly')
@@ -56,7 +60,7 @@ def normalize(inputs,output,target_lufs=TARGET_I):
             row={'source':str(source),'path':str(output/name),'mode':mode,'before':before,'after':after,'limitation':limitation}
             if finite:row['loudness']=measured(second.stderr)
             rows.append(row)
-        if output.exists() or output.resolve()!=output:raise ValueError('output was replaced during normalization')
+        if output.exists() or not direct(output):raise ValueError('output was replaced during normalization')
         stage.rename(output)
     return {'target_lufs':target_lufs,'true_peak_db':TARGET_TP,'lra':TARGET_LRA,'files':rows,'human_action':'listen'}
 

@@ -116,12 +116,13 @@
     </div>
 
     <div class="card composer">
-      <div class="stamp" id="stamp">입력을 시작하면 그 순간의 재생 시각이 기록됩니다. 입력 중에 재생 위치를 옮기면 기록 시각도 따라갑니다.</div>
+      <div class="stamp" id="stamp">빈 입력 상자를 누르면 그 순간의 재생 시각과 자막이 기록됩니다. 쓰는 중에 재생 위치가 달라지면 바꾸기 버튼이 나타납니다.</div>
       <label for="fbText" class="sr-only">피드백</label>
       <textarea id="fbText" placeholder="이 장면에 대한 피드백을 적어 주세요. 저장: Ctrl+Enter 또는 ⌘+Enter"></textarea>
       <div class="row">
         <label class="check"><input type="checkbox" id="pauseOnType" checked> 입력하는 동안 일시정지</label>
         <span class="spacer"></span>
+        <button id="restamp" hidden>지금 위치로 바꾸기</button>
         <button class="primary" id="save">피드백 저장</button>
       </div>
     </div>
@@ -257,14 +258,29 @@
     const b = document.createElement('b'); b.textContent = fmt(ms);
     $('stamp').append('기록 시각 ', b, cue ? ` · 자막: ${cue}` : '');
   }
+  // An empty box re-stamps on every focus. Once text exists the stamp stays put; if the playhead
+  // moves away, the restamp button offers to move it instead (seeking to re-check a scene must not re-label the draft).
+  const restamp = $('restamp');
+  function syncRestamp() {
+    const now = nowMs();
+    const off = draftStampMs !== null && ta.value.trim() && Math.abs(now - draftStampMs) >= 1000;
+    restamp.hidden = !off;
+    if (off) {
+      restamp.textContent = `지금 위치(${fmt(now)})로 바꾸기`;
+      restamp.title = `이 피드백의 기록 시각과 자막을 ${fmt(draftStampMs)}에서 지금 재생 위치 ${fmt(now)}로 바꿉니다. 쓴 내용은 그대로 둡니다.`;
+    }
+  }
   ta.addEventListener('focus', () => {
-    if (draftStampMs === null) setStamp(nowMs());
+    if (!ta.value.trim()) setStamp(nowMs());
+    syncRestamp();
     if ($('pauseOnType').checked && !video.paused) video.pause();
   });
   // focus can be missed (window not focused, programmatic fill); the first keystroke also takes the stamp
-  ta.addEventListener('input', () => { if (draftStampMs === null && ta.value.trim()) setStamp(nowMs()); });
-  // while a draft is open, an explicit seek (timeline drag, transcript click, J/L) moves the stamp to the new position
-  video.addEventListener('seeked', () => { if (draftStampMs !== null) setStamp(nowMs()); });
+  ta.addEventListener('input', () => { if (draftStampMs === null && ta.value.trim()) setStamp(nowMs()); syncRestamp(); });
+  video.addEventListener('timeupdate', syncRestamp);
+  video.addEventListener('seeked', syncRestamp);
+  restamp.addEventListener('mousedown', (e) => e.preventDefault()); // keep the caret in the box
+  restamp.addEventListener('click', () => { setStamp(nowMs()); syncRestamp(); ta.focus(); });
   function save() {
     const text = ta.value.trim();
     if (!text) { toast('피드백 내용을 입력하세요.'); ta.focus(); return; }
@@ -274,7 +290,7 @@
                  t_ms: t, cue: i >= 0 ? CUES[i].text : '', text, created_at: new Date().toISOString(), checked: true });
     items.sort((a, b) => a.t_ms - b.t_ms);
     persist(); render();
-    ta.value = ''; draftStampMs = null;
+    ta.value = ''; draftStampMs = null; syncRestamp();
     $('stamp').textContent = '저장했습니다. 다음 입력을 시작하면 새 재생 시각이 기록됩니다.';
     ta.blur();
     toast(`${fmt(t)} 피드백을 저장했습니다.`);

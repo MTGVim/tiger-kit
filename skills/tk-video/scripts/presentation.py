@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import math
+import re
 import subprocess
 
 
@@ -42,6 +43,15 @@ def validate(data, width, height, end):
     style = data.get("caption_style", "band")
     if style not in ("none", "band", "overlay", "overlay-rounded"):
         raise ValueError("caption_style must be none, band, overlay or overlay-rounded")
+    if "caption_box_color" in data or "caption_box_alpha" in data:
+        if style != "overlay-rounded":
+            raise ValueError("caption box overrides require overlay-rounded")
+        color = data.get("caption_box_color", "000000")
+        if not isinstance(color, str) or not re.fullmatch(r"[0-9A-Fa-f]{6}", color):
+            raise ValueError("caption_box_color must be six RRGGBB hex digits")
+        alpha = finite(data.get("caption_box_alpha", .5))
+        if not 0 <= alpha <= 1:
+            raise ValueError("caption_box_alpha must be opacity from zero to one")
     calls, highlights = data.get("callouts", []), data.get("highlights", [])
     if not isinstance(calls, list) or not isinstance(highlights, list):
         raise ValueError("callouts and highlights must be lists")
@@ -267,7 +277,7 @@ def zoom_filter(plans, width, height, fps):
             f"y='ceil({'+'.join(ys)})':d=1:s={width}x{height}:fps={fps}")
 
 
-def caption_events(captions, style, metrics, width, height, size, plans, calls, fps, warnings):
+def caption_events(captions, style, metrics, width, height, size, plans, calls, fps, warnings, box_color="000000", box_alpha=.5):
     events, boxes = [], []
     previous_end = 0
     for row in captions:
@@ -304,7 +314,7 @@ def caption_events(captions, style, metrics, width, height, size, plans, calls, 
             if any(intersects(top,r) for r in occupied):
                 raise ValueError("caption overlaps protected content at both top and bottom; use band or reframe the capture")
             warnings.append(f"caption moved to top to keep highlights visible: {row['start_ms']:g}ms")
-        if style == "overlay-rounded": events.append(event(start,stop,0,shape(box,size*.22,"000000","80")))
+        if style == "overlay-rounded": events.append(event(start,stop,0,shape(box,size*.22,box_color[4:6]+box_color[2:4]+box_color[0:2],f"{round(255*(1-box_alpha)):02X}")))
         events += text_events(block,box[0]+pad,box[1]+pad,start,stop,center=True,square=style=="overlay")
         boxes.append({"start_ms":row["start_ms"],"end_ms":row["end_ms"],"render_start_ms":start,"render_end_ms":stop,
                       "rect":box,"position":"top" if moved else "bottom","lines":len(block["lines"])})
@@ -324,7 +334,10 @@ def prepare(data, captions, width, height, end, size, fps, ffmpeg, stage, env, w
     if zoom: filters.append(zoom)
     boxes = []
     if style in {"overlay", "overlay-rounded"} and captions:
-        events,boxes = caption_events(captions,style,metrics,width,height,size,plans,calls,float(fps),warnings)
+        events,boxes = caption_events(captions,style,metrics,width,height,size,plans,calls,float(fps),warnings,
+                                    data.get("caption_box_color","000000"),data.get("caption_box_alpha",.5))
         (stage/"overlay-captions.ass").write_text(document(width,height,events),encoding="utf-8")
     return filters,{"caption_style":style,"caption_boxes":boxes,"callout_boxes":calls,"zoom_plan":plans,
-                    "text_metrics":"libass-rendered-ink" if calls or boxes else None}
+                    "text_metrics":"libass-rendered-ink" if calls or boxes else None,
+                    "caption_box_color":data.get("caption_box_color","000000") if boxes else None,
+                    "caption_box_alpha":data.get("caption_box_alpha",.5) if boxes else None}

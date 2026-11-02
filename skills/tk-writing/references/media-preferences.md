@@ -14,11 +14,12 @@
 | `format` | `auto`, `gif`, `mp4` | `auto` |
 | `narration` | boolean | `false` |
 | `voice` | `serena`, `sohee` | `sohee` |
-| `captions` | `none`, `band`, `overlay`, `overlay-rounded` | `band` |
+| `captions` | `none`, `band`, `overlay`, `overlay-rounded` | 관찰 캡처·카드는 `band`, Manim은 `overlay-rounded` |
 | `emphasis` | `in-slide`, `zoom`, `none` | 작성한 슬라이드에는 `in-slide`를, 선택한 캡처 강조 영역에는 `zoom`을 사용합니다. |
 | `callouts` | boolean | `false` |
 | `slideTheme` | `light`, `dark` | `light` |
-| `explainerRenderer` | `cards`, `manim` | `cards` |
+| `explainerRenderer` | `cards`, `manim` | `manim` |
+| `manimTheme` | `light`, `dark` | `dark` |
 
 사용하기 전에 객체와 필드 타입·enum을 검증합니다. 미디어 객체 형식이 잘못되면 이번 실행에서는 저장된 미디어
 설정을 사용할 수 없습니다. 이를 알리고 파일을 보존하며, 하위 계층의 참여 설정 대신
@@ -38,7 +39,7 @@ Narration Choice를 따릅니다. TTS에는 `tk-tts`를 불러오고 현재
 질문이나 질문 도구 호출 전에 실행 담당 스킬의 공통 질문 계약을 읽고, 현재 용도로 허용된 네이티브 도구를 우선합니다. 미디어 결정과 기본값 저장 승인은 별도 질문으로 분리합니다.
 
 같은 첫 질문 차례에서 명시적 답변도 유효한 저장값도 없는 표현 필드인
-자막, 강조, 콜아웃과 슬라이드 테마를 묻습니다. 대체값은 알리지 않은 결정이 아니라
+자막 스타일, 강조, 콜아웃과 선택한 renderer의 테마를 묻습니다. 직접 작성하는 설명 MP4의 hard 자막본/SRT와 내레이션이 있을 때의 자막 없는 MP4 묶음은 알린 뒤 기본으로 사용하므로 hard/soft만을 위한 질문은 생략합니다. 명시적 soft/off 선택은 우선합니다. 대체값은 알리지 않은 결정이 아니라
 추천으로 제시합니다. 미디어 자체가 아직 선택 사항이면 수락 여부를 먼저 확정하고, 수락한 경우에만
 남은 스타일 질문을 묻습니다. 미디어를 거절하면 스타일 답변은 필요하지 않습니다. 테마는 관찰한 캡처의 색을 바꾸는 것이 아니라 작성한 슬라이드에 관한 것입니다. 값이
 없을 때 한 번 결정하고, 작성할 카드에도 그 값을 유지합니다. 해당되는 경우 튜토리얼의 커서·입력 표시를 포함합니다.
@@ -70,7 +71,7 @@ JSON·버전과 경로 소유권을 다시 검증합니다. 승인한 `evidenceM
 `captions`를 `caption_style`에 대응시킵니다. `none`은 자막 출력·범위만 명시적으로 비활성화하며,
 선택한 내레이션이나 오디오 누락·무음 점검은 절대로 비활성화하지 않습니다. 자막을 꺼도 렌더링된
 프레임에 출처 태그를 계속 표시합니다. `callouts: false`는 콜아웃 행 없음으로 대응시킵니다. true이면 기하 구조를 지어내는 대신
-작성하고 시간을 지정한 콜아웃을 선택합니다. `slideTheme`는 ffmpeg가 아니라 카드 작성자에게 전달합니다.
+작성하고 시간을 지정한 콜아웃을 선택합니다. `slideTheme`는 카드 작성자에게, `manimTheme`은 Manim 작성자에게 전달하며 ffmpeg 필드로 복제하지 않습니다. 두 테마 필드는 각각의 경로에만 적용합니다.
 작성한 슬라이드에서는 현재 내레이션 중인 요소만 바꾸어 `in-slide`를 구현하고,
 조립기의 zoom은 끕니다. 캡처만 입력된 경우 `in-slide`는 조립기 확대를 하지 않는다는 뜻입니다.
 실제로 캡처된 단서를 유지하고 슬라이드 형태의 UI 상태를 지어내지 않습니다. 캡처한 UI에서 `zoom`은 기존 좌표·출처 점검을 거친,
