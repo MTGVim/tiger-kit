@@ -32,23 +32,29 @@ Space 동작이 통과해도 Enter 동작의 실패가 해결되지는 않습니
 흐름에서 UI 전환, 요청/응답과 최종 UI 상태를 연결합니다. 응답, 토스트 또는 로컬 DOM 변경만으로는
 충분하지 않습니다.
 
-저장 흐름에서는 리디렉션, `history.back()`과 bfcache 복원 후에도 근거가 남도록 호스트 측 실행
-기록기에서 페이지 대상 프로토콜 이벤트로 method, path와 status를 기록합니다.
-`Network.requestWillBeSent`에서는 명시적으로 허용 목록에 포함된 비민감 본문 필드만 추출하고,
-헤더나 필터링하지 않은 페이로드는 보존하지 않습니다. 기본 쓰기 차단을 위해 신뢰 동작 전에
-일치하는 요청 단계 Fetch 가로채기를 설치합니다. 요청이 일시 정지된 동안 `requestWillBeSent`나
-정지된 요청에서 허용 목록 필드를 연관 짓고, `Fetch.failRequest`를 호출하여 전송이 방지되었는지
-검증합니다. 이때 페이로드 구성만 입증하는 `blocked-intercept`로 보고합니다. 정확히 해당하는
-저장이 승인되면 요청/응답 이벤트 쌍을 보존한 뒤, 새로 진입한 페이지에서 같은 화면과 필드를
-다시 읽어 저장 결과를 검증합니다. 다른 페이지로 이동하는 흐름의 지속적인 근거 출처로
-페이지를 감싼 기록기에 의존하지 않습니다.
+저장 흐름에서는 리디렉션, `history.back()`과 bfcache 복원 후에도 기록이 남도록 페이지 JS 문맥이
+아닌 제공자 측 기록기를 사용합니다. Playwright CLI에서는 같은 세션의 공식 `run-code`로 동작 전에
+`page.on('request')`, `response`, `requestfailed`를 관찰하고 method·안전한 path·status·실패 이유와
+허용 목록에 포함된 비민감 본문 필드만 보존합니다. 헤더나 필터링하지 않은 페이로드는 출력하지 않습니다.
+기본 쓰기 차단에는 요청을 보내는 동작 **전에** `page.route` 또는 필요한 컨텍스트 route를 설치하여
+정확한 요청을 가로채고 `route.abort()`로 전송 방지를 확인합니다. Service Worker 등으로 차단을
+보장할 수 없으면 요청을 유발하지 않고 `Unverifiable`로 남깁니다. 페이로드 구성만 입증한 실행은
+`blocked-intercept`이며 실제 저장 성공이 아닙니다. 정확한 저장이 승인되면 요청/응답 쌍과 새 진입
+페이지의 필드를 다시 읽어 저장 결과를 확인합니다. 실패·예외 경로에서도 관찰자와 route를 제거합니다.
 
-SortableJS 같은 네이티브 HTML 드래그 앤 드롭 컨트롤에서는 CDP `Input.setInterceptDrags`를
-활성화하고, 핸들을 누른 뒤 이동하여 가로챈 드래그 데이터를 얻습니다. 그런 다음 대상에
-`Input.dispatchDragEvent`로 `dragEnter`, `dragOver`와 `drop`을 전달합니다. headless 모드에서
-신뢰할 수 있는 키보드 선택을 무시하는 닫힌 네이티브 `<select>`에서는 문서화한 입력 제한에 대한
-대응으로만 옵션 값을 설정하고 `change`를 전달합니다. 결과 요청과 UI 상태는 독립적으로 검증하며,
-이 우회 방법을 신뢰할 수 있는 사용자 입력으로 설명하지 않습니다.
+선택된 제공자의 신뢰 입력 API를 사용합니다. **Playwright CLI를 선택한 경우에만**
+SortableJS와 네이티브 HTML Drag & Drop에 먼저 CLI `drag <startRef> <endRef>`를 사용하고
+실제 순서·대상 상태와 필요한 요청을 확인합니다. 두 구현을 동일하게 가정하지 않습니다. 실패하면
+같은 세션의 공식 `run-code`에서 `locator.dragTo` 또는 실제 `page.mouse` 이동/누르기/떼기를
+검증합니다. DOM 순서 변경이나 합성 drag 이벤트를 실제 입력 성공으로 계산하지 않습니다.
+다른 제공자를 명시했다면 CLI를 실행하지 않고 해당 제공자의 입력·관찰 경계를 유지합니다.
+같은 최소 사례에서 실패가 재현되고 필요한 기능이 확인된 경우에만 명시적으로 선택한 특수 CDP
+경로의 `Input.setInterceptDrags`·`Input.dispatchDragEvent`를 검토합니다. 일반 drag를 이유로
+자동 CDP 연결·브라우저 추가 실행·시나리오 재생을 하지 않습니다. 실패 근거와 미검증 상태를 유지합니다.
+
+headless 모드에서 신뢰 키보드 선택을 무시하는 닫힌 네이티브 `<select>`에는 문서화한 입력 한계의
+대응으로만 제공자의 옵션 선택 또는 `change` 전달을 사용합니다. 결과 요청과 UI 상태를 독립적으로
+검증하며 이 우회 방법을 신뢰할 수 있는 사용자 입력으로 설명하지 않습니다.
 
 <a id="conditional-state-and-dialogs"></a>
 ## 조건부 상태와 대화상자
@@ -62,7 +68,7 @@ SortableJS 같은 네이티브 HTML 드래그 앤 드롭 컨트롤에서는 CDP 
 <a id="motion"></a>
 ## 모션
 
-CDP 왕복 스냅샷에 애니메이션이 없다는 이유만으로 애니메이션이 존재하지 않는다고 추론하지 않습니다.
+제공자의 단발 스냅샷에 애니메이션이 없다는 이유만으로 애니메이션이 존재하지 않는다고 추론하지 않습니다.
 트리거 전에 `animationstart`, `animationend`, `transitionstart`, `transitionend`와 필요한
 `MutationObserver`를 등록하고, 신뢰 입력 후 하나의 이벤트 타임라인을 확인합니다.
 

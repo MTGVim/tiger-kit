@@ -47,8 +47,8 @@ metadata:
 
 확장 경로를 분류하고 실행하려면 [references/gh-attach.md](references/gh-attach.md)를 사용합니다.
 [references/cdp-fallback.md](references/cdp-fallback.md)는
-CDP를 선택했거나 확장 경로가 대상 쓰기
-기능을 사용할 수 없는 경우에만 읽습니다. 사람이 수행해야만 하는 정확한 호스트 설정,
+사용자가 브라우저 대체 경로를 선택한 경우에만 읽습니다. 기본 `gh-attach` 경로와
+기존 명시적 CDP 선택을 유지하고, 새 브라우저 경로는 설치된 Playwright CLI를 우선 제안합니다. 사람이 수행해야만 하는 정확한 호스트 설정,
 인증, 권한이나 재시작 단계에만 `tk-wizard`를 호출합니다. 인계 전후에 이 스킬의 업로드 대상과 경로를
 유지합니다. 브라우저로 제어하는 런타임 검증에는 `tk-browser-verify`를 사용합니다.
 
@@ -73,8 +73,8 @@ CDP를 선택했거나 확장 경로가 대상 쓰기
    경로·화면 근거가 없으면 만들어 내지 말고 누락을 공개합니다. staging 파일명은
    머리글, 캡션이나 충분한 설명이 아닙니다.
 3. [gh-attach](references/gh-attach.md)를 사용하여 적격 경로를 선택하고
-   실행하거나, CDP를 선택한 뒤에만
-   [CDP 대체 경로](references/cdp-fallback.md)를 읽습니다.
+   실행하거나, 브라우저 경로를 선택한 뒤에만
+   [브라우저 대체 경로](references/cdp-fallback.md)를 읽습니다.
    저장소 공개 여부는 경로 선택 신호가 아니며, 원격 상태를 생성했을 수 있는
    경로에서 알리지 않고 다른 경로로 전환해서는 안 됩니다.
 4. 선택한 경로에 사람이 수행해야만 하는 호스트 행동이 필요하면 범위를 한정한 인계를
@@ -84,8 +84,10 @@ CDP를 선택했거나 확장 경로가 대상 쓰기
 5. 본문·댓글을 쓰기 직전에 [GFM 렌더링](../tk-pr-guidance/references/gfm-rendering.md)을 읽고, 생성된 미디어 토큰까지 반영한 정확한 후보를 검사합니다. 미디어 섹션 삽입도 포함하며, 실패·확인 불가 상태에서는 해당 쓰기를 보류합니다. 업로드와 본문 변경이 결합된 경로는 같은 참조의 사전 작성 본문 확인·사후 토큰 치환 확인을 구분합니다. GitHub API나 동등한 수단으로 요청된 본문이나 댓글만 업데이트합니다.
    `Pass` 전에 대상을 다시 읽고, 생성된 모든 이미지 토큰이 바이트까지 일치하게 정확히 한 번 나타나는지,
    쌍의 역할·캡션이 올바르게 연결된 상태인지, 인증된 fetch에서 모든 자산이
-   디코딩 가능한 `image/*` 바이트인지, 연결된 모든 업로드 객체가 업로드 ref에서 도달 가능한지 검증합니다. 브라우저에서 실제 페이지를 열어 보는 검사는
-   선택 사항이며, 쓰기 전 GFM 확인을 대신하거나 면제하지 않습니다. `Pass`의 선행 조건으로 삼지 말고 검사 여부를 receipt에 보고합니다.
+   디코딩 가능한 `image/*` 바이트인지 검증합니다. 업로드 ref 도달 가능성은 해당 ref를 만드는
+   `gh-attach` 경로에서만 검사합니다. 브라우저 첨부에는 ref를 만들어 내지 말고 `not applicable`로
+   기록합니다. `gh-attach`의 실제 페이지 검사는 선택 사항이며 검사 여부를 receipt에 보고합니다.
+   브라우저 첨부에는 대체 경로 참조의 실제 대상·렌더링 검증을 적용합니다. 어느 검사도 쓰기 전 GFM 확인을 대신하지 않습니다.
 6. 모든 종료 경로에서 소유한 staging 파일만 제거합니다. 이번 실행에 이미 기록된 리터럴 형태의 완전히 해석된 실행 소유 staging 절대 경로를 각 삭제 명령에 씁니다. 명령 치환, 다시 읽은 경로 파일이나 `head` 또는 `tail`로 파이프한 glob에서 대상을 도출하지 않습니다. 정확한 리터럴 경로를 모르면 삭제하지 말고 후보를 나열한 뒤 중단합니다.
 
 <a id="execution-receipt--single-evidence-record"></a>
@@ -99,11 +101,11 @@ CDP를 선택했거나 확장 경로가 대상 쓰기
 Repository: <owner>/<repo>
 PR / Target: <pr-number> / body | existing comment <comment-id>
 Source images: <absolute path list>
-Route: gh-attach | CDP
+Route: gh-attach | playwright-cli | CDP
 Entry: <exact reviewed command | browser route>
 Generated Markdown: <asset refs | none>
-Remote ref: <refs/uploads/issues/<pr-number> | none | unknown>
-Verification: image-token byte match and single occurrence: <Pass | Fail | unavailable>; image bytes/type: <Pass | Fail | unavailable>; upload ref reachability: <Pass | Fail | unavailable>; gfm: <Pass | Fail | unavailable; exact candidate or combined-route pre/post scope>; rendering: <checked | not performed | unavailable>
+Remote ref: <refs/uploads/issues/<pr-number> | not applicable (browser attachment) | none | unknown>
+Verification: image-token byte match and single occurrence: <Pass | Fail | unavailable>; image bytes/type: <Pass | Fail | unavailable>; upload ref reachability: <Pass | Fail | unavailable | not applicable (browser attachment)>; gfm: <Pass | Fail | unavailable; exact candidate or combined-route pre/post scope>; rendering: <checked | not performed | unavailable>
 Changed: <body/comment changed | unchanged | unknown>
 Cleanup: <owned staging path removed | failed | not applicable>
 Status: Pass | Fail | Pending | Blocked | Unverifiable
@@ -147,9 +149,9 @@ Status: Pass | Fail | Pending | Blocked | Unverifiable
 
 확장 기능 부재·미검토 upstream에 관한 선택이나 사람이 수행해야만 하는
 `tk-wizard` 완료 신호를 기다리는 동안에는 `Pending`을 반환합니다. 출처가 `unknown`이거나, 초안이 있거나,
-설치를 거부했고 선택된 CDP 경로도 없다면 `Blocked`를 반환합니다. 인증,
-이미지 바이트 검증이나 업로드 ref 도달 가능성을 확인할 수 없으면 `Unverifiable`을 반환합니다. 렌더링된 페이지
-근거는 선택 사항이며 GFM 확인과 구별합니다. GFM 실패·확인 불가로 본문 쓰기를 보류했다면 그 상태를 유지합니다. 업로드, 원격 ref
+설치를 거부했고 선택된 브라우저 경로도 없다면 `Blocked`를 반환합니다. 인증,
+이미지 바이트 검증이나 `gh-attach` 경로의 업로드 ref 도달 가능성을 확인할 수 없으면 `Unverifiable`을 반환합니다. `gh-attach`의 렌더링된 페이지
+근거는 선택 사항입니다. 브라우저 첨부의 대상·렌더링을 확인할 수 없으면 `Unverifiable`이며, GFM 확인과 구별합니다. GFM 실패·확인 불가로 본문 쓰기를 보류했다면 그 상태를 유지합니다. 업로드, 원격 ref
 검증이나 정리 오류에는 `Fail`을 반환합니다. 선택한 본문·댓글이 바뀌었는지와
 업로드 ref가 남아 있을 수 있는지를 명시합니다.
 

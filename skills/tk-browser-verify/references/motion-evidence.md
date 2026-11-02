@@ -43,8 +43,23 @@ headless/제공자 선택, 인증, 안전한 입력, 승인된 데이터 변경 
 스크린샷을 대체하지 못하며, 짧은 로딩 상태와 debounce 주장에도 직접적인 런타임 assertion이
 필요합니다.
 
-브라우저 MP4의 연속 화면 캡처는 선택한 제공자의 screencast를 기본으로 사용합니다. 이미 선택한
-CDP 지원 제공자에서는 `Page.startScreencast`(PNG/JPEG, 지원되는 `everyNthFrame: 1`)를 사용하고
+브라우저 MP4의 연속 캡처는 이미 선택한 제공자의 지원 API로 시작합니다. Playwright CLI의
+`video-start`/`video-stop`은 설치 버전에서 실제 지원되는지 먼저 확인합니다. 파일 생성만으로 아래
+이벤트별 원래 시각·순서·유휴 유지·실제 종료·전달 fps 계약을 충족한다고 판단하지 않습니다.
+설정한 fps, 컨테이너의 고정 fps나 디코더 PTS를 원래 브라우저 프레임 시각으로 바꾸지 않습니다.
+이 메타데이터를 얻을 수 없으면 일반 동영상으로는 보고할 수 있으나 `mode: evidence` 프레임
+manifest를 만들어 `tk-video`에 넘기지는 않습니다. 정밀 캡처는 `Unverifiable`로 구분합니다.
+
+CLI 기본 녹화가 계약을 입증하지 못하면 같은 세션의 공식 `run-code`에서 Chromium
+`page.context().newCDPSession(page)` 지원을 실제 확인합니다. 지원되면 아래 screencast 계약을
+같은 페이지에서 수행하고 `finally`에서 stop·리스너 제거·detach를 보장합니다. Node 파일시스템을
+가정하지 않고 승인된 호스트 저장 경로로 프레임을 안전하게 보존할 수 있는지도 확인합니다.
+장시간 이벤트/바이트 전달이 불가능하면 그 한계를 보고합니다. Playwright 라이브러리의 CDP Session은
+이미 승인된 동일 브라우저/페이지를 사용할 수 있을 때만 대안이며, 이를 위해 라이브러리나 Puppeteer를
+추가하거나 두 번째 브라우저를 실행하지 않습니다. 기존 특수 CDP 경로를 명시적으로 선택한 경우에만
+최소 기존 수집기를 유지합니다. 지원 여부를 추정하여 일반 검증을 중단하지 않습니다.
+
+이미 선택한 CDP 지원 제공자에서는 `Page.startScreencast`(PNG/JPEG, 지원되는 `everyNthFrame: 1`)를 사용하고
 `Page.screencastFrame`을 수신하며, 각 이벤트를 해당 `sessionId`와 함께
 `Page.screencastFrameAck`로 신속하게 확인 응답합니다. 프레임·메타데이터를 안전하게 수신한 뒤
 ack를 보내며, 무거운 디코딩·후처리로 ack를 막아 캡처를 지연시키지 않습니다. 모든 종료 경로에서 screencast를 중지합니다.

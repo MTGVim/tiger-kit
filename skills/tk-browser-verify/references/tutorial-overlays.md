@@ -20,7 +20,9 @@ viewport 안으로 위치를 제한합니다. 900ms 이내의 문자는 묶고, 
 해제합니다. assertion 스크린샷 전에, 그리고 실패를 포함한 모든 캡처 종료 시 제거를 검증합니다.
 어떤 오버레이 프레임도 해당 독립 스크린샷을 대신하지 않습니다.
 
-제공자의 실제 입력 API를 사용합니다. 이미 승인된 CDP 표면에서는 `Input.dispatchMouseEvent`
+제공자의 실제 입력 API를 사용합니다. Playwright CLI에서는 같은 세션의 mouse/keyboard 명령이나
+공식 `run-code`의 `page.mouse`·`page.keyboard`를 사용하고 상태를 직접 확인합니다.
+이미 승인된 특수 CDP 표면에서는 `Input.dispatchMouseEvent`
 마우스 이동을 약 500~1500ms에 걸쳐 보간하고(약 30ms 간격), 새로 측정한 대상 중심에서
 누르기/떼기를 하기 전에 잠시 멈춥니다. DOM `.click()`을 실제 포인터 입력의 증거로 사용하지
 않습니다. 문자 `Input.dispatchKeyEvent`는 `text`와 함께 `keyDown`을 사용하며, 특수 키는
@@ -54,8 +56,8 @@ viewport 안으로 위치를 제한합니다. 900ms 이내의 문자는 묶고, 
 `callouts`를 도출할 수 있습니다. 구간의 기하가 바뀌면 분리하고, 사라짐 확인을 작성된 자막 및
 카드와 구분해 둡니다.
 
-연관 네트워크 요청이 알려진 동작에서는 제공자의 네트워크 이벤트(CDP `Network.requestWillBeSent`,
-`loadingFinished`, `loadingFailed`)로 요청 ID와 완료 또는 실패를 추적합니다. 동시에 발생하는
+연관 네트워크 요청이 알려진 동작에서는 제공자의 네트워크 이벤트(Playwright `request`, `requestfinished`,
+`requestfailed`; 명시적으로 선택한 CDP의 `Network.requestWillBeSent`, `loadingFinished`, `loadingFailed`)로 요청 ID와 완료 또는 실패를 추적합니다. 동시에 발생하는
 관련 요청과 리디렉션도 고려합니다. 실제 요청이 1초 넘게 대기 중일 때만 중앙에 불확정 스피너와
 정확한 레이블을 표시하고 완료/실패 시 제거합니다. 요청이 없으면 로딩 표시도 없습니다. 요청
 연결이나 완료를 관찰할 수 없으면 로딩 상태를 만들어 내지 말고 제한을 공개합니다. 캡처 출처에
