@@ -21,36 +21,45 @@
 <a id="browser-provider-setup"></a>
 ## 브라우저 제공자 설정
 
-새 Chrome DevTools MCP 경로에는 실제 적용되는 headless 모드를 요구하고 격리된 제공자 프로필을 권장합니다.
-소비자가 제공한 개념적 기본값을 사용합니다.
+일반 브라우저의 새 설정은 Microsoft Playwright CLI를 기본으로 안내합니다. 설치/업데이트는
+사용자가 선택한 버전·대상·범위와 별도 설치 승인 경계에 속하며, 이 인계만으로 실행하지 않습니다.
+Chrome DevTools MCP 등록·MCP 서버 추가·자동 attach를 기본 해결책으로 제시하지 않습니다.
 
-```json
-{
-  "mcpServers": {
-    "chrome-devtools": {
-      "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest", "--headless", "--isolated", "--no-usage-statistics"]
-    }
-  }
-}
-```
+1. 이미 설치된 `playwright-cli`의 경로·`--version`·`--help`, 필요한 브라우저와 현재 호스트에서
+   발견되는 공식 `playwright-cli` Skill을 확인합니다. CLI가 있으면 재설치하지 않습니다.
+2. CLI가 없으면 [공식 설치 안내](https://github.com/microsoft/playwright-cli)의 패키지·Node 요구
+   조건을 현재 시점에 확인합니다. 2026-11-03 확인 명령은 `npm install -g @playwright/cli@0.1.23`이며
+   Node 18+를 요구합니다. 이것은 당시 배포 버전의 고정 예시이며 영구 최소 버전이 아닙니다.
+   공식 문서의 `@latest` 예시를 자동 실행 정책으로 옮기지 말고, 실제 설치할 버전을 확인해 안내합니다.
+3. 공식 Skill은 선택 사항입니다. 없어도 `playwright-cli --help`와 명령별 도움말로 진행합니다.
+   설치를 선택하면 실제 `playwright-cli install --help`를 확인한 뒤
+   `playwright-cli install --skills`(기본 `claude`, `.claude/skills/playwright-cli`) 또는
+   `playwright-cli install --skills=agents`(`.agents/skills/playwright-cli`)를 안내합니다.
+   Claude Code·GitHub Copilot은 공식 안내 대상이며, Codex 등은 현재 호스트의 Skill 탐색 경로가
+   해당 대상과 일치하는지 확인합니다. Work의 원격 Skill 저장소와 호환된다고 추정하지 않습니다.
+   기존 공식 Skill을 덮어쓰거나 다시 설치하지 않고, TigerKit 카탈로그에 복제/필수 의존성으로 넣지 않습니다.
+4. CLI 설치 완료와 브라우저 준비 완료를 구분합니다. `--version`·도움말 성공만으로 headless 실행
+   성공을 주장하지 않습니다. 브라우저가 없으면 설치된 버전의 공식 브라우저 설치 도움말에서 정확한
+   명령과 시스템 의존성을 확인하여 별도 안내합니다. 자동 다운로드나 권한 확대를 하지 않습니다.
+5. 완료 신호는 설치된 CLI 식별/버전·도움말과, 소비자가 실행 소유 세션·명시적 headless 설정으로
+   무해한 `open`을 수행하여 관찰한 실행 모드·소유권·종료입니다. 실제 검증은 소비자가 재개합니다.
+   현재 호스트의 [제공자 선택](../../tk-verification-guidance/references/provider-selection.md)과
+   [연동 지식](../../tk-verification-guidance/references/provider-knowledge.md#playwright-cli)을 적용합니다.
 
-TigerKit은 브라우저 제공자나 upstream 제공자 스킬을 설치하지 않습니다.
-일반적인 새 설정에는 `--browserUrl`, `--wsEndpoint`, 원격 디버깅 포트나 포트 `9222`를 추가하지 않습니다.
-인계에 관찰한 관리형/직접 실행 실패나 동등한 sandbox/VM/container/호스트 경계 근거가 있을 때만 attach를 제안합니다.
-사용자가 attach를 선택하기 전에 외부 실행기가 headless 모드, endpoint 노출과 프로필 데이터를 담당한다고 설명합니다.
+일반 새 설정에는 사용자 프로필, `--persistent`, `--profile`, CDP endpoint나 extension 연결을
+추가하지 않습니다. 기존 MCP 항목과 무관한 설정을 보존합니다. 명시적으로 선택된 다른 제공자는
+해당 버전의 공식 안내와 기존 소유권·headless 경계를 따릅니다. 관리형/직접 실행 실패나 동등한
+sandbox/VM/container/호스트 근거가 있을 때만 attach를 대안으로 제시하고, 사용자가 선택하기 전에
+외부 실행기의 headless 모드·endpoint 노출·프로필 데이터 책임을 설명합니다.
 
-기존 MCP 항목과 무관한 설정을 보존합니다. 실제 적용되는 headless 모드가 없으면 지원되는 최소 수정만 안내합니다.
-제공자 격리는 권장 사항으로 취급합니다. 생략 시 지속성 한계를 설명하되 headless 안전 관문인 것처럼 제시하지 않습니다.
-
-클라이언트를 재시작해야 하면 `Status: Pending`, 지금까지 관찰한 완료 신호와 원래 기준에 대해 `tk-browser-verify`를 다시 실행하는 정확한 지시를 반환합니다.
-브라우저 검증을 통과했다고 주장하지 않습니다.
+클라이언트를 재시작해야 하면 `Status: Pending`, 관찰한 완료 신호와 원래 기준으로
+`tk-browser-verify`를 재개하는 정확한 지시를 반환합니다. 브라우저 검증을 통과했다고 주장하지 않습니다.
 
 <a id="github-image-upload-setup"></a>
 ## GitHub 이미지 업로드 설정
 
 에이전트 실행이 부적절한 경우의 호스트 수준 `gh` 설치/복구, 대화형 `gh auth login`, 계정/저장소 권한 변경이나
-명시적으로 선택한 CDP 경로의 Chrome 권한/재시작 단계처럼 사람의 행동만 받습니다.
+명시적으로 선택한 브라우저 경로의 인증/권한/재시작 단계처럼 사람의 행동만 받습니다.
 검토된 확장 선택/설치, 이미지 준비/업로드, PR 변경이나 렌더링 검증을 대신 맡지 않습니다.
 
 클라이언트 재시작이 필요하지 않은 완료 신호를 받으면 원래 저장소, PR/댓글 대상, 이미지 집합과 선택한 경로를 그대로 유지하여 `tk-pr-media`에 제어를 돌려줍니다.

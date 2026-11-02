@@ -84,7 +84,8 @@ Markdown 수명 주기 기록부를 만들지 않습니다. 중첩 실행에서�
 ## 헤드리스 실행 선행 조건
 
 런타임을 조사하기 전에 [제공자 선택](../tk-verification-guidance/references/provider-selection.md)과
-[공통 검증](../tk-verification-guidance/references/verification.md)을 읽습니다. 해당 계약에 따라 제공자를 선택합니다.
+[공통 검증](../tk-verification-guidance/references/verification.md)을 읽습니다. 해당 계약에 따라 일반 검증은 설치된 Playwright CLI를 기본으로 선택하고, 명시적 제공자 선택은 보존합니다.
+공식 Skill은 선택 사항이며 없어도 CLI 도움말로 실행합니다. CLI 누락은 `tk-wizard` 설정 인계로 처리합니다.
 저장된 선호 설정이 없다는 이유만으로 질문할 필요는 없습니다. 유효한 승인 범위에서 안전한 세션 한정 검증을
 계속하고, 해결되지 않은 실질적인 선택 사항이나 권한 부족에 대해서만 질문합니다.
 제공자가 실패해도 자동 대체 제공자를 사용할 권한이 생기지는 않습니다.

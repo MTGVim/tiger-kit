@@ -2,8 +2,8 @@
 # Headless 환경
 
 [제공자 선택](../../tk-verification-guidance/references/provider-selection.md)에 따라 선택한 제공자를 사용합니다.
-네이티브, Playwright 호환, MCP와 설치된 CLI/CDP 경로를 탐색하되 이들 사이에서 조용히 경로를
-전환하지 않습니다. 필수 기능이 없으면 최종 질문의 현재 결정 경계에 부족한 기능과 선택 가능한
+명시적 선택이 없으면 설치된 `playwright-cli`를 기본으로 사용합니다. 공식 Skill이 없어도 도움말로
+실행하며, MCP와 직접 CLI/CDP를 포함한 다른 경로로 조용히 전환하지 않습니다. 필수 기능이 없으면 최종 질문의 현재 결정 경계에 부족한 기능과 선택 가능한
 대안을 제시합니다. 한 번의 실행을 위해 브라우저 의존성을 설치하지 않습니다. 선택 경로를
 `managed launch | direct launch | attach`로 분류하며, 선택해도 아래 검사는 면제되지 않습니다.
 
@@ -74,27 +74,16 @@ Chromium 버전에 따라 같은 포트의 IPv6로 옮기거나 다른 빈 포�
 제공자 상태, 누락 기능, 필수 유효 headless 모드, 권고 제공자 격리, 완료 신호와 정확한 재개 동작을
 담아 `tk-wizard`를 호출합니다.
 
-새 Chrome DevTools MCP 설정에는 다음 개념적 기본값을 wizard에 전달합니다.
+기본 인계 대상은 공식 Microsoft Playwright CLI입니다. 버전·명령 도움말, 브라우저 바이너리와
+선택적 공식 Skill의 발견 상태를 구별하여 전달합니다. CLI가 이미 있으면 재설치하지 않으며 Skill
+부재는 차단 사유가 아닙니다. CLI/브라우저가 없으면 설치 명령은 `tk-wizard`에서 안내하고 실행하지
+않습니다. 승인 없는 `npx` 다운로드나 라이브러리 내부 진입점 실행으로 누락을 숨기지 않습니다.
+공식 설치 명령과 호스트별 Skill 대상의 안내는 wizard 인계가 소유합니다. 소비자에서 해당 스킬의
+파일을 직접 읽거나 설치하지 않고, 사용할 수 없으면 기존 `tk-setup-skills` 안내로 부족한 담당자를 보고합니다.
 
-```json
-{
-  "mcpServers": {
-    "chrome-devtools": {
-      "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest", "--headless", "--isolated", "--no-usage-statistics"]
-    }
-  }
-}
-```
-
-새 설정에서는 선택적 telemetry watchdog을 피하도록 사용 통계를 비활성화합니다.
-기존 등록은 변경하지 않습니다. 세션마다 사용자 범위 MCP 서버를 시작하는 클라이언트에서는
-선택된 저장소에만 검증이 필요하다면 프로젝트 범위를 고려합니다. 하나의 공유 서버를 가정하지
-말고 현재 근거에서 실제 클라이언트 수명주기와 범위를 도출합니다.
-
-wizard는 현재 로컬 또는 공식 근거에서 호스트가 지원하는 정확한 파일, 범위, 명령 형태와
-재시작 단계를 도출하고 무관한 설정을 보존해야 합니다. TigerKit 스킬은 Chrome DevTools MCP,
-해당 CLI나 upstream 스킬을 설치하지 않습니다.
+현재 설치된 CLI의 [연동 지식](../../tk-verification-guidance/references/provider-knowledge.md#playwright-cli)을
+적용하여 실행 소유 세션·설정·출력 경로와 실제 headless 모드를 검증합니다. Chrome DevTools MCP의
+신규 등록을 기본값으로 만들지 않고, 기존 등록과 사용자 선택도 자동 수정하지 않습니다.
 
 기본값에는 `--browserUrl`, `--wsEndpoint`, remote-debugging 포트나 포트 `9222`를 포함하지
 않습니다. 관리형/직접 실행 실패가 관찰되었거나 이에 준하는 sandbox, VM, container 또는 호스트

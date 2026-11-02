@@ -34,15 +34,18 @@
    연결 방식은 어떤 브라우저 호출보다도 먼저 이 사실들을 확인해야 합니다. 설치만으로는 준비 상태가
    입증되지 않습니다. 네이티브 앱 범위에서는 대신 앱/창 식별 정보, 안전한 입력 전달과 노출되고 활성화된
    네이티브 기능이 필요하며, 브라우저의 헤드리스/프로필 선행 조건은 없습니다.
-5. 명시적인 선택이 없다면, 문서화된 실행 방법으로 설치, 지속 설정 변경, 사용자 프로필/창 사용이나
-   외부 변경 없이 실제 헤드리스로 동작하는 실행 소유 경계를 수립할 수 있을 때, 설치되어 있고 호출 가능한
-   등록 제공자를 세션 한정으로 사용하여 승인된 브라우저 검증을 계속합니다.
-   선택을 간단히 알린 뒤 준비 상태를 확인합니다. 저장된 선호 설정이 없다는 사실만으로는 중단 사유가 되지 않습니다.
-   해결되지 않은 실질적인 선택 사항이나 권한 부족에 대해서만 질문합니다. 네이티브 앱 선택에는 여전히
-   사용자의 선택이 필요합니다. 질문할 때는 최종 질문 묶음에 적격 기능, 부족한 점과 부수 효과를 함께 제시합니다.
-   macOS Orca 후보에는 백그라운드 입력의 capability 조건과 행동별 전달 확인, 앱 실행 명령 부재 및
-   패키지 실행 helper의 사용 가능 여부와 복원 한계를 함께 제시합니다. Registry 순위로 자동 선택하지 않습니다.
-6. 상위 작업/세션/저장 설정의 명시적인 선택을 따릅니다. 선택된 제공자가 실패하거나 필수 기능이
+5. 브라우저 범위에서 명시적인 선택이 없으면 `playwright-cli`를 기본으로 사용합니다. 설치된 CLI와
+   버전이 일치하는 도움말을 확인하고, 설치·지속 설정 변경·사용자 프로필 사용 없이 실행 소유 headless
+   경계를 수립할 수 있을 때 세션 한정으로 계속합니다. 공식 `playwright-cli` Skill은 선택 사항이며,
+   없어도 CLI 도움말로 수행합니다. CLI가 없거나 준비되지 않았으면 해당 분기만 `Blocked`로 유지하고
+   `tk-wizard`에 설치/복구 안내를 인계합니다. MCP나 직접 CDP로 자동 전환하지 않습니다.
+   Chrome DevTools MCP는 기본 권고·설치 경로에서 제외하며, Playwright MCP와 직접 CDP/Puppeteer는
+   명시적으로 선택한 대체/특수 기능 경로로 유지합니다. 선택을 간단히 알린 뒤 준비 상태를 확인합니다.
+   네이티브 앱의 선택에는 여전히 사용자의 선택이 필요하며, 이 브라우저 기본값을 적용하지 않습니다.
+   질문할 때는 적격 기능, 부족한 점과 부수 효과를 함께 제시합니다. macOS Orca 후보에는 백그라운드
+   capability와 행동별 전달 확인, 앱 실행 경로와 복원 한계를 포함하며 registry 순위로 자동 선택하지 않습니다.
+6. 상위 작업/세션/저장 설정의 명시적인 선택을 따릅니다. 기존 `playwright` ID는 MCP/저장소 어댑터를
+   뜻하며 CLI로 재해석하지 않습니다. 기존 Chrome DevTools MCP 선택과 설정도 자동 변경하지 않습니다. 선택된 제공자가 실패하거나 필수 기능이
    부족하면 그 부족 사항과 대안을 보고합니다. 임의로 전환하거나 설치하거나 선호 설정을 다시 쓰지 않습니다.
    저장된 `fallbacks`는 제안 순위를 정할 뿐 실행 권한이 아닙니다. 사용자가 명시적으로 요청했을 때만
    선호 설정을 저장하며, 그 외에는 설정을 변경하지 않습니다.
@@ -50,7 +53,7 @@
 ```json
 {
   "version": 1,
-  "browser": {"provider": "chrome-devtools-mcp", "fallbacks": ["playwright"], "selection": "explicit"},
+  "browser": {"provider": "playwright-cli", "fallbacks": ["playwright"], "selection": "explicit"},
   "app": {"provider": "cua-driver", "fallbacks": [], "selection": "explicit"},
   "docsOverrides": {},
   "providerNotes": {}
@@ -59,7 +62,7 @@
 
 현재 설치된 스킬 모음의 해당 담당 스킬에서 `<tk-verification-guidance>` 경로를 확인합니다. 명시적으로
 저장을 요청받은 뒤 `python3 <tk-verification-guidance>/scripts/verify_preferences.py select --scope app --provider
-cua-driver`를 실행합니다. 브라우저 명령은 `--scope browser --provider chrome-devtools-mcp`를 사용합니다. `show`는
+cua-driver`를 실행합니다. 브라우저 명령은 `--scope browser --provider playwright-cli`를 사용합니다. `show`는
 쓰기 없이 선호 설정을 읽습니다. `--config <explicit-path>`는 의도적으로 다른 설정을 지정할 수 있게 합니다.
 해당 범위만 저장하고 관련 없는 값은 보존합니다. 설정 저장에 실패하면 저장을 중단합니다.
 실패를 보고하고 사용자가 세션 한정 사용을 명시적으로 선택할 때만 진행합니다. 저장되었다고 주장하지 않습니다.

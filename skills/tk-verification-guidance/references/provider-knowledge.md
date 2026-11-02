@@ -34,12 +34,81 @@
 - Orca macOS 백그라운드 입력(2026-11-02): [PR #36005](https://github.com/stablyai/orca/pull/36005)의 merge revision `c31fdaa6a58e99334431f9683c2f8977d82ab59e`에서 `skill-guides/computer-use.md`, macOS `main.swift`와 `BackgroundInputTransport.swift`를 확인했습니다. 실행 파일 식별, 최신 snapshot과 독립 postcondition을 유지하고 capability/행동별 전달 확인을 적용합니다. Upstream의 자동 foreground 재시도는 제외합니다. SkyLight focus record는 Orca 자체 helper에 포팅되어 있으며 cua-driver를 런타임 의존성으로 추가하지 않습니다. 출시 번호만으로 지원을 추론하지 않으며 이 환경에서 native 전달을 실행하지 않았습니다.
 - 제공자와 무관한 macOS 실행(2026-11-02): `trycua/cua` revision `e6a88bf12766b6ab85e4ab51aac6e5007588e747`의 `platform-macos/src/tools/launch_app.rs`, `src/focus_steal.rs`와 `src/apps/nsworkspace.rs`를 확인했습니다. 비활성화 실행 요청, 알림 우선 복원과 만료 시간을 적용하되 provider 내부 코드, wildcard 억제와 응답 후 detached watchdog은 복사하지 않습니다. 패키지 helper는 정확한 bundle/executable만 감시하고 5초 안에 관찰을 마친 뒤 결과를 반환합니다. 복원과 무중단 focus 보존을 구별합니다. Native 실행은 여기서 검증되지 않았습니다.
 
+- Playwright CLI 전환(2026-11-03): `microsoft/playwright-cli` revision
+  `c2d8d199459d1480491bebf0a6b3587136b673fa`의 README·package.json·공식 Skill·running-code 참조·
+  skillCheck.js·통합 테스트와 `microsoft/playwright-mcp` revision
+  `ec572ee8354015293bed67145db21eed386e876d`의 README를 대조했습니다. 당시 npm 배포판은
+  `@playwright/cli@0.1.23`입니다. **keep:** headless·실행 소유권·독립 postcondition·비밀/발행 경계를
+  유지합니다. **adapt:** CLI 기본 선택, 선택적 공식 Skill과 버전별 도움말을 적용합니다. **omit:**
+  자동 설치·권한 확대·사용자 프로필 attach·Skill 본문 복제와 MCP schema 상시 로딩을 도입하지 않습니다.
+  이 환경에는 CLI 바이너리/브라우저가 없어 실제 페이지·drag·녹화·GitHub 첨부는 `Unverified`입니다.
+  설치된 Playwright 1.62.1의 도움말 진단은 배포판 0.1.23의 실행 검증이 아닙니다.
+
+<a id="playwright-cli"></a>
+## Playwright CLI
+
+일반 웹 검증의 기본 실행 도구는 Microsoft `@playwright/cli`의 `playwright-cli`입니다. TigerKit은
+검증 범위·판정·안전을, CLI는 조작·관찰을, 공식 Skill은 사용 방법을 담당합니다. 공식 Skill을
+필수 의존성으로 삼거나 본문을 복제하지 않습니다. 실제 호스트에 노출된 공식 Skill이 있으면 읽고,
+없으면 설치된 `playwright-cli --version`, `--help`와 필요한 명령의 `--help`로 진행합니다.
+패키지 이름이 비슷한 제3자 CLI, `playwright test`, MCP와 구별합니다. 바이너리가 없으면
+`npx`로 내려받거나 라이브러리 내부 경로를 우회 실행하지 않고 `tk-wizard`에 인계합니다.
+
+### 실행과 관찰
+
+- 실행 소유의 충돌 없는 `-s=<run-id>`를 모든 호출에 유지합니다. 첫 호출은 대상 URL 없이
+  `open`으로 시작하고, 지원되는 명시적 `--config=<owned-file>`에
+  `browser.isolated: true`, `browser.launchOptions.headless: true`와 실행 소유 `outputDir`를
+  둡니다. 실제 설치 버전의 설정 schema와 기본 설정·환경 변수 영향을 확인합니다. 런타임의
+  headless·프로필/컨텍스트·브라우저 버전과 실행 소유권을 입증한 뒤 `goto`로 대상에 진입합니다.
+  기본 headless라는 문구만으로 실제 실행 모드를 입증하지 않습니다. `--headed`, `--persistent`,
+  `--profile`, `attach`, CDP endpoint와 extension 연결을 기본 경로에 섞지 않습니다.
+- 동일 세션의 CLI 호출은 같은 브라우저 상태를 재사용합니다. 기본 세션 이름이나 별도 녹화용
+  브라우저를 만들지 않습니다. 시나리오 간 쿠키·저장소는 자동 초기화되지 않으므로 필요한 격리를
+  설치 버전이 지원하는 컨텍스트 경계로 입증합니다. 재사용에는 실행·대상·인증 범위가 같아야 합니다.
+- `snapshot`의 접근성 정보와 최신 요소 ref로 식별하고 `eval`로 필요한 DOM·기하만 관찰합니다.
+  `click`, `hover`, `press`, `type`, `fill`, `drag`, `resize`, `screenshot`의 지원 옵션을 확인합니다.
+  ref는 탐색/재렌더링 후 다시 관찰하며 스냅샷은 독립적인 픽셀 근거를 대신하지 않습니다.
+- `console`과 요청 목록·상세 명령은 버전별 도움말로 확인합니다(명령 이름이 달라질 수 있습니다).
+  HTTP 4xx/5xx와 전송 실패를 구분하고 상태·실패 이유 및 JavaScript 예외를 직접 확인합니다.
+  기본 로그가 필요한 예외/요청을 보존하지 않으면 같은 세션의 공식 `run-code`에서 동작 **전에**
+  `pageerror`, `request`, `response`, `requestfailed` 관찰자를 등록하고 리디렉션/탐색 뒤에도 확인합니다.
+- 상세 요청 출력·console·snapshot·trace에는 비밀이 포함될 수 있습니다. 민감 페이지에서는 CLI가
+  자동 저장/반환하는 로그까지 먼저 제한하고, 원시 헤더·본문을 출력하는 상세 명령을 실행하지 않습니다.
+  필요한 비민감 필드만 허용 목록으로 추출합니다. 안전한 수집을 보장할 수 없으면 해당 분기를 중단합니다.
+- 영역 캡처에는 `screenshot <ref>` 또는 같은 세션의 locator screenshot을 우선합니다. 스크롤 후
+  대상 사각형·viewport·DPR과 실제 픽셀을 대조합니다. 테마는 지원 명령 또는 `run-code`의
+  `page.emulateMedia`로 바꾸고 실제 렌더링을 확인합니다. viewport 크기만으로 모바일 입력·DPR까지
+  검증했다고 주장하지 않습니다. 입력 후에는 요청/응답과 독립 postcondition을 확인합니다.
+
+### 확장 기능과 정리
+
+공식 `run-code`는 단일 `async page => { ... }` 함수이며 Node 전체 환경이 아닙니다.
+`require`·`process`·파일시스템을 가정하지 않고 설치 버전의 제한을 확인합니다. `eval`은 페이지
+문맥이며 브라우저 측 `run-code`와 다릅니다. 코드 실행도 인증·권한 확대·상태 변경 승인을 면제하지 않습니다.
+
+영상은 호출한 검증 담당자의 동작 근거 시간 계약을 충족한 경우에만
+manifest로 인계합니다. `video-start`/`video-stop`의 파일 생성이나 요청한 fps만으로 이벤트별
+원래 시각·실제 전달 fps가 입증되지 않습니다. 같은 페이지의 `page.context().newCDPSession(page)`도
+설치 버전의 `run-code`에서 실제 허용되는지 먼저 확인합니다. 안 되면 독립 제공자를 실행하지 말고
+선택적 영상 제한을 반환합니다. 이미 승인된 특수 CDP 경로는 유지할 수 있습니다.
+
+`tracing-start`/`tracing-stop`은 동작 진단용 Playwright Trace입니다. Chrome DevTools Performance
+Trace의 CPU 프로파일·렌더링 비용·성능 회귀 수치와 동등하다고 주장하지 않습니다. 해당 분석이
+필요하면 관찰된 기능 공백과 명시적으로 선택할 특수 경로를 제시하며, 일반 검증은 계속할 수 있습니다.
+
+종료 시 녹화·trace·관찰자·route를 정리하고 이 실행이 만든 세션만 `-s=<run-id> close`로 닫습니다.
+연결한 외부 브라우저에는 문서화된 detach를 사용합니다. `close-all`, `kill-all`이나 다른 실행의
+`delete-data`를 사용하지 않습니다. 실제 종료와 잔여물을 확인하며 인증 상태 파일은 비밀 규칙을 따릅니다.
+
 ## Chrome DevTools MCP
 
+명시적으로 선택된 기존/특수 경로만 지원하며 기본 권고나 신규 설치 안내로 제시하지 않습니다.
 설정된 launch/attach 모드와 유효 headless 설정을 검사합니다. 관리되는 pipe에는 TCP endpoint가 필요하지 않습니다. 전용 persistent profile에는 격리 한계를 밝혀야 합니다. 네트워크/console/DOM과 성능 도구는 설치 버전과 노출된 도구 목록에 따라 달라집니다. 브라우저 환경 참조의 attach, 소유권과 인증 요구 사항을 보존합니다.
 
 ## Playwright
 
+기존 `playwright` ID는 선택적 MCP/저장소 어댑터입니다. 기본 CLI ID는 `playwright-cli`입니다.
 저장소에 설치된 Playwright와 MCP를 구별합니다. Headless 옵션, 브라우저 바이너리, context 격리, transport와 실제 네트워크/console 도구를 확인합니다. 격리된 profile은 시나리오별로 격리된 context의 증거가 아닙니다. 최신 페이지 근거에서 selector를 확인합니다. 준비 상태를 탐지하려고 브라우저나 npm 패키지를 다운로드하지 않습니다.
 
 ## Browser CDP

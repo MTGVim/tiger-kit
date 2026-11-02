@@ -2,7 +2,16 @@
   "version": 1,
   "providers": [
     {
-      "id": "chrome-devtools-mcp", "scope": "browser", "display_name": "Chrome DevTools MCP", "recommendation": "recommended",
+      "id": "playwright-cli", "scope": "browser", "display_name": "Microsoft Playwright CLI", "recommendation": "recommended",
+      "detection": {"surface": "installed playwright-cli version/help and effective run-owned launch configuration; official skill optional", "hosts": ["shell"], "platforms": ["macos", "windows", "linux"]},
+      "capabilities": ["inspect_dom", "inspect_network", "inspect_console", "screenshot", "interact", "trace", "video", "headless_or_isolated"],
+      "safety": {"input_modes": ["browser-scoped"], "profile_boundary": "unique run-owned named session and in-memory context; no implicit attach or user profile", "focus": "prove effective headless launch before target interaction"},
+      "docs": "https://github.com/microsoft/playwright-cli",
+      "reference_docs": ["https://playwright.dev/docs/api/class-page", "https://playwright.dev/docs/api/class-cdpsession"],
+      "notes": "provider-knowledge.md#playwright-cli"
+    },
+    {
+      "id": "chrome-devtools-mcp", "scope": "browser", "display_name": "Chrome DevTools MCP", "recommendation": "optional",
       "detection": {"surface": "exposed MCP tools and effective launch/attach configuration", "hosts": ["mcp-client"], "platforms": ["macos", "windows", "linux"]},
       "capabilities": ["inspect_dom", "inspect_network", "inspect_console", "screenshot", "interact", "performance_trace", "headless_or_isolated"],
       "safety": {"input_modes": ["browser-scoped"], "profile_boundary": "observe isolated, dedicated or attached profile ownership", "focus": "prove effective headless launch"},
@@ -10,7 +19,7 @@
       "notes": "provider-knowledge.md#chrome-devtools-mcp"
     },
     {
-      "id": "playwright", "scope": "browser", "display_name": "Playwright / Playwright MCP", "recommendation": "recommended",
+      "id": "playwright", "scope": "browser", "display_name": "Playwright MCP / repository adapter", "recommendation": "optional",
       "detection": {"surface": "exposed MCP tools or installed repository Playwright adapter", "hosts": ["mcp-client", "shell"], "platforms": ["macos", "windows", "linux"]},
       "capabilities": ["inspect_dom", "inspect_network", "inspect_console", "screenshot", "interact", "headless_or_isolated"],
       "safety": {"input_modes": ["browser-scoped"], "profile_boundary": "prove context/profile ownership and configuration", "focus": "require observed headless mode"},
@@ -19,7 +28,7 @@
       "notes": "provider-knowledge.md#playwright"
     },
     {
-      "id": "browser-cdp", "scope": "browser", "display_name": "Installed browser CLI / CDP adapter", "recommendation": "optional",
+      "id": "browser-cdp", "scope": "browser", "display_name": "Special-purpose CDP / Puppeteer adapter", "recommendation": "optional",
       "detection": {"surface": "installed documented CLI, repository Puppeteer adapter or verified CDP endpoint", "hosts": ["shell", "mcp-client"], "platforms": ["macos", "windows", "linux"]},
       "capabilities": ["inspect_dom", "inspect_network", "inspect_console", "screenshot", "interact", "headless_or_isolated"],
       "safety": {"input_modes": ["browser-scoped"], "profile_boundary": "attach needs observed endpoint and external run ownership", "focus": "prove effective headless mode before browser calls"},
