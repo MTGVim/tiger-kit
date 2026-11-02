@@ -6,7 +6,7 @@
 <a id="distillation-provenance"></a>
 ## 증류 출처
 
-계약 유지보수에는 다음 검토된 출처(2026-09-30부터 2026-10-13까지)를 사용한 뒤 설치된 제공자 버전의 정본 문서를 갱신하여 확인합니다. TigerKit의 기존 headless/근거 소유권을 유지합니다. 독립 postcondition 점검과 백그라운드/권한 확대 경계를 적용합니다. Upstream 설치기, 전역 입력 예시와 자동 런타임/권한 확대는 제외합니다.
+계약 유지보수에는 다음 고정 revision의 출처를 사용한 뒤 설치된 제공자 버전의 정본 문서를 갱신하여 확인합니다. TigerKit의 기존 headless/근거 소유권을 유지합니다. 독립 postcondition 점검과 백그라운드/권한 확대 경계를 적용합니다. Upstream 설치기, 전역 입력 예시와 자동 런타임/권한 확대는 제외합니다.
 
 - Cua [독립 postcondition 예시](https://github.com/trycua/cua/blob/0f29c142d7fe3e05ea0ce276cee11b3a9725ba01/libs/cua-driver/examples/agent-sdks/native_driver.py)와 공식 백그라운드/플랫폼 및 검증 안내를 확인했습니다. 예시의 전역 데스크톱 입력은 승인된 백그라운드 adapter가 아닙니다. 불확실한 응답을 검증하는 동작만 유지합니다.
 - Orca [버전 일치 안내 로더](https://github.com/stablyai/orca/blob/f4068747ac96cb526c7233683fc1cd89cad5f289/skills/computer-use/SKILL.md)와 공식 computer-use 안내를 확인했습니다. 실행 파일 식별과 최신 창 snapshot guard를 적용하며 자동 앱 열기/재시작과 승인되지 않은 좌표 fallback은 제외합니다.
@@ -30,6 +30,9 @@
   `trycua/cua` revision `a1637f5e2d7ed156f4f74130484c3ea9140bec3f`,
   `e1ed4f41cdc0bf77dc7d7e8f828ae775c75bf834`와
   `adadbe2f53b9227f95493d2a9a28a2911177001e`를 확인했습니다. 최신성, 행동 권한과 디스크 영속성 경계를 유지합니다. 암묵적 inspector 설정, 창 활성화와 제공자 내부 구현 복사는 제외합니다. Native 호스트 동작은 검증되지 않았습니다.
+
+- Orca macOS 백그라운드 입력(2026-11-02): [PR #36005](https://github.com/stablyai/orca/pull/36005)의 merge revision `c31fdaa6a58e99334431f9683c2f8977d82ab59e`에서 `skill-guides/computer-use.md`, macOS `main.swift`와 `BackgroundInputTransport.swift`를 확인했습니다. 실행 파일 식별, 최신 snapshot과 독립 postcondition을 유지하고 capability/행동별 전달 확인을 적용합니다. Upstream의 자동 foreground 재시도는 제외합니다. SkyLight focus record는 Orca 자체 helper에 포팅되어 있으며 cua-driver를 런타임 의존성으로 추가하지 않습니다. 출시 번호만으로 지원을 추론하지 않으며 이 환경에서 native 전달을 실행하지 않았습니다.
+- 제공자와 무관한 macOS 실행(2026-11-02): `trycua/cua` revision `e6a88bf12766b6ab85e4ab51aac6e5007588e747`의 `platform-macos/src/tools/launch_app.rs`, `src/focus_steal.rs`와 `src/apps/nsworkspace.rs`를 확인했습니다. 비활성화 실행 요청, 알림 우선 복원과 만료 시간을 적용하되 provider 내부 코드, wildcard 억제와 응답 후 detached watchdog은 복사하지 않습니다. 패키지 helper는 정확한 bundle/executable만 감시하고 5초 안에 관찰을 마친 뒤 결과를 반환합니다. 복원과 무중단 focus 보존을 구별합니다. Native 실행은 여기서 검증되지 않았습니다.
 
 ## Chrome DevTools MCP
 
@@ -98,15 +101,36 @@ macOS에서 Cua 창 범위 픽셀 `drag`는 foreground 전용이며 best-effort 
 <a id="macos-launch"></a>
 ### macOS 실행
 
-Native 앱 launch에는 설치 버전의 `launch_app` schema와 포함된 `MACOS.md`를 읽습니다. 문서화된 `launch_app({bundle_id})` 경로를 사용합니다. 검토한 macOS 구현은 대상의 자체 활성화를 막으며 `self_activation_suppressed`를 반환할 수 있습니다. true 결과는 guard의 결과를 뒷받침하며 보편적 보장은 아닙니다. 이전 최상위 앱/focus와 launch 후 최신 상태를 독립적으로 비교합니다. 필드가 false이거나 없으면 긍정적인 증거가 아닙니다. 어떤 형태의 shell `open`이든, AppleScript 활성화나 자체 활성화하는 저장소 명령은 백그라운드 launch의 대안이 아닙니다. 선택한 제공자의 launch 계약을 우회하는 데 사용하지 않습니다.
+Native 앱 launch에는 설치 버전의 `launch_app` schema와 포함된 `MACOS.md`를 읽고 문서화된 `launch_app({bundle_id})` 경로를 우선합니다. 검토한 구현은 `activates = false`로 실행을 요청하고 대상이 스스로 활성화되면 이전 최상위 앱을 다시 활성화합니다. 자체 활성화를 원천 차단하지 않으며 `self_activation_suppressed`는 복원 결과일 수 있습니다. true만으로 무중단 focus 보존을 입증하지 않습니다. 이전 최상위 앱/focus와 launch 후 최신 상태를 독립적으로 비교합니다. false이거나 필드가 없으면 긍정적인 증거가 아닙니다.
 
-Bundle이 없는 이미 컴파일된 raw 후보에는 실행 소유 `.app` wrapper가 정확히 그 실행 파일을 복사(symlink가 아님)하고 별도의 `CFBundleIdentifier`를 사용하여 설치된 release가 조회에서 선택되지 않게 할 수 있습니다. 필요한 자원, library, 작업 디렉터리와 런타임 설정을 보존합니다. 이동으로 후보가 달라지거나 지원되지 않는 signing/설정 우회책이 필요하다면 동등성을 주장하지 말고 중단합니다. `launch_app` 전에 등록된 식별 정보가 이 wrapper의 정확한 경로와 후보로 해석되는지 검증하고 반환된 process/window를 연결합니다. 등록만으로 조회를 입증하지 못합니다. 플랫폼이 시스템 임시 경로를 무시하면 저장소 `.tigerkit/tmp/` 같은 점검된 실행 소유 비시스템 임시 위치를 사용합니다. 등록이 미해결이면 `Blocked`입니다. 등록은 일시적이며 실행 소유입니다. 앱 설치나 기존 식별자의 대체가 아닙니다. 정리 시 이 실행의 등록만 해제하고 wrapper를 삭제합니다. 설치된 release의 등록을 해제하거나 제거하지 않습니다.
+이 실행 규칙은 선택한 제공자와 무관하게 macOS 앱 launch에 적용합니다. Shell `open`, AppleScript 활성화나 자체 활성화하는 저장소 명령을 단독 대안으로 쓰지 않습니다. 제공자에 활성화 없는 실행 경로가 없으면 설치된 이 패키지의 [실행 helper](../scripts/launch_macos_background.js)를 사용할 수 있습니다. macOS의 JXA/AppKit을 사용하며 Swift 설치나 다른 입력 제공자는 필요하지 않습니다.
+
+```bash
+/usr/bin/osascript -l JavaScript <tk-verification-guidance>/scripts/launch_macos_background.js --bundle-id <exact-bundle-id>
+/usr/bin/osascript -l JavaScript <tk-verification-guidance>/scripts/launch_macos_background.js --path <absolute-app-or-wrapped-executable-path>
+```
+
+`<tk-verification-guidance>`는 현재 설치된 소유 패키지 경로입니다. 원시 executable은 아래 규칙으로 먼저 만든 `.app` wrapper 안의 정확한 실행 파일만 받습니다. 이미 실행 중인 대상은 중복 실행하거나 활성화하지 않고 거부하므로 기존 창을 재사용합니다. Helper는 `NSWorkspace.OpenConfiguration.activates = false`로 요청하기 전에 정확한 bundle/executable 대상의 활성화 알림을 구독하고 polling을 보조로 사용합니다. 감시는 실행 요청부터 최대 5초이며, 대상의 `isFinishedLaunching`을 관찰한 뒤의 활성화도 같은 기간 안에서 집계한 뒤 종료합니다. 응답 뒤에 감시 프로세스를 남기지 않습니다. 사용자가 다른 앱으로 전환하면 이전 앱으로 되돌리지 않고 중단합니다.
+
+JSON의 `pid`, `prior_frontmost_pid`, `final_frontmost_pid`, `self_activation_suppressed`, `activation_count`, `late_activations`, `ok`와 `error`를 읽습니다. `late_activations`는 정확한 대상의 `isFinishedLaunching`을 처음 관찰한 뒤에 확인한 활성화 횟수입니다. 별도 큐에서 실행되는 completion callback에는 의존하지 않습니다. `NSApplication`의 실행 완료 신호를 보내지 않는 앱은 timeout으로 중단하며 창의 준비 상태는 별도로 확인합니다. `self_activation_suppressed: true`는 감시 종료 시 이전 앱으로 돌아왔다는 뜻이며 `activation_count: 0`이나 같은 key window를 보장하지 않습니다. `osascript`의 exit 0도 launch 성공을 뜻하지 않습니다. `ok: false`, 누락된 식별 정보, timeout이나 focus 변경이면 검증을 중단합니다. 복원되었더라도 `activation_count > 0`이면 무중단 백그라운드 실행 성공으로 처리하지 않습니다. Helper 결과와 별개로 실행 전후 frontmost 앱, focus/key window와 정확한 후보 process/window의 준비 상태를 선택한 제공자로 독립 검증하고, 바뀌었거나 확인할 수 없으면 중단합니다.
+
+되돌리기 방식은 대상 앱이 몇 프레임 동안 앞으로 나와 사용자 키 입력을 받을 수 있고, 복원 자체도 이전 앱을 activate하는 focus 변경입니다. 사용자가 감시 중 대상을 직접 선택한 경우와 자체 활성화를 구별할 수도 없습니다. 5초 뒤의 지연 활성화는 감시하지 않습니다. 이러한 한계는 제공자의 복원 경로에도 적용하며 정확한 foreground 승인을 대신하지 않습니다. Helper는 앱 실행만 담당합니다. 실행 후 상호작용 제공자를 말없이 바꾸거나 raw 입력을 허용하지 않습니다.
+
+Bundle이 없는 이미 컴파일된 raw 후보에는 실행 소유 `.app` wrapper가 정확히 그 실행 파일을 복사(symlink가 아님)하고 별도의 `CFBundleIdentifier`를 사용하여 설치된 release가 조회에서 선택되지 않게 할 수 있습니다. 필요한 자원, library, 작업 디렉터리와 런타임 설정을 보존합니다. 이동으로 후보가 달라지거나 지원되지 않는 signing/설정 우회책이 필요하다면 동등성을 주장하지 말고 중단합니다. 제공자 launch나 helper 실행 전에 등록된 식별 정보가 이 wrapper의 정확한 경로와 후보로 해석되는지 검증하고 반환된 process/window를 연결합니다. 등록만으로 조회를 입증하지 못합니다. 플랫폼이 시스템 임시 경로를 무시하면 저장소 `.tigerkit/tmp/` 같은 점검된 실행 소유 비시스템 임시 위치를 사용합니다. 등록이 미해결이면 `Blocked`입니다. 등록은 일시적이며 실행 소유입니다. 앱 설치나 기존 식별자의 대체가 아닙니다. 정리 시 이 실행의 등록만 해제하고 wrapper를 삭제합니다. 설치된 release의 등록을 해제하거나 제거하지 않습니다.
 
 다른 제공자/플랫폼에는 자체적인 현재 launch 근거가 필요합니다. 이 macOS 의미가 해당 호환성을 입증하지 않습니다.
 
 ## Orca Computer
 
-Orca 명령 전에 현재 upstream 안내에서 세션의 실행 파일을 확인합니다. Linux의 Orca terminal 밖에서는 단독 `orca`가 GNOME screen reader일 수 있습니다. IDE 탐지를 위해 실행하지 않습니다. 확인한 실행 파일의 버전과 일치하는 `skills get computer-use` 안내를 로드한 뒤 상태, 권한과 capability를 확인합니다. 상태 변경 후 앱/창 snapshot을 갱신합니다. Index는 해당 snapshot에 속합니다. Semantic action은 직접 수행할 수 있지만 raw keyboard/좌표나 창 복원은 focus를 빼앗을 수 있습니다. 실제 경로를 검증하고 정확한 권한 확대 승인을 구합니다.
+Orca 명령 전에 현재 upstream 안내에서 세션의 실행 파일을 확인합니다. Linux의 Orca terminal 밖에서는 단독 `orca`가 GNOME screen reader일 수 있습니다. IDE 탐지를 위해 실행하지 않습니다. 확인한 실행 파일의 버전과 일치하는 `skills get computer-use` 안내를 로드한 뒤 상태, 권한과 capability를 확인합니다. 상태 변경 후 앱/창 snapshot을 갱신합니다. Index는 해당 snapshot에 속합니다. Semantic action을 우선하며 실제 입력 경로와 전달 모드를 확인합니다. macOS 신버전의 백그라운드 전달과 구버전/다른 플랫폼의 raw 입력을 구별합니다. 창 복원 등 foreground 전환에는 정확한 권한 확대 승인이 필요합니다.
+
+macOS에서 설치된 실행 파일의 `computer capabilities --json`이 `supports.input.background`를 보고하면 click·type·key·scroll은 기본으로 백그라운드 전달을 시도합니다. 각 결과의 `action.delivery`가 `background`인지 확인합니다. `foreground`이거나 필드가 없으면 백그라운드 전달의 근거로 쓰지 않습니다. 전달 모드는 입력의 성공을 입증하지 않으므로 대상 상태와 frontmost 앱/focus를 독립적으로 관찰합니다. `--restore-window`는 명시적인 foreground 경로이며 정확한 승인 없이 사용하지 않습니다.
+
+`background_unavailable`은 성공이 아니며 popup·web `<select>`는 지원되는 `set-value`로 처리합니다. Chromium/Electron의 백그라운드 drag와 최소화된 창의 합성 pointer·key 입력은 지원되지 않습니다. 최소화된 창의 AX action 가능 여부는 별도로 확인합니다. Linux·Windows의 keyboard·pointer 입력에는 여전히 대상 창을 앞으로 가져와야 하므로 해당 권한이 없으면 중단합니다. 실패 후 foreground나 raw key로 말없이 재시도하지 않습니다.
+
+Orca CLI에는 앱 실행 명령이 없으므로 기존에 일치하는 창을 재사용하거나 위 [macOS 실행](#macos-launch)의 패키지 helper를 사용합니다. 제공자 선택 질문에는 macOS 백그라운드 입력의 버전/capability 조건, 행동별 전달 확인, 실행 helper의 사용 가능 여부와 복원 한계를 함께 제시합니다. `recommendation`은 `optional`로 유지합니다. Helper가 준비되었으면 실행 명령 부재만으로 부적합하다고 판단하지 않습니다. Linux·Windows의 foreground 요구와 독립 native 검증 부족은 별도 판단 근거입니다.
+
+제공된 사건의 macOS `footprint` 관찰은 Orca helper 실행 중 약 9MB, cua-driver daemon 약 27MB와 MCP 세션별 서버 약 8-11MB였습니다. Orca helper가 호출 시 기동하고 idle 120초 뒤 종료한다는 관찰은 유휴 시간에도 계속 상주하지 않는다는 뜻이며 즉시 메모리가 사라진다는 뜻은 아닙니다. 이 수명 주기와 수치는 이번 유지보수 환경에서 재측정하지 않았으므로 설치 버전에 대조하기 전에는 보편적인 성능 근거로 쓰지 않습니다. Upstream의 cua-driver 대비 수치도 자체 fixture의 탐색적 측정이며 일반적인 우열을 입증하지 않습니다.
 
 ## Codex Native
 

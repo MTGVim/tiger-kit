@@ -54,9 +54,9 @@
     },
     {
       "id": "orca-computer", "scope": "app", "display_name": "Orca Computer Use", "recommendation": "optional",
-      "detection": {"surface": "version-matched computer-use guide, status, permissions and capabilities from the resolved Orca executable", "hosts": ["orca", "shell"], "platforms": ["macos", "windows", "linux"]},
-      "capabilities": ["accessibility_tree", "screenshot", "window_select", "foreground_input", "cross_platform"],
-      "safety": {"input_modes": ["background-semantic", "foreground-global"], "profile_boundary": "native app/window", "focus": "check each action; raw input and restore-window may change foreground"},
+      "detection": {"surface": "version-matched computer-use guide, status, permissions and capabilities.supports.input.background from the resolved Orca executable", "hosts": ["orca", "shell"], "platforms": ["macos", "windows", "linux"]},
+      "capabilities": ["accessibility_tree", "background_click", "background_type", "screenshot", "window_select", "foreground_input", "cross_platform"],
+      "safety": {"input_modes": ["background-semantic", "window-routed", "foreground-global"], "profile_boundary": "native app/window", "focus": "macOS background by default when supports.input.background; verify action.delivery per action; --restore-window and Linux/Windows input take foreground"},
       "docs": "https://www.onorca.dev/docs/cli/computer-use",
       "reference_docs": ["https://github.com/stablyai/orca/blob/main/skills/computer-use/SKILL.md"],
       "notes": "provider-knowledge.md#orca-computer"
