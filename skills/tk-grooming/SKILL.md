@@ -46,6 +46,8 @@ metadata:
    규칙, memory나 사용자가 교정한 행동이 범위에 있을 때만
    [지속 맥락](references/persistent-context.md)을 읽습니다.
 3. `evidence`: 모든 후보에 대해 영역별 관찰, 경로, 검증 상태와 소유권 근거를 기록합니다.
+   후보가 로컬 스크립트·참조·설정이나 이를 연결하는 agent·hook·ADR을 명시하면
+   [구조와 의미 검증의 분리](references/discovery.md#structural-and-semantic-evidence)를 읽습니다.
    marketplace vendor 후보로 확인되면 [최신성 근거](references/discovery.md#freshness-evidence-vendor)를 확인합니다.
    설치 스킬 의존성이 선언되어 있으면 해당 참조에 따라 최소 버전도 확인합니다.
    사용자가 특정 복사 설치 외부 스킬의 출처·내용 변경 감사를 명시하면

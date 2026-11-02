@@ -110,3 +110,14 @@ Manim upstream `cef045011722d285692e3381d12d4d637da56e18`의 composer와 narrati
 
 [manim_skill `cef045011722d285692e3381d12d4d637da56e18`](https://github.com/adithya-s-k/manim_skill/tree/cef045011722d285692e3381d12d4d637da56e18)의 현재 composer, Golden Layout과 tests/manimce 안내를 재확인했습니다. 원본은 장면 구성·점진적 공개·색 선택을 안내하지만 상시 제목 제거와 문장별 퇴장 기준은 TigerKit의 보강입니다. 원본 스킬과 예제 테스트를 복사하거나 전체 실행하지 않습니다.
 [Pycairo 설치 문서](https://pycairo.readthedocs.io/en/latest/getting_started.html), [PyPI pkgconf](https://pypi.org/project/pkgconf/)와 [Homebrew ffmpeg-full](https://formulae.brew.sh/formula/ffmpeg-full)에서 cairo 헤더/pkg-config 필요, venv 스크립트 제공과 libass 의존성을 확인했습니다. macOS 실제 재설치와 사용자 입력·청취는 이 확인에 포함되지 않습니다. 학습 논문을 읽거나 재현하지 않았으므로 회고의 학습 효과 해석을 검증된 사실로 승격하지 않습니다.
+
+
+## 조사·설명에서 영상으로 전달하는 근거 (2026-11-03)
+
+[sepi2p/research-explainer-skill@00d1273289258ac0adc31fbb0f03e217bf8a5935](https://github.com/sepi2p/research-explainer-skill/tree/00d1273289258ac0adc31fbb0f03e217bf8a5935)의 `skills/research-explainer/SKILL.md`, `references/accuracy.md`, `references/experiments.md`, `scripts/rx.py`의 `claims`·`assets`·`build`·`selftest`, 프로젝트 템플릿과 루트 `LICENSE`·`THIRD_PARTY.md`를 확인했습니다. 연구 설명 본체는 MIT입니다. 함께 배포되는 ManimGL 스킬은 CC BY-NC-SA 4.0이고 글꼴·음원에는 별도 조건이 있으므로 본체 라이선스로 전체 자산을 해석하지 않습니다. 여기서는 원본 코드·지침 블록·자산을 복사하지 않고 작은 stdlib 검사기를 독립적으로 작성했습니다.
+
+- `keep`: 중요한 주장과 구체적 출처의 연결, 데이터 에셋의 생성 근거·해시, 원고 의미 검토와 실제 영상·청취 검사를 분리하는 책임입니다.
+- `adapt`: 기존 조사 근거와 원고 목록을 재사용하고 데이터 설명 영상에서만 값·단위·분모·상태를 대조합니다. 선택한 에셋은 독립적인 읽기 전용 도우미로 조립 직전 비교합니다. 조립 manifest나 TTS 엔진의 계약은 바꾸지 않습니다.
+- `omit`: 전역 숫자 허용 목록과 데이터의 자동 백분율·반올림 일치를 사실 판정으로 사용하는 방식, 필수 `claims.json`, 전체 제작 런타임, 새 모델 호출·ASR·자동 재생성과 추가 승인 단계는 도입하지 않습니다.
+
+실제 `claims` 실행은 큰 미근거 숫자와 원장 출처 필드의 누락을 실패 처리했지만 작은 미근거 숫자는 경고로 통과했습니다. 같은 숫자의 단위·지표·상태 변경과 원고에 추가한 비수치 주장은 통과했습니다. 숫자 검사는 의미 검토를 대체하지 않습니다. `assets`는 변경을 실제로 검출하며 `build`는 이 두 검사를 자동 호출하지 않습니다. 원본의 `selftest`는 별도 claims·assets 확인 뒤 Manim 렌더링을 요구하므로 전체 실행하지 않았습니다. 좁은 CLI 실험은 해시 검사·기록 실패를 확인하며, 원고 검토 지침의 일반적 검출률이나 실제 TTS·학습 효과를 입증하지 않습니다. 자동 검사와 의미 검토의 결합 효과는 후속 필드테스트에서 확인해야 합니다.

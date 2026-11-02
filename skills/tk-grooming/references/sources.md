@@ -55,3 +55,23 @@ upstream 시뮬레이션 재현은 `unverified`입니다. 이 자료로 보안 �
 - `keep`: Manim 절차의 선택한 스킬 tree 비교, 불변 revision과 내용 동일성의 구별, 수정본 보존과 자동 설치 금지를 유지합니다. Manim 런타임의 중단·오프라인 수용 조건은 그 소유자에게 남깁니다.
 - `adapt`: `B`(설치 당시 기준판)·`L`(현재 설치본)·`U`(고정 원본)를 분리하는 조건부 읽기 전용 감사를 `tk-grooming`에 둡니다. 기준판이 없으면 일치하는 현재 내용만 입증하며, 차이의 원인은 미확인으로 남깁니다. 중요한 diff의 정적 검토 필요성은 기존 `tk-skill-vet` 대상으로 표시합니다.
 - `omit`: 전역 복사 계보 수집, 시뮬레이터·viewer·데이터셋, 상시 감시·registry·자동 updater, 설치본 변경과 새 독립 스킬은 추가하지 않습니다. setup·vet·Manim의 절차를 재작성하거나 의존성을 추가하지 않습니다.
+
+<a id="harness-stocktake-structural-evidence"></a>
+## Harness-stocktake의 구조 근거와 의미 판단
+
+[shimo4228/harness-stocktake](https://github.com/shimo4228/harness-stocktake/tree/3d676093ed3ceb58071b746c16bbf4484e87dc6d)의
+고정 revision `3d676093ed3ceb58071b746c16bbf4484e87dc6d`에서 `skill-health/scripts/scan_refs.py`,
+`harness-stocktake/scripts/render_report.py`, `rules-stocktake/scripts/transfer_probe.py`와 Skills·Rules·Agents·Hooks·
+repo-asset 감사 지침을 검토했습니다. 경로는 저장소의 `skills/` 아래입니다. 라이선스는 MIT이며,
+코드·문장·템플릿을 가져오지 않고 검증 책임의 구분만 독립적으로 작성했습니다.
+
+- `keep`: 기존 GR 단위, vendor 보고 전용, 의미 변경의 담당자 인계와 안전 규칙 보존을 유지합니다. 중복·충돌과 no-op 비교는 이미 현행 grooming이 담당합니다.
+- `adapt`: 실제 로컬 참조 열거와 설정의 소비자 연결을 먼저 확인하고, 의미·가치 판정과 구분합니다. 대상이 같은 제안의 충돌을 기존 GR 근거에 모읍니다. 제거 비교에는 로드/제외와 비교 환경 확인을 요구합니다.
+- `omit`: 전체 harness 감사 확대, 파일 단위 점수·줄 수 비용 목표, 전용 보고 페이지·승인 저장소·ledger, 자동 삭제와 Claude 전용 child runner는 가져오지 않습니다. 반복 모델 호출은 기본 경로에 추가하지 않습니다.
+
+업스트림 스캐너를 합성 사례에 실제 실행했을 때 Markdown 링크와 `bash` 호출의 누락은 잡았지만
+`python scripts/direct_missing.py`는 지원하지 않아 놓쳤습니다. 따라서 스캐너의 성공이나 결과 없음이
+전체 참조 건전성을 보장하지 않습니다. 보고 조립기는 구조적 충돌을 모으며 의미적 상충을 판정하지
+않습니다. 제거 비교 도구는 실제 child 실행 코드가 있지만 이번 환경에는 Claude CLI가 없어 실행하지
+못했습니다. 업스트림의 `pyproject.toml`에는 test 경로가 선언되어 있으나 이 revision에 test 파일은
+포함되지 않았습니다. 모델별 불필요 규칙 검출률과 규칙 제거 효과는 `unverified`입니다.

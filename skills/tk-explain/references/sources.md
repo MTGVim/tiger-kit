@@ -395,3 +395,19 @@ SVG는 공개된 별도 표현으로 유지하며, Excalidraw 통합 주장으�
 
 사용자가 제공한 결함 회고와 TigerKit `647c6d76`을 대조했습니다. `keep`: 대화 기본값, 명시적 기법과 요청 전용 기법, 독립적인 HTML 렌더러 계약을 유지합니다. `adapt`: 런타임 확인 계층, 범위가 명시된 부재 주장, 속성별 현재/변경 후 비교와 영상 인계의 위험·권고 순서 대조입니다. `omit`: 확인하지 않은 운영값·담당 주체, 같은 사실의 반복과 기법 이름을 화면 제목으로 쓰는 구성입니다.
 [Archify `a4065941f12be7967436261d9934784e381d423c`](https://github.com/tt-a1i/archify/tree/a4065941f12be7967436261d9934784e381d423c)의 `archify/explainer/render.mjs`에서 image 블록은 img/figcaption으로, dialog는 다이어그램용으로 렌더됨을 확인했습니다. 이미지 확대 기능을 새로 vendoring하지 않고 읽을 수 있는 전체 폭 이미지·원본 링크를 사용합니다. 이 확인은 브라우저 실행이나 외부 renderer 업데이트가 아닙니다.
+
+## 기술 스택 맵의 표현 원칙 (2026-11-03)
+
+[caru-ini/stack-diagram@9e90a3b286baa6eef9700ca01abb80dbf0ad1514](https://github.com/caru-ini/stack-diagram/tree/9e90a3b286baa6eef9700ca01abb80dbf0ad1514)의
+`skills/stack-diagram/SKILL.md`, `references/geometry.md`, `tsx.md`, `scripts/build.py`, `fetch_icons.py`,
+`render_png.py`와 `assets/template.html`을 확인했습니다. 코드·문서는 MIT이고 글꼴·로고는 별도 조건입니다.
+원본 코드·문구·템플릿·에셋은 복사하지 않고 `tk-explain`의 선택형 기법으로 독립적으로 작성했습니다.
+
+- `keep`: 기존 근거·출력 형식·정밀 PNG 도우미·정확성 검토와 일반 설명의 Archify 분기를 유지합니다.
+- `adapt`: 로고·역할 카드, 확인된 그룹, 전체 카드 경계에 맞춘 선 배치와 최종 이미지 읽기를 `S 기술 스택 맵`에 한정합니다. 기본 전달물은 PNG 하나이며, 불명확한 로고는 이름으로 표시하고 제품 목록에서 연결을 추측하지 않습니다.
+- `omit`: 외부 스킬 설치·실행 연동, 로고 자동 검색 체인·번들 글꼴·자동 배치 보장·새 렌더러·React 출력·갤러리 발행·두 방식의 상시 비교는 도입하지 않습니다.
+
+같은 세 입력에서 양쪽 HTML 후보를 만들고 fresh 출력의 18개 로컬 빌드를 확인했으나 실제 브라우저
+캡처와 시각 A/B는 미실행입니다. 사용자는 기술 스택 표시와 이미지 출력에 쓸 만하다고 평가한 뒤
+`tk-explain` 내부 증류를 요청했습니다. 이는 이 용도의 선택적 지원 근거이며 일반적인 정확성·가독성
+우월성이나 다른 독자의 선호를 입증하지 않습니다. PNG 런타임의 현재 환경 검증은 여전히 `unverified`입니다.
