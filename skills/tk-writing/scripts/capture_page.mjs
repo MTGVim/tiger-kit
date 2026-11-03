@@ -15,15 +15,11 @@ export async function capture(input, output, width = 1440, viewportHeight) {
     throw new Error(`Output exists and is never overwritten: ${output}\nRe-capture to a new name, e.g. ${next}, and review that file.`);
   }
   const url = pathToFileURL(await realpath(input)).href;
-  await withPage(async call => {
-    // A one-pixel bootstrap measures short documents without a 900px viewport floor.
-    await call('Emulation.setDeviceMetricsOverride', {width, height: viewportHeight ?? 1, deviceScaleFactor: 1, mobile: false});
-    const result = await call('Page.navigate', {url});
-    if (result.errorText) throw new Error(result.errorText);
-    await evaluate(call, `new Promise((resolve,reject)=>{const start=Date.now();const check=()=>{if(location.href===${JSON.stringify(url)}&&document.readyState==='complete')resolve();else if(Date.now()-start>15000)reject(new Error('Page load timeout'));else setTimeout(check,50)};check()})`);
-    await evaluate(call, `(async()=>{await document.fonts.ready;await Promise.all([...document.images].map(i=>i.decode()));await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))})()`);
+  const png = await withPage(async page => {
+    await page.goto(url, {waitUntil: 'load'});
+    await evaluate(page, `(async()=>{await document.fonts.ready;await Promise.all([...document.images].map(i=>i.decode()));await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))})()`);
     // Native diagrams can lay out after load/fonts; require bounded stable geometry.
-    await evaluate(call, `new Promise((resolve,reject)=>{
+    await evaluate(page, `new Promise((resolve,reject)=>{
       const start=performance.now();let previous='',stable=start;
       const check=()=>{const now=performance.now();
         const signature=JSON.stringify([document.documentElement.scrollWidth,document.documentElement.scrollHeight,
@@ -32,27 +28,29 @@ export async function capture(input, output, width = 1440, viewportHeight) {
         if(now-start>=1000&&now-stable>=300){resolve();return}
         if(now-start>10000){reject(new Error('Page layout did not stabilize'));return}
         requestAnimationFrame(check)};check()})`);
-    let metrics = await call('Page.getLayoutMetrics');
+    const metrics = () => evaluate(page, `({width:document.documentElement.scrollWidth,height:document.documentElement.scrollHeight})`);
+    let size = await metrics();
     if (viewportHeight === undefined) {
       let fitted = false;
       for (let attempt = 0; attempt < 4; attempt++) {
-        const height = Math.ceil(metrics.cssContentSize.height);
+        const height = Math.ceil(size.height);
         if (height < 1 || height > 100000) throw new Error('Page exceeds bounded capture size');
-        await call('Emulation.setDeviceMetricsOverride', {width, height, deviceScaleFactor: 1, mobile: false});
-        await evaluate(call, 'new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))');
-        metrics = await call('Page.getLayoutMetrics');
-        if (Math.ceil(metrics.cssContentSize.height) === height) { fitted = true; break; }
+        await page.setViewportSize({width, height});
+        await evaluate(page, 'new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))');
+        size = await metrics();
+        if (Math.ceil(size.height) === height) { fitted = true; break; }
       }
       if (!fitted) throw new Error('Document height depends on the viewport; pass an explicit height');
     }
-    const {width: w, height} = metrics.cssContentSize;
+    const {width: w, height} = size;
     if (w > 16384 || height > 100000) throw new Error('Page exceeds bounded capture size');
-    const {data} = await call('Page.captureScreenshot', {format: 'png', captureBeyondViewport: true,
-      clip: {x: 0, y: 0, width: Math.max(width, w), height, scale: 1}});
-    await writeFile(output, Buffer.from(data, 'base64'), {flag: 'wx'});
-  });
+    // Explicit height controls layout, not cropping: retain the entire document.
+    const clip = {x: 0, y: 0, width: Math.max(width, w), height};
+    return await page.screenshot({type: 'png', fullPage: true, scale: 'css', clip});
+  }, {viewport: {width, height: viewportHeight ?? 1}});
+  await writeFile(output, png, {flag: 'wx'});
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href) {
   if (process.argv.length < 4 || process.argv.length > 6) { console.error('Usage: capture_page.mjs input.html new-output.png [width] [height]'); process.exitCode = 2; }
-  else { try { await capture(process.argv[2], process.argv[3], Number(process.argv[4] ?? 1440), process.argv[5] === undefined ? undefined : Number(process.argv[5])); } catch (e) { console.error(e.message); process.exitCode = 1; } }
+  else { try { await capture(process.argv[2], process.argv[3], Number(process.argv[4] ?? 1440), process.argv[5] === undefined ? undefined : Number(process.argv[5])); } catch (e) { console.error(e.message); process.exitCode ||= 1; } }
 }

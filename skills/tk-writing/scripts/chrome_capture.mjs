@@ -1,9 +1,9 @@
-/** Private, dependency-free Chrome DevTools pipe; never attaches to a user session. */
-import {spawn} from 'node:child_process';
+/** Private Playwright renderer; launches only an isolated, installed Chrome. */
 import {access, mkdtemp, rm} from 'node:fs/promises';
 import {constants} from 'node:fs';
 import {tmpdir} from 'node:os';
-import {join, delimiter} from 'node:path';
+import {join, delimiter, isAbsolute} from 'node:path';
+import {createRequire} from 'node:module';
 import {createServer} from 'node:net';
 
 export async function chromePath() {
@@ -17,105 +17,86 @@ export async function chromePath() {
   throw new Error('Blocked: installed Chrome/Chromium unavailable; set CHROME_PATH. No installation attempted.');
 }
 
-export async function withPage(action) {
-  const executable = await chromePath();
-  let profile, child, denyProxy, exited, stopError, signalCode;
-  let next = 0, buffer = '', closed = false;
-  const pending = new Map();
-  const fail = error => { closed = true; for (const p of pending.values()) { clearTimeout(p.timer); p.reject(error); } pending.clear(); };
+function installedChromium() {
+  const override = process.env.PLAYWRIGHT_MODULE_PATH;
+  if (override !== undefined && !isAbsolute(override)) throw new Error('Blocked: PLAYWRIGHT_MODULE_PATH must be an absolute installed Playwright package path.');
+  try {
+    // Resolve from the caller project, not the skill installation or global packages.
+    const {chromium} = createRequire(join(process.cwd(), 'package.json'))(override ?? 'playwright');
+    if (!chromium || typeof chromium.launchPersistentContext !== 'function') throw new Error('Not a Playwright SDK');
+    return chromium;
+  } catch (error) {
+    throw new Error(`Blocked: cannot load installed Playwright SDK${override === undefined ? ' from the caller project' : ' at PLAYWRIGHT_MODULE_PATH'}: ${error.message}. No installation attempted.`);
+  }
+}
+
+export async function withPage(action, {viewport = {width: 1280, height: 720}, deviceScaleFactor = 1} = {}) {
+  const chromium = installedChromium();
+  const executablePath = await chromePath();
+  let profile, context, denyProxy, interrupted;
   let rejectStop;
   const stopped = new Promise((_, reject) => { rejectStop = reject; });
-  const stop = error => { stopError = error; fail(error); rejectStop(error); };
+  const stop = error => { interrupted = error; rejectStop(error); };
   // Install before acquiring resources, including cancellation during launch.
   const handlers = new Map(['SIGINT', 'SIGTERM', 'SIGHUP'].map(signal => [signal, () => {
-    signalCode = {SIGINT: 130, SIGTERM: 143, SIGHUP: 129}[signal];
+    process.exitCode = {SIGINT: 130, SIGTERM: 143, SIGHUP: 129}[signal];
     stop(new Error(`Capture interrupted: ${signal}`));
   }]));
   for (const [signal, handler] of handlers) process.on(signal, handler);
   const timer = setTimeout(() => stop(new Error('Capture timeout (30000ms)')), 30000);
   const launch = (async () => {
-    profile = await mkdtemp(join(tmpdir(), 'tk-explain-chrome-'));
-    if (stopError) throw stopError;
-    // Page-level CDP blocking does not cover iframe/worker/WebSocket traffic.
-    // This run-owned proxy never forwards, including requests to loopback.
+    profile = await mkdtemp(join(tmpdir(), 'tk-writing-playwright-'));
+    if (interrupted) throw interrupted;
+    // Context routes cannot cover worker WebSockets. This run-owned proxy
+    // never forwards connections, including loopback and TLS tunnels.
     denyProxy = createServer(socket => socket.destroy());
     await new Promise((resolve, reject) => {
       denyProxy.once('error', reject);
       denyProxy.listen(0, '127.0.0.1', resolve);
     });
-    if (stopError) throw stopError;
-    child = spawn(executable, ['--headless=new', '--remote-debugging-pipe', '--no-first-run',
-      '--no-default-browser-check', '--disable-background-networking',
-      `--proxy-server=http://127.0.0.1:${denyProxy.address().port}`, '--proxy-bypass-list=<-loopback>',
-      '--disable-quic', '--host-resolver-rules=MAP * ~NOTFOUND',
-      '--force-webrtc-ip-handling-policy=disable_non_proxied_udp', `--user-data-dir=${profile}`, 'about:blank'],
-      {stdio: ['ignore', 'ignore', 'pipe', 'pipe', 'pipe']});
-    exited = new Promise(resolve => { child.once('exit', resolve); child.once('error', resolve); });
-    child.on('error', fail); child.on('exit', () => fail(new Error('Chrome exited before capture completed')));
-    child.stderr.resume();
-    child.stdio[3].on('error', fail);
-    child.stdio[4].on('error', fail);
-    child.stdio[4].setEncoding('utf8');
-    child.stdio[4].on('data', chunk => {
-      buffer += chunk.toString();
-      let end;
-      while ((end = buffer.indexOf('\0')) >= 0) {
-        let row;
-        try { row = JSON.parse(buffer.slice(0, end)); } catch (error) { stop(error); return; }
-        buffer = buffer.slice(end + 1);
-        const p = pending.get(row.id); if (!p) continue;
-        pending.delete(row.id); clearTimeout(p.timer);
-        row.error ? p.reject(new Error(row.error.message)) : p.resolve(row.result);
-      }
+    if (interrupted) throw interrupted;
+    context = await chromium.launchPersistentContext(profile, {
+      executablePath, headless: true, chromiumSandbox: true, viewport, deviceScaleFactor,
+      timeout: 20000, handleSIGINT: false, handleSIGTERM: false, handleSIGHUP: false,
+      serviceWorkers: 'block',
+      proxy: {server: `http://127.0.0.1:${denyProxy.address().port}`, bypass: '<-loopback>'},
+      // GPU surfaces can lose content in extreme-height captures.
+      args: ['--disable-gpu', '--disable-background-networking', '--disable-quic',
+        '--host-resolver-rules=MAP * ~NOTFOUND', '--force-webrtc-ip-handling-policy=disable_non_proxied_udp'],
     });
   })();
-  const send = (method, params = {}, sessionId) => new Promise((resolve, reject) => {
-    if (closed) { reject(stopError || new Error('Chrome is unavailable')); return; }
-    const id = ++next;
-    const timer = setTimeout(() => { pending.delete(id); reject(new Error(`Chrome timeout: ${method}`)); }, 20000);
-    pending.set(id, {resolve, reject, timer});
-    child.stdio[3].write(JSON.stringify({id, method, params, ...(sessionId ? {sessionId} : {})}) + '\0');
-  });
   const work = (async () => {
     await launch;
-    if (stopError) throw stopError;
-    const {targetId} = await send('Target.createTarget', {url: 'about:blank'});
-    const {sessionId} = await send('Target.attachToTarget', {targetId, flatten: true});
-    const call = (method, params) => send(method, params, sessionId);
-    await call('Page.enable'); await call('Network.enable');
-    await call('Network.setBlockedURLs', {urls: ['http://*', 'https://*', 'ws://*', 'wss://*', 'ftp://*']});
-    return await action(call);
+    if (interrupted) throw interrupted;
+    if (typeof context.routeWebSocket !== 'function') throw new Error('Blocked: Playwright 1.48+ is required for WebSocket blocking.');
+    context.setDefaultTimeout(15000);
+    context.setDefaultNavigationTimeout(15000);
+    await context.route('**/*', route => /^(?:file|data|about|blob):/.test(route.request().url()) ? route.continue() : route.abort('blockedbyclient'));
+    await context.routeWebSocket('**/*', socket => socket.close());
+    if (interrupted) throw interrupted;
+    const page = context.pages()[0] || await context.newPage();
+    if (interrupted) throw interrupted;
+    return await action(page);
   })();
   try {
     return await Promise.race([work, stopped]);
   } finally {
     clearTimeout(timer);
     try {
-      // Finish resource acquisition before cleanup, but never await a hung action.
+      // Acquisition is bounded by Playwright's launch timeout; never await a hung action.
       await launch.catch(() => {});
-      if (child?.pid && child.exitCode === null && child.signalCode === null) {
-        child.kill();
-        const killTimer = setTimeout(() => child.kill('SIGKILL'), 2000);
-        try { await exited; } finally { clearTimeout(killTimer); }
-      }
+      if (context) await context.close();
     } finally {
-      fail(new Error('Capture ended'));
-      // Extra pipe descriptors can remain readable after Chrome exits mid-command.
-      for (const stream of child?.stdio || []) stream?.destroy();
       try {
         if (denyProxy?.listening) await new Promise(resolve => denyProxy.close(resolve));
         if (profile) await rm(profile, {recursive: true, force: true, maxRetries: 5, retryDelay: 100});
       } finally {
         for (const [signal, handler] of handlers) process.removeListener(signal, handler);
-        // Public CLI catch blocks must not replace conventional signal exits with 1.
-        if (signalCode) process.exit(signalCode);
       }
     }
   }
 }
 
-export async function evaluate(call, expression) {
-  const value = await call('Runtime.evaluate', {expression, awaitPromise: true, returnByValue: true});
-  if (value.exceptionDetails) throw new Error(value.exceptionDetails.text);
-  return value.result.value;
+export async function evaluate(page, expression) {
+  return await page.evaluate(expression);
 }

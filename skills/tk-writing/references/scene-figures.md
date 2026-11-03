@@ -11,13 +11,16 @@
 스크립트, 이벤트 핸들러, foreign object, 외부 리소스나 글꼴이 없는 정적 SVG를 사용합니다.
 `node <tk-writing>/scripts/svg_to_png.mjs input.svg output.png`로 2배 크기로 래스터화합니다.
 `<tk-writing>`은 호출자가 아니라 현재 설치된 해당 패키지로 해석합니다. 도우미는 네트워크를 차단한 상태에서 SVG를 이미지로 불러오므로 SVG 스크립트가 실행될 수 없습니다.
-설치된 Chrome/Chromium과 Node 18+가 필요합니다. 자동 탐색으로 찾지 못하면 기존 실행 파일을
-`CHROME_PATH`로 지정합니다. Chrome이 없으면 `Blocked`이며, 이를 설치할 권한이 부여되는 것은 아닙니다.
-같은 Chrome의 원래 기본 글꼴·픽셀과 기존 크기 계약을 보존하기 위해 로컬 렌더러의 직접 pipe는
-유지합니다. Playwright `1.65.0-alpha-2026-10-30` / Chrome `156.0.8078.74` 대체 실험에서
-기본 글꼴의 실제 glyph와 SVG alpha 픽셀이 달랐습니다. 명시적 글꼴 fixture의 성공을 일반적인
-기본 글꼴 동등성으로 보고하지 않습니다. 이 도우미에는 Playwright 설치가 새로 필요하지 않으며
-별도 Chrome DevTools MCP도 요구하지 않습니다. 일반 브라우저 검증의 CLI 기본값과 구별합니다.
+설치된 Playwright SDK 1.48+, Chrome/Chromium과 Node 18+가 필요합니다. 호출 프로젝트에 설치된
+`playwright`를 사용하며, 다른 위치의 설치본은 `PLAYWRIGHT_MODULE_PATH`에 패키지 디렉터리의
+절대 경로를 지정합니다. Chrome 자동 탐색에 실패하면 `CHROME_PATH`로 기존 실행 파일을 지정합니다.
+SDK나 Chrome이 없으면 `Blocked`이며 자동 설치나 다운로드, 사용자 브라우저 프로필 연결을 하지 않습니다.
+렌더러는 Playwright가 소유한 격리 headless 컨텍스트를 사용하고, 실행 소유 deny proxy로 외부 요청을
+차단합니다. HTML 전체 캡처와 명시한 layout viewport, SVG의 크기, DPR, 투명 배경 및 덮어쓰기 방지는
+유지하며, 초대형 이미지의 하단 콘텐츠 누락을 피하기 위해 소프트웨어 렌더링을 사용합니다.
+글꼴을 생략한 입력은 Playwright의 기본 글꼴을 사용하므로 이전 직접 pipe 출력과
+글자 모양이나 픽셀이 달라질 수 있습니다. 같은 글꼴이 필요하면 입력 CSS에 명시하며, 이전 출력과의
+픽셀 완전 일치를 설치 조건으로 요구하지 않습니다. 별도 Chrome DevTools MCP는 필요하지 않습니다.
 결과를 검사하고 각 PNG를 의미 있는 `@image alt=... caption=...`로 삽입합니다. 검색 가능한
 설명은 래스터 이미지 밖에 두고, 예시 기하 구조와 측정 데이터를 구별합니다.
 
