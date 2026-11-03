@@ -13,7 +13,7 @@
 workspace를 만들기 전에 행의 Git 상태를 조사합니다. `git rev-parse --show-superproject-working-tree`로 submodule을 제외한 뒤에만 `GIT_DIR != GIT_COMMON`을 linked-worktree 신호로 취급합니다. 이것은 행 소유권을 입증하지 않습니다. 호스트가 만든 workspace는 경로, 정확한 PR head, 행 식별 정보와 전용 출처가 최신이고 모호하지 않을 때만 재사용합니다.
 
 workspace를 만들거나 자식을 배정하기 전에 아래 **자원 제한**에 따라 setup과 실행 동시성 범위를 선택합니다.
-Orca가 설치되어 있으면 생성 경로를 선택하기 전에 [저장소 workspace 설정](workspace-setup.md)을 읽습니다. 중복 의존성 설치를 추가하거나 lifecycle을 우회하지 말고 실제 적용 setup/archive hook을 따릅니다.
+새 workspace의 생성·초기화 경로를 선택하기 전에 [호스트 workspace와 setup 경계](../../tk-pr-guidance/references/workspace-setup.md)를 읽습니다. Orca가 설치되어 있으면 [저장소 workspace 설정](workspace-setup.md)도 읽습니다. 수동 생성 경로에서 setup hook을 직접 실행하지 말고 공통 폴백의 결정을 받습니다. 중복 의존성 설치를 추가하거나 lifecycle을 우회하지 않습니다.
 
 `EnterWorktree`, `WorktreeCreate`, `/worktree` 또는 `--worktree`처럼 에이전트가 호출할 수 있는 네이티브 기능이 있으면 우선하고, 이후 경로, 브랜치 또는 detached 상태와 HEAD를 새로 읽습니다. 안전한 네이티브 기능이 없을 때만 수동 `git worktree`를 사용합니다. 승인된 head에서 시작하고 충돌과 무관한 작업을 피하며 결과를 검증합니다. 격리를 위해 무관한 ignore 편집을 하거나 setup commit을 만들지 않습니다. 승인된 `.tigerkit/` workspace에 제외 설정이 필요할 때만 담당 SKILL.md의 산출물 경로 설정을 사용합니다.
 

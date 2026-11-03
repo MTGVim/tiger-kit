@@ -16,7 +16,7 @@
 연결된 worktree의 신호로 취급합니다. 기본 브랜치에서 실행을 시작하게 된다면, 최종 승인에는 새로 격리된
 작업 체크아웃을 만들거나 사용하는 일이 포함되어야 합니다.
 
-격리가 필요하면 기존 격리 여부를 먼저 확인합니다. `EnterWorktree`, `WorktreeCreate`, `/worktree`, `--worktree`처럼
+격리가 필요하면 기존 격리 여부를 먼저 확인합니다. 새 workspace의 생성·초기화 경로를 선택하기 전에 [호스트 workspace와 setup 경계](../../tk-pr-guidance/references/workspace-setup.md)를 읽습니다. 호스트 경로를 쓸 수 없으면 setup hook을 직접 실행하지 말고 공통 폴백의 결정을 받습니다. `EnterWorktree`, `WorktreeCreate`, `/worktree`, `--worktree`처럼
 에이전트가 호출할 수 있는 사용 가능한 호스트 기본 기능을 우선한 다음, 그 경로, 브랜치나 detached 상태,
 HEAD를 새로 조회합니다. 정확한 계획과 격리 체크아웃에 대한 승인은 해당 호스트 기본 기능의 사용도 승인합니다.
 도구에 별도 이름이 있다는 이유만으로 다시 묻지 않습니다.

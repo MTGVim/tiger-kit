@@ -29,3 +29,4 @@ metadata:
 - [GitHub 시각 자료](references/github-visuals.md): PR에 사용할 시각적 근거를 준비할 때 읽습니다.
 - [다중 PR 전달](references/multi-pr-delivery.md): 승인된 전달을 의도적으로 여러 PR로 나눌 때 읽습니다.
 - [rebase 준비 상태](references/rebase-readiness.md): 특정 PR의 rebase를 준비하거나 rebase 담당자에게 인계할 때 읽습니다.
+- [호스트 workspace와 setup 경계](references/workspace-setup.md): 새 workspace의 생성·초기화 경로를 선택하기 전에 읽습니다.

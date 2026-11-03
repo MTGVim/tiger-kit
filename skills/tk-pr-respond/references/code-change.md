@@ -11,6 +11,7 @@ Sweep 아래에 중첩되어 있으면 Sweep이 제공한 setup 담당자, 준�
 branch/HEAD, linked-worktree 상태, 무관한 작업과 submodule 상태를 조사합니다. `git rev-parse --show-superproject-working-tree`로 submodule을 제외한 뒤에만 `GIT_DIR != GIT_COMMON`을 linked-worktree 신호로 취급합니다. 이것은 checkout이 해당 PR 소유임을 입증하지 않습니다.
 
 조건에 맞는 텍스트 전용 작업에서는 아래의 승인된 index-only 경로도 Sweep 아래를 포함하여 격리를 입증합니다.
+새 workspace의 생성·초기화 경로를 선택하기 전에 [호스트 workspace와 setup 경계](../../tk-pr-guidance/references/workspace-setup.md)를 읽습니다. 호스트 경로를 쓸 수 없으면 setup hook을 직접 실행하지 말고 공통 폴백의 결정을 받습니다. Sweep 아래에서는 해당 행의 기존 결정을 재사용하며 누락된 결정만 부모에게 돌려보냅니다.
 다른 작업에서 작고 직접적인 수정은 현재 checkout이 정확한 PR 브랜치이고, 깨끗하고 안전하며 무관한 작업이 없을 때만 재사용할 수 있습니다. 그 밖에는 기존 작업 격리를 탐지하고, `EnterWorktree`, `WorktreeCreate`, `/worktree` 또는 `--worktree`처럼 사용 가능한 에이전트 호출 네이티브 기능을 우선하며, 결과 경로, 브랜치 또는 detached 상태와 HEAD를 새로 읽습니다. 정확한 계획과 격리에 대한 현재 승인은 추가 질문 없이 해당 기능도 승인합니다.
 
 안전한 네이티브 기능이 없을 때만 수동 `git worktree`를 사용합니다. 정확히 승인된 PR head에서 시작하고 충돌과 무관한 작업을 피하며 결과를 검증합니다. `.tigerkit/` 제외가 누락된 경우에만 담당 SKILL.md의 산출물 경로 설정을 사용합니다. 무관한 ignore 편집을 하거나 격리를 위한 setup commit을 만들지 않습니다.

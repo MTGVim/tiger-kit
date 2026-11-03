@@ -54,6 +54,7 @@ submodule을 배제한 뒤에만 linked-worktree 신호이며, linked worktree�
 인계가 워크스페이스 생성을 포함하는지 먼저 확인합니다. 명시적인 워크스페이스 동의를 요구하는 더 엄격한 사용자 규칙을
 보존합니다. rebase 요청만으로 그 규칙을 무시하지 않습니다. 정확한 격리가 기존 승인에
 포함되면 다시 질문하지 않고 재사용합니다. 그렇지 않으면 생성 전에 누락된 결정을 받습니다.
+새 workspace의 생성·초기화 경로를 선택하기 전에 [호스트 workspace와 setup 경계](../tk-pr-guidance/references/workspace-setup.md)를 읽습니다. 호스트 경로를 쓸 수 없으면 setup hook을 직접 실행하지 말고 공통 폴백의 결정을 받습니다. Sweep에서 받은 해당 행의 기존 결정은 재사용합니다.
 그다음 현재 도구 목록에서 `EnterWorktree`, `WorktreeCreate`, `/worktree`, `--worktree` 같은 구체적인
 기본 진입점을 확인합니다. 이는 기능 예시이며 지속적인 제공자
 경로 규칙이 아닙니다. 사용 가능한 에이전트 호출형 기본 worktree·워크스페이스 기능을 우선하고,
