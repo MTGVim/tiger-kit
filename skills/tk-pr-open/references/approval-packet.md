@@ -15,9 +15,13 @@ PR state: draft | ready
 Base
 Original head ref + SHA + tree
 Template source/compliance
+Template checklist: exact item + checked/unchecked + required/observed environment + evidence/limitation
 PR evidence requirement/state
 Evidence manifest entries/paths
-Known exclusions
+Reviewed head/tree + diff basis + coverage/evidence (publication input)
+Publication candidate head/tree + comparison with reviewed target
+Known exclusions: unreviewed delta + re-review result | optional omission reason/approval
+Remote actions: operation + exact target + proposed change + order + explicit approval
 
 Single publication:
 Head ref + SHA
@@ -25,6 +29,7 @@ Push refspec
 Title
 Title convention basis: <repository instruction | normative template/docs | merged-title evidence | fallback>
 Body
+Additional remote actions: selected tracker target + current/goal state + transition ID, or N/A
 
 Stacked publication:
 See the required plan fields in [retrospective stack split](split-to-stack.md).
@@ -47,7 +52,7 @@ See the required plan fields in [retrospective stack split](split-to-stack.md).
   코드 fence로 감싸지 않습니다. 응답에 본문의 `##` 제목을 복사하는 대신 굵은 섹션 라벨을 사용합니다.
   GFM 표와 이미지 그리드는 읽기 쉬운 한 줄로 요약합니다(예: 수정 전·후 이미지 두 장을 한 쌍으로 표시).
   중요한 항목별 선택이나 체크리스트 변경은 그 요약 밖에 유지합니다.
-  템플릿 상용구(HTML 주석, 바뀌지 않은 제목과 체크리스트)는 미리보기에서
+  체크리스트는 항목별 정확한 문구·최종 체크 상태와 환경 대조 결과를 반드시 보여줍니다. 템플릿 상용구(HTML 주석, 바뀌지 않은 제목)는 미리보기에서
   생략하되 발행 본문에는 그대로 보존하고, 정확한 전체 Markdown은
   활성 자료에 유지합니다(자료 규칙이 요구할 때만 `.tigerkit/pr-open.md`에 보관합니다). 전체 본문은
   요청받을 때만 표시합니다. 미리보기 서식은 발행 본문이나 업로드된 이미지 Markdown을 재작성하지 않습니다.
@@ -55,8 +60,27 @@ See the required plan fields in [retrospective stack split](split-to-stack.md).
 - base/head를 제시합니다. 스택이라면 정확한 하위→상위 브랜치와 보존되는 원본 트리 불변 조건도 제시합니다.
 - 유효한 `PR state`를 제시합니다.
 - 검사·근거 상태를 제시합니다.
+- 검토 대상과 발행 후보의 비교 결과, 바뀐 범위의 재검토 결과 또는 허용된 생략 사유를 제시합니다.
+- 원격 행동별 대상·변경·순서와 개별 승인 여부를 제시합니다. 부가 행동이 없으면 `N/A`로 둡니다.
 - 제외 사항과 위험을 제시합니다.
 - 발행 권고 하나를 제시합니다.
 
 `PR evidence requirement/state`가 여전히 `undecided`라면 이 점검 지점에서 구체적인 발행 미리보기 뒤,
 어떤 쓰기보다 앞에 최종 질문 블록에 이미지 선택 사항을 포함합니다. 기존 자료 필드를 유지합니다.
+선택 답변을 반영한 뒤 바뀐 항목과 현재의 최종 자료를 제시하고 별도 발행 확인을 받습니다. 같은 정확한 자료를 이미 승인받았다면 반복하지 않습니다.
+
+<a id="reviewed-publication-target"></a>
+## 검토 대상 대조
+
+최종 발행 확인 전에 발행 입력으로 받은 검토 대상 head/tree와 현재 발행 후보의 head/tree 및 검토 diff 기준을 비교합니다. 입력이 없거나 대상을 입증할 수 없으면 `Unverifiable`로 발행을 보류하고 구현 담당자에게 필요한 근거를 요청합니다. head가 달라도 tree와 diff 기준이 같다고 입증되면 내용 차이 없음으로 기록합니다.
+
+내용이 다르면 `Known exclusions`에 바뀐 범위와 `재검토 실행 | 재검토 생략(사유)`을 제시하여 미결 선택을 해결하고 최종 확인에 반영합니다. 재검토가 필요하면 구현 담당자에게 반환하여 결과를 받은 뒤 새 후보를 대조합니다. 필수 독립 리뷰를 생략 선택이나 테스트·정적 검사로 대체하지 않습니다. 생략은 기존 담당 절차가 허용하는 선택적 검토에만 가능하며, 미검토 범위와 사유를 명시적으로 승인받아도 검토 완료로 표기하지 않습니다. 스택은 원본 검토 트리와 최종 tip의 일치 및 계층별 검증을 함께 보존합니다.
+
+<a id="additional-remote-actions"></a>
+## 부가 원격 행동
+
+관련 티켓이 있는 ready PR에서 사용자가 상태 전이를 요청하거나 포함하기로 선택한 경우에만 준비합니다. draft PR에는 상태 전이를 제안하지 않습니다. PR 생성·업데이트 승인은 트래커 변경 승인이 아니며, 티켓 키가 본문에 있다는 사실도 승인으로 취급하지 않습니다.
+
+행동마다 서비스·계정·프로젝트와 정확한 티켓 대상, 현재 상태, 목표 상태와 사용 가능한 전이 식별자, PR 발행 성공 뒤라는 실행 순서를 기록합니다. 현재 상태와 전이 목록을 해당 서비스의 지원된 읽기 도구로 조회하여 제안을 만들고 항목별 명시적 승인을 받습니다. 상태명이나 전이 ID를 기억·고정값·다른 티켓에서 가져오지 않습니다. 유효한 경로가 여러 개이거나 조회할 수 없으면 추측하지 말고 해당 행동만 미결로 둡니다. 부가 행동을 제외하기로 결정하면 자료에서 제외한 뒤 PR만 확인받을 수 있습니다.
+
+PR의 URL·head·실제 ready 상태와 필수 본문·근거 발행이 성공했음을 검증한 뒤 전이 직전에 대상·현재 상태·전이 목록을 다시 조회합니다. 승인한 목표 상태와 전이 ID가 여전히 적용될 때만 지원된 쓰기 도구로 정확한 전이 하나를 수행하고 결과 상태를 다시 읽습니다. 이미 목표 상태이면 추가 전이 없이 달성 상태를 보고합니다. 대상·현재 상태·전이 경로가 바뀌면 해당 행동을 보류하고 바뀐 제안을 확인받습니다. 응답이 유실되면 재시도 전에 실제 상태를 먼저 조회합니다. PR 생성 실패 시 전이를 실행하지 않으며, 부가 행동 실패로 성공한 PR을 되돌리거나 요청하지 않은 댓글·메시지·다른 상태 변경을 추가하지 않습니다.
