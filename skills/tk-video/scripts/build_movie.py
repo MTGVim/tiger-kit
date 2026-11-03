@@ -448,7 +448,8 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
         raise ValueError('audio_role must be narration or mixed')
     native_audio = bool(animation and source_video["audio_codec"] and kind == ".mp4")
     compact_native_audio = bool(native_audio and (audio_role == 'narration' or
-                                (audio_role is None and source_video['audio_channels'] == 1 and narration_requested)))
+                                (audio_role is None and narration_requested and
+                                 (source_video['audio_channels'] == 1 or bool(tts_receipts)))))
     if animation and source_video["audio_codec"]:
         if audio is not None or scene_voices:
             raise ValueError("embedded audio cannot be combined with another narration track; select one source")

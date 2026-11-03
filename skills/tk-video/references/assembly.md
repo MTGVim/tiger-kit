@@ -73,9 +73,9 @@ Frame, 장면 WAV와 출력은 manifest 디렉터리 안에 둡니다. 출력은
 
 기본 MP4 FPS는 분수 rate와 30 초과 rate를 포함하여 stream에서 가져옵니다. 길이/해상도를 보존합니다. H.264/yuv420p는 홀수 치수를 짝수 픽셀로 채우고 이를 보고합니다. 명시적 `--fps` 변환과 GIF의 10fps/오디오 생략도 보고합니다. 영상은 선택한 CRF로 재인코딩합니다. 바이트 동일/무손실 출력이 아닙니다. Receipt는 `source_video`, 실제 출력 기하/rate/길이와 render 타이밍을 구별합니다.
 
-내장 오디오는 기본적으로 stream copy로 채널을 유지합니다. 단, `narration_requested: true`인 모노 원음이나
-명시적으로 `audio_role: "narration"`으로 확인한 내장 내레이션은 AAC 모노 48kbps로 다시 인코딩합니다.
-스테레오라는 이유만으로 음성이라고 추측하지 않으며 음악·혼합 오디오는 보존합니다.
+내장 오디오는 기본적으로 stream copy로 채널을 유지합니다. `audio_role: "narration"`이면 AAC 모노 48kbps로 다시 인코딩합니다.
+`audio_role`을 생략했을 때는 `narration_requested: true`를 전제로, 원음이 모노이거나 읽고 검증한 `tts_receipts`가 하나 이상 있는 경우에 같은 압축을 적용합니다. 이 조건에서는 Manim이 모노 TTS를 스테레오로 내보내도 내레이션으로 판단합니다.
+채널 수만으로 스테레오를 음성으로 추측하지 않습니다. 음악·효과음이 섞인 오디오는 `audio_role: "mixed"`로 명시하며, 이 값은 내레이션 요청과 TTS receipt보다 우선하여 원음을 보존합니다.
 receipt의 `source_audio_preserved`, `audio_compacted`와 실제 codec·채널·길이를 대조합니다. 추가 `scenes` 내레이션이나 `--audio`는 충돌하여 실패합니다. 오디오 출처 하나를 선택합니다. 내장 오디오가 없으면 측정 장면 offset이나 전체 track을 재사용합니다. 너무 길거나 사용할 수 없는 animation 오디오는 몰래 생략하지 않고 실패합니다. 선택한 내레이션이 무음이거나 자막 범위가 부족하면 계속 실패입니다. TTS 엔진은 import하지 않습니다.
 
 직접 작성하는 설명 MP4는 별도 선택이 없으면 `caption_delivery: hard`를 사용합니다. 저수준 조립기의 animation 대체값 `soft`와 구별하여 manifest에 명시합니다. 명시적 `none | soft | hard` 선택을 보존하고 frame 경로는 기존 기본값을 유지합니다. `caption_style: none`이나 delivery `none`은 track/sidecar를 비활성화하며 내레이션 guard를 비활성화하지 않습니다. 활성화된 delivery와 style `none`을 결합하지 않습니다. Animation 자막은 순서가 있고 겹치지 않으며 측정 길이 안에 있어야 합니다. 화면 텍스트는 TTS 철자가 아니라 원래 표기를 유지합니다.
@@ -189,7 +189,7 @@ macOS에서는 먼저 설치된 FFmpeg의 `subtitles` 필터를 확인합니다.
 ## TTS 고지 게이트
 
 TTS를 사용한 모든 합성 receipt를 실행 소유 폴더로 복사하여 `tts_receipts: ["/absolute/run/tts.json"]`에 전달합니다. 하나라도 `disclosure_required: true`이면 그 receipt의 `disclosure_notice`가 전체 영상에 보이도록 작성합니다. 이는 라이선스가 표시 위치·전 구간을 지정했다는 뜻이 아니라 이 워크플로의 누락 방지 계약입니다. 조립기는 실제로 그리는 callout, hard 자막, 또는 `disclosure_scene: [{start_ms, end_ms, text}]` 선언만 인정합니다. soft/off 자막과 지원 부재로 그리지 못하는 효과는 고지가 아닙니다. 첫·끝의 최대 1초만 허용하며 중간 공백은 허용하지 않습니다. 요구 문구가 빠지거나 잘못된 receipt·구간이면 인코딩 전에 실패합니다.
-장면이 직접 그리면 조립기는 픽셀을 입증하지 못하므로 반환한 `disclosure.notices[].human_action`에 따라 첫·중간·끝 프레임을 직접 확인합니다. 기본 배치는 자막과 떨어진 하단 가는 경계선 아래의 읽을 수 있는 작은 한 줄이며 처음부터 끝까지 유지합니다. 본문보다 낮은 대비를 쓰되 읽을 수 없어서는 안 됩니다. 별도 자동 콜아웃 삽입으로 위치·겹침 점검을 우회하지 않습니다. SRT와 피드백 플레이어에 고지 반복을 강제하지 않습니다.
+장면이 직접 그리면 조립기는 픽셀을 입증하지 못하므로 반환한 `disclosure.notices[].human_action`에 따라 첫·중간·끝 프레임을 직접 확인합니다. 기본 배치는 우하단에 오른쪽으로 정렬한 작은 고지 한 줄이며, 테두리·배경 상자·가로 구분선은 그리지 않습니다. 본문보다 작은 글자와 테마의 보조 회색 글자색을 사용하고, 최종 1080p 출력에서 약 16px·불투명도 0.65를 시작값으로 삼습니다. 다른 해상도에서는 출력 높이에 비례하여 크기를 조정합니다. 본문·자막과 겹치지 않도록 화면 가장자리의 안전 여백을 확보하며 처음부터 끝까지 유지합니다. 본문보다 흐리게 표시하되 실제 디코딩 프레임에서 고지 문구를 읽을 수 없으면 글자 크기나 불투명도를 높입니다. 별도 자동 콜아웃 삽입으로 위치·겹침 점검을 우회하지 않습니다. SRT와 피드백 플레이어에 고지 반복을 강제하지 않습니다.
 
 <a id="feedback-revision-loop"></a>
 ## 피드백을 반영하는 새 판
