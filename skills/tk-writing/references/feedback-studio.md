@@ -1,23 +1,28 @@
 # HTML 전달본의 다건 피드백과 영상
 
 사람에게 전달하는 HTML을 제작했을 때만 읽습니다. 대화 설명에 파일 제작을 추가하는 조건이 아닙니다.
-현재 생성기가 같은 원본에서 검증한 studio를 이미 만들었다면 재사용하고 중복 주입하지 않습니다. ZIP 등 묶음은 studio를 만든 뒤 기본 열람본·원본·필요한 공개 자원을 함께 패키징합니다. 블라인드 산출물에는 비공개 원고 경로를 넣지 않습니다.
+현재 생성기가 같은 원본에서 검증한 studio를 이미 만들었다면 재사용하고 중복 주입하지 않습니다. ZIP 등 묶음은 studio를 만든 뒤 전달본 한 벌과 필요한 공개 자원만 패키징하며 근거 원본·receipt를 포함하지 않습니다. 블라인드 산출물에는 비공개 원고 경로를 넣지 않습니다.
 현재 설치된 `tk-writing`이 후처리 스크립트·편집기·테마 자원을 소유합니다. 원본 HTML과 렌더러의 receipt는 유지합니다.
 
 ```sh
-python3 <tk-writing>/scripts/add_feedback_studio.py --input <page.html> --owner-skill <actual-owner> --source-path <editable-source>
-python3 <tk-writing>/scripts/add_feedback_studio.py --input <page.html> --video <image-block-id>=<movie.mp4>
+python3 <tk-writing>/scripts/add_feedback_studio.py --input <evidence/stem.html> --output <delivery/stem.html> --owner-skill <actual-owner> --source-path <editable-source>
+python3 <tk-writing>/scripts/add_feedback_studio.py --input <evidence/stem.html> --output <delivery/stem.html> --video <image-block-id>=<movie.mp4>
 ```
 
 `--owner-skill`에는 현재 확인한 생성 담당 스킬을, 원고 경로를 알 때는 `--source-path`에 실제 일반 파일을 넘깁니다. 소유자나 원고를 파일명에서 추측하지 않습니다. 복사 결과는 기존 제목·파일·건수·위치 ID·인용·피드백 순서를 유지하며 머리말에 담당 스킬 로드와 원고 수정 → 재생성·검사 → 새 studio 절차를 추가합니다. archify이면 patch explainer를 명시합니다. 원고가 없으면 먼저 찾도록 안내하고 생성 HTML을 직접 편집하지 않습니다. 알 수 없는 원고 경로를 만들어 넣지 않습니다. 복사한 경로·안내는 새 세션의 접근·변경·발행 권한을 추가하지 않습니다.
 
 `html.theme`에서 결정한 생성 기본값은 선택적 `--theme system|light|dark`로 넘깁니다. 저장된 유효한 독자 선택이 우선합니다.
 
-기본 출력은 원본 옆의 `<stem>.studio.html`이며 기본 열람 링크로 안내합니다. `--output`도 원본과 같은
-폴더에 둡니다. 기본은 기존 파일·중복 주입·닫는 body 없음·알 수 없는 영상 ID·이미지 없는 대상을 거부합니다.
-같은 작업의 전달 폴더에서는 번호를 늘리지 않고 원본과 studio를 고정 이름으로 갱신합니다. 이미 승인된
-실행 소유 전달 파일의 교체만 `--replace`로 명시하며 원본을 studio로 덮어쓰지 않습니다. 후보와 원고·receipt는
-실행 폴더의 판별 경로에 보존하고 원본의 검증된 후보가 준비된 뒤 교체합니다. 원본 소유자의 교체 계약을 따릅니다.
+출력은 필수 `--output <delivery/stem.html>`로 지정하며 전달 폴더에는 이 한 벌만 둡니다.
+입력 원본과 receipt는 `.tigerkit/evidence/<skill>/<run-id>/`에 보존합니다. 원본과 출력은 다른 경로여야 하며,
+`--replace`로도 원본을 덮어쓸 수 없습니다. 기본은 기존 파일·중복 주입·닫는 body 없음·알 수 없는 영상 ID·이미지 없는 대상을 거부합니다.
+같은 작업에서는 전달 이름을 고정하고, 이미 승인된 실행 소유 전달 파일의 교체만 `--replace`로 명시합니다.
+새 원본·receipt는 판별 근거 경로에 검증한 뒤 전달본을 갱신합니다. 같은 stem의 페이지와 영상 플레이어가
+충돌하면 `--output`으로 의미 있는 다른 이름을 선택합니다. 기존 두 벌 전달물을 일괄 삭제하지 않습니다.
+입력과 출력 폴더가 달라도 상대 URL을 자동 수정하거나 자원을 복사하지 않습니다. 원본은 가능한 한 내장 자산으로
+생성하고, 허용된 공개 로컬 자원·링크는 전달 위치를 기준으로 준비합니다. 원본 보존 시 해당 자원과의 대응도 근거에
+기록하고 최종 전달 경로에서 링크·이미지·영상·다운로드를 검사합니다. 근거 폴더로 향하는 링크를 전달물에 남기지 않습니다.
+완료 보고는 finalize 통과 원본과 전달 주입본의 실제 정적·상호작용 검사 결과를 나누어 적습니다.
 
 `--video ID=MP4`는 반복 가능하며 지정한 이미지 자리에 같은 폴더나 하위 폴더의 영상만 상대 경로로 둡니다.
 기존 이미지는 poster·인쇄·내보내기·no-JS·영상 없음 때의 대체 그림으로 보존합니다. MP4도 함께 전달합니다.
@@ -26,6 +31,10 @@ python3 <tk-writing>/scripts/add_feedback_studio.py --input <page.html> --video 
 archify의 패널·Ask·드래그 인용은 유지하되 dialog의 단건 Copy question 자리에 `목록에 담기`를 둡니다.
 일반 HTML은 위치 버튼과 드래그 인용 dialog를 제공합니다. 제목·입력 안내·취소와 추천 피드백 네 개는
 한국어로 표시합니다. 목록에서 선택·위치 이동·수정·삭제·선택 복사를 지원하며 모두 지우기는 확인합니다.
+목록 창에는 `이 목록은 이 브라우저에만 저장됩니다. 보내려면 복사해서 전달해 주세요.`를 안내합니다.
+0건이면 우하단 목록 버튼을 숨기고 첫 항목을 담으면 표시합니다. 마지막 항목 삭제나 모두 지우기로 0건이 되면
+목록 창을 닫고 `피드백을 모두 지웠습니다.`를 알립니다. 포커스가 목록이나 버튼에 있으면 본문으로 옮깁니다.
+영상 플레이어의 별도 목록 배치는 이 숨김 규칙을 적용하지 않습니다.
 항목 수정은 제자리 입력·저장·취소이며 Ctrl/⌘+Enter는 IME 확정 뒤 저장하고 Esc는 수정만 취소합니다.
 빈 수정은 거부하고 `지우려면 삭제를 누르세요`라고 안내하며 저장할 때 `edited_at`을 기록합니다.
 QA의 행별 메모는 점검 결과로 유지하며 studio 목록은 `시트 자체에 대한 피드백`으로 구분하여 안내합니다.
@@ -37,7 +46,8 @@ QA의 행별 메모는 점검 결과로 유지하며 studio 목록은 `시트 �
 `window.__feedbackStudio.mode`는 준비 후 `archify` 또는 `generic`이며 판별 대기 중에는 `pending`입니다.
 
 System/Light/Dark 네이티브 라디오와 `archify-theme` 키는 모든 전달 HTML에서 같습니다. archify의 원본
-테마 코드와 receipt는 수정하지 않고 studio에서 기존 버튼에 연동합니다. `file://` 페이지 간 공유는 브라우저
+테마 코드와 receipt는 수정하지 않고 studio에서 기존 버튼에 연동합니다. UI 값은
+[고정 토큰](html-output.md#frozen-delivery-theme)을 사용하며 후속 archify 변경을 추종하지 않습니다. `file://` 페이지 간 공유는 브라우저
 정책에 달려 있으므로 실측 없이 약속하지 않습니다. 새 페이지 버전이 테마·배속을 초기화하지 않습니다.
 
 붙여 넣은 피드백은 위치 ID와 원고의 소유자에서 반영하고 같은 표현·유형을 전체 페이지에서 함께 찾습니다.

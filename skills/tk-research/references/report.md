@@ -23,7 +23,7 @@ HTML 초안을 작성하기 전에 [명확한 글쓰기](../../tk-writing/refere
 
 렌더러 계약에 명시된 archify의 전체 `finalize explainer` 명령을 실행합니다. 최종 파일은 외부 런타임 요청 없이 단독으로 열려야 합니다. 클릭 가능한 출처 링크는 허용됩니다. 최종 바이트와 연결된 후보와 receipt를 보존합니다. 렌더링 후 결론, 주장과 출처 사이의 링크, 수량, ID와 포함 범위를 확인합니다. 렌더러는 사실의 정확성을 입증하지 않습니다. 렌더러가 실패하거나 없거나 필수 상호작용을 지원하지 않으면 보고서가 성공한 것이 아니며, 기존 문서 템플릿으로 대체할 권한도 생기지 않습니다.
 
-전달 전 [공통 피드백 후처리](../../tk-writing/references/feedback-studio.md)에서 `--owner-skill tk-research --source-path <candidate.archify.md>`를 넘겨 `report.studio.html`을 만들고 기본 열람 링크로 안내합니다. 원본·receipt와 최종 studio의 검증 상태를 구분합니다.
+전달 전 [공통 피드백 후처리](../../tk-writing/references/feedback-studio.md)에서 `--owner-skill tk-research --source-path <candidate.archify.md>`를 넘겨 `--input <evidence/report.html> --output <delivery/report.html>`로 피드백 주입본 한 벌을 만들고 열람 링크로 안내합니다. 원본·receipt는 근거 폴더에 보존하고 finalize 통과 원본과 최종 전달본의 검증 상태를 구분합니다.
 
 검증 패널에는 정적·산출물 확인과 화면·동작 확인의 결과를 별도로 포함합니다. `finalize`는 브라우저를 실행하지 않습니다. 사용자가 화면 확인을 요청하거나 중요한 시각·상호작용 불확실성 때문에 확인이 필요하면 `tk-browser-verify`를 사용합니다. 실행하지 않은 확인은 해당하는 이유에 따라 요청되지 않았거나 이용할 수 없었다고 정직하게 보고합니다. 정적 receipt만으로 테마, 키보드, 탐색이나 상호작용의 성공을 주장하지 않습니다.
 

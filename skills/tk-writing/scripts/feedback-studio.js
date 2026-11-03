@@ -54,19 +54,19 @@
 
   // === STYLE: own tokens; follows html[data-theme] (archify, TigerKit pages) and falls back to the OS preference ===
   const css = `
-  .fs-root{--fs-bg:#ffffff;--fs-ink:#0b0b0b;--fs-ink2:#52514e;--fs-line:#dcdbd3;--fs-accent:#2a78d6;--fs-accent-bg:#e8efff;--fs-danger:#c43333;
-    font:14px/1.5 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;color:var(--fs-ink)}
-  @media (prefers-color-scheme: dark){html:not([data-theme="light"]) .fs-root{--fs-bg:#1d1d1b;--fs-ink:#f2f1ec;--fs-ink2:#c4c3bb;--fs-line:#3a3935;--fs-accent:#6aa5ee;--fs-accent-bg:#1e2c40;--fs-danger:#ef6b6b}}
-  html[data-theme="dark"] .fs-root{--fs-bg:#1d1d1b;--fs-ink:#f2f1ec;--fs-ink2:#c4c3bb;--fs-line:#3a3935;--fs-accent:#6aa5ee;--fs-accent-bg:#1e2c40;--fs-danger:#ef6b6b}
+  .fs-root{--fs-bg:#ffffff;--fs-ink:#111318;--fs-ink2:#6a707c;--fs-line:#e5e7eb;--fs-line-strong:#d3d7dd;--fs-accent:#2457d6;--fs-accent-bg:#eaf0fd;--fs-danger:#c4321f;--fs-on-accent:#fff;
+    font:14px/1.5 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "PingFang SC", "Hiragino Sans GB", "Segoe UI", "Microsoft YaHei", "Noto Sans SC", sans-serif;color:var(--fs-ink)}
+  @media (prefers-color-scheme: dark){html:not([data-theme="light"]) .fs-root{--fs-bg:#15171c;--fs-ink:#f1f3f6;--fs-ink2:#8d94a1;--fs-line:#262a31;--fs-line-strong:#343943;--fs-accent:#7aa2ff;--fs-accent-bg:#18223a;--fs-danger:#f2806f;--fs-on-accent:#111318}}
+  html[data-theme="dark"] .fs-root{--fs-bg:#15171c;--fs-ink:#f1f3f6;--fs-ink2:#8d94a1;--fs-line:#262a31;--fs-line-strong:#343943;--fs-accent:#7aa2ff;--fs-accent-bg:#18223a;--fs-danger:#f2806f;--fs-on-accent:#111318}
   .fs-root button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--fs-line);background:var(--fs-bg);color:var(--fs-ink);padding:5px 10px}
   .fs-root button:focus-visible,.fs-root textarea:focus-visible{outline:2px solid var(--fs-accent);outline-offset:2px}
-  .fs-root button.fs-primary{background:var(--fs-accent);border-color:var(--fs-accent);color:#fff}
+  .fs-root button.fs-primary{background:var(--fs-accent);border-color:var(--fs-accent);color:var(--fs-on-accent)}
   .fs-root button.fs-danger{color:var(--fs-danger)}
-  .fs-tray-btn{position:fixed;right:16px;bottom:16px;z-index:2147483000;box-shadow:0 4px 16px rgb(0 0 0/.18);border-radius:999px!important;padding:8px 14px!important;background:var(--fs-accent)!important;color:#fff!important;border:0!important}
+  .fs-tray-btn{position:fixed;right:16px;bottom:16px;z-index:2147483000;box-shadow:0 4px 16px rgb(0 0 0/.18);border-radius:8px!important;padding:8px 14px!important;background:var(--fs-accent)!important;color:var(--fs-on-accent)!important;border:0!important}
   .fs-tray-btn[data-empty="true"]{background:var(--fs-bg)!important;color:var(--fs-ink2)!important;border:1px solid var(--fs-line)!important}
   .fs-drawer{position:fixed;right:16px;bottom:64px;z-index:2147483000;width:min(440px,calc(100vw - 32px));max-height:min(70vh,640px);display:flex;flex-direction:column;
     background:var(--fs-bg);border:1px solid var(--fs-line);border-radius:12px;box-shadow:0 10px 32px rgb(0 0 0/.22)}
-  .fs-drawer[hidden]{display:none}
+  .fs-root [hidden]{display:none!important}
   .fs-drawer header,.fs-drawer footer{display:flex;gap:8px;align-items:center;padding:10px 12px;flex-wrap:wrap}
   .fs-drawer header{border-bottom:1px solid var(--fs-line)} .fs-drawer footer{border-top:1px solid var(--fs-line)}
   .fs-drawer h2{font-size:14px;margin:0;flex:1}
@@ -79,7 +79,7 @@
   .fs-text{white-space:pre-wrap;word-break:break-word}
   .fs-empty{color:var(--fs-ink2);padding:12px 0}
   .fs-hint{font-size:12px;color:var(--fs-ink2)}
-  .fs-float{position:absolute;z-index:2147483000;border-radius:999px!important;padding:3px 10px!important;font-size:12px!important;background:var(--fs-ink)!important;color:var(--fs-bg)!important;border:0!important;box-shadow:0 4px 14px rgb(0 0 0/.18)}
+  .fs-float{position:absolute;z-index:2147483000;border-radius:8px!important;padding:3px 10px!important;font-size:12px!important;background:var(--fs-ink)!important;color:var(--fs-bg)!important;border:0!important;box-shadow:0 4px 14px rgb(0 0 0/.18)}
   .fs-sec-btn{margin-left:8px;font-size:12px!important;padding:1px 8px!important;vertical-align:middle}
   .fs-dialog{width:min(520px,calc(100vw - 32px));padding:0;border-radius:12px;border:1px solid var(--fs-line);background:var(--fs-bg);color:var(--fs-ink)}
   .fs-dialog form{display:flex;flex-direction:column;gap:10px;padding:14px}
@@ -92,7 +92,7 @@
   .fs-chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.fs-chip[aria-pressed="true"]{outline:2px solid var(--fs-accent)}
   /* video in place of an image: the image right after it stays for poster, print/export and no-JS */
   @media screen{.js .fs-vwrap.interactive,.fs-vwrap{display:block!important;margin:0 0 8px}} /* screen only: archify's print rule must still hide it */
-  .fs-vwrap video{width:100%;display:block;border-radius:10px;background:#000}
+  .fs-vwrap video{width:100%;display:block;border-radius:12px;background:#000}
   .fs-vwrap:not([data-missing]) + img{display:none}
   .fs-vwrap[data-missing] video,.fs-vwrap[data-missing] .fs-speed{display:none}
   .fs-speed{display:flex;gap:4px;align-items:center;margin-top:8px;flex-wrap:wrap}
@@ -158,12 +158,30 @@
   // === TRAY: floating counter + drawer with select / jump / delete / copy / clear ===
   const trayBtn = el('button', 'fs-tray-btn'); trayBtn.type = 'button'; trayBtn.setAttribute('aria-expanded', 'false');
   const drawer = el('section', 'fs-drawer'); drawer.hidden = true; drawer.setAttribute('aria-label', LIST_LABEL);
-  drawer.innerHTML = '<header><h2></h2><label class="fs-hint"><input type="checkbox" class="fs-all" checked> 전체 선택</label></header><ul class="fs-list"></ul><footer><button type="button" class="fs-danger fs-clear">모두 지우기</button><span style="flex:1"></span><button type="button" class="fs-primary fs-copy">선택한 피드백 복사</button></footer><p class="fs-hint" style="margin:0;padding:0 12px 10px">문장을 드래그하거나 각 부분의 버튼으로 피드백을 담은 뒤, 한 번에 복사해 에이전트에게 붙여 넣으세요. 이 브라우저에만 저장됩니다.</p>';
+  drawer.innerHTML = '<header><h2></h2><label class="fs-hint"><input type="checkbox" class="fs-all" checked> 전체 선택</label></header><ul class="fs-list"></ul><footer><button type="button" class="fs-danger fs-clear">모두 지우기</button><span style="flex:1"></span><button type="button" class="fs-primary fs-copy">선택한 피드백 복사</button></footer><p class="fs-hint" style="margin:0;padding:0 12px 10px">문장을 드래그하거나 각 부분의 버튼으로 피드백을 담은 뒤, 한 번에 복사해 에이전트에게 붙여 넣으세요. 이 목록은 이 브라우저에만 저장됩니다. 보내려면 복사해서 전달해 주세요.</p>';
   root.append(drawer, trayBtn);
   trayBtn.addEventListener('click', () => { drawer.hidden = !drawer.hidden; trayBtn.setAttribute('aria-expanded', String(!drawer.hidden)); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !e.isComposing && e.keyCode !== 229 && !drawer.hidden && !document.querySelector('dialog[open]')) { drawer.hidden = true; trayBtn.setAttribute('aria-expanded', 'false'); } });
 
+  let hadItems = items.length > 0;
   function render() {
+    const emptied = hadItems && !items.length;
+    const restoreFocus = emptied && (document.activeElement === trayBtn || drawer.contains(document.activeElement));
+    if (!items.length) {
+      drawer.hidden = true;
+      trayBtn.setAttribute('aria-expanded', 'false');
+    }
+    trayBtn.hidden = !items.length;
+    if (restoreFocus) {
+      const target = document.querySelector('main') || document.body;
+      if (!target.hasAttribute('tabindex')) {
+        target.setAttribute('tabindex', '-1');
+        target.addEventListener('blur', () => target.removeAttribute('tabindex'), { once: true });
+      }
+      target.focus({ preventScroll: true });
+    }
+    if (emptied) toast('피드백을 모두 지웠습니다.');
+    hadItems = items.length > 0;
     trayBtn.textContent = items.length ? `피드백 ${items.length}건` : '피드백 0건';
     trayBtn.dataset.empty = String(!items.length);
     drawer.querySelector('h2').textContent = `${LIST_LABEL} ${items.length}건`;

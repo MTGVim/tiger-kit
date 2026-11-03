@@ -154,7 +154,8 @@ python3 <loaded-package>/scripts/make_poster.py --video <unsubtitled-or-main.mp4
 <a id="feedback-player"></a>
 ## 피드백 플레이어
 
-MP4와 SRT sidecar를 만든 뒤 다음 명령으로 영상 옆의 `<stem>.feedback.html`을 만듭니다.
+페이지와 영상의 stem이 같아 HTML 이름이 충돌하면 `--output`으로 다른 이름을 지정합니다. 기존 파일은 기본 거부하며, `--replace`는 승인된 실행 소유 플레이어에만 사용합니다.
+MP4와 SRT sidecar를 만든 뒤 다음 명령으로 영상 옆의 `<stem>.html`을 만듭니다.
 
 ```sh
 python3 <loaded-package>/scripts/make_feedback_player.py --video <out.mp4> --captions <out.srt> --writing-root <tk-writing> --poster <stem>.poster.jpg

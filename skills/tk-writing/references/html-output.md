@@ -3,10 +3,31 @@
 
 이 공통 셸 계약은 특화된 QA, 갤러리, prototype과 시각적 질문 인터페이스에 사용합니다.
 요청한 실시간 상호작용을 포함하여 `tk-explain`과 `tk-research` 페이지는 대신 자체 renderer-contract.md를 사용합니다.
-archify 원본은 보존하고 전달용 studio에는 같은 공통 테마·피드백 계약을 적용합니다.
+archify 원본·receipt는 근거 폴더에 보존하고, 전달 폴더에는 공통 테마·피드백을 적용한 `<stem>.html` 한 벌만 둡니다.
 여기 보관하는 공통 자산은 설명이나 보고서의 대체 렌더러가 아닙니다.
 사람에게 HTML을 전달하기 전에는 [렌더러 계약](renderer-contract.md)의 공통 후처리와
 [피드백 studio](feedback-studio.md)를 적용합니다. 영상 플레이어만 같은 공통 자원을 쓰는 자체 목록을 유지합니다.
+
+<a id="frozen-delivery-theme"></a>
+## 전달 HTML의 고정 토큰
+
+공통 셸·피드백 UI·영상 피드백 플레이어는 archify 3.2.0 explainer의 다음 값을 TigerKit 안에 고정합니다.
+기준은 `tt-a1i/archify@d6059331abbddb49bca380ff46dca8ce33158b04`의 `archify/explainer/reader.css`입니다.
+이후 archify 토큰 변경을 따라 바꾸는 작업이나 동기화 점검·자동 추종 장치를 만들지 않습니다.
+
+| 용도 | 라이트 | 다크 |
+| --- | --- | --- |
+| 페이지 배경 | `#f4f5f7` | `#0c0d10` |
+| 카드·창 배경 | `#ffffff` | `#15171c` |
+| 본문 | `#111318` | `#f1f3f6` |
+| 보조 글자 | `#6a707c` | `#8d94a1` |
+| 구분선 / 강한 구분선 | `#e5e7eb` / `#d3d7dd` | `#262a31` / `#343943` |
+| 강조 / 옅은 강조 배경 | `#2457d6` / `#eaf0fd` | `#7aa2ff` / `#18223a` |
+| 위험 | `#c4321f` | `#f2806f` |
+
+카드·창 모서리는 12px, 컨트롤은 8px입니다. studio 창은 카드 배경을 사용합니다.
+글꼴은 `-apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "PingFang SC", "Hiragino Sans GB", "Segoe UI", "Microsoft YaHei", "Noto Sans SC", sans-serif`를 사용합니다.
+독서 편의를 위해 기존 본문 크기는 유지합니다. 공통 셸 16px, studio 14px, 영상 플레이어 15px이며 archify 본문은 수정하지 않습니다.
 
 이미 검증한 내용을 이용 가능한 적절한 렌더러나 최소한의 의미 기반 HTML로 렌더링합니다.
 외부 자산, 글꼴, framework, 빌드 단계나 런타임 네트워크 요청 없이 인라인 CSS, SVG와 선택적 JavaScript를 포함하는 오프라인 읽기 가능한 HTML 파일 하나를 만듭니다.

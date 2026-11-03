@@ -1,28 +1,28 @@
 :root {
   color-scheme: light;
   --ht-font-scale: 1;
-  --bg: #f4f5f7; --panel: #ffffff; --text: #17191f; --muted: #626977; --line: #e1e4ea;
-  --line-strong: #858d9b; --accent-soft: #eaf0fd; --shadow: 0 1px 2px #17191f06, 0 4px 16px #17191f04;
-  --accent: #2457c5; --good: #187644; --warn: #895000; --bad: #b32636;
+  --bg: #f4f5f7; --panel: #ffffff; --text: #111318; --muted: #6a707c; --line: #e5e7eb;
+  --line-strong: #d3d7dd; --accent-soft: #eaf0fd; --shadow: 0 1px 2px #11131806, 0 4px 16px #11131804;
+  --accent: #2457d6; --good: #187644; --warn: #895000; --bad: #c4321f;
   --code-bg: #f0f2f5; --hover: #f0f2f6; --warn-bg: #fff1ce;
   --font-body: calc(16px * var(--ht-font-scale)); --font-small: calc(14px * var(--ht-font-scale)); --font-h1: calc(28px * var(--ht-font-scale)); --font-h2: calc(21px * var(--ht-font-scale));
   --space: 8px; --radius: 12px; --radius-control: 8px;
-  --font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  --font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "PingFang SC", "Hiragino Sans GB", "Segoe UI", "Microsoft YaHei", "Noto Sans SC", sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --bg: #0e1014; --panel: #171a20; --text: #f1f3f6; --muted: #a2a9b6; --line: #303640;
-    --line-strong: #737d8e; --accent-soft: #202e4b; --shadow: 0 1px 2px #0002, 0 4px 16px #0001;
-    --accent: #8cafff; --good: #68d59c; --warn: #f3c26b; --bad: #ff98a4;
+    --bg: #0c0d10; --panel: #15171c; --text: #f1f3f6; --muted: #8d94a1; --line: #262a31;
+    --line-strong: #343943; --accent-soft: #18223a; --shadow: 0 1px 2px #0002, 0 4px 16px #0001;
+    --accent: #7aa2ff; --good: #68d59c; --warn: #f3c26b; --bad: #f2806f;
     --code-bg: #20242c; --hover: #222731; --warn-bg: #3a2f12;
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0e1014; --panel: #171a20; --text: #f1f3f6; --muted: #a2a9b6; --line: #303640;
-    --line-strong: #737d8e; --accent-soft: #202e4b; --shadow: 0 1px 2px #0002, 0 4px 16px #0001;
-  --accent: #8cafff; --good: #68d59c; --warn: #f3c26b; --bad: #ff98a4;
+  --bg: #0c0d10; --panel: #15171c; --text: #f1f3f6; --muted: #8d94a1; --line: #262a31;
+    --line-strong: #343943; --accent-soft: #18223a; --shadow: 0 1px 2px #0002, 0 4px 16px #0001;
+  --accent: #7aa2ff; --good: #68d59c; --warn: #f3c26b; --bad: #f2806f;
   --code-bg: #20242c; --hover: #222731; --warn-bg: #3a2f12;
 }
 * { box-sizing: border-box; }
@@ -95,7 +95,7 @@ pre { max-width: 100%; overflow-x: auto; }
 .ht-theme-option input:checked + span { background: var(--panel); color: var(--text); box-shadow: inset 0 0 0 1px var(--line-strong), 0 1px 2px #0001; font-weight: 700; }
 .ht-theme-option input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: -3px; }
 .ht-theme-control[hidden] { display:none; }
-.ht-theme-control { margin-inline-start:auto; font:14px/1.3 system-ui,sans-serif; }
+.ht-theme-control { margin-inline-start:auto; font:14px/1.3 var(--font-family, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "PingFang SC", "Hiragino Sans GB", "Segoe UI", "Microsoft YaHei", "Noto Sans SC", sans-serif); }
 .ht-theme-buttons { background:var(--bg, #fafaf8); border-color:var(--line, #aaa); }
 .ht-theme-option > span { color:var(--text, var(--ink, inherit)); }
 .ht-visually-hidden { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Write <page>.studio.html: a single-file explainer page plus N-item feedback and an optional video card.
+"""Write one delivery HTML with N-item feedback and an optional video card.
 
 The original page is never modified. An archify page keeps its finalize receipt bound to the original bytes;
-the studio copy is a new file beside it.
+keep that original and its receipt in the run evidence directory and pass an explicit delivery --output.
 
 Usage:
-  python3 add_feedback_studio.py --input <page.html> [--video <id>=<movie.mp4> ...] [--output <path>]
+  python3 add_feedback_studio.py --input <page.html> [--video <id>=<movie.mp4> ...] --output <delivery/stem.html>
   python3 add_feedback_studio.py --selftest
 
 --video ID=MP4 (repeatable) puts a video where the first image of element ID is: an archify @image block id, or any
@@ -135,7 +135,7 @@ def main(argv=None):
     ap.add_argument("--input")
     ap.add_argument("--video", action="append", default=[], metavar="ID=MP4",
                     help="replace the image in element ID with this video (repeatable)")
-    ap.add_argument("--output", help="default: <stem>.studio.html beside the input")
+    ap.add_argument("--output", help="required delivery path: <stem>.html, separate from the evidence input")
     ap.add_argument("--theme", choices=['system', 'light', 'dark'], help="resolved generation default; saved reader preference takes priority")
     ap.add_argument("--owner-skill", help="verified workflow owner, for example tk-explain or tk-research")
     ap.add_argument("--source-path", help="known editable source file, never inferred from the delivered HTML")
@@ -144,21 +144,19 @@ def main(argv=None):
     a = ap.parse_args(argv)
     if a.selftest:
         return selftest()
+    if not a.output:
+        ap.error("--output is required; preserve the original in evidence and choose a delivery <stem>.html")
     if not a.input or not os.path.isfile(a.input):
         print("--input must be an existing HTML file", file=sys.stderr)
         return 2
     try:
         source = safe_input(a.input)
-        stem, _ = os.path.splitext(source)
-        out = safe_output(a.output or stem + ".studio.html")
+        out = safe_output(a.output)
     except (ValueError, OSError) as e:
         print(str(e), file=sys.stderr)
         return 2
     if os.path.exists(out) and not a.replace:
-        print(f"output exists, choose a new path: {out}", file=sys.stderr)
-        return 2
-    if os.path.dirname(out) != os.path.dirname(os.path.abspath(a.input)):
-        print("studio must stay beside the source HTML to preserve relative resources", file=sys.stderr)
+        print(f"output exists; use --output to choose another name or --replace for an owned delivery: {out}", file=sys.stderr)
         return 2
     if out == source:
         print("studio output cannot replace its source", file=sys.stderr)

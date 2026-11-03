@@ -4,7 +4,7 @@
 The HTML references the video by a relative path and never embeds it, so the page stays small.
 
 Usage:
-  python3 make_feedback_player.py --video <out.mp4> --captions <out.srt> [--output <out.feedback.html>] [--title <text>]
+  python3 make_feedback_player.py --video <out.mp4> --captions <out.srt> [--output <out.html>] [--title <text>]
   python3 make_feedback_player.py --selftest
 
 Exit codes: 0 written / selftest passed, 2 bad input (missing file, existing output, unparsable SRT, video not beside output).
@@ -118,7 +118,7 @@ def main(argv=None):
     ap.add_argument("--video")
     ap.add_argument("--captions")
     ap.add_argument("--poster", help="existing preview JPEG/PNG beside or below the player; no playback offset")
-    ap.add_argument("--output", help="default: <video stem>.feedback.html beside the video")
+    ap.add_argument("--output", help="default: <video stem>.html beside the video")
     ap.add_argument("--title", help="default: video file stem")
     ap.add_argument("--writing-root", help="verified installed tk-writing owner path")
     ap.add_argument("--theme", choices=['system', 'light', 'dark'], help="resolved generation default")
@@ -133,12 +133,12 @@ def main(argv=None):
         video = safe_input(a.video)
         captions = safe_input(a.captions)
         stem = os.path.splitext(os.path.basename(video))[0]
-        out = safe_output(a.output or os.path.join(os.path.dirname(video), stem + ".feedback.html"))
+        out = safe_output(a.output or os.path.join(os.path.dirname(video), stem + ".html"))
     except (ValueError, OSError) as e:
         print(str(e), file=sys.stderr)
         return 2
     if os.path.exists(out) and not a.replace:
-        print(f"output exists, choose a new path: {out}", file=sys.stderr)
+        print(f"output exists; use --output to choose another name or --replace for an owned player: {out}", file=sys.stderr)
         return 2
     if out in (video, captions):
         print("player output cannot replace its video or captions", file=sys.stderr)

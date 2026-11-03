@@ -332,7 +332,11 @@ def render(public, key, theme, mode="gallery", external_key=False):
     return re.sub(r'@@([A-Z_]+)@@', lambda match: values[match[1]], template)
 
 
-def build(manifest_path, output, previous_key=None, theme="system", mode="gallery", delivery="single", answer_key=None):
+def build(manifest_path, output, previous_key=None, theme="system", mode="gallery", delivery="single", answer_key=None, evidence_dir=None):
+    require(evidence_dir is not None, "build requires an explicit evidence directory")
+    delivery_path, evidence_path = Path(output).absolute(), Path(evidence_dir).absolute()
+    require(not (delivery_path.is_relative_to(evidence_path) or evidence_path.is_relative_to(delivery_path)),
+            "evidence and delivery directories must be separate, non-nested paths")
     require(mode in {"gallery", "versus"} and delivery in {"single", "split"}, "invalid mode/delivery")
     require(theme in {"system", "light", "dark"}, "invalid theme")
     require(answer_key in {None, "embedded", "separate"}, "invalid answer key delivery")
@@ -360,7 +364,12 @@ def build(manifest_path, output, previous_key=None, theme="system", mode="galler
                 for link in card.get("links", []):
                     link["href"] = "assets/" + link["href"]
     rendered = render(public, key, theme, mode, external_key)
+    # Validate both new roots before creating either; neither may contain source inputs.
+    for path in (delivery_path, evidence_path):
+        require(path.resolve() == path and not path.exists(), "output/evidence must be new nonsymlink directories")
+        require(not any(Path(x).resolve().is_relative_to(path) for x in inputs), "output/evidence contains an input")
     dest = destination(output, inputs)
+    evidence = destination(evidence_dir, inputs)
     asset_dir = dest / 'assets' if delivery == "split" else dest
     if delivery == "split":
         asset_dir.mkdir()
@@ -368,20 +377,19 @@ def build(manifest_path, output, previous_key=None, theme="system", mode="galler
         (asset_dir / filename).write_bytes(data)
     (dest / 'answer-key.json').write_text(json.dumps(key, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     page_name = 'index.html' if delivery == "split" else 'gallery.html'
-    (dest / page_name).write_text(rendered, encoding='utf-8')
+    original = evidence / page_name
+    original.write_text(rendered, encoding='utf-8')
     # The recipient bundle is created only after the shared delivery copy exists.
     # Private manifest/source paths must not enter a blind evaluator's page.
     postprocessor = PACKAGE.parent / 'tk-writing/scripts/add_feedback_studio.py'
-    studio = subprocess.run([sys.executable, str(postprocessor), '--input', str(dest / page_name),
+    studio = subprocess.run([sys.executable, str(postprocessor), '--input', str(original), '--output', str(dest / page_name),
                              '--owner-skill', 'tk-blind-comparison', '--theme', theme],
                             capture_output=True, text=True)
     if studio.returncode:
-        raise SharedOwnerError('Shared studio generation failed; raw gallery preserved; check tk-writing installation')
-    studio_name = Path(page_name).stem + '.studio.html'
+        raise SharedOwnerError('Shared studio generation failed; raw gallery preserved in evidence; check tk-writing installation')
     if delivery == "split":
         with zipfile.ZipFile(dest / 'comparison.zip', 'w', compression=zipfile.ZIP_DEFLATED) as archive:
             archive.write(dest / page_name, page_name)
-            archive.write(dest / studio_name, studio_name)
             for filename, _ in files:
                 archive.write(asset_dir / filename, 'assets/' + filename)
     return public, key
@@ -528,7 +536,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest='command', required=True)
     b = commands.add_parser('build')
-    b.add_argument('manifest'); b.add_argument('--output', required=True); b.add_argument('--previous-key')
+    b.add_argument('manifest'); b.add_argument('--evidence-dir', required=True, help='new run evidence directory, separate from delivery'); b.add_argument('--output', required=True); b.add_argument('--previous-key')
     b.add_argument('--theme', choices=('system', 'light', 'dark'), default='system')
     b.add_argument('--mode', choices=('gallery', 'versus'), default='gallery')
     b.add_argument('--delivery', choices=('single', 'split'), default='single')
@@ -540,7 +548,7 @@ def main():
     args = parser.parse_args()
     try:
         if args.command == 'build':
-            build(args.manifest, args.output, args.previous_key, args.theme, args.mode, args.delivery, args.answer_key)
+            build(args.manifest, args.output, args.previous_key, args.theme, args.mode, args.delivery, args.answer_key, args.evidence_dir)
         else:
             summary = summarize(read_json(args.ratings), read_json(args.key), blind=args.blind)
             if args.output:
