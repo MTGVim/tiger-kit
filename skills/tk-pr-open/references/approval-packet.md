@@ -14,11 +14,13 @@ PR operation: create | update
 PR state: draft | ready
 Base
 Original head ref + SHA + tree
+Local commit (when needed): exact paths/diff + parent HEAD + message + verification + approval + resulting head/tree
 Template source/compliance
 Template checklist: exact item + checked/unchecked + required/observed environment + evidence/limitation
 PR evidence requirement/state
 Evidence manifest entries/paths
 Reviewed head/tree + diff basis + coverage/evidence (publication input)
+Review requirement/basis + reviewed | no review performed | missing review evidence
 Publication candidate head/tree + comparison with reviewed target
 Known exclusions: unreviewed delta + re-review result | optional omission reason/approval
 Remote actions: operation + exact target + proposed change + order + explicit approval
@@ -60,6 +62,7 @@ See the required plan fields in [retrospective stack split](split-to-stack.md).
 - base/head를 제시합니다. 스택이라면 정확한 하위→상위 브랜치와 보존되는 원본 트리 불변 조건도 제시합니다.
 - 유효한 `PR state`를 제시합니다.
 - 검사·근거 상태를 제시합니다.
+- 로컬 커밋 분기를 사용했다면 승인한 경로·메시지와 실행 결과 head/tree를 제시합니다. 로컬 커밋 승인과 원격 행동 승인을 구분합니다.
 - 검토 대상과 발행 후보의 비교 결과, 바뀐 범위의 재검토 결과 또는 허용된 생략 사유를 제시합니다.
 - 원격 행동별 대상·변경·순서와 개별 승인 여부를 제시합니다. 부가 행동이 없으면 `N/A`로 둡니다.
 - 제외 사항과 위험을 제시합니다.
@@ -69,10 +72,25 @@ See the required plan fields in [retrospective stack split](split-to-stack.md).
 어떤 쓰기보다 앞에 최종 질문 블록에 이미지 선택 사항을 포함합니다. 기존 자료 필드를 유지합니다.
 선택 답변을 반영한 뒤 바뀐 항목과 현재의 최종 자료를 제시하고 별도 발행 확인을 받습니다. 같은 정확한 자료를 이미 승인받았다면 반복하지 않습니다.
 
+<a id="local-publication-commit"></a>
+## 발행 전 로컬 커밋
+
+같은 세션에서 이미 구현·검증한 관련 미커밋 변경만 있을 때 읽습니다. 현재 저장소·브랜치·부모 `HEAD`, staged/unstaged/untracked 전체 경로와 diff를 조사하여 작업 소유권과 기존 검증의 대응을 입증합니다. rename·삭제·새 파일·파일 모드도 범위에 포함합니다. 무관한 변경, 미해결 충돌이나 진행 중인 merge/rebase 등 Git 작업이 있으면 `Blocked`로 보존하고 구현 담당자에게 반환합니다. 아직 필요한 구현·검증이 남아 있으면 이 분기에서 대신 수행하지 않습니다.
+
+승인 자료에 `로컬 커밋` 행동으로 정확한 경로 목록·전체 후보 diff·부모 `HEAD`·커밋 메시지·검증 근거를 제시합니다. 같은 작업의 유효한 로컬 커밋 승인이 이 정확한 범위를 포함하면 재사용하고, 없으면 해당 로컬 행동만 명시적으로 승인받습니다. PR 호출이나 원격 발행 의도만으로 커밋을 추론하지 않습니다. 원격 발행의 최종 확인은 실제 커밋 결과를 얻은 뒤에 받으므로, 이 단계의 승인을 원격 쓰기에 사용하지 않습니다.
+
+승인 뒤 stage하기 전에 저장소·브랜치·부모 `HEAD`와 경로별 현재 내용·전체 작업 상태가 승인 자료와 같고 진행 중인 Git 작업이 없음을 다시 확인합니다. 불일치하면 변경하지 않고 보류합니다. 정확한 경로만 stage하며 전체 stage나 `commit -a`로 범위를 넓히지 않습니다. staged 전체 경로·diff가 승인된 후보와 같고 검증 근거가 그 전체 후보를 다룸을 확인한 뒤 `git write-tree`로 예상 tree를 고정합니다. 커밋 직전에도 저장소·브랜치·부모 `HEAD`가 승인 값 그대로인지 재확인하고, 불일치하면 stage 결과를 보존한 채 보류합니다. 일치할 때만 저장소의 정상 commit·hook·서명 절차로 커밋 하나를 만듭니다. hook·서명 요건을 끄거나 우회하지 않습니다.
+
+커밋 뒤 실제 부모·메시지·변경 경로·head/tree가 승인 내용과 고정한 tree에 맞는지, 추적·미추적·staged 상태에 예상하지 못한 변경이 없는지 확인합니다. hook이 후보를 수정했거나 실패·불확실성이 있으면 원격 쓰기를 보류하고 실제 결과를 보존합니다. 자동 amend·reset이나 구현 수정으로 맞추지 않습니다. 성공하면 승인 자료에 실제 head/tree를 기록하고 그 commit을 입력으로 사전 점검·검토 대상 대조·최종 발행 확인을 계속합니다. 예상 SHA를 최종 head로 미리 확정하지 않습니다.
+
 <a id="reviewed-publication-target"></a>
 ## 검토 대상 대조
 
-최종 발행 확인 전에 발행 입력으로 받은 검토 대상 head/tree와 현재 발행 후보의 head/tree 및 검토 diff 기준을 비교합니다. 입력이 없거나 대상을 입증할 수 없으면 `Unverifiable`로 발행을 보류하고 구현 담당자에게 필요한 근거를 요청합니다. head가 달라도 tree와 diff 기준이 같다고 입증되면 내용 차이 없음으로 기록합니다.
+최종 발행 확인 전에 적용되는 저장소·사용자 지침과 구현 담당 절차의 리뷰 요구를 확인합니다. 검토 대상 입력이 있으면 head/tree와 현재 발행 후보의 head/tree 및 검토 diff 기준을 비교합니다. head가 달라도 tree와 diff 기준이 같다고 입증되면 내용 차이 없음으로 기록합니다.
+
+입력이 없으면 리뷰를 수행하지 않은 경우와 수행했지만 대상 근거가 누락된 경우를 구분합니다. 리뷰가 필수가 아니고 실제로 수행하지 않았음이 확인되면 `검토 입력 없음, 미검토 범위 = 전체 base...HEAD diff`와 그 기준 base/head/tree·리뷰 요구의 근거를 `Known exclusions`에 적습니다. 그 미검토 범위를 사용자에게 제시하고 명시적으로 승인받은 뒤에만 발행할 수 있으며, 검토 완료로 표기하지 않습니다. 이 승인은 검토 입력이 없다는 사실과 전체 미검토 범위를 포함해야 하며 일반 PR 요청에서 추론하지 않습니다.
+
+검토 대상 입력이 없는데 리뷰가 필수이거나, 리뷰 요구·수행 여부를 확인할 수 없거나, 수행한 리뷰의 대상 근거가 누락·불명확하면 `Unverifiable`로 발행을 보류합니다. 필수 리뷰를 완료하고 유효한 대상 근거가 있는 경우에는 위의 정상 대조 경로를 따릅니다. 보류할 때는 필요한 base/head/tree와 미충족 범위를 명시하고 구현 담당자의 기존 리뷰 절차로 돌아가거나 그 정확한 대상으로 `/tk-review`를 요청하도록 안내합니다. 이 스킬이 리뷰를 자동 호출하지 않으며, 테스트·정적 검사나 생략 승인으로 필수 독립 리뷰를 대신하지 않습니다.
 
 내용이 다르면 `Known exclusions`에 바뀐 범위와 `재검토 실행 | 재검토 생략(사유)`을 제시하여 미결 선택을 해결하고 최종 확인에 반영합니다. 재검토가 필요하면 구현 담당자에게 반환하여 결과를 받은 뒤 새 후보를 대조합니다. 필수 독립 리뷰를 생략 선택이나 테스트·정적 검사로 대체하지 않습니다. 생략은 기존 담당 절차가 허용하는 선택적 검토에만 가능하며, 미검토 범위와 사유를 명시적으로 승인받아도 검토 완료로 표기하지 않습니다. 스택은 원본 검토 트리와 최종 tip의 일치 및 계층별 검증을 함께 보존합니다.
 
