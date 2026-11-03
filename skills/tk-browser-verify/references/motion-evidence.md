@@ -50,16 +50,42 @@ headless/제공자 선택, 인증, 안전한 입력, 승인된 데이터 변경 
 이 메타데이터를 얻을 수 없으면 일반 동영상으로는 보고할 수 있으나 `mode: evidence` 프레임
 manifest를 만들어 `tk-video`에 넘기지는 않습니다. 정밀 캡처는 `Unverifiable`로 구분합니다.
 
-CLI 기본 녹화가 계약을 입증하지 못하면 같은 세션의 공식 `run-code`에서 Chromium
-`page.context().newCDPSession(page)` 지원을 실제 확인합니다. 지원되면 아래 screencast 계약을
-같은 페이지에서 수행하고 `finally`에서 stop·리스너 제거·detach를 보장합니다. Node 파일시스템을
-가정하지 않고 승인된 호스트 저장 경로로 프레임을 안전하게 보존할 수 있는지도 확인합니다.
-장시간 이벤트/바이트 전달이 불가능하면 그 한계를 보고합니다. Playwright 라이브러리의 CDP Session은
-이미 승인된 동일 브라우저/페이지를 사용할 수 있을 때만 대안이며, 이를 위해 라이브러리나 Puppeteer를
-추가하거나 두 번째 브라우저를 실행하지 않습니다. 기존 특수 CDP 경로를 명시적으로 선택한 경우에만
-최소 기존 수집기를 유지합니다. 지원 여부를 추정하여 일반 검증을 중단하지 않습니다.
+CLI 기본 녹화가 이 계약을 입증하지 못하면 같은 세션의 공식 `run-code`를 사용합니다.
+CLI `0.1.23`과 Playwright `1.65.0-alpha-2026-10-30`에서는 Chromium의
+`page.context().newCDPSession(page)`로 이벤트·원본 PNG·시각·ack를 실제 수집했습니다.
+`require`·`process`·`module`·동적 import는 허용되지 않았지만 공개 API와 제한된 크기의
+JSON/base64 반환은 작동했습니다. Node 파일시스템의 부재를 장기 이벤트 수집 불가로 해석하지 않습니다.
 
-이미 선택한 CDP 지원 제공자에서는 `Page.startScreencast`(PNG/JPEG, 지원되는 `everyNthFrame: 1`)를 사용하고
+이 패키지의 [정밀 캡처 도우미](../scripts/capture_motion.py)는 **이미 열린 실행 소유 named session**에서
+승인된 `async (page) => ...` 시나리오를 한 번 실행합니다. 설치된 공식 CLI의
+`--raw run-code --filename=<file>`을 호출하고, 호스트에서 원본·메타데이터·manifest를 새 ignored 근거 디렉터리에
+배타적으로 씁니다. 브라우저 시작·endpoint 연결·Node 모듈·별도 MCP·다른 제공자를 요구하지 않습니다.
+CLI·시나리오 파일·이미 존재하는 부모 경로는 호출자가 먼저 확인합니다.
+
+```bash
+python3 <installed-tk-browser-verify>/scripts/capture_motion.py \
+  --cli "$PLAYWRIGHT_CLI" --session "$OWNED_SESSION" \
+  --scenario "$APPROVED_SCENARIO" --output-dir "$NEW_EVIDENCE_DIRECTORY"
+```
+
+기본 제한은 15초·600프레임·base64 32MiB이며 유한한 한도 안에서만 명시적으로 조정합니다.
+전체 JSON·원래 시각·프레임 순서·PNG·ack·캡처 종료와 stop/리스너 제거/detach를 검증합니다.
+원본 이벤트와 같은 브라우저의 `Performance.getMetrics` 시계로 시작·종료를 관찰하고,
+종료 경계 뒤의 이벤트는 원시 근거에 보존하되 manifest에서 제외합니다.
+시나리오 코드가 수행하는 모든 동작과 비동기 작업을 반드시 await하고, helper가 반환한 값으로만
+시나리오 종료를 추정하지 않습니다. deadline·예산 오류의 `Promise.race`는 원래 시나리오를
+취소하지 않으므로, **실패·호스트 중단에는 해당 소유 세션을 닫고** close receipt를 보존합니다.
+정리 실패 시 다음 캡처를 시작하지 말고 정확한 PID·프로필·리스너를 확인합니다.
+성공하면 같은 페이지를 유지하며 호출자가 사용 종료 시 소유 세션을 닫습니다. 실패한 실행에는
+manifest를 발행하지 않습니다. 기존 출력 재사용·비격리·headed·attached·기본 세션은 거부합니다.
+
+설치 버전에서 실제 실패하면 정확한 시도와 재개 조건을 보고하고 그 미디어만 제한합니다.
+이미 승인된 동일 브라우저·페이지의 라이브러리 CDP Session은 별도로 선택된 경우에만 검토하며,
+이를 위해 Puppeteer·추가 브라우저를 설치하거나 실제 변경 시나리오를 반복하지 않습니다.
+다음 원래 시각 API 자체는 일반 녹화가 제공하지 않는 메타데이터 때문에 유지합니다.
+이는 직접 socket/pipe 수집기나 Chrome DevTools MCP를 새로 요구한다는 뜻이 아닙니다.
+
+선택한 같은 페이지의 CDP Session에서 `Page.startScreencast`(PNG/JPEG, 지원되는 `everyNthFrame: 1`)를 사용하고
 `Page.screencastFrame`을 수신하며, 각 이벤트를 해당 `sessionId`와 함께
 `Page.screencastFrameAck`로 신속하게 확인 응답합니다. 프레임·메타데이터를 안전하게 수신한 뒤
 ack를 보내며, 무거운 디코딩·후처리로 ack를 막아 캡처를 지연시키지 않습니다. 모든 종료 경로에서 screencast를 중지합니다.
@@ -93,7 +119,8 @@ PNG를 우선하며, 추가 손실 변환을 피합니다. 선택된 경우에�
 
 소유한 근거 실행에 순서 있는 캡처 manifest를 씁니다. `mode: evidence`, 절대 PNG/JPEG `path`와
 0에서 시작하는 `timestamp_ms`가 있는 `frames`, 마지막 프레임 뒤의 `end_ms`를 포함합니다.
-밀리초 변환 전에 원래 이벤트 시간으로 정렬합니다. 반올림 후 같은 밀리초의 프레임은 결정적으로
+밀리초 변환 전에 원래 이벤트의 도착 순서에서 역행·불연속을 먼저 검사하고, 이를 정렬로 숨기지 않습니다.
+반올림 후 같은 밀리초의 프레임은 결정적으로
 합치고(마지막 관찰 상태를 유지), 타임스탬프가 엄격하게 증가하는지 검증하며 최종 프레임 뒤의
 실제 종료를 보존합니다. 시간을 만들어 내거나 시계 불연속을 숨기지 않습니다. 순서를 확립할 수
 없으면 보고하고 중단합니다. 인계에 승인된 자막과 캡처 식별 정보를 포함합니다. 제공자가 실제

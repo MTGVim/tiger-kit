@@ -48,9 +48,19 @@ SortableJS와 네이티브 HTML Drag & Drop에 먼저 CLI `drag <startRef> <endR
 같은 세션의 공식 `run-code`에서 `locator.dragTo` 또는 실제 `page.mouse` 이동/누르기/떼기를
 검증합니다. DOM 순서 변경이나 합성 drag 이벤트를 실제 입력 성공으로 계산하지 않습니다.
 다른 제공자를 명시했다면 CLI를 실행하지 않고 해당 제공자의 입력·관찰 경계를 유지합니다.
-같은 최소 사례에서 실패가 재현되고 필요한 기능이 확인된 경우에만 명시적으로 선택한 특수 CDP
-경로의 `Input.setInterceptDrags`·`Input.dispatchDragEvent`를 검토합니다. 일반 drag를 이유로
-자동 CDP 연결·브라우저 추가 실행·시나리오 재생을 하지 않습니다. 실패 근거와 미검증 상태를 유지합니다.
+같은 최소 사례에서 모두 실패했다면 실패한 입력·기하·최종 상태·요청을 보존하고 해당 drag를
+`Unverifiable`로 남깁니다. 이 실패만으로 직접 CDP 연결·별도 MCP·브라우저 추가 실행이나
+실제 변경 시나리오 재생을 허용하지 않습니다. 별도 경로는 구체적인 기능 공백과 정확한 승인을
+확인한 뒤에만 검토합니다. 일반 drag에 직접 프로토콜 명령을 요구하지 않습니다.
+
+2026-11-03의 `@playwright/cli@0.1.23` / Playwright `1.65.0-alpha-2026-10-30` /
+Chrome `156.0.8078.74` 로컬 fixture에서 SortableJS `1.15.6`과 네이티브 HTML Drag & Drop을
+각각 검증했습니다. CLI `drag`, 같은 세션 `locator.dragTo`와 실제 `page.mouse` 입력 모두
+Sortable 순서 `[a,b,c] → [b,c,a]`, native drop 값 `local-item`, 각 POST 본문과 성공 응답을
+확인했습니다. 기존 intercepted CDP 비교도 실제 `dragIntercepted`의 DragData를 받아 두 fixture의
+같은 최종 상태와 POST/200 응답을 통과했습니다. 단순 CDP mouse 비교에서는 Sortable이 `[b,a,c]`여서
+실패했으므로 이를 CDP 자체의 불가능성으로 해석하지 않습니다. CLI 경로가 필요한 상태와 요청을
+모두 충족했기 때문에 일반 drag의 직접 CDP 지침을 제거합니다. 이 표본은 임의의 drag 구현에 대한 보장이 아닙니다.
 
 headless 모드에서 신뢰 키보드 선택을 무시하는 닫힌 네이티브 `<select>`에는 문서화한 입력 한계의
 대응으로만 제공자의 옵션 선택 또는 `change` 전달을 사용합니다. 결과 요청과 UI 상태를 독립적으로
