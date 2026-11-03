@@ -50,3 +50,5 @@ metadata:
 
 승인된 산출물 쓰기, checkout/전송/제외 설정 또는 임시 입력 소비 전에 [산출물 경로](../tk-artifacts/references/artifact-paths.md)를 읽습니다. 저장소 임시 자원에는 안전한 소유 경로로서 symlink가 아닌 경로와 입증된 Git 제외를 사용합니다. 점검에 실패하면 해당 파일 분기를 중단합니다. 명시적인 최종 목적지와 소유자별 기본값을 보존합니다. 미리 채워진 입력은 완성된 입력이 아닙니다.
 정리는 기록된 literal로서 해석이 완료된 실행 소유 절대 경로만 대상으로 하며 cwd 상대 경로나 glob은 사용하지 않습니다.
+
+갤러리 builder가 현재 원본에서 studio를 생성하고 split ZIP에 포함하므로 이를 다시 중복 주입하지 않습니다. 기본 링크는 single의 `gallery.studio.html`, split의 `index.studio.html`이며 정답 키를 별도 보존합니다. HTML을 사람에게 전달할 때는 현재 설치된 `tk-writing`의 [공통 피드백 후처리](../tk-writing/references/feedback-studio.md)를 적용하고 studio를 기본 열람본으로 안내합니다. 원본·기존 전용 인터페이스·검증 의무를 유지합니다.

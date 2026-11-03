@@ -3,8 +3,10 @@
 
 이 공통 셸 계약은 특화된 QA, 갤러리, prototype과 시각적 질문 인터페이스에 사용합니다.
 요청한 실시간 상호작용을 포함하여 `tk-explain`과 `tk-research` 페이지는 대신 자체 renderer-contract.md를 사용합니다.
-해당 페이지의 테마는 Archify가 담당하며 TigerKit `html.theme`을 읽지 않습니다.
+archify 원본은 보존하고 전달용 studio에는 같은 공통 테마·피드백 계약을 적용합니다.
 여기 보관하는 공통 자산은 설명이나 보고서의 대체 렌더러가 아닙니다.
+사람에게 HTML을 전달하기 전에는 [렌더러 계약](renderer-contract.md)의 공통 후처리와
+[피드백 studio](feedback-studio.md)를 적용합니다. 영상 플레이어만 같은 공통 자원을 쓰는 자체 목록을 유지합니다.
 
 이미 검증한 내용을 이용 가능한 적절한 렌더러나 최소한의 의미 기반 HTML로 렌더링합니다.
 외부 자산, 글꼴, framework, 빌드 단계나 런타임 네트워크 요청 없이 인라인 CSS, SVG와 선택적 JavaScript를 포함하는 오프라인 읽기 가능한 HTML 파일 하나를 만듭니다.
@@ -97,9 +99,9 @@ explain/explain-diff에서는 요지 뒤에, research에서는 요약 뒤에, te
 prototype 비교에서는 기존 제품/설계 참조 토큰이 계속 우선합니다. 그런 기반이 없는 독립형 출력에는 이 중립적 기본값을 사용합니다.
 처음에는 숨겨진 `fieldset[data-ht-theme-control]`에 `legend`와 `ht-theme`이라는 이름의 네이티브 라디오 입력 세 개를 추가하고,
 값은 순서대로 `system`, `light`, `dark`를 사용합니다.
-접근 가능한 이름, 호버 제목과 aria-hidden SVG가 있는 40px SVG/이모지 선택지를 사용합니다.
+System/Light/Dark라는 글자가 보이는 분할 선택 버튼을 사용합니다. 공통 스크립트가 기존 아이콘 마크업도 이 형태로 정규화합니다.
 네이티브 Tab/방향키 의미와 시각적으로 숨긴 레이블 텍스트를 유지합니다. 기능이 작동할 때만 그룹을 표시합니다.
-각 `.ht-theme-option`에는 라디오 입력 바로 다음에 아이콘과 접근 가능한 레이블을 담은 비어 있지 않은 `<span>`이 있어야 합니다.
+각 `.ht-theme-option`에는 라디오 입력 바로 다음에 보이는 선택지 이름을 담은 비어 있지 않은 `<span>`이 있어야 합니다.
 공통 CSS는 그 span에만 스타일을 적용합니다.
 
 공통 script는 테마 그룹 바로 왼쪽에 네이티브 `글자 크기` select를 추가하고 이를 `.ht-reader-controls`로 감쌉니다.
@@ -144,7 +146,9 @@ TigerKit 독립형 HTML 산출물을 쓰기 전에 `${XDG_CONFIG_HOME:-~/.config
 결정한 생성 기본값을 `html[data-default-theme]`에 넣습니다.
 `light`나 `dark`이면 같은 값을 `html[data-theme]`에도 넣어 첫 화면이 운영체제 테마나 JavaScript에 의존하지 않게 합니다.
 `system`이면 `data-theme`을 생략합니다.
-`tigerkit-html-theme`에 이미 저장된 유효한 브라우저 선호는 명시적 독자 선택이며 런타임에서 생성 기본값보다 우선합니다.
+`archify-theme`에 이미 저장된 유효한 브라우저 선호는 명시적 독자 선택이며 런타임에서 생성 기본값보다 우선합니다.
+이전 `tigerkit-html-theme`·`video-feedback:theme`의 유효한 값은 공통 키가 없을 때만 읽어 이전합니다.
+저장 키를 공유해도 `file://` 파일 간이나 브라우저 간의 동일 저장소 범위를 보장하지 않습니다.
 브라우저 저장소를 이용할 수 없으면 생성 기본값을 유지하고 모든 테마 제어를 사용할 수 있게 합니다.
 
 시스템 선호 CSS와 수동 재정의를 포함하여 공통 light/dark 토큰과 `color-scheme`을 보존합니다.

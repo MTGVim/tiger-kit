@@ -84,15 +84,22 @@ pre { max-width: 100%; overflow-x: auto; }
 .ht-table-scroll table { width: 100%; border-collapse: collapse; }
 .ht-table-scroll th, .ht-table-scroll td { text-align: left; vertical-align: top; padding: var(--space); border-bottom: 1px solid var(--line); font-size: var(--font-body); }
 .ht-table-scroll th[scope="row"] { min-width: 8em; overflow-wrap: normal; }
+/* theme-control:start */
 .ht-theme-control { min-inline-size: 0; width: max-content; max-width: 100%; margin: 0; padding: 0; border: 0; font-size: var(--font-body); }
 .ht-theme-label { padding: 0; }
-.ht-theme-buttons { display: grid; grid-template-columns: repeat(3, 40px); gap: 2px; padding: 3px; width: max-content; min-width: 0; max-width: 100%; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); }
+.ht-theme-buttons { display: grid; grid-template-columns: repeat(3, minmax(0, auto)); gap: 2px; padding: 3px; width: max-content; min-width: 0; max-width: 100%; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); }
 .ht-theme-option { position: relative; min-width: 0; cursor: pointer; }
 .ht-theme-option input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-.ht-theme-option > span { display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 40px; padding: 6px; border-radius: var(--radius-control); background: transparent; color: var(--muted); white-space: nowrap; }
+.ht-theme-option > span { display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 40px; padding: 6px 10px; border-radius: var(--radius-control); background: transparent; color: var(--muted); white-space: nowrap; }
 .ht-theme-option:hover span { background: var(--hover); }
 .ht-theme-option input:checked + span { background: var(--panel); color: var(--text); box-shadow: inset 0 0 0 1px var(--line-strong), 0 1px 2px #0001; font-weight: 700; }
 .ht-theme-option input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: -3px; }
+.ht-theme-control[hidden] { display:none; }
+.ht-theme-control { margin-inline-start:auto; font:14px/1.3 system-ui,sans-serif; }
+.ht-theme-buttons { background:var(--bg, #fafaf8); border-color:var(--line, #aaa); }
+.ht-theme-option > span { color:var(--text, var(--ink, inherit)); }
+.ht-visually-hidden { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+/* theme-control:end */
 .ht-token { white-space: nowrap; overflow-wrap: normal; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }

@@ -92,15 +92,22 @@ pre { max-width: 100%; overflow-x: auto; }
 .ht-table-scroll table { width: 100%; border-collapse: collapse; }
 .ht-table-scroll th, .ht-table-scroll td { text-align: left; vertical-align: top; padding: var(--space); border-bottom: 1px solid var(--line); font-size: var(--font-body); }
 .ht-table-scroll th[scope="row"] { min-width: 8em; overflow-wrap: normal; }
+/* theme-control:start */
 .ht-theme-control { min-inline-size: 0; width: max-content; max-width: 100%; margin: 0; padding: 0; border: 0; font-size: var(--font-body); }
 .ht-theme-label { padding: 0; }
-.ht-theme-buttons { display: grid; grid-template-columns: repeat(3, 40px); gap: 2px; padding: 3px; width: max-content; min-width: 0; max-width: 100%; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); }
+.ht-theme-buttons { display: grid; grid-template-columns: repeat(3, minmax(0, auto)); gap: 2px; padding: 3px; width: max-content; min-width: 0; max-width: 100%; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); }
 .ht-theme-option { position: relative; min-width: 0; cursor: pointer; }
 .ht-theme-option input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-.ht-theme-option > span { display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 40px; padding: 6px; border-radius: var(--radius-control); background: transparent; color: var(--muted); white-space: nowrap; }
+.ht-theme-option > span { display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 40px; padding: 6px 10px; border-radius: var(--radius-control); background: transparent; color: var(--muted); white-space: nowrap; }
 .ht-theme-option:hover span { background: var(--hover); }
 .ht-theme-option input:checked + span { background: var(--panel); color: var(--text); box-shadow: inset 0 0 0 1px var(--line-strong), 0 1px 2px #0001; font-weight: 700; }
 .ht-theme-option input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: -3px; }
+.ht-theme-control[hidden] { display:none; }
+.ht-theme-control { margin-inline-start:auto; font:14px/1.3 system-ui,sans-serif; }
+.ht-theme-buttons { background:var(--bg, #fafaf8); border-color:var(--line, #aaa); }
+.ht-theme-option > span { color:var(--text, var(--ink, inherit)); }
+.ht-visually-hidden { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+/* theme-control:end */
 .ht-token { white-space: nowrap; overflow-wrap: normal; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
@@ -833,34 +840,73 @@ html:has(:is(.ht-document, [data-ht-document])) { --ht-anchor-offset: 7rem; scro
   else start();
 })();
 
+// theme-control:start
 (() => {
-  const control = document.querySelector('[data-ht-theme-control]');
-  if (!control) return;
-  const inputs = [...control.querySelectorAll('input[name="ht-theme"]')];
-  if (!inputs.length) return;
-  const root = document.documentElement;
-  const key = 'tigerkit-html-theme';
-  const valid = value => ['system', 'light', 'dark'].includes(value);
-  const configuredValue = root.getAttribute('data-default-theme');
-  const configured = valid(configuredValue) ? configuredValue : 'system';
-  const apply = value => {
-    if (value === 'system') root.removeAttribute('data-theme');
-    else root.setAttribute('data-theme', value);
-    for (const input of inputs) input.checked = input.value === value;
-  };
-  let saved = configured;
-  try { const value = localStorage.getItem(key); if (valid(value)) saved = value; } catch {}
-  apply(saved);
-  for (const input of inputs) {
-    input.addEventListener('change', () => {
+  if (window.__tigerkitTheme) return;
+  const start = () => {
+    if (window.__tigerkitTheme) return;
+    const root = document.documentElement;
+    const legacy = [...document.querySelectorAll('button[data-theme-choice]')];
+    let control = document.querySelector('[data-ht-theme-control]');
+    if (!control) {
+      control = document.createElement('fieldset');
+      control.className = 'ht-theme-control interactive';
+      control.setAttribute('data-ht-theme-control', '');
+      control.innerHTML = '<legend class="ht-theme-label ht-visually-hidden">테마</legend><div class="ht-theme-buttons"></div>';
+      const old = legacy[0]?.closest('.theme-controls');
+      if (old) { old.before(control); old.hidden = true; old.style.display = 'none'; }
+      else {
+        let host = document.querySelector('.ht-topbar,.masthead,body > header');
+        if (!host) { host = document.createElement('header'); document.body.prepend(host); }
+        host.append(control);
+      }
+    }
+    const labels = {system: 'System', light: 'Light', dark: 'Dark'};
+    let box = control.querySelector('.ht-theme-buttons');
+    if (!box) { box = document.createElement('div'); box.className = 'ht-theme-buttons'; control.append(box); }
+    box.replaceChildren();
+    for (const value of ['system', 'light', 'dark']) {
+      const label = document.createElement('label'); label.className = 'ht-theme-option';
+      const input = document.createElement('input'); input.type = 'radio'; input.name = 'ht-theme'; input.value = value;
+      input.setAttribute('aria-label', labels[value]);
+      const text = document.createElement('span'); text.textContent = labels[value];
+      label.append(input, text); box.append(label);
+    }
+    const inputs = [...box.querySelectorAll('input')], key = 'archify-theme';
+    const valid = value => ['system', 'light', 'dark'].includes(value);
+    const normalize = value => value === 'auto' ? 'system' : value;
+    const configured = normalize(root.dataset.defaultTheme || 'system');
+    const apply = value => {
+      value = valid(value) ? value : 'system';
+      const button = legacy.find(x => normalize(x.dataset.themeChoice) === value);
+      if (button) button.click();
+      else if (value === 'system') root.removeAttribute('data-theme');
+      else root.setAttribute('data-theme', value);
+      for (const input of inputs) input.checked = input.value === value;
+    };
+    let saved = valid(configured) ? configured : 'system';
+    try {
+      for (const name of [key, 'tigerkit-html-theme', 'video-feedback:theme']) {
+        const value = normalize(localStorage.getItem(name));
+        if (valid(value)) { saved = value; if (name !== key) localStorage.setItem(key, saved); break; }
+      }
+    } catch {}
+    window.__tigerkitTheme = {apply, key};
+    apply(saved);
+    for (const input of inputs) input.addEventListener('change', () => {
       if (!input.checked) return;
-      const value = valid(input.value) ? input.value : 'system';
-      apply(value);
-      try { localStorage.setItem(key, value); } catch {}
+      apply(input.value);
+      try { localStorage.setItem(key, input.value); } catch {}
     });
-  }
-  control.hidden = false;
+    window.addEventListener('storage', event => {
+      if (event.key === key) apply(normalize(event.newValue));
+    });
+    control.hidden = false;
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true});
+  else start();
 })();
+// theme-control:end
 
 (() => {
   const theme = document.querySelector('[data-ht-theme-control]');

@@ -95,8 +95,9 @@ Completed work: <done items | none>
 Remaining work: <unfinished items | none>
 Open questions: <required decisions | none>
 Risks: <remaining failure/regression risk>
+Owner skill: <verified owner skill and remaining generation/verification/delivery phase | none>
 Next step: <one executable immediate action>
-Resume hints: <environment/order/command hints>
+Resume hints: <owner phase plus environment/order/command hints>
 Disposition: reported | applied | pending
 ```
 

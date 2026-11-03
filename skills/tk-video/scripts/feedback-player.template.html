@@ -99,7 +99,7 @@
   <span class="file" id="videoName"></span>
   <span class="spacer" style="flex:1"></span>
   <span class="hint">단축키: K·스페이스 재생/정지, J·L 5초 이동, &lt; &gt; 배속, N 피드백 입력, Esc 입력 종료</span>
-  <button id="theme" title="테마 전환: 시스템 → 라이트 → 다크">테마: 시스템</button>
+  <fieldset class="ht-theme-control" data-ht-theme-control hidden><legend class="ht-visually-hidden">테마</legend><div class="ht-theme-buttons"></div></fieldset>
 </header>
 
 <main>
@@ -153,6 +153,7 @@
 </main>
 <div class="toast" id="toast" role="status"></div>
 
+__SHARED_HTML_CONTROLS__
 <script id="fp-data" type="application/json">__FEEDBACK_PLAYER_DATA__</script>
 <script>
 (() => {
@@ -161,7 +162,15 @@
   // === DATA: injected by make_feedback_player.py ===
   const DATA = JSON.parse(document.getElementById('fp-data').textContent);
   const CUES = DATA.cues.slice().sort((a, b) => a.start_ms - b.start_ms);
-  const STORE_KEY = 'video-feedback:' + DATA.storage_key;
+  const FILE = location.href.split('#')[0];
+  const STORE_KEY = 'video-feedback:' + JSON.stringify([FILE, DATA.video, DATA.storage_key]);
+  try { for (let i=localStorage.length-1; i>=0; i--) {
+    const key = localStorage.key(i);
+    if (key === STORE_KEY || !key?.startsWith('video-feedback:[')) continue;
+    try { const parts = JSON.parse(key.slice('video-feedback:'.length));
+      if (Array.isArray(parts) && parts.length === 3 && parts[0] === FILE && parts[1] === DATA.video) localStorage.removeItem(key);
+    } catch {}
+  }} catch {}
   const $ = (id) => document.getElementById(id);
   const video = $('video');
 
@@ -204,6 +213,7 @@
   $('videoName').textContent = DATA.video;
   $('missingName').textContent = DATA.video;
   video.src = DATA.video_url;
+  if (DATA.poster_url) video.poster = DATA.poster_url;
   video.addEventListener('error', () => { $('missing').hidden = false; });
   let pickedURL = null;
   $('pick').addEventListener('change', (e) => {
@@ -258,6 +268,36 @@
     const b = document.createElement('b'); b.textContent = fmt(ms);
     $('stamp').append('기록 시각 ', b, cue ? ` · 자막: ${cue}` : '');
   }
+  rows.forEach((row, index) => {
+    const button = document.createElement('button'); button.type = 'button'; button.textContent = '피드백';
+    button.setAttribute('aria-label', fmt(CUES[index].start_ms) + ' 위치에 피드백');
+    button.addEventListener('click', event => {
+      event.stopPropagation();
+      if (ta.value.trim()) { toast('작성 중인 피드백을 먼저 저장하거나 지워 주세요.'); return; }
+      setStamp(CUES[index].start_ms); ta.focus();
+      // Focus normally stamps an empty composer; restore the explicitly selected cue.
+      setStamp(CUES[index].start_ms); syncRestamp();
+    });
+    row.querySelector('.badge').replaceChildren(button);
+  });
+  const quoteButton = document.createElement('button'); quoteButton.type = 'button';
+  quoteButton.textContent = '인용 피드백'; quoteButton.hidden = true;
+  quoteButton.style.cssText = 'position:fixed;right:16px;bottom:16px;z-index:1000';
+  document.body.append(quoteButton);
+  let selectedQuote = '';
+  document.addEventListener('selectionchange', () => {
+    const selection = getSelection();
+    const node = selection?.rangeCount ? selection.getRangeAt(0).commonAncestorContainer : null;
+    const element = node?.nodeType === 1 ? node : node?.parentElement;
+    selectedQuote = element?.closest('.cues,.nowline') ? selection.toString().trim() : '';
+    quoteButton.hidden = selectedQuote.length < 2;
+  });
+  quoteButton.addEventListener('mousedown', event => event.preventDefault());
+  quoteButton.addEventListener('click', () => {
+    const quote = selectedQuote;
+    if (ta.value.trim()) { toast('작성 중인 피드백을 먼저 저장하거나 지워 주세요.'); return; }
+    ta.value = '인용: 「' + quote + '」\n'; setStamp(nowMs()); ta.focus(); quoteButton.hidden = true;
+  });
   // An empty box re-stamps on every focus. Once text exists the stamp stays put; if the playhead
   // moves away, the restamp button offers to move it instead (seeking to re-check a scene must not re-label the draft).
   const restamp = $('restamp');
@@ -296,20 +336,8 @@
     toast(`${fmt(t)} 피드백을 저장했습니다.`);
   }
   $('save').addEventListener('click', save);
-  // Korean/Japanese IME: saving while a syllable is still composing clears the box, then the IME commits
-  // that syllable back into it. Wait for compositionend so the last character is saved, not left behind.
-  let saveAfterComposition = false;
-  ta.addEventListener('compositionend', () => {
-    if (saveAfterComposition) { saveAfterComposition = false; setTimeout(save, 0); }
-  });
-  ta.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-      e.preventDefault();
-      if (e.isComposing || e.keyCode === 229) { saveAfterComposition = true; ta.blur(); } // blur commits the composition
-      else save();
-    }
-    if (e.key === 'Escape' && !e.isComposing) { ta.blur(); }
-  });
+  window.TigerKitFeedback.bindSubmitKey(ta, save);
+  ta.addEventListener('keydown', event => { if (event.key === 'Escape' && !event.isComposing) ta.blur(); });
 
   function render() {
     const list = $('fbList'); list.innerHTML = '';
@@ -328,7 +356,12 @@
       body.append(txt, ctx);
       const del = document.createElement('button'); del.className = 'danger'; del.textContent = '삭제';
       del.addEventListener('click', () => { items = items.filter((x) => x.id !== it.id); persist(); render(); });
-      li.append(cb, tb, body, del); list.appendChild(li);
+      const actions = document.createElement('div'); actions.style.cssText = 'display:flex;flex-direction:column;gap:4px';
+      const edit = document.createElement('button'); edit.textContent = '수정'; edit.type = 'button';
+      edit.setAttribute('aria-label', fmt(it.t_ms) + ' 피드백 수정');
+      edit.addEventListener('click', () => window.TigerKitFeedback.edit({host:body, textElement:txt, trigger:edit,
+        item:it, commit:() => { persist(); render(); toast('피드백을 수정했습니다.'); }, notify:toast}));
+      actions.append(edit, del); li.append(cb, tb, body, actions); list.appendChild(li);
     });
     syncCheckAll();
   }
@@ -396,23 +429,6 @@
   video.addEventListener('ratechange', showRate);
   try { const saved = Number(localStorage.getItem(RATE_KEY)); if (RATES.includes(saved)) setRate(saved); } catch (e) { /* default 1x */ }
   showRate();
-
-  // === THEME: system -> light -> dark; per-viewer choice kept in localStorage when available ===
-  const THEME_KEY = 'video-feedback:theme';
-  const THEME_LABEL = { system: '시스템', light: '라이트', dark: '다크' };
-  function applyTheme(t) {
-    if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
-    else { t = 'system'; delete document.documentElement.dataset.theme; }
-    $('theme').textContent = '테마: ' + THEME_LABEL[t];
-    return t;
-  }
-  let theme = 'system';
-  try { theme = localStorage.getItem(THEME_KEY) || 'system'; } catch (e) { theme = 'system'; }
-  theme = applyTheme(theme);
-  $('theme').addEventListener('click', () => {
-    theme = applyTheme({ system: 'light', light: 'dark', dark: 'system' }[theme]);
-    try { localStorage.setItem(THEME_KEY, theme); } catch (e) { /* choice lasts for this page only */ }
-  });
 
   // === INIT ===
   load(); render(); onTime();

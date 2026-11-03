@@ -22,3 +22,5 @@ metadata:
 
 - [질문](references/questions.md): 사용자 소유 결정, 누락된 승인이나 선행 조건을 질문·승인 제안·질문 도구 입력으로 제시하기 직전에 읽었는지 확인합니다. 네이티브 도구 우선순위, 결정·승인 분리와 포콕식 채팅 대체 형식의 정본입니다.
 - [시각적 질문](references/visual-questions.md): 미해결 레이아웃, 탐색 또는 시각적 선택에 질문 보조 자료가 필요할 때 읽습니다.
+
+HTML을 사람에게 전달할 때는 현재 설치된 `tk-writing`의 [공통 피드백 후처리](../tk-writing/references/feedback-studio.md)를 적용하고 studio를 기본 열람본으로 안내합니다. 원본·기존 전용 인터페이스·검증 의무를 유지합니다.

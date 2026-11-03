@@ -11,6 +11,7 @@ import random
 import re
 import runpy
 import secrets
+import subprocess
 import sys
 import zipfile
 from pathlib import Path
@@ -229,6 +230,7 @@ def render(public, key, theme, mode="gallery", external_key=False):
     # Shared theme belongs to tk-writing in this installed collection only.
     writing = PACKAGE.parent / 'tk-writing'
     resources = [writing / 'SKILL.md', writing / 'assets/html-theme.css', writing / 'assets/html-theme.js']
+    resources += [writing / 'scripts' / name for name in ('add_feedback_studio.py', 'html_controls.py', 'feedback-studio.js', 'feedback-editor.js')]
     if any(p.is_symlink() for resource in resources for p in (resource, *resource.parents)):
         raise SharedOwnerError('Unsafe tk-writing resource; use tk-setup-skills')
     validator = PACKAGE.parent / 'tk-setup-skills/scripts/skill_dependencies.py'
@@ -367,9 +369,19 @@ def build(manifest_path, output, previous_key=None, theme="system", mode="galler
     (dest / 'answer-key.json').write_text(json.dumps(key, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     page_name = 'index.html' if delivery == "split" else 'gallery.html'
     (dest / page_name).write_text(rendered, encoding='utf-8')
+    # The recipient bundle is created only after the shared delivery copy exists.
+    # Private manifest/source paths must not enter a blind evaluator's page.
+    postprocessor = PACKAGE.parent / 'tk-writing/scripts/add_feedback_studio.py'
+    studio = subprocess.run([sys.executable, str(postprocessor), '--input', str(dest / page_name),
+                             '--owner-skill', 'tk-blind-comparison', '--theme', theme],
+                            capture_output=True, text=True)
+    if studio.returncode:
+        raise SharedOwnerError('Shared studio generation failed; raw gallery preserved; check tk-writing installation')
+    studio_name = Path(page_name).stem + '.studio.html'
     if delivery == "split":
         with zipfile.ZipFile(dest / 'comparison.zip', 'w', compression=zipfile.ZIP_DEFLATED) as archive:
             archive.write(dest / page_name, page_name)
+            archive.write(dest / studio_name, studio_name)
             for filename, _ in files:
                 archive.write(asset_dir / filename, 'assets/' + filename)
     return public, key

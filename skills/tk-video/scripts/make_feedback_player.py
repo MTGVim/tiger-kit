@@ -11,6 +11,8 @@ Exit codes: 0 written / selftest passed, 2 bad input (missing file, existing out
 Standard library only.
 """
 import argparse
+import importlib.util
+from pathlib import Path
 import hashlib
 import json
 import os
@@ -60,22 +62,34 @@ def parse_srt(text):
     return cues
 
 
-def render(title, video_rel, cues):
+def load_controls(root):
+    root = Path(root).absolute()
+    if root.resolve() != root or not re.search(r'^name: [\"\']?tk-writing[\"\']?$', (root / 'SKILL.md').read_text(), re.M):
+        raise ValueError('writing-root must identify the installed nonsymlink tk-writing owner')
+    spec = importlib.util.spec_from_file_location('tigerkit_html_controls', root / 'scripts/html_controls.py')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    editor = (root / 'scripts/feedback-editor.js').read_text(encoding='utf-8')
+    return module, module.theme_assets() + '<script>' + editor + '</script>'
+
+
+def render(title, video_rel, cues, video_digest='', controls='', poster_rel=None):
     with open(TEMPLATE, encoding="utf-8") as f:
         html = f.read()
-    if html.count(TOKEN) != 1:
+    if html.count(TOKEN) != 1 or html.count('__SHARED_HTML_CONTROLS__') != 1:
         raise ValueError("template must contain the data token exactly once")
-    key_src = video_rel + "\n" + json.dumps(cues, ensure_ascii=False)
+    key_src = video_rel + "\n" + video_digest + "\n" + json.dumps(cues, ensure_ascii=False)
     data = {
         "title": title,
         "video": video_rel,
         "video_url": quote(video_rel, safe="/"),
+        "poster_url": quote(poster_rel, safe="/") if poster_rel else None,
         "storage_key": video_rel + ":" + hashlib.sha256(key_src.encode("utf-8")).hexdigest()[:12],
         "cues": cues,
     }
     # "<" escaped so cue text such as "</script>" cannot close the data block
     payload = json.dumps(data, ensure_ascii=False).replace("<", "\\u003c")
-    return html.replace(TOKEN, payload)
+    return html.replace('__SHARED_HTML_CONTROLS__', controls).replace(TOKEN, payload)
 
 
 def write_new(path, text):
@@ -103,14 +117,18 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--video")
     ap.add_argument("--captions")
+    ap.add_argument("--poster", help="existing preview JPEG/PNG beside or below the player; no playback offset")
     ap.add_argument("--output", help="default: <video stem>.feedback.html beside the video")
     ap.add_argument("--title", help="default: video file stem")
+    ap.add_argument("--writing-root", help="verified installed tk-writing owner path")
+    ap.add_argument("--theme", choices=['system', 'light', 'dark'], help="resolved generation default")
+    ap.add_argument("--replace", action="store_true", help="replace an owned existing player delivery file")
     ap.add_argument("--selftest", action="store_true")
     a = ap.parse_args(argv)
     if a.selftest:
         return selftest()
-    if not a.video or not a.captions:
-        ap.error("--video and --captions are required")
+    if not a.video or not a.captions or not a.writing_root:
+        ap.error("--video, --captions and --writing-root are required")
     try:
         video = safe_input(a.video)
         captions = safe_input(a.captions)
@@ -119,26 +137,43 @@ def main(argv=None):
     except (ValueError, OSError) as e:
         print(str(e), file=sys.stderr)
         return 2
-    if os.path.exists(out):
+    if os.path.exists(out) and not a.replace:
         print(f"output exists, choose a new path: {out}", file=sys.stderr)
+        return 2
+    if out in (video, captions):
+        print("player output cannot replace its video or captions", file=sys.stderr)
         return 2
     video_rel = os.path.relpath(video, os.path.dirname(out))
     if video_rel.split(os.sep)[0] == "..":
         print("put the HTML in the video's folder or above it so the relative link survives copying", file=sys.stderr)
         return 2
     try:
+        poster_rel = None
+        poster_path = a.poster or os.path.splitext(video)[0] + '.poster.jpg'
+        if a.poster or os.path.isfile(poster_path):
+            poster = safe_input(poster_path)
+            if os.path.splitext(poster)[1].lower() not in ('.jpg', '.jpeg', '.png', '.webp'):
+                raise ValueError('poster must be a supported image')
+            poster_rel = os.path.relpath(poster, os.path.dirname(out)).replace(os.sep, '/')
+            if poster_rel.split('/')[0] == '..':
+                raise ValueError('poster must stay beside or below the player')
         with open(captions, encoding="utf-8") as f:
             cues = parse_srt(f.read())
-        html = render(a.title or stem, video_rel.replace(os.sep, "/"), cues)
-    except ValueError as e:
+        digest = hashlib.sha256()
+        with open(video, 'rb') as stream:
+            for block in iter(lambda: stream.read(1024 * 1024), b''): digest.update(block)
+        shared, controls = load_controls(a.writing_root)
+        html = render(a.title or stem, video_rel.replace(os.sep, "/"), cues, digest.hexdigest()[:12], controls, poster_rel)
+        html = shared.theme_default(html, a.theme)
+    except (ValueError, OSError) as e:
         print(str(e), file=sys.stderr)
         return 2
     if len(html.encode("utf-8")) > MAX_HTML_BYTES:
         print("HTML is unexpectedly large; refusing to write", file=sys.stderr)
         return 2
     try:
-        write_new(out, html)
-    except OSError as e:
+        shared.write_html(out, html, a.replace)
+    except (ValueError, OSError) as e:
         print(str(e), file=sys.stderr)
         return 2
     print(json.dumps({"path": out, "video": video_rel, "cues": len(cues), "bytes": len(html.encode("utf-8"))}, ensure_ascii=False))

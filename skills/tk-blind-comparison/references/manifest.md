@@ -72,17 +72,19 @@ python3 <package>/scripts/build_gallery.py build manifest.json --output <new-run
 python3 <package>/scripts/build_gallery.py build manifest.json --output <new-run-directory> --delivery split --theme system
 ```
 
-single 전달은 `gallery.html`, 중립 표시/링크 파일과 `answer-key.json`을 유지합니다.
+single 전달은 기본 열람본 `gallery.studio.html`, 원본 `gallery.html`, 중립 표시/링크 파일과 `answer-key.json`을 유지합니다.
 기본 single-gallery 렌더링과 평가 schema는 기존 인코딩 공개 매핑을 포함하여 변경되지 않습니다. 기본 single-versus 전달은 인코딩된 최소 정답 키(이름과 검증 명단/revision만 포함하며 비공개 진단은 제외)를 포함합니다. 명시적 공개 전에는 눈에 보이는 DOM/콘텐츠 밖에 유지됩니다. 오프라인 인코딩은 소스 검토에 대한 비밀 보장이 아닙니다.
 우승자 화면의 `결과 보기`는 선택한 파일과 같은 loader로 embedded 키를 검증한 뒤 한 번의 행동으로 결과 표를 공개합니다. 완료/reload 후 자동 공개하지 않습니다.
 
 다른 평가자나 separate-key single HTML에는 `--answer-key separate`를 사용합니다. split 전달은 항상 별도 키를 사용하며 `--answer-key embedded`를 거부합니다. 결과 버튼은 계속 활성 상태입니다. 로드된 키가 없으면 분리를 설명하고 파일 선택기를 엽니다. 해당 공개 행동에서 일치하는 키를 선택하면 결과 표로 이어집니다(필요하면 부분 비교 확인을 거칩니다). 관리 기능에서 키를 수동 선택하는 것만으로는 여전히 이름을 공개하지 않습니다. 취소되거나 유효하지 않은 파일 선택은 기록과 노출 상태를 보존합니다. 평가자 ZIP과 별도 키를 함께 배포하지 않습니다. 명시적인 자기 평가 전달에서는 embedded 경로를 사용할 수 있습니다.
 
-split 전달은 `index.html`, `assets/item-NNNN-slot-NNNN.ext`와 선택적인 `assets/item-NNNN-slot-NNNN-link-NNNN.ext`, `comparison.zip`, 별도 `answer-key.json`을 씁니다.
-ZIP에는 `index.html`과 참조하는 중립 자원만 포함합니다. 정답 키나 인코딩된 후보 이름 매핑은 포함하지 않습니다. 인라인 theme/application 자원은 네트워크 요청이 필요 없습니다. ZIP을 추출한 뒤 `file://`로 `index.html`을 엽니다. archive viewer 안에서 열지 않습니다. `assets/`는 `index.html` 옆에 유지합니다. 추출한 자원이 누락되거나 수정되면 변경된 자료에 평가를 재사용하지 말고 온전한 새 추출과 검증을 수행해야 합니다. builder는 준비된 입력을 검증하지만 추출 파일의 hash를 계속 계산하지는 않습니다.
+split 전달은 기본 열람본 `index.studio.html`, 원본 `index.html`, `assets/item-NNNN-slot-NNNN.ext`와 선택적인 `assets/item-NNNN-slot-NNNN-link-NNNN.ext`, `comparison.zip`, 별도 `answer-key.json`을 씁니다.
+builder가 공통 studio를 만든 뒤 ZIP에 `index.html`·`index.studio.html`과 참조하는 중립 자원만 포함합니다. 공통 후처리를 나중에 실행한 원본 전용 ZIP을 배포하지 않습니다. 정답 키나 인코딩된 후보 이름 매핑은 포함하지 않습니다. 인라인 theme/application 자원은 네트워크 요청이 필요 없습니다. ZIP을 추출한 뒤 `file://`로 `index.studio.html`을 엽니다. archive viewer 안에서 열지 않습니다. `assets/`는 `index.html` 옆에 유지합니다. 추출한 자원이 누락되거나 수정되면 변경된 자료에 평가를 재사용하지 말고 온전한 새 추출과 검증을 수행해야 합니다. builder는 준비된 입력을 검증하지만 추출 파일의 hash를 계속 계산하지는 않습니다.
 
 상위 출력 디렉터리가 아니라 `comparison.zip`만 배포합니다. 공개가 승인될 때까지 키를 비공개로 유지합니다. `정답표 선택`은 명시적으로 선택한 키를 메모리로 읽고 study, version, versus revision, 모든 불투명 출력 식별 정보/fingerprint와 실패 상태를 확인합니다.
 수동 선택 자체로 이름을 공개하거나 키 내용을 storage/export에 저장하지 않습니다.
 `결과 보기`가 명시적인 공개 행동입니다. 부분 비교에서는 여전히 확인을 요청합니다. 이전 `revealed` flag는 이력이지 에이전트가 신원을 공개해도 된다는 허가가 아닙니다.
 
 요청이나 실제 환경 근거로 split 전달을 선택합니다. media 크기 기준이나 지어낸 브라우저 실패 설명을 사용하지 않습니다. 연결된 HTML, metadata와 인코딩/pixel/의미상 단서를 포함한 전체 배포물을 검토합니다. 정확한 이름과 매핑이 비공개여도 스타일이 기법을 암시할 수 있습니다. packaging은 암호학적 익명성이나 HTML sanitization이 아닙니다.
+
+블라인드 전달본의 피드백 처리자는 `tk-blind-comparison`입니다. 비공개 manifest·제작 원고의 경로는 studio metadata나 ZIP에 넣지 않습니다. 원본과 studio의 공개 콘텐츠를 함께 검사하고, 정답 키는 계속 별도로 유지합니다.

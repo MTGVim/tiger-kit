@@ -16,6 +16,8 @@ output's folder or below it. The image stays in the page as the poster, as the p
 Exit codes: 0 written / selftest ok, 2 bad input. Standard library only.
 """
 import argparse
+import hashlib
+from html_controls import theme_assets, theme_default, write_html
 import json
 import html as htmllib
 import os
@@ -134,6 +136,10 @@ def main(argv=None):
     ap.add_argument("--video", action="append", default=[], metavar="ID=MP4",
                     help="replace the image in element ID with this video (repeatable)")
     ap.add_argument("--output", help="default: <stem>.studio.html beside the input")
+    ap.add_argument("--theme", choices=['system', 'light', 'dark'], help="resolved generation default; saved reader preference takes priority")
+    ap.add_argument("--owner-skill", help="verified workflow owner, for example tk-explain or tk-research")
+    ap.add_argument("--source-path", help="known editable source file, never inferred from the delivered HTML")
+    ap.add_argument("--replace", action="store_true", help="replace an explicitly owned existing studio delivery file")
     ap.add_argument("--selftest", action="store_true")
     a = ap.parse_args(argv)
     if a.selftest:
@@ -148,11 +154,14 @@ def main(argv=None):
     except (ValueError, OSError) as e:
         print(str(e), file=sys.stderr)
         return 2
-    if os.path.exists(out):
+    if os.path.exists(out) and not a.replace:
         print(f"output exists, choose a new path: {out}", file=sys.stderr)
         return 2
     if os.path.dirname(out) != os.path.dirname(os.path.abspath(a.input)):
         print("studio must stay beside the source HTML to preserve relative resources", file=sys.stderr)
+        return 2
+    if out == source:
+        print("studio output cannot replace its source", file=sys.stderr)
         return 2
     videos = []
     for spec in a.video:
@@ -175,13 +184,21 @@ def main(argv=None):
     with open(SCRIPT, encoding="utf-8") as f:
         js = f.read()
     try:
-        result = inject(page, js, videos)
+        js = js.replace('__FS_PAGE_VERSION__', hashlib.sha256(page.encode('utf-8')).hexdigest()[:12])
+        if a.owner_skill and not re.fullmatch(r'tk-[a-z0-9]+(?:-[a-z0-9]+)*', a.owner_skill):
+            raise ValueError('owner-skill must be an exact tk-* skill name')
+        context = {'owner': a.owner_skill, 'source': safe_input(a.source_path) if a.source_path else None}
+        js = js.replace('__FS_CONTEXT__', json.dumps(context, ensure_ascii=False).replace('<', '\\u003c'))
+        editor = open(os.path.join(os.path.dirname(SCRIPT), 'feedback-editor.js'), encoding='utf-8').read()
+        result = inject(page, editor + '\n' + js, videos)
+        result = result.replace(MARK, MARK + theme_assets(), 1)
+        result = theme_default(result, a.theme)
     except ValueError as e:
         print(str(e), file=sys.stderr)
         return 2
     try:
-        write_new(out, result)
-    except OSError as e:
+        write_html(out, result, a.replace)
+    except (ValueError, OSError) as e:
         print(str(e), file=sys.stderr)
         return 2
     added = len(result.encode("utf-8")) - len(page.encode("utf-8"))

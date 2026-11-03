@@ -410,7 +410,12 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
             warnings.append("audio omitted: invalid, unavailable or longer than movie; captions retained")
             audio = None
     audio_duration = duration * 1000 if audio is not None else 0
+    audio_role = data.get('audio_role')
+    if audio_role not in (None, 'narration', 'mixed'):
+        raise ValueError('audio_role must be narration or mixed')
     native_audio = bool(animation and source_video["audio_codec"] and kind == ".mp4")
+    compact_native_audio = bool(native_audio and (audio_role == 'narration' or
+                                (audio_role is None and source_video['audio_channels'] == 1 and narration_requested)))
     if animation and source_video["audio_codec"]:
         if audio is not None or scene_voices:
             raise ValueError("embedded audio cannot be combined with another narration track; select one source")
@@ -503,7 +508,7 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
                 cmd += ["-fps_mode", "passthrough"]
             cmd += ["-vf", filters, "-t", str(end / 1000), "-c:v", "libx264", "-crf", str(selected_crf),
                     "-threads", "1", "-pix_fmt", "yuv420p", "-movflags", "+faststart"]
-            if native_audio:
+            if native_audio and not compact_native_audio:
                 cmd += ["-c:a", "copy"]
             elif audio is not None:
                 cmd += ["-af", "apad", "-c:a", "aac", "-ac", "1", "-b:a", "48k"]
@@ -529,9 +534,9 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
         audio_streams = [s for s in info["streams"] if s["codec_type"] == "audio"]
         subtitle_streams = [s for s in info["streams"] if s["codec_type"] == "subtitle"]
         if audio is not None:
-            expected_codec = source_video["audio_codec"] if native_audio else "aac"
-            expected_channels = source_video["audio_channels"] if native_audio else 1
-            expected_duration = source_video["audio_duration_ms"] / 1000 if native_audio else end / 1000
+            expected_codec = source_video["audio_codec"] if native_audio and not compact_native_audio else "aac"
+            expected_channels = source_video["audio_channels"] if native_audio and not compact_native_audio else 1
+            expected_duration = source_video["audio_duration_ms"] / 1000 if native_audio and not compact_native_audio else end / 1000
             if not audio_streams or audio_streams[0].get("codec_name") != expected_codec or audio_streams[0].get("channels") != expected_channels:
                 errors.append("audio-stream-mismatch")
             elif abs(float(audio_streams[0].get("duration", 0)) - expected_duration) > .15:
@@ -575,7 +580,7 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
             "width": int(stream["width"]), "height": int(stream["height"]), "pixel_format": stream["pix_fmt"],
             "encoded_duration_ms": float(info["format"]["duration"]) * 1000,
             "audio": audio is not None, "warnings": warnings,
-            "source_video": source_video, "source_audio_preserved": native_audio,
+            "source_video": source_video, "source_audio_preserved": native_audio and not compact_native_audio, "audio_compacted": compact_native_audio,
             "ffmpeg_path": ffmpeg, "ffprobe_path": ffprobe,
             "media_status": "failed" if errors else "blocked" if captions_blocked or presentation_blocked else "ready",
             "media_validation": {"status": "fail" if errors else "pass", "errors": errors},

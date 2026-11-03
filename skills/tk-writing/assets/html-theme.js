@@ -95,34 +95,73 @@
   else start();
 })();
 
+// theme-control:start
 (() => {
-  const control = document.querySelector('[data-ht-theme-control]');
-  if (!control) return;
-  const inputs = [...control.querySelectorAll('input[name="ht-theme"]')];
-  if (!inputs.length) return;
-  const root = document.documentElement;
-  const key = 'tigerkit-html-theme';
-  const valid = value => ['system', 'light', 'dark'].includes(value);
-  const configuredValue = root.getAttribute('data-default-theme');
-  const configured = valid(configuredValue) ? configuredValue : 'system';
-  const apply = value => {
-    if (value === 'system') root.removeAttribute('data-theme');
-    else root.setAttribute('data-theme', value);
-    for (const input of inputs) input.checked = input.value === value;
-  };
-  let saved = configured;
-  try { const value = localStorage.getItem(key); if (valid(value)) saved = value; } catch {}
-  apply(saved);
-  for (const input of inputs) {
-    input.addEventListener('change', () => {
+  if (window.__tigerkitTheme) return;
+  const start = () => {
+    if (window.__tigerkitTheme) return;
+    const root = document.documentElement;
+    const legacy = [...document.querySelectorAll('button[data-theme-choice]')];
+    let control = document.querySelector('[data-ht-theme-control]');
+    if (!control) {
+      control = document.createElement('fieldset');
+      control.className = 'ht-theme-control interactive';
+      control.setAttribute('data-ht-theme-control', '');
+      control.innerHTML = '<legend class="ht-theme-label ht-visually-hidden">테마</legend><div class="ht-theme-buttons"></div>';
+      const old = legacy[0]?.closest('.theme-controls');
+      if (old) { old.before(control); old.hidden = true; old.style.display = 'none'; }
+      else {
+        let host = document.querySelector('.ht-topbar,.masthead,body > header');
+        if (!host) { host = document.createElement('header'); document.body.prepend(host); }
+        host.append(control);
+      }
+    }
+    const labels = {system: 'System', light: 'Light', dark: 'Dark'};
+    let box = control.querySelector('.ht-theme-buttons');
+    if (!box) { box = document.createElement('div'); box.className = 'ht-theme-buttons'; control.append(box); }
+    box.replaceChildren();
+    for (const value of ['system', 'light', 'dark']) {
+      const label = document.createElement('label'); label.className = 'ht-theme-option';
+      const input = document.createElement('input'); input.type = 'radio'; input.name = 'ht-theme'; input.value = value;
+      input.setAttribute('aria-label', labels[value]);
+      const text = document.createElement('span'); text.textContent = labels[value];
+      label.append(input, text); box.append(label);
+    }
+    const inputs = [...box.querySelectorAll('input')], key = 'archify-theme';
+    const valid = value => ['system', 'light', 'dark'].includes(value);
+    const normalize = value => value === 'auto' ? 'system' : value;
+    const configured = normalize(root.dataset.defaultTheme || 'system');
+    const apply = value => {
+      value = valid(value) ? value : 'system';
+      const button = legacy.find(x => normalize(x.dataset.themeChoice) === value);
+      if (button) button.click();
+      else if (value === 'system') root.removeAttribute('data-theme');
+      else root.setAttribute('data-theme', value);
+      for (const input of inputs) input.checked = input.value === value;
+    };
+    let saved = valid(configured) ? configured : 'system';
+    try {
+      for (const name of [key, 'tigerkit-html-theme', 'video-feedback:theme']) {
+        const value = normalize(localStorage.getItem(name));
+        if (valid(value)) { saved = value; if (name !== key) localStorage.setItem(key, saved); break; }
+      }
+    } catch {}
+    window.__tigerkitTheme = {apply, key};
+    apply(saved);
+    for (const input of inputs) input.addEventListener('change', () => {
       if (!input.checked) return;
-      const value = valid(input.value) ? input.value : 'system';
-      apply(value);
-      try { localStorage.setItem(key, value); } catch {}
+      apply(input.value);
+      try { localStorage.setItem(key, input.value); } catch {}
     });
-  }
-  control.hidden = false;
+    window.addEventListener('storage', event => {
+      if (event.key === key) apply(normalize(event.newValue));
+    });
+    control.hidden = false;
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true});
+  else start();
 })();
+// theme-control:end
 
 (() => {
   const theme = document.querySelector('[data-ht-theme-control]');

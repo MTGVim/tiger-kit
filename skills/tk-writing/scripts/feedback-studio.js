@@ -4,7 +4,7 @@
   Injected inline by add_feedback_studio.py (no network, no external files; the video is referenced, never embedded). Two modes:
     - archify:  an archify 3.x explainer (has section.panel + .ask-dialog). Adds "목록에 담기" to archify's own
                 Ask dialog, so its panel buttons and drag-to-quote keep working; items go to the tray instead of
-                being copied one by one. Archify's own single copy button stays.
+                being copied one by one. The list action replaces the single-question copy button.
     - generic:  any other single-file HTML. Adds a drag-to-quote floating button, a small "피드백" button on
                 each anchored section, and its own dialog.
   Sections (search "// ==="): CONFIG, STORE, STYLE, ANCHORS, FORMAT, TRAY, DIALOG, ARCHIFY, GENERIC, VIDEO, INIT.
@@ -17,8 +17,22 @@
 
   // === CONFIG ===
   const PAGE_TITLE = (document.querySelector('h1')?.textContent || document.title || '').trim(); // h1 first: archify titles carry a " · Archify" suffix
+  const LIST_LABEL = document.getElementById('qa-data') ? '시트 자체에 대한 피드백' : '모은 피드백';
+  const CONTEXT = __FS_CONTEXT__;
   const FILE = location.protocol === 'file:' ? decodeURIComponent(location.pathname) : location.href.split('#')[0];
-  const STORE_KEY = 'page-feedback:' + FILE;
+  const VERSION = '__FS_PAGE_VERSION__';
+  const STORE_KEY = 'page-feedback:' + JSON.stringify([FILE, VERSION]);
+  try {
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const key = localStorage.key(i);
+      if (key === STORE_KEY) continue;
+      if (key === 'page-feedback:' + FILE) { localStorage.removeItem(key); continue; }
+      if (!key?.startsWith('page-feedback:[')) continue;
+      try { const parts = JSON.parse(key.slice('page-feedback:'.length));
+        if (Array.isArray(parts) && parts.length === 2 && parts[0] === FILE) localStorage.removeItem(key);
+      } catch {}
+    }
+  } catch {}
   const MAC = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
   const isArchify = () => !!(document.querySelector('section.panel .panel-head') && document.querySelector('dialog.ask-dialog footer') && document.querySelector('dialog.ask-dialog textarea') && document.querySelector('dialog.ask-dialog .ask-where'));
 
@@ -74,7 +88,8 @@
   .fs-dialog footer{display:flex;gap:8px;justify-content:flex-end;align-items:center}
   .fs-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:2147483001;background:var(--fs-ink);color:var(--fs-bg);padding:8px 14px;border-radius:8px;opacity:0;transition:opacity .2s;pointer-events:none}
   .fs-toast.fs-show{opacity:1}
-  .fs-added-btn{margin-right:auto}
+  .fs-actions{display:flex;flex-direction:column;gap:4px;align-self:start}
+  .fs-chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.fs-chip[aria-pressed="true"]{outline:2px solid var(--fs-accent)}
   /* video in place of an image: the image right after it stays for poster, print/export and no-JS */
   @media screen{.js .fs-vwrap.interactive,.fs-vwrap{display:block!important;margin:0 0 8px}} /* screen only: archify's print rule must still hide it */
   .fs-vwrap video{width:100%;display:block;border-radius:10px;background:#000}
@@ -114,7 +129,12 @@
 
   // === FORMAT: one message for N items, ordered as collected ===
   function asMessage(sel) {
-    const lines = [`페이지: 「${PAGE_TITLE}」`, `파일: ${FILE}`, `피드백 ${sel.length}건`, ''];
+    const lines = [`페이지: 「${PAGE_TITLE}」`, `파일: ${FILE}`, `피드백 ${sel.length}건`];
+    const procedure = isArchify() ? 'archify 원고 patch explainer → 재생성·검사 → 새 studio' : '원고 수정 → 재생성·검사 → 새 studio';
+    lines.push(CONTEXT.owner ? `처리: ${CONTEXT.owner}의 feedback-studio 절차(${procedure})를 먼저 읽고 적용해 주세요.`
+      : `처리: 원본 산출물의 담당 스킬을 먼저 확인하고 ${procedure} 절차를 따르세요.`);
+    if (CONTEXT.source) lines.push(`원고: ${CONTEXT.source}`);
+    lines.push('생성된 HTML을 직접 편집하지 말고, 원고가 확인되지 않으면 먼저 해당 원고를 찾아 주세요.', '');
     sel.forEach((it, i) => {
       lines.push(`${i + 1}. 위치: ${it.label}${it.id ? ` (ID: ${it.id})` : ''}`);
       if (it.quote) lines.push(`   인용: 「${it.quote}」`);
@@ -137,16 +157,16 @@
 
   // === TRAY: floating counter + drawer with select / jump / delete / copy / clear ===
   const trayBtn = el('button', 'fs-tray-btn'); trayBtn.type = 'button'; trayBtn.setAttribute('aria-expanded', 'false');
-  const drawer = el('section', 'fs-drawer'); drawer.hidden = true; drawer.setAttribute('aria-label', '모은 피드백');
+  const drawer = el('section', 'fs-drawer'); drawer.hidden = true; drawer.setAttribute('aria-label', LIST_LABEL);
   drawer.innerHTML = '<header><h2></h2><label class="fs-hint"><input type="checkbox" class="fs-all" checked> 전체 선택</label></header><ul class="fs-list"></ul><footer><button type="button" class="fs-danger fs-clear">모두 지우기</button><span style="flex:1"></span><button type="button" class="fs-primary fs-copy">선택한 피드백 복사</button></footer><p class="fs-hint" style="margin:0;padding:0 12px 10px">문장을 드래그하거나 각 부분의 버튼으로 피드백을 담은 뒤, 한 번에 복사해 에이전트에게 붙여 넣으세요. 이 브라우저에만 저장됩니다.</p>';
   root.append(drawer, trayBtn);
   trayBtn.addEventListener('click', () => { drawer.hidden = !drawer.hidden; trayBtn.setAttribute('aria-expanded', String(!drawer.hidden)); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !drawer.hidden && !document.querySelector('dialog[open]')) { drawer.hidden = true; trayBtn.setAttribute('aria-expanded', 'false'); } });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !e.isComposing && e.keyCode !== 229 && !drawer.hidden && !document.querySelector('dialog[open]')) { drawer.hidden = true; trayBtn.setAttribute('aria-expanded', 'false'); } });
 
   function render() {
     trayBtn.textContent = items.length ? `피드백 ${items.length}건` : '피드백 0건';
     trayBtn.dataset.empty = String(!items.length);
-    drawer.querySelector('h2').textContent = `모은 피드백 ${items.length}건`;
+    drawer.querySelector('h2').textContent = `${LIST_LABEL} ${items.length}건`;
     const list = drawer.querySelector('.fs-list'); list.innerHTML = '';
     if (!items.length) list.append(el('li', 'fs-empty', '아직 담은 피드백이 없습니다.'));
     items.forEach((it) => {
@@ -161,7 +181,12 @@
       body.append(el('div', 'fs-text', it.text));
       const del = el('button', 'fs-danger', '삭제'); del.type = 'button';
       del.addEventListener('click', () => { items = items.filter((x) => x.id_ !== it.id_); persist(); render(); });
-      li.append(cb, body, del); list.append(li);
+      const actions = el('div', 'fs-actions');
+      const edit = el('button', 'fs-edit', '수정'); edit.type = 'button';
+      edit.setAttribute('aria-label', it.label + ' 피드백 수정');
+      edit.addEventListener('click', () => window.TigerKitFeedback.edit({host:body, textElement:body.querySelector('.fs-text'),
+        trigger:edit, item:it, commit:() => { persist(); render(); toast('피드백을 수정했습니다.'); }, notify:toast}));
+      actions.append(edit, del); li.append(cb, body, actions); list.append(li);
     });
     syncAll();
   }
@@ -186,24 +211,26 @@
     return true;
   }
 
-  // shared: Ctrl/⌘+Enter that waits for IME composition (Korean last syllable) before acting
-  function bindSubmitKey(textarea, action) {
-    let pending = false;
-    textarea.addEventListener('compositionend', () => { if (pending) { pending = false; setTimeout(action, 0); } });
-    textarea.addEventListener('keydown', (e) => {
-      if (e.key !== 'Enter' || !(e.metaKey || e.ctrlKey)) return;
-      e.preventDefault(); e.stopImmediatePropagation();
-      if (e.isComposing || e.keyCode === 229) { pending = true; textarea.blur(); } else action();
-    }, true);
+  const bindSubmitKey = window.TigerKitFeedback.bindSubmitKey;
+  const CHIPS = ['이 부분이 이해되지 않습니다', '더 자세히 설명해 주세요', '예시를 들어 주세요', '근거가 무엇인가요?'];
+  function bindChip(chip, area) {
+    chip.addEventListener('click', () => {
+      const lines = area.value.split('\n').filter(x => x.trim()), text = chip.textContent;
+      const on = !lines.includes(text);
+      area.value = (on ? [...lines, text] : lines.filter(x => x !== text)).join('\n');
+      chip.setAttribute('aria-pressed', String(on)); area.focus();
+    });
   }
 
   // === DIALOG (generic mode): quote + textarea, adds to the tray ===
   function makeDialog() {
     const d = document.createElement('dialog'); d.className = 'fs-dialog';
-    d.innerHTML = `<form method="dialog"><div><h2>피드백 담기</h2><p class="fs-where-line"></p></div><blockquote class="fs-quote" hidden></blockquote><textarea aria-label="피드백" placeholder="무엇이 어색하거나 틀렸는지, 어떻게 바꾸면 좋을지 적어 주세요."></textarea><footer><span class="fs-hint">${MAC ? '⌘↵' : 'Ctrl+↵'} 목록에 담기</span><span style="flex:1"></span><button type="button" class="fs-cancel">취소</button><button type="submit" class="fs-primary">목록에 담기</button></footer></form>`;
+    d.innerHTML = `<form method="dialog"><div><h2>피드백 담기</h2><p class="fs-where-line"></p></div><blockquote class="fs-quote" hidden></blockquote><div class="fs-chips" role="group" aria-label="추천 피드백"></div><textarea aria-label="피드백" placeholder="무엇이 어색하거나 틀렸는지, 어떻게 바꾸면 좋을지 적어 주세요."></textarea><footer><span class="fs-hint">${MAC ? '⌘↵' : 'Ctrl+↵'} 목록에 담기</span><span style="flex:1"></span><button type="button" class="fs-cancel">취소</button><button type="submit" class="fs-primary">목록에 담기</button></footer></form>`;
     root.append(d);
     let ctx = null;
     const area = d.querySelector('textarea');
+    CHIPS.forEach(text => { const chip = el('button', 'fs-chip', text); chip.type = 'button';
+      chip.setAttribute('aria-pressed', 'false'); bindChip(chip, area); d.querySelector('.fs-chips').append(chip); });
     const submit = () => { if (ctx && add(ctx.where, ctx.quote, area.value)) d.close(); };
     d.querySelector('form').addEventListener('submit', (e) => { e.preventDefault(); submit(); });
     d.querySelector('.fs-cancel').addEventListener('click', () => d.close());
@@ -212,6 +239,7 @@
       ctx = { where, quote };
       d.querySelector('.fs-where-line').textContent = where.label + (where.id ? ` · ${where.id}` : '');
       const q = d.querySelector('.fs-quote'); q.hidden = !quote; q.textContent = quote || '';
+      d.querySelectorAll('.fs-chip').forEach(x => x.setAttribute('aria-pressed', 'false'));
       area.value = ''; d.showModal(); area.focus();
     };
   }
@@ -228,9 +256,16 @@
       const ask = e.target.closest?.('.ask-button'); if (ask) panel = ask.closest('section.panel');
       if (e.target.closest?.('.ask-floating')) panel = panelOfSelection() || panel;
     }, true);
-    const addBtn = el('button', 'fs-primary fs-added-btn', '목록에 담기'); addBtn.type = 'button';
-    addBtn.style.cssText = 'font:inherit;cursor:pointer;border-radius:8px;padding:5px 10px;border:1px solid #2a78d6;background:#2a78d6;color:#fff';
-    footer.prepend(addBtn);
+    dialog.querySelectorAll('[data-chip]').forEach((chip, i) => { if (CHIPS[i]) chip.textContent = CHIPS[i]; });
+    area.placeholder = '무엇이 어색하거나 틀렸는지, 어떻게 바꾸면 좋을지 적어 주세요.';
+    const title = dialog.querySelector('#ask-title'); if (title) title.textContent = '피드백 담기';
+    dialog.querySelectorAll('[data-ask-cancel]').forEach(button => button.setAttribute('aria-label', '취소'));
+    dialog.querySelector('.ask-chips')?.setAttribute('aria-label', '추천 피드백');
+    footer.querySelectorAll('[data-ask-cancel]').forEach(button => button.textContent = '취소');
+    const submit = footer.querySelector('button[type="submit"]');
+    const addBtn = el('button', submit?.className || 'fs-primary', '목록에 담기'); addBtn.type = 'button';
+    if (submit) { submit.before(addBtn); submit.hidden = true; submit.style.display = 'none'; } else footer.append(addBtn);
+    dialog.querySelector('form')?.addEventListener('submit', event => { event.preventDefault(); event.stopImmediatePropagation(); collect(); }, true);
     const collect = () => {
       const quote = dialog.querySelector('blockquote:not([hidden])')?.textContent || '';
       if (add(describe(panel || document.getElementById('answer')), quote, area.value)) dialog.close();
@@ -240,12 +275,21 @@
     bindSubmitKey(area, collect);
     const kbd = dialog.querySelector('button[type="submit"] kbd'); if (kbd) kbd.remove();
     const note = dialog.querySelector('.ask-note');
-    if (note) note.textContent = `${MAC ? '⌘↵' : 'Ctrl+↵'}로 목록에 담고, 오른쪽 아래에서 여러 건을 한 번에 복사합니다. 이 질문만 바로 복사하려면 오른쪽 버튼을 누르세요.`;
+    if (note) note.textContent = `${MAC ? '⌘↵' : 'Ctrl+↵'}로 목록에 담고, 오른쪽 아래에서 여러 건을 한 번에 복사합니다. `;
   }
 
   // === GENERIC: drag-to-quote floating button + a button on each anchored section heading ===
   function wireGeneric() {
     const open = makeDialog();
+    document.querySelectorAll('h1,h2,h3,h4').forEach((heading, index) => {
+      if (root.contains(heading) || heading.closest('[data-feedback-anchor],section[id],article[id]')) return;
+      if (!heading.id) {
+        let id = `feedback-heading-${index + 1}`;
+        while (document.getElementById(id)) id += '-next';
+        heading.id = id;
+      }
+      heading.dataset.feedbackAnchor = headText(heading);
+    });
     const floating = el('button', 'fs-float', '피드백'); floating.type = 'button'; floating.hidden = true; root.append(floating);
     let selected = null;
     document.addEventListener('selectionchange', () => {
@@ -262,7 +306,7 @@
     floating.addEventListener('click', () => { if (selected) open(selected.where, selected.quote); floating.hidden = true; });
     document.querySelectorAll('[data-feedback-anchor],section[id],article[id]').forEach((sec) => {
       if (root.contains(sec)) return;
-      const h = sec.querySelector('h1,h2,h3'); if (!h || h.querySelector('.fs-sec-btn')) return;
+      const h = sec.matches('h1,h2,h3,h4') ? sec : sec.querySelector('h1,h2,h3'); if (!h || h.querySelector('.fs-sec-btn')) return;
       const b = el('button', 'fs-sec-btn', '피드백'); b.type = 'button'; b.setAttribute('aria-label', `${headText(h)}에 피드백 담기`);
       b.style.cssText = 'font:inherit;cursor:pointer;border-radius:8px;border:1px solid currentColor;background:transparent;color:inherit;opacity:.7';
       b.addEventListener('click', () => open(describe(sec)));
@@ -298,13 +342,13 @@
   function start() {
     let tries = 0;
     const pick = () => {
-      if (isArchify()) { wireArchify(); render(); return; }
+      if (isArchify()) { window.__feedbackStudio.mode = 'archify'; wireArchify(); render(); return; }
       if (document.querySelector('section.panel .panel-head') && tries++ < 20) { setTimeout(pick, 100); return; }
-      wireGeneric(); render();
+      window.__feedbackStudio.mode = 'generic'; wireGeneric(); render();
     };
     pick();
   }
-  window.__feedbackStudio = { asMessage, describe, get items() { return items; } }; // for automated checks
+  window.__feedbackStudio = { mode: 'pending', asMessage, describe, get items() { return items; } }; // for automated checks
   const boot = () => { wireVideo(); start(); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })();
