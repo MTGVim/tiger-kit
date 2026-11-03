@@ -20,16 +20,34 @@
   권고·설치 예시에서 제외하되 기존 명시적 선택을 삭제하거나 설정을 자동 이관하지 않습니다.
 - 일반 관찰·입력·캡처는 CLI 또는 같은 세션의 공식 `run-code`로 수행합니다. 독립 화면 근거,
   postcondition, 실패 근거, 비밀 보호, 쓰기 범위와 실행 소유 자원 정리를 완화하지 않습니다.
-- 정확한 프레임 시각 계약은 일반 동영상 파일·출력 fps와 구별합니다. CLI 기본 녹화, 같은 페이지의
-  `run-code` CDP Session, 이미 승인된 동일 페이지의 라이브러리 CDP Session 순으로 실제 기능을
-  확인합니다. 충족하지 못하면 선택적 미디어만 제한하고 별도 브라우저나 시나리오를 암묵적으로 실행하지 않습니다.
-- Playwright Trace를 Chrome DevTools Performance Trace로 간주하지 않습니다. 성능 분석과 재현된
-  특수 drag에는 명시적으로 선택한 최소 CDP 경로를 유지할 수 있습니다.
+- 정밀 캡처는 같은 CLI 세션의 공식 `run-code`와 `page.context().newCDPSession(page)`로 수행합니다.
+  `capture_motion.py`는 기존 페이지에서 원래 프레임 시각·ack·정리와 크기·시간이 제한된 호스트 전달을 담당하며
+  브라우저를 시작하거나 별도 endpoint에 연결하지 않습니다. 일반 녹화의 25fps 컨테이너/디코더
+  PTS는 원래 프레임 시각 계약을 충족하지 않습니다. `Page.startScreencast` 이벤트 API 자체는
+  이 기능 차이 때문에 유지하지만 별도 Chrome DevTools MCP·직접 socket/pipe 수집기를 요구하지 않습니다.
+- SortableJS와 네이티브 HTML Drag & Drop은 실제 입력과 POST 결과가 통과한 CLI `drag`,
+  같은 세션의 `dragTo`·mouse 경로로 대체합니다. 일반 drag의 직접 CDP 명령 지침을 제거합니다.
+  실패한 새로운 사례는 최소 재현과 부족한 기능을 확인하기 전까지 `Unverifiable`이며,
+  자동으로 CDP 필수나 별도 브라우저 실행으로 바꾸지 않습니다.
+- Playwright Trace와 Chrome DevTools Performance Trace를 구별합니다. 후자는 같은 페이지의
+  공개 `browser.startTracing`/`stopTracing` API로 CPU 표본·레이아웃·페인트·User Timing을
+  실제 확보했습니다. 이 분석을 위해 별도 MCP나 직접 `Profiler` 명령을 요구하지 않습니다.
+- 기존 `chrome-devtools-mcp`·`browser-cdp` ID는 설정 호환성을 위해 `reference`로 보존합니다.
+  신규 설치 권고에서 제외하되 명시적 사용자 선택과 설정을 자동 변경하지 않습니다.
 - PR 미디어의 `gh-attach` 기본 경로를 유지합니다. 사용자가 고른 브라우저 대체 경로에는 CLI를
   우선 제안하며 인증·정확한 대상·작성창·첨부 완료·바이트·렌더링/재생 검증을 유지합니다.
-- `tk-writing`의 `chrome_capture.mjs`, `capture_page.mjs`, `svg_to_png.mjs`는 네트워크가
-  차단된 실행 소유 pipe로 로컬 산출물을 렌더링하는 도우미입니다. 일반 앱 검증 제공자가 아니므로
-  이번 전환에서 유지합니다. 이 도우미를 CLI 누락 우회나 제품 검증 대체에 사용하지 않습니다.
+- `tk-writing`의 로컬 HTML/SVG 렌더러도 **Replace**합니다. 초기에는 기본 글꼴이
+  `Apple SD Gothic Neo`에서 `Times`로 바뀌고 HTML 630픽셀, SVG 1682픽셀이 달라 Keep으로
+  판정했지만, 후속 사용자 결정으로 기본 글꼴과 픽셀 완전 일치를 대체의 필수 조건에서 제외했습니다.
+  Playwright가 소유한 격리 headless 컨텍스트를 사용하며 사용자 Chrome 프로필은 읽지 않습니다.
+  글꼴을 고정해야 하는 입력은 CSS에 명시합니다. HTML 전체 캡처와 명시한 layout viewport,
+  크기 제한, DPR, SVG 투명 배경, 덮어쓰기 방지, 네트워크 차단과 종료 처리는 유지합니다.
+  설치된 Playwright SDK를 사용하고 자동 설치나 다운로드는 하지 않습니다. GPU 합성에서 발생한
+  초대형 캡처의 하단 콘텐츠 누락은 소프트웨어 렌더링으로 해결하고, 모든 PNG는 공개
+  `page.screenshot`으로 생성합니다. 별도 CDPSession이나 직접 pipe 연결은 요구하지 않으며,
+  일반 앱 검증이나 CLI 누락 우회에 이 도우미를 쓰지 않습니다.
+  초기 100000px 실패 로그는 후속 CDP Session 후보의 실행이므로 공개 screenshot API 전체의
+  한계로 일반화하지 않습니다. 초기 후보와 실패 근거는 최종 채택 경로의 검증과 구분해 보존합니다.
 
 ## 결과와 제한
 
@@ -38,11 +56,23 @@
 수정하지 않습니다. `tk-explain`의 로컬 콘텐츠 리뷰용 캡처도 기존 소유 경계를 유지합니다.
 
 공식 계약의 고정 revision과 `keep | adapt | omit` 근거는 `tk-verification-guidance`의
-`references/provider-knowledge.md`에 둡니다. 현재 환경에는 CLI 실행 파일과 브라우저가 없으므로
-실제 페이지·네트워크·SortableJS/HTML drag·픽셀·정밀 영상·성능·인증된 PR 업로드는 `Unverified`입니다.
-일반 전환의 지침·registry·설치 경계 변경과 런타임 완료 기준 달성을 구별합니다. 지원 여부를
-문서 존재만으로 통과 처리하지 않습니다. 준비된 환경에서 동일 시나리오를 실행하고 기능 성공·명령 수·
-시간·재시도·개입·추가 의존성·잔여 자원·근거 품질을 비교합니다. 토큰은 측정할 수 있을 때만 기록합니다.
+`references/provider-knowledge.md`에 둡니다. PR #497 당시의 CLI/브라우저 부재는 역사적 실행
+제약이었으며 대체 불가능성의 증명이 아니었습니다. 후속 실행은 공식 CLI `0.1.23`, 실제 의존
+Playwright `1.65.0-alpha-2026-10-30`, Chrome `156.0.8078.74`에서 공식 Skill 없이 수행했습니다.
+
+초기 정밀 캡처에서는 원래 단조 시계 이벤트 193개와 ack 193개, 순서 역행 없음, 마지막 유휴
+유지 약 1195ms를 확인했습니다. 움직임 구간의 전달 속도 약 60fps와 출력 인코딩 30fps를
+구별하고, 4496ms manifest를 기존 `tk-video` 조립기로 실제 4500ms MP4로 인코딩·검사했습니다.
+최종 helper 소스도 별도로 정상·시나리오 예외·기한·예산·SIGINT와 소유 세션 폐기를 실행했습니다.
+프레임 시각·ack·원본을 보존하되 프로토콜에 compositor sequence가 없어 원천 브라우저의
+모든 프레임 전달/누락까지 보장하지는 않습니다. 이 한계는 직접 CDP 수집기에도 같습니다.
+
+인증된 GitHub 첨부는 승인된 브라우저 인증과 정확한 업로드 대상이 없어 `Unverified`입니다.
+로컬 file chooser·파일 선택의 성공을 GitHub 업로드 성공으로 확대하지 않습니다. 재개에는
+정확한 PR·본문 또는 기존 댓글과 그 환경에 승인된 브라우저 인증이 필요합니다. 새 계정 연결,
+사용자 프로필 접근이나 시험 댓글 생성은 하지 않습니다. `gh-attach` 기본값은 바꾸지 않습니다.
+상시 suite·CI·새 제공자 framework를 도입하지 않으며 일회성 실험과 원시 근거는 ignored
+`.tigerkit/` 경로에 보존합니다. 시간·명령 수·토큰 비용은 실제 측정한 항목만 보고합니다.
 
 ## 복구
 

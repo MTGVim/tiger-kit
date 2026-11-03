@@ -41,8 +41,14 @@
   `@playwright/cli@0.1.23`입니다. **keep:** headless·실행 소유권·독립 postcondition·비밀/발행 경계를
   유지합니다. **adapt:** CLI 기본 선택, 선택적 공식 Skill과 버전별 도움말을 적용합니다. **omit:**
   자동 설치·권한 확대·사용자 프로필 attach·Skill 본문 복제와 MCP schema 상시 로딩을 도입하지 않습니다.
-  이 환경에는 CLI 바이너리/브라우저가 없어 실제 페이지·drag·녹화·GitHub 첨부는 `Unverified`입니다.
-  설치된 Playwright 1.62.1의 도움말 진단은 배포판 0.1.23의 실행 검증이 아닙니다.
+  PR #497 당시의 CLI/브라우저 부재와 Playwright `1.62.1` 도움말 진단은 역사적 근거이며,
+  배포판 CLI의 실행 검증이 아닙니다. 후속 실험에서는 공식 CLI `0.1.23`과 실제 의존
+  Playwright/`playwright-core` `1.65.0-alpha-2026-10-30`, 기존 Chrome `156.0.8078.74`를
+  격리 headless 세션으로 실행했습니다. 별도 라이브러리 비교도 같은 버전으로 고정했습니다.
+  공식 Skill 없이 CLI 도움말로 일반 입력·POST·파일 선택, SortableJS/HTML drag와 공개 API의
+  Chrome 성능 trace를 실제 확인했습니다. 인증된 GitHub 첨부는 별도의 `Unverified`로 남깁니다.
+  **adapt:** 성공한 기능을 같은 CLI 세션으로 대체합니다. **omit:** 비교적 쉬운 fixture의 성공을
+  모든 앱의 보장으로 확대하거나 호환성 ID를 기술적 필수 의존성으로 취급하지 않습니다.
 
 <a id="playwright-cli"></a>
 ## Playwright CLI
@@ -94,15 +100,20 @@
 `require`·`process`·파일시스템을 가정하지 않고 설치 버전의 제한을 확인합니다. `eval`은 페이지
 문맥이며 브라우저 측 `run-code`와 다릅니다. 코드 실행도 인증·권한 확대·상태 변경 승인을 면제하지 않습니다.
 
-영상은 호출한 검증 담당자의 동작 근거 시간 계약을 충족한 경우에만
-manifest로 인계합니다. `video-start`/`video-stop`의 파일 생성이나 요청한 fps만으로 이벤트별
-원래 시각·실제 전달 fps가 입증되지 않습니다. 같은 페이지의 `page.context().newCDPSession(page)`도
-설치 버전의 `run-code`에서 실제 허용되는지 먼저 확인합니다. 안 되면 독립 제공자를 실행하지 말고
-선택적 영상 제한을 반환합니다. 이미 승인된 특수 CDP 경로는 유지할 수 있습니다.
+영상은 호출한 검증 담당자의 동작 근거 시간 계약을 충족한 경우에만 manifest로 인계합니다.
+`video-start`/`video-stop`의 파일 생성·컨테이너 fps는 이벤트별 원래 시각·전달 fps가 아닙니다.
+CLI `0.1.23`에서는 같은 페이지의 `run-code`에서 CDP Session 이벤트와 원본 PNG 바이트를
+실제 수집했습니다. 정밀 캡처는 호출한 캡처 담당자의 동작 근거 계약을 따릅니다. `tk-browser-verify`는
+그 소유의 `capture_motion.py`로 이 경로를 구현합니다. 이 도우미는 공식 CLI의 제한된 바이트 전달을 사용하며 Node
+파일시스템·새 브라우저·별도 endpoint·MCP를 요구하지 않습니다. 원래 시각을 보존하는 CDP
+이벤트 API 자체와 직접 연결을 구별합니다. 설치 버전에서 실패하면 그 미디어만 제한하고
+자동으로 다른 제공자·브라우저를 실행하지 않습니다.
 
-`tracing-start`/`tracing-stop`은 동작 진단용 Playwright Trace입니다. Chrome DevTools Performance
-Trace의 CPU 프로파일·렌더링 비용·성능 회귀 수치와 동등하다고 주장하지 않습니다. 해당 분석이
-필요하면 관찰된 기능 공백과 명시적으로 선택할 특수 경로를 제시하며, 일반 검증은 계속할 수 있습니다.
+`tracing-start`/`tracing-stop`은 동작 진단용 Playwright Trace이며 Chrome DevTools Performance
+Trace와 다릅니다. CPU 표본·레이아웃·페인트·User Timing이 실제 과제에 필요할 때만
+[Chrome 성능 분석](performance-trace.md)을 읽고 같은 페이지의 공개 `browser.startTracing` /
+`stopTracing` API를 사용합니다. 직접 CDP 연결이나 별도 MCP를 기본 요구 사항으로 두지 않습니다.
+실제 누락 데이터를 입증한 경우에만 최소 특수 경로를 검토하며 일반 검증은 계속합니다.
 
 종료 시 녹화·trace·관찰자·route를 정리하고 이 실행이 만든 세션만 `-s=<run-id> close`로 닫습니다.
 연결한 외부 브라우저에는 문서화된 detach를 사용합니다. `close-all`, `kill-all`이나 다른 실행의
@@ -110,7 +121,8 @@ Trace의 CPU 프로파일·렌더링 비용·성능 회귀 수치와 동등하�
 
 ## Chrome DevTools MCP
 
-명시적으로 선택된 기존/특수 경로만 지원하며 기본 권고나 신규 설치 안내로 제시하지 않습니다.
+기존 명시적 설정을 읽기 위한 호환성 항목입니다. 이 저장소의 drag·성능·로컬 렌더링 과제를 위해
+새로 설치할 기술적 필요는 입증되지 않았습니다. 기본 권고나 신규 설치 안내로 제시하지 않습니다.
 설정된 launch/attach 모드와 유효 headless 설정을 검사합니다. 관리되는 pipe에는 TCP endpoint가 필요하지 않습니다. 전용 persistent profile에는 격리 한계를 밝혀야 합니다. 네트워크/console/DOM과 성능 도구는 설치 버전과 노출된 도구 목록에 따라 달라집니다. 브라우저 환경 참조의 attach, 소유권과 인증 요구 사항을 보존합니다.
 
 ## Playwright
