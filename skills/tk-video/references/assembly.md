@@ -63,6 +63,8 @@ Frame, 장면 WAV와 출력은 manifest 디렉터리 안에 둡니다. 출력은
 <a id="continuous-rendered-video"></a>
 ## 연속 렌더링 영상
 
+평균 FPS가 공칭 FPS와 미세하게 다르면 비디오 packet PTS를 표시 순서로 정렬하여 검사합니다. 공칭 간격과 다른 간격이 전체의 0.1% 이하이고 각 편차가 공칭 간격의 2% 미만일 때만 공칭 FPS로 인정하며 receipt `warnings`에 실측 비율과 개수를 남깁니다. 유효한 time base·PTS가 없거나 평균 FPS 자체가 공칭값에서 2% 이상 벗어나면 모호한 입력으로 거부합니다. Manim 구간 접합 경계에서 관찰된 것과 같은 미세한 오차는 이 범위 안에서 처리하지만, 접합이 원인이라는 가설을 판정 근거로 사용하지 않습니다. 허용 범위를 벗어나 명시적 CFR 변환이 필요하더라도 먼저 `avg_frame_rate == r_frame_rate`인지 확인하고 이미 같으면 이 오차 우회만을 위한 추가 재인코딩을 하지 않습니다. 조립 전에 자동 CFR 재인코딩을 추가하지 않습니다.
+
 선택한 [Manim 경로](manim.md) 이후에는 PNG frame을 추출하는 대신 이 실행 안의 일반 MP4를 사용합니다. 이 경로는 완전한 고정 frame rate render 하나를 소비합니다. 여러 beat는 그 안에서 구성합니다. Frame/영상 혼합 manifest와 직접 작성한 `end_ms`는 거부합니다. 가변적이거나 모호한 rate에는 추측이 아니라 명시적으로 선택한 변환이 필요합니다. 이는 render된 animation이며 관찰된 애플리케이션 타이밍이 아닙니다.
 
 ```json

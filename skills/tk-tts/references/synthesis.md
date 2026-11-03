@@ -16,7 +16,7 @@
 
 발음이 개선되었다는 주장은 같은 엔진, 목소리와 설정으로 새로 만든 변경 전/후 파일을 청취하여 별도로 검증합니다. 원고 검토만으로는 음향 근거가 되지 않습니다.
 
-Qwen은 sohee(한국어 기본값)와 명시적으로 선택하는 serena를 제공합니다. 0.6B 모델은 instruct를 무시합니다. 지원하지 않는 style을 제안하거나 모델을 몰래 업그레이드하지 않습니다. ppaso는 Qwen speaker ID가 아니라 자체 모델 목소리를 사용합니다. 브라우저 발화는 내보낼 WAV 경로가 될 수 없습니다. Supertonic 3는 denoising 8단계와 speed 1.05가 고정된, 명시적으로 선택하는 한국어 CPU/F1 대안입니다. Adapter는 고정된 공식 도우미를 사용하고 각 native chunk를 예측 길이로 자른 뒤 연결하며 도우미의 chunk 사이 0.3초 간격을 보존합니다. 작성한 문장 사이에 간격을 추가하지 않습니다. Style, 언어나 사용자 지정 목소리 제어는 노출하지 않습니다.
+Qwen 경로를 선택했을 때만 화자 대체값 sohee와 명시적인 serena를 적용합니다. Apple Silicon에서 이 화자들이 필요하면 MLX 5bit를 선택할 수 있으며, voice 값만으로 Qwen을 선택하지 않습니다. 0.6B 모델은 instruct를 무시합니다. 지원하지 않는 style을 제안하거나 모델을 몰래 업그레이드하지 않습니다. ppaso는 Qwen speaker ID가 아니라 자체 모델 목소리를 사용합니다. 브라우저 발화는 내보낼 WAV 경로가 될 수 없습니다. 엔진 미지정 시 첫 추천은 플랫폼과 관계없이 Supertonic 3 한국어 ONNX CPU/F1입니다. 해당 upstream은 보관 처리되어 유지보수·보안 수정이 없으며 AI 합성 고지가 필요합니다. 유효한 저장 엔진 선호가 있으면 그 엔진을 먼저 추천하고, 추천만으로 합성하지 않습니다. Supertonic 3의 denoising 8단계와 speed 1.05는 고정되어 있습니다. Adapter는 고정된 공식 도우미를 사용하고 각 native chunk를 예측 길이로 자른 뒤 연결하며 도우미의 chunk 사이 0.3초 간격을 보존합니다. 작성한 문장 사이에 간격을 추가하지 않습니다. Style, 언어나 사용자 지정 목소리 제어는 노출하지 않습니다.
 
 ```bash
 python -B scripts/qwen3.py --engine mlx --quantization 5 --text-file <script.txt> --output <new.wav> --speaker sohee

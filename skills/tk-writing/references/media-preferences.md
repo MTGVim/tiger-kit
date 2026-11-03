@@ -13,7 +13,8 @@
 | `enabled` | boolean | `false` |
 | `format` | `auto`, `gif`, `mp4` | `auto` |
 | `narration` | boolean | `false` |
-| `voice` | `serena`, `sohee` | `sohee` |
+| `ttsEngine` | `qwen3-mlx-5bit`, `qwen3-mlx-8bit`, `qwen3-pytorch`, `ppaso-onnx`, `supertonic3-onnx` | `supertonic3-onnx`를 추천하며 사용자 답변으로 간주하지 않습니다. |
+| `voice` | `serena`, `sohee` | Qwen 경로가 선택된 경우에만 `sohee` |
 | `captions` | `none`, `band`, `overlay`, `overlay-rounded` | 관찰 캡처·카드는 `band`, Manim은 `overlay-rounded` |
 | `emphasis` | `in-slide`, `zoom`, `none` | 작성한 슬라이드에는 `in-slide`를, 선택한 캡처 강조 영역에는 `zoom`을 사용합니다. |
 | `callouts` | boolean | `false` |
@@ -24,8 +25,7 @@
 사용하기 전에 객체와 필드 타입·enum을 검증합니다. 미디어 객체 형식이 잘못되면 이번 실행에서는 저장된 미디어
 설정을 사용할 수 없습니다. 이를 알리고 파일을 보존하며, 하위 계층의 참여 설정 대신
 안전한 대체값과 현재 실행의 명시적 답변을 사용합니다. 관련 없는 설정의
-우선순위를 바꾸지 않습니다. `voice`는 기존 Qwen 화자 선호값이며, 엔진 선택이나
-다른 지원 TTS 경로를 숨길 권한이 아닙니다. 직접적인 영상 요청은 `enabled`가 false여도 이번 실행에서 미디어를 선택한 것으로 봅니다.
+우선순위를 바꾸지 않습니다. `ttsEngine`은 `list_options.py`의 정확한 `id`와 같은 enum으로 검증하며 기존 필드와 같은 우선순위를 따릅니다. `voice`는 Qwen 계열에만 적용하는 기존 화자 선호값입니다. 다른 엔진에서는 무시하고 선택 질문에 그 사실을 표시합니다. `voice: sohee`만 저장되어 있어도 Qwen 엔진 선택으로 해석하지 않습니다. 어떤 선호값도 다른 지원 TTS 경로를 숨길 권한이 아닙니다. 직접적인 영상 요청은 `enabled`가 false여도 이번 실행에서 미디어를 선택한 것으로 봅니다.
 어떤 선호 설정도 설치, 캡처 변경이나 발행 권한을 부여하지 않습니다.
 
 <a id="one-choice-round-before-production"></a>
@@ -36,6 +36,7 @@ Narration Choice를 따릅니다. TTS에는 `tk-tts`를 불러오고 현재
 `list_options.py` 출력의 모든 경로를 기기·플랫폼, 음성, 누락된 의존성과 실제 캐시·설정
 상태와 함께 보여 줍니다. 모듈이 존재한다는 사실만으로 모델 준비 상태를 검증한 것은 아닙니다. 이전 평가는
 추천 이유를 설명할 수 있지만, 사용 가능한 경로를 제외하는 근거가 될 수는 없습니다. 제공된 오디오와 내레이션 없음도 선택할 수 있게 유지합니다.
+현재 명시적 엔진 선택이 없으면 호출자가 해석한 유효한 저장 선호를 `list_options.py --preferred <id>`로 전달합니다. `tk-tts`가 이 설정 파일을 직접 읽게 하지 않습니다. `preferred`는 저장된 선호, `recommended`는 미지정 시 추천이며 별개입니다. 유효한 선호 엔진을 첫 추천으로 제시하고, 없으면 Supertonic 3 ONNX CPU/F1을 첫 추천으로 제시하되 추천을 답변으로 간주하지 않고 엔진을 묻습니다. Supertonic 3 추천 바로 옆에 upstream이 보관 처리되어 유지보수·보안 수정이 없다는 점과 AI 합성 고지 의무를 알립니다. 선호 엔진이 준비되지 않았으면 설치 안내와 대안을 함께 제시하고, 승인 없이 설치하거나 다른 엔진으로 바꾸지 않습니다. 내레이션 동의나 설치·다운로드·합성 권한은 엔진 선호에서 추론하지 않습니다.
 질문이나 질문 도구 호출 전에 실행 담당 스킬의 공통 질문 계약을 읽고, 현재 용도로 허용된 네이티브 도구를 우선합니다. 미디어 결정과 기본값 저장 승인은 별도 질문으로 분리합니다.
 
 같은 첫 질문 차례에서 명시적 답변도 유효한 저장값도 없는 표현 필드인

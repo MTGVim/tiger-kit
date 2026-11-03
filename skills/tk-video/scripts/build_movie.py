@@ -129,7 +129,31 @@ def timeline(data: dict, root: Path, ffprobe: str = "ffprobe") -> tuple[list[tup
     return frames, end, [] if data.get("caption_style") == "none" else captions
 
 
-def animation_source(data: dict, root: Path, ffprobe: str) -> dict:
+def packet_cfr_warning(stream: dict, packets: dict, rate: Fraction, nominal: Fraction) -> str:
+    try:
+        time_base = Fraction(stream["time_base"])
+        rows = packets["packets"]
+        if time_base <= 0 or not isinstance(rows, list) or len(rows) < 2:
+            raise ValueError("missing packet timing")
+        if any(not isinstance(row, dict) or type(row.get("pts")) is not int for row in rows):
+            raise ValueError("packet PTS must be integers")
+        # Encoded packets may be in decode order when the source has B-frames.
+        stamps = sorted(row["pts"] for row in rows)
+        intervals = [b - a for a, b in zip(stamps, stamps[1:])]
+        expected = 1 / nominal / time_base
+        deviations = [abs(interval - expected) for interval in intervals if interval != expected]
+        if (any(interval <= 0 for interval in intervals)
+                or abs(rate - nominal) >= nominal / 50
+                or len(deviations) * 1000 > len(intervals)
+                or any(delta >= expected / 50 for delta in deviations)):
+            raise ValueError("packet timing exceeds CFR tolerance")
+    except (KeyError, TypeError, ValueError, ZeroDivisionError) as exc:
+        raise ValueError("animation requires a verified constant frame rate; packet timing is variable or ambiguous") from exc
+    return (f"average frame rate {stream['avg_frame_rate']} differs from nominal {stream['r_frame_rate']}; "
+            f"{len(deviations)} of {len(intervals)} packet intervals deviate by < 2%; treated as constant")
+
+
+def animation_source(data: dict, root: Path, ffprobe: str, warnings: list | None = None) -> dict:
     if "frames" in data or "end_ms" in data:
         raise ValueError("animation uses video_path and measured duration, not frames/end_ms")
     path = regular(Path(data["video_path"]), root)
@@ -143,12 +167,20 @@ def animation_source(data: dict, root: Path, ffprobe: str) -> dict:
     try:
         rate = Fraction(stream["avg_frame_rate"])
         nominal = Fraction(stream["r_frame_rate"])
-    except (ValueError, ZeroDivisionError, KeyError) as exc:
+    except (TypeError, ValueError, ZeroDivisionError, KeyError) as exc:
         raise ValueError("animation requires a verified constant frame rate") from exc
     duration = number(float(stream["duration"]))
     width, height = int(stream["width"]), int(stream["height"])
-    if rate <= 0 or rate != nominal or duration <= 0 or width <= 0 or height <= 0:
+    if rate <= 0 or nominal <= 0 or duration <= 0 or width <= 0 or height <= 0:
         raise ValueError("animation requires positive duration/geometry and a constant frame rate")
+    if rate != nominal:
+        result = subprocess.run([ffprobe, "-v", "error", "-select_streams", "v:0", "-show_packets",
+                                 "-show_entries", "packet=pts", "-of", "json", str(path)],
+                                capture_output=True, text=True, check=True)
+        warning = packet_cfr_warning(stream, json.loads(result.stdout), rate, nominal)
+        if warnings is not None:
+            warnings.append(warning)
+        rate = nominal
     audio = [s for s in info["streams"] if s.get("codec_type") == "audio"]
     if len(audio) > 1:
         raise ValueError("select a rendered source with at most one embedded audio stream")
@@ -321,7 +353,8 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
         hard_captions=delivery == "hard" and caption_support,
         callouts_rendered=caption_support)
 
-    source_video = animation_source(data, root, ffprobe) if animation else None
+    source_warnings = []
+    source_video = animation_source(data, root, ffprobe, source_warnings) if animation else None
     narration_requested = data.get("narration_requested", False)
     scenes = audio_scenes(data, frames, end, root, ffprobe)
     scene_voices = any(row[2] is not None for row in scenes)
@@ -345,7 +378,7 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
         selected_fps, fps_source = frame_rate(data, frames, kind, fps)
     rate = Fraction(selected_fps).limit_denominator(100000)
     rate_text = f"{rate.numerator}/{rate.denominator}"
-    warnings = []
+    warnings = source_warnings
     if animation:
         warnings.append("rendered video is re-encoded; it is not observed application evidence")
         if not math.isclose(selected_fps, source_video["fps"], rel_tol=1e-9):
