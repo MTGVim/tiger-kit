@@ -1,10 +1,11 @@
-/** Private Playwright renderer; launches only an isolated, installed Chrome. */
+/** Private offline renderer; launches only an isolated, installed Chrome. */
 import {access, mkdtemp, rm} from 'node:fs/promises';
 import {constants} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join, delimiter, isAbsolute} from 'node:path';
 import {createRequire} from 'node:module';
 import {createServer} from 'node:net';
+import {launchChromePipe} from './chrome_pipe.mjs';
 
 export async function chromePath() {
   const paths = process.env.CHROME_PATH ? [process.env.CHROME_PATH] : [
@@ -20,9 +21,14 @@ export async function chromePath() {
 function installedChromium() {
   const override = process.env.PLAYWRIGHT_MODULE_PATH;
   if (override !== undefined && !isAbsolute(override)) throw new Error('Blocked: PLAYWRIGHT_MODULE_PATH must be an absolute installed Playwright package path.');
+  const require = createRequire(join(process.cwd(), 'package.json'));
+  if (override === undefined) {
+    try { require.resolve('playwright'); }
+    catch (error) { if (error.code === 'MODULE_NOT_FOUND') return null; throw error; }
+  }
   try {
     // Resolve from the caller project, not the skill installation or global packages.
-    const {chromium} = createRequire(join(process.cwd(), 'package.json'))(override ?? 'playwright');
+    const {chromium} = require(override ?? 'playwright');
     if (!chromium || typeof chromium.launchPersistentContext !== 'function') throw new Error('Not a Playwright SDK');
     return chromium;
   } catch (error) {
@@ -33,7 +39,7 @@ function installedChromium() {
 export async function withPage(action, {viewport = {width: 1280, height: 720}, deviceScaleFactor = 1} = {}) {
   const chromium = installedChromium();
   const executablePath = await chromePath();
-  let profile, context, denyProxy, interrupted;
+  let profile, context, native, denyProxy, interrupted;
   let rejectStop;
   const stopped = new Promise((_, reject) => { rejectStop = reject; });
   const stop = error => { interrupted = error; rejectStop(error); };
@@ -45,7 +51,7 @@ export async function withPage(action, {viewport = {width: 1280, height: 720}, d
   for (const [signal, handler] of handlers) process.on(signal, handler);
   const timer = setTimeout(() => stop(new Error('Capture timeout (30000ms)')), 30000);
   const launch = (async () => {
-    profile = await mkdtemp(join(tmpdir(), 'tk-writing-playwright-'));
+    profile = await mkdtemp(join(tmpdir(), 'tk-writing-capture-'));
     if (interrupted) throw interrupted;
     // Context routes cannot cover worker WebSockets. This run-owned proxy
     // never forwards connections, including loopback and TLS tunnels.
@@ -55,6 +61,11 @@ export async function withPage(action, {viewport = {width: 1280, height: 720}, d
       denyProxy.listen(0, '127.0.0.1', resolve);
     });
     if (interrupted) throw interrupted;
+    if (!chromium) {
+      console.error('Capture backend: installed Chrome pipe (Playwright SDK unavailable).');
+      native = await launchChromePipe(executablePath, profile, `http://127.0.0.1:${denyProxy.address().port}`, viewport, deviceScaleFactor);
+      return;
+    }
     context = await chromium.launchPersistentContext(profile, {
       executablePath, headless: true, chromiumSandbox: true, viewport, deviceScaleFactor,
       timeout: 20000, handleSIGINT: false, handleSIGTERM: false, handleSIGHUP: false,
@@ -68,6 +79,7 @@ export async function withPage(action, {viewport = {width: 1280, height: 720}, d
   const work = (async () => {
     await launch;
     if (interrupted) throw interrupted;
+    if (native) return await action(native.page);
     if (typeof context.routeWebSocket !== 'function') throw new Error('Blocked: Playwright 1.48+ is required for WebSocket blocking.');
     context.setDefaultTimeout(15000);
     context.setDefaultNavigationTimeout(15000);
@@ -83,9 +95,10 @@ export async function withPage(action, {viewport = {width: 1280, height: 720}, d
   } finally {
     clearTimeout(timer);
     try {
-      // Acquisition is bounded by Playwright's launch timeout; never await a hung action.
+      // Both launch backends are bounded; never await a hung action.
       await launch.catch(() => {});
       if (context) await context.close();
+      if (native) await native.close();
     } finally {
       try {
         if (denyProxy?.listening) await new Promise(resolve => denyProxy.close(resolve));

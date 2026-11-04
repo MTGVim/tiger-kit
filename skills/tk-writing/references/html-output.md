@@ -115,6 +115,9 @@ explain/explain-diff에서는 요지 뒤에, research에서는 요약 뒤에, te
 <a id="shared-theme"></a>
 ## 공통 테마
 
+archify 설명 페이지의 후처리는 [피드백 studio](feedback-studio.md)의 원래 테마 버튼 보존 규칙을
+따릅니다. 아래 라디오 마크업 정규화와 공통 셸 스타일은 archify UI에 적용하지 않습니다.
+
 자체 완결형 HTML에 `tk-writing`의 [테마 CSS](../assets/html-theme.css)와 [테마 제어](../assets/html-theme.js)를 인라인으로 넣습니다.
 정본 토큰, 글꼴, 크기 체계, 간격과 구성 요소 스타일을 함께 유지합니다.
 prototype 비교에서는 기존 제품/설계 참조 토큰이 계속 우선합니다. 그런 기반이 없는 독립형 출력에는 이 중립적 기본값을 사용합니다.

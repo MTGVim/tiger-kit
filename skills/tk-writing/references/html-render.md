@@ -37,3 +37,16 @@ footer와 `.ht-doc-nav` 사각형이 교차하지 않는지 확인하는 작업�
 작동하는 링크를 포함하여 펼쳐진 상태로 나오는지 점검합니다.
 
 페이지를 고친 뒤 다시 캡처할 때는 새 출력 이름을 사용합니다. 기존 출력 오류가 나면 그 PNG를 최신 화면으로 검토하지 않습니다. 리뷰어에게 최신 캡처의 절대 경로와 생성 시각, 원본 콘텐츠 식별 정보를 함께 전달합니다.
+
+공통 정적 캡처 도우미는 호출 프로젝트의 Playwright SDK로 격리된 시스템 Chrome을 실행합니다.
+SDK가 설치되어 있지 않으면 같은 시스템 Chrome의 전용 pipe로 캡처합니다. 디버깅 포트를 열거나
+사용자 브라우저에 연결하지 않으며, 별도 프로필·네트워크 차단·시간 제한·정리와 출력 덮어쓰기 금지를
+유지합니다. 명시한 `PLAYWRIGHT_MODULE_PATH`의 오류, 설치된 SDK의 오류나 Chrome 실행 실패는
+자동 전환하지 않습니다. Chrome이 없으면 `CHROME_PATH` 안내와 함께 중단하고 자동 설치하지 않습니다.
+이 대체 경로는 정적 HTML/SVG 캡처에만 해당하며 일반 브라우저 검증의 제공자 선택을 바꾸지 않습니다.
+
+대체 캡처는 Chromium의 [Page](https://chromedevtools.github.io/devtools-protocol/tot/Page/)·
+[Network](https://chromedevtools.github.io/devtools-protocol/tot/Network/) 프로토콜의 문서 로드·캡처·차단
+명령을 사용합니다(2026-11-04 확인). `keep`: 기존 설치 Chrome과 오프라인 격리입니다.
+`adapt`: SDK가 없을 때만 프로세스 전용 pipe를 사용합니다. `omit`: TCP 디버깅 endpoint·일반 검증기
+전환·자동 설치입니다. 프로토콜 문서 확인은 실제 Chrome 실행 검증을 대신하지 않습니다.

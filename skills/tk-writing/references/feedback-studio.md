@@ -45,10 +45,15 @@ QA의 행별 메모는 점검 결과로 유지하며 studio 목록은 `시트 �
 현재 방문에서는 동작하며 저장 경고와 복사를 안내합니다. 피드백을 옮길 때 로컬 경로가 포함됨을 알립니다.
 `window.__feedbackStudio.mode`는 준비 후 `archify` 또는 `generic`이며 판별 대기 중에는 `pending`입니다.
 
-System/Light/Dark 네이티브 라디오와 `archify-theme` 키는 모든 전달 HTML에서 같습니다. archify의 원본
-테마 코드와 receipt는 수정하지 않고 studio에서 기존 버튼에 연동합니다. UI 값은
+archify 페이지는 원래 Auto/Light/Dark 버튼·선택 상태·스타일을 그대로 사용합니다. 별도 선택기로 교체하거나
+원래 버튼을 숨기지 않습니다. 공통 후처리는 기존 버튼을 통해 생성 기본값·독자 선택과 `archify-theme`
+저장 키만 연결하며, `system`과 `auto`를 호환합니다. 일반 HTML과 영상 플레이어는 공통
+System/Light/Dark 라디오를 사용합니다. archify 원본과 receipt는 수정하지 않습니다. 피드백 UI 값은
 [고정 토큰](html-output.md#frozen-delivery-theme)을 사용하며 후속 archify 변경을 추종하지 않습니다. `file://` 페이지 간 공유는 브라우저
 정책에 달려 있으므로 실측 없이 약속하지 않습니다. 새 페이지 버전이 테마·배속을 초기화하지 않습니다.
+테마 관련 후처리를 변경하거나 색 차이를 제보받았으면 같은 원본과 주입본의 동일한 viewport·테마를
+나란히 캡처합니다. 원래 테마 버튼의 선택 상태와 Clean·Export 등 기존 버튼의 배경·글자·테두리를
+비교하고 확인하지 않은 색 차이를 사실로 확정하지 않습니다.
 
 붙여 넣은 피드백은 위치 ID와 원고의 소유자에서 반영하고 같은 표현·유형을 전체 페이지에서 함께 찾습니다.
 archify 원고는 `patch explainer`로 수정하고 ID를 유지하며 재생성·확인한 뒤 studio를 다시 만듭니다.
@@ -64,3 +69,7 @@ archify `a4065941f12be7967436261d9934784e381d423c`의 explainer reader/render에
 2026-11-03 사용자 결정으로 이전 단건 복사 보존 결정을 재검토했습니다.
 DOM 계약은 `.panel`, `.panel-head`, `.panel-id`, `.ask-dialog`, `.ask-button`, `.ask-floating`과 내부 요소입니다.
 완전한 dialog가 없으면 일반 모드로 동작합니다.
+
+2026-11-04에 같은 고정 revision의 `explainer/reader.js`와 `render.mjs`를 다시 확인했습니다.
+`keep`: 원래 테마 버튼·선택 상태·내부 도해 갱신입니다. `adapt`: 버튼을 교체하지 않고 기본값과
+독자 선택 저장만 연결합니다. `omit`: archify 토큰과 호환되지 않는 별도 테마 선택기입니다.

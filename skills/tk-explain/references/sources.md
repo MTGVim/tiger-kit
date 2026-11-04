@@ -421,3 +421,19 @@ SVG는 공개된 별도 표현으로 유지하며, Excalidraw 통합 주장으�
 캡처와 시각 A/B는 미실행입니다. 사용자는 기술 스택 표시와 이미지 출력에 쓸 만하다고 평가한 뒤
 `tk-explain` 내부 증류를 요청했습니다. 이는 이 용도의 선택적 지원 근거이며 일반적인 정확성·가독성
 우월성이나 다른 독자의 선호를 입증하지 않습니다. PNG 런타임의 현재 환경 검증은 여전히 `unverified`입니다.
+
+<a id="discussion-audience-and-current-finalize-2026-11-04"></a>
+## 논의 상대와 이번 실행의 완료 근거
+
+2026-11-04 사용자 회고의 문서 과잉 상세화·담당 추정·작업 중복 사례를 조건부 독자 기준으로
+반영했습니다. `keep`: 설명의 근거·한정 조건과 명시적으로 요청한 구현 상세입니다.
+`adapt`: 논의 문서에는 작업·고려사항·담당을 중심으로 쓰고, 미확정 권한은 제안·확인 필요로 표시합니다.
+`omit`: 모든 문서에 적용하는 고정 패널 수와 개인 memory·자동 스킬 복제입니다.
+
+`tt-a1i/archify@a4065941f12be7967436261d9934784e381d423c`의 `explainer/prepare.mjs`,
+`bin/archify.mjs`, `bin/finalize.mjs`, `locales/ko.json`과 CLI·배치 검증 사례를 확인했습니다.
+기본 validate와 showcase finalize의 품질 차이, finalize 준비 중 실패 뒤 이전 성공 요약 잔존,
+한국어 workflow backend 범례의 `Agent 로직` 표시를 로컬 CLI로 재현했습니다. 원래 회고의 원고는
+제공되지 않았으므로 같은 원고를 재현한 것은 아닙니다. `keep`: 원본·receipt·오프라인 finalize입니다.
+`adapt`: 동일 품질의 사전 검사, 이번 stdout의 `ok`와 산출물 해시 대조, 명시적 범례입니다.
+`omit`: 요약 파일 존재만으로 완료 판정·품질 기준 완화·TigerKit에 외부 렌더러 코드 복제입니다.

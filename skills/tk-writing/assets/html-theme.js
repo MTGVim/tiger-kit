@@ -102,6 +102,25 @@
     if (window.__tigerkitTheme) return;
     const root = document.documentElement;
     const legacy = [...document.querySelectorAll('button[data-theme-choice]')];
+    // Renderer-owned controls also update embedded diagrams. Keep their DOM and styling.
+    if (root.dataset.archifyArtifact === 'explainer' || document.getElementById('explainer-manifest')) {
+      const key = 'archify-theme';
+      const normalize = value => value === 'system' ? 'auto' : value;
+      const valid = value => ['auto', 'light', 'dark'].includes(value);
+      const apply = value => legacy.find(button => button.dataset.themeChoice === normalize(value))?.click();
+      let saved = normalize(root.dataset.defaultTheme || 'auto');
+      try { const value = normalize(localStorage.getItem(key)); if (valid(value)) saved = value; } catch {}
+      // Install persistence after restoring: reading must not rewrite the reader's choice.
+      apply(valid(saved) ? saved : 'auto');
+      for (const button of legacy) button.addEventListener('click', () => {
+        try { localStorage.setItem(key, button.dataset.themeChoice); } catch {}
+      });
+      window.addEventListener('storage', event => {
+        if (event.key === key) apply(valid(normalize(event.newValue)) ? event.newValue : 'auto');
+      });
+      window.__tigerkitTheme = {apply, key};
+      return;
+    }
     let control = document.querySelector('[data-ht-theme-control]');
     if (!control) {
       control = document.createElement('fieldset');
