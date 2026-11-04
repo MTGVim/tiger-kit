@@ -1,11 +1,19 @@
 <a id="upstream-distillation"></a>
 # Upstream 증류
 
-- 출처: Matt Pocock의 `wizard` 스킬,
-  `https://raw.githubusercontent.com/mattpocock/skills/main/skills/engineering/wizard/SKILL.md`
-  (2026-08-11 검증).
-- 관계: `adapted`입니다. 보존한 개념은 저장소 우선 범위 설정, 순서가 있는 단계,
-  도우미 용어, 숨겨진 비밀, 확인 관문, 임시 기본값과
-  `bash -n`/`shellcheck` 정적 검사입니다.
-- 이 패키지는 원문 복사가 아니라 TigerKit 방식으로 증류한 결과입니다. upstream의 템플릿 라이브러리 구현은 의도적으로 제외합니다.
-  이 스킬은 계획과 안전한 인계를 담당합니다.
+2026-11-04에 `mattpocock/skills`의 최신 `main`을
+[`4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`](https://github.com/mattpocock/skills/tree/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d)로
+고정하고 `skills/engineering/wizard/SKILL.md`, `template.sh`, `docs/engineering/wizard.md`를 확인했습니다.
+관계는 `adapted`이며 원본 MIT 고지는 [LICENSE.txt](../LICENSE.txt)에 보존합니다.
+
+- **keep:** 근거 있는 단계, 값의 출처·목적지, 현재 행동과 진행 표시, 일반/비밀 입력 구분과 재실행입니다.
+  짧은 절차에는 기존 대화를 유지합니다.
+- **adapt:** 복잡한 사람 수행 절차에 검증한 일회성 Bash Wizard를 조건부로 제공합니다.
+  [입력 틀](../assets/wizard.sh)은 원본 코드로 작성했으며 입력·진행 표시만 소유합니다.
+  저장·대상별 원격 쓰기는 실제 파서·권한과 생성본의 실행 검증을 통과한 경우에만 추가합니다.
+- **omit:** upstream 템플릿의 symlink 추종 쓰기, 셸 인용을 가정한 범용 dotenv 처리, cwd에서 추론하는
+  GitHub 대상, 부분 실패 뒤 무조건 성공 요약, 값의 일괄 보존과 생성본의 구문 검사만으로 전달하는 방식은
+  도입하지 않습니다. 운영·비가역 변경의 대상별 승인과 기존 보호 입력·정리 계약이 우선합니다.
+
+실행·검증 조건은 [실행형 Wizard](executable-wizard.md)가 소유합니다. 설치된 Bash 3.2/macOS나
+실제 제공자 쓰기를 확인하지 않았다면 해당 런타임의 성공을 주장하지 않습니다.

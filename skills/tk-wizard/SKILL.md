@@ -1,6 +1,6 @@
 ---
 name: tk-wizard
-description: "[user/auto] 사용자가 직접 수행해야 하는 provisioning, 인증, 권한, device pairing, migration 절차를 근거 기반의 대화로 안전하게 안내합니다."
+description: "[user/auto] 사용자가 직접 수행해야 하는 설정·인증·권한·device pairing·migration 절차를 근거 기반 대화로 안내하며, 복잡하거나 반복할 절차에는 검증한 일회성 Bash Wizard를 제공합니다."
 disable-model-invocation: false
 argument-hint: "<사용자가 직접 해야 하는 설정·인증·이관 작업>"
 metadata:
@@ -33,7 +33,10 @@ metadata:
 이 담당자의 조사 범위에서 UI 근거를 수집/검증하기 전에 [UI 근거 수집](../tk-ui-evidence/references/ui-evidence.md)을 읽습니다.
 UI가 아닌 분기와 전달만 하는 분기는 수집을 생략하고, 새 조사를 시작하지 않은 채 제공된 근거/공백을 전달합니다.
 
-사용자가 직접 수행해야 하는 `host-session` 절차를 안내합니다. 내부적으로 단계, 값의 출처/목적지, 비밀 여부와 안전 경계를 엄격히 추적하되,
+기본은 사용자가 직접 수행해야 하는 짧은 `host-session` 대화 안내입니다. 복잡하거나 반복 가능한 사람 수행 절차에서
+여러 번의 대화·복사 작업을 줄일 수 있으면 [실행형 Wizard](references/executable-wizard.md)를 읽고
+검증한 일회성 Bash 스크립트를 제공합니다. 대화 안내를 일괄 교체하거나 일반 CLI 작업을 사용자에게 넘기지 않습니다.
+내부적으로 단계, 값의 출처/목적지, 비밀 여부와 안전 경계를 엄격히 추적하되,
 이를 승인 문서처럼 사용자에게 쏟아내지 않습니다.
 
 **대화는 자연스럽게 진행하고 상태는 엄격하게 관리합니다.**
@@ -90,7 +93,8 @@ UI가 아닌 분기와 전달만 하는 분기는 수집을 생략하고, 새 �
 키 값은 대화에 남기지 않을게요. 먼저 발급 화면까지 들어가 주세요.
 ```
 
-이전 단계의 `completion`을 관찰한 뒤에만 다음 단계를 안내합니다.
+대화에서는 이전 단계의 `completion`을 관찰한 뒤에만 다음 단계를 안내합니다.
+실행형 경로는 검증된 각 단계의 완료 판정을 스크립트가 수행하고, 에이전트는 전달만으로 완료를 주장하지 않습니다.
 
 <a id="secrets-and-authentication"></a>
 ## 비밀과 인증

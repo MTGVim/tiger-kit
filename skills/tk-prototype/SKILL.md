@@ -57,6 +57,18 @@ Screenshot: <absolute path | N/A>; actual inspection: yes | no | N/A
 
 콘텐츠, 데이터와 상호작용 상태를 동일하게 유지하면서 결정에 관련된 개념 2–3개를 비교합니다. 기본적으로 넓은 화면에서는 2–3개 열을 나란히 배치하고 좁은 화면에서는 세로로 쌓습니다. 동시 렌더링이 개념이나 최소 가독성을 해칠 때만 명시적인 A/B 또는 A/B/C 전환을 사용합니다. 세 번째 선택지가 독립적인 가치를 더하지 않으면 A/B에서 멈춥니다. 저장소 근거가 이미 결정을 해결하면 prototype을 만들지 않습니다.
 
+전환 보기를 사용하면 변형 ID와 재현에 필요한 비밀이 아닌 시나리오 ID를 URL의 `?variant=B&scenario=empty`
+또는 파일용 fragment에 보존합니다. 새로고침·직접 열기에서도 같은 변형과 초기 상태를 복원하고,
+알 수 없는 ID는 기본값과 함께 명시적으로 표시합니다. 원시 입력·인증값·개인정보를 URL에 넣지 않습니다.
+전환할 때는 같은 상태 스냅샷을 사용하며, 상태 구조가 달라 공유할 수 없으면 공통 초기 상태와 같은
+행동 순서로 재생합니다. 전환 UI는 평가할 제품 UI와 구별하고 키보드·선택 상태를 확인합니다.
+화살표 단축키를 제공하더라도 입력·편집 영역의 키를 가로채지 않습니다. 선택 인계에는 이 재현 경로도 보존합니다.
+
+로직 비교는 순수 harness를 기본으로 유지합니다. 사람이 행동 순서를 직접 바꾸어 봐야 미해결 결정을
+판단할 수 있을 때만 상태·행동 버튼·초기화·고정 시나리오 재생을 갖춘 작은 조작 화면을 추가합니다.
+정상·경계·금지 행동을 같은 초기 상태에서 재현하고 실제 데이터 변경 없이 결과를 비교합니다.
+단순 I/O 비교를 위해 HTML을 만들거나 prototype 코드를 제품으로 자동 승격하지 않습니다.
+
 `tk-browser-verify`로 실제 상호작용, `run URL`/`command`와 `success-criteria` 스크린샷을 포함하여 웹 출력을 검증합니다. 개발 서버가 필요하면 `handoff`로 정확한 `command`/`cwd`/대상 URL/`auth mode`/`readiness` 조건을 전달합니다. 서버 시작, 대기와 종료는 `tk-browser-verify`가 담당합니다. `hypothesis`가 반응형 동작·레이아웃을 다룰 때만 넓은 화면과 좁은 화면을 모두 점검합니다. 실행 소유의 추적 중인 `harness` 파일만 정리하고 `existing route`, `dependency`와 `production source`는 보존합니다.
 
 <a id="failure-paths"></a>
@@ -91,6 +103,10 @@ Screenshot: <absolute path | N/A>; actual inspection: yes | no | N/A
 
 <a id="prohibited-patterns"></a>
 ## 금지 패턴
+
+전환 경로와 조작 가능한 상태 비교는 `mattpocock/skills@4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`의
+`skills/engineering/prototype/UI.md`와 `LOGIC.md`에서 적응했습니다. 같은 상태의 비교·선택 인계는
+유지하고, 제품 route 수정·자동 승격·모든 로직 비교의 HTML 생성은 제외합니다. [MIT 고지](LICENSE.txt)를 유지합니다.
 
 - prototype을 제품에 사용할 준비가 되었다고 부르거나 자동 승격·commit하거나 다른 사용자 스킬을 호출하지 않습니다.
 - 가짜 통합을 실제 통합으로 보고하거나 실행 근거 없이 성공을 주장하지 않습니다.

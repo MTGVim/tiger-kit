@@ -1,6 +1,6 @@
 interface:
-  short_description: "[user/auto] 사람이 직접 해야 하는 설정·인증 절차를 자연스러운 대화로 안전하게 안내합니다."
-  default_prompt: "tk-wizard로 저장소와 `host` 근거를 먼저 확인하고, 전체 여정은 짧게 설명한 뒤 사용자가 지금 해야 할 행동 하나씩만 자연스럽게 안내하세요. `secret`은 대화에 남기지 말고 비가역 작업만 명시 확인을 받으세요."
+  short_description: "[user/auto] 사람의 설정·인증 절차를 대화나 검증한 일회성 Bash Wizard로 안내합니다."
+  default_prompt: "tk-wizard로 저장소와 호스트 근거를 확인하고 짧은 절차는 대화로 안내하세요. 복잡하거나 반복할 사람 수행 절차에는 검증한 일회성 Bash Wizard를 제공하세요. 비밀은 노출하지 않고 대상별 승인과 실제 완료 판정을 유지하세요."
 
 policy:
   allow_implicit_invocation: true
