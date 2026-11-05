@@ -1,6 +1,6 @@
 ---
 name: tk-grooming
-description: "[user/auto] 기존 skill·지속 rule·memory의 중복, 충돌, 낡은 지침을 감사합니다. 이들과 연결된 hook·plugin의 지연, 주입 비용이나 사용 기록 불일치에 대한 증상·진단 요청에도 사용하며, 일반 코드 오류나 신규 skill 작성에는 사용하지 않습니다."
+description: "[user/auto] 기존 skill·지속 rule·memory와 관련 런타임의 건전성을 감사합니다. 연결된 hook·plugin의 지연, 주입 비용, 사용 기록 불일치나 도구 호출 오류를 진단할 때도 사용하며, 일반 코드 오류나 신규 skill 작성에는 사용하지 않습니다."
 disable-model-invocation: false
 argument-hint: "[scope] [--apply]"
 metadata:
@@ -54,9 +54,10 @@ metadata:
    사용자가 특정 복사 설치 외부 스킬의 출처·내용 변경 감사를 명시하면
    [복사 설치 감사](references/copied-skill-audit.md)를 읽습니다. 일반 감사에서 자동으로 확대하지 않습니다.
    사용 빈도나 비활성이 범위에 있으면 [사용 근거](references/usage-evidence.md)를 읽습니다.
-   스킬·지속 맥락이나 연결된 hook·plugin에 대한 지연, 주입 비용, 기록 불일치 같은 증상 요청 또는
-   명시적 진단 요청이 있으면 [런타임 근거](references/runtime-evidence.md)를 읽습니다.
-   일반 정적 감사에는 이 분기를 붙이지 않습니다. 감사 대상 코드·hook은 실행하지 않으며,
+   명시적으로 이 스킬을 실행하거나 감사를 요청하면 증상 제보가 없어도
+   [런타임 근거](references/runtime-evidence.md)에 따라 최근 7일의 기본 진단을 포함합니다.
+   사용자가 정적 감사만 요청하거나 기록 조회를 제외했으면 그 제한을 우선합니다. 암묵적 호출은
+   교정된 문제와 연결된 근거만 조사하고 7일 전체 감사로 확대하지 않습니다. 감사 대상 코드·hook은 실행하지 않으며,
    검증된 읽기 전용 진단만 해당 참조의 범위 안에서 허용합니다.
 4. `incident attribution`: 이전 행동이 잘못되었다는 사용자 피드백이 있으면 그 행동이 인용했거나
    관찰된 지침을 활성 스킬과 지속 맥락에 비교합니다. 현행 소유자와 충돌하는 것으로 입증된

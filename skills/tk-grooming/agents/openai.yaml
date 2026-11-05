@@ -1,2 +1,2 @@
 interface:
-  short_description: "[user/auto] 스킬·지속 지침을 감사하고 관련 런타임 증상을 진단합니다."
+  short_description: "[user/auto] 스킬·지속 지침을 감사하고 최근 런타임 기록의 이상을 진단합니다."

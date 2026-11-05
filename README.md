@@ -75,7 +75,7 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 | --- | --- | --- |
 | [tk-retro](skills/tk-retro/SKILL.md) | `hybrid` | 세션을 회고하고 개선안을 제안합니다. |
 | [tk-compound](skills/tk-compound/SKILL.md) | `user` | 완료 PR에서 반복 문제와 예방책을 찾습니다. |
-| [tk-grooming](skills/tk-grooming/SKILL.md) | `hybrid` | 스킬·지속 규칙의 중복·충돌을 감사하고 관련 런타임 증상을 진단합니다. |
+| [tk-grooming](skills/tk-grooming/SKILL.md) | `hybrid` | 스킬·지속 규칙을 감사하고 최근 7일의 관련 런타임 기록을 진단합니다. |
 | [tk-skill-vet](skills/tk-skill-vet/SKILL.md) | `hybrid` | 외부 스킬의 설치 전 보안 위험과 업데이트 동작을 정적으로 검토합니다. |
 | [tk-handoff](skills/tk-handoff/SKILL.md) | `hybrid` | 세션 현황을 확인하고 인수인계를 작성합니다. |
 | [tk-setup-skills](skills/tk-setup-skills/SKILL.md) | `user` | 필요한 스킬과 공통 의존성의 설치·설정을 지원합니다. |
