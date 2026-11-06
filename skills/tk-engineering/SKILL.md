@@ -27,7 +27,8 @@ metadata:
 
 - [진단](references/diagnosis.md): 어렵거나 간헐적이거나 성능과 관련된 버그를 진단해야 하거나 최초 재현에 실패했을 때 읽습니다.
 - [발견 사항 품질](references/finding-quality.md): 정확한 범위의 리뷰 발견 사항을 걸러내고 근거를 뒷받침할 때 읽습니다.
-- [프로젝트 규칙](references/project-rules.md): 저장소나 작업이 프로젝트 규칙 묶음을 지정할 때 읽습니다.
+- [프로젝트 규칙](references/project-rules.md): 저장소나 작업이 규칙 묶음을 지정하거나 선별한 기여 규칙의 작업 과정 근거를 판정할 때 읽습니다.
+- [OpenAPI 호환성](references/openapi-compatibility.md): 기존 OpenAPI 명세가 변경되면 비교 입력 확보 여부와 관계없이 읽습니다.
 - [React](references/react.md): 정확히 해당하는 코드 리뷰에 React 코드가 포함될 때 읽습니다.
 - [리뷰 프로토콜](references/review-protocol.md): 직접 리뷰, SDD Unit 리뷰 또는 전체 변경의 독립 리뷰를 수행할 때 읽습니다.
 - [SDD 상호작용](references/sdd-interaction.md): 승인된 SDD 실행이 사용자 상호작용 지점에 도달했을 때 읽습니다.

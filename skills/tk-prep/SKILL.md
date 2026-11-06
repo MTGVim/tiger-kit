@@ -140,6 +140,8 @@ Seed, SDD Unit 구조나 실행 형태를 확정하지 않습니다. 먼저 조�
 동작, 회귀·RED 또는 동작 보존 리팩터링을 위한 편집 전 GREEN, 집중 실행 명령, 필수
 테스트 모음, 변경 위험, `N/A`와 엔지니어링 예외의 구별을 확정합니다.
 사소하거나 문장만 바꾸는 작업에 형식적인 테스트를 추가하지 않습니다. 런타임 검증은 자동 보호를 대체하지 않습니다.
+저장소의 기존 OpenAPI 명세가 변경되면 비교 입력 확보 여부와 관계없이
+[OpenAPI 호환성](../tk-engineering/references/openapi-compatibility.md)을 읽고 조건부 검증을 계획합니다.
 직접 실행이나 SDD의 모든 코드 리뷰에는 [독립 리뷰 프로토콜](../tk-engineering/references/review-protocol.md)과
 [발견 사항 품질](../tk-engineering/references/finding-quality.md)을 읽습니다.
 [TypeScript](../tk-engineering/references/typescript.md), [React](../tk-engineering/references/react.md), [보안](../tk-engineering/references/security.md)은

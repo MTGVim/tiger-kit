@@ -59,6 +59,10 @@ worktree 대상에서는 초기 상태·경로 집합과 내용 fingerprint를 �
 
 모든 리뷰에서 [독립 리뷰 절차](../tk-engineering/references/review-protocol.md)와 [발견 사항 품질](../tk-engineering/references/finding-quality.md)을 읽습니다. JavaScript/TypeScript 의미가 범위에 있을 때만 [TypeScript](../tk-engineering/references/typescript.md)를 읽고, React component/hook/JSX/RSC 의미가 범위에 있을 때만 [React](../tk-engineering/references/react.md)를 읽습니다. diff가 인증·인가 경계, 공격자 통제 입력이나 파일·경로·명령·URL, 비밀이나 민감한 데이터, API endpoint, 결제, webhook, 외부 연동 또는 보안 설정에 닿을 때만 [보안](../tk-engineering/references/security.md)을 읽습니다.
 
+저장소의 기존 OpenAPI 명세가 변경되면 비교 입력 확보 여부와 관계없이
+[OpenAPI 호환성](../tk-engineering/references/openapi-compatibility.md)을 읽고 제공된 실행 근거를 검토합니다.
+읽기 전용 경계상 새 파일·산출물·설치가 필요하면 직접 만들지 말고 호출자에게 정확한 누락 근거를 반환합니다.
+
 controller는 리뷰 절차에서 요구하는 독립 발견 구조를 적용하고 다음을 기록합니다.
 
 - `Spec/AC`: 명시한 의도와 승인 기준을 기록합니다.
