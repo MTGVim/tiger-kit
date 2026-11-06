@@ -14,6 +14,7 @@ python3 <tk-writing>/scripts/add_feedback_studio.py --input <evidence/stem.html>
 `html.theme`에서 결정한 생성 기본값은 선택적 `--theme system|light|dark`로 넘깁니다. 저장된 유효한 독자 선택이 우선합니다.
 
 출력은 필수 `--output <delivery/stem.html>`로 지정하며 전달 폴더에는 이 한 벌만 둡니다.
+채팅에는 피드백 편집기 포함본의 경로만 안내하고, 보존한 원본 경로를 함께 안내하지 않습니다.
 입력 원본과 receipt는 `.tigerkit/evidence/<skill>/<run-id>/`에 보존합니다. 원본과 출력은 다른 경로여야 하며,
 `--replace`로도 원본을 덮어쓸 수 없습니다. 기본은 기존 파일·중복 주입·닫는 body 없음·알 수 없는 영상 ID·이미지 없는 대상을 거부합니다.
 같은 작업에서는 전달 이름을 고정하고, 이미 승인된 실행 소유 전달 파일의 교체만 `--replace`로 명시합니다.

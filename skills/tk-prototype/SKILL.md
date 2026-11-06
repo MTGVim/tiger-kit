@@ -117,4 +117,4 @@ Screenshot: <absolute path | N/A>; actual inspection: yes | no | N/A
 
 승인된 산출물 쓰기, checkout·전송·ignore 설정 또는 임시 입력 소비 전에 [산출물 경로](../tk-artifacts/references/artifact-paths.md)를 읽습니다. 저장소 임시 작업에는 안전한 소유 nonsymlink 경로와 입증된 Git 제외를 사용합니다. 점검이 실패하면 해당 파일 분기를 중단합니다. 명시된 최종 목적지와 소유자별 기본값을 보존합니다. 미리 채운 입력은 완료된 입력이 아닙니다. 정리 대상은 기록된 리터럴 값이자 해석된 절대 경로인 실행 소유 경로뿐이며 cwd 상대 경로나 glob은 사용하지 않습니다.
 
-HTML을 사람에게 전달할 때는 현재 설치된 `tk-writing`의 [공통 피드백 후처리](../tk-writing/references/feedback-studio.md)를 적용하고 studio를 기본 열람본으로 안내합니다. 원본·기존 전용 인터페이스·검증 의무를 유지합니다.
+HTML을 사람에게 전달할 때는 현재 설치된 `tk-writing`의 [공통 피드백 후처리](../tk-writing/references/feedback-studio.md)를 적용합니다. `.tigerkit/prototypes/<slug>/`에는 피드백 편집기 포함 전달본 한 벌과 필요한 공개 자원을 두고, 사용자에게는 이 HTML 경로만 안내합니다. 원본·receipt는 공통 계약의 근거 폴더에 보존하며 상대 자원은 최종 전달 위치에서 검사합니다. 기존 전용 인터페이스·검증 의무를 유지합니다.

@@ -28,7 +28,7 @@ wizard_input() {
   local kind=$1 label=$2 has_current=$3 optional=$4 action='' value=''
   REPLY=''
   INPUT_ACTION=''
-  while :; do
+  while [[ "$has_current" == yes || "$optional" == yes ]]; do
     printf '%s: [r] 입력' "$label"
     if [[ "$has_current" == yes ]]; then printf ', [k 또는 Enter] 기존 값 유지'; fi
     if [[ "$optional" == yes ]]; then printf ', [s] 건너뛰기'; fi
