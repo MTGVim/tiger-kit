@@ -41,11 +41,17 @@ metadata:
 ```text
 Command: <exact command and arguments>
 CWD: <absolute worktree or route path>
+Provider: <actual provider, version and execution path | N/A (non-web)>
 Exit code: <integer>
 Output: <bounded summary or absolute output path>
 Artifact: <absolute path | none>; ownership: run-owned | pre-existing
 Screenshot: <absolute path | N/A>; actual inspection: yes | no | N/A
 ```
+
+웹 실행의 `Provider`는 `tk-browser-verify`가 반환한 실제 제공자와 근거에 연결합니다.
+검증기를 거치지 않았거나 선택한 제공자에서 임의로 전환했다면 해당 웹 검증은 `Unverifiable`입니다.
+`playwright-cli`라는 이름만 기록하거나 Chrome 직접 캡처가 성공했다는 이유로 `Pass`를 부여하지 않습니다.
+기존 PNG/GIF와 직접 확인한 이미지 내용은 보존하며, 캡처·이미지 확인·미디어 생성과 웹 비교 검증의 완료를 구분합니다.
 
 5. `compare`: 근거를 기준에 대응시키고 검증된 차이, 미검증 항목과 다음 결정을 요약합니다. 상위 계약에 이미지 `PR evidence: required`가 기록되어 있고 비교가 `Pass`이며 직접 확인한 스크린샷이 이를 바로 입증하면, 실행 소유 절대 경로 `Screenshot: <path>`와 실제 이미지 확인 내용을 `## Tested` 아래에 보존하고 발행 측에서 소비하는 것과 같은 생성 주체에 종속되지 않는 manifest를 제공합니다. `evidence_required: true`, `evidence_kind: visual-change`, `verification_status: Pass`, 기준, 비교, 한계와 함께 역할, 절대 경로, origin이 없는 정확한 `display_route`, 상태/영역, viewport가 있는 직접 확인한 산출물을 포함합니다. `tk-browser-verify`가 반환한 메타데이터를 사용하고 파일명, 원시 URL 또는 생성 주체의 식별 정보에서 도출하지 않습니다. 이는 prototype 비교를 입증하며 공식 제품 런타임 인수 판정은 아닙니다. `Fail | Blocked | Unverifiable`이면 소유한 실패 산출물을 보존하고 실제 상태를 반환하되 `verification_status: Pass` 발행 manifest를 내보내지 않습니다. 필수 이미지 발행을 충족할 수 없으면 해당 발행 요구사항을 차단 또는 검증 불가로 보고합니다.
 6. 비교가 후속 구현에 영향을 주면 [선택된 prototype 인계](../tk-engineering/references/selection-handoff.md)를 읽고 해당 선택 기록을 기존 결과에 반환합니다.

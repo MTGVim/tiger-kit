@@ -33,6 +33,8 @@ AC를 해당 스크린샷, 발행해도 안전한 정확한 `display_route`, 재
 중첩 결과와 독립 결과에는 다음 계약 필드가 필요합니다. 중첩 결과는 다음 항목으로만 제한합니다.
 
 - status
+- `provider`: 실제 제공자 ID, 버전, 실행 파일 또는 호출한 호스트 도구 경로와 선택 근거. 예정한 제공자가 아니라
+  관찰한 실행 사실을 기록하며, CLI 이름만으로 준비 상태나 검증 성공을 주장하지 않습니다.
 - `contract: <metadata.tigerkit.version>`. 현재 계약은 `1.2.0`입니다.
 - `scope: full-inventory | explicitly-scoped`. 범위를 제한했다면 사용자가 지정한 정확한 범위를 식별합니다.
 - `coverage: planned <N> / executed <n> / covered-by <c> / out-of-scope <o> / not-executed <m>`. 개수는 조사한 전체 항목 목록과 일치하도록 대조해야 합니다.
