@@ -91,6 +91,13 @@
   .cue-row.active .ts { color: var(--accent); font-weight: 600; }
   .cue-row .badge { font-size: 11px; color: var(--accent); align-self: center; }
   .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  @media (max-width: 640px) {
+    .nowline { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; }
+    .nowline .cue { word-break: keep-all; overflow-wrap: anywhere; line-height: 1.65; }
+    .nowline .speed { grid-column: 1 / -1; display: flex; flex-wrap: wrap; min-width: 0; }
+    .speed button { min-height: 40px; padding: 6px 10px; }
+    .side .head { flex-wrap: wrap; }
+  }
 </style>
 </head>
 <body>
