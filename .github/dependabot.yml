@@ -1,0 +1,17 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Security updates remain enabled; ordinary version updates are disabled.
+    open-pull-requests-limit: 0
+    groups:
+      security-patches:
+        applies-to: security-updates
+        patterns: ["*"]
+        update-types: ["patch"]
+      security-upgrades:
+        applies-to: security-updates
+        patterns: ["*"]
+        update-types: ["minor", "major"]

@@ -47,5 +47,5 @@ TigerKit은 조합 가능한 Agent Skills 저장소입니다. workflow runner, p
 - 기계가 소비하는 필드는 엄격한 타입을 유지합니다. 검증 제공자의 제한된 재검증 문제 해결 메모 외에 pitfall corpus, 범용 memory backend, 원시 로그·세션·모델 routing 설정을 추가하지 않습니다. 관찰만으로 규칙이나 메모리를 자동 승격하지 않습니다.
 - 이 저장소는 상시 테스트 suite, eval catalog, 문구 잠금 검사나 릴리즈 비교 framework를 유지하지 않습니다. 필요한 검증은 변경한 실제 기능·설치 경계에 맞추어 실행하고 근거를 ignored evidence에 둡니다. 삭제된 검증 코드는 Git 이력에 남습니다.
 - 이 결정은 업무 스킬이 다른 프로젝트에서 적용하는 TDD·리뷰·검증 의무를 완화하지 않습니다. 계속 배포할 실행 코드의 실제 실패 조건을 확인하고, 실행하지 못한 것은 `Unverifiable`로 보고합니다.
-- CI를 사용하지 않습니다. `.github/workflows/`나 임시 원격 Runner로 로컬 검증을 우회하지 않습니다.
+- 일반 작업과 릴리스 검증에는 CI를 사용하지 않습니다. 2026-11-08 승인한 Dependabot 보안 PR에 한해 전용 검증과 patch 자동 병합을 허용합니다. 일반 PR·수동 발행의 로컬 검증 의무는 유지합니다.
 - `main` 반영 전 필수 확인과 실행 명령은 [릴리즈 체크리스트](RELEASE_CHECKLIST.md)를 따릅니다. README는 소개·설치·짧은 카탈로그만 소유합니다.
