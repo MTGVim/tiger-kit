@@ -43,3 +43,5 @@ python3 skills/tk-setup-skills/scripts/skill_dependencies.py build-catalog \
 - 승인된 범위만 commit하고 작업 트리 상태를 확인합니다. 원격 발행은 정확한 사용자 승인 범위에서만 수행하며, 이 체크리스트는 push/merge/force 권한을 부여하지 않습니다.
 
 일반 작업과 릴리스 확인은 로컬에서 수행합니다. CI나 임시 GitHub Actions로 우회하지 않습니다. 2026-11-08 승인한 Dependabot 보안 PR 전용 검사와 patch 자동 병합만 예외로 둡니다.
+
+🤖 본 체크리스트는 AI가 작성했습니다.
