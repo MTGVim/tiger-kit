@@ -141,3 +141,18 @@ MDN `nav`/`details`와 W3C bypass-blocks는 기본 탐색·접근성 의미를 �
 ## archify 전용 문서 라우팅(2026-10-28)
 
 새로 확인한 출처는 여전히 `tt-a1i/archify@d6059331abbddb49bca380ff46dca8ce33158b04`(3.2.0)로 해석됩니다. 기존 문서 경로를 제거하기 전에 release manifest, SKILL.md, explainer 작성·viewer-runtime 계약, explainer 렌더러와 CLI·패키징 테스트를 확인했습니다. 기본 안내 단계, 노드·경로 탐색, 출처 연결과 오프라인 finalize 관문을 유지합니다. 설명과 조사 출력 모두에 `tk-writing`의 공통 렌더러·장면 도우미를 사용합니다. 자동 설치, 포함된 외부 런타임과 사용자 정의 스크립트 주입은 제외합니다. 임의의 매개변수 기반 시뮬레이션은 이 버전의 explainer 문법에 포함되지 않습니다. 정적 그림이 이를 구현한다고 주장하지 말고 요청한 동작을 미충족으로 보존합니다. 특수 QA·gallery·prototype·질문 인터페이스와 기존 사용자 산출물은 각 담당자가 유지합니다. 이전 공통 shell 출처는 이력을 기록하며, 새로운 설명·보고서 렌더링 경로가 아닙니다.
+
+## 보고서의 내용 형태별 경로 재검토 (2026-11-09)
+
+사용자의 비교표와 권고 목록 사례에 따라 위 archify 전용 결정을 재검토했습니다.
+최신으로 고정한 `tt-a1i/archify@11b0d6031853bdae89eed57e7979aabbf0034097`의
+`archify/references/explainer-authoring.md`, `archify/explainer/validate.mjs`와
+`test/explainer-validation.test.mjs`를 읽었습니다. 정보 형태에 따른 표와 도해의 구분,
+raw HTML과 안전하지 않은 링크 거부 및 출처 참조 검증을 확인했습니다.
+
+- `keep`: 요청한 HTML만 제작, 연구 근거와 프로젝트 전체 포함 범위, 원고에서 수정, 원본 보존과 피드백 후처리입니다.
+- `adapt`: `tk-writing`의 내용 형태별 선택과 미위임 HTML의 제작 전 제안, 일반 문서 빌더 및 정적 기준을 보고서에도 적용합니다.
+  일반 HTML과 선택한 archify의 검사 결과를 구별하며 기존 보고서 전용 생성기와 검사기를 공통 경로로 복원하지 않습니다.
+- `omit`: 모든 조사 페이지의 archify 강제, 원고나 출처를 생략한 임의 HTML, 렌더러 설치나 업데이트와 실패 뒤 조용한 전환입니다.
+
+형태 선택은 TigerKit 사용자 교정입니다. upstream 테스트는 읽었으며 실행하지 않았고 모델 효과는 `unverified`입니다.

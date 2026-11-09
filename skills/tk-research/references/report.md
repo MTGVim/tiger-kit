@@ -3,7 +3,7 @@
 
 사용자가 HTML·웹페이지 또는 `.html` 목적지를 요청했을 때 읽는 산출물 계약입니다. 기본 조사 결과는 대화에서 완결하며, 이 참조가 첫 연구나 지속 확인 지점의 HTML 생성을 요구하지 않습니다. 다른 파일 형식은 해당 요청을 따릅니다.
 
-HTML 초안을 작성하기 전에 [명확한 글쓰기](../../tk-writing/references/clear-writing.md), [문서의 목적](../../tk-writing/references/diataxis.md), [렌더러 계약](../../tk-writing/references/renderer-contract.md)을 읽습니다. 보고서는 구체적인 결정을 돕기 위한 것이며, 의무적으로 작성하는 튜토리얼이 아닙니다. 요청받은 새 HTML이나 실질적으로 갱신하는 HTML에는 지원되는 기본 상호작용을 포함하여 archify를 사용합니다. `render_report.py`, `build_html.py` 또는 기존 `assets/report.html`을 사용하지 않습니다. 공통 특수 UI 자산은 조사 렌더러를 선택하지 않습니다.
+HTML 초안을 작성하기 전에 [명확한 글쓰기](../../tk-writing/references/clear-writing.md), [문서의 목적](../../tk-writing/references/diataxis.md), [렌더러 계약](../../tk-writing/references/renderer-contract.md)을 읽습니다. 보고서는 구체적인 결정을 돕기 위한 것이며, 의무적으로 작성하는 튜토리얼이 아닙니다. 렌더러 계약의 내용 형태별 기준과 제작 전 형식 제안을 적용하고 이미 선택하거나 위임한 형식은 다시 묻지 않습니다. 비교표나 권고 목록이 중심인 일반 HTML은 현재 설치된 `tk-writing`의 `build_html.py`로 조립합니다. 선택한 archify는 지원되는 기본 상호작용과 finalize를 유지합니다. 구 `render_report.py`와 `assets/report.html`은 복원하지 않습니다.
 
 <a id="content-and-sources"></a>
 ## 내용과 출처
@@ -12,18 +12,20 @@ HTML 초안을 작성하기 전에 [명확한 글쓰기](../../tk-writing/refere
 
 보고서는 일관되고 대화하듯 자연스럽게 작성합니다. 짧은 보고서는 관련 사실을 몇 개의 패널로 합칠 수 있습니다. 빈 범주, 중복 보기나 문서 모드 선택기를 만들지 않습니다. 관찰, 추론과 예시를 구분합니다. 미확인 사항은 결정에 영향을 미치는 위치에서 설명하고, 권장 절차는 직접 확인한 근거에서 도출하거나 제안이라고 표시합니다. 이해도 퀴즈를 추가하지 않습니다. 학습 확인은 `tk-explain`이 담당합니다.
 
-설치된 archify 작성 참조를 사용하여 `.tigerkit/tmp/tk-research/<run-id>/` 아래에 `candidate.archify.md`를 작성합니다. 결론과 함께 근거, 대안, 한계, 다음 행동과 실제 검증을 위한 패널을 사용합니다. 안정적인 ID로 읽기용 표현과 출처를 연결합니다. 각 출처를 `@source`로 선언하고, archify의 `source:id` 인라인 링크 구문을 사용하여 뒷받침하는 주장 옆에 인용합니다. 사람이 읽는 범위·근거 텍스트에 revision/접근 날짜와 조사 식별 정보를 보존합니다. 검증한 URL이나 고정된 저장소 위치를 사용합니다. 출처를 이용할 수 없으면 그 사실을 밝힙니다. 링크에 접근할 수 있다는 사실만으로 주장이 검증되지는 않습니다. 코드 발췌는 고정된 revision에서 확인할 수 있어야 합니다. 출처를 꾸며 내거나 원시 비공개 로그를 보고서 내용으로 바꾸지 않습니다. 부정적 결과와 모순을 보존합니다.
+실행 소유 `.tigerkit/tmp/tk-research/<run-id>/` 아래에 편집 가능한 원고를 둡니다. 일반 HTML은 [문서 조립](../../tk-writing/references/html-assembly.md)에 따라 `body.html` 조각을 작성하며, 결론, 근거, 대안, 한계, 다음 행동과 실제 검증을 의미 있는 섹션과 표로 구성합니다. 안정적인 ID로 주장 옆의 인용과 출처를 연결하고 각 출처에서 모든 인용 위치로 역링크를 제공합니다.
 
-관계나 사건 순서가 결론을 설명할 때는 기본 다이어그램과 `@steps`를 사용하고, 대안에는 비교를 사용합니다. 실제 동작을 요청받았다면 [상호작용 예시](../../tk-writing/references/interactive-examples.md)를 읽고 archify의 실제 지원 여부를 검증합니다. 기본 다이어그램으로 표현할 수 없는 공간 그림에는 [장면 그림](../../tk-writing/references/scene-figures.md)을 읽고 변환한 PNG를 `@image`, 대체 텍스트와 캡션으로 삽입합니다. 기본 상호작용 다이어그램을 그림으로 바꾸거나 이미지 생성으로 측정 근거를 만들어 내지 않습니다.
+archify를 선택했으면 설치된 작성 참조로 `candidate.archify.md`를 작성하고 같은 내용을 패널로 구성합니다. 각 출처를 `@source`로 선언하고 `source:id` 인라인 링크로 주장 옆에 인용합니다. 어느 경로든 사람이 읽는 범위와 근거에 revision/접근 날짜와 조사 식별 정보를 보존합니다. 검증한 URL이나 고정된 저장소 위치를 사용합니다. 출처를 이용할 수 없으면 그 사실을 밝힙니다. 링크에 접근할 수 있다는 사실만으로 주장이 검증되지는 않습니다. 코드 발췌는 고정된 revision에서 확인할 수 있어야 합니다. 출처를 꾸며 내거나 원시 비공개 로그를 보고서 내용으로 바꾸지 않습니다. 부정적 결과와 모순을 보존합니다.
+
+archify에서 관계나 사건 순서가 결론을 설명할 때는 기본 다이어그램과 `@steps`를 사용하고, 대안에는 비교를 사용합니다. 실제 동작을 요청받았다면 [상호작용 예시](../../tk-writing/references/interactive-examples.md)의 선택한 경로 기준을 적용하고 지원 여부를 검증합니다. 기본 다이어그램으로 표현할 수 없는 공간 그림에는 [장면 그림](../../tk-writing/references/scene-figures.md)을 읽습니다. archify에는 변환한 PNG를 `@image`, 대체 텍스트와 캡션으로 넣고, 일반 HTML에는 내장 이미지와 대체 텍스트 및 캡션을 사용합니다. 기본 상호작용 다이어그램을 그림으로 바꾸거나 이미지 생성으로 측정 근거를 만들어 내지 않습니다.
 
 <a id="delivery-and-checks"></a>
 ## 전달과 확인
 
 산출물 경로 기준을 적용합니다. 기본 목적지는 `.tigerkit/research/<slug>/report.html`이며, 명시적으로 지정된 안전한 목적지를 사용할 수도 있습니다. 디렉터리나 보고서만으로 지속 조사를 시작하지 않습니다. HTML은 읽기용 표현이며, 실행 원장이나 권한 또는 편집 가능한 정본 상태가 아닙니다. 이 프로젝트의 보고서만 교체하기 전에 소유권을 확인합니다. 통과한 후보가 준비될 때까지 기존의 유효한 보고서를 보존합니다. 원자적으로 교체하기 전에 실행 디렉터리 아래에서 렌더링을 준비합니다.
 
-렌더러 계약에 명시된 archify의 전체 `finalize explainer` 명령을 실행합니다. 최종 파일은 외부 런타임 요청 없이 단독으로 열려야 합니다. 클릭 가능한 출처 링크는 허용됩니다. 최종 바이트와 연결된 후보와 receipt를 보존합니다. 렌더링 후 결론, 주장과 출처 사이의 링크, 수량, ID와 포함 범위를 확인합니다. 렌더러는 사실의 정확성을 입증하지 않습니다. 렌더러가 실패하거나 없거나 필수 상호작용을 지원하지 않으면 보고서가 성공한 것이 아니며, 기존 문서 템플릿으로 대체할 권한도 생기지 않습니다.
+모든 HTML에 렌더러 계약의 공통 정적 검사와 출처 및 포함 범위 대조를 수행합니다. 일반 HTML은 [HTML 출력](../../tk-writing/references/html-output.md)의 정적 기준도 적용하고, 구 보고서 템플릿 전용 `check_report.py`를 공통 검사기로 사용하지 않습니다. archify에서만 전체 `finalize explainer` 명령을 추가 실행합니다. 최종 파일은 외부 런타임 요청 없이 단독으로 열려야 합니다. 클릭 가능한 출처 링크는 허용됩니다. 최종 바이트와 연결된 원고 및 실제 검사 근거를 보존하고 archify이면 receipt도 보존합니다. 렌더링 후 결론, 주장과 출처 사이의 링크, 수량, ID와 포함 범위를 확인합니다. 렌더러는 사실의 정확성을 입증하지 않습니다. 선택한 렌더러가 실패하거나 없거나 필수 상호작용을 지원하지 않으면 해당 보고서 분기를 차단하고, 다른 형식으로 말없이 바꾸지 않습니다.
 
-전달 전 [공통 피드백 후처리](../../tk-writing/references/feedback-studio.md)에서 `--owner-skill tk-research --source-path <candidate.archify.md>`를 넘겨 `--input <evidence/report.html> --output <delivery/report.html>`로 피드백 주입본 한 벌을 만들고 열람 링크로 안내합니다. 원본·receipt는 근거 폴더에 보존하고 finalize 통과 원본과 최종 전달본의 검증 상태를 구분합니다.
+전달 전 [공통 피드백 후처리](../../tk-writing/references/feedback-studio.md)에서 `--owner-skill tk-research --source-path <확인한 원고>`를 넘겨 `--input <evidence/report.html> --output <delivery/report.html>`로 피드백 주입본 한 벌을 만들고 열람 링크로 안내합니다. 원고는 일반 HTML의 `body.html` 또는 archify의 `candidate.archify.md`처럼 실제 재생성에 쓰는 파일입니다. 원본과 검사 근거를 근거 폴더에 보존하고 원본과 최종 전달본의 검증 상태를 구분합니다. finalize 통과는 archify 원본에만 보고하며, 위임받아 제작했으면 선택한 형식과 이유도 완료 보고에 씁니다.
 
 검증 패널에는 정적·산출물 확인과 화면·동작 확인의 결과를 별도로 포함합니다. `finalize`는 브라우저를 실행하지 않습니다. 사용자가 화면 확인을 요청하거나 중요한 시각·상호작용 불확실성 때문에 확인이 필요하면 `tk-browser-verify`를 사용합니다. 실행하지 않은 확인은 해당하는 이유에 따라 요청되지 않았거나 이용할 수 없었다고 정직하게 보고합니다. 정적 receipt만으로 테마, 키보드, 탐색이나 상호작용의 성공을 주장하지 않습니다.
 

@@ -470,3 +470,21 @@ HTML 렌더링 근거이지 원본 고유 파이프라인의 성공·동등성 �
 제공되지 않았으므로 같은 원고를 재현한 것은 아닙니다. `keep`: 원본·receipt·오프라인 finalize입니다.
 `adapt`: 동일 품질의 사전 검사, 이번 stdout의 `ok`와 산출물 해시 대조, 명시적 범례입니다.
 `omit`: 요약 파일 존재만으로 완료 판정·품질 기준 완화·TigerKit에 외부 렌더러 코드 복제입니다.
+
+## 내용 형태별 HTML과 제작 전 선택 (2026-11-09)
+
+사용자가 제공한 표와 목록 중심 출력 및 제작 전 선택 기회에 관한 피드백으로, 위 2026-10-28의
+archify 전용 기본값과 2026-11-02의 미지정 HTML도 먼저 제작하는 결정을 재검토했습니다.
+최신 HEAD를 고정한 `tt-a1i/archify@11b0d6031853bdae89eed57e7979aabbf0034097`의
+`archify/references/explainer-authoring.md`(정보 형태별 표, 작업 목록, 도해),
+`archify/explainer/validate.mjs`와 `test/explainer-validation.test.mjs`(raw HTML와 안전하지 않은 링크 거부,
+참조와 비교 셀 검증)를 읽었습니다. 일반 HTML 경로와 제작 전 선택은 upstream의 요구가 아니라
+사용자 교정에 따른 TigerKit 계약입니다. upstream 테스트는 읽었지만 실행하지 않았으며 렌더러 버전은 바꾸지 않습니다.
+
+- `keep`: 지정된 형식과 기법, 선택한 archify의 원고와 finalize, 출처, 작성자 검사와 해당 독립 정확성 리뷰입니다.
+- `adapt`: 결론에 관계나 흐름이 필요한 경우의 archify 기본값과 표, 목록, 사진 중심의 일반 HTML을 구분합니다.
+  공통 `tk-writing`이 경로 선택, 미위임 HTML의 제작 전 제안과 일반 HTML의 작성 및 검사를 소유합니다.
+- `omit`: 파일 확장자만으로 archify를 선택하는 동작, 선택을 위임했는데 다시 질문하는 동작,
+  실패 뒤 조용한 렌더러 전환, 원본 구현이나 템플릿 복제와 새 실행 framework입니다.
+
+지침의 분기 비교와 기존 공통 도우미 실행은 사용자 사고의 독립 재현이나 일반적인 모델 준수율 개선을 입증하지 않습니다.

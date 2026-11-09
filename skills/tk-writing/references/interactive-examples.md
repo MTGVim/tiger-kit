@@ -1,7 +1,7 @@
 <a id="interaction-in-archify-pages"></a>
 # archify 페이지의 상호작용
 
-선택한 archify 분기에서 명시적 요청이나 추천 선택에 따라 상호작용을 제공할 때 읽습니다. 기법별
+선택한 archify 분기에서 명시적 요청이나 추천 선택에 따라 상호작용을 제공할 때 읽습니다. 일반 HTML과 기법별
 HTML 형식은 대신 공통 렌더러 계약을 따릅니다(기본 disclosure, 인라인 향상,
 JS 없이도 모든 단계를 읽을 수 있어야 합니다). 해당 분기에 archify의 제한을 적용하지 않습니다.
 완전한 archify 설명은 archify 안에 유지하며,
