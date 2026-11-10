@@ -138,3 +138,11 @@ Apache-2.0이며 코드·문장·fixture를 제품에 가져오지 않았습니�
 - `keep`: 관련 범위만 조사하고 미관측과 실패를 구분하며 기존 hook/tool/usage 진단·RT 표·완료 상태를 유지합니다.
 - `adapt`: 필요한 실행 단계의 관찰 근거를 연결하고 최초 관찰 실패와 최초 근거 공백, 주장·연결의 근거 등급을 구별합니다. 앞단 미확인이 뒤의 독립 관찰을 지우지 않게 합니다.
 - `omit`: 새 SkillRun 모델·schema·registry·필수 단계별 표·원시 로그 수집기와 `Experimental` 기본 상태를 도입하지 않습니다. upstream engine에 독립 selection/verification stage가 있다고 주장하거나 resource 문자열 매칭을 실제 로드 성공으로 이식하지 않습니다.
+
+## Waza 대조 출처
+
+`tw93/Waza@6095341ad46b063619f4d0a5afc1c6fa8f1b4696`의 `skills/health/SKILL.md`와
+`skills/think/SKILL.md`를 2026-11-11에 본문 대조했습니다. 기존 범위·읽기 전용 감사·조건부 설계
+비교는 keep, 실제 MCP 상태/권한 수단 및 최소안/핵심 전제 검토는 adapt, collector·자동 실행·
+새 프레임워크는 omit합니다. MIT 고지는 이 패키지의 `LICENSE.txt`에 보존합니다.
+https://github.com/tw93/Waza/tree/6095341ad46b063619f4d0a5afc1c6fa8f1b4696

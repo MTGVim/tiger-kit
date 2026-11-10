@@ -1,7 +1,7 @@
 <a id="conditional-design-comparison"></a>
 # 조건부 설계 비교
 
-`Repository precedent`와 `current evidence`로 해결되지 않는 `material architecture uncertainty`가 있을 때만 이 문서를 읽습니다. 네 조건을 모두 충족하는 경우가 아니면 저장소 선례나 가장 단순하고 되돌릴 수 있는 선택을 권고하고 추가 절차 없이 준비를 계속합니다.
+단순성 절은 새 추상화·옵션·설정 추가 시 읽습니다. 아래 설계 비교는 `Repository precedent`와 `current evidence`로 해결되지 않는 `material architecture uncertainty`가 있을 때만 이 문서를 읽습니다. 네 조건을 모두 충족하는 경우가 아니면 저장소 선례나 가장 단순하고 되돌릴 수 있는 선택을 권고하고 추가 절차 없이 준비를 계속합니다.
 
 1. `interface/seam/schema/architecture/migration`처럼 선택을 되돌리기 어렵습니다.
 2. 실제로 실행 가능한 설계가 적어도 두 가지 있습니다.
@@ -51,3 +51,19 @@
 독립적인 탐색이 적어도 두 개 이상이면 확신을 실질적으로 높일 수 있는 복잡한 경우에만 서브에이전트 `fan-out`을 선택합니다. 현재 호스트에 `fan-out` 기능이 없으면 컨트롤러가 같은 비교를 수행합니다. 이것은 `Blocked`가 아닙니다. 이 참조나 `Seed`에 에이전트 수, provider, model 또는 reasoning 값을 영속화하지 않습니다.
 
 이 휴리스틱은 제안과 탐색을 돕는 수단입니다. 설계 용어가 실제로 저장소 표준, 승인된 `Seed` 결정 또는 AC로 채택되지 않았다면 검토자는 그 용어를 독립적인 실패 기준으로 사용하지 않습니다. TigerKit 소유 설계 원장이나 새로운 공개 워크플로를 만들지 않습니다.
+
+## 단순성과 전제 붕괴
+
+추천 전에 기존 구성·고정 기본값·설명 한 줄로 같은 목표가 성립하는지 확인합니다. 새 설정이나
+추상화는 그 단순안으로 충족하지 못하는 구체적 요구가 있을 때만 권고합니다. 우회 장치가 기능보다
+커지면 접근 자체를 재검토합니다. 가장 취약한 핵심 전제를 밝히고 그 전제가 깨질 때의 결과와
+검증·복구를 확인합니다. 이미 승인된 선택을 다시 승인받는 관문으로 쓰지 않습니다.
+
+
+## Waza 대조 출처
+
+`tw93/Waza@6095341ad46b063619f4d0a5afc1c6fa8f1b4696`의 `skills/health/SKILL.md`와
+`skills/think/SKILL.md`를 2026-11-11에 본문 대조했습니다. 기존 범위·읽기 전용 감사·조건부 설계
+비교는 keep, 실제 MCP 상태/권한 수단 및 최소안/핵심 전제 검토는 adapt, collector·자동 실행·
+새 프레임워크는 omit합니다. MIT 고지는 이 패키지의 `LICENSE.txt`에 보존합니다.
+https://github.com/tw93/Waza/tree/6095341ad46b063619f4d0a5afc1c6fa8f1b4696

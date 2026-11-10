@@ -158,6 +158,8 @@ def main() -> int:
     parser.add_argument("--timeout-ms", type=int, default=15000)
     parser.add_argument("--max-frames", type=int, default=600)
     parser.add_argument("--max-base64-bytes", type=int, default=32*1024*1024)
+    parser.add_argument("--keep-session-on-failure", action="store_true",
+                        help="Keep an owned session only when scenario settlement and recorder cleanup are proven")
     args = parser.parse_args()
     if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,79}", args.session) or args.session == "default":
         raise ValueError("require an explicit non-default run-owned session")
@@ -199,6 +201,7 @@ def main() -> int:
     old = {sig: signal.signal(sig, defer) for sig in (signal.SIGINT, signal.SIGTERM)}
     command = [str(cli), f"-s={args.session}", "--raw", "run-code", f"--filename={code_path}"]
     succeeded = False
+    safe_to_keep = False
     try:
         try:
             completed = subprocess.run(command, cwd=repository, capture_output=True, timeout=args.timeout_ms/1000+30)
@@ -213,6 +216,9 @@ def main() -> int:
         if completed.returncode or len(completed.stdout) > args.max_base64_bytes + 4*1024*1024:
             raise ValueError("CLI failed or exceeded payload bound")
         payload = json.loads(completed.stdout)
+        safe_to_keep = (payload.get("scenario_settled") is True
+                        and all(payload.get("cleanup", {}).get(k) is True
+                                for k in ("stopped", "listenerRemoved", "detached")))
         write(target / "capture.json", json.dumps(payload).encode())
         if interrupted:
             print(json.dumps({"status":"interrupted", "cleanup":payload.get("cleanup"), "output_dir":str(target)}))
@@ -227,7 +233,11 @@ def main() -> int:
         return 0
     finally:
         try:
-            if not succeeded:
+            if not succeeded and args.keep_session_on_failure and safe_to_keep:
+                write(target / "capture.session-kept.json", json.dumps(
+                    {"session": args.session, "scenario_settled": True,
+                     "recorder_cleanup": "complete", "next_required": "retry only this scene or close the owned session"}).encode())
+            if not succeeded and not (args.keep_session_on_failure and safe_to_keep):
                 # Recorder finally cannot cancel a racing scenario Promise. Closing only this
                 # explicitly owned session revokes its page/context before any later run.
                 close_command = [str(cli), f"-s={args.session}", "close"]

@@ -323,8 +323,63 @@ def caption_text(value: str) -> str:
     return html.escape("\n".join(line.strip() for line in value.splitlines() if line.strip()), quote=False)
 
 
+def cached_scene_base(frames, end, rate, ffmpeg, ffprobe, stage, root, width, height):
+    """Cache lossless, captionless still scenes; quantize boundaries once on the output clock."""
+    cache = root / ".movie-cache"
+    cache.mkdir(mode=0o700, exist_ok=True)
+    if cache.resolve() != cache or not cache.is_dir():
+        raise ValueError("scene cache must be a run-owned nonsymlink directory")
+    binary = Path(ffmpeg).resolve().stat()
+    identity = [str(Path(ffmpeg).resolve()), binary.st_size, binary.st_mtime_ns]
+    hits = misses = 0
+    clips = []
+    for i, (image, start) in enumerate(frames):
+        stop = frames[i+1][1] if i+1 < len(frames) else end
+        count = math.ceil(stop * float(rate) / 1000) - math.ceil(start * float(rate) / 1000)
+        if count <= 0:
+            continue
+        geometry = next(x for x in probe(image, ffprobe)["streams"] if x["codec_type"] == "video")
+        if (math.ceil(int(geometry["width"])/2)*2, math.ceil(int(geometry["height"])/2)*2) != (width, height):
+            raise ValueError("scene cache requires equal source geometry")
+        key = hashlib.sha256(json.dumps([hashlib.sha256(image.read_bytes()).hexdigest(),
+            count, str(rate), width, height, identity, "lossless-scene-v1"]).encode()).hexdigest()
+        entry = cache / key
+        clip, receipt = entry / "scene.mp4", entry / "receipt.json"
+        if entry.exists():
+            if entry.resolve() != entry or not entry.is_dir():
+                raise ValueError("scene cache entry must be a nonsymlink directory")
+            regular(clip, root); regular(receipt, root)
+            if json.loads(receipt.read_text())["sha256"] != hashlib.sha256(clip.read_bytes()).hexdigest():
+                raise ValueError("scene cache content changed; preserve and inspect it")
+            hits += 1
+        else:
+            candidate = stage / (key + ".mp4")
+            subprocess.run([ffmpeg, "-v", "error", "-nostdin", "-n", "-loop", "1", "-i", str(image),
+                "-vf", f"fps={rate},pad={width}:{height}", "-frames:v", str(count), "-c:v", "libx264",
+                "-crf", "0", "-threads", "1", "-pix_fmt", "yuv420p", "-an", str(candidate)],
+                capture_output=True, check=True)
+            # Publish the complete clip/receipt pair atomically. An interrupted temporary
+            # entry is ignored, so a retry can encode it again without deleting any file.
+            with tempfile.TemporaryDirectory(prefix="pending-", dir=cache) as pending:
+                temporary = Path(pending)
+                os.link(candidate, temporary / "scene.mp4")
+                (temporary / "receipt.json").write_text(json.dumps(
+                    {"sha256":hashlib.sha256(candidate.read_bytes()).hexdigest()}))
+                os.rename(temporary, entry)
+            misses += 1
+        # Paths are generated hexadecimal names; no caller-authored concat syntax.
+        local = stage / (key + "-cached.mp4")
+        if not local.exists(): os.link(clip, local)
+        clips.append("file '" + local.name + "'")
+    (stage / "scene-clips.txt").write_text("\n".join(clips) + "\n")
+    base = stage / "captionless-base.mp4"
+    subprocess.run([ffmpeg, "-v", "error", "-nostdin", "-n", "-f", "concat", "-safe", "1", "-i",
+                    "scene-clips.txt", "-c", "copy", str(base)], cwd=stage, capture_output=True, check=True)
+    return base, {"hits":hits, "encoded":misses, "path":str(cache), "timing":"output-frame-quantized"}
+
+
 def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str | None = None,
-          fps: float | None = None, crf: int | None = None, caption_size: float | None = None) -> dict:
+          fps: float | None = None, crf: int | None = None, caption_size: float | None = None, check_only: bool = False) -> dict:
     manifest = regular(manifest)
     data = json.loads(manifest.read_text(encoding="utf-8"))
     if not isinstance(data, dict):
@@ -349,6 +404,28 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
     if not isinstance(receipt_paths, list) or any(not isinstance(p, str) for p in receipt_paths):
         raise ValueError("tts_receipts must be a list of run-owned JSON paths")
     tts_receipts = [json.loads(regular(Path(p), root).read_text(encoding="utf-8")) for p in receipt_paths]
+    if any(not isinstance(r, dict) for r in tts_receipts):
+        raise ValueError("TTS receipt must be an object")
+    notices = sorted({r["disclosure_notice"].strip() for r in tts_receipts
+                      if r.get("disclosure_required") is True and isinstance(r.get("disclosure_notice"), str)
+                      and r["disclosure_notice"].strip()})
+    missing_notices = []
+    for notice in notices:
+        try:
+            disclosure.check({**data, "captions": captions},
+                [{"disclosure_required": True, "disclosure_notice": notice}], end,
+                hard_captions=delivery == "hard" and caption_support, callouts_rendered=caption_support)
+        except ValueError as error:
+            if not str(error).startswith("AI disclosure is not visible throughout"):
+                raise
+            missing_notices.append(notice)
+    if missing_notices:
+        # Render the required notice in the assembly graph, including a card border/background.
+        ffmpeg, ffprobe, caption_support = media_tools(ffmpeg, True)
+        if not caption_support:
+            return {"media_status": "blocked", "prerequisite": "ffmpeg-subtitles-filter", "output_created": False}
+        data = {**data, "callouts": list(data.get("callouts", [])) + [
+            {"start_ms": 0, "end_ms": end, "text": "\n".join(missing_notices), "x": 8, "y": 8}]}
     disclosure_receipt = disclosure.check({**data, "captions": captions}, tts_receipts, end,
         hard_captions=delivery == "hard" and caption_support,
         callouts_rendered=caption_support)
@@ -408,6 +485,9 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
             if (int(geometry["width"]), int(geometry["height"])) != (source_width, source_height):
                 raise ValueError("presentation coordinates require equal-sized source frames")
     presentation_blocked = bool(callouts) and not caption_support
+    if captions_blocked or presentation_blocked:
+        return {"media_status": "blocked", "prerequisite": "ffmpeg-subtitles-filter",
+                "check_only": check_only, "output_created": False}
     presentation_receipt = {"caption_style": caption_style, "caption_boxes": [], "callout_boxes": [], "zoom_plan": []}
     # Conservative estimate only: font metrics and line breaking vary by renderer.
     for index, caption in enumerate(captions, 1):
@@ -461,16 +541,28 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
     with tempfile.TemporaryDirectory(prefix="movie-", dir=output.parent) as directory:
         stage = Path(directory)
         env = dict(os.environ, TMPDIR=directory, XDG_CACHE_HOME=str(stage / "cache"))
-        if scene_voices and kind == ".mp4":
+        if scene_voices and kind == ".mp4" and not check_only:
             audio, audio_duration = scene_audio(scenes, root, stage, env, ffmpeg)
-        elif scene_voices:
+        elif scene_voices and kind == ".gif":
             warnings.append("GIF has no audio; scene narration omitted")
+        elif scene_voices and check_only:
+            audio_duration = end
         if narration_requested:
-            if audio is None: errors.append("narration-missing")
+            if audio is None and not (check_only and scene_voices and kind == ".mp4"): errors.append("narration-missing")
             if caption_style != "none" and not captions:
                 errors.append("narration-subtitles-short")
-        if caption_style != "none" and audio is not None and captions and max(row["end_ms"] for row in captions) < audio_duration:
+        if caption_style != "none" and audio_duration > 0 and captions and max(row["end_ms"] for row in captions) < audio_duration:
             errors.append("narration-subtitles-short")
+        prepared_filters = []
+        if enhanced:
+            prepared_filters, presentation_receipt = presentation.prepare(
+                data, captions if burn else [], width, height, end, layout["size_px"],
+                float(rate), ffmpeg, stage, env, warnings)
+        if check_only:
+            return {"media_status": "failed" if errors else "ready", "check_only": True, "output_created": False,
+                    "media_validation": {"status": "fail" if errors else "pass", "errors": errors},
+                    "presentation": presentation_receipt, "disclosure": disclosure_receipt,
+                    "warnings": warnings}
         if not animation:
             lines = ["ffconcat version 1.0"]
             hashes = []
@@ -506,9 +598,14 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
                 (stage / "captions.vtt").write_text(vtt, encoding="utf-8")
                 if vtt_sidecar.exists() and vtt_sidecar.read_bytes() != (stage / "captions.vtt").read_bytes():
                     raise ValueError("existing WebVTT sidecar differs; it was preserved")
+        base_video = None
+        cache_receipt = None
+        if mode == "explainer" and kind == ".mp4":
+            base_video, cache_receipt = cached_scene_base(frames, end, rate, ffmpeg, ffprobe,
+                                                          stage, root, width, height)
         # Only generated relative frame names/options enter this private concat file.
         cmd = [ffmpeg, "-v", "error", "-nostdin", "-n", "-threads", "1"]
-        cmd += ["-i", str(frames[0][0])] if animation else ["-f", "concat", "-safe", "0", "-i", "frames.txt"]
+        cmd += ["-i", str(frames[0][0])] if animation else ["-i", str(base_video)] if base_video else ["-f", "concat", "-safe", "0", "-i", "frames.txt"]
         if audio is not None:
             cmd += ["-i", str(audio)]
         soft = bool(captions) and not burn and kind == ".mp4"
@@ -518,9 +615,7 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
         if not animation or fps is not None or kind == ".gif":
             filters = f"fps={rate_text}," + filters
         if enhanced and not presentation_blocked:
-            extra_filters, presentation_receipt = presentation.prepare(data, captions if burn else [], width, height,
-                end, layout["size_px"], float(rate), ffmpeg, stage, env, warnings)
-            if extra_filters: filters += "," + ",".join(extra_filters)
+            if prepared_filters: filters += "," + ",".join(prepared_filters)
         if burn:
             # Keep source pixels intact; visible captions live in an appended band.
             if band:
@@ -628,7 +723,7 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
             "captions_path": str(sidecar) if sidecar else None,
             "captions_vtt_path": str(vtt_sidecar) if vtt_sidecar else None,
             "verification_status": "not-assessed", "source_frames_preserved": True,
-            "presentation": presentation_receipt, "disclosure": disclosure_receipt,
+            "presentation": presentation_receipt, "disclosure": disclosure_receipt, "scene_cache": cache_receipt,
             "tts_receipts": receipt_paths}
 
 
@@ -641,9 +736,10 @@ def main() -> int:
     parser.add_argument("--fps", type=float, help="Override output fps (positive; capture/stills at most 30); scene times stay unchanged")
     parser.add_argument("--crf", type=int, help="MP4 H.264 quality, 0-51 (default 18); lower values retain more detail and may increase size")
     parser.add_argument("--caption-size", type=float, help="Nominal hard-caption size in output pixels (default 5%% of final height)")
+    parser.add_argument("--check-only", action="store_true", help="Validate media tools, timing, fonts and overlay geometry without movie encoding")
     args = parser.parse_args()
     try:
-        result = build(args.manifest, args.output, args.audio, args.ffmpeg, args.fps, args.crf, args.caption_size)
+        result = build(args.manifest, args.output, args.audio, args.ffmpeg, args.fps, args.crf, args.caption_size, args.check_only)
         print(json.dumps(result, ensure_ascii=False))
         return 2 if result["media_status"] == "blocked" else 1 if result["media_status"] == "failed" else 0
     except (ValueError, KeyError, TypeError, OSError, subprocess.SubprocessError) as exc:

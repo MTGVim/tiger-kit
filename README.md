@@ -32,6 +32,7 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
+| [tk-debug](skills/tk-debug/SKILL.md) | `hybrid` | 오류·회귀의 원인을 조사하고 수정 권한과 진단 근거를 구분합니다. |
 | [tk-review](skills/tk-review/SKILL.md) | `user` | 지정한 변경을 명세와 품질 기준으로 검토합니다. |
 | [tk-browser-verify](skills/tk-browser-verify/SKILL.md) | `hybrid` | 설치된 Playwright CLI를 기본으로 화면과 동작을 검증하거나 데모용으로 캡처합니다. |
 | [tk-app-verify](skills/tk-app-verify/SKILL.md) | `hybrid` | 데스크톱 앱의 동작·화면·접근성을 검증합니다. |

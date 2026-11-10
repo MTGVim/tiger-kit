@@ -1,6 +1,12 @@
 <a id="video-assembly"></a>
 # 영상 조립
 
+조립 전에 같은 manifest·출력 옵션으로 `build_movie.py --check-only`를 실행합니다. 출력 미디어 없이 필터 지원·입력/타이밍·실제 글리프·자막/강조 영역 겹침을 확인합니다. 정상 조립도 같은 검사를 인코딩 전에 수행합니다. 텍스트 양에 따라 실제 font 측정 시간이 달라지므로 몇 초 이내 완료를 보장하지 않습니다.
+
+`explainer` MP4의 정지 장면 조립은 실행 디렉터리의 `.movie-cache/`에 자막·고지 없는 lossless 장면을 보존합니다. frame 바이트, 출력 frame 수·FPS·치수와 ffmpeg identity가 같으면 장면을 재인코딩하지 않고 stream copy로 기본 영상을 연결합니다. 바뀐 장면만 인코딩하며 `scene_cache.hits/encoded`로 재사용을 보고합니다. 명시적 hold가 없으면 자막 길이가 hold를 바꿀 수 있으므로 자막만 바꿀 작업은 수용한 hold를 manifest에 고정합니다. 최종 hard 자막·고지는 기본 영상 위에 한 번의 인코딩으로 입힙니다. 촘촘한 `evidence` 캡처 frame마다 encoder를 시작하지 않도록 evidence는 기존 단일 concat 경로를 유지합니다. GIF와 연속 animation도 이 정지 장면 캐시를 사용하지 않습니다. 캐시 손상·다른 바이트는 덮어쓰지 않고 실패하며 소유한 실행 결과의 정리 정책을 따릅니다.
+
+필수 TTS 고지는 receipt에서 읽어 외곽선·배경이 있는 상시 callout 레이어로 기본 조립에 포함합니다. 별도 drawtext 재인코딩을 덧붙이지 않습니다. 겹침이 생기면 preflight에서 드러난 배치를 수정하고 처음·중간·마지막 decoded frame의 가독성을 확인합니다.
+
 - [입력과 타이밍](#inputs-and-timing)
 - [연속 렌더링 영상](#continuous-rendered-video)
 - [선택적 자막, 콜아웃과 확대](#optional-captions-callouts-and-zoom)
@@ -192,8 +198,8 @@ macOS에서는 먼저 설치된 FFmpeg의 `subtitles` 필터를 확인합니다.
 <a id="tts-disclosure-gate"></a>
 ## TTS 고지 게이트
 
-TTS를 사용한 모든 합성 receipt를 실행 소유 폴더로 복사하여 `tts_receipts: ["/absolute/run/tts.json"]`에 전달합니다. 하나라도 `disclosure_required: true`이면 그 receipt의 `disclosure_notice`가 전체 영상에 보이도록 작성합니다. 이는 라이선스가 표시 위치·전 구간을 지정했다는 뜻이 아니라 이 워크플로의 누락 방지 계약입니다. 조립기는 실제로 그리는 callout, hard 자막, 또는 `disclosure_scene: [{start_ms, end_ms, text}]` 선언만 인정합니다. soft/off 자막과 지원 부재로 그리지 못하는 효과는 고지가 아닙니다. 첫·끝의 최대 1초만 허용하며 중간 공백은 허용하지 않습니다. 요구 문구가 빠지거나 잘못된 receipt·구간이면 인코딩 전에 실패합니다.
-장면이 직접 그리면 조립기는 픽셀을 입증하지 못하므로 반환한 `disclosure.notices[].human_action`에 따라 첫·중간·끝 프레임을 직접 확인합니다. 기본 배치는 우하단에 오른쪽으로 정렬한 작은 고지 한 줄이며, 테두리·배경 상자·가로 구분선은 그리지 않습니다. 본문보다 작은 글자와 테마의 보조 회색 글자색을 사용하고, 최종 1080p 출력에서 약 16px·불투명도 0.65를 시작값으로 삼습니다. 다른 해상도에서는 출력 높이에 비례하여 크기를 조정합니다. 본문·자막과 겹치지 않도록 화면 가장자리의 안전 여백을 확보하며 처음부터 끝까지 유지합니다. 본문보다 흐리게 표시하되 실제 디코딩 프레임에서 고지 문구를 읽을 수 없으면 글자 크기나 불투명도를 높입니다. 별도 자동 콜아웃 삽입으로 위치·겹침 점검을 우회하지 않습니다. SRT와 피드백 플레이어에 고지 반복을 강제하지 않습니다.
+TTS를 사용한 모든 합성 receipt를 실행 소유 폴더로 복사하여 `tts_receipts: ["/absolute/run/tts.json"]`에 전달합니다. 하나라도 `disclosure_required: true`이면 그 receipt의 `disclosure_notice`가 전체 영상에 보이도록 작성합니다. 이는 라이선스가 표시 위치·전 구간을 지정했다는 뜻이 아니라 이 워크플로의 누락 방지 계약입니다. 조립기는 실제로 그리는 callout, hard 자막, 또는 `disclosure_scene: [{start_ms, end_ms, text}]` 선언만 인정합니다. soft/off 자막과 지원 부재로 그리지 못하는 효과는 고지가 아닙니다. 첫·끝의 최대 1초만 허용하며 중간 공백은 허용하지 않습니다. 기존 표시와 자동 고지를 반영한 뒤에도 요구 문구가 빠지거나 receipt·구간이 잘못되었으면 인코딩 전에 실패합니다.
+장면이 직접 그리면 조립기는 픽셀을 입증하지 못하므로 반환한 `disclosure.notices[].human_action`에 따라 첫·중간·끝 프레임을 직접 확인합니다. 기존 hard 자막·callout 또는 `disclosure_scene` 선언이 요구 문구와 전체 구간을 이미 충족하면 중복 레이어를 추가하지 않습니다. 충족하지 못한 고지는 조립기가 좌상단의 배경·테두리가 있는 callout으로 전체 구간에 표시합니다. 표시 크기는 출력 높이에 비례하며 다른 callout·강조 영역·자막과의 겹침을 기존 presentation 검사로 확인합니다. 고지 배치가 충돌하면 manifest의 명시적 고지 callout이나 직접 그린 장면으로 조정한 뒤 다시 검사합니다. 자동 배치도 첫·중간·끝 decoded frame에서 실제 가독성을 확인하며 SRT와 피드백 플레이어에 고지 반복을 강제하지 않습니다.
 
 <a id="feedback-revision-loop"></a>
 ## 피드백을 반영하는 새 판
