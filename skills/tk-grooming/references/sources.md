@@ -125,3 +125,16 @@ tree에 없어서 검증 구현과 upstream 실행은 `unverified`입니다. 사
 
 이 보강은 upstream 코드 이식이 아닌 사용자 교정의 행동 계약입니다. 합성 시나리오 비교는
 지침의 분기·집계 의미를 검토할 뿐 원래 plugin의 성능·절감률이나 사고 원인을 입증하지 않습니다.
+
+## 스킬 실행의 관찰 경계
+
+`hellogxp/skill-runtime-intelligence@0ac671f0ba8e08babffb5684906671fdd32c71ca`의 `README.md`,
+`docs/runtime-event-model.md`, `docs/architecture.md`, `src/skill_runtime_intelligence/diagnosis_engine.py`,
+`src/skill_runtime_intelligence/diagnostics.py`, `src/skill_runtime_intelligence/behavior_constraints.py`와
+`tests/test_diagnosis_engine.py`, `tests/test_diagnostics.py`, `tests/test_behavior_constraints.py`를 읽었습니다.
+Apache-2.0이며 코드·문장·fixture를 제품에 가져오지 않았습니다.
+원본 tests·collector·hook·SQLite·UI 실행과 정량 효과는 `unverified`입니다.
+
+- `keep`: 관련 범위만 조사하고 미관측과 실패를 구분하며 기존 hook/tool/usage 진단·RT 표·완료 상태를 유지합니다.
+- `adapt`: 필요한 실행 단계의 관찰 근거를 연결하고 최초 관찰 실패와 최초 근거 공백, 주장·연결의 근거 등급을 구별합니다. 앞단 미확인이 뒤의 독립 관찰을 지우지 않게 합니다.
+- `omit`: 새 SkillRun 모델·schema·registry·필수 단계별 표·원시 로그 수집기와 `Experimental` 기본 상태를 도입하지 않습니다. upstream engine에 독립 selection/verification stage가 있다고 주장하거나 resource 문자열 매칭을 실제 로드 성공으로 이식하지 않습니다.
