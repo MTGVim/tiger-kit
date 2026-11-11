@@ -49,6 +49,9 @@ HTML의 구체적인 표현 형식이 미지정이고 선택을 위임받지 않
 HTML/CSS/JS에 외부 URL·리소스 로드가 있는지, `<title>`이 비어 있지 않은지, 비어 있지 않은
 `<summary>`가 각 `<details>`의 첫 자식인지 확인합니다. no-JS 읽기 경로와 출처 발췌를 검증합니다.
 후보 식별 정보와 점검 결과를 실행 근거에 기록합니다. 정적 검사는 브라우저 근거가 아닙니다.
+공통 셸의 `[data-ht-download]`를 제공하는 페이지는 최종 후처리 뒤 [다운로드와 파일 공유](html-output.md#download-and-file-sharing)의
+`package_html.py --check`로 payload·manifest와 최종 허용 목록 바이트를 검사합니다. 검사 실패는 전달 실패입니다.
+이 셸 다운로드 기능이 없는 archify·독립 HTML에는 `template[data-ht-export]`를 강제하지 않습니다.
 요청한 상호작용 점검은 여전히 `tk-browser-verify`로 전달합니다. 선택한 archify 페이지만 추가로
 `finalize`를 실행합니다. 독립적으로 작성한 HTML에는 archify 설치나 receipt가 필요하지 않습니다.
 

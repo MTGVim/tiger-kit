@@ -1,6 +1,6 @@
 ---
 name: tk-explain
-description: "[user/auto] 개념·상황·코드 변경의 배경·원리·영향을 설명하고 실제 학습자 답변에 맞춰 이어서 가르치거나, 이미 만든 설명 페이지·studio에서 복사한 피드백을 원고에 반영할 때 사용합니다. HTML·시각자료 등은 요청했거나 기법·표현·형식 선택을 위임한 경우 제작합니다. 단순 사실 조회, 결함 리뷰, 제품 구현, 일반 글 교정, 제품 비교 시제품에는 사용하지 않습니다."
+description: "[user/auto] 개념·상황·코드 변경의 배경·원리·영향을 설명하거나, 앞선 설명을 이해하지 못했다는 신호에 맞춰 다시 설명하거나, 실제 학습자 답변에 맞춰 이어서 가르치거나, 설명 페이지·studio의 피드백을 원고에 반영할 때 사용합니다. HTML·시각자료 등은 요청했거나 기법·표현·형식 선택을 위임한 경우 제작합니다. 단순 사실 조회, 결함 리뷰, 제품 구현, 일반 글 교정, 제품 비교 시제품에는 사용하지 않습니다."
 disable-model-invocation: false
 argument-hint: "<topic, change target, or learner response> [audience] [output path]"
 metadata:

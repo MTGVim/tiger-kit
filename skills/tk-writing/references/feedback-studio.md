@@ -30,11 +30,15 @@ python3 <tk-writing>/scripts/add_feedback_studio.py --input <evidence/stem.html>
 페이지 전체 영상은 이미지 자리에 억지로 넣지 않고 `tk-video`의 자체 피드백 플레이어로 전달합니다.
 
 archify의 패널·Ask·드래그 인용은 유지하되 dialog의 단건 Copy question 자리에 `목록에 담기`를 둡니다.
-일반 HTML은 위치 버튼과 드래그 인용 dialog를 제공합니다. 제목·입력 안내·취소와 추천 피드백 네 개는
+일반 HTML은 제목별 버튼을 삽입하지 않고 드래그 인용 dialog와 전역 `피드백 추가` 버튼 하나를 제공합니다.
+인용 없는 전역 입력은 `페이지 전체`를 가리키며 키보드·터치로도 열 수 있습니다. 위치 식별용 ID와 인용의 위치 연결은 유지합니다. 제목·입력 안내·취소와 추천 피드백 네 개는
 한국어로 표시합니다. 목록에서 선택·위치 이동·수정·삭제·선택 복사를 지원하며 모두 지우기는 확인합니다.
 목록 창에는 `이 목록은 이 브라우저에만 저장됩니다. 보내려면 복사해서 전달해 주세요.`를 안내합니다.
 0건이면 우하단 목록 버튼을 숨기고 첫 항목을 담으면 표시합니다. 마지막 항목 삭제나 모두 지우기로 0건이 되면
 목록 창을 닫고 `피드백을 모두 지웠습니다.`를 알립니다. 포커스가 목록이나 버튼에 있으면 본문으로 옮깁니다.
+일반 HTML의 `피드백 추가`는 0건이어도 유지합니다. 공통 셸의 `.ht-doc-controls`가 보이면 실측한 위쪽 경계와
+간격을 기준으로 피드백 버튼 묶음을 그 위에, 목록 창을 묶음 위에 배치합니다. 창 높이도 남은 viewport에 맞추며
+크기 변경 때 다시 계산합니다. 셸 이동 버튼이 없는 페이지에는 기본 우하단 배치를 유지합니다.
 영상 플레이어의 별도 목록 배치는 이 숨김 규칙을 적용하지 않습니다.
 항목 수정은 제자리 입력·저장·취소이며 Ctrl/⌘+Enter는 IME 확정 뒤 저장하고 Esc는 수정만 취소합니다.
 빈 수정은 거부하고 `지우려면 삭제를 누르세요`라고 안내하며 저장할 때 `edited_at`을 기록합니다.
@@ -74,3 +78,12 @@ DOM 계약은 `.panel`, `.panel-head`, `.panel-id`, `.ask-dialog`, `.ask-button`
 2026-11-04에 같은 고정 revision의 `explainer/reader.js`와 `render.mjs`를 다시 확인했습니다.
 `keep`: 원래 테마 버튼·선택 상태·내부 도해 갱신입니다. `adapt`: 버튼을 교체하지 않고 기본값과
 독자 선택 저장만 연결합니다. `omit`: archify 토큰과 호환되지 않는 별도 테마 선택기입니다.
+
+2026-11-11에는 `tt-a1i/archify@7e45f36c66de1254d5ad6ba1d878f6499ea269fd`의
+`archify/explainer/reader.js`·`page-bundle.mjs`와 `test/explainer-browser.test.mjs`,
+`nicobailon/visual-explainer@9d5f880b7e8e0a9a80c890b8e1bb6918b68481ad`의
+`plugins/visual-explainer/kit/ask.js`·`reply.js`와 `eval/README.md`를 정적으로 확인했습니다.
+`keep`: 인용·위치 식별과 내보내기의 상호작용 UI 제외입니다. `adapt`: generic 제목 버튼을 전역 입력 하나로
+대체하고 공통 셸 이동 버튼과 목록의 배치를 분리합니다. 이는 TigerKit의 독립적인 개선이며 upstream 의무가 아닙니다.
+`omit`: upstream 코드 복제, 자동 전송, HTML payload를 모든 렌더러에 강제하는 정책입니다.
+upstream 테스트 실행, 배치의 런타임 효과와 접근성 개선 효과는 이 조사에서 입증하지 않았습니다.

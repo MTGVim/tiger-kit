@@ -1,3 +1,20 @@
+<a id="confusion-and-badge-review-2026-11-11"></a>
+# 이해 실패 신호와 배지 검토 (2026-11-11)
+
+`mattpocock/skills@4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`의
+`skills/productivity/wait-what/SKILL.md`, `docs/productivity/wait-what.md`와 teach의
+`SKILL.md`·`LEARNING-RECORD-FORMAT.md`를 확인했습니다. `keep`: 이해 실패 신호에 설명을 다시 구성하고
+실제 답변과 단순 노출을 구분합니다. `adapt`: 이미 공유한 사례·용어로 돌아가고 필수 조건을 보존하며,
+혼란이 이어질 때 막힌 문장을 묻습니다. `omit`: 고정 영어 규격, 필수 glossary, 강제 수업·기록과 숙달 추론입니다.
+호출 증가와 학습 효과는 미검증입니다.
+
+`tt-a1i/archify@7e45f36c66de1254d5ad6ba1d878f6499ea269fd`의
+`archify/explainer/render.mjs`·`inline.mjs`, `archify/references/explainer-authoring.md`와
+`test/explainer-inline.test.mjs`를 정적으로 확인했습니다. `keep`: 사실의 범위·예외와 배지의 의미 색조입니다.
+`adapt`: `.assessment.good/caution/bad`를 포함한 배지 선언을 검토 텍스트에 보존하고 셀의 열 속성과 대조합니다.
+`omit`: 색조의 자동 정확성 판정, upstream 렌더러 코드 복제와 정적 추출을 실제 색 검증으로 취급하는 주장입니다.
+upstream 검증 코드는 읽었지만 실행하지 않았으며 기존 렌더러 최소 버전 계약은 변경하지 않습니다.
+
 <a id="outcome-led-teaching-reassessment-2026-10-18"></a>
 # 학습 성과 중심 수업 재평가 (2026-10-18)
 

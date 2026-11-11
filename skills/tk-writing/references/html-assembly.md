@@ -15,6 +15,7 @@
 ```bash
 python3 <tk-writing>/scripts/build_html.py --body <scratch>/body.html --title '<subject>' --output <final>.html
 python3 <tk-writing>/scripts/package_html.py --root <final-directory> --name <filename>.html <filename>.html
+python3 <tk-writing>/scripts/package_html.py --check --root <final-directory> --name <filename>.html <filename>.html
 ```
 
 `<tk-writing>`은 호출자나 소스 checkout이 아닌 현재 설치된 모음의 해당 소유 스킬로 해석합니다.
@@ -23,6 +24,8 @@ python3 <tk-writing>/scripts/package_html.py --root <final-directory> --name <fi
 원본/코드와 script/style 종료 시퀀스를 이스케이프합니다.
 `--lang`은 언어를 바꿉니다. `--theme`은 명시적 테마를 따르고, 그렇지 않으면 HTML 출력에 따라 설정을 결정/초기화합니다.
 출력된 생성/대체 안내를 완료 보고에 전달합니다. 연결된 수업은 위의 단일 파일 명령 대신 최종 모음 내보내기 허용 목록을 사용합니다.
+`--check`는 파일을 쓰지 않고 각 HTML의 payload·진입 경로·manifest와 허용 목록 전체의 최종 바이트를 대조합니다.
+studio 주입을 포함한 최종 편집 뒤 같은 허용 목록으로 다시 패키징하고 검사합니다. 누락·손상·중복·오래된 payload는 전달 실패입니다.
 
 사전 점검은 조각 균형, 섹션 제목, ID/대상과 summary 배치를 검사하고 공통 테마에 없는 클래스를 경고합니다.
 완전한 정적/오프라인 검증이나 산문/렌더링/학습 판정은 아닙니다. 담당자의 모든 내용/출처/연습 검사와 HTML 출력 검사를 보존합니다.

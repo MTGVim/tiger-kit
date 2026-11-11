@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Extract authored review text and image alt text, not a browser visibility verdict."""
 import argparse
+import json
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -15,6 +16,13 @@ class VisibleText(HTMLParser):
         attrs = dict(attrs)
         hidden = bool(self.stack and self.stack[-1][1]) or tag in ('script', 'style', 'template', 'head') or 'hidden' in attrs
         if not hidden:
+            classes = (attrs.get('class') or '').split()
+            if ('data-tone' in attrs or 'data-badge' in attrs or any(
+                    name in ('badge', 'assessment', 'ht-badge') or name.startswith(('badge-', 'ht-badge-'))
+                    for name in classes)):
+                metadata = ' '.join(key + '=' + json.dumps(attrs[key], ensure_ascii=False)
+                                    for key in ('class', 'data-tone', 'data-badge', 'style') if key in attrs)
+                self.parts.append('[badge ' + metadata + '] ')
             if tag == 'img' and attrs.get('alt'):
                 self.parts.append('\n[image: ' + attrs['alt'] + ']\n')
             elif tag in ('p', 'div', 'section', 'br', 'li', 'tr', 'h1', 'h2', 'h3', 'figcaption', 'summary'):

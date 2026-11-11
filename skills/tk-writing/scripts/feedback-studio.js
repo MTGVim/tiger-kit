@@ -62,7 +62,8 @@
   .fs-root button:focus-visible,.fs-root textarea:focus-visible{outline:2px solid var(--fs-accent);outline-offset:2px}
   .fs-root button.fs-primary{background:var(--fs-accent);border-color:var(--fs-accent);color:var(--fs-on-accent)}
   .fs-root button.fs-danger{color:var(--fs-danger)}
-  .fs-tray-btn{position:fixed;right:16px;bottom:16px;z-index:2147483000;box-shadow:0 4px 16px rgb(0 0 0/.18);border-radius:8px!important;padding:8px 14px!important;background:var(--fs-accent)!important;color:var(--fs-on-accent)!important;border:0!important}
+  .fs-controls{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));z-index:2147483000;display:flex;gap:8px;align-items:center;max-width:calc(100vw - 32px)}
+  .fs-tray-btn{box-shadow:0 4px 16px rgb(0 0 0/.18);border-radius:8px!important;padding:8px 14px!important;background:var(--fs-accent)!important;color:var(--fs-on-accent)!important;border:0!important}
   .fs-tray-btn[data-empty="true"]{background:var(--fs-bg)!important;color:var(--fs-ink2)!important;border:1px solid var(--fs-line)!important}
   .fs-drawer{position:fixed;right:16px;bottom:64px;z-index:2147483000;width:min(440px,calc(100vw - 32px));max-height:min(70vh,640px);display:flex;flex-direction:column;
     background:var(--fs-bg);border:1px solid var(--fs-line);border-radius:12px;box-shadow:0 10px 32px rgb(0 0 0/.22)}
@@ -80,7 +81,6 @@
   .fs-empty{color:var(--fs-ink2);padding:12px 0}
   .fs-hint{font-size:12px;color:var(--fs-ink2)}
   .fs-float{position:absolute;z-index:2147483000;border-radius:8px!important;padding:3px 10px!important;font-size:12px!important;background:var(--fs-ink)!important;color:var(--fs-bg)!important;border:0!important;box-shadow:0 4px 14px rgb(0 0 0/.18)}
-  .fs-sec-btn{margin-left:8px;font-size:12px!important;padding:1px 8px!important;vertical-align:middle}
   .fs-dialog{width:min(520px,calc(100vw - 32px));padding:0;border-radius:12px;border:1px solid var(--fs-line);background:var(--fs-bg);color:var(--fs-ink)}
   .fs-dialog form{display:flex;flex-direction:column;gap:10px;padding:14px}
   .fs-dialog h2{font-size:15px;margin:0} .fs-dialog .fs-where-line{font-size:12px;color:var(--fs-ink2);margin:2px 0 0}
@@ -156,10 +156,36 @@
   }
 
   // === TRAY: floating counter + drawer with select / jump / delete / copy / clear ===
+  const controls = el('div', 'fs-controls');
   const trayBtn = el('button', 'fs-tray-btn'); trayBtn.type = 'button'; trayBtn.setAttribute('aria-expanded', 'false');
   const drawer = el('section', 'fs-drawer'); drawer.hidden = true; drawer.setAttribute('aria-label', LIST_LABEL);
-  drawer.innerHTML = '<header><h2></h2><label class="fs-hint"><input type="checkbox" class="fs-all" checked> 전체 선택</label></header><ul class="fs-list"></ul><footer><button type="button" class="fs-danger fs-clear">모두 지우기</button><span style="flex:1"></span><button type="button" class="fs-primary fs-copy">선택한 피드백 복사</button></footer><p class="fs-hint" style="margin:0;padding:0 12px 10px">문장을 드래그하거나 각 부분의 버튼으로 피드백을 담은 뒤, 한 번에 복사해 에이전트에게 붙여 넣으세요. 이 목록은 이 브라우저에만 저장됩니다. 보내려면 복사해서 전달해 주세요.</p>';
-  root.append(drawer, trayBtn);
+  drawer.innerHTML = '<header><h2></h2><label class="fs-hint"><input type="checkbox" class="fs-all" checked> 전체 선택</label></header><ul class="fs-list"></ul><footer><button type="button" class="fs-danger fs-clear">모두 지우기</button><span style="flex:1"></span><button type="button" class="fs-primary fs-copy">선택한 피드백 복사</button></footer><p class="fs-hint" style="margin:0;padding:0 12px 10px">페이지에서 모은 피드백을 한 번에 복사해 에이전트에게 붙여 넣으세요. 이 목록은 이 브라우저에만 저장됩니다. 보내려면 복사해서 전달해 주세요.</p>';
+  controls.append(trayBtn); root.append(drawer, controls);
+  function positionControls() {
+    controls.style.bottom = '';
+    const shell = document.querySelector('.ht-doc-controls');
+    const bounds = shell?.getBoundingClientRect();
+    if (bounds && bounds.width > 0 && bounds.height > 0 && bounds.top < innerHeight && bounds.bottom > 0 && getComputedStyle(shell).visibility !== 'hidden') {
+      const bottom = Math.max(innerHeight - controls.getBoundingClientRect().bottom, innerHeight - bounds.top + 8);
+      controls.style.bottom = `${bottom}px`;
+    }
+    const drawerBottom = innerHeight - controls.getBoundingClientRect().top + 8;
+    drawer.style.bottom = `${drawerBottom}px`;
+    drawer.style.maxHeight = `min(70vh,640px,${Math.max(0, innerHeight - drawerBottom - 8)}px)`;
+  }
+  let positionFrame;
+  function schedulePosition() {
+    cancelAnimationFrame(positionFrame);
+    positionFrame = requestAnimationFrame(positionControls);
+  }
+  addEventListener('resize', schedulePosition);
+  window.visualViewport?.addEventListener('resize', schedulePosition);
+  if (typeof ResizeObserver !== 'undefined') {
+    const observer = new ResizeObserver(schedulePosition);
+    observer.observe(controls);
+    const shell = document.querySelector('.ht-doc-controls');
+    if (shell) observer.observe(shell);
+  }
   trayBtn.addEventListener('click', () => { drawer.hidden = !drawer.hidden; trayBtn.setAttribute('aria-expanded', String(!drawer.hidden)); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !e.isComposing && e.keyCode !== 229 && !drawer.hidden && !document.querySelector('dialog[open]')) { drawer.hidden = true; trayBtn.setAttribute('aria-expanded', 'false'); } });
 
@@ -207,6 +233,7 @@
       actions.append(edit, del); li.append(cb, body, actions); list.append(li);
     });
     syncAll();
+    schedulePosition();
   }
   function syncAll() { drawer.querySelector('.fs-all').checked = items.length > 0 && items.every((x) => x.checked !== false); }
   drawer.querySelector('.fs-all').addEventListener('change', (e) => { items.forEach((x) => { x.checked = e.target.checked; }); persist(); render(); });
@@ -296,9 +323,12 @@
     if (note) note.textContent = `${MAC ? '⌘↵' : 'Ctrl+↵'}로 목록에 담고, 오른쪽 아래에서 여러 건을 한 번에 복사합니다. `;
   }
 
-  // === GENERIC: drag-to-quote floating button + a button on each anchored section heading ===
+  // === GENERIC: drag-to-quote and one keyboard-accessible page feedback entry ===
   function wireGeneric() {
     const open = makeDialog();
+    const addButton = el('button', 'fs-add-btn', '피드백 추가'); addButton.type = 'button';
+    addButton.addEventListener('click', () => open({ id: '', label: '페이지 전체' }));
+    controls.prepend(addButton);
     document.querySelectorAll('h1,h2,h3,h4').forEach((heading, index) => {
       if (root.contains(heading) || heading.closest('[data-feedback-anchor],section[id],article[id]')) return;
       if (!heading.id) {
@@ -322,14 +352,6 @@
     });
     floating.addEventListener('mousedown', (e) => e.preventDefault()); // keep the selection
     floating.addEventListener('click', () => { if (selected) open(selected.where, selected.quote); floating.hidden = true; });
-    document.querySelectorAll('[data-feedback-anchor],section[id],article[id]').forEach((sec) => {
-      if (root.contains(sec)) return;
-      const h = sec.matches('h1,h2,h3,h4') ? sec : sec.querySelector('h1,h2,h3'); if (!h || h.querySelector('.fs-sec-btn')) return;
-      const b = el('button', 'fs-sec-btn', '피드백'); b.type = 'button'; b.setAttribute('aria-label', `${headText(h)}에 피드백 담기`);
-      b.style.cssText = 'font:inherit;cursor:pointer;border-radius:8px;border:1px solid currentColor;background:transparent;color:inherit;opacity:.7';
-      b.addEventListener('click', () => open(describe(sec)));
-      h.append(b);
-    });
   }
 
   // === VIDEO: each video sits right before the image it replaces; that image is its poster and its fallback ===
