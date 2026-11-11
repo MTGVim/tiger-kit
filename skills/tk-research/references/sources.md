@@ -156,3 +156,12 @@ raw HTML과 안전하지 않은 링크 거부 및 출처 참조 검증을 확인
 - `omit`: 모든 조사 페이지의 archify 강제, 원고나 출처를 생략한 임의 HTML, 렌더러 설치나 업데이트와 실패 뒤 조용한 전환입니다.
 
 형태 선택은 TigerKit 사용자 교정입니다. upstream 테스트는 읽었으며 실행하지 않았고 모델 효과는 `unverified`입니다.
+
+## 설치본과 upstream의 revision 구분 (2026-11-11)
+
+최신 HEAD가 같은 `rohankgeorge/the-researcher@1184d246c290a4ff772ea669ac6b9f9914d3f7da`임을 조회하고
+README와 `plugins/researcher/skills/research-verification/SKILL.md`의 실제 출처 확인·최신 상태 대조를 읽었습니다.
+
+- `keep`: 주장과 읽은 출처의 연결, 최신성 확인과 접근 불가의 `Unverifiable` 처리를 유지합니다.
+- `adapt`: 사용자 피드백 24에 따라 플러그인 버전 표기가 같아도 설치 메타데이터 commit과 upstream HEAD를 먼저 대조하여 두 동작의 근거를 분리합니다. 구체적인 commit 대조는 TigerKit 보강입니다.
+- `omit`: 자동 설치·갱신, 필수 주장 원장과 upstream 검증 런타임은 추가하지 않습니다. 출처 텍스트를 읽었으며 upstream 실행 효과는 `unverified`입니다.
