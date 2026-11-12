@@ -57,6 +57,7 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 | --- | --- | --- |
 | [tk-ask-repo](skills/tk-ask-repo/SKILL.md) | `user` | 저장소의 동작과 근거를 설명합니다. |
 | [tk-explain](skills/tk-explain/SKILL.md) | `hybrid` | 개념·코드 변경을 설명하고 후속 수업과 기존 설명 페이지의 피드백 반영을 지원합니다. |
+| [tk-comic](skills/tk-comic/SKILL.md) | `hybrid` | 기술 개념과 검증된 코드 변경을 교육용 만화로 제작합니다. |
 | [tk-video](skills/tk-video/SKILL.md) | `hybrid` | 소프트웨어와 개념을 설명하는 MP4·GIF 영상을 만듭니다. |
 | [tk-research](skills/tk-research/SKILL.md) | `hybrid` | 근거를 조사하고 접근법을 비교합니다. |
 | [tk-tts](skills/tk-tts/SKILL.md) | `hybrid` | 한국어 원고에서 검수 가능한 로컬 음원을 생성합니다. |
