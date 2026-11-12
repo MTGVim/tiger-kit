@@ -1,7 +1,8 @@
 <a id="browser-evidence-and-results"></a>
 # 브라우저 근거와 결과
 
-런타임 근거를 저장하거나 실행한 검증 단계를 반환하기 전에 읽습니다.
+최종 판정 분기의 런타임 근거를 저장하거나 실행한 검증 단계를 반환하기 전에 읽습니다.
+명시적 접근성 감사의 범위·완료·발견 반환은 [접근성 결함 탐색](accessibility-audit.md)을 따릅니다.
 
 `.tigerkit/evidence/` 아래에 처음 쓰기 전에
 `git ls-files -- .tigerkit/`가 추적 경로를 하나도 반환하지 않고
