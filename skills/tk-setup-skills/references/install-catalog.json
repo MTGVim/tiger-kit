@@ -56,6 +56,13 @@
         "tk-writing"
       ]
     },
+    "tk-comic": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning",
+        "tk-writing"
+      ]
+    },
     "tk-compound": {
       "requires": [
         "tk-artifacts",
