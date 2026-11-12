@@ -25,6 +25,7 @@ import re
 import sys
 import tempfile
 from html.parser import HTMLParser
+from pathlib import Path
 from urllib.parse import quote
 
 SCRIPT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "feedback-studio.js")
@@ -81,6 +82,66 @@ class ImageTargets(HTMLParser):
                 return
 
 
+class InlineAssets(HTMLParser):
+    """Collect live inline assets, not prose, data scripts or template contents."""
+
+    def __init__(self, page):
+        super().__init__()
+        self.inert = []
+        self.active = None
+        self.assets = {'script': [], 'style': []}
+        self.feed(page)
+
+    def handle_starttag(self, tag, attrs):
+        if tag in ('template', 'noscript'):
+            self.inert.append(tag)
+        if tag not in self.assets or self.inert:
+            return
+        attrs = dict(attrs)
+        kind = (attrs.get('type') or '').strip().lower()
+        if tag == 'script':
+            if 'src' in attrs or 'nomodule' in attrs or kind not in ('', 'module', 'text/javascript', 'application/javascript'):
+                return
+        elif kind not in ('', 'text/css') or (attrs.get('media') or '').strip().lower() not in ('', 'all'):
+            return
+        self.active = (tag, [])
+
+    def handle_data(self, data):
+        if self.active:
+            self.active[1].append(data)
+
+    def handle_endtag(self, tag):
+        if self.active and self.active[0] == tag:
+            self.assets[tag].append(''.join(self.active[1]))
+            self.active = None
+        if tag in self.inert:
+            index = len(self.inert) - 1 - self.inert[::-1].index(tag)
+            del self.inert[index:]
+
+
+def image_assets(page):
+    """Reuse the package-owned image reader, including non-reader delivery HTML.
+
+    The builder already inlines these sections; don't add another copy in studio.
+    No image URL or bytes are copied here: the viewer reads the live img on opening.
+    """
+    assets = Path(__file__).resolve().parents[1] / 'assets'
+    parts = []
+    existing = InlineAssets(page).assets
+    for name, start, end, tag in (
+        ('html-theme.css', '/* image-reader:start */', '/* image-reader:end */', 'style'),
+        ('html-theme.js', '// image-reader:start', '// image-reader:end', 'script'),
+    ):
+        text = (assets / name).read_text(encoding='utf-8')
+        if text.count(start) != 1 or text.count(end) != 1:
+            raise ValueError('invalid shared image reader boundaries: ' + name)
+        section = start + text.split(start, 1)[1].split(end, 1)[0] + end
+        if any(content.strip() in (section.strip(), text.strip()) for content in existing[tag]):
+            continue
+        parts.append(f'<{tag}>\n{section}\n</{tag}>\n')
+    return ''.join(parts)
+
+
 def inject(page, js, videos=()):
     """videos: [(target_id, relative_video_path)]. target_id is an archify @image block id, or any element id
     whose first <img> becomes the video's poster and fallback."""
@@ -88,10 +149,19 @@ def inject(page, js, videos=()):
         raise ValueError("page already has the feedback studio")
     if "</script" in js.lower():
         raise ValueError("studio script must not contain a closing script tag")
+    # Add only a scope flag to the delivery body; never modify the evidence original.
+    page, bodies = re.subn(
+        r'<body\b([^>]*)>',
+        lambda match: match.group(0) if re.search(r'\bdata-ht-image-reader(?:\s|=|$)', match.group(1), re.I)
+        else '<body data-ht-image-reader' + match.group(1) + '>',
+        page, count=1, flags=re.I,
+    )
+    if not bodies:
+        raise ValueError('page has no <body>')
     end = page.lower().rfind("</body>")
     if end < 0:
         raise ValueError("page has no </body>")
-    page = page[:end] + MARK + "\n<script>\n" + js + "\n</script>\n" + page[end:]
+    page = page[:end] + MARK + image_assets(page) + "\n<script>\n" + js + "\n</script>\n" + page[end:]
     targets = [target for target, _ in videos]
     if len(set(targets)) != len(targets):
         raise ValueError("duplicate video target")

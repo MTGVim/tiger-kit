@@ -24,18 +24,24 @@ $extra_css
     <output class="ht-export-status" data-ht-export-status role="status" hidden></output>
   </div>
 </header>
+<div class="ht-reader-layout">
+<nav class="ht-doc-nav" aria-label="문서 그룹" data-ht-section-nav>
+  <h2 class="ht-doc-nav-heading">문서 그룹</h2>
+  <details class="ht-doc-toc" data-ht-section-disclosure open>
+    <summary aria-label="목차 열기 또는 닫기">목차</summary>
+    <div class="ht-doc-toc-panel" data-ht-section-links tabindex="-1">$groups</div>
+  </details>
+</nav>
 <main class="ht-doc-content">
 <h1>$title</h1>
 $body
 </main>
+<aside class="ht-page-toc" aria-label="이 페이지의 목차">
+  <h2 class="ht-doc-nav-heading">이 페이지의 목차</h2>
+  <nav class="ht-doc-toc-panel" data-ht-page-links aria-label="현재 페이지 섹션">$toc</nav>
+</aside>
+</div>
 <footer id="document-bottom">$footer</footer>
-<nav class="ht-doc-nav" aria-label="문서 탐색">
-  <h2 class="ht-doc-nav-heading">목차</h2>
-  <details class="ht-doc-toc" open>
-    <summary aria-label="목차 열기 또는 닫기">목차</summary>
-    <div class="ht-doc-toc-panel" tabindex="-1">$toc</div>
-  </details>
-</nav>
 <nav class="ht-doc-controls" aria-label="문서 이동">
   <a href="#document-top" aria-label="맨 위로 이동">↑</a>
   <a href="#document-bottom" aria-label="맨 아래로 이동">↓</a>

@@ -110,6 +110,22 @@ def toc(sections):
     ) + '</ol>'
 
 
+def group_menu(sections):
+    """The left rail names top-level groups; the right rail lists page sections.
+
+    Nested links stay available in the mobile menu, where the right rail is hidden.
+    All navigation remains native and works without JavaScript.
+    """
+    groups = []
+    for section in sections:
+        title = html.escape(' '.join(section['title'].split()))
+        groups.append('<details class="ht-nav-group" open><summary>' + title +
+                      '</summary>' + toc([{**section, 'children': []}]) +
+                      ('<div class="ht-nav-subsections">' + toc(section['children']) + '</div>'
+                       if section['children'] else '') + '</details>')
+    return ''.join(groups)
+
+
 def resolve_theme(explicit=None):
     if explicit:
         return explicit, []
@@ -173,7 +189,7 @@ def assemble(body, title, *, theme='system', lang='ko', css='', script='', foote
     document = template.substitute(
         title=html.escape(title), lang=html.escape(lang, quote=True), theme=theme,
         theme_attr='' if theme == 'system' else ' data-theme="' + theme + '"',
-        body=body, footer=footer, toc=toc(navigation),
+        body=body, footer=footer, toc=toc(navigation), groups=group_menu(navigation),
         css=theme_css,
         script=(PACKAGE / 'assets/html-theme.js').read_text(encoding='utf-8'),
         extra_css='<style>' + css + '</style>' if css else '',

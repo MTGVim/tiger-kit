@@ -95,6 +95,64 @@
   else start();
 })();
 
+// image-reader:start
+(() => {
+  const start = () => {
+    if (window.__tigerkitImages || typeof HTMLDialogElement === 'undefined') return;
+    window.__tigerkitImages = true;
+    let dialog, expanded, opener;
+    const open = (image, trigger) => {
+      if (!dialog) {
+        dialog = document.createElement('dialog');
+        dialog.className = 'ht-image-dialog interactive';
+        dialog.setAttribute('aria-label', '이미지 확대');
+        const close = document.createElement('button');
+        close.type = 'button'; close.className = 'ht-image-close';
+        close.textContent = '닫기'; close.setAttribute('aria-label', '확대 이미지 닫기');
+        expanded = document.createElement('img');
+        dialog.append(close, expanded); document.body.append(dialog);
+        close.addEventListener('click', () => dialog.close());
+        dialog.addEventListener('click', event => {
+          if (event.target !== dialog) return;
+          const box = dialog.getBoundingClientRect();
+          if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) dialog.close();
+        });
+        // Native modal supplies Escape and focus containment. Release the temporary source on close.
+        dialog.addEventListener('close', () => {
+          expanded.removeAttribute('src'); expanded.alt = '';
+          if (opener?.isConnected) opener.focus({preventScroll: true});
+          opener = null;
+        });
+      }
+      if (dialog.open) return;
+      opener = trigger;
+      expanded.alt = image.alt;
+      expanded.src = image.currentSrc || image.src;
+      dialog.showModal();
+    };
+    for (const image of document.querySelectorAll('.ht-doc-content img, body[data-ht-image-reader] img')) {
+      // Never hijack authored links, controls, diagram viewers, or studio UI.
+      if (image.closest('a, button, [role="button"], header, nav, dialog, .interactive, .fs-root, [data-ht-image-ignore]') || image.hasAttribute('onclick') || image.hasAttribute('tabindex')) continue;
+      image.classList.add('ht-reader-image');
+      const button = document.createElement('button');
+      button.type = 'button'; button.className = 'ht-image-open interactive';
+      button.textContent = '이미지 확대';
+      button.setAttribute('aria-label', (image.alt ? image.alt + ' · ' : '') + '이미지 확대');
+      button.setAttribute('aria-haspopup', 'dialog');
+      // Keep img in place: video uses its immediate preceding sibling for poster/fallback.
+      image.after(button);
+      button.addEventListener('click', () => open(image, button));
+      image.addEventListener('click', () => {
+        if (window.getSelection()?.toString()) return;
+        open(image, button);
+      });
+    }
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once: true});
+  else start();
+})();
+// image-reader:end
+
 // theme-control:start
 (() => {
   if (window.__tigerkitTheme) return;
@@ -230,11 +288,14 @@
   const syncNavigationMode = () => { if (toc && narrowNavigation) toc.open = !narrowNavigation.matches; };
   syncNavigationMode();
   narrowNavigation?.addEventListener('change', syncNavigationMode);
-  const links = [...nav.querySelectorAll('[data-ht-section-links] a[href^="#"], .ht-doc-toc-panel a[href^="#"]')];
+  const links = [...new Set([
+    ...nav.querySelectorAll('[data-ht-section-links] a[href^="#"], .ht-doc-toc-panel a[href^="#"]'),
+    ...document.querySelectorAll('[data-ht-page-links] a[href^="#"]')
+  ])];
   const targetFor = hash => {
     try { return document.getElementById(decodeURIComponent(hash.slice(1))); } catch { return null; }
   };
-  const sections = links.map(link => targetFor(link.hash)).filter(Boolean);
+  const sections = [...new Set(links.map(link => targetFor(link.hash)).filter(Boolean))];
   const close = (returnFocus = false) => {
     if (!toc?.open || !narrowNavigation?.matches) return;
     toc.open = false;

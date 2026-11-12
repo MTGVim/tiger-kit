@@ -67,3 +67,13 @@ MIT 출처 고지는 `LICENSE.txt`에 있습니다. 이전 스킬 패키지와 �
 - `keep`: 패키지별 네 열 표, 제안 전용 권한, 비공개 식별자 제거와 요청한 파일만의 검사를 유지합니다.
 - `adapt`: 사용자 피드백 21–23에 따라 세션 밖 수신자용 표는 확인한 파일·절, 정확한 제안 문구와 공개 출처 URL·commit을 행 안에 담고, 수정 단위로 나누며 보류 조건을 셀 맨 앞에 둡니다.
 - `omit`: 일반 대화의 상세화, 인계만을 위한 파일 생성과 자동 구현·발행은 추가하지 않습니다. upstream 전용 자동 검증은 확인하지 못했고 실행 효과는 `unverified`입니다.
+
+## 사용자 요구의 수렴·조사 범위·후속 통합 (2026-11-12)
+
+최신 HEAD가 `mattpocock/skills@4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`임을 GitHub API로 확인하고
+`skills/engineering/retro/SKILL.md`, `skills/productivity/writing-for-agents/SKILL.md`와 각각의 `docs/` 설명을 읽었습니다.
+recursive tree의 관련 경로와 검증 후보도 조회했으며 retro 전용 자동 검증은 확인하지 못했습니다. upstream 실행 효과는 `unverified`입니다.
+
+- `keep`: 일차 세션 근거, 기존 검사 우선, 명확한 완료 조건과 단일 소유 정본을 유지합니다.
+- `adapt`: 사용자 피드백 #11–17에 따라 시간순 마지막 합의·폐기 방향, 반복 정정 우선순위, renderer·shell 소유 근거, 호출 스킬→소유 저장소 확인, 수렴 결과와 후속 통합표를 TigerKit 계약으로 보강합니다. `tk-ask-repo`의 외부 부재 판정은 최신 fetch·bare clone·전체 로컬 검색과 실패 한계를 요구하되 조사용 Git 메타데이터만 예외로 둡니다.
+- `omit`: 숨겨진 기록 접근, 개인 memory·자동 스킬로 공유 결함을 해결했다는 처리, 사용자 checkout 변경, 자동 구현·발행과 보편적 CI 관문은 추가하지 않습니다. 수정 불가 원인 소유자는 보존하며 승인된 우회 담당자와 구분합니다.

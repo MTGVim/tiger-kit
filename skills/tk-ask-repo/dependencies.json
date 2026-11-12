@@ -1,6 +1,7 @@
 {
   "version": 1,
   "requires": [
+    "tk-artifacts",
     "tk-questioning",
     "tk-repository-guidance",
     "tk-ui-evidence",
