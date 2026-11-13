@@ -12,7 +12,13 @@
 `Unverifiable`을 반환합니다.
 
 바이너리 근거는 이번 실행이 소유한 `.tigerkit/evidence/tk-browser-verify/<run-id>/`에 저장할 수 있습니다. 변경 전 기준 비교에는
-`baseline/`, `after/`와 변경 불가능한 `failed-<attempt>/` 하위 디렉터리를 사용합니다. 필수로 작성하는 제한된 범위의 `README.md`에는 각
+`baseline/`, `after/`와 변경 불가능한 `failed-<attempt>/` 하위 디렉터리를 사용합니다. **첫 스크린샷 전에** 실행 소유
+`README.md`를 생성하고 첫 줄에 `sensitive_regions: <selector 목록 | none(이유)>`를 실제 값으로
+기록합니다. 민감 영역 목록은 캡처 전 DOM/화면 상태의 안전한 점검으로 정하며 미가공 시험 이미지를
+찍지 않습니다. 모든 캡처 단계에서 이 첫 줄의 존재·값과 해당 화면의 적용 관계를 검사합니다.
+누락·빈 값·근거 없는 `none`은 **근거 결과 계약 위반**이며, 캡처를 금지하고 단계 상태를
+`Unverifiable`로 반환합니다. 이후 단계의 화면이 달라지면 다음 캡처 전에 값을 갱신하고 변경
+사유를 색인에 남깁니다. 필수로 작성하는 제한된 범위의 `README.md`에는 각
 AC를 해당 스크린샷, 발행해도 안전한 정확한 `display_route`, 재실행 절차와 공개된 캡처 전용 또는
 비결정적 제외 사항에 대응시킵니다. 이는 근거 색인이지 수명 주기 기록부가 아닙니다.
 그곳에 다른 Markdown 파일을 두지 않습니다.
@@ -62,6 +68,7 @@ AC를 해당 스크린샷, 발행해도 안전한 정확한 `display_route`, 재
 - 예외의 사유와 영향을 포함하여 근거 색인에도 같은 캡처별 방법/실제 적용 뷰포트 기록
 - 시각 캡처마다 대상 외곽선에 대한 `annotation: visible (pixel-checked) | none (remain unchanged) | none (target absent by intent)`와
   `target in frame: yes | no`. 대상이 없다면 나타남/사라짐 의도와 화면에 보이는 주변 맥락이 필요합니다.
+- `sensitive_regions: <selector 목록 | none(이유)>`: 첫 캡처 전 작성한 근거 `README.md`의 **첫 줄**과 각 단계 화면의 일치 여부. 누락·무효 값은 `Unverifiable`입니다.
 - 민감한 화면은 캡처 계획의 민감 영역과 캡처 전 자르기/마스킹. 전체 페이지/가공 전 원본은 절대로 보존하지 않습니다.
 - limitation
 - 정확한 실행 소유 서버/브라우저 종료, 기록된 시작 PID/핸들, 확인된 종료와 검증된 잔여물을 포함한 정리 사실. 변경 전 기준부터 최종 헤드까지 프로세스를 유지하지 않습니다.
