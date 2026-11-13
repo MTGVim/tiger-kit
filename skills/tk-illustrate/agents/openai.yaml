@@ -1,0 +1,6 @@
+interface:
+  short_description: "[user/auto] AI 삽화·문서 보조 그림·인포그래픽을 제작하고 도구가 없으면 콘티와 최종 프롬프트를 제공합니다."
+  default_prompt: "$tk-illustrate를 사용해 근거에 맞는 삽화를 제작해 주세요. 이미 정한 주제와 스타일은 유지하고, 이미지 도구가 없으면 외부 생성용 콘티와 최종 프롬프트를 완성해 주세요."
+
+policy:
+  allow_implicit_invocation: true

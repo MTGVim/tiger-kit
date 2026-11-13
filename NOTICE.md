@@ -1,5 +1,12 @@
 # 고지
 
+`tk-illustrate`와 `tk-comic`의 이미지·만화 제작 계약 및 선택형 스타일 자료는
+`JimLiu/baoyu-skills@ca703c2d7c2c4399a1dc0cf82224f8551e05a96d`를 참고해 조정했습니다.
+원본의 정보 구조·표현 축·프롬프트 보존·부분 제작을 TigerKit의 근거·질문·권한 경계에 맞추고,
+원본 백엔드·전역 설정·고정 캐릭터·자동 설치는 도입하지 않습니다. 각 패키지의 출처 참조와
+`LICENSE.txt`에 원저작자와 완전한 MIT 고지를 보존합니다. `tk-explain`은 설명 근거·HTML과
+최종 리뷰를 소유하고, AI 래스터 제작만 `tk-illustrate`에 위임합니다.
+
 `tk-compound`는 `EveryInc/compound-engineering-plugin`의 MIT 스냅샷
 `50532b00de523980010d97fe950965b35382a3b7`에서 유효한 교훈의 선별과 근거 검증 원칙을
 참고했습니다. 자동 문서 작성·기억 저장소·세션 종료 실행은 도입하지 않았습니다.

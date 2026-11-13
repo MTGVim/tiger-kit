@@ -36,6 +36,18 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 설계 근거는 [ADR 0004](docs/adr/0004-shared-reference-skills.md)에 있습니다. 기존 ADR 0003의 독립 설치·
 문서 사본 계약은 이 전환 범위에서 대체되며, 전환 전 설치는 과거 동작입니다.
 
+## AI 삽화 제작을 `tk-illustrate`로 분리
+
+`tk-explain`은 설명·근거·HTML과 기존 F1~F9 형식 선택을 유지하고, AI 래스터 제작만
+`tk-illustrate`에 위임합니다. 기존에 `tk-explain`을 선택 설치했다면 `tk-setup-skills`로
+`tk-illustrate`를 포함한 최신 dependency closure를 같은 컬렉션에 준비하세요. 자동 설치나 새로운
+선택적 의존성 스키마는 사용하지 않습니다. 일반 대화와 정밀 PNG·SVG는 제작 카탈로그를 읽지 않습니다.
+
+`tk-illustrate`는 단일 그림·문서 삽화·인포그래픽의 독립 진입점이며, `tk-comic`은 독립적인
+만화 제작자로 유지합니다. 두 스킬 모두 이미지 도구가 없으면 콘티와 완전한 프롬프트를 준비하고
+미생성 상태를 밝힙니다. `tk-comic`의 SVG 콘티는 별도 수락 후에만 만듭니다. 기존 결과물은
+이동하거나 덮어쓰지 않으며, 부분 제작·재생성에는 해당 패키지의 현재 선행 산출물 계약을 적용합니다.
+
 ## 영상 조립을 `tk-video`로 분리
 
 - `tk-browser-verify`의 조립·내레이션 스크립트는 `tk-video`로 이동합니다. 영상을 사용하는 경우 이 스킬도 설치하세요.

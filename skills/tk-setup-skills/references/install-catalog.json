@@ -91,6 +91,7 @@
     "tk-explain": {
       "requires": [
         "tk-artifacts",
+        "tk-illustrate",
         "tk-questioning",
         "tk-writing"
       ]
@@ -114,6 +115,13 @@
         "tk-artifacts",
         "tk-questioning",
         "tk-ui-evidence",
+        "tk-writing"
+      ]
+    },
+    "tk-illustrate": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning",
         "tk-writing"
       ]
     },

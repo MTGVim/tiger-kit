@@ -13,6 +13,8 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 
 공통 기준·HTML 자원과 도우미는 `tk-writing` 등 참조 전용 소유 스킬에, 검증 registry·설정 도우미는 `tk-verification-guidance`에 한 번 둡니다. 선택한 스킬의 `dependencies.json` 전체 closure를 같은 설치 컬렉션에 준비해야 하며, 업무 패키지 하나만 복사하면 충분하다고 가정하지 않습니다. 소유자가 없으면 해당 단계를 중단하고 setup을 안내하며, 출력·임시 파일은 호출한 업무가 설치 패키지 밖에서 관리합니다.
 
+`tk-explain`의 이미지 제작 분기에는 `tk-illustrate`가 필요합니다. 기존 선택 설치도 setup으로 이 의존성을 함께 갱신합니다. `tk-illustrate`와 `tk-comic`은 각각 직접 호출할 수 있습니다.
+
 ## 스킬 구성
 
 `user`는 직접 호출하며, `hybrid`는 작업에 맞게 자동 선택할 수도 있습니다. 상세한 동작과 권한은 각 스킬 문서에 있습니다.
@@ -57,7 +59,8 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 | --- | --- | --- |
 | [tk-ask-repo](skills/tk-ask-repo/SKILL.md) | `user` | 저장소의 동작과 근거를 설명합니다. |
 | [tk-explain](skills/tk-explain/SKILL.md) | `hybrid` | 개념·코드 변경을 설명하고 후속 수업과 기존 설명 페이지의 피드백 반영을 지원합니다. |
-| [tk-comic](skills/tk-comic/SKILL.md) | `hybrid` | 기술 개념과 검증된 코드 변경을 교육용 만화로 제작합니다. |
+| [tk-illustrate](skills/tk-illustrate/SKILL.md) | `hybrid` | 단일 그림·문서 삽화·인포그래픽을 제작하며, 이미지 도구가 없으면 콘티와 생성 프롬프트를 제공합니다. |
+| [tk-comic](skills/tk-comic/SKILL.md) | `hybrid` | 교육용 만화를 제작하고 프리셋·부분 제작·페이지 재생성과 외부 생성 인계를 지원합니다. |
 | [tk-video](skills/tk-video/SKILL.md) | `hybrid` | 소프트웨어와 개념을 설명하는 MP4·GIF 영상을 만듭니다. |
 | [tk-research](skills/tk-research/SKILL.md) | `hybrid` | 근거를 조사하고 접근법을 비교합니다. |
 | [tk-tts](skills/tk-tts/SKILL.md) | `hybrid` | 한국어 원고에서 검수 가능한 로컬 음원을 생성합니다. |
