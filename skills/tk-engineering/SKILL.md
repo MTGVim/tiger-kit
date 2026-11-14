@@ -31,11 +31,12 @@ metadata:
 - [OpenAPI 호환성](references/openapi-compatibility.md): 기존 OpenAPI 명세가 변경되면 비교 입력 확보 여부와 관계없이 읽습니다.
 - [React](references/react.md): 정확히 해당하는 코드 리뷰에 React 코드가 포함될 때 읽습니다.
 - [위임 권한](references/delegation-permissions.md): 자식을 디스패치하거나 접근·환경이 바뀐 자식을 재개할 때 읽습니다.
+- [위임 예산](references/delegation-budget.md): 컨트롤러가 자식을 디스패치·재개·교체·재시도하기 전에 읽습니다.
 - [리뷰 운영](references/review-operations.md): 컨트롤러가 결과를 수락하거나 실행 예약·대기·근거 반박을 처리할 때 해당 절을 읽습니다.
 - [리뷰 프로토콜](references/review-protocol.md): 직접 리뷰, SDD Unit 리뷰 또는 전체 변경의 독립 리뷰를 수행할 때 읽습니다.
 - [SDD 상호작용](references/sdd-interaction.md): 승인된 SDD 실행이 사용자 상호작용 지점에 도달했을 때 읽습니다.
 - [SDD 복구](references/sdd-recovery.md): 승인되었으나 중단된 SDD 실행을 재개할 때 읽습니다.
-- [SDD 전달](references/sdd-transport.md): 승인된 SDD 단위나 리뷰 brief를 작업자에게 전달할 때 읽습니다.
+- [산출물 전달](references/sdd-transport.md): 승인된 자식 작업이나 리뷰의 전달 형식을 선택하거나 파일 자료를 준비·복구할 때 읽습니다.
 - [SDD](references/sdd.md): 준비 담당자가 이미 SDD를 선택했을 때 읽습니다.
 - [보안 경계](references/security-boundaries.md): 엔지니어링 또는 감사 조사가 안전이나 권한 경계에 도달했을 때 읽습니다.
 - [보안](references/security.md): 정확히 해당하는 코드 리뷰에 보안상 민감한 영역이 포함될 때 읽습니다.

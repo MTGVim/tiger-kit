@@ -13,6 +13,11 @@
 - 실행 `sdd`: 여러 실질적인 Unit에 독립적인 구현/테스트/검토 판단 반복이 필요합니다. Ready Seed가 필수입니다.
 - 실행 `handoff`: Ready Seed를 준비하고 다른 세션/실행자를 위해 중단합니다.
 
+작고 명확하며 메인이 필요한 맥락을 이미 가진 작업은 direct를 유지합니다. 메인의 구현 자체를 금지하지 않습니다.
+긴 탐색·큰 출력을 격리할 이점이 브리프 작성·디스패치·결과 대조 비용보다 클 때만 단일 worker 위임을 검토합니다.
+하나의 일관된 작업을 위임한다는 이유만으로 다중 Unit·Seed·SDD나 추가 리뷰 단계를 만들지 않습니다.
+이 경우 실행 형태는 direct로 유지하고 [로컬 실행](local-execution.md#direct-execution-and-completion)의 단일 worker 경계를 적용합니다.
+
 복잡성은 보호 수준을 높이는 방향으로만 작용할 수 있습니다. 순서는 대화 내 direct → Seed direct → SDD/재준비입니다. 편의를 위해 조용히 낮추지 않습니다.
 Direct/no-Seed는 SDD 지침을 읽지 않습니다. SDD를 선택한 뒤에만 [비공개 SDD](../../tk-engineering/references/sdd.md)를 읽습니다.
 

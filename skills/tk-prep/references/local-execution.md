@@ -32,6 +32,15 @@ HEAD를 새로 조회합니다. 정확한 계획과 격리 체크아웃에 대�
 <a id="direct-execution-and-completion"></a>
 ## 직접 실행과 완료
 
+긴 탐색·출력을 격리할 이점이 확인된 하나의 일관된 direct 작업은 단일 worker에 위임할 수 있습니다.
+디스패치 전 [위임 권한](../../tk-engineering/references/delegation-permissions.md), [위임 예산](../../tk-engineering/references/delegation-budget.md)과 [산출물 전달](../../tk-engineering/references/sdd-transport.md)을 읽습니다.
+같은 시점의 작업 식별자·정확한 workspace·`BASE = git rev-parse HEAD`와 관련 미커밋 변경을 결합해 기록하고 브리프에 넘깁니다.
+컨트롤러는 승인된 목표·범위·AC·전역 제약과 이전 결정을 전달하고, 자료 준비를 위해 worker의 구현 분석을 미리 중복 수행하지 않습니다.
+worker는 재위임 없는 리프이며 승인된 격리 checkout에서만 변경합니다. 구현자를 동시에 실행하지 않고 원격 발행 권한을 주지 않습니다.
+위임은 아래 테스트·자체 단순화·정확한 전체 변경의 독립 리뷰·최종 검증·승인된 commit 의무를 대체하거나 리뷰 단계를 추가하지 않습니다.
+중단 결과가 불명확하면 디스패치 때 결합한 작업·workspace·BASE, 실제 commit·미커밋 변경과 이전 worker의 쓰기 종료를 확인하기 전 재실행·교체하지 않습니다.
+결합이나 종료를 입증하지 못하면 `Blocked | Unverifiable`로 반환합니다. 단일 worker 위임만으로 Seed나 SDD 상세 문서를 읽지 않습니다.
+
 직접 변경은 [행동 우선 테스트](../../tk-engineering/references/testing.md)의 해당 경로를 따릅니다. 동작 변경은 RED → 실패 확인 → 최소
 GREEN으로 진행하고, 동작 보존 리팩터링은 편집 전 GREEN → 동작 보존 리팩터링 → 대응하는 GREEN으로 진행합니다. 그런 다음 자체 단순화 →
 정확한 변경 범위의 읽기 전용 리뷰 → 범위 내 수정·재리뷰 → 최종 후보에 결부한 검증 → 커밋 순서로 진행합니다. 불필요한 간접 계층,
