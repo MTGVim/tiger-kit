@@ -39,6 +39,7 @@ metadata:
 - [HTML reader](references/html-reader.md): 공통 reader 수업이나 변경 문서를 조립할 때 읽습니다.
 - [HTML 렌더링](references/html-render.md): 선택한 HTML 출력을 빌드, 패키징하거나 검사할 때 읽습니다.
 - [대화형 예제](references/interactive-examples.md): 명시적 요청이나 추천 선택에 따라 실시간 대화형 예제를 제공할 때 읽습니다.
+- [로컬 이미지 폴백과 분리 식질](references/local-image-fallback.md): `tk-illustrate`·`tk-comic`에서 사용 가능한 이미지 도구가 없어 로컬 폴백과 준비물 전달을 선택하거나, 선택한 로컬 그림에 별도 텍스트를 조판할 때만 읽습니다. 실행·설치·승인·최종 검사는 호출자가 담당합니다.
 - [미디어 선호](references/media-preferences.md): 시각 자료나 미디어 형식/선호를 결정해야 할 때 읽습니다.
 - [독자용 서식](references/reader-formatting.md): 설명 문서에 작성한 산문의 서식을 정할 때 읽습니다.
 - [렌더러 계약](references/renderer-contract.md): 기존 학습 자료를 바꾸지 않고 지원되는 설명 렌더러를 선택할 때 읽습니다.

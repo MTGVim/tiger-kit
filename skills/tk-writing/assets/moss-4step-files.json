@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "profile": "moss-sft-4step-comfy-int8",
+  "purpose": "Installation planning and file verification only; no automatic installer or runtime compatibility guarantee",
+  "checked_on": "2026-11-15",
+  "runtime": "Existing compatible ComfyUI; pin runtime and platform dependencies in each approved installation plan",
+  "settings": {
+    "steps": 4,
+    "cfg": 1,
+    "sampler": "euler",
+    "scheduler": "simple",
+    "lora_strength": 1
+  },
+  "files": [
+    {
+      "repo": "Comfy-Org/MOSS-Image",
+      "revision": "2929efe3cdd506c0a430bcfca70a9a8d805cc095",
+      "file": "diffusion_models/moss_image_sft_int8_convrot.safetensors",
+      "target": "diffusion_models/moss_image_sft_int8_convrot.safetensors",
+      "bytes": 5413698958,
+      "sha256": "b4d1475bc7eeffd7b809e82ea13a1fba1fb85c4e18365af3813722faa5c0fe4f",
+      "license": "apache-2.0"
+    },
+    {
+      "repo": "Comfy-Org/MOSS-Image",
+      "revision": "2929efe3cdd506c0a430bcfca70a9a8d805cc095",
+      "file": "text_encoders/qwen3.5_9b_int8_convrot.safetensors",
+      "target": "text_encoders/qwen3.5_9b_int8_convrot.safetensors",
+      "bytes": 9748121532,
+      "sha256": "32e3787472f708fa5f83624acbf5ef23f7fc89c439e05065ea57cfe5a97f025a",
+      "license": "apache-2.0"
+    },
+    {
+      "repo": "Comfy-Org/MOSS-Image",
+      "revision": "2929efe3cdd506c0a430bcfca70a9a8d805cc095",
+      "file": "vae/flux2-vae.safetensors",
+      "target": "vae/flux2-vae.safetensors",
+      "bytes": 336211292,
+      "sha256": "868fe7b343cc8f3a19dbcfcafbc3d5f888802be3f89bd81b65b3621a066ce8f3",
+      "license": "apache-2.0"
+    },
+    {
+      "repo": "akhaliq/MOSS-Image-SFT-4-steps",
+      "revision": "2ded95c37a029360245926fe72e475e30039bbfb",
+      "file": "lora.safetensors",
+      "target": "loras/moss_image_sft_4step.safetensors",
+      "bytes": 1189176752,
+      "sha256": "154c7f1455c3bf9925945c2f1ea2e4f09d0d0c67256081384a094b2b585f913f",
+      "license": "apache-2.0"
+    }
+  ],
+  "model_bytes": 16687208534,
+  "notes": [
+    "Model bytes only, not total installation footprint or memory requirement",
+    "This standard INT8 profile is not the GGUF + Heretic profile from the local comic comparison",
+    "No downloads during discovery; verify all selected bytes before loading"
+  ]
+}

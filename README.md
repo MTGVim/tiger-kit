@@ -59,8 +59,8 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 | --- | --- | --- |
 | [tk-ask-repo](skills/tk-ask-repo/SKILL.md) | `user` | 저장소의 동작과 근거를 설명합니다. |
 | [tk-explain](skills/tk-explain/SKILL.md) | `hybrid` | 개념·코드 변경을 설명하고 후속 수업과 기존 설명 페이지의 피드백 반영을 지원합니다. |
-| [tk-illustrate](skills/tk-illustrate/SKILL.md) | `hybrid` | 단일 그림·문서 삽화·인포그래픽을 제작하며, 이미지 도구가 없으면 콘티와 생성 프롬프트를 제공합니다. |
-| [tk-comic](skills/tk-comic/SKILL.md) | `hybrid` | 교육용 만화를 제작하고 프리셋·부분 제작·페이지 재생성과 외부 생성 인계를 지원합니다. |
+| [tk-illustrate](skills/tk-illustrate/SKILL.md) | `hybrid` | 단일 그림·문서 삽화·인포그래픽을 제작하며, 이미지 도구가 없으면 MOSS 로컬 폴백·분리 식질 또는 콘티·프롬프트 전달을 선택합니다. |
+| [tk-comic](skills/tk-comic/SKILL.md) | `hybrid` | 교육용 만화를 제작하고 부분 제작·페이지 복구를 지원하며, 도구가 없으면 MOSS 로컬 폴백·분리 식질 또는 외부 인계를 선택합니다. |
 | [tk-video](skills/tk-video/SKILL.md) | `hybrid` | 소프트웨어와 개념을 설명하는 MP4·GIF 영상을 만듭니다. |
 | [tk-research](skills/tk-research/SKILL.md) | `hybrid` | 근거를 조사하고 접근법을 비교합니다. |
 | [tk-tts](skills/tk-tts/SKILL.md) | `hybrid` | 한국어 원고에서 검수 가능한 로컬 음원을 생성합니다. |
