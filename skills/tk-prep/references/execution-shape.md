@@ -18,6 +18,11 @@
 하나의 일관된 작업을 위임한다는 이유만으로 다중 Unit·Seed·SDD나 추가 리뷰 단계를 만들지 않습니다.
 이 경우 실행 형태는 direct로 유지하고 [로컬 실행](local-execution.md#direct-execution-and-completion)의 단일 worker 경계를 적용합니다.
 
+첫 작업의 순서는 근거가 부족하고 틀렸을 때 재작업 비용이 큰 연결을 작은 실행으로 확인할 수
+있는지에 따라 정합니다. 해당할 때 [불확실한 연결 검증](../../tk-engineering/references/testing.md#uncertain-contract-check)을
+읽고 기존 작업의 테스트 주기에 포함하되, 선행 의존성과 안전한 순서를 보존합니다. 충분한 기존
+근거가 있거나 명확한 작은 수정이면 추가 준비나 별도 prototype 없이 기존 direct 경로를 유지합니다.
+
 복잡성은 보호 수준을 높이는 방향으로만 작용할 수 있습니다. 순서는 대화 내 direct → Seed direct → SDD/재준비입니다. 편의를 위해 조용히 낮추지 않습니다.
 Direct/no-Seed는 SDD 지침을 읽지 않습니다. SDD를 선택한 뒤에만 [비공개 SDD](../../tk-engineering/references/sdd.md)를 읽습니다.
 
