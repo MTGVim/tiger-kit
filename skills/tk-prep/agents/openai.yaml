@@ -1,6 +1,6 @@
 interface:
-  short_description: "[user] 작업 크기에 맞춰 준비하고 승인된 로컬 실행까지 수행합니다."
+  short_description: "[user/auto] 자연어 SWE 요청을 준비하고 승인된 로컬 구현까지 수행합니다."
   default_prompt: "`tk-prep`으로 작업 원천과 저장소 근거를 조사하고 필요한 결정만 자연스럽게 닫으세요. 이해·엔지니어링·테스트 준비도를 검증한 뒤 최종 승인에서 직접/`no-Seed`, Ready `Seed`, SDD 또는 인계를 선택하고, 승인된 경우에만 안전한 로컬 구현·검증·`commit`까지 수행하세요. 원격 발행은 확장하지 마세요."
 
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true
