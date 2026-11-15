@@ -27,6 +27,7 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 | [tk-roadmap](skills/tk-roadmap/SKILL.md) | `user` | 목표와 제약을 정리해 마일스톤을 만듭니다. |
 | [tk-audit](skills/tk-audit/SKILL.md) | `user` | 저장소의 기술 일감을 읽기 전용으로 감사합니다. |
 | [tk-prototype](skills/tk-prototype/SKILL.md) | `hybrid` | UI·로직 대안을 비교하는 시제품을 만듭니다. |
+| [tk-experience-review](skills/tk-experience-review/SKILL.md) | `hybrid` | 사용자 경험과 외부 레퍼런스에서 개선·신규 기능 일감을 발굴합니다. |
 | [tk-domain](skills/tk-domain/SKILL.md) | `hybrid` | 저장소 용어와 지속할 결정을 정리합니다. |
 | [tk-merge-conflict](skills/tk-merge-conflict/SKILL.md) | `hybrid` | 활성 Git 충돌의 의도를 복원하고 해결합니다. |
 
