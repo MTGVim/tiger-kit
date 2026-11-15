@@ -23,7 +23,7 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
-| [tk-prep](skills/tk-prep/SKILL.md) | `user` | 작업을 준비하고 승인된 로컬 구현·검증을 진행합니다. |
+| [tk-prep](skills/tk-prep/SKILL.md) | `hybrid` | 자연어 SWE 착수·구현 요청을 준비하고 승인된 로컬 구현·검증을 진행합니다. |
 | [tk-roadmap](skills/tk-roadmap/SKILL.md) | `user` | 목표와 제약을 정리해 마일스톤을 만듭니다. |
 | [tk-audit](skills/tk-audit/SKILL.md) | `user` | 저장소의 기술 일감을 읽기 전용으로 감사합니다. |
 | [tk-prototype](skills/tk-prototype/SKILL.md) | `hybrid` | UI·로직 대안을 비교하는 시제품을 만듭니다. |
