@@ -88,6 +88,14 @@
         "tk-pr-guidance"
       ]
     },
+    "tk-experience-review": {
+      "requires": [
+        "tk-artifacts",
+        "tk-questioning",
+        "tk-ui-evidence",
+        "tk-writing"
+      ]
+    },
     "tk-explain": {
       "requires": [
         "tk-artifacts",

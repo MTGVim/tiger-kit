@@ -1,0 +1,6 @@
+interface:
+  short_description: "[user/auto] 실제 사용 경험과 상용 UX 사례를 조사해 개선·신규 기능 일감을 발굴합니다."
+  default_prompt: "사용자의 불만 또는 제품 체험 요청에서 출발해 실제 사용 흐름을 확인하세요. 외부 상용·선도 제품 레퍼런스를 조사하고 현재 설치된 UX 스킬·라이브러리를 검토한 다음 근거 있는 개선 후보를 제시하세요. 필요한 경우에만 승인된 격리 프로토타입으로 비교하고, 실제 SWE 구현은 tk-prep으로 인계하세요."
+
+policy:
+  allow_implicit_invocation: true
