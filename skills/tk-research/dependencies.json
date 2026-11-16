@@ -2,6 +2,7 @@
   "version": 1,
   "requires": [
     "tk-artifacts",
+    "tk-engineering",
     "tk-questioning",
     "tk-repository-guidance",
     "tk-setup-skills",
