@@ -37,7 +37,7 @@ metadata:
 - [OpenAPI 호환성](references/openapi-compatibility.md): 기존 OpenAPI 명세가 변경되면 비교 입력 확보 여부와 관계없이 읽습니다.
 - [React](references/react.md): 정확히 해당하는 코드 리뷰에 React 코드가 포함될 때 읽습니다.
 - [위임 권한](references/delegation-permissions.md): 자식을 디스패치하거나 접근·환경이 바뀐 자식을 재개할 때 읽습니다.
-- [위임 예산](references/delegation-budget.md): 컨트롤러가 자식을 디스패치·재개·교체·재시도하기 전에 읽습니다.
+- [위임과 독립 평가](references/delegation.md): 자식의 역할·능력 요청, 구현/평가 분리, 재개·재수정과 종료를 정할 때 읽습니다.
 - [리뷰 운영](references/review-operations.md): 컨트롤러가 결과를 수락하거나 실행 예약·대기·근거 반박을 처리할 때 해당 절을 읽습니다.
 - [리뷰 프로토콜](references/review-protocol.md): 직접 리뷰, SDD Unit 리뷰 또는 전체 변경의 독립 리뷰를 수행할 때 읽습니다.
 - [SDD 상호작용](references/sdd-interaction.md): 승인된 SDD 실행이 사용자 상호작용 지점에 도달했을 때 읽습니다.
