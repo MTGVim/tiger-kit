@@ -1,6 +1,6 @@
 ---
 name: tk-artifacts
-description: "[user/auto] 파일 산출물 경로·비밀 입력·인증 보존 기준을 참조할 때 사용합니다. 실제 업무 실행이나 변경 권한을 부여하지 않습니다."
+description: "[user/auto] 파일 산출물 경로와 사용자 비밀 입력·인증 보존의 공통 안전 기준을 조회할 때 사용합니다. 에이전트가 사용자 인증정보를 받아야 하는 실제 절차와 파일 경로 인계는 tk-wizard가 담당합니다. 참조는 업무 실행이나 변경 권한을 부여하지 않습니다."
 disable-model-invocation: false
 metadata:
   tigerkit:

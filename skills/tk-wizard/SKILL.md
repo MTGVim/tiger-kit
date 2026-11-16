@@ -1,6 +1,6 @@
 ---
 name: tk-wizard
-description: "[user/auto] 사용자가 직접 수행해야 하는 설정·인증·권한·device pairing·migration 절차를 근거 기반 대화로 안내하며, 복잡하거나 반복할 절차에는 검증한 일회성 Bash Wizard를 제공합니다."
+description: "[user/auto] 사용자가 직접 수행해야 하는 설정·인증·권한·device pairing·migration 절차를 안내합니다. 에이전트가 사용자 대신 작업하려고 토큰·비밀번호·쿠키 등 인증정보를 받아야 할 때도 자동 선택하여 안전한 파일 경로로 인계합니다. 복잡하거나 반복할 절차에는 검증한 일회성 Bash Wizard를 제공합니다."
 disable-model-invocation: false
 argument-hint: "<사용자가 직접 해야 하는 설정·인증·이관 작업>"
 metadata:
@@ -12,6 +12,8 @@ metadata:
 
 <a id="user-run-wizard"></a>
 # 사용자가 실행하는 설정 안내
+
+에이전트가 작업을 계속하기 위해 사용자에게 토큰·비밀번호·쿠키 등 인증정보를 받아야 한다면 **첫 행동은 값을 요청하는 것이 아니라** 아래 `비밀과 인증` 절에 따라 검증된 `.tigerkit/secret-input/tk-wizard-<run-id>/input.json` 입력 파일 경로를 준비하고 인계하는 것입니다. 채팅에 값을 붙여 넣거나 `export` 명령에 값을 넣으라고 안내하지 않습니다. 파일을 실제로 안전하게 만들 수 없다면 경로를 추측하지 말고 해당 분기를 `Blocked | Unverifiable`로 처리합니다.
 
 <a id="shared-references"></a>
 ## 공통 참조
