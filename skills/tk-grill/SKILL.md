@@ -1,11 +1,11 @@
 ---
 name: tk-grill
-description: "[user] 아이디어·계획·결정을 빠짐없이 stress-test하고 shared understanding까지 선명하게 만들고 싶을 때 명시적으로 사용합니다. 구현할 request/ticket 준비, 일반적인 짧은 brainstorming, 자동 질문 확장에는 사용하지 않습니다."
-disable-model-invocation: true
+description: "[user/auto] 아이디어·계획·의사결정을 철저히 검토하고 숨은 가정·절충·결정 분기를 사용자와 확인해 달라는 명확한 요청에 사용합니다. 단순 의견·브레인스토밍, 일반 구현 준비, 질문 수 증가만을 이유로 자동 진입하지 않습니다."
+disable-model-invocation: false
 argument-hint: "<idea, decision, or plan>"
 metadata:
   tigerkit:
-    kind: user-invoked
+    kind: hybrid
     origin: mattpocock/skills
     relationship: adapted
     upstream-skill: grilling
@@ -24,9 +24,7 @@ metadata:
 - 사용자 소유 결정·누락된 승인·미충족 선행 조건을 질문이나 질문 도구 입력으로 제시하기 직전에 [질문 라운드](../tk-questioning/references/questions.md)를 이번 작업에서 읽었는지 확인하고 누락했으면 먼저 읽습니다. 독립적인 결정과 승인은 각각 별도 질문으로 두며, 승인 선택지를 결정 질문에 섞지 않습니다.
 - 사용자에게 완료 보고, 산출물 경로 인계나 여러 속성을 비교하는 채팅을 전달하기 전에 [채팅 전달](../tk-writing/references/delivery.md)을 읽습니다. 해당 작업의 구체적인 출력 계약이 우선합니다.
 
-명시적인 `/tk-grill`, `$tk-grill` 또는 호스트의 스킬 선택으로만 시작합니다. 사용자가
-간단한 의견, 일반적인 브레인스토밍, 저장소 설명이나 구현 계획을 요청했을 때
-자동으로 호출하지 않습니다.
+`/tk-grill`, `$tk-grill`, 호스트의 스킬 선택 또는 아이디어·계획·결정의 허점과 숨은 가정까지 깊게 검토해 달라는 명확한 자연어 요청으로 시작합니다. 단순 의견, 일반적인 브레인스토밍, 저장소 설명, 구체적인 구현 요청이나 `tk-prep` 중 질문이 늘어난 상황만으로 자동 호출하지 않습니다. 실제 구현 준비는 `tk-prep`, 질문 방식의 공통 기준은 `tk-questioning`이 소유하며 같은 요청에서 중복 인터뷰를 시작하지 않습니다.
 
 <a id="boundary"></a>
 ## 경계
@@ -42,9 +40,7 @@ metadata:
 - 사용자가 저장소 고유 용어나 지속해서 보존할 결정을 원하면 `tk-domain`을 제안합니다.
 - 더 할 일이 없으면 중단합니다.
 
-사용자만 호출할 수 있는 다음 스킬은 `/<skill>`을 넣어 한 줄로 안내하고 현재
-대화가 이어진다고 알립니다. 다른 세션으로 넘길 때만 전체 인계 프롬프트를 제공합니다.
-호출을 시도하거나 절차를 흉내 내지 말고 `disable-model-invocation`을 준수합니다.
+다음 단계가 명시 호출 전용 스킬이면 `/<skill>`을 넣어 한 줄로 안내합니다. 자동 호출 가능한 스킬도 이 검토만으로 시작할 권한이 생기지 않으며, 사용자의 후속 요청에 따라 담당 범위를 전환합니다. 다른 세션으로 넘길 때만 전체 인계 프롬프트를 제공합니다.
 
 <a id="decision-tree-and-frontier"></a>
 ## 결정 트리와 현재 질문 집합
