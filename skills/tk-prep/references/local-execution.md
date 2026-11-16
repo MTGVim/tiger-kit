@@ -32,8 +32,8 @@ HEAD를 새로 조회합니다. 정확한 계획과 격리 체크아웃에 대�
 <a id="direct-execution-and-completion"></a>
 ## 직접 실행과 완료
 
-긴 탐색·출력을 격리할 이점이 확인된 하나의 일관된 direct 작업은 단일 worker에 위임할 수 있습니다.
-디스패치 전 [위임 권한](../../tk-engineering/references/delegation-permissions.md), [위임 예산](../../tk-engineering/references/delegation-budget.md)과 [산출물 전달](../../tk-engineering/references/sdd-transport.md)을 읽습니다.
+안전한 위임 기능이 있으면 하나의 일관된 direct 작업도 구현과 수정을 단일 worker에게 맡기는 것을 기본으로 합니다. direct는 작업 구조이지 메인 세션의 직접 편집을 강제하는 표시가 아닙니다. 컨트롤러는 사용자 의도·작업 분배·판정에 집중하며 직접 구현은 공통 위임 계약의 예외에서만 수행합니다.
+디스패치 전 [위임 권한](../../tk-engineering/references/delegation-permissions.md), [위임과 독립 평가](../../tk-engineering/references/delegation.md)과 [산출물 전달](../../tk-engineering/references/sdd-transport.md)을 읽습니다.
 같은 시점의 작업 식별자·정확한 workspace·`BASE = git rev-parse HEAD`와 관련 미커밋 변경을 결합해 기록하고 브리프에 넘깁니다.
 컨트롤러는 승인된 목표·범위·AC·전역 제약과 이전 결정을 전달하고, 자료 준비를 위해 worker의 구현 분석을 미리 중복 수행하지 않습니다.
 worker는 재위임 없는 리프이며 승인된 격리 checkout에서만 변경합니다. 구현자를 동시에 실행하지 않고 원격 발행 권한을 주지 않습니다.

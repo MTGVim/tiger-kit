@@ -102,6 +102,7 @@
     "tk-explain": {
       "requires": [
         "tk-artifacts",
+        "tk-engineering",
         "tk-illustrate",
         "tk-questioning",
         "tk-writing"
@@ -242,6 +243,7 @@
     "tk-research": {
       "requires": [
         "tk-artifacts",
+        "tk-engineering",
         "tk-questioning",
         "tk-repository-guidance",
         "tk-setup-skills",

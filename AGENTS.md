@@ -51,3 +51,7 @@ TigerKit은 조합 가능한 Agent Skills 저장소입니다. workflow runner, p
 - `main` 반영 전 필수 확인과 실행 명령은 [릴리즈 체크리스트](RELEASE_CHECKLIST.md)를 따릅니다. README는 소개·설치·짧은 카탈로그만 소유합니다.
 
 🤖 본 지침는 AI가 작성했습니다.
+
+## 위임 역할과 독립 평가
+
+Subagent-driven 실행의 정본은 `skills/tk-engineering/references/delegation.md`입니다. 메인 컨트롤러는 사용자 의도·작업 분배·판정을 맡고 구현·수정과 상세 검수는 분리합니다. 역할별 능력 티어와 effort는 독립적인 요청 축이며 공급자 모델 ID를 소유하는 라우터나 전역 상태를 추가하는 정책이 아닙니다. 호스트가 실제 지원하는 설정만 사용하고 필수 독립 리뷰를 자체 재독으로 대체하지 않습니다.
