@@ -17,7 +17,8 @@
     },
     "tk-artifacts": {
       "requires": [
-        "tk-questioning"
+        "tk-questioning",
+        "tk-writing"
       ]
     },
     "tk-ask-repo": {
@@ -72,7 +73,8 @@
     },
     "tk-debug": {
       "requires": [
-        "tk-engineering"
+        "tk-engineering",
+        "tk-writing"
       ]
     },
     "tk-domain": {
@@ -85,7 +87,8 @@
     "tk-engineering": {
       "requires": [
         "tk-artifacts",
-        "tk-pr-guidance"
+        "tk-pr-guidance",
+        "tk-writing"
       ]
     },
     "tk-experience-review": {
@@ -148,7 +151,9 @@
       ]
     },
     "tk-pr-guidance": {
-      "requires": []
+      "requires": [
+        "tk-writing"
+      ]
     },
     "tk-pr-media": {
       "requires": [
@@ -274,7 +279,9 @@
       ]
     },
     "tk-setup-skills": {
-      "requires": []
+      "requires": [
+        "tk-writing"
+      ]
     },
     "tk-skill-vet": {
       "requires": [
@@ -290,10 +297,14 @@
       ]
     },
     "tk-ui-evidence": {
-      "requires": []
+      "requires": [
+        "tk-writing"
+      ]
     },
     "tk-verification-guidance": {
-      "requires": []
+      "requires": [
+        "tk-writing"
+      ]
     },
     "tk-video": {
       "requires": [
