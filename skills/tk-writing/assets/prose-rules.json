@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "id": "report-heading",
+      "severity": "error",
+      "scope": "heading",
+      "profile": "report",
+      "pattern": "(?:[?？]|(?:할까요|할까|인가요|인가|어떨까|하나요|정하나|하는가|합시다|하세요|합니다|됩니다|습니다|는데|하며|하면)[.!]?)$",
+      "message": "보고서 제목을 내용을 나타내는 명사구로 바꾸거나 사용자 고정 제목 예외를 기록합니다.",
+      "pass": "만료 시간 결정 기준",
+      "fail": "만료 시간은 어떻게 정하나"
+    },
+    {
+      "id": "prose-em-dash",
+      "severity": "warning",
+      "scope": "any",
+      "pattern": "—",
+      "message": "인용과 공식 명칭이 아니라면 문장 관계를 명시합니다.",
+      "pass": "조건을 확인한 뒤 실행합니다.",
+      "fail": "조건 확인 — 실행"
+    },
+    {
+      "id": "compound-unit",
+      "severity": "warning",
+      "scope": "any",
+      "pattern": "[가-힣]+·[가-힣]+\\s*(?:횟수|주기|기간|비율|시간)",
+      "message": "정의되지 않은 복합 사건이나 단위인지 확인합니다.",
+      "pass": "캐시가 만료된 뒤 새로 채워진 횟수",
+      "fail": "만료·갱신 횟수"
+    },
+    {
+      "id": "condition-parentheses",
+      "severity": "warning",
+      "scope": "any",
+      "pattern": "\\([^)]*(?:하면|되면|으면|뀌면|경우|단,|때에는)[^)]*\\)",
+      "message": "조건과 한계를 괄호 밖의 완전한 문장으로 표현합니다.",
+      "pass": "가격이 바뀌면 즉시 갱신합니다.",
+      "fail": "60초 (가격이 바뀌면 즉시 갱신)"
+    },
+    {
+      "id": "stock-leadin",
+      "severity": "warning",
+      "scope": "any",
+      "pattern": "(?:결론부터 말하면|정리하면|핵심은)",
+      "message": "상투적 도입인지 맥락에서 확인하고 필요한 의미는 보존합니다.",
+      "pass": "설정을 변경합니다.",
+      "fail": "결론부터 말하면 설정을 변경합니다."
+    },
+    {
+      "id": "lone-label",
+      "severity": "warning",
+      "scope": "isolated-list",
+      "pattern": "^[-*]\\s+(?:이유|판단|결론):",
+      "message": "하나뿐인 이유나 판단을 라벨 불릿 대신 문장으로 적습니다.",
+      "pass": "결제 단계에서 가격을 다시 확인합니다.",
+      "fail": "- 이유: 결제 단계에서 가격을 다시 확인합니다."
+    }
+  ]
+}
