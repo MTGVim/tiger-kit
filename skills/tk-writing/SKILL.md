@@ -1,6 +1,6 @@
 ---
 name: tk-writing
-description: "[user/auto] 글쓰기·설명·HTML 문서 구성 및 표현 기준을 참조할 때 사용합니다. 실제 업무 실행이나 변경 권한을 부여하지 않습니다."
+description: "[user/auto] TigerKit에서 질문 초안·영상 대본·자막·HTML·Markdown·스킬 본문 등 사람이 읽는 내용을 작성하거나 수정할 때 공통 저작 품질 관문을 제공합니다. 실제 업무 실행이나 변경 권한을 부여하지 않습니다."
 disable-model-invocation: false
 metadata:
   tigerkit:
@@ -22,8 +22,15 @@ metadata:
 이 스킬은 공통 HTML 자산과 조립, 코드 강조, 내보내기와 Chrome 캡처 도우미를 소유하며 런타임 워크플로를 소유하지 않습니다.
 호출자가 담당하는 승인과 경로 검사를 마친 뒤 선택한 도우미만 호출합니다. 입력, 출력, 임시 파일과 정리는 설치된 패키지 밖에서 관리합니다.
 
+<a id="authoring-gate"></a>
+## 저작 품질 관문
+
+TigerKit에서 사람이 읽는 내용을 새로 작성하거나 수정할 때는 산출물을 만들기 전에 [모든 저작의 공통 관문](references/authoring-gate.md)을 읽고, 해당 글에 [명확한 글쓰기](references/clear-writing.md)를 적용합니다. 최종 원고를 인계하기 전에도 해당 관문으로 확인합니다. 도구의 런타임, 승인과 변경 책임은 호출자에게 남습니다. 보호된 리터럴과 기계적 출력 계약은 변경하지 않습니다.
+
 <a id="conditional-references"></a>
 ## 조건부 참조
+
+- [모든 저작의 공통 관문](references/authoring-gate.md): 모든 TigerKit 저작·수정에 필요한 입력 전/인계 전 공통 게이트입니다.
 
 - [HTML 피드백](references/feedback-studio.md): 사람에게 전달하는 HTML의 검증을 마친 뒤 studio를 만들거나 피드백 목록을 반영할 때 읽습니다.
 
