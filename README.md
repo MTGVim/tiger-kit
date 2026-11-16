@@ -14,6 +14,8 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 
 `Claude Code`·`Hermes`는 `/tk-setup-skills`, `Codex`는 `$tk-setup-skills`로 호출합니다. 설치는 대상·범위를 승인한 뒤 실행합니다. 소스·설치본 검사와 gallery·legacy report CLI의 소유자 검사에는 `Python 3.9+`·`PyYAML`이 필요하며, 파서가 없으면 자동 설치하지 않고 중단합니다. 빈 대상의 카탈로그 계획은 표준 라이브러리만 사용합니다.
 
+모든 TigerKit 저작(질문 초안·영상 대본/자막·HTML·Markdown·스킬 본문·설명·협업 메시지)은 생성 전과 인계 전에 `tk-writing`의 [공통 저작 품질 관문](skills/tk-writing/references/authoring-gate.md)을 적용합니다. 기존 스킬이 범위·권한·출력 계약을 유지하며, 정확한 리터럴과 기계 출력은 보호하고 추가 에이전트·승인 라운드를 강제하지 않습니다.
+
 공통 기준·HTML 자원과 도우미는 `tk-writing` 등 참조 전용 소유 스킬에, 검증 registry·설정 도우미는 `tk-verification-guidance`에 한 번 둡니다. 선택한 스킬의 `dependencies.json` 전체 closure를 같은 설치 컬렉션에 준비해야 하며, 업무 패키지 하나만 복사하면 충분하다고 가정하지 않습니다. 소유자가 없으면 해당 단계를 중단하고 setup을 안내하며, 출력·임시 파일은 호출한 업무가 설치 패키지 밖에서 관리합니다.
 
 `tk-explain`의 이미지 제작 분기에는 `tk-illustrate`가 필요합니다. 기존 선택 설치도 setup으로 이 의존성을 함께 갱신합니다. `tk-illustrate`와 `tk-comic`은 각각 직접 호출할 수 있습니다.
