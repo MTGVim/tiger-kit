@@ -1,6 +1,6 @@
 ---
 name: tk-setup-skills
-description: "[user] TigerKit 스킬을 선택 설치하거나 누락된 공통 참조 의존성을 확인할 때 명시적으로 사용합니다. 기본은 읽기 전용 계획이며 설치와 설정 변경을 자동 실행하지 않습니다."
+description: "[user] TigerKit 스킬 선택 설치 계획이나 누락된 참조 의존성 확인을 명시적으로 요청할 때 사용합니다. 설치·설정 변경은 별도 승인 후 수행하며 일반 스킬 실행 중 자동 설치하거나 자동 호출하지 않습니다."
 disable-model-invocation: true
 argument-hint: "<선택 skill IDs, source, exact target, agent, project|global>"
 metadata:

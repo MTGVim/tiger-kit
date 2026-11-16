@@ -1,6 +1,6 @@
 ---
 name: tk-qa-sheet
-description: "[user] 사용자가 직접 점검할 영향 화면과 진입 경로를 정리하고 기본적으로 체크와 메모가 저장되는 단일 HTML QA 시트를 만듭니다. 같은 세션의 자동 검증 근거는 수동 체크와 분리하며, Markdown이나 파일 없는 목록은 명시적으로 요청한 경우에만 반환합니다. 제품 승인이나 PR 발행에는 사용하지 않습니다."
+description: "[user] 사용자가 직접 수행할 QA를 위해 영향을 받는 화면과 경로를 정리한 HTML 체크 시트를 명시 요청 시 생성합니다. 자동 검증과 수동 확인을 구별하며 일반 구현·리뷰 완료 후 자동 생성하지 않습니다. Markdown이나 파일 없는 목록은 별도 요청 시에만 반환합니다."
 argument-hint: "<diff, PR, or affected UI scope; optional Markdown/no-file override>"
 disable-model-invocation: true
 metadata:

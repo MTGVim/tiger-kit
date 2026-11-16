@@ -2,6 +2,8 @@
 
 `Claude Code`, `Codex`, `Hermes Agent`에서 골라 쓰는 작고 조합 가능한 에이전트 스킬 모음입니다.
 
+각 스킬은 필요한 작업에 맞게 선택하여 조합할 수 있습니다.
+
 ## 설치
 
 ```bash
@@ -9,6 +11,7 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 ```
 
 전체 설치의 갱신에도 위 명령을 사용하고, 기존 내용과 덮어쓰기 대상을 먼저 확인합니다. 지원 버전의 `skills update`는 복사 모드를 보존하지 않습니다. 선택 설치의 갱신은 기존 선택·호스트·범위를 유지하며 `tk-setup-skills`로 필요한 업무 스킬과 공통 의존성을 함께 준비합니다. 설치기는 의존성을 자동 해결하지 않습니다.
+
 `Claude Code`·`Hermes`는 `/tk-setup-skills`, `Codex`는 `$tk-setup-skills`로 호출합니다. 설치는 대상·범위를 승인한 뒤 실행합니다. 소스·설치본 검사와 gallery·legacy report CLI의 소유자 검사에는 `Python 3.9+`·`PyYAML`이 필요하며, 파서가 없으면 자동 설치하지 않고 중단합니다. 빈 대상의 카탈로그 계획은 표준 라이브러리만 사용합니다.
 
 공통 기준·HTML 자원과 도우미는 `tk-writing` 등 참조 전용 소유 스킬에, 검증 registry·설정 도우미는 `tk-verification-guidance`에 한 번 둡니다. 선택한 스킬의 `dependencies.json` 전체 closure를 같은 설치 컬렉션에 준비해야 하며, 업무 패키지 하나만 복사하면 충분하다고 가정하지 않습니다. 소유자가 없으면 해당 단계를 중단하고 setup을 안내하며, 출력·임시 파일은 호출한 업무가 설치 패키지 밖에서 관리합니다.
@@ -17,7 +20,7 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 
 ## 스킬 구성
 
-`user`는 직접 호출하며, `hybrid`는 작업에 맞게 자동 선택할 수도 있습니다. 상세한 동작과 권한은 각 스킬 문서에 있습니다.
+`user`는 명시적인 스킬 호출로만 시작하며, `hybrid`는 명시적 호출 외에 자연어 요청에서 자동 선택될 수도 있습니다. 자동 선택은 구현·설치·원격 발행 등 별도 행동에 대한 승인이 아닙니다. 상세한 권한과 진입 조건은 각 스킬 문서에 있습니다.
 
 ### 개발·기획
 

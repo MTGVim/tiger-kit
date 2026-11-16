@@ -1,6 +1,6 @@
 ---
 name: tk-compound
-description: "[user] 여러 완료 PR과 연결된 세션 이력에서 반복 문제와 재발 방지 후보를 읽기 전용으로 진단할 때 명시적으로 사용합니다. 단일 변경 리뷰, 한 세션 회고, 기존 지침 감사나 개선안 구현에는 사용하지 않습니다."
+description: "[user] 여러 완료 PR과 관련 세션 이력에 나타난 반복 문제와 재발 방지 기회를 분석하는 명시 호출 전용 읽기 전용 회고입니다. 단일 PR 리뷰·세션 회고·일반 구현 완료에 자동 연결하지 않습니다."
 license: MIT
 argument-hint: "[--since 30d] [--focus testing|review|...] [PRs]"
 disable-model-invocation: true
