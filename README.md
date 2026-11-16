@@ -24,8 +24,8 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
 | [tk-prep](skills/tk-prep/SKILL.md) | `hybrid` | 자연어 SWE 착수·구현 요청을 준비하고 승인된 로컬 구현·검증을 진행합니다. |
-| [tk-roadmap](skills/tk-roadmap/SKILL.md) | `user` | 목표와 제약을 정리해 마일스톤을 만듭니다. |
-| [tk-audit](skills/tk-audit/SKILL.md) | `user` | 저장소의 기술 일감을 읽기 전용으로 감사합니다. |
+| [tk-roadmap](skills/tk-roadmap/SKILL.md) | `hybrid` | 목표와 제약을 정리해 마일스톤을 만듭니다. |
+| [tk-audit](skills/tk-audit/SKILL.md) | `hybrid` | 저장소의 기술 일감을 읽기 전용으로 감사합니다. |
 | [tk-prototype](skills/tk-prototype/SKILL.md) | `hybrid` | UI·로직 대안을 비교하는 시제품을 만듭니다. |
 | [tk-experience-review](skills/tk-experience-review/SKILL.md) | `hybrid` | 사용자 경험과 외부 레퍼런스에서 개선·신규 기능 일감을 발굴합니다. |
 | [tk-domain](skills/tk-domain/SKILL.md) | `hybrid` | 저장소 용어와 지속할 결정을 정리합니다. |
@@ -36,7 +36,7 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
 | [tk-debug](skills/tk-debug/SKILL.md) | `hybrid` | 오류·회귀의 원인을 조사하고 수정 권한과 진단 근거를 구분합니다. |
-| [tk-review](skills/tk-review/SKILL.md) | `user` | 지정한 변경을 명세와 품질 기준으로 검토합니다. |
+| [tk-review](skills/tk-review/SKILL.md) | `hybrid` | 지정한 변경을 명세와 품질 기준으로 검토합니다. |
 | [tk-browser-verify](skills/tk-browser-verify/SKILL.md) | `hybrid` | Playwright CLI 기본 화면·동작 검증, 명시적 접근성 결함 탐색과 데모 캡처를 담당합니다. |
 | [tk-app-verify](skills/tk-app-verify/SKILL.md) | `hybrid` | 데스크톱 앱의 동작·화면·접근성을 검증합니다. |
 | [tk-blind-comparison](skills/tk-blind-comparison/SKILL.md) | `hybrid` | 정체를 가린 후보의 점수와 메모를 로컬 갤러리에서 비교합니다. |
@@ -58,7 +58,7 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
-| [tk-ask-repo](skills/tk-ask-repo/SKILL.md) | `user` | 저장소의 동작과 근거를 설명합니다. |
+| [tk-ask-repo](skills/tk-ask-repo/SKILL.md) | `hybrid` | 저장소의 동작과 근거를 설명합니다. |
 | [tk-explain](skills/tk-explain/SKILL.md) | `hybrid` | 개념·코드 변경을 설명하고 후속 수업과 기존 설명 페이지의 피드백 반영을 지원합니다. |
 | [tk-illustrate](skills/tk-illustrate/SKILL.md) | `hybrid` | 단일 그림·문서 삽화·인포그래픽을 제작하며, 이미지 도구가 없으면 MOSS 로컬 폴백·분리 식질 또는 콘티·프롬프트 전달을 선택합니다. |
 | [tk-comic](skills/tk-comic/SKILL.md) | `hybrid` | 교육용 만화를 제작하고 부분 제작·페이지 복구를 지원하며, 도구가 없으면 MOSS 로컬 폴백·분리 식질 또는 외부 인계를 선택합니다. |
@@ -70,7 +70,7 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
-| [tk-grill](skills/tk-grill/SKILL.md) | `user` | 아이디어와 결정을 질문으로 구체화합니다. |
+| [tk-grill](skills/tk-grill/SKILL.md) | `hybrid` | 아이디어와 결정을 질문으로 구체화합니다. |
 | [tk-inquiry](skills/tk-inquiry/SKILL.md) | `hybrid` | 다른 담당자에게 보낼 질문 초안을 작성합니다. |
 | [tk-adhd](skills/tk-adhd/SKILL.md) | `hybrid` | 답변과 결과를 찾기 쉽게 구성합니다. |
 | [tk-rewrite](skills/tk-rewrite/SKILL.md) | `hybrid` | 기존 글의 맥락과 표현을 다듬습니다. |
