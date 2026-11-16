@@ -1,6 +1,6 @@
 ---
 name: tk-pr-sweep
-description: "[user] 설정된 저장소의 여러 열린 PR 상태를 확인하거나 일괄 정리할 때 명시적으로 사용합니다. 단일 PR 피드백 대응이나 일반적인 CI 오류에는 자동 적용하지 않습니다."
+description: "[user] 여러 열린 PR의 현황 보고 또는 일괄 유지보수를 사용자가 명시적으로 요청했을 때 실행합니다. 대상·승인 범위를 확정해야 하므로 단일 PR 리뷰 대응이나 일반 CI 오류에서 자동 호출하지 않습니다."
 disable-model-invocation: true
 argument-hint: "[--report] [--repo <owner/name>]"
 metadata:
