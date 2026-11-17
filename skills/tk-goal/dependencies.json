@@ -2,9 +2,12 @@
   "version": 1,
   "requires": [
     "tk-artifacts",
+    "tk-engineering",
+    "tk-grill",
     "tk-handoff",
     "tk-prep",
     "tk-questioning",
+    "tk-research",
     "tk-roadmap",
     "tk-writing"
   ]
