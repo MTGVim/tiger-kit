@@ -280,6 +280,14 @@
         "tk-writing"
       ]
     },
+    "tk-route-mode": {
+      "requires": [
+        "tk-artifacts",
+        "tk-engineering",
+        "tk-questioning",
+        "tk-writing"
+      ]
+    },
     "tk-setup-skills": {
       "requires": [
         "tk-writing"

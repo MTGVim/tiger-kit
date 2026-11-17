@@ -35,7 +35,7 @@ TigerKit에서 사람이 읽는 내용을 새로 작성하거나 수정할 때�
 - [HTML 피드백](references/feedback-studio.md): 사람에게 전달하는 HTML의 검증을 마친 뒤 studio를 만들거나 피드백 목록을 반영할 때 읽습니다.
 
 - [차트 설계](references/chart-design.md): 데이터에 차트가 필요하거나 차트 표현을 선택해야 할 때 읽습니다.
-- [채팅 전달](references/delivery.md): 사용자에게 결과, 산출물 링크나 여러 속성의 채팅 비교를 반환할 때 읽습니다.
+- [채팅 전달](references/delivery.md): 사용자에게 결과, 산출물 링크나 여러 속성의 채팅 비교를 반환하거나 사용자의 결정 및 승인을 묻는 채팅을 작성할 때 읽습니다.
 - [명료한 글쓰기](references/clear-writing.md): 제공된 정확한 텍스트를 보존하는 대신 산문을 작성할 때 읽습니다.
 - [Diátaxis](references/diataxis.md): 튜토리얼, 방법 안내, 설명이나 참조 구성을 선택할 때 읽습니다.
 - [설명 기법](references/explanation-techniques.md): 교육 설명이나 그 표현을 계획할 때 읽습니다.

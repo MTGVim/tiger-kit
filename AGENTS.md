@@ -25,7 +25,7 @@ TigerKit은 조합 가능한 Agent Skills 저장소입니다. workflow runner, p
 
 - `tk-prep`은 대화형 준비와 승인된 격리 로컬 구현·검증·commit을 담당합니다. `direct/no-Seed | Ready Seed direct | SDD | handoff`는 실제 작업 구조에 맞게 선택합니다. `direct/no-Seed`에서는 SDD 상세 문서를 읽지 않습니다.
 - Ready Seed는 실제 지속 맥락이 필요할 때만 `.tigerkit/seed.md`에 만듭니다. 최종 승인 전 기존 Ready Seed를 보존합니다. 대화 없이 목표·근거·범위·확정 결정·AC/검증·함정·실행 방향을 복원할 수 있어야 하며, transcript·progress ledger·secret store로 쓰지 않습니다.
-- SDD 행동 정본은 `tk-engineering`이 소유합니다. 실제 자식 기능은 현재 호스트에서 확인합니다. provider/model/effort routing, durable worker cursor, `.tigerkit/session.md`를 제품에 추가하지 않습니다.
+- SDD 행동 정본은 `tk-engineering`이 소유합니다. 실제 자식 기능은 현재 호스트에서 확인합니다. 업무 실행 중 provider/model/effort routing, durable worker cursor, `.tigerkit/session.md`를 제품에 추가하지 않습니다.
 - 승인은 같은 작업의 필요한 후속 단계까지 보존하되 새 범위·보안·권한·발행을 추론하지 않습니다. 근거가 승인된 계약을 깨면 임의로 재해석하지 않고 준비·재승인으로 돌아갑니다.
 - 로컬 구현 승인은 push·PR·merge·publish·release 승인이 아닙니다. 원격 변경은 정확한 대상·행동의 사용자 승인과 해당 담당 절차를 거칩니다. 강제 push나 보호 규칙 우회를 가정하지 않습니다. 새 tag나 별도 release는 발행하지 않습니다.
 - PR 상태의 정본은 필요한 시점에 다시 읽은 GitHub state입니다. Markdown snapshot으로 PR/head/thread/check/identity를 대신하지 않습니다.
@@ -44,7 +44,7 @@ TigerKit은 조합 가능한 Agent Skills 저장소입니다. workflow runner, p
 ## 설정과 검증
 
 - 저장소 정책은 `tigerkit.config.json`과 무시된 `.tigerkit/repository.json`, Orca 설정은 `orca.yaml`, PR triage 사용자 범위는 `$XDG_CONFIG_HOME/tigerkit/pr-triage.json`이 소유합니다. 설정 작성 승인은 원격 변경이나 실행 승인이 아닙니다.
-- 기계가 소비하는 필드는 엄격한 타입을 유지합니다. 검증 제공자의 제한된 재검증 문제 해결 메모 외에 pitfall corpus, 범용 memory backend, 원시 로그·세션·모델 routing 설정을 추가하지 않습니다. 관찰만으로 규칙이나 메모리를 자동 승격하지 않습니다.
+- 기계가 소비하는 필드는 엄격한 타입을 유지합니다. 검증 제공자의 제한된 재검증 문제 해결 메모 외에 pitfall corpus, 범용 memory backend, 원시 로그, 세션이나 저장소 수준 모델 routing 설정을 추가하지 않습니다. 명시적으로 호출하는 tk-route-mode는 사용자 수준의 호스트 설정만 승인받아 준비할 수 있으며, 일반 업무 실행의 자동 라우터나 전역 장부를 추가하지 않습니다. 관찰만으로 규칙이나 메모리를 자동 승격하지 않습니다.
 - 이 저장소는 상시 테스트 suite, eval catalog, 문구 잠금 검사나 릴리즈 비교 framework를 유지하지 않습니다. 필요한 검증은 변경한 실제 기능·설치 경계에 맞추어 실행하고 근거를 ignored evidence에 둡니다. 삭제된 검증 코드는 Git 이력에 남습니다.
 - 이 결정은 업무 스킬이 다른 프로젝트에서 적용하는 TDD·리뷰·검증 의무를 완화하지 않습니다. 계속 배포할 실행 코드의 실제 실패 조건을 확인하고, 실행하지 못한 것은 `Unverifiable`로 보고합니다.
 - 일반 작업과 릴리스 검증에는 CI를 사용하지 않습니다. 2026-11-08 승인한 Dependabot 보안 PR에 한해 전용 검증과 patch 자동 병합을 허용합니다. 일반 PR·수동 발행의 로컬 검증 의무는 유지합니다.
