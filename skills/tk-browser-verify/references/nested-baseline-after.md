@@ -37,7 +37,7 @@
 
 제품에 상호작용하기 전에 공유 clipboard·사용자 파일·알림·계정·외부 네트워크를 **변경하지 않음**을 확인합니다.
 실행 소유 브라우저/서버만 열고 헤드리스를 재확인합니다. 민감한 화면의 선택자를 원시
-스크린샷 없이 DOM/사전 계획으로 식별합니다. **첫 캡처 전에** 근거
+스크린샷 없이 DOM/사전 계획으로 식별합니다. README를 처음 작성하기 전에 [근거 README 형식](../../tk-verification-guidance/references/verification.md#evidence-readme-format)을 읽습니다. **첫 캡처 전에** 근거
 `.tigerkit/evidence/tk-browser-verify/<run-id>/README.md`를 생성하고,
 **첫 줄**을 `sensitive_regions: <selector 목록 | none(이유)>`의 실제 값으로 씁니다.
 없음을 확인한 경우에만 구체적인 `none(확인 근거)`를 사용합니다. 누락·불확실·무효 값은
@@ -49,7 +49,7 @@
 
 ## 3. 단계별 수행 순서
 
-1. `baseline`: 편집 전 현재 소스의 출처를 기록하고 `baseline/`에, `after`: 보존한 baseline과
+1. §2의 형식 절을 읽었는지 확인합니다. `baseline`: 편집 전 현재 소스의 출처를 기록하고 `baseline/`에, `after`: 보존한 baseline과
    재생 조건을 재확인한 뒤 새 서버·브라우저에서 `after/`에 캡처합니다. 실패 시도는
    고유 `failed-<attempt>/`에 보존하며 기존 파일은 덮어쓰지 않습니다.
 2. 캡처 **직전** 목적지가 해당 단계 디렉터리 안이며 존재하지 않는지 검사합니다.
@@ -68,10 +68,20 @@
    실제 PID/핸들·종료·잔여물을 확인합니다. 사용자 자원은 종료하지 않습니다.
    다음 단계에는 살아 있는 세션 대신 같은 `run_id`의 baseline/재생 기록을 사용합니다.
 
+5. README를 아래 뼈대로 재구성하고 반환 직전에 다시 읽습니다. [공통 형식의 반환 전 점검](../../tk-verification-guidance/references/verification.md#evidence-readme-format)에 따라 링크·실제 이미지·기준별 확인할 점과 근거를 대조합니다.
+
 ## 4. 근거 README 및 중첩 반환
 
-README 첫 줄의 `sensitive_regions`와 단계별 적용 이유를 지키고, 각 기준 ID를 이미지와
-일대일 대응시킵니다. 표현 형식과 인계 전 점검은 [근거 README 형식](../../tk-verification-guidance/references/verification.md#evidence-readme-format)을 따릅니다. `provider`(실제 ID/버전/경로/선택 근거), `contract: 1.2.0`,
+README는 다음 순서로 구성합니다. 아래 필드는 해당 절에 담고 필드 덤프로 대신하지 않습니다.
+
+1. 첫 줄 `sensitive_regions`와 단계별 적용 이유
+2. 실행 조건
+3. 결과 요약
+4. 재현 경로
+5. 기준별 비교 이미지 표 및 각 표 아래 **확인할 점:** (실제 관찰과 판정 근거)
+6. 한계와 정리
+
+각 기준 ID를 이미지와 일대일 대응시킵니다. after에서는 baseline README에 별도 절을 덧붙이지 않고 기준별로 다시 구성합니다. 각 기준의 표는 편집 전·후 두 열(추가 단계가 있으면 단계 수만큼)과 GFM 구분선, 상대 경로 이미지 Markdown을 사용합니다. baseline만 있으면 해당 단계만 표시하고 미실행 after를 성공으로 표시하지 않습니다. 표현 형식과 인계 전 점검은 [근거 README 형식](../../tk-verification-guidance/references/verification.md#evidence-readme-format)을 따릅니다. `provider`(실제 ID/버전/경로/선택 근거), `contract: 1.2.0`,
 `scope: full-inventory | explicitly-scoped`, `coverage: planned/executed/covered-by/out-of-scope/not-executed`,
 `human_action`, `phase`, `visual_contract: applied`, `capture_only_mutation`,
 `automated_regression`, 인증 방식(비민감), 근거 절대 경로, 정확한 대상/head/출처,
