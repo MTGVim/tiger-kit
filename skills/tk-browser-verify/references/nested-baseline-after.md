@@ -71,7 +71,7 @@
 ## 4. 근거 README 및 중첩 반환
 
 README 첫 줄의 `sensitive_regions`와 단계별 적용 이유를 지키고, 각 기준 ID를 이미지와
-일대일 대응시킵니다. `provider`(실제 ID/버전/경로/선택 근거), `contract: 1.2.0`,
+일대일 대응시킵니다. 표현 형식과 인계 전 점검은 [근거 README 형식](../../tk-verification-guidance/references/verification.md#evidence-readme-format)을 따릅니다. `provider`(실제 ID/버전/경로/선택 근거), `contract: 1.2.0`,
 `scope: full-inventory | explicitly-scoped`, `coverage: planned/executed/covered-by/out-of-scope/not-executed`,
 `human_action`, `phase`, `visual_contract: applied`, `capture_only_mutation`,
 `automated_regression`, 인증 방식(비민감), 근거 절대 경로, 정확한 대상/head/출처,
@@ -81,8 +81,7 @@ README 첫 줄의 `sensitive_regions`와 단계별 적용 이유를 지키고, �
 각 기준의 사실 행에는 `criterion_id`, `result`, `route`, `entry`, `trigger`,
 `operation: read`, `input: trusted | not-run`, `evidence_kind`, `evidence_ref`, `head`를 포함합니다.
 미실행 행에는 `reason`, `search_scope`, `unblock`; 명시적 제외/다른 행으로 커버한
-기준에는 해당 사유·근거 참조를 보존합니다. 장면 비교는
-`scene | baseline observed value | after observed value | verdict`로 기록합니다.
+기준에는 해당 사유·근거 참조를 보존합니다. 장면 비교는 공통 형식의 결과 요약 표에 기록합니다.
 다른 Markdown/세션 원장은 만들지 않습니다.
 
 부모에게는 간결한 **단계 사실만** 반환합니다. `baseline` 성공은

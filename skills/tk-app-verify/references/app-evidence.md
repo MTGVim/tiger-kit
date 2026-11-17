@@ -1,7 +1,7 @@
 <a id="native-app-evidence"></a>
 # native 앱 근거
 
-캡처, 근거 쓰기 또는 실행한 단계의 반환 전에 읽습니다. [공통 검증 계약](../../tk-verification-guidance/references/verification.md)과 [산출물 경로](../../tk-artifacts/references/artifact-paths.md)를 적용합니다. native 근거는 URL/DOM이 아니라 창에 연결됩니다. 실행 소유 근거는 `.tigerkit/evidence/tk-app-verify/<run-id>/` 아래에 저장하고, 해당할 때 `baseline/`, `after/` 및 불변 `failed-<attempt>/` 캡처를 둡니다. 필수적인 범위 한정 `README.md`가 유일한 Markdown AC/근거 색인이며 수명 주기 장부가 아닙니다.
+캡처, 근거 쓰기 또는 실행한 단계의 반환 전에 읽습니다. [공통 검증 계약](../../tk-verification-guidance/references/verification.md)과 [산출물 경로](../../tk-artifacts/references/artifact-paths.md)를 적용합니다. native 근거는 URL/DOM이 아니라 창에 연결됩니다. 실행 소유 근거는 `.tigerkit/evidence/tk-app-verify/<run-id>/` 아래에 저장하고, 해당할 때 `baseline/`, `after/` 및 불변 `failed-<attempt>/` 캡처를 둡니다. 필수적인 범위 한정 `README.md`가 유일한 Markdown AC/근거 색인이며 수명 주기 장부가 아닙니다. 표현 형식과 인계 전 점검은 [근거 README 형식](../../tk-verification-guidance/references/verification.md#evidence-readme-format)을 따릅니다. 첫 캡처 전에 README 첫 줄에 실제 민감 영역 또는 근거 있는 `none`을 기록하고 다음 캡처 전에 해당 화면과 대조합니다.
 
 <a id="capture-and-annotations"></a>
 ## 캡처와 주석
@@ -31,10 +31,9 @@
 - `verification_complete`, 정확한 `next_required`, 한계, focus 영향과 정리/잔여물을 포함합니다.
 - 부모 또는 검증된 처리 결정에 따른 `automated_regression: protected | N/A | exception | unknown`을 포함합니다.
 
-변경 전/후 비교에는 장면마다 간결한 행 하나를 포함합니다.
-`scene | baseline observed value | after observed value | verdict`를 사용합니다. 캡처 시점의 현재 앱/접근성/런타임 근거에서 각 값을 읽고 눈에 보인다는 주장은 이미지로 확인합니다. native 화면의 DOM 측정값을 지어내지 않습니다. 필요한 비식별 처리를 거친 같은 단계별 관찰값 텍스트를 캡처 레이블로 사용합니다. 근거가 있을 때만 `match`, `intended change` 또는 `pre-existing issue`를 사용합니다. 예상하지 못한 변경이나 근거 누락에는 `regression` 또는 `unverifiable`을 사용합니다. 실제 기준 상태를 유지합니다. 장면 설명은 면제 사유가 아닙니다. 대상 윤곽선이 필요하지 않은 경우에도 레이블을 pixel로 확인합니다. 프레임 밖의 대상은 시각적 기준을 뒷받침할 수 없습니다. 나타남/사라짐 비교에서 대상이 없는 쪽은 주변 맥락을 보여야 합니다.
+변경 전/후 비교에는 [근거 README 형식](../../tk-verification-guidance/references/verification.md#evidence-readme-format)의 결과 요약 표를 사용하고 장면마다 행 하나를 기록합니다. 캡처 시점의 현재 앱/접근성/런타임 근거에서 각 값을 읽고 눈에 보인다는 주장은 이미지로 확인합니다. native 화면의 DOM 측정값을 지어내지 않습니다. 필요한 비식별 처리를 거친 같은 단계별 관찰값 텍스트를 캡처 레이블로 사용합니다. 근거가 있을 때만 `match`, `intended change` 또는 `pre-existing issue`를 사용합니다. 예상하지 못한 변경이나 근거 누락에는 `regression` 또는 `unverifiable`을 사용합니다. 실제 기준 상태를 유지합니다. 장면 설명은 면제 사유가 아닙니다. 대상 윤곽선이 필요하지 않은 경우에도 레이블을 pixel로 확인합니다. 프레임 밖의 대상은 시각적 기준을 뒷받침할 수 없습니다. 나타남/사라짐 비교에서 대상이 없는 쪽은 주변 맥락을 보여야 합니다.
 
-전체 결과 필드, 비교 행과 캡처 대응 관계는 근거 `README.md`에 둡니다. 선택적인 HTML gallery/contact sheet는 파생 뷰이며 해당 색인이나 원본 이미지 확인을 대체하지 않습니다. 사용자의 브라우저나 desktop opener로 근거를 열지 않고 절대 경로를 반환합니다. 사용자가 명시적으로 요청한 경우에만 엽니다. 요청받아 여는 경우에도 선택한 제공자의 focus와 승인 요구를 유지합니다.
+전체 결과 필드, 비교 행과 캡처 대응 관계는 근거 `README.md`에 둡니다. README 본문의 이미지 미리보기와 원본 링크는 필수입니다. HTML 갤러리와 콘택트 시트만 선택적 파생 보기이며 해당 색인이나 원본 이미지 확인을 대체하지 않습니다. 사용자의 브라우저나 desktop opener로 근거를 열지 않고 절대 경로를 반환합니다. 사용자가 명시적으로 요청한 경우에만 엽니다. 요청받아 여는 경우에도 선택한 제공자의 focus와 승인 요구를 유지합니다.
 
 사전 점검 중단에서는 실제 상태, 누락된 선행 조건과 다음 입력만 반환합니다. 캡처나 완료 필드를 지어내지 않습니다. 변경 전 기준은 캡처만 수행하며 `baseline_capture: Pass`, `verification_complete: false`를 사용하고, 부모가 진행 중이면 `resume_parent: required`를 사용합니다. 변경 후 결과는 같은 실행/출처/재현 절차에 연결되며 모든 기준을 다룬 경우에만 완료됩니다.
 독립 실행 출력은 정확한 `Status: <token>`으로 시작하고 간결한 사실/한계/정리 내용을 제시합니다. 중첩 실행은 사용자에게 최종 답변하지 않고 해당 단계의 근거를 반환한 뒤 담당자를 재개합니다.
