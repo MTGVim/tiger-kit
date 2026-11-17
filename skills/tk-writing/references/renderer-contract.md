@@ -75,12 +75,11 @@ HTML/CSS/JS에 외부 URL·리소스 로드가 있는지, `<title>`이 비어 �
 ## 모든 전달 HTML의 공통 후처리
 
 사람에게 전달하는 모든 tk-* HTML은 원본의 생성·검증이 끝난 뒤 현재 설치된 `tk-writing`의
-[피드백 studio](feedback-studio.md)를 적용하여 전달 폴더에는 피드백 주입본 `<stem>.html` 한 벌만 두고
-이를 열람본으로 안내합니다. 검증한 원본과 해당 receipt는 `.tigerkit/evidence/<skill>/<run-id>/`에
+[피드백 studio](feedback-studio.md)를 기본으로 적용합니다. 사용자가 명시적으로 피드백 기능 제외·제거를 요청한 경우에만 주입을 생략하고 검증한 원본에서 피드백 없는 전달본을 만듭니다. 별도 선택 질문 없이 해당 모드의 `<stem>.html` 한 벌만 열람본으로 안내합니다. 검증한 원본과 해당 receipt는 `.tigerkit/evidence/<skill>/<run-id>/`에
 바이트를 바꾸지 않고 보존합니다. 기법별 HTML도 같은 규칙을 따릅니다. 설명·조사·갤러리·QA 시트·prototype·시각 질문에 같은 계약을 적용합니다.
 영상 피드백 플레이어는 같은 공통 테마·항목 수정 자원을 사용하는 자체 목록을 유지하며 studio를
 중복 주입하지 않습니다. 캡처 전용 임시 HTML은 전달물이 아니므로 후처리를 생략합니다.
-완료 보고에는 원본의 실제 검사와 `전달본: 피드백 주입본(실제 통과한 검사)`을
+완료 보고에는 원본의 실제 검사와 `전달본: 피드백 주입본(실제 통과한 검사)` 또는 `전달본: 피드백 제외본(실제 통과한 검사)`을
 구분합니다. archify 원본에만 `finalize 통과본`이라고 쓰며, 일반 HTML에 finalize receipt를 요구하거나 주입본을 원본의 finalize 통과 바이트로 보고하지 않습니다.
 후처리한 최종 바이트에도 정적·해당 상호작용 검사를 적용합니다. 후처리에 실패하면 근거 폴더의 원본을 보존하고 실패 사유를 알립니다. 전달 폴더에 기존 유효본이
 있으면 유지합니다. 원본만 전달하는 예외를 택하면 그 한 벌만 `<stem>.html`로 복사하고 누락 기능을 알립니다. 이 공통 단계는 렌더러를 바꾸거나 HTML 제작을 새로 요구하지 않습니다.
@@ -170,7 +169,7 @@ upstream 테스트는 읽었지만 실행하지 않았으며 일반적인 이해
 
 보고서 원고의 막대 블록에는 `caption:`으로 측정 대상을, `unit:`으로 값 단위를 명시합니다. `0`은 유효하고 음수·비유한 값·누락된 지표는 빌더가 거부합니다. 비율처럼 정해진 기준이 있으면 `max:`를 명시하여 막대를 과장하지 않습니다. 신뢰된 로컬 HTML 그림 조각만 전달하며 빌더를 HTML sanitizer로 취급하지 않습니다.
 
-최종 전달 파일에 `scripts/check_report.py <page.html> --require-feedback-studio`를 실행합니다. 이 옵션은 설명 페이지처럼 studio가 필수인 전달 계약에만 사용합니다. marker 검사는 studio 동작 검증이 아니며 실제 컨트롤·저장·내보내기 검사를 유지합니다. 일반 HTML 패키징의 `package_html.py --check`는 export payload 일치 검증으로 유지합니다.
+최종 전달 파일에 `scripts/check_report.py <page.html>`를 실행하고 studio 기본 전달 모드에는 `--require-feedback-studio`를 추가합니다. 명시적 제외본에는 이 옵션을 쓰지 않고 공통 studio 주입 표시와 UI가 없는지 확인합니다. marker 검사는 studio 동작 검증이 아니며 실제 컨트롤·저장·내보내기 검사를 유지합니다. 일반 HTML 패키징의 `package_html.py --check`는 export payload 일치 검증으로 유지합니다.
 
 이미 설치된 Python Playwright와 Chromium을 사용할 수 있으면 `check_report.py <page.html> --browser --chromium <실행파일> --evidence <실행-소유-근거경로>`로 가로 overflow와 보이는 컨트롤의 hit-test, 테마와 캡처를 확인합니다. 자동 설치하지 않습니다. 스크립트가 만든 캡처는 평가자가 실제로 열어 보며, 그림자·빈 공간·미학적 폭 차이에 검증되지 않은 하드 임계값을 적용하지 않습니다. 사용자 지정 기기 기준과 더 엄격한 검증을 보존합니다. 원본과 studio 주입본의 지문을 구분하고 최종 바이트에 검사를 결합합니다.
 

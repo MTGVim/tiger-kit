@@ -25,7 +25,7 @@ archify에서 관계나 사건 순서가 결론을 설명할 때는 기본 다�
 
 모든 HTML에 렌더러 계약의 공통 정적 검사와 출처 및 포함 범위 대조를 수행합니다. 일반 HTML은 [HTML 출력](../../tk-writing/references/html-output.md)의 정적 기준도 적용하고, 구 보고서 템플릿 전용 `check_report.py`를 공통 검사기로 사용하지 않습니다. archify에서만 전체 `finalize explainer` 명령을 추가 실행합니다. 최종 파일은 외부 런타임 요청 없이 단독으로 열려야 합니다. 클릭 가능한 출처 링크는 허용됩니다. 최종 바이트와 연결된 원고 및 실제 검사 근거를 보존하고 archify이면 receipt도 보존합니다. 렌더링 후 결론, 주장과 출처 사이의 링크, 수량, ID와 포함 범위를 확인합니다. 렌더러는 사실의 정확성을 입증하지 않습니다. 선택한 렌더러가 실패하거나 없거나 필수 상호작용을 지원하지 않으면 해당 보고서 분기를 차단하고, 다른 형식으로 말없이 바꾸지 않습니다.
 
-전달 전 [공통 피드백 후처리](../../tk-writing/references/feedback-studio.md)에서 `--owner-skill tk-research --source-path <확인한 원고>`를 넘겨 `--input <evidence/report.html> --output <delivery/report.html>`로 피드백 주입본 한 벌을 만들고 열람 링크로 안내합니다. 원고는 일반 HTML의 `body.html` 또는 archify의 `candidate.archify.md`처럼 실제 재생성에 쓰는 파일입니다. 원본과 검사 근거를 근거 폴더에 보존하고 원본과 최종 전달본의 검증 상태를 구분합니다. finalize 통과는 archify 원본에만 보고하며, 위임받아 제작했으면 선택한 형식과 이유도 완료 보고에 씁니다.
+전달 전 [공통 피드백 후처리](../../tk-writing/references/feedback-studio.md)에서 `--owner-skill tk-research --source-path <확인한 원고>`를 넘겨 `--input <evidence/report.html> --output <delivery/report.html>`로 기본 피드백 주입본 한 벌을 만들고 열람 링크로 안내합니다. 명시적 제외 요청에는 공통 계약의 제외 분기를 적용합니다. 원고는 일반 HTML의 `body.html` 또는 archify의 `candidate.archify.md`처럼 실제 재생성에 쓰는 파일입니다. 원본과 검사 근거를 근거 폴더에 보존하고 원본과 최종 전달본의 검증 상태를 구분합니다. finalize 통과는 archify 원본에만 보고하며, 위임받아 제작했으면 선택한 형식과 이유도 완료 보고에 씁니다.
 
 검증 패널에는 정적·산출물 확인과 화면·동작 확인의 결과를 별도로 포함합니다. `finalize`는 브라우저를 실행하지 않습니다. 사용자가 화면 확인을 요청하거나 중요한 시각·상호작용 불확실성 때문에 확인이 필요하면 `tk-browser-verify`를 사용합니다. 실행하지 않은 확인은 해당하는 이유에 따라 요청되지 않았거나 이용할 수 없었다고 정직하게 보고합니다. 정적 receipt만으로 테마, 키보드, 탐색이나 상호작용의 성공을 주장하지 않습니다.
 

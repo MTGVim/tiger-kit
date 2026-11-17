@@ -332,7 +332,7 @@ def render(public, key, theme, mode="gallery", external_key=False):
     return re.sub(r'@@([A-Z_]+)@@', lambda match: values[match[1]], template)
 
 
-def build(manifest_path, output, previous_key=None, theme="system", mode="gallery", delivery="single", answer_key=None, evidence_dir=None):
+def build(manifest_path, output, previous_key=None, theme="system", mode="gallery", delivery="single", answer_key=None, evidence_dir=None, feedback_studio=True):
     require(evidence_dir is not None, "build requires an explicit evidence directory")
     delivery_path, evidence_path = Path(output).absolute(), Path(evidence_dir).absolute()
     require(not (delivery_path.is_relative_to(evidence_path) or evidence_path.is_relative_to(delivery_path)),
@@ -381,12 +381,15 @@ def build(manifest_path, output, previous_key=None, theme="system", mode="galler
     original.write_text(rendered, encoding='utf-8')
     # The recipient bundle is created only after the shared delivery copy exists.
     # Private manifest/source paths must not enter a blind evaluator's page.
-    postprocessor = PACKAGE.parent / 'tk-writing/scripts/add_feedback_studio.py'
-    studio = subprocess.run([sys.executable, str(postprocessor), '--input', str(original), '--output', str(dest / page_name),
-                             '--owner-skill', 'tk-blind-comparison', '--theme', theme],
-                            capture_output=True, text=True)
-    if studio.returncode:
-        raise SharedOwnerError('Shared studio generation failed; raw gallery preserved in evidence; check tk-writing installation')
+    if feedback_studio:
+        postprocessor = PACKAGE.parent / 'tk-writing/scripts/add_feedback_studio.py'
+        studio = subprocess.run([sys.executable, str(postprocessor), '--input', str(original), '--output', str(dest / page_name),
+                                 '--owner-skill', 'tk-blind-comparison', '--theme', theme],
+                                capture_output=True, text=True)
+        if studio.returncode:
+            raise SharedOwnerError('Shared studio generation failed; raw gallery preserved in evidence; check tk-writing installation')
+    else:
+        (dest / page_name).write_bytes(original.read_bytes())
     if delivery == "split":
         with zipfile.ZipFile(dest / 'comparison.zip', 'w', compression=zipfile.ZIP_DEFLATED) as archive:
             archive.write(dest / page_name, page_name)
@@ -541,6 +544,7 @@ def main():
     b.add_argument('--mode', choices=('gallery', 'versus'), default='gallery')
     b.add_argument('--delivery', choices=('single', 'split'), default='single')
     b.add_argument('--answer-key', choices=('embedded', 'separate'), help='single defaults to embedded; split keeps a separate key')
+    b.add_argument('--no-feedback-studio', action='store_true', help='omit common feedback studio only; preserve comparison controls')
     s = commands.add_parser('summarize')
     s.add_argument('ratings', help='rating JSON path, or - for stdin'); s.add_argument('--key', required=True)
     s.add_argument('--output', help='new directory for summary files; omit to print JSON without saving')
@@ -548,7 +552,7 @@ def main():
     args = parser.parse_args()
     try:
         if args.command == 'build':
-            build(args.manifest, args.output, args.previous_key, args.theme, args.mode, args.delivery, args.answer_key, args.evidence_dir)
+            build(args.manifest, args.output, args.previous_key, args.theme, args.mode, args.delivery, args.answer_key, args.evidence_dir, feedback_studio=not args.no_feedback_studio)
         else:
             summary = summarize(read_json(args.ratings), read_json(args.key), blind=args.blind)
             if args.output:
