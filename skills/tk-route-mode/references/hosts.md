@@ -6,7 +6,7 @@
 |---|---|---|---|
 | Claude Code | `~/.claude/agents/tier-<티어>.md` | frontmatter `model`, `effort` | 호출 인자 및 `CLAUDE_CODE_SUBAGENT_MODEL_FORCE`, `CLAUDE_CODE_EFFORT_LEVEL`의 우선순위를 확인합니다. |
 | Codex | `~/.codex/agents/tier-<티어>.toml` | `model`, `model_reasoning_effort` | 에이전트 파일, 호출값, 기본값과 부모 세션의 우선순위를 확인합니다. 스킬 자체의 모델 지정과 혼동하지 않습니다. |
-| Hermes | `config.yaml`의 `delegation.backends.model_map.options` | `model`, `provider`, `reasoning_effort` | advanced-delegation 및 `delegation.backend: model_map`의 실제 지원과 활성화를 확인합니다. |
+| Hermes | 활성 Hermes 프로필의 `config.yaml` 아래 `delegation.backends.model_map.options` | `name`, `description`, `provider`, `model`, `reasoning_effort` | [Hermes 전용 설정·검증](hermes-setup.md)에 따라 0.22.5 이상·프로필별 설치·`hermes delegation config`·새 CLI 세션·`delegate_task.option`과 결과 route를 확인합니다. |
 
 출처: [Claude Code subagents](https://code.claude.com/docs/en/sub-agents), [model configuration](https://code.claude.com/docs/en/model-config), [Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents), [Hermes advanced delegation](https://hermes-agent.nousresearch.com/docs/plugins/advanced-delegation).
 
@@ -19,3 +19,5 @@
 [Codex subagents 공식 문서](https://learn.chatgpt.com/docs/agent-configuration/subagents)에 따르면 사용자 custom agent는 `~/.codex/agents/`의 standalone TOML 파일로 정의할 수 있습니다. 필수 키는 `name`, `description`, `developer_instructions`이며 모델과 effort는 `model`, `model_reasoning_effort`를 사용합니다. 이름의 정본은 `name`입니다. 파일에 지정한 모델과 effort의 우선순위 및 지원 범위를 현재 문서와 대조합니다.
 
 현재 호출 도구의 스키마에 이름 선택 인자가 없다는 사실과 호스트 전체의 custom agent 지원 여부는 별개입니다. 먼저 실제 클라이언트 버전과 현재 문서로 지원 여부를 확인합니다. 파일 작성·TOML 검사, 세션의 agent_type 목록 등 로드 증거, 이름을 선택한 실제 위임 실행과 호스트 기록을 따로 확인합니다. 파일이나 목록만으로 실행을 검증했다고 보고하지 않습니다. 현재 세션에서 이름이 보이지 않으면 새 세션이나 확인된 reload 후 다시 확인하고, 그래도 선택 또는 실효값 확인이 불가능하면 unverified로 둡니다. 사용자 수준 지침의 실제 로드 여부와 동등한 티어 선택 규칙도 검사합니다.
+
+Hermes의 `model_map`에는 위임 대상 이름을 `option`으로, `profile_routes`에는 `profile`로 전달합니다. 현 연동 도구의 스키마 제한과 Hermes CLI의 기능 지원은 분리합니다. 현재 세션에 옛 스키마가 남아 있으면 새 세션으로 확인합니다.
