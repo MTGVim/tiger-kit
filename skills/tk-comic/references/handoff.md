@@ -15,7 +15,7 @@
 | `prompts/characters-vNN.md` | 캐릭터 참조 시트를 만들기로 했을 때 그 완전한 프롬프트를 저장합니다. 페이지 생성보다 먼저 실행하도록 안내합니다. |
 | `references/manifest.md` | 참조 ID, 출처·사용 조건, 실제 파일/호스트 참조, 용도 `direct/style/palette`, 사용할 페이지, 누락·미지원 사항을 기록합니다. 참조가 없으면 `none`과 이유를 씁니다. |
 
-`--storyboard-only`에는 `prompts/`가 필요하지 않습니다. 생성 단계에 도달한 경우에만 실제 이미지, 도구와 출력 크기를 기록합니다. 호스트가 이미지를 관리하는 경우 존재하지 않는 로컬 파일 경로를 만들지 말고 실제 반환된 asset을 연결합니다. 참조 파일은 사용 권한이 있고 패키지에 포함할 수 있는 것만 복사하며 무관한 원문·비밀 파일을 함께 넣지 않습니다.
+`storyboard-only`에는 `prompts/`가 필요하지 않습니다. 생성 단계에 도달한 경우에만 실제 이미지, 도구와 출력 크기를 기록합니다. 호스트가 이미지를 관리하는 경우 존재하지 않는 로컬 파일 경로를 만들지 말고 실제 반환된 asset을 연결합니다. 참조 파일은 사용 권한이 있고 패키지에 포함할 수 있는 것만 복사하며 무관한 원문·비밀 파일을 함께 넣지 않습니다.
 
 ## 독립 프롬프트
 
@@ -39,8 +39,8 @@
 
 | 실제 결과 | 보고 |
 | --- | --- |
-| `--storyboard-only`의 콘티와 필요한 근거·캐릭터 정의가 검증됨 | `status: Pass`, `preparation: Pass`, `rendering: not-requested`, `deliverable: storyboard` |
-| `--prompts-only`의 콘티·모든 프롬프트가 검증됨 | `status: Pass`, `preparation: Pass`, `rendering: not-requested`, `deliverable: prompts` |
+| `storyboard-only`의 콘티와 필요한 근거·캐릭터 정의가 검증됨 | `status: Pass`, `preparation: Pass`, `rendering: not-requested`, `deliverable: storyboard` |
+| `prompts-only`의 콘티·모든 프롬프트가 검증됨 | `status: Pass`, `preparation: Pass`, `rendering: not-requested`, `deliverable: prompts` |
 | 래스터 요청, 도구/필수 기능 부재, 외부 인계 자료 완성 | `status: Blocked`, `preparation: Pass`, `rendering: Blocked`, `deliverable: external-handoff-ready` |
 | 필요한 콘티·출처·참조가 없어 준비물을 검증할 수 없음 | 해당 단계는 `Blocked` 또는 `Unverifiable`이며 `preparation: Pass`나 인계 준비 완료를 주장하지 않습니다. |
 | 실제 이미지가 있으나 픽셀을 열 수 없거나 필요한 독립 리뷰가 없음 | `status: Unverifiable`이며 생성 사실과 미확인 항목을 따로 기록합니다. |

@@ -28,17 +28,17 @@
 | --- | --- |
 | 요청한 모든 이미지가 생성되고 필수 검사·리뷰를 통과함 | `status: Pass`, `preparation: Pass`, `rendering: Pass`, `deliverable: images` |
 | 이미지가 목표이나 도구·필수 참조 기능이 없고 준비물은 검증됨 | `status: Blocked`, `preparation: Pass`, `rendering: Blocked`, `deliverable: external-handoff-ready` |
-| 명시적으로 `--prompts-only`를 요청하고 준비물 검토를 통과함 | `status: Pass`, `preparation: Pass`, `rendering: not-requested`, `deliverable: prompt-package` |
+| 명시적으로 `prompts-only`를 요청하고 준비물 검토를 통과함 | `status: Pass`, `preparation: Pass`, `rendering: not-requested`, `deliverable: prompt-package` |
 | 이미지가 있지만 필수 픽셀 검사 또는 독립 리뷰를 수행할 수 없음 | `status: Unverifiable`, 실제 생성 여부와 미검증 항목을 별도로 기록함 |
 | 실제 라벨·관계·내용 오류가 남아 있음 | `status: Fail`, 결함 ID·후보·복구 결과를 명시함 |
 
 일부만 통과하면 ID별 결과를 표시하며 전체를 `Pass`로 합치지 않습니다. `article`에서 근거 검토 결과 삽화가 필요 없어 0장을 선택했다면 그 이유와 `rendering: not-requested`를 밝힙니다. 사용자가 정확한 장수를 명시한 작업에는 이 예외를 적용하지 않습니다.
 
-`--images-only`의 기존 검증본 재사용은 현재 입력 식별값과 검사 기록이 일치할 때만 가능합니다. 새 그림을 만들지 않았으면 재사용이라고 기록합니다. 프롬프트·SVG·HTML·canvas만 만들거나 SVG를 PNG로 변환한 것은 AI 래스터 생성이 아닙니다.
+`images-only`의 기존 검증본 재사용은 현재 입력 식별값과 검사 기록이 일치할 때만 가능합니다. 새 그림을 만들지 않았으면 재사용이라고 기록합니다. 프롬프트·SVG·HTML·canvas만 만들거나 SVG를 PNG로 변환한 것은 AI 래스터 생성이 아닙니다.
 
 ## 대체 표현과 부모 인계
 
-이 스킬은 도구 부재 시 [MOSS 로컬 폴백 또는 콘티·프롬프트만 전달](../../tk-writing/references/local-image-fallback.md)을 선택하게 합니다. 로컬 사용 선택과 설치 실행 승인은 구분하며, 준비물은 선택 대기·거절·설치 실패와 관계없이 승인된 범위에서 완성합니다. 명시적으로 준비물만 전달로 목표를 바꾸면 `--prompts-only` 상태를 사용하고, 미응답을 목표 변경으로 간주하지 않습니다. 임의로 SVG나 정적 다이어그램으로 목표를 바꾸지 않습니다. 부모가 별도로 승인된 임시 대체물 제작을 소유한다면 `rendering: Blocked`와 준비물을 반환하고, 부모가 그 결과의 임시 성격을 표시하도록 합니다. `tk-comic`의 SVG 벡터 콘티 수락 절차는 만화 스킬이 독립적으로 소유합니다.
+이 스킬은 도구 부재 시 [MOSS 로컬 폴백 또는 콘티·프롬프트만 전달](../../tk-writing/references/local-image-fallback.md)을 선택하게 합니다. 로컬 사용 선택과 설치 실행 승인은 구분하며, 준비물은 선택 대기·거절·설치 실패와 관계없이 승인된 범위에서 완성합니다. 명시적으로 준비물만 전달로 목표를 바꾸면 `prompts-only` 상태를 사용하고, 미응답을 목표 변경으로 간주하지 않습니다. 임의로 SVG나 정적 다이어그램으로 목표를 바꾸지 않습니다. 부모가 별도로 승인된 임시 대체물 제작을 소유한다면 `rendering: Blocked`와 준비물을 반환하고, 부모가 그 결과의 임시 성격을 표시하도록 합니다. `tk-comic`의 SVG 벡터 콘티 수락 절차는 만화 스킬이 독립적으로 소유합니다.
 
 반환에는 선택한 조합과 이유, 실제 이미지/패키지 링크, 출처·프롬프트·참조 전달 여부, 수행한 검사와 남은 제한을 포함합니다. 문서 삽화는 삽입 위치와 대체 텍스트를 함께 반환합니다. 원격 발행·설치·사용자 파일 덮어쓰기 권한을 확장하지 않습니다.
 

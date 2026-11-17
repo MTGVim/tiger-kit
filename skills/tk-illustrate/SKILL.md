@@ -2,7 +2,7 @@
 name: tk-illustrate
 description: "[user/auto] AI 삽화 한 장, 문서의 보조 삽화, 인포그래픽을 제작하거나 외부 이미지 도구용 콘티·프롬프트를 준비할 때 사용합니다. tk-explain이 사실과 설명 구성을 확정해 AI 래스터 제작을 위임한 경우도 포함합니다. 일반 대화 설명, 정밀 코드·수치 도해, 다중 페이지 만화, 영상 제작에는 사용하지 않습니다."
 disable-model-invocation: false
-argument-hint: "<topic, source, or prepared directory> [--mode single|article|infographic] [--style name] [--prompts-only]"
+argument-hint: "<topic, source, or prepared directory> [mode single|article|infographic] [style name] [prompts-only]"
 metadata:
   tigerkit:
     kind: hybrid
@@ -14,6 +14,8 @@ metadata:
 
 이 스킬에서 질문·메시지·설명·보고서·Markdown·HTML·대본·자막·문서·스킬 본문 등 사람이 읽는 텍스트를 **새로 작성하거나 의미·표현을 수정하기 전에**, 설치된 `tk-writing`의 [모든 저작의 공통 관문](../tk-writing/references/authoring-gate.md)과 [명확한 글쓰기](../tk-writing/references/clear-writing.md)를 이번 작업에서 읽고 적용합니다. 최종 산출물을 인계하기 전에 같은 기준으로 원고를 검사하고 문제를 수정합니다. 이미 읽은 기준을 반복 로드하거나 별도 재작성 스킬·에이전트·승인 라운드를 추가하지 않습니다. 코드·명령·식별자·기계 판독 형식·인용과 고정 문구는 보호하며, 이 참조로 변경·전송·발행 권한이 생기지 않습니다. 이 스킬이 작성 작업을 수행하지 않는 경우에는 추가 읽기가 필요하지 않습니다.
 <!-- /tigerkit:universal-authoring-gate -->
+
+사용자 호출의 명시적 옵션 위치에는 `preset`, `layout`, `prompts-only`처럼 접두어 없는 키워드를 사용합니다. 기존 `--preset`, `--layout`, `--prompts-only` 등 동일 이름의 표기도 호환합니다. 일반 요청 본문·경로의 단어는 옵션으로 간주하지 않으며 기존 선택·승인 경계를 유지합니다.
 
 
 <a id="illustrate"></a>
