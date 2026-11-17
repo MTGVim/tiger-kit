@@ -28,4 +28,5 @@ metadata:
 ## 조건부 참조
 
 - [산출물 경로](references/artifact-paths.md): 승인된 산출물이나 임시 입력을 쓰기 전에 읽습니다.
+- [설정 조회 중 비밀 보호](references/artifact-paths.md#secret-safe-inspection): 환경변수나 비밀이 포함될 수 있는 설정을 조회하기 전에 읽습니다.
 - [인증](references/authentication.md): 승인된 애플리케이션 인증 입력이나 갱신이 필요할 때 읽습니다.

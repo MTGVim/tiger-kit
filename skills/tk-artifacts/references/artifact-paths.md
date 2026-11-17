@@ -53,6 +53,11 @@ ignore 설정을 생략합니다. 로컬 임시 작업에는 일반 제외 점�
 
 Git 제외는 worktree를 스캔하는 빌드 도구에서도 제외된다는 보장이 아닙니다. [Tailwind v4 자동 소스 탐지](https://tailwindcss.com/docs/detecting-classes-in-source-files#which-files-are-scanned)는 `.gitignore`의 경로를 제외하지만, 사용자 수준 제외만 사용했을 때는 확인된 빌드 스캔에 `.tigerkit/`가 남았습니다. 빌드 스캔 제외는 별도의 저장소 로컬 결정입니다. 이 사실은 위의 종료 코드 0일 때 편집하지 않는 규칙을 바꾸지 않습니다.
 
+<a id="secret-safe-inspection"></a>
+## 설정 조회 중 비밀 보호
+
+설정 파일의 환경변수 블록을 조사할 때에는 값을 도구 출력으로 반환하지 않습니다. 키 이름만 출력하고(예: `jq '.env | keys'`), 값 확인이 필요하면 로컬에서 비어 있는지 여부만 판정합니다. 비밀로 추정되는 키 이름을 필터링하는 방식에 의존하지 않습니다. 원문 전체, 파서 오류, 디버그 출력에도 값이 포함되지 않도록 출력 전에 범위를 제한합니다. 필요한 자격 증명은 승인된 소비자에게만 전달합니다.
+
 <a id="user-editable-temporary-input"></a>
 ## 사용자가 편집하는 임시 입력
 
