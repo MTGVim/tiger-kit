@@ -19,7 +19,7 @@ TigerKit은 조합 가능한 Agent Skills 저장소입니다. workflow runner, p
 - 환경·설정·명령을 한 번의 저렴한 fresh lookup으로 알 수 있으면 문서에 목록을 복제하지 않습니다. 줄 수나 토큰 목표를 맞추려고 필요한 실패·승인 guard를 없애지 않습니다.
 - 사용자용 문서와 사람이 검수하는 `SKILL.md` 및 패키지 참조의 자연어 제목·실행 지침은 한국어를 기본으로 작성합니다. exact ID/path/status/command, 기계 판독 문자열, 코드, 외부 인용과 라이선스 고지는 원문을 유지합니다. 지침 작성 언어와 결과물의 출력 언어는 별개이며, 기존 출력 언어 계약을 바꾸지 않습니다. 전환 원칙과 예외는 [ADR 0005](docs/adr/0005-korean-skill-instructions.md)를 따릅니다.
 - 공개 동작·명령·경로·설치 계약을 바꾸면 그 사실을 소유한 기존 문서만 같은 변경에서 갱신합니다. 의례적인 변경 문서·상태표·새 lifecycle을 만들지 않습니다.
-- 대화 형식과 결과 전달 기준은 `tk-writing`, 질문·승인 기준은 `tk-questioning`이 소유합니다. 실제 업무의 더 구체적인 미리보기·출력 계약이 우선합니다.
+- 대화 형식과 결과 전달 기준은 `tk-writing`, 질문·승인 기준은 `tk-questioning`이 소유합니다. 일반 답변을 포함해 결정이나 승인을 묻는 채팅에서는 [마지막 질문 블록](skills/tk-writing/references/delivery.md#results)을 적용합니다. 실제 업무의 더 구체적인 미리보기·출력 계약이 우선합니다.
 
 ## 실행·승인 경계
 
@@ -36,7 +36,7 @@ TigerKit은 조합 가능한 Agent Skills 저장소입니다. workflow runner, p
 - 저장소 귀속 임시 실행 파일은 `.tigerkit/tmp/<skill>/<run-id>/`, 검증 근거는 `.tigerkit/evidence/<skill>/<run-id>/`에 둡니다. 설명과 조사는 해당 소유 스킬의 durable-root/default 정책을 따르며 기존 학습 공간과 명시한 최종 목적지를 보존합니다.
 - 쓰기 전 저장소·소유권·nonsymlink 경계와 Git 제외를 확인합니다. `git ls-files -- .tigerkit/`에 추적 파일이 없어야 하며 `git check-ignore -q -- .tigerkit/`가 성공해야 합니다. Git의 최종 판정이 정본이며 전역 exclude도 유효합니다.
 - 제외가 없을 때만 안전한 루트 `.gitignore`에 기존 바이트/줄바꿈을 보존해 `/.tigerkit/`를 추가하고 재확인합니다. 실패·추적 파일·안전하지 않은 경로는 파일 분기만 중단하며 자동 untrack이나 다른 임시 경로로 우회하지 않습니다. 설정만을 위한 stage/commit은 하지 않습니다.
-- 비밀은 chat·Seed·logs·receipt·Git에 넣지 않습니다. 보호 입력은 `.tigerkit/secret-input/` 아래 디렉터리 `0700`, 파일 `0600`으로 둡니다. 값 수집·감시·소비·정리는 `tk-artifacts`의 입력/인증 정본을 따릅니다.
+- 비밀은 chat·Seed·logs·receipt·Git에 넣지 않습니다. 환경변수나 인증 설정을 조회하기 전에는 [비밀 보호 조회 기준](skills/tk-artifacts/references/artifact-paths.md#secret-safe-inspection)을 적용합니다. 보호 입력은 `.tigerkit/secret-input/` 아래 디렉터리 `0700`, 파일 `0600`으로 둡니다. 값 수집·감시·소비·정리는 `tk-artifacts`의 입력/인증 정본을 따릅니다.
 - 승인된 비운영 앱 인증 입력은 같은 작업·worktree·앱·환경·계정에 묶어 보존할 수 있습니다. 보존은 로그인·주입·갱신 권한이 아닙니다. 만료/거부된 access 값을 사용하지 않고 지원된 복구 경로를 확인합니다. 일회성 비밀의 소비 후 삭제와 잔여 확인은 유지합니다.
 - 사용자 입력 파일은 필요한 키와 빈 문자열을 담은 UTF-8 일반 `input.json` 객체로 준비합니다. 값을 명령줄에 넣거나 편집기·GUI를 자동으로 열지 않습니다. 사용자 대기 전 실행 소유 자원을 정리하고 해당 소유 스킬의 최종 경로 안내/재개 계약을 따릅니다.
 - 외부 도구 자체 캐시와 격리 단위 검증 데이터는 해당 도구의 임시 공간을 사용할 수 있습니다. 실행 소유권이 확인된 자원만 정리하며 다른 worktree·사용자 파일·인증 입력을 임의 삭제하지 않습니다.
