@@ -34,7 +34,7 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 | 장기 자율 작업 시작 또는 전환 | [tk-goal](skills/tk-goal/SKILL.md) |
 | 현재 작업을 다른 세션으로 인계 | [tk-handoff](skills/tk-handoff/SKILL.md) |
 
-스킬 호출에서 명령과 옵션은 `foo` 형태의 키워드를 사용합니다. 이전 `--foo` 표기도 호환되며 실제 CLI 명령의 플래그는 변경하지 않습니다.
+스킬 호출에서 명령과 옵션은 `foo` 형태의 키워드를 사용합니다. 실제 CLI 명령의 플래그는 변경하지 않습니다.
 
 ### 대표 사용 예시
 
