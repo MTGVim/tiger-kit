@@ -12,7 +12,7 @@
 
 두 버전의 API 가격은 입력 $2, 출력 $10 / 100만 토큰으로 동일합니다. **Max**의 Intelligence Index 실제 작업당 비용은 6.1 Sol $1.27, 6.2 Sol $1.01입니다. 이 수치를 다른 effort에 전용하지 않습니다.
 
-[Artificial Analysis 출시 분석](https://artificialanalysis.ai/es/articles/openai-has-the-2-model-in-the-intelligence-index-with-the-release-of-gpt-6-2-astra-and-gpt-6-2-sol)에 따르면 **Coding Agent Index의 max 설정은 신형이 3점 낮습니다.** 원인의 하나로 SWE-Atlas-QnA-AA 14점 하락을 지목했습니다. medium의 코딩 성능까지 동일하게 낮다고 단정하지 않습니다.
+[Artificial Analysis 출시 분석](https://artificialanalysis.ai/articles/openai-has-the-2-model-in-the-intelligence-index-with-the-release-of-gpt-6-2-astra-and-gpt-6-2-sol/)에 따르면 **Coding Agent Index의 max 설정은 신형이 3점 낮습니다.** 원인의 하나로 SWE-Atlas-QnA-AA 14점 하락을 지목했습니다. medium의 코딩 성능까지 동일하게 낮다고 단정하지 않습니다.
 
 ## 맵 적용 결정
 
