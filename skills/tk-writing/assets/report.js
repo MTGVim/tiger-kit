@@ -1,4 +1,4 @@
-/* report.js: 테마 버튼, 좁은 화면의 목차 메뉴, 목차의 현재 절 표시만 한다. 외부 요청 없음. */
+/* report.js: 테마 버튼, 좁은 화면의 목차 메뉴, 목차의 현재 절 표시, 막대의 제목 표시만 한다. 외부 요청 없음. */
 (function () {
   // 테마: studio 가 먼저 붙었으면 건드리지 않는다. 저장 키와 마크업은 studio 와 같다.
   function theme() {
@@ -60,6 +60,17 @@
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(true); });
     document.addEventListener('click', function (e) { if (!d.contains(e.target) || e.target.closest('a')) close(false); });
   }
-  function start() { theme(); menu(); toc(); }
+  // 본문 제목이 막대 위로 지나가면 표시한다.
+  function title() {
+    var t = document.querySelector('.rp-title'), h = document.querySelector('.page > header h1');
+    if (!t || !h || !('IntersectionObserver' in window)) return;
+    var bar = document.querySelector('.rp-tools');
+    var top = bar ? Math.round(bar.getBoundingClientRect().height) : 0;
+    new IntersectionObserver(function (es) {
+      var e = es[0], gone = !e.isIntersecting && e.boundingClientRect.top < top;
+      if (gone) t.setAttribute('data-shown', ''); else t.removeAttribute('data-shown');
+    }, { rootMargin: '-' + top + 'px 0px 0px 0px' }).observe(h);
+  }
+  function start() { theme(); menu(); toc(); title(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start();
 })();
