@@ -31,7 +31,7 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 | 아이디어와 결정 구체화 | [tk-grill](skills/tk-grill/SKILL.md) |
 | 추진 방향과 마일스톤 수립 | [tk-roadmap](skills/tk-roadmap/SKILL.md) |
 | 사용성 개선 및 신규 기능 발굴 | [tk-experience-review](skills/tk-experience-review/SKILL.md) |
-| 장기 자율 작업 시작 또는 전환 | [tk-mission](skills/tk-mission/SKILL.md) |
+| 장기 자율 작업 시작 또는 전환 | [tk-goal](skills/tk-goal/SKILL.md) |
 | 현재 작업을 다른 세션으로 인계 | [tk-handoff](skills/tk-handoff/SKILL.md) |
 
 ### 대표 사용 예시
@@ -48,17 +48,11 @@ using tk-roadmap, 다음 분기의 개선 방향과 우선순위를 정리해 �
 처음부터 장기 작업을 요청하거나 진행 중인 작업을 전환할 수 있습니다.
 
 ```text
-using tk-mission, 목표를 달성하고 실제 검증까지 완료할 때까지 작업해 주세요.
-using tk-mission, 현재 작업을 장기 자율 작업으로 전환해 주세요.
+using tk-goal, 목표를 달성하고 실제 검증까지 완료할 때까지 작업해 주세요.
+using tk-goal, 현재 작업을 장기 자율 작업으로 전환해 주세요.
 ```
 
-`tk-mission`은 필요한 승인과 목표를 확보하고, 전략과 현재 작업 맥락을 보존합니다. 별도 터미널에 Mission Control TUI를 띄워 컨텍스트를 감시하며 검증된 실행 환경에서는 정상적인 세션 교체 후 같은 작업을 이어갑니다. 기존 업무 스킬이 구현, 리뷰와 검증을 계속 담당합니다. Orca는 선택 사항이며 추가 LLM이나 스케줄러는 사용하지 않습니다. 실행 환경의 호환성을 확인하지 못하면 자동 교체를 활성화하지 않습니다. 목표와 승인 범위를 임의로 확대하지 않습니다.
-
-아래는 모의 어댑터를 연결한 실제 터미널 검증에서 캡처한 Mission Control의 화면입니다(임시 경로는 생략했습니다).
-
-![Mission Control의 PTY 테스트 화면](docs/assets/mission-control.svg)
-
-TUI의 전략, 진행 상태, 컨텍스트와 교체 기록을 확인할 수 있습니다. `tk-mission --status`로 현재 상태를 읽고 `tk-mission --stop`으로 이후 자동 교체를 중단할 수 있습니다. 자세한 조건은 [Mission 설정](skills/tk-mission/references/setup.md)을 참고합니다.
+`tk-goal`은 필수 리서치와 심층 인터뷰로 목표·단계별 성공 기준·자율 결정 범위를 확정합니다. 메인 세션은 작업을 위임하고 독립 검증에 따라 전략을 갱신하며 전체 목표 달성까지 반복합니다. 컨텍스트 보호나 중단 시 장부와 인수인계를 보존하고 새 세션에서 `tk-goal --resume <run-id>`로 재개합니다. 별도 런타임이나 자동 세션 교체는 제공하지 않습니다. `--status`, `--pause`, `--stop`도 지원합니다. 자세한 조건은 [장부와 재개](skills/tk-goal/references/ledger.md)를 참고합니다.
 
 ## 스킬 구성
 
@@ -129,7 +123,7 @@ TUI의 전략, 진행 상태, 컨텍스트와 교체 기록을 확인할 수 있
 | [tk-grooming](skills/tk-grooming/SKILL.md) | `hybrid` | 스킬·지속 규칙을 감사하고 최근 7일의 관련 런타임 기록을 진단합니다. |
 | [tk-skill-vet](skills/tk-skill-vet/SKILL.md) | `hybrid` | 외부 스킬의 설치 전 보안 위험과 업데이트 동작을 정적으로 검토합니다. |
 | [tk-handoff](skills/tk-handoff/SKILL.md) | `hybrid` | 세션 현황을 확인하고 일반 또는 장기 작업 인계를 작성하고 복원합니다. |
-| [tk-mission](skills/tk-mission/SKILL.md) | `user` | 장기 작업의 전략, 컨텍스트 감시 및 세션 교체 환경을 구성합니다. |
+| [tk-goal](skills/tk-goal/SKILL.md) | `user` | 목표를 조사·인터뷰하고 단계별 검증과 재계획으로 달성합니다. |
 | [tk-route-mode](skills/tk-route-mode/SKILL.md) | `user` | 위임 티어별 기본/절약 모드를 설정하고 승인된 호스트 설정을 적용, 검증 및 복원합니다. |
 | [tk-setup-skills](skills/tk-setup-skills/SKILL.md) | `user` | 필요한 스킬과 공통 의존성의 설치·설정을 지원합니다. |
 | [tk-wizard](skills/tk-wizard/SKILL.md) | `hybrid` | 설정·인증·이관을 대화나 일회성 Bash Wizard로 안내합니다. |

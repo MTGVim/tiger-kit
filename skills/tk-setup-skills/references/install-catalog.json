@@ -87,6 +87,7 @@
     "tk-engineering": {
       "requires": [
         "tk-artifacts",
+        "tk-handoff",
         "tk-pr-guidance",
         "tk-writing"
       ]
@@ -105,6 +106,19 @@
         "tk-engineering",
         "tk-illustrate",
         "tk-questioning",
+        "tk-writing"
+      ]
+    },
+    "tk-goal": {
+      "requires": [
+        "tk-artifacts",
+        "tk-engineering",
+        "tk-grill",
+        "tk-handoff",
+        "tk-prep",
+        "tk-questioning",
+        "tk-research",
+        "tk-roadmap",
         "tk-writing"
       ]
     },
@@ -148,16 +162,6 @@
       "requires": [
         "tk-artifacts",
         "tk-questioning",
-        "tk-writing"
-      ]
-    },
-    "tk-mission": {
-      "requires": [
-        "tk-artifacts",
-        "tk-handoff",
-        "tk-prep",
-        "tk-questioning",
-        "tk-roadmap",
         "tk-writing"
       ]
     },
