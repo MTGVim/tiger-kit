@@ -1,8 +1,8 @@
 ---
 name: tk-route-mode
-description: "[user] 위임 능력 티어별 모델과 effort의 기본 및 절약 모드를 확인·전환하거나 사용자 모드를 추가하고, 현재 호스트의 사용자 수준 에이전트 설정을 승인받아 적용·검증·복원할 때 사용합니다. 개별 작업의 티어 선택이나 메인 세션 모델 변경에는 사용하지 않습니다."
+description: "[user] 위임 능력 티어별 모델과 effort의 기본 및 절약 모드를 확인·전환하거나 사용자 모드를 추가·갱신하고, 현재 호스트의 사용자 수준 에이전트 설정을 승인받아 적용·검증·복원할 때 사용합니다. 개별 작업의 티어 선택이나 메인 세션 모델 변경에는 사용하지 않습니다."
 disable-model-invocation: true
-argument-hint: "[status | use <mode> | add <mode> | apply | verify | rollback | derive | rule on/off/status]"
+argument-hint: "[help | status | use <mode> | add <mode> | update <mode> | apply | verify | rollback | derive | rule on/off/status]"
 metadata:
   tigerkit:
     kind: user-invoked
@@ -34,19 +34,23 @@ metadata:
 
 ```bash
 python3 scripts/route_mode.py path
+python3 scripts/route_mode.py --help
 python3 scripts/route_mode.py list
 python3 scripts/route_mode.py validate
 python3 scripts/route_mode.py plan --provider anthropic --mode economy
 python3 scripts/route_mode.py use economy
 python3 scripts/route_mode.py add review-heavy --extends economy --set anthropic.standard=sonnet:high
+python3 scripts/route_mode.py update economy --set anthropic.standard=sonnet:high
 python3 scripts/route_mode.py derive
 python3 scripts/route_mode.py derive --save
 ```
 
-path, list, validate, plan, derive(저장 옵션 없음)는 읽기 전용입니다. use, add, derive --save와 rule on/off는 쓰기 명령이므로 정확한 목적지와 변경 계획에 대한 사용자 승인 후에만 실행합니다. 도우미는 호스트 설정을 자동 변경하지 않습니다. 검사가 실패하면 대응표를 저장하지 않습니다.
+path, list, validate, plan, derive(저장 옵션 없음)는 읽기 전용입니다. use, add, update, derive --save와 rule on/off는 쓰기 명령이므로 정확한 목적지와 변경 계획에 대한 사용자 승인 후에만 실행합니다. 도우미는 호스트 설정을 자동 변경하지 않습니다. 검사가 실패하면 대응표를 저장하지 않습니다.
 
 ## 요청별 절차
 
+- help: `--help` 출력과 `list`의 현재 활성 모드를 함께 보여 줍니다.
+- update: 기존 모드의 칸 변경입니다. `--set provider.tier=model:effort`, `--unset provider.tier`, `--description`으로 변경할 칸과 설명만 지정합니다. 저장 전 기존 값과 변경 대상, 백업 및 검증을 확인합니다. 활성 모드 또는 상속 관계로 활성 대응표가 달라지면 호스트 적용까지 하나의 계획으로 승인받습니다. 명시적 override는 derive --save에서 보존하며 unset은 도출 또는 상속 기본값으로 복원합니다.
 - status: list와 plan으로 현재 모드, 호스트의 목표 대응표, 기존 적용 기록과 실제 확인 상태를 보여 줍니다. 파일 존재만으로 적용 성공을 주장하지 않습니다.
 - use: 먼저 plan --mode로 목표를 조회하고 대응표와 호스트 설정 변경을 하나의 승인 계획에 포함합니다. 승인 후 모드를 저장하고 호스트 적용 절차를 실행합니다.
 - add: 바탕 모드와 변경할 칸을 결정합니다. [선정 원칙](references/selection.md)에 따라 경계선 밖 칸의 대안과 미확인 벤치마크를 표시합니다. 사용자가 선택한 칸과 목적지를 승인받은 후 저장합니다. 활성 모드는 별도 승인 없이 바꾸지 않습니다.
@@ -58,7 +62,7 @@ path, list, validate, plan, derive(저장 옵션 없음)는 읽기 전용입니�
 1. 공급자마다 티어별 모델과 effort에 대응하는 작업당 비용(USD), 종합 점수를 같은 측정의 원본에서 수집합니다. 기본 조사처는 Artificial Analysis Intelligence Index입니다. 코딩 작업에는 Terminal-Bench 등 코드 벤치마크의 근거도 비교합니다.
 2. 대응표와 같은 디렉터리의 benchmarks.json에 [번들 형식](references/benchmarks.json)을 사용해 출처 URL, 조회 날짜, 공급자별 모델 별칭과 값을 저장할 계획을 만듭니다. 원본에서 확인하지 못한 값은 추정하여 채우지 않습니다. 승인 후 사용자 벤치마크를 저장합니다.
 3. derive로 두 모드의 후보를 도출합니다. [선정 원칙](references/selection.md)의 규칙에 따라 현재 값과 차이, 비용 및 점수, 코딩 벤치마크와의 불일치를 보고합니다. 번들 데이터는 사용자 제공 세션의 재구성값이며 원본 수치 대조는 unverified입니다.
-4. 승인 후 derive --save로 저장합니다. 사용자 추가 모드는 보존하며 현재 모드의 목표가 달라지면 승인받은 적용 절차를 수행합니다.
+4. 승인 후 derive --save로 저장합니다. 사용자 추가 모드와 update로 기록된 override는 보존하며 현재 모드의 목표가 달라지면 승인받은 적용 절차를 수행합니다.
 
 ## 호스트 적용
 

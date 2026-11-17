@@ -4,7 +4,7 @@
   "tiers": {
     "light": "좁은 사실 수집, 탐색·분류, 기계적 검사",
     "standard": "구현, 독립 리뷰",
-    "top": "메인 세션(컨트롤러), 아키텍처, 미지 문제 탐사·연구"
+    "top": "아키텍처, 미지 문제 탐사·연구"
   },
   "efforts": {
     "anthropic": [
@@ -24,7 +24,7 @@
   },
   "modes": {
     "standard": {
-      "description": "기본값. 상위 티어는 경계선 위 칸에서 고르고, 최상위는 medium에서 시작합니다.",
+      "description": "기본값. 상위 티어는 경계선 위 칸에서 고르고, 최상위 위임은 원본 벤치마크 검증 전까지 잠정 medium을 유지합니다.",
       "providers": {
         "anthropic": {
           "light": {
