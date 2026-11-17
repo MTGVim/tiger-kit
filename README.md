@@ -54,6 +54,10 @@ using tk-mission, 현재 작업을 장기 자율 작업으로 전환해 주세�
 
 `tk-mission`은 필요한 승인과 목표를 확보하고, 전략과 현재 작업 맥락을 보존합니다. 별도 터미널에 Mission Control TUI를 띄워 컨텍스트를 감시하며 검증된 실행 환경에서는 정상적인 세션 교체 후 같은 작업을 이어갑니다. 기존 업무 스킬이 구현, 리뷰와 검증을 계속 담당합니다. Orca는 선택 사항이며 추가 LLM이나 스케줄러는 사용하지 않습니다. 실행 환경의 호환성을 확인하지 못하면 자동 교체를 활성화하지 않습니다. 목표와 승인 범위를 임의로 확대하지 않습니다.
 
+아래는 모의 어댑터를 연결한 실제 터미널 검증에서 캡처한 Mission Control의 화면입니다(임시 경로는 생략했습니다).
+
+![Mission Control의 PTY 테스트 화면](docs/assets/mission-control.svg)
+
 TUI의 전략, 진행 상태, 컨텍스트와 교체 기록을 확인할 수 있습니다. `tk-mission --status`로 현재 상태를 읽고 `tk-mission --stop`으로 이후 자동 교체를 중단할 수 있습니다. 자세한 조건은 [Mission 설정](skills/tk-mission/references/setup.md)을 참고합니다.
 
 ## 스킬 구성
