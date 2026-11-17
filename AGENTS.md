@@ -2,7 +2,7 @@
 
 ## 제품과 소유권
 
-TigerKit은 조합 가능한 Agent Skills 저장소입니다. workflow runner, plugin, scheduler, shared-state framework를 만들지 않습니다.
+TigerKit은 조합 가능한 Agent Skills 저장소입니다. 범용 workflow runner, plugin, scheduler, shared-state framework를 만들지 않습니다. 명시적으로 호출한 `tk-mission`은 예외로 허용합니다. 같은 승인된 작업의 세션 교체만 관리하는 워크트리별 foreground 컨트롤러, TUI와 최소한의 복구 상태를 소유합니다. 추가 LLM, 전역 스케줄러, 자동 업무 배정 및 승인 확대는 허용하지 않습니다.
 
 - `skills/tk-*/SKILL.md`가 현재 동작·권한·완료 조건의 정본입니다. `references/`는 조건부 지식, `scripts/`는 실제 실행 도우미, `assets/`는 표현 자원입니다.
 - 공통 기준과 자원은 해당 참조 전용 스킬에 한 번 둡니다. HTML 공통 자원·도우미는 `tk-writing`, 검증 registry·설정 도우미는 `tk-verification-guidance`가 소유합니다. 업무 스킬은 필요한 조건에서만 읽고, 설치 의존성은 각 `dependencies.json`에 명시합니다. [ADR 0004](docs/adr/0004-shared-reference-skills.md)를 따릅니다.
@@ -33,6 +33,7 @@ TigerKit은 조합 가능한 Agent Skills 저장소입니다. workflow runner, p
 
 ## 산출물과 비밀
 
+- `tk-mission`의 실행 상태 및 요청별 전략·인계는 [전용 실행 경로](skills/tk-artifacts/references/artifact-paths.md#mission-state)에 보존할 수 있습니다. 이 좁은 예외는 일반 산출물이나 다른 작업의 상태 저장소에 적용하지 않습니다.
 - 저장소 귀속 임시 실행 파일은 `.tigerkit/tmp/<skill>/<run-id>/`, 검증 근거는 `.tigerkit/evidence/<skill>/<run-id>/`에 둡니다. 설명과 조사는 해당 소유 스킬의 durable-root/default 정책을 따르며 기존 학습 공간과 명시한 최종 목적지를 보존합니다.
 - 쓰기 전 저장소·소유권·nonsymlink 경계와 Git 제외를 확인합니다. `git ls-files -- .tigerkit/`에 추적 파일이 없어야 하며 `git check-ignore -q -- .tigerkit/`가 성공해야 합니다. Git의 최종 판정이 정본이며 전역 exclude도 유효합니다.
 - 제외가 없을 때만 안전한 루트 `.gitignore`에 기존 바이트/줄바꿈을 보존해 `/.tigerkit/`를 추가하고 재확인합니다. 실패·추적 파일·안전하지 않은 경로는 파일 분기만 중단하며 자동 untrack이나 다른 임시 경로로 우회하지 않습니다. 설정만을 위한 stage/commit은 하지 않습니다.
@@ -48,7 +49,7 @@ TigerKit은 조합 가능한 Agent Skills 저장소입니다. workflow runner, p
 - 이 저장소는 상시 테스트 suite, eval catalog, 문구 잠금 검사나 릴리즈 비교 framework를 유지하지 않습니다. 필요한 검증은 변경한 실제 기능·설치 경계에 맞추어 실행하고 근거를 ignored evidence에 둡니다. 삭제된 검증 코드는 Git 이력에 남습니다.
 - 이 결정은 업무 스킬이 다른 프로젝트에서 적용하는 TDD·리뷰·검증 의무를 완화하지 않습니다. 계속 배포할 실행 코드의 실제 실패 조건을 확인하고, 실행하지 못한 것은 `Unverifiable`로 보고합니다.
 - 일반 작업과 릴리스 검증에는 CI를 사용하지 않습니다. 2026-11-08 승인한 Dependabot 보안 PR에 한해 전용 검증과 patch 자동 병합을 허용합니다. 일반 PR·수동 발행의 로컬 검증 의무는 유지합니다.
-- `main` 반영 전 필수 확인과 실행 명령은 [릴리즈 체크리스트](RELEASE_CHECKLIST.md)를 따릅니다. README는 소개·설치·짧은 카탈로그만 소유합니다.
+- `main` 반영 전 필수 확인과 실행 명령은 [릴리즈 체크리스트](RELEASE_CHECKLIST.md)를 따릅니다. README는 소개, 설치, 사용자 진입점과 대표 워크플로 및 짧은 카탈로그를 소유합니다.
 
 🤖 본 지침는 AI가 작성했습니다.
 

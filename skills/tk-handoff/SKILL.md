@@ -2,7 +2,7 @@
 name: tk-handoff
 description: "[user/auto] 현재 세션 현황을 짧게 확인하거나, 다른 세션에 인계할 자료를 만들거나 기존 인수인계를 명시적으로 재개할 때 사용합니다. 일반 문서 요약이나 평범한 계속하기에는 적용하지 않습니다."
 disable-model-invocation: false
-argument-hint: "[current status | goal or target] [--output <path>|--resume]"
+argument-hint: "[current status | goal or target] [--output <path>|--resume [<path>]] [--strategy <path>]"
 metadata:
   tigerkit:
     kind: hybrid
@@ -58,6 +58,7 @@ UI 문구·경로를 인용·검증·전달할 때 [UI 근거](../tk-ui-evidence
 
 - `.tigerkit/seed.md`: 무엇을, 왜, 어떤 조건에서 해야 하는지 정의하는 작업 계약입니다.
 - `.tigerkit/handoff.md`: 수행한 작업과 현재 상태를 기록하는 진행 `snapshot`입니다.
+- 장기 작업에 한해 `strategy.md`는 전체 전략, 판단 이유, 단계별 상태 및 이후 후보를 보존합니다. 명시적인 장기 인계나 `--strategy <path>` 또는 등록된 Mission 인계에서는 [장기 전략](references/strategy.md)을 읽습니다. 일반적인 인계에는 추가하지 않습니다.
 
 현재 작업의 Seed가 있으면 계약을 복사하지 말고 참조합니다. 정당한 direct/no-Seed 작업은 Seed를 만들 필요가 없습니다. 다른 세션에서 이해할 수 있도록 최소 목표, 범위·제외 사항, AC와 확인된 승인 경계를 Handoff 자체에 기록합니다.
 
@@ -77,7 +78,7 @@ UI 문구·경로를 인용·검증·전달할 때 [UI 근거](../tk-ui-evidence
 관찰한 사실만 `verified`로, 사용자와 확인한 결정만 `confirmed`로 표시합니다.
 실행하지 않은 명령, 이전 주장과 모델의 추론은 `unverified`입니다.
 
-기본 경로는 `.tigerkit/handoff.md`입니다. 같은 디렉터리의 임시 파일에 작성하고, 대상을 원자적으로 교체한 뒤 다시 읽습니다.
+기본 경로는 `.tigerkit/handoff.md`입니다. 같은 디렉터리의 임시 파일에 작성하고, 대상을 원자적으로 교체한 뒤 다시 읽습니다. `--output <path>`가 있으면 그 정확한 경로를 사용합니다. `--resume <path>`는 명시한 Handoff를 읽으며 인수가 없는 기존 `--resume`은 기본 경로를 사용합니다. 전략이 있는 경우 `Strategy: <exact absolute path>`를 추가하고 재개 때 함께 읽습니다.
 산출물을 만드는 것 자체는 제품, Git이나 원격 상태를 변경할 권한을 부여하지 않습니다.
 
 Handoff에는 적어도 다음 의미를 보존합니다.
@@ -124,7 +125,7 @@ Seed가 있는 작업은 정확한 계약 절·경로를 참조합니다. direct
 
 재개할 때는 완료한 작업, 남은 작업, 차단 요인과 바로 다음 행동을 사람이 이해하기 쉽게 설명합니다.
 
-`.tigerkit/`을 보관소, 현재 항목 pointer나 전역 상태로 사용하지 않습니다.
+`.tigerkit/`을 보관소, 현재 항목 pointer나 전역 상태로 사용하지 않습니다. `tk-mission`의 명시적인 작업별 실행 디렉터리에 한해 전략과 요청별 인계를 보존할 수 있습니다. 해당 디렉터리는 [산출물 경로](../tk-artifacts/references/artifact-paths.md#mission-state)의 전용 경계를 따릅니다.
 ignore 수정은 산출물 경로 설정으로 제한하고, 자동으로 commit하거나 발행하지 않습니다.
 
 <a id="artifact-paths"></a>
