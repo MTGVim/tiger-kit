@@ -315,7 +315,12 @@ def main(argv=None):
     ap = argparse.ArgumentParser(prog="route_mode", formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="예시:\n  route_mode list\n  route_mode plan --provider anthropic\n  route_mode update economy --set anthropic.standard=sonnet:high\n  route_mode derive --save")
     ap.add_argument("--config", help="대응표 경로 (기본: $ROUTE_MODE_CONFIG 또는 ~/.config/route-mode/modes.json)")
-    sub = ap.add_subparsers(dest="cmd", required=True)
+    ap.add_argument("--bench", help="비교할 벤치마크 후보 파일 경로")
+    sub = ap.add_subparsers(dest="cmd")
+    status = sub.add_parser("status", help="활성 모드와 목표 대응표 확인 (읽기 전용)")
+    status.add_argument("--provider")
+    status.add_argument("--host")
+    status.add_argument("--rule-file")
     sub.add_parser("path", help="대응표 경로 확인")
     sub.add_parser("validate", help="대응표 검사")
     p = sub.add_parser("plan", help="공급자별 목표 대응표 확인")
@@ -342,6 +347,9 @@ def main(argv=None):
     r.add_argument("--host", default="unknown", help="적용 기록 이름 (예: claude-code)")
     r.add_argument("--prefix", default="tier-", help="위임 대상 이름 접두어 (Hermes 선택지는 빈 문자열)")
     args = ap.parse_args(argv)
+    if args.cmd is None:
+        args.cmd = "status"
+        args.provider = args.host = args.rule_file = None
 
     if args.cmd == "rule":
         try:
@@ -352,7 +360,7 @@ def main(argv=None):
         return 0
 
     data = load(args.config)
-    bp = bench_path(args.config)
+    bp = safe_path(args.bench) if args.bench else bench_path(args.config)
     bench = read_json(bp) if bp.exists() else None
 
     if args.cmd == "derive":
@@ -391,7 +399,29 @@ def main(argv=None):
             print("saved", save(new, args.config))
         return 0
 
-    if args.cmd == "path":
+    if args.cmd == "status":
+        print(f"active: {data['active']}")
+        errors, warnings = validate(data, bench)
+        print("mapping:", "invalid" if errors else "valid")
+        for message in errors + warnings:
+            print(message)
+        if errors:
+            return 1
+        providers = resolve(data, data["active"])
+        for provider in ([args.provider] if args.provider else providers):
+            print(f"\nprovider: {provider}\n{plan(data, data['active'], provider)}")
+        if args.host:
+            if not re.fullmatch(r"[a-zA-Z0-9_-]+", args.host):
+                raise ValueError("잘못된 호스트 이름")
+            record = safe_path(safe_path(args.config or config_path()).parent / "applied" / f"{args.host}.json")
+            print("application record:", "present" if record.exists() else "absent")
+        if args.rule_file:
+            print("managed rule marker:", rule_apply(args.rule_file, "status", args.host or "unknown"))
+        print("profile files: unverified\nprofile load: unverified\nselection rule: unverified")
+        for tier in TIERS:
+            print(f"{tier} effective model/effort: unverified")
+        return 0
+    elif args.cmd == "path":
         p = Path(args.config) if args.config else config_path()
         print(f"{p} ({'있음' if p.exists() else '없음, 기본 대응표 사용'})")
     elif args.cmd == "list":
@@ -439,7 +469,7 @@ def main(argv=None):
             for e in errors:
                 print("ERROR", e)
             return 1
-        if args.cmd == "update":
+        if args.cmd in ("use", "add", "update"):
             backup_config(args.config)
         print("saved", save(new, args.config))
     return 0
