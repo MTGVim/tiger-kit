@@ -34,6 +34,8 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 | 장기 자율 작업 시작 또는 전환 | [tk-goal](skills/tk-goal/SKILL.md) |
 | 현재 작업을 다른 세션으로 인계 | [tk-handoff](skills/tk-handoff/SKILL.md) |
 
+스킬 호출에서 명령과 옵션은 `foo` 형태의 키워드를 사용합니다. 실제 CLI 명령의 플래그는 변경하지 않습니다.
+
 ### 대표 사용 예시
 
 ```text
@@ -52,7 +54,11 @@ using tk-goal, 목표를 달성하고 실제 검증까지 완료할 때까지 �
 using tk-goal, 현재 작업을 장기 자율 작업으로 전환해 주세요.
 ```
 
-`tk-goal`은 필수 리서치와 심층 인터뷰로 목표·단계별 성공 기준·자율 결정 범위를 확정합니다. 메인 세션은 작업을 위임하고 독립 검증에 따라 전략을 갱신하며 전체 목표 달성까지 반복합니다. 컨텍스트 보호나 중단 시 장부와 인수인계를 보존하고 새 세션에서 `tk-goal --resume <run-id>`로 재개합니다. 별도 런타임이나 자동 세션 교체는 제공하지 않습니다. `--status`, `--pause`, `--stop`도 지원합니다. 자세한 조건은 [장부와 재개](skills/tk-goal/references/ledger.md)를 참고합니다.
+`tk-goal`은 필수 리서치와 심층 인터뷰로 목표·단계별 성공 기준·자율 결정 범위를 확정합니다. 메인 세션은 작업을 위임하고 독립 검증에 따라 전략을 갱신하며 전체 목표 달성까지 반복합니다. 컨텍스트 보호나 중단 시 장부와 인수인계를 보존하고 새 세션에서 `tk-goal resume <run-id>`로 재개합니다. 별도 런타임이나 자동 세션 교체는 제공하지 않습니다. `status`, `pause`, `stop`도 지원합니다. 자세한 조건은 [장부와 재개](skills/tk-goal/references/ledger.md)를 참고합니다.
+
+### 위임 모드
+
+`tk-route-mode`는 인자 없이 상태를 확인합니다. `tk-route-mode standard`와 `tk-route-mode economy`는 승인된 프로필과 위임 규칙을 함께 적용·검증하며, `tk-route-mode update`는 최신 벤치마크 기반 후보를 비교한 뒤 승인받아 갱신합니다.
 
 ## 스킬 구성
 

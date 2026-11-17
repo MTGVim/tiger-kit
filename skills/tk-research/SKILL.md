@@ -2,7 +2,7 @@
 name: tk-research
 description: "[user/auto] 외부 선행 사례·접근법 비교, 스킬·워크플로 증류 제안, 지속 연구와 재개에 사용합니다. 배경·근거·한계를 대화로 보고하며 HTML 등 산출물은 요청한 경우에 만듭니다. 스킬 정본 수정이나 제품 구현은 담당하지 않습니다."
 disable-model-invocation: false
-argument-hint: "[--resume] <research goal or decision> [constraints] [save <path>]"
+argument-hint: "[resume] <research goal or decision> [constraints] [save <path>]"
 metadata:
   tigerkit:
     kind: hybrid
@@ -14,6 +14,8 @@ metadata:
 
 이 스킬에서 질문·메시지·설명·보고서·Markdown·HTML·대본·자막·문서·스킬 본문 등 사람이 읽는 텍스트를 **새로 작성하거나 의미·표현을 수정하기 전에**, 설치된 `tk-writing`의 [모든 저작의 공통 관문](../tk-writing/references/authoring-gate.md)과 [명확한 글쓰기](../tk-writing/references/clear-writing.md)를 이번 작업에서 읽고 적용합니다. 최종 산출물을 인계하기 전에 같은 기준으로 원고를 검사하고 문제를 수정합니다. 이미 읽은 기준을 반복 로드하거나 별도 재작성 스킬·에이전트·승인 라운드를 추가하지 않습니다. 코드·명령·식별자·기계 판독 형식·인용과 고정 문구는 보호하며, 이 참조로 변경·전송·발행 권한이 생기지 않습니다. 이 스킬이 작성 작업을 수행하지 않는 경우에는 추가 읽기가 필요하지 않습니다.
 <!-- /tigerkit:universal-authoring-gate -->
+
+사용자 호출의 명시적 옵션 위치에서는 `resume`를 사용합니다. 일반 요청 본문이나 경로의 단어를 옵션으로 해석하지 않습니다. 기존 승인과 실행 경계는 그대로 유지합니다.
 
 
 <a id="adaptive-research"></a>
@@ -59,7 +61,7 @@ metadata:
 
 재개, 발전하는 후속 탐색 영역·이력, 중요한 부정적 결과 보존 또는 다음 배치의 근거 재사용 때문에 지속 로컬 상태가 필요할 때만 [지속 연구](references/persistent-research.md)를 사용합니다. 구체적인 연구 요청은 이미 이 범위가 한정된 로컬 상태 전환을 승인합니다. 첫 배치가 지속 연구가 되었다는 이유만으로 멈추고 허가를 묻지 않습니다. 저장 금지·파일 금지라는 명시적 요청은 여전히 우선합니다. benchmark, prototype, replay harness 또는 소스 변경이 실제로 질문을 해결할 때만 실험 작업 공간을 추가합니다. 실험 전에 [실험 규율](references/experiments.md)을 읽고 보호된 평가기, `KEEP | REJECT | INCONCLUSIVE | BLOCKED`, 확대 전 pilot과 비용을 고려한 측정 단계를 보존합니다. 고정된 실험 할당량이나 필수 지표는 적용하지 않습니다.
 
-`$tk-research --resume`은 [상태](references/state.md)와 [영속화](references/persistence.md)를 통해 식별 정보를 검증한 정본 저장 위치를 복원하고, 재개 조건·중요 근거를 갱신하며 후속 탐색을 계속합니다. 유효하게 일치하는 저장 위치가 하나면 자동으로 재개합니다. 프로젝트가 없거나 일치하지 않거나 여러 개면 중요한 선택 하나가 필요하며 기억에서 재구성하지 않습니다. 방향 조정은 식별 정보와 확정된 발견을 보존하고, 다른 목표는 별도 저장 위치를 가집니다. 검증된 소유 상태에만 기존 형식 마이그레이션을 적용하고 재읽기가 성공할 때까지 원본을 보존합니다.
+`$tk-research resume`은 [상태](references/state.md)와 [영속화](references/persistence.md)를 통해 식별 정보를 검증한 정본 저장 위치를 복원하고, 재개 조건·중요 근거를 갱신하며 후속 탐색을 계속합니다. 유효하게 일치하는 저장 위치가 하나면 자동으로 재개합니다. 프로젝트가 없거나 일치하지 않거나 여러 개면 중요한 선택 하나가 필요하며 기억에서 재구성하지 않습니다. 방향 조정은 식별 정보와 확정된 발견을 보존하고, 다른 목표는 별도 저장 위치를 가집니다. 검증된 소유 상태에만 기존 형식 마이그레이션을 적용하고 재읽기가 성공할 때까지 원본을 보존합니다.
 
 구체적인 연구 요청은 이 저장소의 되돌릴 수 있는 로컬 연구 작업을 승인합니다. 여기에는 ignored 상태·보고서, 안전하게 격리된 연구 코드·테스트·fixture·benchmark, 프로젝트 로컬 일회용 의존성, 로컬 명령과 일관된 실행 소유 실험 commit·폐기가 포함됩니다. 모델 선택, 복원된 상태 또는 보고서 내용만으로 권한이 생기지 않습니다. 소스 변경 전에 영속화 절차를 통해 안전한 격리를 확립하고 사용자·저장소의 branch/worktree 제한을 준수합니다. 순수 연구에는 이들이 필요하지 않습니다. 관련 없는 작업을 덮어쓰거나 stash, reset, clean, stage 또는 commit하지 않습니다.
 

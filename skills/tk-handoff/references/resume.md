@@ -1,14 +1,14 @@
 <a id="handoff-resume"></a>
 # 인수인계 재개
 
-명시적인 `--resume`에만 읽습니다. 제품, Git이나 원격 변경을 승인하는 것은 아닙니다.
+명시적인 `resume`에만 읽습니다. 제품, Git이나 원격 변경을 승인하는 것은 아닙니다.
 
-`--resume`은 `handoff snapshot`을 현재 Git 및 파일과 비교하여 작업을 재개하도록 요청합니다. `Goal run:`이 있는 Handoff는 목표 실행 소유자에게 반환하고 `tk-goal --resume <run-id>`를 안내합니다. 일반 Handoff 재개 경로에서 해당 실행의 제품 변경을 시작하지 않습니다.
+`resume`은 `handoff snapshot`을 현재 Git 및 파일과 비교하여 작업을 재개하도록 요청합니다. `Goal run:`이 있는 Handoff는 목표 실행 소유자에게 반환하고 `tk-goal resume <run-id>`를 안내합니다. 일반 Handoff 재개 경로에서 해당 실행의 제품 변경을 시작하지 않습니다.
 
 먼저 다음을 새로 읽습니다.
 
-- 정확한 `handoff`와, 참조되어 있다면 해당 작업에 연결된 Seed를 읽습니다. 그렇지 않으면 독립적인 no-Seed 계약을 읽습니다. 명시한 `--resume <path>`가 있으면 기본 경로로 대체하지 않습니다.
-- Handoff에 `Strategy:`가 있으면 정확한 경로와 [장기 전략](strategy.md)을 읽고 전체 목표, 마일스톤, 판단 이유 및 실패 근거를 복원합니다. 누락·충돌한 전략은 추측으로 재구성하지 않습니다. `Goal run:`이 있으면 정확한 실행의 상태와 권한을 확인하고 `tk-goal --resume <run-id>` 절차에서 재개합니다. 일반 Handoff만으로 목표 실행을 중복 시작하지 않습니다.
+- 정확한 `handoff`와, 참조되어 있다면 해당 작업에 연결된 Seed를 읽습니다. 그렇지 않으면 독립적인 no-Seed 계약을 읽습니다. 명시한 `resume <path>`가 있으면 기본 경로로 대체하지 않습니다.
+- Handoff에 `Strategy:`가 있으면 정확한 경로와 [장기 전략](strategy.md)을 읽고 전체 목표, 마일스톤, 판단 이유 및 실패 근거를 복원합니다. 누락·충돌한 전략은 추측으로 재구성하지 않습니다. `Goal run:`이 있으면 정확한 실행의 상태와 권한을 확인하고 `tk-goal resume <run-id>` 절차에서 재개합니다. 일반 Handoff만으로 목표 실행을 중복 시작하지 않습니다.
 - `branch`/`HEAD`/`worktree`
 - 변경 파일
 - 관련 검증 근거
@@ -31,4 +31,4 @@
 | 충돌 | 양립할 수 없는 근거를 제시하고 `Blocked`로 표시합니다. |
 | 미검증 | 필요한 상태를 확인할 수 없으면 `Unverifiable`로 표시합니다. |
 
-`--resume`은 작업을 계속하도록 승인할 수 있지만, `Seed`의 `goal/scope/decision/AC` 변경 승인이나 원격 발행 권한을 대체하지 않습니다.
+`resume`은 작업을 계속하도록 승인할 수 있지만, `Seed`의 `goal/scope/decision/AC` 변경 승인이나 원격 발행 권한을 대체하지 않습니다.

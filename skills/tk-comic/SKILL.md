@@ -2,7 +2,7 @@
 name: tk-comic
 description: "[user/auto] 기술 개념·검증된 코드 변경을 원본 근거에 맞춘 교육용 만화로 제작해 달라는 명시적 요청에 사용합니다. 일반 설명, 삽화 한 장, HTML, 영상 제작에는 사용하지 않습니다."
 disable-model-invocation: false
-argument-hint: "[topic, source, or prepared directory] [--preset name] [--art name --tone name --layout name] [--pages N] [--prompts-only | --images-only | --regenerate N[,M...]]"
+argument-hint: "[topic, source, or prepared directory] [preset name] [art name tone name layout name] [pages N] [prompts-only | images-only | regenerate N[,M...]]"
 metadata:
   tigerkit:
     kind: hybrid
@@ -14,6 +14,8 @@ metadata:
 
 이 스킬에서 질문·메시지·설명·보고서·Markdown·HTML·대본·자막·문서·스킬 본문 등 사람이 읽는 텍스트를 **새로 작성하거나 의미·표현을 수정하기 전에**, 설치된 `tk-writing`의 [모든 저작의 공통 관문](../tk-writing/references/authoring-gate.md)과 [명확한 글쓰기](../tk-writing/references/clear-writing.md)를 이번 작업에서 읽고 적용합니다. 최종 산출물을 인계하기 전에 같은 기준으로 원고를 검사하고 문제를 수정합니다. 이미 읽은 기준을 반복 로드하거나 별도 재작성 스킬·에이전트·승인 라운드를 추가하지 않습니다. 코드·명령·식별자·기계 판독 형식·인용과 고정 문구는 보호하며, 이 참조로 변경·전송·발행 권한이 생기지 않습니다. 이 스킬이 작성 작업을 수행하지 않는 경우에는 추가 읽기가 필요하지 않습니다.
 <!-- /tigerkit:universal-authoring-gate -->
+
+사용자 호출의 명시적 옵션 위치에는 `preset`, `layout`, `prompts-only`처럼 접두어 없는 키워드를 사용합니다. 일반 요청 본문·경로의 단어는 옵션으로 간주하지 않으며 기존 선택·승인 경계를 유지합니다.
 
 
 <a id="technical-comic"></a>
@@ -32,27 +34,27 @@ metadata:
 옵션을 해석하거나 조합을 추천할 때 [옵션과 조합](references/options.md)을 읽습니다. 선택된 `art`·`tone`·`layout`·`preset`의 참조만 추가로 읽습니다. 일부 실행·재개 요청에만 [부분 제작](references/partial-workflows.md)을 읽습니다.
 
 ```text
-/tk-comic architecture.md --preset ohmsha --layout webtoon --pages 4 --lang ko
-/tk-comic concept.md --art manga --tone warm --layout four-panel --storyboard-only
-/tk-comic ./prepared-comic --regenerate 3
+/tk-comic architecture.md preset ohmsha layout webtoon pages 4 lang ko
+/tk-comic concept.md art manga tone warm layout four-panel storyboard-only
+/tk-comic ./prepared-comic regenerate 3
 ```
 
 ## 제작 흐름
 
 1. **근거 고정:** 출처·revision/시점·독자·교육 목표와 정확한 용어를 확인합니다. 코드 변경에는 확인한 commit/diff와 실행 조건을 연결합니다. 확인되지 않은 동작, 추론과 비유를 사실로 묘사하지 않습니다. 외부에 전달할 최소 내용과 참조 이미지의 사용 권한을 확인하고 비밀·무관한 사용자 파일은 제외합니다.
-2. **콘티 작성:** [만화 구성 및 검사](references/comic-production.md)를 읽고 페이지·패널 ID, 장면·대사·출처·연속성을 명세합니다. 선택된 프리셋의 서사 규칙과 개별 옵션을 반영하되 기존 상업용 캐릭터를 기본값으로 복제하지 않습니다. `--storyboard-only`는 이 단계의 품질 확인 후 전달합니다.
-3. **프롬프트 보존:** [패키지와 결과 계약](references/handoff.md)에 따라 각 페이지와 필요한 캐릭터 시트의 **완전한 독립 프롬프트**를 `prompts/`에 저장하고 확인합니다. 이미지 도구가 없어도 이 단계까지 완료합니다. `--prompts-only`는 검증된 준비물을 전달하고 종료합니다.
+2. **콘티 작성:** [만화 구성 및 검사](references/comic-production.md)를 읽고 페이지·패널 ID, 장면·대사·출처·연속성을 명세합니다. 선택된 프리셋의 서사 규칙과 개별 옵션을 반영하되 기존 상업용 캐릭터를 기본값으로 복제하지 않습니다. `storyboard-only`는 이 단계의 품질 확인 후 전달합니다.
+3. **프롬프트 보존:** [패키지와 결과 계약](references/handoff.md)에 따라 각 페이지와 필요한 캐릭터 시트의 **완전한 독립 프롬프트**를 `prompts/`에 저장하고 확인합니다. 이미지 도구가 없어도 이 단계까지 완료합니다. `prompts-only`는 검증된 준비물을 전달하고 종료합니다.
 4. **기능 확인·생성:** 현재 호스트가 노출한 네이티브 래스터 도구를 우선합니다. 비율, 참조 전달, 결과 파일/이미지 접근, 동시 호출 지원을 실제 도구 계약으로 확인합니다. 필요한 캐릭터 시트를 먼저 검증한 후 종속 페이지를 생성합니다. 지정된 참조를 텍스트 설명으로 조용히 대체하지 않습니다. 사용 가능한 이미지 도구가 없으면 [로컬 이미지 폴백과 분리 식질](../tk-writing/references/local-image-fallback.md)을 읽고 **MOSS 4-step 로컬 폴백 사용(미설치 시 설치 계획부터)**과 **콘티·프롬프트만 전달** 중 선택을 묻습니다. 선택은 설치 승인이 아니며, 이미 확정된 선택은 재사용합니다. 필수 참조·비율을 폴백도 지원하지 못하면 해당 기능은 차단하고 외부 생성용 패키지를 완성합니다.
 5. **검사·복구:** 읽기 크기와 확대 상태에서 실제 픽셀·대사·작은 라벨·기술 관계·페이지 연속성을 대조합니다. 로컬 폴백은 그림에 글자·말풍선을 생성하지 않고 패널별 검증 대사를 그림 밖 별도 영역에 식질합니다. 네이티브 이미지 도구에서는 기존 말풍선 제작을 유지합니다. 근거 있는 그림 오류는 프롬프트를 먼저 수정하고 해당 페이지의 새 후보를 생성하며, 분리한 식질 오류는 원본 그림을 보존하고 조판만 수정합니다. 검증된 기존 후보와 비선택 페이지를 보존합니다. 컷 전체 교체는 만화 구성 참조의 제한을 모두 충족해야 하며 현재 호스트의 이미지 편집 도구 규칙도 따릅니다.
 6. **전달:** 요청된 페이지·준비물을 순서대로 전달하고 패키지의 `README.md`에 적용 옵션, 실제 도구, 프롬프트·이미지 연결, 확인 결과와 남은 한계를 기록합니다. `change` 및 명시적인 검토 요청에는 최종 콘텐츠·근거·실제 이미지에 대한 독립 리뷰를 적용합니다. 필요한 리뷰나 픽셀 검사를 수행할 수 없으면 `Pass`로 보고하지 않습니다.
 
 ## 실패·승인 경계
 
-래스터 제작을 요청받았지만 이미지 도구가 없으면 위 두 경로의 선택을 먼저 묻되, 응답을 기다리며 콘티·최종 프롬프트 준비를 미루지 않습니다. 폴백을 거절했거나 선택·설치 승인이 없거나 실행이 불가능하면 **텍스트 콘티와 최종 프롬프트가 있는 외부 인계 패키지를 완성**합니다. 사용자가 준비물만 전달로 목표를 명시적으로 바꿨으면 `--prompts-only` 결과 계약을 사용합니다. 필수 참조 기능 부재는 폴백으로 조용히 약화하지 않습니다. 실제 래스터가 없으면 `status: Blocked`, 검증된 준비물에는 `preparation: Pass`, `rendering: Blocked`, `deliverable: external-handoff-ready`를 기록합니다. 명시적 준비물 요청과 픽셀을 확인할 수 없는 경우는 [결과 상태](references/handoff.md#결과-상태)로 구분합니다.
+래스터 제작을 요청받았지만 이미지 도구가 없으면 위 두 경로의 선택을 먼저 묻되, 응답을 기다리며 콘티·최종 프롬프트 준비를 미루지 않습니다. 폴백을 거절했거나 선택·설치 승인이 없거나 실행이 불가능하면 **텍스트 콘티와 최종 프롬프트가 있는 외부 인계 패키지를 완성**합니다. 사용자가 준비물만 전달로 목표를 명시적으로 바꿨으면 `prompts-only` 결과 계약을 사용합니다. 필수 참조 기능 부재는 폴백으로 조용히 약화하지 않습니다. 실제 래스터가 없으면 `status: Blocked`, 검증된 준비물에는 `preparation: Pass`, `rendering: Blocked`, `deliverable: external-handoff-ready`를 기록합니다. 명시적 준비물 요청과 픽셀을 확인할 수 없는 경우는 [결과 상태](references/handoff.md#결과-상태)로 구분합니다.
 
 두 경로를 제시하기 전에 SVG 대안을 먼저 묻지 않습니다. 외부 인계를 선택한 뒤 사용자가 시각 콘티도 원할 때만 질문 기준에 따라 **"SVG로 콘티를 그려 드릴까요? 외부 이미지 모델에 참조로 넣을 수 있습니다"**라고 제안합니다. 수락 전에는 SVG를 만들지 않습니다. 수락하여 만들면 `벡터 콘티`로 표시하고 래스터 페이지 완료로 보고하지 않습니다. SVG/HTML/캔버스나 프롬프트만 만든 것을 생성 만화라고 주장하지 않습니다.
 
-기존 승인을 보존하되 설치, 자격 증명, 새로운 비용, 승인 범위 밖의 외부 전송·원격 발행, 사용자 파일 덮어쓰기는 별도 권한 없이 실행하지 않습니다. `--no-confirm`이나 부분 실행 플래그가 이 경계를 바꾸지 않습니다.
+기존 승인을 보존하되 설치, 자격 증명, 새로운 비용, 승인 범위 밖의 외부 전송·원격 발행, 사용자 파일 덮어쓰기는 별도 권한 없이 실행하지 않습니다. `no-confirm`이나 부분 실행 플래그가 이 경계를 바꾸지 않습니다.
 
 ## 산출물
 

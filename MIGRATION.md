@@ -145,7 +145,7 @@ npx skills list --global
 npx skills remove tk-autoresearch tk-discover --global --agent claude-code codex hermes-agent
 ```
 
-새 호출은 `$tk-research <goal>` 또는 `$tk-research --resume`이며 외부 예약에도 `/tk-research --resume`을 사용합니다. 기본 상태는 필요할 때만 `.tigerkit/research/<slug>/state.md`에 만들고 HTML은 같은 홈의 `report.html`에 제공합니다. 기본 `hybrid` 설정·자동 추적 사본·지식 체크포인트 커밋을 제거했습니다. 명시적인 공유 요청만 정제한 지식을 추적 경로로 저장하며 HTML은 실행 정본이 아닙니다.
+새 호출은 `$tk-research <goal>` 또는 `$tk-research resume`이며 외부 예약에도 `/tk-research resume`을 사용합니다. 기본 상태는 필요할 때만 `.tigerkit/research/<slug>/state.md`에 만들고 HTML은 같은 홈의 `report.html`에 제공합니다. 기본 `hybrid` 설정·자동 추적 사본·지식 체크포인트 커밋을 제거했습니다. 명시적인 공유 요청만 정제한 지식을 추적 경로로 저장하며 HTML은 실행 정본이 아닙니다.
 
 기존 `.tigerkit/autoresearch/state.md`는 [이관 계약](skills/tk-research/references/persistence.md#legacy-migration)에 따라 저장소·연구 식별·홈 소유권을 검증한 뒤 실패 근거·실험·출처·전제·질문·현재 탐색 가능 항목·재개 조건·인계 후보와 안정적인 ID를 보존하여 새 로컬 정본으로 옮깁니다. 원자적 저장과 전체 핵심 필드 재확인 성공 전 원본을 삭제하지 않습니다. 성공 후 이전 정본을 역사 자료로 표시하여 중복 재개를 방지합니다. 기존 `local | hybrid | tracked` 설정은 검증하는 이관 입력이며 새 실행 권한이 아닙니다. 알 수 없는 키·모드·버전, 안전하지 않은 경로, 식별 불일치와 여러 소유 후보는 입력을 고치거나 추측하지 않고 중단합니다. 추적 문서·상태 사본은 역사 자료로 보존하며 자동 갱신·삭제하지 않습니다.
 
