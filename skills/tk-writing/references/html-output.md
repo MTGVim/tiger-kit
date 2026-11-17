@@ -4,9 +4,9 @@
 이 계약은 일반 HTML의 정식 작성과 검사 경로이며, 특화된 QA, 갤러리, prototype과 시각적 질문 인터페이스에도 적용합니다.
 `tk-explain`과 `tk-research`는 [렌더러 계약](renderer-contract.md)에서 내용 형태와 표현 선택을 확정한 뒤 일반 HTML에 이 경로를 사용합니다.
 선택한 archify 원본과 receipt는 수정하지 않습니다. 원본과 해당 검사 근거는 근거 폴더에 보존하고,
-전달 폴더에는 공통 테마와 피드백을 적용한 `<stem>.html` 한 벌만 둡니다.
+전달 폴더에는 공통 계약에 따라 피드백 주입본 또는 명시적 제외본 `<stem>.html` 한 벌만 둡니다.
 사람에게 HTML을 전달하기 전에는 [렌더러 계약](renderer-contract.md)의 공통 후처리와
-[피드백 studio](feedback-studio.md)를 적용합니다. 영상 플레이어만 같은 공통 자원을 쓰는 자체 목록을 유지합니다.
+[피드백 studio](feedback-studio.md)의 기본 주입 및 명시적 제외 계약을 적용합니다. 영상 플레이어는 같은 공통 자원을 쓰는 자체 목록을 유지합니다.
 
 <a id="frozen-delivery-theme"></a>
 ## 전달 HTML의 고정 토큰
