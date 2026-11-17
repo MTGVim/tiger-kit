@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "requires": [
+    "tk-artifacts",
+    "tk-handoff",
+    "tk-prep",
+    "tk-questioning",
+    "tk-roadmap",
+    "tk-writing"
+  ]
+}
