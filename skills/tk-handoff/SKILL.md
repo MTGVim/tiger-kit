@@ -2,7 +2,7 @@
 name: tk-handoff
 description: "[user/auto] 현재 세션 현황을 짧게 확인하거나, 다른 세션에 인계할 자료를 만들거나 기존 인수인계를 명시적으로 재개할 때 사용합니다. 일반 문서 요약이나 평범한 계속하기에는 적용하지 않습니다."
 disable-model-invocation: false
-argument-hint: "[current status | goal or target] [--output <path>|--resume [<path>]] [--strategy <path>]"
+argument-hint: "[current status | goal or target] [output <path>|resume [<path>]] [strategy <path>]"
 metadata:
   tigerkit:
     kind: hybrid
@@ -14,6 +14,8 @@ metadata:
 
 이 스킬에서 질문·메시지·설명·보고서·Markdown·HTML·대본·자막·문서·스킬 본문 등 사람이 읽는 텍스트를 **새로 작성하거나 의미·표현을 수정하기 전에**, 설치된 `tk-writing`의 [모든 저작의 공통 관문](../tk-writing/references/authoring-gate.md)과 [명확한 글쓰기](../tk-writing/references/clear-writing.md)를 이번 작업에서 읽고 적용합니다. 최종 산출물을 인계하기 전에 같은 기준으로 원고를 검사하고 문제를 수정합니다. 이미 읽은 기준을 반복 로드하거나 별도 재작성 스킬·에이전트·승인 라운드를 추가하지 않습니다. 코드·명령·식별자·기계 판독 형식·인용과 고정 문구는 보호하며, 이 참조로 변경·전송·발행 권한이 생기지 않습니다. 이 스킬이 작성 작업을 수행하지 않는 경우에는 추가 읽기가 필요하지 않습니다.
 <!-- /tigerkit:universal-authoring-gate -->
+
+사용자 호출의 명시적 옵션 위치에서는 `output`, `resume`, `strategy`를 사용합니다. 이전 `--output` 등 같은 이름의 `--` 표기도 호환합니다. 일반 요청 본문이나 경로의 단어를 옵션으로 해석하지 않습니다. 기존 승인과 실행 경계는 그대로 유지합니다.
 
 
 <a id="handoff"></a>
@@ -49,7 +51,7 @@ UI 문구·경로를 인용·검증·전달할 때 [UI 근거](../tk-ui-evidence
 [대화만으로 현황 파악하기](references/orientation.md)를 읽고 간결한 요약을 반환한 뒤,
 산출물을 작성하거나 작업을 재개하지 않고 해당 턴을 끝냅니다. 이 보고 경계는 기존 승인을 철회하지
 않습니다. 이후 재개 지시가 있으면 그 승인을 재사용할 수 있습니다. 명시적인 인수인계 생성 요청이면
-아래 산출물 workflow를 계속합니다. `--resume`이면 작성·재개 체크포인트 이후
+아래 산출물 workflow를 계속합니다. `resume`이면 작성·재개 체크포인트 이후
 [재개와 변동 분류](references/resume.md)를 읽고 최신 상태를 검증한 다음 계속합니다.
 일반적인 문서 요약이나 평범한 “계속” 요청은 어느 분기도 선택하지 않습니다. 상태 요약을 위해
 지속 보존할 인수인계를 만들거나, 내용을 채우려고 다른 세션이나 원격 PR을 조회하지 않습니다.
@@ -58,7 +60,7 @@ UI 문구·경로를 인용·검증·전달할 때 [UI 근거](../tk-ui-evidence
 
 - `.tigerkit/seed.md`: 무엇을, 왜, 어떤 조건에서 해야 하는지 정의하는 작업 계약입니다.
 - `.tigerkit/handoff.md`: 수행한 작업과 현재 상태를 기록하는 진행 `snapshot`입니다.
-- 장기 작업에 한해 `strategy.md`는 전체 전략, 판단 이유, 단계별 상태 및 이후 후보를 보존합니다. 명시적인 장기 인계나 `--strategy <path>` 또는 활성 목표 실행 인계에서는 [장기 전략](references/strategy.md)을 읽습니다. 일반적인 인계에는 추가하지 않습니다.
+- 장기 작업에 한해 `strategy.md`는 전체 전략, 판단 이유, 단계별 상태 및 이후 후보를 보존합니다. 명시적인 장기 인계나 `strategy <path>` 또는 활성 목표 실행 인계에서는 [장기 전략](references/strategy.md)을 읽습니다. 일반적인 인계에는 추가하지 않습니다.
 
 현재 작업의 Seed가 있으면 계약을 복사하지 말고 참조합니다. 정당한 direct/no-Seed 작업은 Seed를 만들 필요가 없습니다. 다른 세션에서 이해할 수 있도록 최소 목표, 범위·제외 사항, AC와 확인된 승인 경계를 Handoff 자체에 기록합니다.
 
@@ -78,7 +80,7 @@ UI 문구·경로를 인용·검증·전달할 때 [UI 근거](../tk-ui-evidence
 관찰한 사실만 `verified`로, 사용자와 확인한 결정만 `confirmed`로 표시합니다.
 실행하지 않은 명령, 이전 주장과 모델의 추론은 `unverified`입니다.
 
-기본 경로는 `.tigerkit/handoff.md`입니다. 같은 디렉터리의 임시 파일에 작성하고, 대상을 원자적으로 교체한 뒤 다시 읽습니다. `--output <path>`가 있으면 그 정확한 경로를 사용합니다. `--resume <path>`는 명시한 Handoff를 읽으며 인수가 없는 기존 `--resume`은 기본 경로를 사용합니다. 전략이 있는 경우 `Strategy: <exact absolute path>`를 추가하고 재개 때 함께 읽습니다.
+기본 경로는 `.tigerkit/handoff.md`입니다. 같은 디렉터리의 임시 파일에 작성하고, 대상을 원자적으로 교체한 뒤 다시 읽습니다. `output <path>`가 있으면 그 정확한 경로를 사용합니다. `resume <path>`는 명시한 Handoff를 읽으며 인수가 없는 기존 `resume`은 기본 경로를 사용합니다. 전략이 있는 경우 `Strategy: <exact absolute path>`를 추가하고 재개 때 함께 읽습니다.
 산출물을 만드는 것 자체는 제품, Git이나 원격 상태를 변경할 권한을 부여하지 않습니다.
 
 Handoff에는 적어도 다음 의미를 보존합니다.
@@ -109,11 +111,11 @@ Seed가 있는 작업은 정확한 계약 절·경로를 참조합니다. direct
 <a id="-checkpoint---stop--writeresume-boundary"></a>
 ## 🔴 CHECKPOINT · 🛑 STOP · 작성·재개 경계
 
-새 `Handoff`를 작성하거나 `--resume`을 계속하기 전에 다음을 확인합니다.
+새 `Handoff`를 작성하거나 `resume`을 계속하기 전에 다음을 확인합니다.
 
 - branch, HEAD, worktree와 필요한 근거를 새로 읽습니다. 새 Handoff가 미리 존재할 필요는 없으며, 선택적인 Seed가 없는 것도 정당할 수 있습니다. 재개할 때는 참조한 Handoff와 작업에 연결된 Seed를 읽을 수 있어야 합니다. 필요한 산출물이 없거나 읽을 수 없으면 `Unverifiable`이며, 추측으로 재구성할 권한이 생기는 것은 아닙니다.
 - 근거가 충돌하면 STOP하고 `Blocked`로 표시하며, `Seed` 계약에 변동이 있어도 동일하게 처리합니다. 두 조건 모두 `Handoff` 안에서 해결하지 않습니다.
-- 원자적 교체를 완료할 수 없거나 다시 읽기에 실패하면 작성 전에 STOP합니다. 기본적으로 `.tigerkit/handoff.md`를 사용하고, 명시적인 `--output <path>`를 정확히 따릅니다.
+- 원자적 교체를 완료할 수 없거나 다시 읽기에 실패하면 작성 전에 STOP합니다. 기본적으로 `.tigerkit/handoff.md`를 사용하고, 명시적인 `output <path>`를 정확히 따릅니다.
 - 제품, Git이나 원격 발행의 승인 경계에서는 STOP합니다. 산출물은 해당 권한을 부여하지 않습니다.
 - 위 조건에 해당하지 않으면 일상적인 산출물 갱신에 추가 질문을 하지 않고 계속합니다.
 
@@ -125,7 +127,7 @@ Seed가 있는 작업은 정확한 계약 절·경로를 참조합니다. direct
 
 재개할 때는 완료한 작업, 남은 작업, 차단 요인과 바로 다음 행동을 사람이 이해하기 쉽게 설명합니다.
 
-`.tigerkit/`을 보관소, 현재 항목 pointer나 전역 상태로 사용하지 않습니다. `tk-goal`의 명시적인 작업별 실행 디렉터리에 한해 목표 장부와 인계를 보존할 수 있습니다. 해당 디렉터리는 [산출물 경로](../tk-artifacts/references/artifact-paths.md#goal-state)의 전용 경계를 따릅니다. 목표 실행 인계에는 정확한 `Goal run:` 경로를 보존하며 재개는 `tk-goal --resume <run-id>`가 담당합니다. 컨텍스트 보호로 자동 인계하는 경우에도 같은 실제 상태 확인과 원자적 저장·재독 후 턴을 종료합니다.
+`.tigerkit/`을 보관소, 현재 항목 pointer나 전역 상태로 사용하지 않습니다. `tk-goal`의 명시적인 작업별 실행 디렉터리에 한해 목표 장부와 인계를 보존할 수 있습니다. 해당 디렉터리는 [산출물 경로](../tk-artifacts/references/artifact-paths.md#goal-state)의 전용 경계를 따릅니다. 목표 실행 인계에는 정확한 `Goal run:` 경로를 보존하며 재개는 `tk-goal resume <run-id>`가 담당합니다. 컨텍스트 보호로 자동 인계하는 경우에도 같은 실제 상태 확인과 원자적 저장·재독 후 턴을 종료합니다.
 ignore 수정은 산출물 경로 설정으로 제한하고, 자동으로 commit하거나 발행하지 않습니다.
 
 <a id="artifact-paths"></a>

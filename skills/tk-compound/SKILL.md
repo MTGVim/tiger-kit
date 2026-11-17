@@ -2,7 +2,7 @@
 name: tk-compound
 description: "[user] 여러 완료 PR과 관련 세션 이력에 나타난 반복 문제와 재발 방지 기회를 분석하는 명시 호출 전용 읽기 전용 회고입니다. 단일 PR 리뷰·세션 회고·일반 구현 완료에 자동 연결하지 않습니다."
 license: MIT
-argument-hint: "[--since 30d] [--focus testing|review|...] [PRs]"
+argument-hint: "[since 30d] [focus testing|review|...] [PRs]"
 disable-model-invocation: true
 metadata:
   tigerkit:
@@ -15,6 +15,8 @@ metadata:
 
 이 스킬에서 질문·메시지·설명·보고서·Markdown·HTML·대본·자막·문서·스킬 본문 등 사람이 읽는 텍스트를 **새로 작성하거나 의미·표현을 수정하기 전에**, 설치된 `tk-writing`의 [모든 저작의 공통 관문](../tk-writing/references/authoring-gate.md)과 [명확한 글쓰기](../tk-writing/references/clear-writing.md)를 이번 작업에서 읽고 적용합니다. 최종 산출물을 인계하기 전에 같은 기준으로 원고를 검사하고 문제를 수정합니다. 이미 읽은 기준을 반복 로드하거나 별도 재작성 스킬·에이전트·승인 라운드를 추가하지 않습니다. 코드·명령·식별자·기계 판독 형식·인용과 고정 문구는 보호하며, 이 참조로 변경·전송·발행 권한이 생기지 않습니다. 이 스킬이 작성 작업을 수행하지 않는 경우에는 추가 읽기가 필요하지 않습니다.
 <!-- /tigerkit:universal-authoring-gate -->
+
+사용자 호출의 명시적 옵션 위치에서는 `since`, `focus`를 사용합니다. 이전 `--since` 등 같은 이름의 `--` 표기도 호환합니다. 일반 요청 본문이나 경로의 단어를 옵션으로 해석하지 않습니다. 기존 승인과 실행 경계는 그대로 유지합니다.
 
 
 <a id="retrospective-repository-diagnosis"></a>
@@ -39,7 +41,7 @@ metadata:
 <a id="scope-and-evidence"></a>
 ## 범위와 근거
 
-`--since <duration-or-date>`는 리뷰 활동 기간을 덮어쓰고, `--focus <area>`는 진단 주제의
+`since <duration-or-date>`는 리뷰 활동 기간을 덮어쓰고, `focus <area>`는 진단 주제의
 범위를 좁힙니다(예: `testing` 또는 `review`). 명시적인 PR은 후보 집합을 제한합니다.
 잘못되거나 상충하는 수식 인수는 확인이 필요합니다.
 

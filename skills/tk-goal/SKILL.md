@@ -2,7 +2,7 @@
 name: tk-goal
 description: "[user] 여러 단계에 걸친 목표를 인터뷰와 근거 조사로 확정하고, 승인된 범위에서 독립 검증과 재계획을 반복하여 달성할 때 사용합니다. 현재 작업 전환, 상태 확인, 일시 중지와 명시적 재개를 지원합니다."
 disable-model-invocation: true
-argument-hint: "[goal | --status | --pause | --resume | --stop] [run-id]"
+argument-hint: "[goal | status | pause | resume | stop] [run-id]"
 metadata:
   tigerkit:
     kind: user-invoked
@@ -15,6 +15,8 @@ metadata:
 이 스킬에서 질문·메시지·설명·보고서·Markdown·HTML·대본·자막·문서·스킬 본문 등 사람이 읽는 텍스트를 **새로 작성하거나 의미·표현을 수정하기 전에**, 설치된 `tk-writing`의 [모든 저작의 공통 관문](../tk-writing/references/authoring-gate.md)과 [명확한 글쓰기](../tk-writing/references/clear-writing.md)를 이번 작업에서 읽고 적용합니다. 최종 산출물을 인계하기 전에 같은 기준으로 원고를 검사하고 문제를 수정합니다. 이미 읽은 기준을 반복 로드하거나 별도 재작성 스킬·에이전트·승인 라운드를 추가하지 않습니다. 코드·명령·식별자·기계 판독 형식·인용과 고정 문구는 보호하며, 이 참조로 변경·전송·발행 권한이 생기지 않습니다. 이 스킬이 작성 작업을 수행하지 않는 경우에는 추가 읽기가 필요하지 않습니다.
 <!-- /tigerkit:universal-authoring-gate -->
 
+사용자 호출의 명시적 옵션 위치에서는 `status`, `pause`, `resume`, `stop`를 사용합니다. 이전 `--status` 등 같은 이름의 `--` 표기도 호환합니다. 일반 요청 본문이나 경로의 단어를 옵션으로 해석하지 않습니다. 기존 승인과 실행 경계는 그대로 유지합니다.
+
 # 목표 기반 자율 실행
 
 명시적인 `/tk-goal`, `$tk-goal` 또는 호스트 선택에서만 시작합니다. 일반 구현을 자동 등록하지 않습니다. 현재 메인 세션은 목표·전략·권한·단계 판정을 담당하는 오케스트레이터입니다. 조사, 상세 계획, 구현, 수정과 독립 평가는 새 컨텍스트의 자식에게 맡깁니다. 별도 런타임, 상주 프로세스, TUI, Orca 또는 자동 세션 교체를 요구하지 않습니다.
@@ -22,8 +24,8 @@ metadata:
 ## 진입과 준비
 
 - 인수가 없는 시작은 현재 작업의 합의된 맥락을 사용합니다. 목표가 없으면 확인합니다.
-- `--status`는 [장부와 재개](references/ledger.md)의 정확한 실행을 읽어 상태·완료 근거·다음 행동을 보고하고 종료합니다. 자료를 수정하거나 실행하지 않습니다.
-- `--pause`, `--resume`, `--stop`은 [장부와 재개](references/ledger.md)의 제어 절차를 따릅니다. 종료된 실행을 자동 재개하지 않습니다.
+- `status`는 [장부와 재개](references/ledger.md)의 정확한 실행을 읽어 상태·완료 근거·다음 행동을 보고하고 종료합니다. 자료를 수정하거나 실행하지 않습니다.
+- `pause`, `resume`, `stop`은 [장부와 재개](references/ledger.md)의 제어 절차를 따릅니다. 종료된 실행을 자동 재개하지 않습니다.
 
 새 목표와 현재 작업 전환 모두 [준비와 인터뷰](references/preparation.md)를 읽고 필수 조사, 심층 인터뷰, 단계별 성공 기준 및 권한 위임을 확보합니다. 이미 합의한 결정은 재사용하고 누락만 보충합니다. 실행 준비와 최초 승인 전에는 제품을 변경하지 않습니다. 계획은 [tk-roadmap 전략 기준](../tk-roadmap/references/strategy-planning.md), 질문은 [tk-questioning](../tk-questioning/references/questions.md), SWE 준비는 [tk-prep](../tk-prep/SKILL.md)를 따릅니다. 설치된 소유자와 자원을 확인하고 누락 시 해당 단계를 차단합니다.
 
@@ -44,4 +46,4 @@ metadata:
 
 ## 종료
 
-`completed`는 전체 목표의 독립 검증이 통과한 경우에만 기록합니다. 결과와 남은 한계를 보고합니다. 일시 중지나 컨텍스트 보호 시 새 세션에서 `/tk-goal --resume <run-id>`를 호출하도록 안내합니다. 자동 세션 실행을 약속하지 않습니다. 최종 사용자 검수와 별도 원격 승인 경계를 유지합니다.
+`completed`는 전체 목표의 독립 검증이 통과한 경우에만 기록합니다. 결과와 남은 한계를 보고합니다. 일시 중지나 컨텍스트 보호 시 새 세션에서 `/tk-goal resume <run-id>`를 호출하도록 안내합니다. 자동 세션 실행을 약속하지 않습니다. 최종 사용자 검수와 별도 원격 승인 경계를 유지합니다.
