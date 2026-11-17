@@ -32,6 +32,8 @@ HEAD를 새로 조회합니다. 정확한 계획과 격리 체크아웃에 대�
 <a id="direct-execution-and-completion"></a>
 ## 직접 실행과 완료
 
+여러 작업 단위를 연속 수행하거나 컨텍스트 압력·일관성 저하가 확인되면 다음 작업의 안전한 경계에서 [컨텍스트 보호](../../tk-engineering/references/context-guard.md)를 적용합니다. 중단 조건에 해당하면 완료를 주장하지 않고 정해진 인계 절차를 따릅니다.
+
 안전한 위임 기능이 있으면 하나의 일관된 direct 작업도 구현과 수정을 단일 worker에게 맡기는 것을 기본으로 합니다. direct는 작업 구조이지 메인 세션의 직접 편집을 강제하는 표시가 아닙니다. 컨트롤러는 사용자 의도·작업 분배·판정에 집중하며 직접 구현은 공통 위임 계약의 예외에서만 수행합니다.
 디스패치 전 [위임 권한](../../tk-engineering/references/delegation-permissions.md), [위임과 독립 평가](../../tk-engineering/references/delegation.md)과 [산출물 전달](../../tk-engineering/references/sdd-transport.md)을 읽습니다.
 같은 시점의 작업 식별자·정확한 workspace·`BASE = git rev-parse HEAD`와 관련 미커밋 변경을 결합해 기록하고 브리프에 넘깁니다.

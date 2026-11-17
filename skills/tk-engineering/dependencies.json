@@ -2,6 +2,7 @@
   "version": 1,
   "requires": [
     "tk-artifacts",
+    "tk-handoff",
     "tk-pr-guidance",
     "tk-writing"
   ]

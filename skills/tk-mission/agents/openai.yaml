@@ -1,6 +1,0 @@
-interface:
-  short_description: "[user] 장기 작업의 전략과 세션 교체를 관리하는 실행 환경을 구성합니다."
-  default_prompt: "$tk-mission 현재 작업을 장기 자율 작업으로 전환해 주세요."
-
-policy:
-  allow_implicit_invocation: false
