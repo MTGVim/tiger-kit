@@ -15,7 +15,8 @@
   :::tiles                    `- 값 | 설명` 줄마다 숫자 타일
   :::decision                 안의 표나 문단을 결정 블록으로 감싼다
   :::note                     조용한 노트
-  :::bars                     caption: 지표와 unit: 단위를 먼저 적고 `- 라벨 | 숫자 | quiet(선택)`을 씁니다
+  :::bars                     caption: 지표와 unit: 단위를 먼저 적고 `- 라벨 | 숫자 | quiet(선택)`을 씁니다.
+                              비율처럼 기준이 따로 있으면 max: 100 을 더해 막대 길이를 그 기준에 맞춘다
   [[figure:이름]]             --figures 폴더의 이름.html 조각을 그 자리에 넣는다
   `코드` **굵게** [글](https://..)  인라인
 """
@@ -134,10 +135,10 @@ def bars(block):
     metadata = {}
     while lines and not lines[0].startswith('- '):
         key, separator, value = lines.pop(0).partition(':')
-        if not separator or key not in ('caption', 'unit') or key in metadata or not value.strip():
-            raise ValueError('bars require one caption: and one unit: before the list')
+        if not separator or key not in ('caption', 'unit', 'max') or key in metadata or not value.strip():
+            raise ValueError('bars take one caption:, one unit: and optional max: before the list')
         metadata[key] = value.strip()
-    if set(metadata) != {'caption', 'unit'}:
+    if not {'caption', 'unit'} <= set(metadata):
         raise ValueError('bars require explicit caption: and unit:')
     items = [[x.strip() for x in item.split('|')] for item in bullets('\n'.join(lines))]
     if any(len(item) not in (2, 3) or not item[0] or
@@ -147,6 +148,11 @@ def bars(block):
     if any(not math.isfinite(value) or value < 0 for value in values):
         raise ValueError('bar values must be finite and nonnegative')
     maximum = max(values)
+    if 'max' in metadata:
+        scale = float(metadata['max'].replace(',', ''))
+        if not math.isfinite(scale) or scale <= 0 or scale < maximum:
+            raise ValueError('bars max: must be a positive number no smaller than every value')
+        maximum = scale
     rendered = []
     for item, value in zip(items, values):
         width = value / maximum * 100 if maximum else 0
@@ -253,9 +259,9 @@ def build(md, a):
 <div class="page">
 <div class="rp-bar">
 <nav class="toc" aria-label="{esc(a.toc_label)}"><details><summary><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M1 3h12M1 7h12M1 11h12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>{esc(a.toc_label)}</span></summary><ol>{toc}</ol></details></nav>
-<div class="rp-tools"><fieldset class="ht-theme-control" data-ht-theme-control hidden><legend class="ht-visually-hidden">테마</legend><div class="ht-theme-buttons"></div></fieldset></div>
+<div class="rp-tools"><a class="rp-title" href="#top">{esc(title)}</a><fieldset class="ht-theme-control" data-ht-theme-control hidden><legend class="ht-visually-hidden">테마</legend><div class="ht-theme-buttons"></div></fieldset></div>
 </div>
-<header><h1>{esc(title)}</h1>{f'<p class="meta">{esc(meta)}</p>' if meta else ''}</header>
+<header id="top"><h1>{esc(title)}</h1>{f'<p class="meta">{esc(meta)}</p>' if meta else ''}</header>
 <main>
 {chr(10).join(h for _, _, h in secs)}
 </main>
