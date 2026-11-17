@@ -169,6 +169,22 @@ def bench_path(config=None):
     return safe_path(user) if user.exists() or user.is_symlink() else BENCH
 
 
+def _versioned_family(model):
+    """명시적인 모델 ID만 비교한다. 미확인 별칭은 버전을 추측하지 않는다."""
+    match = re.fullmatch(r"gpt-(\d+)(?:\.(\d+))?-(sol|terra|luna)", model)
+    if not match:
+        return None
+    return (match.group(3), int(match.group(1)), int(match.group(2) or 0))
+
+
+def _prefer_newer_release(candidate, preferred):
+    """번들 릴리스가 레거시 벤치마크 후보보다 새 버전이면 보존한다."""
+    old, new = _versioned_family(candidate["model"]), _versioned_family(preferred["model"])
+    if old and new and old[0] == new[0] and new[1:] > old[1:]:
+        return copy.deepcopy(preferred)
+    return candidate
+
+
 def derive(data, bench):
     """벤치마크에서 standard·economy 모드를 도출한다.
 
@@ -194,6 +210,13 @@ def derive(data, bench):
         std = std or on_frontier(mid, "medium")
         lower = order[max(order.index(std["effort"]) - 1, 0)]
         base = {"light": on_frontier(light, "low"), "top": on_frontier(top, "medium")}
+        # 오래된 벤치마크로 최신 안정 버전을 하향하지 않는다.
+        # 실제 호스트 적용 가능성과 사용자 승인은 스킬에서 확인한다.
+        release_default = load(DEFAULTS)["modes"]["standard"]["providers"].get(prov, {}).get("top")
+        current = data.get("modes", {}).get("standard", {}).get("providers", {}).get(prov, {}).get("top")
+        for preferred in (release_default, current):
+            if preferred:
+                base["top"] = _prefer_newer_release(base["top"], preferred)
         modes["standard"]["providers"][prov] = {**base, "standard": std}
         modes["economy"]["providers"][prov] = {**base, "standard": on_frontier(std["model"], lower)}
     return modes

@@ -1,5 +1,5 @@
 {
-  "source": "Artificial Analysis Intelligence Index v5.0.1, 2026-11-17 대화에서 인용한 값을 재구성. 원본과 하나씩 대조하지 않음.",
+  "source": "Artificial Analysis Intelligence Index v5.0.1, 2026-11-17 대화의 원본 미대조 수치 재구성. OpenAI Sol 데이터는 GPT-6.1 Sol 기준이며 신형 GPT-6.2 Sol의 비용·성능으로 재해석하지 않음.",
   "metric": "[작업당 비용(USD), 지능 점수]",
   "tiers": {
     "anthropic": [
@@ -10,7 +10,7 @@
     "openai": [
       "luna",
       "terra",
-      "sol"
+      "gpt-6.1-sol"
     ]
   },
   "providers": {
@@ -59,7 +59,7 @@
           51.3
         ]
       },
-      "sol": {
+      "gpt-6.1-sol": {
         "low": [
           0.16,
           35

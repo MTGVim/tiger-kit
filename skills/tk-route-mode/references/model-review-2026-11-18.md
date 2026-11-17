@@ -14,10 +14,12 @@
 
 [Artificial Analysis 출시 분석](https://artificialanalysis.ai/articles/openai-has-the-2-model-in-the-intelligence-index-with-the-release-of-gpt-6-2-astra-and-gpt-6-2-sol/)에 따르면 **Coding Agent Index의 max 설정은 신형이 3점 낮습니다.** 원인의 하나로 SWE-Atlas-QnA-AA 14점 하락을 지목했습니다. medium의 코딩 성능까지 동일하게 낮다고 단정하지 않습니다.
 
-## 맵 적용 결정
+## 최신 버전 우선 적용 결정
 
-**기존 standard/economy의 OpenAI top 기본값(`sol`, `medium`)과 Hermes에서 실제 시험한 `gpt-6.1-sol`을 자동 교체하지 않습니다.** 연구·설계 목적의 `gpt-6.2-sol` / `medium`은 실험 후보입니다. 코딩 관련 top 위임에는 별도 코딩 성능과 호스트 실효값을 비교해야 합니다.
+**신규 기본 대응표의 OpenAI top은 `gpt-6.2-sol` / `medium`입니다.** GPT-6.2 Sol은 기존 6.1과 API 토큰 가격이 같고, 동일 effort에서 종합 지능과 작업시간이 개선됐습니다. Coding Agent Index의 max effort 3점 하락은 주의 신호이지만, medium에서의 중대한 코딩 회귀까지 입증하지는 않습니다. 신형 출시 후 구버전을 기본으로 고정하는 정책의 향후 이전 비용도 함께 고려합니다.
 
-현재 공개 자료에서 GPT-6.2 Sol의 **모든 effort별 작업당 비용**을 원본 숫자로 확인하지 못했습니다. 기존 `benchmarks.json`의 `[비용, 점수]` 필드를 일부 임의 보간하거나 전날의 `sol` 별칭을 새 버전에 재연결하면 `derive`의 비용·성능 비교가 왜곡됩니다. 그러므로 번들 계산용 테이블은 보존합니다. 신형이 본인 호스트에서 지원되는 정확한 ID와 effort인지, 비용과 코딩 평가가 비교 가능한지 확인한 후 `update`와 사용자 승인으로 맵을 재산출합니다.
+공식 [OpenAI API 지원 종료 안내](https://developers.openai.com/api/docs/deprecations)에는 **2026-11-18 기준 GPT-6.1 Sol의 Deprecated 또는 Shutdown 일정이 공지되지 않았습니다.** 최신 버전이 존재한다는 사실과 공식적인 지원 중단을 구분합니다. 공식 수명주기는 Active / Deprecated / Shutdown으로 나누며, 일반 출시 모델에는 원칙적으로 최소 6개월의 종료 사전 통지가 제공됩니다.
 
-이 판단은 새 모델을 사용하지 말라는 뜻이 아니라 **측정 가능한 근거 없이 기본값을 바꾸지 않는다는 의미**입니다.
+현재 공개 자료에서 GPT-6.2 Sol의 **모든 effort별 작업당 비용**은 확인하지 못했습니다. 따라서 번들 `benchmarks.json`은 `gpt-6.1-sol`의 역사적 측정값으로 명시하고 신형 수치를 추정하지 않습니다. 그러나 이 결측만으로 최신 버전의 기본 채택을 무기한 보류하지 않습니다. `derive`는 오래된 측정값 때문에 신규 기본값을 구버전으로 내리지 않습니다.
+
+변경은 **새 기본 대응표에만 해당**합니다. 기존 사용자의 저장된 설정, 수동 override, Hermes·Codex·Claude Code 프로필을 자동 변경하지 않습니다. 실제 호스트가 `gpt-6.2-sol`과 `medium`을 지원하는지 확인하고 승인받은 뒤 적용·검증합니다. 작업에서 재현되는 중대한 회귀가 확인되면 그 작업에 한정해 구버전을 예외로 유지하고 재평가 기준을 기록합니다.

@@ -24,7 +24,7 @@ hermes delegation config --show
 | `standard` | 구현·독립 리뷰 | `gpt-6.1-terra` | `low` |
 | `top` | 아키텍처·미지 문제 조사 | `gpt-6.1-sol` | `medium` |
 
-이는 2026-11-18 사용자가 **새 Hermes CLI 세션에서 검증했다고 보고한 설정**의 예시입니다. 모든 사용자에게 강제할 모델 맵이 아닙니다. 실제 적용 대상은 현재 `tk-route-mode` standard/economy 대응표와 기존 사용자 override로 결정합니다. 공급자 문자열을 예시에서 추측하지 말고 현재 Hermes 프로필의 유효한 선택기를 사용합니다. 새 GPT-6.2 Sol의 도입 판단은 [모델 검토](model-review-2026-11-18.md)를 따릅니다.
+이는 2026-11-18 사용자가 **새 Hermes CLI 세션에서 검증했다고 보고한 설정**의 예시입니다. 모든 사용자에게 강제할 모델 맵이 아닙니다. 실제 적용 대상은 현재 `tk-route-mode` standard/economy 대응표와 기존 사용자 override로 결정합니다. 공급자 문자열을 예시에서 추측하지 말고 현재 Hermes 프로필의 유효한 선택기를 사용합니다. 새 기본 맵의 OpenAI top은 `gpt-6.2-sol` / `medium`입니다. 표의 `gpt-6.1-sol`은 이전 세션에서 검증한 사례이며 새 기본 권장이 아닙니다. 모델 변경은 호스트가 정확한 ID와 effort를 지원하는지 확인하고 승인받아야 합니다. 판단 근거는 [모델 검토](model-review-2026-11-18.md)를 따릅니다.
 
 `model_map`은 개별 `delegate_task` 항목의 `option`을 사용합니다. `profile_routes`의 `profile`을 사용하거나 다른 프로필의 인증정보·SOUL.md·터미널 정책을 자동 전달하는 기능과 혼동하지 않습니다. `model_map`이 활성화되면 기본 `delegation.model`·`delegation.provider`는 경로를 결정하지 않습니다. 경로를 고르지 않으면 별도의 default 설정 또는 부모 모델이 사용되므로 테스트 시 명시적으로 `option`을 넘깁니다.
 
