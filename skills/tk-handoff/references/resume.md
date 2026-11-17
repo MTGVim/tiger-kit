@@ -3,7 +3,7 @@
 
 명시적인 `--resume`에만 읽습니다. 제품, Git이나 원격 변경을 승인하는 것은 아닙니다.
 
-`--resume`은 `handoff snapshot`을 현재 Git 및 파일과 비교하여 작업을 재개하도록 요청합니다.
+`--resume`은 `handoff snapshot`을 현재 Git 및 파일과 비교하여 작업을 재개하도록 요청합니다. `Goal run:`이 있는 Handoff는 목표 실행 소유자에게 반환하고 `tk-goal --resume <run-id>`를 안내합니다. 일반 Handoff 재개 경로에서 해당 실행의 제품 변경을 시작하지 않습니다.
 
 먼저 다음을 새로 읽습니다.
 

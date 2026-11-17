@@ -27,7 +27,7 @@ metadata:
 
 새 목표와 현재 작업 전환 모두 [준비와 인터뷰](references/preparation.md)를 읽고 필수 조사, 심층 인터뷰, 단계별 성공 기준 및 권한 위임을 확보합니다. 이미 합의한 결정은 재사용하고 누락만 보충합니다. 실행 준비와 최초 승인 전에는 제품을 변경하지 않습니다. 계획은 [tk-roadmap 전략 기준](../tk-roadmap/references/strategy-planning.md), 질문은 [tk-questioning](../tk-questioning/references/questions.md), SWE 준비는 [tk-prep](../tk-prep/SKILL.md)를 따릅니다. 설치된 소유자와 자원을 확인하고 누락 시 해당 단계를 차단합니다.
 
-승인된 목표, 범위, 권한, 전체 성공 기준 및 초기 단계별 기준을 [장부와 재개](references/ledger.md)에 기록하고 실행 식별을 확정합니다. 스킬 호출이나 장부 존재만으로 변경·발행 권한을 만들지 않습니다.
+승인된 실제 작업 공간을 기존 담당자의 격리 절차로 먼저 확정합니다. 제품 변경 전에 승인된 목표, 범위, 권한, 전체 성공 기준 및 초기 단계별 기준을 [장부와 재개](references/ledger.md)에 기록하고 실행 식별과 소유권을 확정합니다. 스킬 호출이나 장부 존재만으로 변경·발행 권한을 만들지 않습니다.
 
 ## 자율 실행
 
