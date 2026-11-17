@@ -45,7 +45,7 @@ def snapshot(r):
             'host':c['host'],'profile':c.get('profile'),'threshold':c['threshold'],
             'run':str(r.d),'handoff':str(r.paths()[0]) if s.get('request') else None}
 
-def watch(d, interval, plain, Run, lock, stop_run):
+def watch(d, interval, plain, Run, lock, stop_run, Busy):
     def poll():
         with lock(d):
             r=Run(d)
@@ -74,7 +74,10 @@ def watch(d, interval, plain, Run, lock, stop_run):
         return min(interval,2) if v['state']['phase'] in TRANSITION else interval
     if plain or not (sys.stdin.isatty() and sys.stdout.isatty()):
         while True:
-            v,msg=poll(); s=v['state']
+            try: v,msg=poll()
+            except Busy:
+                time.sleep(1); continue
+            s=v['state']
             print(f'{datetime.datetime.now().isoformat(timespec="seconds")} {s["phase"]} generation={s["generation"]} context={s.get("last_pressure")} {msg}',flush=True)
             if s['phase'] in TERMINAL: return
             time.sleep(next_delay(v))
@@ -112,7 +115,7 @@ def watch(d, interval, plain, Run, lock, stop_run):
                 bar=max(8,min(32,width-32))
                 filled=int(bar*float(p)/100) if isinstance(p,(int,float)) and 0<=p<=100 else 0
                 label=f'{p:.1f}%' if isinstance(p,(int,float)) else 'unverified'
-                line(5,f' Context [{"#"*filled+"."*(bar-filled)}] {label} / {v["threshold"]:g}%',palette.get('yellow' if isinstance(p,(int,float)) and p>=v['threshold'] else 'cyan',0))
+                line(5,f' Context (last) [{"#"*filled+"."*(bar-filled)}] {label} / {v["threshold"]:g}%',palette.get('yellow' if isinstance(p,(int,float)) and p>=v['threshold'] else 'cyan',0))
                 line(6,' '+('-'*max(0,width-2)),curses.A_DIM)
                 line(7,' MISSION',curses.A_BOLD)
                 line(8,' '+(v['goal'] or 'Strategy not available'))
@@ -142,16 +145,20 @@ def watch(d, interval, plain, Run, lock, stop_run):
                 stdscr.refresh()
             while True:
                 if time.monotonic()>=deadline:
-                    v,msg=poll()
-                    deadline=time.monotonic()+next_delay(v)
+                    try:
+                        v,msg=poll(); deadline=time.monotonic()+next_delay(v)
+                    except Busy:
+                        msg='Another mission operation is running'; deadline=time.monotonic()+1
                 draw()
-                if v['state']['phase'] in TERMINAL:
+                if v and v['state']['phase'] in TERMINAL:
                     return msg
                 k=stdscr.getch()
                 if k in (ord('h'),ord('H')):
                     details=not details; scroll=0
                 elif k in (ord('r'),ord('R'),ord('p'),ord('P'),ord('q'),ord('Q')):
-                    msg=action(chr(k).lower())
+                    try: msg=action(chr(k).lower())
+                    except Busy:
+                        msg='Another mission operation is running; retry the key'; continue
                     if chr(k).lower()=='q': return msg
                     deadline=0
                 elif k==curses.KEY_DOWN: scroll+=1

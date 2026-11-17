@@ -45,7 +45,7 @@ python3 "$SCRIPT" --run "$RUN" init --root "$ROOT" \
 3. 해당 CLI의 정상 종료 명령(Claude/Hermes `/exit`, Codex `/quit`)이 실제로 PTY를 정상 종료하는지 확인합니다. 셸로 돌아오기만 하면 종료 증거가 아니므로 새 세션을 시작하지 않습니다.
 4. 같은 워크트리에 fresh launch하고 provider session ID가 실제로 달라졌으며 계정, 권한 및 모델/effort가 그대로인지 확인합니다. 이 테스트는 사용자의 제품 파일을 수정하거나 원격 발행하지 않습니다.
 
-성공한 경우에만 원래 작업의 등록 시 `--auto-exit --profile <nonsecret verified profile identifier> --session-id <observed provider session ID>`를 추가합니다. `--model`과 `--effort`는 실제 지원되는 값만 지정합니다. 프로필에는 비밀이 아닌 모델/effort, 계정 식별 별칭, 권한 및 실행 옵션의 확인된 요약을 넣습니다. 새 에이전트가 실제 값을 검증하고 ACK에 제출하며, 기계적으로 확인할 수 없는 요소를 추측하면 안 됩니다. 현재 Orca CLI가 기존 프로필을 그대로 재현할 수 없는 경우에는 자동 종료를 켜지 않습니다.
+성공한 경우에만 원래 작업의 등록 시 `--profile <nonsecret verified profile identifier> --session-id <observed provider session ID>`를 추가합니다. 자동 종료까지 확인했다면 `--auto-exit`도 추가합니다. profile과 session ID는 함께 제공해야 하며, 없으면 수동 정상 종료 후에도 자동 launch하지 않습니다. `--model`과 `--effort`는 실제 지원되는 값만 지정합니다. 프로필에는 비밀이 아닌 모델/effort, 계정 식별 별칭, 권한 및 실행 옵션의 확인된 요약을 넣습니다. 새 에이전트가 실제 값을 검증하고 ACK에 제출하며, 기계적으로 확인할 수 없는 요소를 추측하면 안 됩니다. 현재 Orca CLI가 기존 프로필을 그대로 재현할 수 없는 경우에는 자동 종료를 켜지 않습니다.
 
 현재 전략을 작성한 뒤 `enroll`, `doctor`를 자기 세션에서 실행합니다. 컨트롤러는 별도 터미널에서 실행합니다.
 
@@ -62,7 +62,7 @@ orca terminal create --worktree 'id:<exact worktree ID>' \
   --command '<quoted absolute Python and rollover.py> --run <quoted run path> watch' --json
 ```
 
-`terminal read --screen` 등으로 컨트롤러가 정상 실행 중인지 확인합니다. 별도의 에이전트나 Orca Automation은 생성하지 않습니다. 자동 종료가 비활성화된 경우는 안전한 인계까지 진행하고 기존 세션의 확인된 정상 종료를 기다립니다. 컨텍스트 표시를 확인하지 못한 경우 수동 `request`만 가능합니다. 기본 감시 주기는 30초이며 전환 단계에서는 최대 2초 간격으로 상태를 확인합니다. 장시간 도구가 실행 중이면 작업 경계 확인이 늦을 수 있으므로 내장 compact는 비활성화하지 않습니다.
+`terminal read --screen` 등으로 컨트롤러가 정상 실행 중인지 확인합니다. 별도의 에이전트나 Orca Automation은 생성하지 않습니다. 자동 종료가 비활성화된 경우는 안전한 인계까지 진행하고 기존 세션의 확인된 정상 종료를 기다립니다. 실제 화면에 빈 draft가 명시되지 않거나 유휴/승인 상태가 확인되지 않으면 자동 종료하지 않습니다. 필요한 경우 검증된 `--notify`로 현재 담당 에이전트에게 협력 요청을 전달할 수 있으며, 요청 파일이 정본입니다. 컨텍스트 표시를 확인하지 못한 경우 수동 `request`만 가능합니다. 기본 감시 주기는 30초이며 전환 단계에서는 최대 2초 간격으로 상태를 확인합니다. 장시간 도구가 실행 중이면 작업 경계 확인이 늦을 수 있으므로 내장 compact는 비활성화하지 않습니다.
 
 ## 다른 터미널 환경
 
@@ -80,7 +80,7 @@ python3 "$SCRIPT" --run "$RUN" continue
 python3 "$SCRIPT" --run "$RUN" stop --status completed
 ```
 
-TUI의 H는 전략 및 인계 세부 정보를 표시하고 R은 수동 교체를 요청합니다. P는 active 단계의 감시를 일시 중단하거나 다시 시작하며 Q는 현재 에이전트를 종료하지 않고 이후 교체를 중단합니다. 방향키로 긴 목록을 이동합니다. `stop`의 상태는 `completed`, `blocked`, `aborted`, `waiting_user`, `unverifiable`입니다.
+`status`의 `controller_running`으로 실제 감시 잠금의 존재를 확인합니다. 수동 `tick`은 감시 프로세스가 없을 때만 실행합니다. 상태 작업이 잠금을 점유하고 있으면 그 작업이 끝난 뒤 같은 명령만 재시도합니다. TUI의 H는 전략 및 인계 세부 정보를 표시하고 R은 수동 교체를 요청합니다. P는 active 단계의 감시를 일시 중단하거나 다시 시작하며 Q는 현재 에이전트를 종료하지 않고 이후 교체를 중단합니다. 방향키로 긴 목록을 이동합니다. `stop`의 상태는 `completed`, `blocked`, `aborted`, `waiting_user`, `unverifiable`입니다.
 
 컨트롤러 터미널을 실제로 닫으면 감시가 중단됩니다. 화면 전환이 프로세스 종료를 의미하지는 않습니다. 중단된 실행은 상태 파일과 기존 대화를 보존합니다. `launching`에서 중단되면 새 에이전트가 이미 시작되었을 수 있으므로 중복 launch하지 않습니다. `exit_sent`에서는 정상 종료 증거만 확인합니다. 컨트롤러가 갑자기 중단되면 먼저 상태와 해당 터미널의 실제 프로세스를 확인하고 수동 인계로 복구합니다. `stop.json`을 삭제하여 강제로 재개하지 않습니다. 새 작업은 기존 실행이 종료되고 컨트롤러가 없음을 확인한 뒤 정확한 소유 디렉터리를 별도의 복구 경로로 보존하여 새로 등록합니다. 이때 이전 실행의 전략, 인계와 Git 파일을 자동 삭제하지 않습니다.
 

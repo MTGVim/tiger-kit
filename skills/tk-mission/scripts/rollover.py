@@ -22,6 +22,7 @@ STOP = {'completed', 'blocked', 'aborted', 'waiting_user', 'unverifiable'}
 MAX = 256_000
 
 class Halt(Exception): pass
+class Busy(Halt): pass
 
 def require(ok, message):
     if not ok: raise Halt(message)
@@ -100,7 +101,8 @@ class ExternalAdapter:
     def __init__(self,c): self.c=c
     def call(self,operation,**kwargs):
         p=Path(self.c['adapter'])
-        require(p.is_absolute() and p.is_file() and not p.is_symlink(), 'Adapter missing or unsafe')
+        require(p.is_absolute() and p.is_file() and not any(x.is_symlink() for x in (p,*p.parents)), 'Adapter missing or unsafe')
+        require(p.stat().st_uid==os.getuid() and p.stat().st_mode & 0o022==0,'Adapter ownership/mode changed')
         require(hashlib.sha256(p.read_bytes()).hexdigest()==self.c['adapter_sha256'],'Adapter changed; stop')
         data={'version':1,'operation':operation,'root':self.c['root'],'host':self.c['host'],
               'worktree_id':self.c.get('worktree_id'),'profile':self.c.get('profile'),
@@ -163,7 +165,9 @@ class Run:
         screen=self.o.screen(self.s['handle'])
         if screen.get('source')!='screen' or screen.get('status')!='running': return None
         # Only one fully matched line in the configured footer. No transcript search.
-        lines=screen.get('tail',[])[-self.c.get('footer_lines',4):]
+        tail=screen.get('tail')
+        if not isinstance(tail,list) or not all(isinstance(x,str) for x in tail): return None
+        lines=tail[-self.c.get('footer_lines',4):]
         matches=[m for line in lines if (m:=re.fullmatch(regex,line.strip()))]
         if len(matches)!=1: return None
         n=float(matches[0].group('percent'))
@@ -211,14 +215,16 @@ class Run:
         require(len(read(hand))<=48000,'Handoff too large')
         return obj
     def checkpoint(self):
-        require(self.s['phase']=='requested','No pending request'); self.identity()
+        require(self.s['phase']=='requested','No pending request'); self.live(self.identity())
         hand,ready=self.paths(); self.validate_strategy(); body=read(hand)
         require(self.o.caller()==self.s['handle'],'Checkpoint must be sealed from the enrolled pane')
         require(all(re.search(r'^'+re.escape(x)+r':',body,re.M) for x in HANDOFF_FIELDS),'Handoff missing required fields')
         require(re.search(r'^Status:\s*in_progress\s*$',body,re.M),'Handoff is not in_progress')
         require(not ready.exists(),'Already sealed')
+        require(len(body)<=48000,'Handoff too large')
         require(f'Strategy: {self.d}/{self.s["request"]["id"]}.strategy.md' in body.splitlines(),'Missing exact strategy snapshot reference')
-        atomic(self.d/f'{self.s["request"]["id"]}.strategy.md',read(self.d/'strategy.md'))
+        snapshot=self.d/f'{self.s["request"]["id"]}.strategy.md'
+        require(digest(snapshot)==digest(self.d/'strategy.md'),'Strategy snapshot differs from current strategy')
         save(ready,{'request_id':self.s['request']['id'],'generation':self.s['generation'],'status':'in_progress','safe_boundary':True,'repository':repo(self.root),'worktree_digest':worktree_digest(self.root),'strategy_sha256':digest(self.d/'strategy.md'),'handoff_sha256':digest(hand)})
     def launch_prompt(self):
         hand,_=self.paths(); script=self.c['script']; d=str(self.d)
@@ -230,11 +236,16 @@ class Run:
                 f' Before any work, run {cmd} from this new pane. If the launch receipt is pending, retry only ack after reading status. Wait until status shows active for your own handle. '
                 f'Then invoke installed tk-handoff: {skill} --resume {str(hand)!r}. '
                 'Preserve goal, approvals, milestones, failed approaches and completion gates. Do not repeat completed work or expand scope. Follow the mission protocol after resume; stop on user decisions or completion.')
+    @staticmethod
+    def safe_input(t,screen):
+        return (screen.get('source')=='screen' and screen.get('status')=='running'
+                and screen.get('draft')=='' and 'agentWait' in t and t['agentWait'] is None)
     def tick(self):
         phase=self.s['phase']
         if (self.d/'stop.json').exists():
             stop=load(self.d/'stop.json'); require(stop.get('generation')==self.s['generation'] and stop.get('status') in STOP,'Invalid stop marker')
-            self.persist(phase='stopped',stop=stop); return 'stopped'
+            if phase!='stopped': self.persist(phase='stopped',stop=stop,stopped_from=phase)
+            return 'stopped'
         if phase=='active':
             self.live(self.identity()); p=self.pressure()
             self.persist(last_pressure=p, last_check=time.time())
@@ -256,9 +267,12 @@ class Run:
                 self.persist(phase='exited'); return 'exited'
             if not self.c.get('auto_exit'): return 'waiting for clean exit (manual /exit or /quit)'
             self.live(t); screen=self.o.screen(self.s['handle'])
-            if screen.get('source')!='screen' or screen.get('draft') or t.get('agentWait') is not None or 'agentWait' not in t: return 'not safe to send exit'
+            if not self.safe_input(t,screen): return 'not safe to send exit'
             w=self.o.wait(self.s['handle'],'tui-idle')
             if w.get('satisfied') is not True or w.get('blockedReason') or w.get('status')!='running': return 'waiting for idle'
+            # Recheck the checkpoint, identity and input immediately before mutation.
+            self.validate_ready(); t=self.identity(); self.live(t)
+            if not self.safe_input(t,self.o.screen(self.s['handle'])): return 'not safe to send exit'
             # No automatic retry of a mutation with ambiguous result.
             self.persist(phase='exit_sent',exit_sent_at=time.time())
             r=self.o.send(self.s['handle'],HOSTS[self.c['host']]); require(r.get('accepted') is True,'Exit not accepted; inspect')
@@ -269,11 +283,14 @@ class Run:
             if time.time()-self.s['exit_sent_at']>self.c['request_timeout']: self.persist(phase='blocked',reason='exit unconfirmed')
             return 'waiting for verified clean exit'
         if phase=='exited':
+            if not self.c.get('profile') or not self.s.get('provider_session_id'):
+                self.persist(phase='blocked',reason='Fresh launch profile/session ID not verified'); return 'blocked'
             self.validate_ready(); self.identity(); w=self.o.wait(self.s['handle'],'exit')
             require(w.get('satisfied') is True and w.get('status')=='exited' and w.get('exitCode')==0,'Old exit not confirmed')
             self.persist(phase='launching')
             r=self.o.launch(self.launch_prompt()); outcome=r.get('outcome',{}); h=outcome.get('handle')
             require(outcome.get('kind')=='terminal' and h and h!=self.s['handle'] and r.get('worktreeId')==self.c['worktree_id'],'Unexpected launch receipt; inspect, never retry blindly')
+            self.persist(new_handle=h,operation_id=r.get('operationId'))
             new=self.identity(h,False)
             self.persist(phase='await_ack',new_handle=h,new_incarnation=new['incarnationId'],operation_id=r.get('operationId'),launched_at=time.time()); return 'awaiting resume ack'
         if phase=='await_ack':
@@ -289,7 +306,10 @@ class Run:
             # Remove only our exact request, after ack. Archive is kept by immutable request id.
             require(load(self.d/'request.json')==self.s['request'],'Request changed')
             self.persist(phase='finalizing',next_incarnation=t['incarnationId'],next_session_id=a.get('session_id')); return self.finalize()
-        if phase=='finalizing': return self.finalize()
+        if phase=='finalizing':
+            self.validate_ready(); t=self.identity(self.s['new_handle'],False); self.live(t)
+            require(t['incarnationId']==self.s['next_incarnation'],'New incarnation changed')
+            return self.finalize()
         return f'{phase}: no automatic action'
     def finalize(self):
         p=self.d/'request.json'
@@ -324,12 +344,24 @@ def lock(d,name='lock'):
     require(not (d/name).is_symlink(),'Unsafe lock')
     with open(d/name,'a') as f:
         try: fcntl.flock(f,fcntl.LOCK_EX|fcntl.LOCK_NB)
-        except BlockingIOError: raise Halt('Another tick is running')
+        except BlockingIOError: raise Busy('Another mission operation is running; retry only after it releases the lock')
         yield
+
+def controller_running(d):
+    p=d/'watch.lock'
+    if not p.exists(): return False
+    require(not p.is_symlink(),'Unsafe watch lock')
+    with p.open('r') as f:
+        try: fcntl.flock(f,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        except BlockingIOError: return True
+        return False
 
 def stop_run(r,status):
     if not (r.d/'stop.json').exists():
         save(r.d/'stop.json',{'generation':r.s['generation'],'status':status})
+    marker=load(r.d/'stop.json')
+    require(marker.get('generation')==r.s['generation'] and marker.get('status') in STOP,'Invalid stop marker')
+    if r.s['phase']!='stopped': r.persist(phase='stopped',stop=marker,stopped_from=r.s['phase'])
 
 def main():
     p=argparse.ArgumentParser(); p.add_argument('--run',type=Path); sub=p.add_subparsers(dest='cmd',required=True)
@@ -348,6 +380,7 @@ def main():
     d=d.resolve()
     if a.cmd=='init':
         root=a.root.resolve(); repo(root); outside(d,root); require(d==run_path(root).resolve(),'Use the exact path from path --root (one mission per worktree)'); require(not d.exists(),'Run directory already exists; inspect or archive a stopped run'); require(0<a.threshold<100 and a.request_timeout>0,'Invalid limits'); require(not a.effort or a.model,'Effort requires model')
+        require(bool(a.profile)==bool(a.session_id),'Profile and provider session ID must be supplied together')
         require(not a.auto_exit or (a.profile and a.session_id and a.pressure_regex),'Automatic exit requires verified profile, session ID and context regex')
         if a.pressure_regex: require('percent' in re.compile(a.pressure_regex).groupindex,'Regex needs named percent group')
         c={'root':str(root),'host':a.host,'orca':a.orca,'threshold':a.threshold,'pressure_regex':a.pressure_regex,'pressure_kind':a.pressure_kind,'auto_exit':a.auto_exit,'notify':a.notify,'request_timeout':a.request_timeout,'model':a.model,'effort':a.effort,'script':str(Path(__file__).resolve()),'python':sys.executable,'protocol':str(Path(__file__).resolve().parents[1]/'references'/'agent-protocol.md'),'profile':a.profile}
@@ -369,16 +402,21 @@ def main():
         require(1<=a.interval<=3600,'Invalid watch interval')
         from mission_tui import watch as run_watch
         with lock(d,'watch.lock'):
-            run_watch(d,a.interval,a.plain,Run,lock,stop_run)
+            with lock(d):
+                r=Run(d); caller=r.o.caller()
+                require(caller and caller!=r.s['handle'],'Watch must run in a separate identified terminal')
+                require(r.s['phase']!='enrolling','Enroll before watching')
+            run_watch(d,a.interval,a.plain,Run,lock,stop_run,Busy)
         return
     with lock(d):
         r=Run(d)
-        if a.cmd=='tick': print(r.tick())
+        if a.cmd=='tick':
+            require(not controller_running(d),'Controller is already watching'); print(r.tick())
         elif a.cmd=='enroll': r.enroll(); print('enrolled')
         elif a.cmd=='request': r.request('manual'); print('requested')
         elif a.cmd=='checkpoint': r.checkpoint(); print('sealed; stop working')
         elif a.cmd=='ack': r.ack(a.session_id,a.profile); print('acknowledged')
-        elif a.cmd=='status': print(json.dumps(r.s,indent=2))
+        elif a.cmd=='status': print(json.dumps({**r.s,'controller_running':controller_running(d)},indent=2))
         elif a.cmd=='doctor':
             t=r.identity(); r.live(t)
             keys=('handle','incarnationId','worktreeId','worktreePath','executionHostId','agentIdentity','verdict')
@@ -390,5 +428,7 @@ def main():
 
 if __name__=='__main__':
     try: main()
-    except (Halt, OSError, ValueError, KeyError, subprocess.SubprocessError) as e:
+    except KeyboardInterrupt:
+        print('Controller interrupted; no further monitoring',file=sys.stderr); sys.exit(130)
+    except (Halt, OSError, ValueError, KeyError, TypeError, RuntimeError, subprocess.SubprocessError) as e:
         print(f'rollover stopped: {e}',file=sys.stderr); sys.exit(2)

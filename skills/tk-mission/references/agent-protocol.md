@@ -19,7 +19,7 @@
 
 ## 신규 세션
 
-제공된 명시적 Handoff 및 전략, 연결된 Seed, Git 상태와 현재 설치된 담당 스킬을 읽기 전용으로 확인합니다. 이전 목표와 승인 범위가 그대로인지 확인하고 새 provider session ID 및 실제 비밀이 아닌 모델/effort/계정/권한 프로필을 확인합니다. 확인한 값을 `ack --session-id <new ID> --profile <same verified profile>`로 제출합니다(프로필 없이 등록된 수동 실험에서는 `ack`만 사용합니다). launch receipt가 아직 기록되지 않았다면 상태를 확인한 뒤 ACK만 다시 시도합니다. 자신이 새로 등록된 담당 세션이고 상태가 active가 될 때까지 제품 파일을 변경하지 않습니다.
+제공된 명시적 Handoff 및 전략, 연결된 Seed, Git 상태와 현재 설치된 담당 스킬을 읽기 전용으로 확인합니다. 이전 목표와 승인 범위가 그대로인지 확인하고 새 provider session ID 및 실제 비밀이 아닌 모델/effort/계정/권한 프로필을 확인합니다. 확인한 값을 `ack --session-id <new ID> --profile <same verified profile>`로 제출합니다. 프로필이나 기존 session ID가 없는 실행에서는 자동 launch하지 않습니다. launch receipt가 아직 기록되지 않았다면 상태를 확인한 뒤 ACK만 다시 시도합니다. 자신이 새로 등록된 담당 세션이고 상태가 active가 될 때까지 제품 파일을 변경하지 않습니다.
 
 이후 `tk-handoff --resume <exact handoff path>`로 기존 소유 스킬을 재개합니다. 이전에 완료한 일을 불필요하게 반복하지 않으며, 확인된 다음 행동부터 이어갑니다. 새 세션에도 이 프로토콜이 적용됩니다. 원래 목표를 다룰 수 없거나 승인이 불명확한 경우 자동 진행하지 않습니다.
 
