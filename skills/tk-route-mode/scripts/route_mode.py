@@ -81,6 +81,60 @@ def save(data, path=None):
     return atomic_write(p, (json.dumps(data, ensure_ascii=False, indent=2) + "\n").encode())
 
 
+def backup_config(path):
+    from datetime import datetime, timezone
+    p = safe_path(path or config_path())
+    if p.exists():
+        ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%f")
+        atomic_write(p.parent / "backups" / ts / p.name, p.read_bytes())
+
+
+def update_mode(data, name, sets, unsets, description, bench):
+    if name not in data["modes"]:
+        raise ValueError(f"없는 모드: {name}")
+    new = copy.deepcopy(data)
+    mode = new["modes"][name]
+    overrides = mode.setdefault("overrides", {})
+    providers = mode.setdefault("providers", {})
+    def key_parts(key):
+        prov, sep, tier = key.partition(".")
+        if not sep or prov not in new["efforts"] or tier not in TIERS:
+            raise ValueError(f"잘못된 칸: {key}")
+        return prov, tier
+
+    touched = set()
+    for item in sets:
+        key, sep, value = item.partition("=")
+        prov, tier = key_parts(key)
+        model, colon, effort = value.rpartition(":")
+        if not sep or not colon or not model.strip() or effort not in new["efforts"][prov] or key in touched:
+            raise ValueError(f"잘못되거나 중복된 --set: {item}")
+        touched.add(key)
+        cell = {"model": model, "effort": effort}
+        providers.setdefault(prov, {})[tier] = cell
+        overrides[key] = cell
+    for key in unsets:
+        prov, tier = key_parts(key)
+        if key in touched or key not in overrides:
+            raise ValueError(f"해제할 사용자 override가 없거나 중복됨: {key}")
+        touched.add(key)
+        del overrides[key]
+        # 기본 모드는 도출값으로 복원하고, 파생 모드는 부모의 값을 상속한다.
+        if name in ("standard", "economy") and bench:
+            providers.setdefault(prov, {})[tier] = derive(new, bench)[name]["providers"][prov][tier]
+        elif mode.get("extends"):
+            providers.get(prov, {}).pop(tier, None)
+            if not providers.get(prov):
+                providers.pop(prov, None)
+        else:
+            raise ValueError(f"복원할 기본값 없음: {key}")
+    if description is not None:
+        mode["description"] = description
+    if not touched and description is None:
+        raise ValueError("변경할 칸 또는 설명을 지정해야 합니다")
+    return new
+
+
 def resolve(data, mode, seen=()):
     """extends를 펼친 모드의 providers 표를 돌려준다."""
     if mode not in data["modes"]:
@@ -258,25 +312,31 @@ def plan(data, mode, prov):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(prog="route_mode")
+    ap = argparse.ArgumentParser(prog="route_mode", formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="예시:\n  route_mode list\n  route_mode plan --provider anthropic\n  route_mode update economy --set anthropic.standard=sonnet:high\n  route_mode derive --save")
     ap.add_argument("--config", help="대응표 경로 (기본: $ROUTE_MODE_CONFIG 또는 ~/.config/route-mode/modes.json)")
     sub = ap.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("path")
-    sub.add_parser("validate")
-    p = sub.add_parser("plan")
+    sub.add_parser("path", help="대응표 경로 확인")
+    sub.add_parser("validate", help="대응표 검사")
+    p = sub.add_parser("plan", help="공급자별 목표 대응표 확인")
     p.add_argument("--provider", required=True)
     p.add_argument("--mode")
-    sub.add_parser("list")
-    u = sub.add_parser("use")
+    sub.add_parser("list", help="모드 목록과 활성 모드 확인")
+    u = sub.add_parser("use", help="활성 모드 변경 (승인 필요)")
     u.add_argument("mode")
-    a = sub.add_parser("add")
+    a = sub.add_parser("add", help="사용자 모드 추가 (승인 필요)")
     a.add_argument("name")
     a.add_argument("--extends", required=True)
     a.add_argument("--description", default="")
     a.add_argument("--set", action="append", default=[], metavar="PROVIDER.TIER=MODEL:EFFORT")
-    d = sub.add_parser("derive", help="벤치마크로 standard·economy 모드를 도출해 현재 값과 비교")
+    u2 = sub.add_parser("update", help="기존 모드의 지정 칸·설명 변경 (승인 필요)")
+    u2.add_argument("mode")
+    u2.add_argument("--set", action="append", default=[], metavar="PROVIDER.TIER=MODEL:EFFORT")
+    u2.add_argument("--unset", action="append", default=[], metavar="PROVIDER.TIER")
+    u2.add_argument("--description")
+    d = sub.add_parser("derive", help="벤치마크로 기본 모드 비교 (--save 승인 필요)")
     d.add_argument("--save", action="store_true", help="도출한 두 모드를 대응표에 저장")
-    r = sub.add_parser("rule", help="사용자 지침 파일의 위임 규칙 블록 넣기·빼기·상태")
+    r = sub.add_parser("rule", help="사용자 지침 파일의 위임 규칙 블록 관리 (on/off 승인 필요)")
     r.add_argument("action", choices=["on", "off", "status"])
     r.add_argument("--file", required=True, help="호스트의 사용자 수준 지침 파일")
     r.add_argument("--host", default="unknown", help="적용 기록 이름 (예: claude-code)")
@@ -308,19 +368,26 @@ def main(argv=None):
                     new = tiers[t]
                     old = data["modes"].get(mode, {}).get("providers", {}).get(prov, {}).get(t)
                     mark = "" if old == new else f"  (현재 {old['model']} {old['effort']})" if old else "  (새 칸)"
-                    changed |= bool(mark)
+                    if f"{prov}.{t}" in data["modes"].get(mode, {}).get("overrides", {}):
+                        mark += "  (사용자 override 보존)"
+                    changed |= old != new
                     print(f"{mode:9} {prov:10} {t:9} {new['model']} {new['effort']}{mark}")
         if not changed:
             print("현재 대응표와 같음")
         if args.save:
             new = copy.deepcopy(data)
             for mode, m in derived.items():
-                new["modes"].setdefault(mode, {"description": ""}).setdefault("providers", {}).update(m["providers"])
+                target = new["modes"].setdefault(mode, {"description": ""})
+                for prov, tiers in m["providers"].items():
+                    for tier, cell in tiers.items():
+                        if f"{prov}.{tier}" not in target.get("overrides", {}):
+                            target.setdefault("providers", {}).setdefault(prov, {})[tier] = cell
             errors, _ = validate(new, bench)
             if errors:
                 for e in errors:
                     print("ERROR", e)
                 return 1
+            backup_config(args.config)
             print("saved", save(new, args.config))
         return 0
 
@@ -342,13 +409,15 @@ def main(argv=None):
         return 1 if errors else 0
     elif args.cmd == "plan":
         print(plan(data, args.mode or data["active"], args.provider))
-    elif args.cmd in ("use", "add"):
+    elif args.cmd in ("use", "add", "update"):
         new = copy.deepcopy(data)
         if args.cmd == "use":
             if args.mode not in new["modes"]:
                 print(f"ERROR 없는 모드: {args.mode}", file=sys.stderr)
                 return 1
             new["active"] = args.mode
+        elif args.cmd == "update":
+            new = update_mode(data, args.mode, args.set, args.unset, args.description, bench)
         else:
             if args.name in new["modes"]:
                 print(f"ERROR 이미 있는 모드: {args.name}", file=sys.stderr)
@@ -370,6 +439,8 @@ def main(argv=None):
             for e in errors:
                 print("ERROR", e)
             return 1
+        if args.cmd == "update":
+            backup_config(args.config)
         print("saved", save(new, args.config))
     return 0
 
