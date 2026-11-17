@@ -58,7 +58,7 @@ UI 문구·경로를 인용·검증·전달할 때 [UI 근거](../tk-ui-evidence
 
 - `.tigerkit/seed.md`: 무엇을, 왜, 어떤 조건에서 해야 하는지 정의하는 작업 계약입니다.
 - `.tigerkit/handoff.md`: 수행한 작업과 현재 상태를 기록하는 진행 `snapshot`입니다.
-- 장기 작업에 한해 `strategy.md`는 전체 전략, 판단 이유, 단계별 상태 및 이후 후보를 보존합니다. 명시적인 장기 인계나 `--strategy <path>` 또는 등록된 Mission 인계에서는 [장기 전략](references/strategy.md)을 읽습니다. 일반적인 인계에는 추가하지 않습니다.
+- 장기 작업에 한해 `strategy.md`는 전체 전략, 판단 이유, 단계별 상태 및 이후 후보를 보존합니다. 명시적인 장기 인계나 `--strategy <path>` 또는 활성 목표 실행 인계에서는 [장기 전략](references/strategy.md)을 읽습니다. 일반적인 인계에는 추가하지 않습니다.
 
 현재 작업의 Seed가 있으면 계약을 복사하지 말고 참조합니다. 정당한 direct/no-Seed 작업은 Seed를 만들 필요가 없습니다. 다른 세션에서 이해할 수 있도록 최소 목표, 범위·제외 사항, AC와 확인된 승인 경계를 Handoff 자체에 기록합니다.
 
@@ -125,7 +125,7 @@ Seed가 있는 작업은 정확한 계약 절·경로를 참조합니다. direct
 
 재개할 때는 완료한 작업, 남은 작업, 차단 요인과 바로 다음 행동을 사람이 이해하기 쉽게 설명합니다.
 
-`.tigerkit/`을 보관소, 현재 항목 pointer나 전역 상태로 사용하지 않습니다. `tk-mission`의 명시적인 작업별 실행 디렉터리에 한해 전략과 요청별 인계를 보존할 수 있습니다. 해당 디렉터리는 [산출물 경로](../tk-artifacts/references/artifact-paths.md#mission-state)의 전용 경계를 따릅니다.
+`.tigerkit/`을 보관소, 현재 항목 pointer나 전역 상태로 사용하지 않습니다. `tk-goal`의 명시적인 작업별 실행 디렉터리에 한해 목표 장부와 인계를 보존할 수 있습니다. 해당 디렉터리는 [산출물 경로](../tk-artifacts/references/artifact-paths.md#goal-state)의 전용 경계를 따릅니다. 목표 실행 인계에는 정확한 `Goal run:` 경로를 보존하며 재개는 `tk-goal --resume <run-id>`가 담당합니다. 컨텍스트 보호로 자동 인계하는 경우에도 같은 실제 상태 확인과 원자적 저장·재독 후 턴을 종료합니다.
 ignore 수정은 산출물 경로 설정으로 제한하고, 자동으로 commit하거나 발행하지 않습니다.
 
 <a id="artifact-paths"></a>
