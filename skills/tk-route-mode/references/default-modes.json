@@ -42,11 +42,11 @@
         },
         "openai": {
           "light": {
-            "model": "luna",
+            "model": "gpt-6-luna",
             "effort": "low"
           },
           "standard": {
-            "model": "terra",
+            "model": "gpt-6.1-terra",
             "effort": "medium"
           },
           "top": {
@@ -75,11 +75,11 @@
         },
         "openai": {
           "light": {
-            "model": "luna",
+            "model": "gpt-6-luna",
             "effort": "low"
           },
           "standard": {
-            "model": "terra",
+            "model": "gpt-6.1-terra",
             "effort": "low"
           },
           "top": {

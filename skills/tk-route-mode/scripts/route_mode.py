@@ -169,6 +169,32 @@ def bench_path(config=None):
     return safe_path(user) if user.exists() or user.is_symlink() else BENCH
 
 
+# 과거 사용자 벤치마크의 짧은 이름을 그 당시의 정확한 모델 ID로 해석한다.
+# 버전을 알 수 없는 임의의 별칭은 최신 버전으로 추측하지 않는다.
+LEGACY_BENCHMARK_IDS = {"luna": "gpt-6-luna", "terra": "gpt-6.1-terra"}
+
+
+def canonicalize_benchmark(bench):
+    normalized = copy.deepcopy(bench)
+    if "openai" not in normalized.get("providers", {}):
+        return normalized
+    mapping = dict(LEGACY_BENCHMARK_IDS)
+    if "sol" in normalized["providers"]["openai"] or "sol" in normalized.get("tiers", {}).get("openai", []):
+        if "GPT-6.1 Sol" not in normalized.get("source", ""):
+            raise ValueError("sol 벤치마크 별칭의 버전을 확인할 수 없습니다. 원본 출처와 버전을 명시하세요")
+        mapping["sol"] = "gpt-6.1-sol"
+    models = normalized["providers"]["openai"]
+    for alias, full in mapping.items():
+        if alias not in models:
+            continue
+        if full in models:
+            raise ValueError(f"동일 모델 ID 중복: {alias} / {full}")
+        models[full] = models.pop(alias)
+    if "openai" in normalized.get("tiers", {}):
+        normalized["tiers"]["openai"] = [mapping.get(m, m) for m in normalized["tiers"]["openai"]]
+    return normalized
+
+
 def _versioned_family(model):
     """명시적인 모델 ID만 비교한다. 미확인 별칭은 버전을 추측하지 않는다."""
     match = re.fullmatch(r"gpt-(\d+)(?:\.(\d+))?-(sol|terra|luna)", model)
@@ -192,6 +218,7 @@ def derive(data, bench):
               칸이 경계선 밖이면 같은 모델 effort를 high까지 올려 보고, 그래도 밖이면 대체 칸을 쓴다.
     economy:  standard 티어만 한 단계 낮춘다(같은 모델 effort 한 단계 아래, 경계선 밖이면 대체 칸).
     """
+    bench = canonicalize_benchmark(bench)
     modes = {"standard": {"providers": {}}, "economy": {"providers": {}}}
     for prov, (light, mid, top) in bench["tiers"].items():
         order = data["efforts"][prov]
@@ -219,6 +246,10 @@ def derive(data, bench):
                 base["top"] = _prefer_newer_release(base["top"], preferred)
         modes["standard"]["providers"][prov] = {**base, "standard": std}
         modes["economy"]["providers"][prov] = {**base, "standard": on_frontier(std["model"], lower)}
+    for name, mode in modes.items():
+        for tier, cell in mode["providers"].get("openai", {}).items():
+            if cell["model"] in LEGACY_BENCHMARK_IDS or cell["model"] == "sol":
+                raise ValueError(f"{name}.openai.{tier}: 짧은 모델 별칭이 다시 생성됐습니다")
     return modes
 
 
@@ -313,6 +344,8 @@ def validate(data, bench=None):
                     continue
                 if allowed and cell["effort"] not in allowed:
                     errors.append(f"{mode}.{prov}.{tier}: 허용되지 않은 effort {cell['effort']}")
+                if mode in ("standard", "economy") and prov == "openai" and cell["model"] in ("luna", "terra", "sol"):
+                    warnings.append(f"{mode}.{prov}.{tier}: 과거의 짧은 별칭 {cell['model']} (Codex 모델 ID 대조 및 전환 필요)")
                 d = bench and dominated(bench, prov, cell["model"], cell["effort"])
                 if d:
                     warnings.append(
@@ -387,7 +420,7 @@ def main(argv=None):
 
     data = load(args.config)
     bp = safe_path(args.bench) if args.bench else bench_path(args.config)
-    bench = read_json(bp) if bp.exists() else None
+    bench = canonicalize_benchmark(read_json(bp)) if bp.exists() else None
 
     if args.cmd == "derive":
         if not bench or "tiers" not in bench:
