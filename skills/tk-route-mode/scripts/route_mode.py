@@ -351,6 +351,9 @@ def main(argv=None):
         args.cmd = "status"
         args.provider = args.host = args.rule_file = None
 
+    if args.bench and (args.cmd != "derive" or args.save):
+        ap.error("--bench는 읽기 전용 derive 후보 비교에만 사용할 수 있습니다")
+
     if args.cmd == "rule":
         try:
             print(rule_apply(args.file, args.action, args.host, args.prefix, args.config))
