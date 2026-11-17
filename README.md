@@ -58,7 +58,7 @@ using tk-goal, 현재 작업을 장기 자율 작업으로 전환해 주세요.
 
 ### 위임 모드
 
-`tk-route-mode`는 인자 없이 상태를 확인합니다. `tk-route-mode standard`와 `tk-route-mode economy`는 승인된 프로필과 위임 규칙을 함께 적용·검증하며, `tk-route-mode update`는 최신 벤치마크 기반 후보를 비교한 뒤 승인받아 갱신합니다.
+`tk-route-mode`는 인자 없이 상태를 확인합니다. `tk-route-mode standard`와 `tk-route-mode economy`는 승인된 프로필과 위임 규칙을 함께 적용·검증하며, `tk-route-mode update`는 최신 벤치마크 기반 후보를 비교한 뒤 승인받아 갱신합니다. Hermes는 [프로필별 advanced-delegation 설정·검증 안내](skills/tk-route-mode/references/hermes-setup.md)를 사용합니다.
 
 ## 스킬 구성
 
