@@ -17,3 +17,6 @@
 ## 승격과 설정
 
 개별 작업의 승격은 [공통 위임 계약](../../tk-engineering/references/delegation.md)이 정합니다. standard는 high까지 높이고 더 필요하면 top으로 승격합니다. light 상한은 공급자별 대응표에서 정합니다. 명시된 사용자 effort 초기값이 공통 표보다 우선합니다.
+
+
+최상위 위임 티어의 초기 effort는 [위임 역할 표](../../tk-engineering/references/delegation.md)의 아키텍처·미지 문제 탐사 행을 근거로 정합니다. 해당 행의 초기값은 미검증이므로 기존 medium 도출값은 잠정 유지합니다. 원본 벤치마크 대조 전에는 high로 변경하지 않으며 economy의 top도 유지합니다.
