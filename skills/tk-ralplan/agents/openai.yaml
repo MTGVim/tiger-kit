@@ -1,0 +1,6 @@
+interface:
+  short_description: "[user] Ralphex 실행용 목표·Task·검증 계획을 작성하고 정적으로 확인합니다."
+  default_prompt: "$tk-ralplan 현재 합의된 목표를 외부 Ralphex 실행용 계획 Markdown으로 준비해 주세요. 기존 결정과 성공 기준을 재사용하고 직접 실행하지 마세요."
+
+policy:
+  allow_implicit_invocation: false

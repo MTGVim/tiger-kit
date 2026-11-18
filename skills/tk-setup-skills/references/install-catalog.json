@@ -109,19 +109,6 @@
         "tk-writing"
       ]
     },
-    "tk-goal": {
-      "requires": [
-        "tk-artifacts",
-        "tk-engineering",
-        "tk-grill",
-        "tk-handoff",
-        "tk-prep",
-        "tk-questioning",
-        "tk-research",
-        "tk-roadmap",
-        "tk-writing"
-      ]
-    },
     "tk-grill": {
       "requires": [
         "tk-artifacts",
@@ -246,6 +233,16 @@
     },
     "tk-questioning": {
       "requires": [
+        "tk-writing"
+      ]
+    },
+    "tk-ralplan": {
+      "requires": [
+        "tk-artifacts",
+        "tk-grill",
+        "tk-questioning",
+        "tk-research",
+        "tk-roadmap",
         "tk-writing"
       ]
     },

@@ -1,6 +1,0 @@
-interface:
-  short_description: "[user] 목표를 조사·인터뷰하고 단계별 검증과 재계획으로 달성합니다."
-  default_prompt: "$tk-goal 현재 목표를 자율 실행으로 전환해 주세요."
-
-policy:
-  allow_implicit_invocation: false
