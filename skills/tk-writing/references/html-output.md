@@ -211,7 +211,7 @@ studio 등 후처리까지 마친 최종 전달본을 같은 허용 목록으로
 공통 셸에 내장한 테마 CSS와 script는 변경 없이 유지합니다.
 구성 요소에 필요할 때만 별도의 내용별 `<style>` 블록과 검토한 오프라인 script를 추가합니다.
 인라인 자체 완결형 CSS를 유지하고 `@import`, `url(...)`, 원격 글꼴이나 `image-set(...)`을 사용하지 않습니다.
-기존 `tk-research/scripts/check_report.py`는 구 `assets/report.html`의 구조와 script 일치를 검사하는 전용 도우미이며,
+기존 `tk-research/scripts/check_page.py`는 구 `assets/report.html`의 구조와 script 일치를 검사하는 전용 도우미이며,
 일반 HTML의 검사기로 사용하지 않습니다. 일반 HTML은 아래 정적 기준을 최종 바이트에 직접 적용합니다.
 
 <a id="visual-block-rhythm"></a>
