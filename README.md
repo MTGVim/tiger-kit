@@ -31,7 +31,7 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 | 아이디어와 결정 구체화 | [tk-grill](skills/tk-grill/SKILL.md) |
 | 추진 방향과 마일스톤 수립 | [tk-roadmap](skills/tk-roadmap/SKILL.md) |
 | 사용성 개선 및 신규 기능 발굴 | [tk-experience-review](skills/tk-experience-review/SKILL.md) |
-| Ralphex 실행 계획 작성·점검 | [tk-ralplan](skills/tk-ralplan/SKILL.md) |
+| Ralph 반복 작업용 계획 작성·점검 | [tk-ralplan](skills/tk-ralplan/SKILL.md) |
 | 현재 작업을 다른 세션으로 인계 | [tk-handoff](skills/tk-handoff/SKILL.md) |
 
 스킬 호출에서 명령과 옵션은 `foo` 형태의 키워드를 사용합니다. 실제 CLI 명령의 플래그는 변경하지 않습니다.
@@ -45,12 +45,12 @@ using tk-grill, 새 기능의 요구사항을 함께 구체화해 주세요.
 using tk-roadmap, 다음 분기의 개선 방향과 우선순위를 정리해 주세요.
 ```
 
-### Ralphex 실행 계획 준비
+### Ralph 반복 작업용 계획 준비
 
-`tk-ralplan`은 확정된 목표와 근거를 Ralphex용 Markdown 작업 계획으로 준비하고 형식을 점검합니다. 장기 실행, 자식 세션 교체, 검증 반복은 TigerKit이 아닌 별도로 설치한 Ralphex가 담당합니다.
+`tk-ralplan`은 확정된 목표와 근거를 범용 Markdown 작업 계획으로 준비하고 점검합니다. 기본 Task·체크박스 형식은 Ralphex와 호환되지만 실행기를 Ralphex로 제한하지 않습니다. 장기 실행과 세션 교체는 사용자가 별도로 선택한 외부 실행기가 담당합니다.
 
 ```text
-using tk-ralplan, 현재 작업의 목표와 검증 기준을 Ralphex 계획 파일로 준비해 주세요.
+using tk-ralplan, 현재 작업의 목표와 검증 기준을 장기 반복 실행용 계획 파일로 준비해 주세요.
 using tk-ralplan check docs/plans/feature.md
 ```
 
@@ -70,7 +70,7 @@ using tk-ralplan check docs/plans/feature.md
 | --- | --- | --- |
 | [tk-prep](skills/tk-prep/SKILL.md) | `hybrid` | 자연어 SWE 착수·구현 요청을 준비하고 승인된 로컬 구현·검증을 진행합니다. |
 | [tk-roadmap](skills/tk-roadmap/SKILL.md) | `hybrid` | 목표와 제약을 정리해 마일스톤을 만듭니다. |
-| [tk-ralplan](skills/tk-ralplan/SKILL.md) | `user` | Ralphex 실행용 목표·작업·검증 계획을 작성하고 정적으로 점검합니다. |
+| [tk-ralplan](skills/tk-ralplan/SKILL.md) | `user` | 범용 목표·작업·검증 계획을 작성합니다. 기본 형식은 Ralphex 호환입니다. |
 | [tk-audit](skills/tk-audit/SKILL.md) | `hybrid` | 저장소의 기술 일감을 읽기 전용으로 감사합니다. |
 | [tk-prototype](skills/tk-prototype/SKILL.md) | `hybrid` | UI·로직 대안을 비교하는 시제품을 만듭니다. |
 | [tk-experience-review](skills/tk-experience-review/SKILL.md) | `hybrid` | 사용자 경험과 외부 레퍼런스에서 개선·신규 기능 일감을 발굴합니다. |

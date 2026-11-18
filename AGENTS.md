@@ -2,7 +2,7 @@
 
 ## 제품과 소유권
 
-TigerKit은 조합 가능한 Agent Skills 저장소입니다. 범용 workflow runner, plugin, scheduler, shared-state framework를 만들지 않습니다. `tk-ralplan`은 외부 Ralphex용 목표·계획 파일만 준비·검사하며 실행기나 장기 상태를 소유하지 않습니다. 폐기된 `tk-goal`과 동등한 상주 LLM 오케스트레이터의 재도입은 [ADR 0007](docs/adr/0007-retire-tk-goal-use-ralphex-plan.md)의 검증 및 사용자 결정 없이는 허용하지 않습니다. 별도 런타임, 세션 교체 컨트롤러, TUI, 전역 스케줄러 및 승인 확대를 TigerKit에 추가하지 않습니다.
+TigerKit은 조합 가능한 Agent Skills 저장소입니다. 범용 workflow runner, plugin, scheduler, shared-state framework를 만들지 않습니다. `tk-ralplan`은 외부 반복 실행을 위한 범용 목표·계획 파일만 준비·검사하고 기본 출력은 Ralphex 계획 형식과 호환됩니다. 실행기나 장기 상태를 소유하지 않습니다. 폐기된 `tk-goal`과 동등한 상주 LLM 오케스트레이터의 재도입은 [ADR 0007](docs/adr/0007-retire-tk-goal-use-ralphex-plan.md)의 검증 및 사용자 결정 없이는 허용하지 않습니다. 별도 런타임, 세션 교체 컨트롤러, TUI, 전역 스케줄러 및 승인 확대를 TigerKit에 추가하지 않습니다.
 
 - `skills/tk-*/SKILL.md`가 현재 동작·권한·완료 조건의 정본입니다. `references/`는 조건부 지식, `scripts/`는 실제 실행 도우미, `assets/`는 표현 자원입니다.
 - 공통 기준과 자원은 해당 참조 전용 스킬에 한 번 둡니다. HTML 공통 자원·도우미는 `tk-writing`, 검증 registry·설정 도우미는 `tk-verification-guidance`가 소유합니다. 업무 스킬은 필요한 조건에서만 읽고, 설치 의존성은 각 `dependencies.json`에 명시합니다. [ADR 0004](docs/adr/0004-shared-reference-skills.md)를 따릅니다.
