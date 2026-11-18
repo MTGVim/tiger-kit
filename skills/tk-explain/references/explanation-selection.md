@@ -233,7 +233,7 @@ PNG 경로는 해당 목적지의 기본값으로 유지하며, 명시적인 독
 썸네일은 첫 화면이 아니라 그 변형본만의 장면을 잘라 씁니다. 첫 화면은 서로 거의 같아 구분이
 안 됩니다. 토글은 `localStorage`에 저장하되 try/catch로 감싸 막혀도 화면이 동작하게 하고, 같은
 테마 토큰으로 밝은 테마와 어두운 테마, 375px 폭, 오프라인을 지킵니다.
-[갤러리 빌더](../../tk-writing/scripts/build_gallery.py)는 id, name, href, thumb, diff, misfit,
+[갤러리 빌더](../../tk-writing/scripts/build_variant_gallery.py)는 id, name, href, thumb, diff, misfit,
 baseline을 담은 JSON 목록으로 이 페이지를 만듭니다. 채팅에는 갤러리 경로와 몇 줄만 적습니다.
 이 갤러리는 이름을 보여 주고 가지치기를 돕는 용도이며, 이름을 가려 판단하는 `tk-blind-comparison`과 다릅니다.
 
