@@ -65,7 +65,7 @@ Screenshot: <absolute path | N/A>; actual inspection: yes | no | N/A
 
 미해결 UI 비교에서는 결정에 관련된 차원만 바꿉니다. 색상, 대비 또는 상태 식별이 질문인 경우 색상만 다른 대안도 유효하며 해당 비교에서 레이아웃과 동작은 유지합니다. 아키텍처, 흐름 또는 탐색은 그것이 실제 질문일 때만 바꿉니다. 로직에는 예시 입력/출력과 최소 어댑터를 사용하는 작은 순수 harness를 우선합니다.
 
-웹 prototype에서는 저장소 실행 명령, 설치된 UI 스택, 구성 요소와 디자인 토큰을 확인합니다. 의존성을 추가하거나 manifest/lockfile을 바꾸지 않고 안전하게 격리된 route/harness를 재사용합니다. 저장소·참조 디자인 토큰이 없는 독립 HTML에는 공통 테마 자산과 가독성·렌더링 요구사항을 위해 [HTML 출력](../tk-writing/references/html-output.md)을 읽습니다. 비교별 디자인 토큰과 prototype 탐색 예외를 유지합니다. 안전한 route/harness가 없으면 작은 `.tigerkit/prototypes/<slug>/index.html`, `styles.css`, `app.js`를 사용합니다.
+웹 prototype에서는 저장소 실행 명령, 설치된 UI 스택, 구성 요소와 디자인 토큰을 확인합니다. 의존성을 추가하거나 manifest/lockfile을 바꾸지 않고 안전하게 격리된 route/harness를 재사용합니다. 저장소·참조 디자인 토큰이 없는 독립 HTML에는 공통 테마 자산과 가독성·렌더링 요구사항을 위해 [HTML 출력](../tk-writing/references/html-output.md)을 읽습니다. 비교별 디자인 토큰과 prototype 탐색 예외를 유지합니다. 안전한 route/harness가 없고 사람에게 전달하는 한 페이지 비교 화면이 필요하면 `tk-writing`의 공용 한 페이지 빌더(`scripts/build_report.py`)로 조립합니다. 상호작용은 `[[figure:이름]]` 조각에 필요한 `<style>`·`<script>`와 함께 넣고 동작을 검증합니다. 제품 UI를 검증하기 위한 격리된 실행 harness는 기존 route/harness 정책을 따릅니다.
 
 콘텐츠, 데이터와 상호작용 상태를 동일하게 유지하면서 결정에 관련된 개념 2–3개를 비교합니다. 기본적으로 넓은 화면에서는 2–3개 열을 나란히 배치하고 좁은 화면에서는 세로로 쌓습니다. 동시 렌더링이 개념이나 최소 가독성을 해칠 때만 명시적인 A/B 또는 A/B/C 전환을 사용합니다. 세 번째 선택지가 독립적인 가치를 더하지 않으면 A/B에서 멈춥니다. 저장소 근거가 이미 결정을 해결하면 prototype을 만들지 않습니다.
 
