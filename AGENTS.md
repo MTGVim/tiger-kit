@@ -11,6 +11,10 @@ TigerKit은 조합 가능한 Agent Skills 저장소입니다. 범용 workflow ru
 - 공통 도우미를 실행해도 결과·임시 경로·승인·정리 책임은 호출한 업무에 있습니다. 공통 패키지 안에 실행 결과를 쓰지 않습니다.
 - 업무 스킬을 합치거나 삭제하려면 독립 호출·특별한 절차·완료 조건·소유 권한이 실제로 필요한지 확인합니다. 참조 전용 스킬은 좁은 읽기 조건과 독립적인 기준을 소유해야 합니다. 범용 `tk-common`이나 중앙 router를 만들지 않습니다.
 
+## 파일명 규칙
+
+- Python 파일(`.py`)은 `snake_case`, JavaScript·ES 모듈·스타일·HTML·JSON 파일(`.js`, `.mjs`, `.css`, `.html`, `.json`)은 `kebab-case`로 작성합니다. 공개 실행 경로를 변경할 때는 스킬 본문, 참조 문서, import, 설치 패키지의 모든 호출부를 같은 변경에서 갱신합니다. 단순 파일명 규칙을 위해 독립 스킬을 추가하지 않습니다.
+
 ## 조사와 지침 경제성
 
 - skill·SDD·review 품질에 영향을 주는 변경은 먼저 최신 upstream을 고정 revision으로 조사합니다. SDD는 `obra/superpowers`를 primary upstream으로 삼습니다. 현재 구현·설계 근거·관련 검증을 함께 확인하고 읽지 못한 것은 `unverified`로 남깁니다.
