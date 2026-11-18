@@ -2,7 +2,7 @@
 
 ## 제품과 소유권
 
-TigerKit은 조합 가능한 Agent Skills 저장소입니다. 범용 workflow runner, plugin, scheduler, shared-state framework를 만들지 않습니다. 명시적으로 호출한 `tk-goal`은 승인된 목표의 단계별 실행, 독립 검증, 재계획과 작업별 장부를 담당합니다. 별도 런타임, 세션 교체 컨트롤러, TUI, 전역 스케줄러 및 승인 확대는 허용하지 않습니다.
+TigerKit은 조합 가능한 Agent Skills 저장소입니다. 범용 workflow runner, plugin, scheduler, shared-state framework를 만들지 않습니다. `tk-ralplan`은 외부 Ralphex용 목표·계획 파일만 준비·검사하며 실행기나 장기 상태를 소유하지 않습니다. 폐기된 `tk-goal`과 동등한 상주 LLM 오케스트레이터의 재도입은 [ADR 0007](docs/adr/0007-retire-tk-goal-use-ralphex-plan.md)의 검증 및 사용자 결정 없이는 허용하지 않습니다. 별도 런타임, 세션 교체 컨트롤러, TUI, 전역 스케줄러 및 승인 확대를 TigerKit에 추가하지 않습니다.
 
 - `skills/tk-*/SKILL.md`가 현재 동작·권한·완료 조건의 정본입니다. `references/`는 조건부 지식, `scripts/`는 실제 실행 도우미, `assets/`는 표현 자원입니다.
 - 공통 기준과 자원은 해당 참조 전용 스킬에 한 번 둡니다. HTML 공통 자원·도우미는 `tk-writing`, 검증 registry·설정 도우미는 `tk-verification-guidance`가 소유합니다. 업무 스킬은 필요한 조건에서만 읽고, 설치 의존성은 각 `dependencies.json`에 명시합니다. [ADR 0004](docs/adr/0004-shared-reference-skills.md)를 따릅니다.
@@ -38,7 +38,7 @@ TigerKit은 조합 가능한 Agent Skills 저장소입니다. 범용 workflow ru
 
 ## 산출물과 비밀
 
-- `tk-goal`의 작업별 장부와 인계는 [목표 실행 경로](skills/tk-artifacts/references/artifact-paths.md#goal-state)에 보존합니다. 일반 단기 작업에 목표 장부를 강제하지 않습니다.
+- 폐기된 `tk-goal`의 기존 실행 기록은 [과거 Goal 기록](skills/tk-artifacts/references/artifact-paths.md#goal-state)에 남겨 두며 자동 삭제하거나 실행 권한으로 취급하지 않습니다. 새 `tk-ralplan`은 목표 장부를 만들지 않습니다.
 - 저장소 귀속 임시 실행 파일은 `.tigerkit/tmp/<skill>/<run-id>/`, 검증 근거는 `.tigerkit/evidence/<skill>/<run-id>/`에 둡니다. 설명과 조사는 해당 소유 스킬의 durable-root/default 정책을 따르며 기존 학습 공간과 명시한 최종 목적지를 보존합니다.
 - 쓰기 전 저장소·소유권·nonsymlink 경계와 Git 제외를 확인합니다. `git ls-files -- .tigerkit/`에 추적 파일이 없어야 하며 `git check-ignore -q -- .tigerkit/`가 성공해야 합니다. Git의 최종 판정이 정본이며 전역 exclude도 유효합니다.
 - 제외가 없을 때만 안전한 루트 `.gitignore`에 기존 바이트/줄바꿈을 보존해 `/.tigerkit/`를 추가하고 재확인합니다. 실패·추적 파일·안전하지 않은 경로는 파일 분기만 중단하며 자동 untrack이나 다른 임시 경로로 우회하지 않습니다. 설정만을 위한 stage/commit은 하지 않습니다.

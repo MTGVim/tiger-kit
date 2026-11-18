@@ -31,7 +31,7 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 | 아이디어와 결정 구체화 | [tk-grill](skills/tk-grill/SKILL.md) |
 | 추진 방향과 마일스톤 수립 | [tk-roadmap](skills/tk-roadmap/SKILL.md) |
 | 사용성 개선 및 신규 기능 발굴 | [tk-experience-review](skills/tk-experience-review/SKILL.md) |
-| 장기 자율 작업 시작 또는 전환 | [tk-goal](skills/tk-goal/SKILL.md) |
+| Ralphex 실행 계획 작성·점검 | [tk-ralplan](skills/tk-ralplan/SKILL.md) |
 | 현재 작업을 다른 세션으로 인계 | [tk-handoff](skills/tk-handoff/SKILL.md) |
 
 스킬 호출에서 명령과 옵션은 `foo` 형태의 키워드를 사용합니다. 실제 CLI 명령의 플래그는 변경하지 않습니다.
@@ -45,16 +45,16 @@ using tk-grill, 새 기능의 요구사항을 함께 구체화해 주세요.
 using tk-roadmap, 다음 분기의 개선 방향과 우선순위를 정리해 주세요.
 ```
 
-### 장기 자율 작업
+### Ralphex 실행 계획 준비
 
-처음부터 장기 작업을 요청하거나 진행 중인 작업을 전환할 수 있습니다.
+`tk-ralplan`은 확정된 목표와 근거를 Ralphex용 Markdown 작업 계획으로 준비하고 형식을 점검합니다. 장기 실행, 자식 세션 교체, 검증 반복은 TigerKit이 아닌 별도로 설치한 Ralphex가 담당합니다.
 
 ```text
-using tk-goal, 목표를 달성하고 실제 검증까지 완료할 때까지 작업해 주세요.
-using tk-goal, 현재 작업을 장기 자율 작업으로 전환해 주세요.
+using tk-ralplan, 현재 작업의 목표와 검증 기준을 Ralphex 계획 파일로 준비해 주세요.
+using tk-ralplan check docs/plans/feature.md
 ```
 
-`tk-goal`은 필수 리서치와 심층 인터뷰로 목표·단계별 성공 기준·자율 결정 범위를 확정합니다. 메인 세션은 작업을 위임하고 독립 검증에 따라 전략을 갱신하며 전체 목표 달성까지 반복합니다. 컨텍스트 보호나 중단 시 장부와 인수인계를 보존하고 새 세션에서 `tk-goal resume <run-id>`로 재개합니다. 별도 런타임이나 자동 세션 교체는 제공하지 않습니다. `status`, `pause`, `stop`도 지원합니다. 자세한 조건은 [장부와 재개](skills/tk-goal/references/ledger.md)를 참고합니다.
+계획은 보통 `docs/plans/<slug>.md`에 작성하며, 실행 명령은 승인된 범위와 로컬 CLI 설정을 확인한 뒤 별도로 결정합니다. `tk-ralplan`이 자동 실행하거나 완료를 보장하지 않습니다. `tk-goal`은 제거됐으며 재도입 판단 기준은 [ADR 0007](docs/adr/0007-retire-tk-goal-use-ralphex-plan.md)을 따릅니다.
 
 ### 위임 모드
 
@@ -70,6 +70,7 @@ using tk-goal, 현재 작업을 장기 자율 작업으로 전환해 주세요.
 | --- | --- | --- |
 | [tk-prep](skills/tk-prep/SKILL.md) | `hybrid` | 자연어 SWE 착수·구현 요청을 준비하고 승인된 로컬 구현·검증을 진행합니다. |
 | [tk-roadmap](skills/tk-roadmap/SKILL.md) | `hybrid` | 목표와 제약을 정리해 마일스톤을 만듭니다. |
+| [tk-ralplan](skills/tk-ralplan/SKILL.md) | `user` | Ralphex 실행용 목표·작업·검증 계획을 작성하고 정적으로 점검합니다. |
 | [tk-audit](skills/tk-audit/SKILL.md) | `hybrid` | 저장소의 기술 일감을 읽기 전용으로 감사합니다. |
 | [tk-prototype](skills/tk-prototype/SKILL.md) | `hybrid` | UI·로직 대안을 비교하는 시제품을 만듭니다. |
 | [tk-experience-review](skills/tk-experience-review/SKILL.md) | `hybrid` | 사용자 경험과 외부 레퍼런스에서 개선·신규 기능 일감을 발굴합니다. |
@@ -129,7 +130,6 @@ using tk-goal, 현재 작업을 장기 자율 작업으로 전환해 주세요.
 | [tk-grooming](skills/tk-grooming/SKILL.md) | `hybrid` | 스킬·지속 규칙을 감사하고 최근 7일의 관련 런타임 기록을 진단합니다. |
 | [tk-skill-vet](skills/tk-skill-vet/SKILL.md) | `hybrid` | 외부 스킬의 설치 전 보안 위험과 업데이트 동작을 정적으로 검토합니다. |
 | [tk-handoff](skills/tk-handoff/SKILL.md) | `hybrid` | 세션 현황을 확인하고 일반 또는 장기 작업 인계를 작성하고 복원합니다. |
-| [tk-goal](skills/tk-goal/SKILL.md) | `user` | 목표를 조사·인터뷰하고 단계별 검증과 재계획으로 달성합니다. |
 | [tk-route-mode](skills/tk-route-mode/SKILL.md) | `user` | 위임 티어별 기본/절약 모드를 설정하고 승인된 호스트 설정을 적용, 검증 및 복원합니다. |
 | [tk-setup-skills](skills/tk-setup-skills/SKILL.md) | `user` | 필요한 스킬과 공통 의존성의 설치·설정을 지원합니다. |
 | [tk-wizard](skills/tk-wizard/SKILL.md) | `hybrid` | 설정·인증·이관을 대화나 일회성 Bash Wizard로 안내합니다. |
