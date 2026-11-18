@@ -22,6 +22,7 @@
 """
 import argparse, html, math, os, re, sys, tempfile
 from pathlib import Path
+from html_controls import theme_assets
 
 HERE = Path(__file__).resolve().parent
 
@@ -269,7 +270,8 @@ def build(md, a):
 <script>
 {js}
 </script>
-</body>
+<!-- tk-writing:shared-theme -->
+{theme_assets()}</body>
 </html>
 '''
 
