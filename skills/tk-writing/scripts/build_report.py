@@ -259,7 +259,7 @@ def build(md, a):
 <div class="page">
 <div class="rp-bar">
 <nav class="toc" aria-label="{esc(a.toc_label)}"><details><summary><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M1 3h12M1 7h12M1 11h12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>{esc(a.toc_label)}</span></summary><ol>{toc}</ol></details></nav>
-<div class="rp-tools"><a class="rp-title" href="#top">{esc(title)}</a><fieldset class="ht-theme-control" data-ht-theme-control hidden><legend class="ht-visually-hidden">테마</legend><div class="ht-theme-buttons"></div></fieldset></div>
+<div class="rp-tools"><a class="rp-title" href="#top">{esc(title)}</a><button type="button" data-ht-download aria-label="다운로드" hidden>다운로드</button><span data-ht-export-status role="status" hidden></span><fieldset class="ht-theme-control" data-ht-theme-control hidden><legend class="ht-visually-hidden">테마</legend><div class="ht-theme-buttons"></div></fieldset></div>
 </div>
 <header id="top"><h1>{esc(title)}</h1>{f'<p class="meta">{esc(meta)}</p>' if meta else ''}</header>
 <main>
