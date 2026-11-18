@@ -13,7 +13,8 @@ TigerKit은 조합 가능한 Agent Skills 저장소입니다. 범용 workflow ru
 
 ## 파일명 규칙
 
-- Python 파일(`.py`)은 `snake_case`, JavaScript·ES 모듈·스타일·HTML·JSON 파일(`.js`, `.mjs`, `.css`, `.html`, `.json`)은 `kebab-case`로 작성합니다. 공개 실행 경로를 변경할 때는 스킬 본문, 참조 문서, import, 설치 패키지의 모든 호출부를 같은 변경에서 갱신합니다. 단순 파일명 규칙을 위해 독립 스킬을 추가하지 않습니다.
+- [ADR 0008](docs/adr/0008-unify-source-filenames.md)에 따라 `.py` 파일은 소문자 `snake_case`, `.js`·`.mjs`·`.css`·`.html`·`.json` 파일은 소문자 `kebab-case`로 통일합니다. 대상 확장자 앞에 추가 점이나 밑줄을 넣지 않습니다. 외부 도구가 고정한 이름은 근거를 확인한 예외로만 취급합니다.
+- 이름을 바꿀 때는 저장소 전체 추적 파일명, 스킬 본문과 문서 링크·앵커, Python·JS import, CLI 예시, 설치·패키징 호출부와 소유권을 확인합니다. 다른 스킬이 소유한 동명 파일은 바꾸지 않습니다. 변경 후 [릴리즈 체크리스트](RELEASE_CHECKLIST.md)의 파일명 검사를 통과하지 못하면 `main` 반영을 중단합니다. 단순 파일명 규칙을 위해 독립 스킬을 추가하지 않습니다.
 
 ## 조사와 지침 경제성
 
