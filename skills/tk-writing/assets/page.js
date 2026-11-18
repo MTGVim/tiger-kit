@@ -1,35 +1,5 @@
 /* page.js: 테마 버튼, 좁은 화면의 목차 메뉴, 목차의 현재 절 표시, 막대의 제목 표시만 한다. 외부 요청 없음. */
 (function () {
-  // 테마: studio 가 먼저 붙었으면 건드리지 않는다. 저장 키와 마크업은 studio 와 같다.
-  function theme() {
-    if (window.__tigerkitTheme) return;
-    var root = document.documentElement, key = 'archify-theme';
-    var control = document.querySelector('[data-ht-theme-control]');
-    if (!control) return;
-    var box = control.querySelector('.ht-theme-buttons');
-    var labels = { system: '시스템', light: '밝게', dark: '어둡게' };
-    box.textContent = '';
-    ['system', 'light', 'dark'].forEach(function (v) {
-      var label = document.createElement('label'); label.className = 'ht-theme-option';
-      var input = document.createElement('input'); input.type = 'radio'; input.name = 'ht-theme'; input.value = v; input.setAttribute('aria-label', labels[v]);
-      var span = document.createElement('span'); span.textContent = labels[v];
-      label.appendChild(input); label.appendChild(span); box.appendChild(label);
-    });
-    var inputs = [].slice.call(box.querySelectorAll('input'));
-    function apply(v) {
-      if (['system', 'light', 'dark'].indexOf(v) < 0) v = 'system';
-      if (v === 'system') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', v);
-      inputs.forEach(function (i) { i.checked = i.value === v; });
-    }
-    var saved = 'system';
-    try { var s = localStorage.getItem(key); if (s === 'auto') s = 'system'; if (s) saved = s; } catch (e) {}
-    window.__tigerkitTheme = { apply: apply, key: key };
-    apply(saved);
-    inputs.forEach(function (i) {
-      i.addEventListener('change', function () { apply(i.value); try { localStorage.setItem(key, i.value); } catch (e) {} });
-    });
-    control.hidden = false;
-  }
   function toc() {
     var links = [].slice.call(document.querySelectorAll('.toc a'));
     if (!('IntersectionObserver' in window) || !links.length) return;
@@ -71,7 +41,7 @@
       if (gone) t.setAttribute('data-shown', ''); else t.removeAttribute('data-shown');
     }, { rootMargin: '-' + top + 'px 0px 0px 0px' }).observe(h);
   }
-  function start() { theme(); menu(); toc(); title(); }
+  function start() { menu(); toc(); title(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start();
 })();
 
