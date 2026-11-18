@@ -9,7 +9,7 @@
 모식도는 정확한 속도, 거리나 충돌 동작의 근거가 아닙니다.
 
 스크립트, 이벤트 핸들러, foreign object, 외부 리소스나 글꼴이 없는 정적 SVG를 사용합니다.
-`node <tk-writing>/scripts/svg_to_png.mjs input.svg output.png`로 2배 크기로 래스터화합니다.
+`node <tk-writing>/scripts/svg-to-png.mjs input.svg output.png`로 2배 크기로 래스터화합니다.
 `<tk-writing>`은 호출자가 아니라 현재 설치된 해당 패키지로 해석합니다. 도우미는 네트워크를 차단한 상태에서 SVG를 이미지로 불러오므로 SVG 스크립트가 실행될 수 없습니다.
 설치된 Playwright SDK 1.48+, Chrome/Chromium과 Node 18+가 필요합니다. 호출 프로젝트에 설치된
 `playwright`를 사용하며, 다른 위치의 설치본은 `PLAYWRIGHT_MODULE_PATH`에 패키지 디렉터리의
