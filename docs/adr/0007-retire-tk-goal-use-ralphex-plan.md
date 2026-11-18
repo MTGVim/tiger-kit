@@ -9,6 +9,12 @@
 
 비교한 외부 실행기는 `umputun/ralphex`(계획의 Task별 새 실행과 리뷰), `Th0rgal/open-ralph-wiggum`(반복마다 새 CLI 프로세스)입니다. 둘 다 구현자의 완료 신호 및 수정 가능한 파일에 의존하는 부분이 있어 완전한 외부 목표 검증기로 간주할 수 없습니다. Ralphex는 작업 형식, 계획 실행, 리뷰와 역할별 모델·effort 설정이 이미 있어 이 결정의 우선 대상입니다. 실제 제품 작업에 대한 비교 PoC는 수행하지 않았으며, 특정 실행기의 우월성을 보장하지 않습니다.
 
+## 확인한 상류 구현과 적용 판단
+
+- `umputun/ralphex@e31a99108fafa55a2b31438ed882cd2d05332798`: `README.md`, `pkg/config/defaults/prompts/task.txt`, `pkg/processor/phase/task.go`의 계획 형식과 단계별 신호·재시도 계약을 확인했습니다. **Keep:** Ralphex가 실행과 리뷰를 소유하는 범위를 유지합니다. **Adapt:** TigerKit은 계획의 목표·AC·검증 지시만 구성합니다. **Omit:** Ralphex 런타임, 자동 커밋 및 서킷 브레이커를 TigerKit에 복제하지 않습니다.
+- `Th0rgal/open-ralph-wiggum@7559f267b227d74d82776048697615536c2a6b2a`: `README.md`, `ralph.ts`와 `completion.ts`의 반복별 새 세션, 체크박스와 완료 신호 확인 방식을 비교했습니다. 일반 자유 형식 프롬프트와 문장 출력만으로 성공을 입증하지 못한다는 한계를 확인했습니다.
+- 두 실행기의 실제 장기 작업 완료율·토큰 비용은 이번 변경에서 측정하지 않았습니다. 외부 CLI 명령과 제공자 설정은 실행 직전 설치본에서 확인해야 합니다.
+
 ## 결정
 
 1. `tk-goal` 패키지와 공개 호출을 제거합니다. 기존 Goal Runner, 장부 갱신·반복·세션 인계 기능을 `tk-ralplan` 아래에 다시 구현하지 않습니다.

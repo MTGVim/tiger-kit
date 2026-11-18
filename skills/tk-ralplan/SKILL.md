@@ -72,4 +72,4 @@ Ralphex 문서에 맞춰 다음 형식을 사용합니다. 이 예시의 명령�
 
 사용자에게 실제 계획 파일 경로, 준비된 전체 성공 기준, 검증 명령, 미검증 항목, 선택한 실행기와 예상되는 파일·권한 변경을 보고합니다. 실행 명령은 **실제 버전의 `ralphex --help` 및 인증·sandbox 설정을 확인한 경우에만** 예시로 제시합니다. 예: `ralphex --codex --worktree docs/plans/<slug>.md`. `--worktree`는 소스 checkout과 실행 worktree를 나누지만 보호 파일의 변경 자체를 막지 않습니다. Ralphex 기본 흐름의 자동 커밋과 넓은 실행 권한, 완료 계획의 이동을 명시합니다. 이 계획 파일 작성, 실행 명령 제시 또는 사용자의 최초 계획 승인만으로 외부 실행, 자동 커밋, push, PR, 병합이나 배포 권한을 새로 얻지 않습니다.
 
-준비를 마치면 **종료**합니다. 사용자 명시 승인 없이 Ralphex를 시작하거나 장기 실행을 감시·재개하지 않습니다. Ralphex의 실행 상태는 해당 외부 실행기의 파일과 출력에서 확인하며 TigerKit 장부를 추가하지 않습니다. 기존 `tk-goal`의 장기 오케스트레이션을 다른 이름으로 복원하지 않습니다. 근거와 재도입 기준은 [ADR 0007](../../docs/adr/0007-retire-tk-goal-use-ralphex-plan.md)에 기록되어 있습니다.
+준비를 마치면 **종료**합니다. 사용자 명시 승인 없이 Ralphex를 시작하거나 장기 실행을 감시·재개하지 않습니다. Ralphex의 실행 상태는 해당 외부 실행기의 파일과 출력에서 확인하며 TigerKit 장부를 추가하지 않습니다. 기존 `tk-goal`의 장기 오케스트레이션을 다른 이름으로 복원하지 않습니다. 근거와 재도입 기준은 [ADR 0007](https://github.com/MTGVim/tiger-kit/blob/main/docs/adr/0007-retire-tk-goal-use-ralphex-plan.md)에 기록되어 있습니다.
