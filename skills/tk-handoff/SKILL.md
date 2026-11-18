@@ -94,7 +94,7 @@ Changed files: <observed paths | none>
 Commands: <actually executed commands | none>
 Verification: <check/result/evidence>
 Completed work: <done items | none>
-Remaining work: <unfinished items | none>
+Remaining work: <unfinished items | none; criterion IDs must include definitions or exact definition file paths>
 Open questions: <required decisions | none>
 Risks: <remaining failure/regression risk>
 Owner skill: <verified owner skill and remaining generation/verification/delivery phase | none>
@@ -102,6 +102,8 @@ Next step: <one executable immediate action>
 Resume hints: <owner phase plus environment/order/command hints>
 Disposition: reported | applied | pending
 ```
+
+`Remaining work`에서 이전 세션에만 정의된 기준 ID를 참조할 때는 각 ID마다 실행 가능한 한 줄 정의 또는 정의가 있는 정확한 파일 경로를 함께 적습니다. ID 이름만 남겨 재개한 세션이 기준을 재구성하도록 하지 않습니다.
 
 `Disposition`은 이 인수인계에 기록된 작업을 설명합니다. 조사·보고 전용 작업은 `reported`,
 이미 수행한 승인된 변경은 `applied`, 아직 적용하지 않은 제안은 `pending`입니다. 권한을 부여하지 않습니다.

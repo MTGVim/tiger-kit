@@ -60,6 +60,8 @@ AC를 해당 스크린샷, 발행해도 안전한 정확한 `display_route`, 재
 - `evidence_kind`: `blocked-intercept | request+response | reread-runtime | reread-image | visual-pair | trace | accessibility | dom-runtime | none` 중 하나 이상. 어느 시도에서도 근거를 얻지 못했다면 `none`과 `evidence_ref: none`을 사용합니다.
 - 모든 `create` 또는 `update` 행의 `Pass`에는 같은 화면의 같은 필드에서 수행한 `reread-runtime`이 필요합니다. `reread-image`를 사용하면 검사한 이미지에 판정할 필드가 보여야 합니다.
 - 실행하지 않은 모든 행의 `reason`, `search_scope`(페이지, 필터, 데이터 조건이나 정확한 사전 점검 경계), `unblock`(실행을 가능하게 할 구체적인 단계)
+
+`unblock`이 승인된 상호작용 경계 안에서 검증기가 직접 수행할 수 있는 단계라면 반환 전에 실행하고 시도·결과를 기록합니다. 예를 들어 다른 허용된 데이터 대상으로 전환하거나, 입력 전 필요한 체크박스를 조작하거나, 다른 DOM 값으로 승인된 판정을 시도합니다. 실행하지 않은 in-scope 단계는 `Unverifiable`로 반환하지 않고 해당 행을 `not-executed`, `unblock: in-scope`로 표시하며 부모에게 다음 실행 단계를 전달합니다. 부모도 이를 사용자에게 '확인 불가'로 바꾸어 보고하지 않습니다. 승인 범위 밖이거나 안전하지 않은 단계는 수행하지 않고 사유를 기록합니다.
 - 민감하지 않은 인증 모드
 - 근거 디렉터리의 절대 경로
 - 시각 비교 쌍이 필요할 때는 변경 전 기준의 출처 정보와 재실행 절차
