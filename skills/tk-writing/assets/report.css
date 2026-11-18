@@ -29,9 +29,9 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 24px; background: var(--bg); }
+html { font-size: calc(16px * var(--ht-font-scale, 1)); scroll-behavior: smooth; scroll-padding-top: 24px; background: var(--bg); }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
-body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.7 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", sans-serif; word-break: keep-all; overflow-wrap: break-word; font-variant-numeric: tabular-nums; -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 1rem/1.7 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", sans-serif; word-break: keep-all; overflow-wrap: break-word; font-variant-numeric: tabular-nums; -webkit-text-size-adjust: 100%; }
 a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 code { font: .9em ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--tint-1); color: var(--ink-h); padding: .05em .35em; border-radius: 4px; }
@@ -189,3 +189,8 @@ section.is-quiet h2 { border-left-color: var(--quiet-bd); }
 .legend i { width: 14px; height: 14px; }
 .slot { margin: 0 0 1.5em; padding: 28px 16px; border: 1px dashed var(--line-strong); border-radius: var(--radius); color: var(--muted); text-align: center; font-size: .875rem; }
 .fig-wide { margin: 8px 0 20px; overflow-x: clip; }
+
+/* One-page reader controls */
+.rp-tools [data-ht-download], .rp-tools .ht-font-control select { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 5px 8px; cursor: pointer; }
+.rp-tools [data-ht-download][hidden], .rp-tools [data-ht-export-status][hidden] { display: none; }
+.rp-tools .ht-font-control { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
