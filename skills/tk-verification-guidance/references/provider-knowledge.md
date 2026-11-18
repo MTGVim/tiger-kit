@@ -191,11 +191,11 @@ macOS에서 Cua 창 범위 픽셀 `drag`는 foreground 전용이며 best-effort 
 
 Native 앱 launch에는 설치 버전의 `launch_app` schema와 포함된 `MACOS.md`를 읽고 문서화된 `launch_app({bundle_id})` 경로를 우선합니다. 검토한 구현은 `activates = false`로 실행을 요청하고 대상이 스스로 활성화되면 이전 최상위 앱을 다시 활성화합니다. 자체 활성화를 원천 차단하지 않으며 `self_activation_suppressed`는 복원 결과일 수 있습니다. true만으로 무중단 focus 보존을 입증하지 않습니다. 이전 최상위 앱/focus와 launch 후 최신 상태를 독립적으로 비교합니다. false이거나 필드가 없으면 긍정적인 증거가 아닙니다.
 
-이 실행 규칙은 선택한 제공자와 무관하게 macOS 앱 launch에 적용합니다. Shell `open`, AppleScript 활성화나 자체 활성화하는 저장소 명령을 단독 대안으로 쓰지 않습니다. 제공자에 활성화 없는 실행 경로가 없으면 설치된 이 패키지의 [실행 helper](../scripts/launch_macos_background.js)를 사용할 수 있습니다. macOS의 JXA/AppKit을 사용하며 Swift 설치나 다른 입력 제공자는 필요하지 않습니다.
+이 실행 규칙은 선택한 제공자와 무관하게 macOS 앱 launch에 적용합니다. Shell `open`, AppleScript 활성화나 자체 활성화하는 저장소 명령을 단독 대안으로 쓰지 않습니다. 제공자에 활성화 없는 실행 경로가 없으면 설치된 이 패키지의 [실행 helper](../scripts/launch-macos-background.js)를 사용할 수 있습니다. macOS의 JXA/AppKit을 사용하며 Swift 설치나 다른 입력 제공자는 필요하지 않습니다.
 
 ```bash
-/usr/bin/osascript -l JavaScript <tk-verification-guidance>/scripts/launch_macos_background.js --bundle-id <exact-bundle-id>
-/usr/bin/osascript -l JavaScript <tk-verification-guidance>/scripts/launch_macos_background.js --path <absolute-app-or-wrapped-executable-path>
+/usr/bin/osascript -l JavaScript <tk-verification-guidance>/scripts/launch-macos-background.js --bundle-id <exact-bundle-id>
+/usr/bin/osascript -l JavaScript <tk-verification-guidance>/scripts/launch-macos-background.js --path <absolute-app-or-wrapped-executable-path>
 ```
 
 `<tk-verification-guidance>`는 현재 설치된 소유 패키지 경로입니다. 원시 executable은 아래 규칙으로 먼저 만든 `.app` wrapper 안의 정확한 실행 파일만 받습니다. 이미 실행 중인 대상은 중복 실행하거나 활성화하지 않고 거부하므로 기존 창을 재사용합니다. Helper는 `NSWorkspace.OpenConfiguration.activates = false`로 요청하기 전에 정확한 bundle/executable 대상의 활성화 알림을 구독하고 polling을 보조로 사용합니다. 감시는 실행 요청부터 최대 5초이며, 대상의 `isFinishedLaunching`을 관찰한 뒤의 활성화도 같은 기간 안에서 집계한 뒤 종료합니다. 응답 뒤에 감시 프로세스를 남기지 않습니다. 사용자가 다른 앱으로 전환하면 이전 앱으로 되돌리지 않고 중단합니다.
