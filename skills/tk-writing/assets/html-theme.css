@@ -116,16 +116,16 @@ pre { max-width: 100%; overflow-x: auto; }
   from { outline-color: var(--accent); }
   to { outline-color: transparent; }
 }
-:is(.ht-document, [data-ht-document]):not([data-ht-anchor-cues]) :is(.ht-doc-content, [data-ht-content]) section[id]:target > :is(h1, h2, h3, h4, h5, h6),
-:is(.ht-document, [data-ht-document]):not([data-ht-anchor-cues]) :is(.ht-doc-content, [data-ht-content]) :is(h1, h2, h3, h4, h5, h6)[id]:target {
+:is(.ht-document, [data-ht-document]):not([data-ht-anchor-cues]) [data-ht-content] section[id]:target > :is(h1, h2, h3, h4, h5, h6),
+:is(.ht-document, [data-ht-document]):not([data-ht-anchor-cues]) [data-ht-content] :is(h1, h2, h3, h4, h5, h6)[id]:target {
   outline: 2px solid transparent;
   outline-offset: 4px;
   border-radius: calc(.5 * var(--radius));
   animation: ht-target-flash 1.5s ease-out;
 }
 @media (prefers-reduced-motion: reduce) {
-  :is(.ht-document, [data-ht-document]):not([data-ht-anchor-cues]) :is(.ht-doc-content, [data-ht-content]) section[id]:target > :is(h1, h2, h3, h4, h5, h6),
-  :is(.ht-document, [data-ht-document]):not([data-ht-anchor-cues]) :is(.ht-doc-content, [data-ht-content]) :is(h1, h2, h3, h4, h5, h6)[id]:target {
+  :is(.ht-document, [data-ht-document]):not([data-ht-anchor-cues]) [data-ht-content] section[id]:target > :is(h1, h2, h3, h4, h5, h6),
+  :is(.ht-document, [data-ht-document]):not([data-ht-anchor-cues]) [data-ht-content] :is(h1, h2, h3, h4, h5, h6)[id]:target {
     animation: none;
     background: var(--hover);
   }
@@ -143,8 +143,6 @@ pre { max-width: 100%; overflow-x: auto; }
   font-size: var(--font-small); line-height: 1.5; overflow-wrap: anywhere;
   pointer-events: none;
 }
-.ht-sidenote { margin: 1rem 0; padding: .5rem .75rem; border-inline-start: 1px solid var(--line-strong); color: var(--muted); font-size: .9em; }
-@media (min-width: 1200px) { .ht-sidenote { float: inline-end; width: min(40%, 18rem); margin: .25rem 0 1rem 1rem; } }
 .ht-sidenote { margin: 1rem 0; padding: .5rem .75rem; border-inline-start: 1px solid var(--line-strong); color: var(--muted); font-size: .9em; }
 @media (min-width: 1200px) { .ht-sidenote { float: inline-end; width: min(40%, 18rem); margin: .25rem 0 1rem 1rem; } }
 @media (max-width: 960px) { .ht-sidenote { float: none; width: auto; } }
