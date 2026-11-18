@@ -149,8 +149,20 @@
     var label = document.createElement('label'); label.className = 'ht-font-control';
     label.appendChild(document.createTextNode('글자 크기 '));
     var select = document.createElement('select'); select.setAttribute('data-ht-font-size', '');
-    [75, 100, 125, 150].forEach(function (n) { var option = document.createElement('option'); option.value = String(n); option.textContent = n + '%'; if (n === 100) option.selected = true; select.appendChild(option); });
-    select.addEventListener('change', function () { document.documentElement.style.setProperty('--ht-font-scale', String(Number(select.value) / 100)); });
+    select.setAttribute('aria-label', '글자 크기');
+    var sizes = ['50', '75', '100', '125', '150', '175', '200'];
+    sizes.forEach(function (n) { var option = document.createElement('option'); option.value = n; option.textContent = n + '%'; select.appendChild(option); });
+    function apply(value) {
+      select.value = sizes.includes(value) ? value : '100';
+      document.documentElement.style.setProperty('--ht-font-scale', String(Number(select.value) / 100));
+    }
+    var key = 'tigerkit-html-font-size', saved = '100';
+    try { var stored = localStorage.getItem(key); if (sizes.includes(stored)) saved = stored; } catch (e) {}
+    apply(saved);
+    select.addEventListener('change', function () {
+      apply(select.value);
+      try { localStorage.setItem(key, select.value); } catch (e) {}
+    });
     label.appendChild(select); theme.parentNode.insertBefore(label, theme);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fontSize, {once:true}); else fontSize();
