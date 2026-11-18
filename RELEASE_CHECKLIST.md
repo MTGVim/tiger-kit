@@ -30,7 +30,7 @@ patterns = {
 bad = [path for path in paths if path and (pat := patterns.get(PurePosixPath(path).suffix))
        and not pat.fullmatch(PurePosixPath(path).name)]
 if bad:
-    raise SystemExit('파일명 규칙 위반:\\n' + '\\n'.join(bad))
+    raise SystemExit('파일명 규칙 위반:\n' + '\n'.join(bad))
 print('파일명 규칙: PASS')
 PY
 ```
