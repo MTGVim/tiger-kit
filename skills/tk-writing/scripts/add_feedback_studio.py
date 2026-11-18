@@ -259,6 +259,8 @@ def main(argv=None):
         js = js.replace('__FS_CONTEXT__', json.dumps(context, ensure_ascii=False).replace('<', '\\u003c'))
         editor = open(os.path.join(os.path.dirname(SCRIPT), 'feedback-editor.js'), encoding='utf-8').read()
         result = inject(page, editor + '\n' + js, videos)
+        if not re.search(r'\[data-theme\s*=\s*[\'\"]dark[\'\"]\]', ''.join(InlineAssets(page).assets['style'])):
+            raise ValueError('공용 셸로 조립한 페이지만 받습니다: [data-theme="dark"] 규칙이 없습니다')
         result = result.replace(MARK, MARK + theme_assets(), 1)
         result = theme_default(result, a.theme)
     except ValueError as e:
