@@ -3,7 +3,7 @@
 
 사용자가 HTML·웹페이지 또는 `.html` 목적지를 요청했을 때 읽는 산출물 계약입니다. 기본 조사 결과는 대화에서 완결하며, 이 참조가 첫 연구나 지속 확인 지점의 HTML 생성을 요구하지 않습니다. 다른 파일 형식은 해당 요청을 따릅니다.
 
-HTML 초안을 작성하기 전에 [명확한 글쓰기](../../tk-writing/references/clear-writing.md), [문서의 목적](../../tk-writing/references/diataxis.md), [렌더러 계약](../../tk-writing/references/renderer-contract.md)을 읽습니다. 보고서는 구체적인 결정을 돕기 위한 것이며, 의무적으로 작성하는 튜토리얼이 아닙니다. 렌더러 계약의 내용 형태별 기준과 제작 전 형식 제안을 적용하고 이미 선택하거나 위임한 형식은 다시 묻지 않습니다. 비교표나 권고 목록이 중심인 일반 HTML은 현재 설치된 `tk-writing`의 `build_html.py`로 조립합니다. 선택한 archify는 지원되는 기본 상호작용과 finalize를 유지합니다. 구 `render_report.py`와 `assets/report.html`은 복원하지 않습니다.
+HTML 초안을 작성하기 전에 [명확한 글쓰기](../../tk-writing/references/clear-writing.md), [문서의 목적](../../tk-writing/references/diataxis.md), [렌더러 계약](../../tk-writing/references/renderer-contract.md)을 읽습니다. 보고서는 구체적인 결정을 돕기 위한 것이며, 의무적으로 작성하는 튜토리얼이 아닙니다. 렌더러 계약의 내용 형태별 기준과 제작 전 형식 제안을 적용하고 이미 선택하거나 위임한 형식은 다시 묻지 않습니다. 비교표나 권고 목록이 중심인 일반 HTML은 현재 설치된 `tk-writing`의 `build_report.py`로 조립합니다. 선택한 archify는 지원되는 기본 상호작용과 finalize를 유지합니다. 구 `render_report.py`와 `assets/report.html`은 복원하지 않습니다.
 
 <a id="content-and-sources"></a>
 ## 내용과 출처
@@ -12,7 +12,7 @@ HTML 초안을 작성하기 전에 [명확한 글쓰기](../../tk-writing/refere
 
 보고서는 일관되고 대화하듯 자연스럽게 작성합니다. 짧은 보고서는 관련 사실을 몇 개의 패널로 합칠 수 있습니다. 빈 범주, 중복 보기나 문서 모드 선택기를 만들지 않습니다. 관찰, 추론과 예시를 구분합니다. 미확인 사항은 결정에 영향을 미치는 위치에서 설명하고, 권장 절차는 직접 확인한 근거에서 도출하거나 제안이라고 표시합니다. 이해도 퀴즈를 추가하지 않습니다. 학습 확인은 `tk-explain`이 담당합니다.
 
-실행 소유 `.tigerkit/tmp/tk-research/<run-id>/` 아래에 편집 가능한 원고를 둡니다. 일반 HTML은 [문서 조립](../../tk-writing/references/html-assembly.md)에 따라 `body.html` 조각을 작성하며, 결론, 근거, 대안, 한계, 다음 행동과 실제 검증을 의미 있는 섹션과 표로 구성합니다. 안정적인 ID로 주장 옆의 인용과 출처를 연결하고 각 출처에서 모든 인용 위치로 역링크를 제공합니다.
+실행 소유 `.tigerkit/tmp/tk-research/<run-id>/` 아래에 편집 가능한 원고를 둡니다. 일반 HTML은 [문서 조립](../../tk-writing/references/html-assembly.md)에 따라 Markdown 원고와 `[[figure:이름]]` 조각을 작성하며, 결론, 근거, 대안, 한계, 다음 행동과 실제 검증을 의미 있는 섹션과 표로 구성합니다. 안정적인 ID로 주장 옆의 인용과 출처를 연결하고 각 출처에서 모든 인용 위치로 역링크를 제공합니다.
 
 archify를 선택했으면 설치된 작성 참조로 `candidate.archify.md`를 작성하고 같은 내용을 패널로 구성합니다. 각 출처를 `@source`로 선언하고 `source:id` 인라인 링크로 주장 옆에 인용합니다. 어느 경로든 사람이 읽는 범위와 근거에 revision/접근 날짜와 조사 식별 정보를 보존합니다. 검증한 URL이나 고정된 저장소 위치를 사용합니다. 출처를 이용할 수 없으면 그 사실을 밝힙니다. 링크에 접근할 수 있다는 사실만으로 주장이 검증되지는 않습니다. 코드 발췌는 고정된 revision에서 확인할 수 있어야 합니다. 출처를 꾸며 내거나 원시 비공개 로그를 보고서 내용으로 바꾸지 않습니다. 부정적 결과와 모순을 보존합니다.
 
