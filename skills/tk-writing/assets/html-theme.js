@@ -193,7 +193,7 @@
         host.append(control);
       }
     }
-    const labels = {system: 'System', light: 'Light', dark: 'Dark'};
+    const labels = {system: '시스템', light: '밝게', dark: '어둡게'};
     let box = control.querySelector('.ht-theme-buttons');
     if (!box) { box = document.createElement('div'); box.className = 'ht-theme-buttons'; control.append(box); }
     box.replaceChildren();
