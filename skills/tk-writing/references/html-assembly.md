@@ -6,7 +6,7 @@
 원고는 UTF-8 Markdown으로 작성하며 첫 줄은 `# 제목`, 본문은 `## 절 제목`으로 구성합니다. 추가 HTML·CSS·JavaScript 상호작용이 필요하면 원고에 `[[figure:이름]]`을 놓고 별도 `<figures>/이름.html` 조각에 검토한 `<style>`과 `<script>`를 포함합니다. 신뢰할 수 없는 원고나 스크립트를 자동으로 실행하지 않습니다. 근거와 인용의 식별자, 접근 날짜 및 페이지 내 링크를 보존합니다.
 
 ```bash
-python3 <tk-writing>/scripts/build_report.py <scratch>/manuscript.md <scratch>/report.html --figures <scratch>/figures
+python3 <tk-writing>/scripts/build_page.py <scratch>/manuscript.md <scratch>/report.html --figures <scratch>/figures
 python3 <tk-writing>/scripts/package_html.py --root <final-directory> --name report.html report.html
 python3 <tk-writing>/scripts/package_html.py --check --root <final-directory> --name report.html report.html
 ```
