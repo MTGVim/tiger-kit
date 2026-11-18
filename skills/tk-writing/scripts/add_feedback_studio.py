@@ -318,6 +318,18 @@ def selftest():
             raise AssertionError("overwrote an existing file")
         except FileExistsError:
             pass
+    with tempfile.TemporaryDirectory() as d:
+        source = os.path.join(d, "source.html")
+        invalid = os.path.join(d, "invalid.html")
+        with open(source, "w", encoding="utf-8") as stream:
+            stream.write(generic)
+        assert main(["--input", source, "--output", invalid]) == 2
+        assert not os.path.exists(invalid)
+        valid = generic.replace("</head>", '<style>:root[data-theme="dark"] { color: white; }</style></head>')
+        with open(source, "w", encoding="utf-8") as stream:
+            stream.write(valid)
+        assert main(["--input", source, "--output", os.path.join(d, "valid.html")]) == 0
+        assert os.path.isfile(os.path.join(d, "valid.html"))
     print("selftest ok")
     return 0
 
