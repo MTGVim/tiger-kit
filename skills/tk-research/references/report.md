@@ -3,7 +3,7 @@
 
 사용자가 HTML·웹페이지 또는 `.html` 목적지를 요청했을 때 읽는 산출물 계약입니다. 기본 조사 결과는 대화에서 완결하며, 이 참조가 첫 연구나 지속 확인 지점의 HTML 생성을 요구하지 않습니다. 다른 파일 형식은 해당 요청을 따릅니다.
 
-HTML 초안을 작성하기 전에 [명확한 글쓰기](../../tk-writing/references/clear-writing.md), [문서의 목적](../../tk-writing/references/diataxis.md), [렌더러 계약](../../tk-writing/references/renderer-contract.md)을 읽습니다. 보고서는 구체적인 결정을 돕기 위한 것이며, 의무적으로 작성하는 튜토리얼이 아닙니다. 렌더러 계약의 내용 형태별 기준과 제작 전 형식 제안을 적용하고 이미 선택하거나 위임한 형식은 다시 묻지 않습니다. 비교표나 권고 목록이 중심인 일반 HTML은 현재 설치된 `tk-writing`의 `build_report.py`로 조립합니다. 선택한 archify는 지원되는 기본 상호작용과 finalize를 유지합니다. 구 `render_report.py`와 `assets/report.html`은 복원하지 않습니다.
+HTML 초안을 작성하기 전에 [명확한 글쓰기](../../tk-writing/references/clear-writing.md), [문서의 목적](../../tk-writing/references/diataxis.md), [렌더러 계약](../../tk-writing/references/renderer-contract.md)을 읽습니다. 보고서는 구체적인 결정을 돕기 위한 것이며, 의무적으로 작성하는 튜토리얼이 아닙니다. 렌더러 계약의 내용 형태별 기준과 제작 전 형식 제안을 적용하고 이미 선택하거나 위임한 형식은 다시 묻지 않습니다. 비교표나 권고 목록이 중심인 일반 HTML은 현재 설치된 `tk-writing`의 `build_page.py`로 조립합니다. 선택한 archify는 지원되는 기본 상호작용과 finalize를 유지합니다. 구 `render_report.py`와 `assets/report.html`은 복원하지 않습니다.
 
 <a id="content-and-sources"></a>
 ## 내용과 출처
@@ -23,7 +23,7 @@ archify에서 관계나 사건 순서가 결론을 설명할 때는 기본 다�
 
 산출물 경로 기준을 적용합니다. 기본 목적지는 `.tigerkit/research/<slug>/report.html`이며, 명시적으로 지정된 안전한 목적지를 사용할 수도 있습니다. 디렉터리나 보고서만으로 지속 조사를 시작하지 않습니다. HTML은 읽기용 표현이며, 실행 원장이나 권한 또는 편집 가능한 정본 상태가 아닙니다. 이 프로젝트의 보고서만 교체하기 전에 소유권을 확인합니다. 통과한 후보가 준비될 때까지 기존의 유효한 보고서를 보존합니다. 원자적으로 교체하기 전에 실행 디렉터리 아래에서 렌더링을 준비합니다.
 
-모든 HTML에 렌더러 계약의 공통 정적 검사와 출처 및 포함 범위 대조를 수행합니다. 일반 HTML은 [HTML 출력](../../tk-writing/references/html-output.md)의 정적 기준도 적용하고, 구 보고서 템플릿 전용 `check_report.py`를 공통 검사기로 사용하지 않습니다. archify에서만 전체 `finalize explainer` 명령을 추가 실행합니다. 최종 파일은 외부 런타임 요청 없이 단독으로 열려야 합니다. 클릭 가능한 출처 링크는 허용됩니다. 최종 바이트와 연결된 원고 및 실제 검사 근거를 보존하고 archify이면 receipt도 보존합니다. 렌더링 후 결론, 주장과 출처 사이의 링크, 수량, ID와 포함 범위를 확인합니다. 렌더러는 사실의 정확성을 입증하지 않습니다. 선택한 렌더러가 실패하거나 없거나 필수 상호작용을 지원하지 않으면 해당 보고서 분기를 차단하고, 다른 형식으로 말없이 바꾸지 않습니다.
+모든 HTML에 렌더러 계약의 공통 정적 검사와 출처 및 포함 범위 대조를 수행합니다. 일반 HTML은 [HTML 출력](../../tk-writing/references/html-output.md)의 정적 기준도 적용하고, 구 보고서 템플릿 전용 `check_page.py`를 공통 검사기로 사용하지 않습니다. archify에서만 전체 `finalize explainer` 명령을 추가 실행합니다. 최종 파일은 외부 런타임 요청 없이 단독으로 열려야 합니다. 클릭 가능한 출처 링크는 허용됩니다. 최종 바이트와 연결된 원고 및 실제 검사 근거를 보존하고 archify이면 receipt도 보존합니다. 렌더링 후 결론, 주장과 출처 사이의 링크, 수량, ID와 포함 범위를 확인합니다. 렌더러는 사실의 정확성을 입증하지 않습니다. 선택한 렌더러가 실패하거나 없거나 필수 상호작용을 지원하지 않으면 해당 보고서 분기를 차단하고, 다른 형식으로 말없이 바꾸지 않습니다.
 
 전달 전 [공통 피드백 후처리](../../tk-writing/references/feedback-studio.md)에서 `--owner-skill tk-research --source-path <확인한 원고>`를 넘겨 `--input <evidence/report.html> --output <delivery/report.html>`로 기본 피드백 주입본 한 벌을 만들고 열람 링크로 안내합니다. 명시적 제외 요청에는 공통 계약의 제외 분기를 적용합니다. 원고는 일반 HTML의 `body.html` 또는 archify의 `candidate.archify.md`처럼 실제 재생성에 쓰는 파일입니다. 원본과 검사 근거를 근거 폴더에 보존하고 원본과 최종 전달본의 검증 상태를 구분합니다. finalize 통과는 archify 원본에만 보고하며, 위임받아 제작했으면 선택한 형식과 이유도 완료 보고에 씁니다.
 
