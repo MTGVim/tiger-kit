@@ -21,7 +21,7 @@ import sys
 import tempfile
 from urllib.parse import quote
 
-TEMPLATE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "feedback-player.template.html")
+TEMPLATE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "feedback-player-template.html")
 TOKEN = "__FEEDBACK_PLAYER_DATA__"
 MAX_HTML_BYTES = 512 * 1024  # a transcript-only page; anything larger means media leaked in
 
