@@ -15,6 +15,24 @@ python3 skills/tk-setup-skills/scripts/skill_dependencies.py validate \
 PYTHONPYCACHEPREFIX=.tigerkit/tmp/compile-cache python3 -m compileall -q skills
 for f in skills/*/scripts/*.mjs; do node --check "$f" || exit; done
 git diff --check
+# 확장자별 파일명 규칙: 위반 시 exit 1
+python3 - <<'PY'
+import re
+import subprocess
+from pathlib import PurePosixPath
+
+paths = subprocess.check_output(['git', 'ls-files', '-z']).decode('utf-8').split('\0')
+patterns = {
+    '.py': re.compile(r'[a-z0-9]+(?:_[a-z0-9]+)*\.py'),
+    **{ext: re.compile(r'[a-z0-9]+(?:-[a-z0-9]+)*' + re.escape(ext))
+       for ext in ('.js', '.mjs', '.css', '.html', '.json')},
+}
+bad = [path for path in paths if path and (pat := patterns.get(PurePosixPath(path).suffix))
+       and not pat.fullmatch(PurePosixPath(path).name)]
+if bad:
+    raise SystemExit('파일명 규칙 위반:\\n' + '\\n'.join(bad))
+print('파일명 규칙: PASS')
+PY
 ```
 
 `dependencies.json`을 바꿨으면 동일한 실제 설치 도우미로 bundled catalog를 갱신한 후 위 검사를 실행합니다.
@@ -23,6 +41,12 @@ git diff --check
 python3 skills/tk-setup-skills/scripts/skill_dependencies.py build-catalog \
   --root . --output skills/tk-setup-skills/references/install-catalog.json
 ```
+
+## 파일명 변경과 참조 검증
+
+- [ADR 0008](docs/adr/0008-unify-source-filenames.md)에 따라 **저장소 전체 Git 추적 파일**을 검사합니다. `.py`는 `snake_case`, `.js`·`.mjs`·`.css`·`.html`·`.json`은 `kebab-case`입니다. 추가 점·밑줄·대문자 등 위반이 있으면 `main` 반영을 중단합니다. 고정 파일명 예외는 근거와 범위를 먼저 문서화합니다.
+- 이름을 바꾼 파일마다 과거 경로 참조가 남았는지 `git grep -n -F '<이전 파일명>' -- .`으로 확인합니다. 결과가 있으면 서로 다른 소유자의 동명 파일인지 실제로 확인합니다. 새 파일의 정확한 경로 존재, Python·JS import, 설치·패키징 명령과 생성물의 상대 자원을 확인합니다.
+- 변경된 Markdown 상대 링크는 원본 파일 위치를 기준으로 해석하여 대상 파일과 `#anchor`를 확인합니다. 파일명 검사나 문자열 검색만으로 링크·런타임 검증을 대신하지 않습니다. 실제 빌드와 실행이 불가능하면 미검증으로 보고하고 통과를 선언하지 않습니다.
 
 ## 변경에 맞는 실행 확인
 
