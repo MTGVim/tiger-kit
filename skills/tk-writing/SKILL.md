@@ -39,11 +39,10 @@ TigerKit에서 사람이 읽는 내용을 새로 작성하거나 수정할 때�
 - [명료한 글쓰기](references/clear-writing.md): 제공된 정확한 텍스트를 보존하는 대신 산문을 작성할 때 읽습니다.
 - [Diátaxis](references/diataxis.md): 튜토리얼, 방법 안내, 설명이나 참조 구성을 선택할 때 읽습니다.
 - [설명 기법](references/explanation-techniques.md): 교육 설명이나 그 표현을 계획할 때 읽습니다.
-- [HTML 조립](references/html-assembly.md): 선택한 출력이 공통 reader HTML 조립 경로를 사용할 때 읽습니다.
+- [HTML 조립](references/html-assembly.md): 한 페이지 HTML을 공용 빌더로 조립할 때 읽습니다.
 - [HTML 구성 요소](references/html-components.md): 선택한 HTML 인터페이스에 지원되는 구성 요소가 필요할 때 읽습니다.
 - [HTML 도해](references/html-figures.md): 선택한 HTML에 설명 도해가 필요할 때 읽습니다.
 - [HTML 출력](references/html-output.md): HTML 산출물을 전달물로 선택했을 때 읽습니다.
-- [HTML reader](references/html-reader.md): 공통 reader 수업이나 변경 문서를 조립할 때 읽습니다.
 - [HTML 렌더링](references/html-render.md): 선택한 HTML 출력을 빌드, 패키징하거나 검사할 때 읽습니다.
 - [대화형 예제](references/interactive-examples.md): 명시적 요청이나 추천 선택에 따라 실시간 대화형 예제를 제공할 때 읽습니다.
 - [로컬 이미지 폴백과 분리 식질](references/local-image-fallback.md): `tk-illustrate`·`tk-comic`에서 사용 가능한 이미지 도구가 없어 로컬 폴백과 준비물 전달을 선택하거나, 선택한 로컬 그림에 별도 텍스트를 조판할 때만 읽습니다. 실행·설치·승인·최종 검사는 호출자가 담당합니다.
