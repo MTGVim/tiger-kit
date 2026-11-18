@@ -20,9 +20,9 @@ PR·이슈의 기본 형식 규칙은 위 목적지에만 적용하며 일반 �
 
 실행의 임시 디렉터리에 정적 독립형 SVG 또는 HTML을 작성합니다. SVG는
 [장면 그림](../../tk-writing/references/scene-figures.md)의 비활성 자산 제한을 따릅니다. 명시적인 크기와
-설치된 `tk-writing`의 [SVG 래스터 변환기](../../tk-writing/scripts/svg_to_png.mjs)를 사용합니다. 크기가 제한된 HTML에는
-`node <tk-writing>/scripts/capture_page.mjs input.html new-output.png [width] [height]`를 사용합니다. 예를 들면
-`node <tk-writing>/scripts/capture_page.mjs input.html new-output.png 1200 580`입니다. `<tk-writing>`은
+설치된 `tk-writing`의 [SVG 래스터 변환기](../../tk-writing/scripts/svg-to-png.mjs)를 사용합니다. 크기가 제한된 HTML에는
+`node <tk-writing>/scripts/capture-page.mjs input.html new-output.png [width] [height]`를 사용합니다. 예를 들면
+`node <tk-writing>/scripts/capture-page.mjs input.html new-output.png 1200 580`입니다. `<tk-writing>`은
 현재 설치된 컬렉션의 해당 소유 스킬로 해석합니다. 높이는 선택 사항입니다.
 생략하면 900px보다 짧은 문서를 포함하여 뷰포트가 문서에 맞춰집니다. 높이를 명시하면
 뷰포트가 고정되지만 캡처에는 여전히 문서 전체가 포함됩니다. 수렴하지 않는
