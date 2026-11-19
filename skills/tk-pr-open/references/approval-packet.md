@@ -64,6 +64,7 @@ See the required plan fields in [retrospective stack split](split-to-stack.md).
 - 검토 대상과 발행 후보의 비교 결과, 바뀐 범위의 재검토 결과 또는 허용된 생략 사유를 제시합니다.
 - 원격 행동별 대상·변경·순서와 개별 승인 여부를 제시합니다. 부가 행동이 없으면 `N/A`로 둡니다.
 - 제외 사항과 위험을 제시합니다.
+- 미리보기 블록 밖의 메타 필드는 필드마다 목록 항목 하나로 쓰고, 원격 행동은 번호 목록으로 순서를 보입니다.
 - 발행 권고 하나를 제시합니다.
 
 `PR evidence requirement/state`가 여전히 `undecided`라면 이 점검 지점에서 구체적인 발행 미리보기 뒤,
