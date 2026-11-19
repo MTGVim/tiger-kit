@@ -68,12 +68,12 @@ body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: 
 .toc a:hover { color: var(--text); text-decoration: none; }
 .toc a[aria-current] { color: var(--accent); font-weight: 700; background: none; }
 .rp-tools { position: sticky; gap: 12px; top: env(safe-area-inset-top, 0px); z-index: 40; box-sizing: border-box; height: var(--bar-h); display: flex; align-items: center; justify-content: flex-end; margin: 0 calc(50% - 50vw) 0; padding: 0 calc(var(--gutter) + env(safe-area-inset-right, 0px)) 0 var(--gutter); background: var(--bg); border-bottom: 1px solid var(--line); }
-.rp-title { flex: 1 1 0; min-width: 0; margin-right: auto; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--text); font-size: 14px; font-weight: 600; text-decoration: none; visibility: hidden; opacity: 0; transition: opacity .15s; }
+.rp-title { position: absolute; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 46rem); margin: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--text); font-size: 14px; font-weight: 600; text-align: center; text-decoration: none; visibility: hidden; opacity: 0; transition: opacity .15s; }
 .rp-title[data-shown] { visibility: visible; opacity: 1; }
 .rp-title:hover { color: var(--accent); }
-@media (max-width: 65.99rem) { .rp-title { padding-left: 5.25rem; } }
+@media (max-width: 65.99rem) { .rp-title { position: absolute; top: 100%; left: 0; right: 0; transform: none; box-sizing: border-box; width: auto; max-width: none; padding: 6px var(--gutter); text-align: center; font-size: 13px; background: var(--bg); border-bottom: 1px solid var(--line); } .rp-title:not([data-shown]) { display: none; } .rp-bar .toc details[open] ol { z-index: 10; } }
 .page { padding-top: 0; padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px)); }
-.page [id] { scroll-margin-top: 1.5rem; }
+.page [id] { scroll-margin-top: 3.25rem; }
 @media (min-width: 66rem) {
   .page { display: grid; grid-template-columns: minmax(calc(12rem + 24px), 1fr) minmax(0, 50rem) 1fr; width: auto; max-width: none; margin: 0; column-gap: 0; padding: 0 var(--gutter) 96px; }
   .rp-tools { grid-column: 1 / -1; grid-row: 1; }
