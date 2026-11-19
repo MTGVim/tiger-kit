@@ -30,6 +30,8 @@ class Document(HTMLParser):
         self.errors = []
         self.inert = 0
         self.studio = 0
+        self.download = 0
+        self.export = 0
 
     def handle_comment(self, data):
         if not self.inert and data.strip() == STUDIO_MARK:
@@ -38,9 +40,13 @@ class Document(HTMLParser):
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
         if tag == 'template':
+            if 'data-ht-export' in attrs and not self.inert:
+                self.export += 1
             self.inert += 1
         if self.inert:
             return
+        if 'data-ht-download' in attrs:
+            self.download += 1
         if tag == 'h1':
             self.h1 += 1
         if tag == 'nav' and 'toc' in attrs.get('class', '').split():
@@ -66,6 +72,8 @@ def static_check(text, profile='report', require_studio=False):
         doc.errors.append(f'expected one h1, found {doc.h1}')
     if profile == 'report' and doc.toc != 1:
         doc.errors.append(f'expected one report TOC, found {doc.toc}')
+    if profile == 'report' and doc.download and not doc.export:
+        doc.errors.append('download button without embedded export; run package_html.py')
     if require_studio and doc.studio != 1:
         doc.errors.append(f'expected one real feedback-studio comment, found {doc.studio}')
     return doc.errors
