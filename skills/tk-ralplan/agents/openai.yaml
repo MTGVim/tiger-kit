@@ -1,6 +1,6 @@
 interface:
-  short_description: "[user] 외부 반복 실행용 범용 목표·Task·검증 계획을 작성합니다. 기본 출력은 Ralphex와 호환됩니다."
-  default_prompt: "$tk-ralplan 현재 합의된 목표를 범용 반복 실행 계획 Markdown으로 준비해 주세요. 기본 출력은 Ralphex 형식과 호환되도록 하고 직접 실행하지 마세요."
+  short_description: "[user] 외부 반복 실행용 범용 목표·Task·검증 계획과 Ralphex 원샷 실행 스크립트를 준비합니다."
+  default_prompt: "$tk-ralplan 현재 합의된 목표를 범용 반복 실행 계획 Markdown으로 준비해 주세요. 기본 출력은 Ralphex 형식과 호환되게 하고 확인된 모델 및 현재 셸에 맞는 원샷 실행 스크립트를 준비하되 직접 실행하지 마세요."
 
 policy:
   allow_implicit_invocation: false
