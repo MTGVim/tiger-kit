@@ -47,14 +47,14 @@ using tk-roadmap, 다음 분기의 개선 방향과 우선순위를 정리해 �
 
 ### Ralph 반복 작업용 계획 준비
 
-`tk-ralplan`은 확정된 목표와 근거를 범용 Markdown 작업 계획으로 준비하고 점검합니다. 기본 Task·체크박스 형식은 Ralphex와 호환되지만 실행기를 Ralphex로 제한하지 않습니다. 장기 실행과 세션 교체는 사용자가 별도로 선택한 외부 실행기가 담당합니다.
+`tk-ralplan`은 확정된 목표와 근거를 범용 Markdown 작업 계획으로 준비하고 점검합니다. Task·체크박스는 Ralphex와 호환되고, 설치된 Ralphex의 실행 옵션을 확인하여 현재 셸용 원샷 스크립트를 계획 옆에 생성합니다. 구현·리뷰 모델을 구체화하고 저비용 모델일수록 Task를 작게 나눕니다. 모델 라우팅과 충돌하는 사용자 수준 `CLAUDE.md` 또는 `AGENTS.md`에 Ralph 예외를 넣을지는 별도로 승인받으며, 외부 실행기를 자동 실행하거나 설치하지 않습니다.
 
 ```text
 using tk-ralplan, 현재 작업의 목표와 검증 기준을 장기 반복 실행용 계획 파일로 준비해 주세요.
 using tk-ralplan check docs/plans/feature.md
 ```
 
-계획은 보통 `docs/plans/<slug>.md`에 작성하며, 실행 명령은 승인된 범위와 로컬 CLI 설정을 확인한 뒤 별도로 결정합니다. `tk-ralplan`이 자동 실행하거나 완료를 보장하지 않습니다. `tk-goal`은 제거됐으며 재도입 판단 기준은 [ADR 0007](docs/adr/0007-retire-tk-goal-use-ralphex-plan.md)을 따릅니다.
+계획은 기본적으로 `.tigerkit/ralph/<slug>.md`에 작성하며, 현재 환경에 맞는 `<slug>.sh` 또는 `<slug>.ps1`과 복사용 실행 명령을 함께 제공합니다. Ralphex가 없으면 공식 설치를 제안합니다. `tk-ralplan`이 자동 실행하거나 완료를 보장하지 않습니다. `tk-goal`은 제거됐으며 재도입 판단 기준은 [ADR 0007](docs/adr/0007-retire-tk-goal-use-ralphex-plan.md)을 따릅니다.
 
 ### 위임 모드
 
