@@ -168,11 +168,39 @@ def serve_snapshot(resources):
     return server, thread, f'http://127.0.0.1:{server.server_port}'
 
 
+
+def chrome_fallback(path, evidence, widths, dom_only=False):
+    """Use the installed Chrome pipe with no dependency installation."""
+    import shutil
+    import subprocess
+    import tempfile
+    if dom_only:
+        raise RuntimeError('--dom-only requires Python Playwright; Chrome fallback navigates a local file')
+    node = shutil.which('node')
+    if not node:
+        raise RuntimeError('Python Playwright and Node Chrome pipe unavailable; browser check not run')
+    evidence.mkdir(parents=True, exist_ok=True)
+    script = Path(__file__).with_name('check_page_chrome.mjs')
+    with tempfile.TemporaryDirectory(prefix='tk-page-runtime-') as temp:
+        runtime = Path(temp) / 'runtime.js'
+        runtime.write_text(RUNTIME, encoding='utf-8')
+        proc = subprocess.run(
+            [node, str(script), str(path.resolve()), str(evidence.resolve()),
+             json.dumps(widths), str(runtime)],
+            capture_output=True, text=True, timeout=180)
+        if proc.returncode:
+            raise RuntimeError('Chrome pipe browser check failed: ' + proc.stderr[-2000:])
+        try:
+            return json.loads(proc.stdout)
+        except json.JSONDecodeError as error:
+            raise RuntimeError('Chrome pipe returned invalid browser results') from error
+
+
 def browser_check(path, evidence, executable, widths, dom_only=False):
     try:
         from playwright.sync_api import sync_playwright
-    except ImportError as error:
-        raise RuntimeError('Python Playwright is unavailable; no packages were installed') from error
+    except ImportError:
+        return chrome_fallback(path, evidence, widths, dom_only)
     evidence.mkdir(parents=True, exist_ok=True)
     results, network = [], []
     resources = snapshot_resources(path)
