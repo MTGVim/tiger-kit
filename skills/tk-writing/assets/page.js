@@ -147,9 +147,9 @@
     var theme = document.querySelector('.rp-tools [data-ht-theme-control]');
     if (!theme) return;
     var label = document.createElement('label'); label.className = 'ht-font-control';
-    label.appendChild(document.createTextNode('글자 크기 '));
     var select = document.createElement('select'); select.setAttribute('data-ht-font-size', '');
     select.setAttribute('aria-label', '글자 크기');
+    select.title = '글자 크기';
     var sizes = ['50', '75', '100', '125', '150', '175', '200'];
     sizes.forEach(function (n) { var option = document.createElement('option'); option.value = n; option.textContent = n + '%'; select.appendChild(option); });
     function apply(value) {
