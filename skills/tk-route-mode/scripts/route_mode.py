@@ -260,7 +260,10 @@ def rule_block(prefix="tier-"):
     n = {t: f"`{prefix}{t}`" for t in TIERS}
     return (f"{BEGIN}\n하위 에이전트에 위임할 때는 {n['light']}(좁은 사실 수집, 탐색·분류, 기계적 검사), "
             f"{n['standard']}(구현, 독립 리뷰), {n['top']}(아키텍처, 미지 문제 탐사·연구) 중에서 고르고, "
-            f"호출할 때 모델·effort 인자를 따로 넘기지 않는다.\n{END}\n")
+            f"호출할 때 모델·effort 인자를 따로 넘기지 않는다.\n"
+            f"예외: 현재 실행이 명시적으로 Ralphex 세션(TK_RALPH_SESSION=1)임을 확인했다면 "
+            f"위 티어 대상 선택을 생략하고 자식에게 부모 모델 상속을 요청한다. "
+            f"실행기 표식을 확인할 수 없다면 Ralph 세션이라고 추측하지 않는다.\n{END}\n")
 
 
 def rule_span(text):
