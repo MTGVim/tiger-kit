@@ -96,6 +96,15 @@ RUNTIME = r'''() => {
     }
     checked++;
   }
+  // Only validate the export icon after payload preparation has made it visible.
+  for (const button of document.querySelectorAll('[data-ht-download]:not([hidden])')) {
+    if (getComputedStyle(button).display === 'none') continue;
+    const svg = button.querySelector('svg');
+    if (!svg) { errors.push('visible download button has no SVG icon'); continue; }
+    const rect = svg.getBoundingClientRect(), style = getComputedStyle(svg);
+    if (rect.width <= 0 || rect.height <= 0 || style.visibility === 'hidden' || style.stroke === 'none' || style.strokeWidth === '0px')
+      errors.push('visible download SVG has no rendered size or stroke');
+  }
   const title = document.querySelector('h1');
   if (scrollY === 0 && title && title.getBoundingClientRect().top < 8) warnings.push('title top padding needs visual inspection');
   return {errors,warnings,checked,scrollY,width:innerWidth,height:innerHeight,background:getComputedStyle(document.body).backgroundColor};
