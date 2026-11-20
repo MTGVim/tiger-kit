@@ -192,7 +192,7 @@ python3 <loaded-package>/scripts/make_feedback_player.py --video <out.mp4> --cap
 <a id="narrated-output-bundle"></a>
 ## 설명 MP4 전달 묶음
 
-내레이션이 있는 직접 작성 설명은 hard 자막 MP4, 자막 없는 MP4, SRT를 기본으로 전달합니다. 내레이션이 없으면 hard MP4와 SRT를 전달하며, 명시적 soft/off 요청이 우선합니다. 같은 렌더·오디오·타임라인에서 별도 출력 이름과 manifest 사본으로 조립하고 각 receipt의 실제 경로와 측정 길이를 대조합니다. 자막 없는 사본은 `caption_box_color`와 `caption_box_alpha`를 제거하고 `caption_delivery: none`과 `caption_style: none`으로 만들되 `narration_requested`와 `tts_receipts` 및 화면 고지는 보존합니다. 피드백 플레이어에는 자막 없는 MP4와 자막본의 SRT를 함께 넘깁니다.
+내레이션이 있는 직접 작성 설명은 hard 자막 MP4, 자막 없는 MP4, SRT를 기본으로 전달합니다. 내레이션이 없으면 hard MP4와 SRT를 전달하며, 명시적 soft/off 요청이 우선합니다. 같은 렌더·오디오·타임라인에서 별도 출력 이름과 manifest 사본으로 조립하고 각 receipt의 실제 경로와 측정 길이를 대조합니다. 자막 없는 사본은 `caption_box_color`와 `caption_box_alpha`를 제거하고 `caption_delivery: none`과 `caption_style: none`으로 만들되 `narration_requested`와 `tts_receipts` 및 화면 고지는 보존합니다. 피드백 플레이어에는 자막 없는 MP4와 자막본의 SRT를 함께 넘깁니다. 현재 피드백 플레이어는 SRT의 cue를 영상 아래와 목록에만 표시하며, 영상 위 자막 on/off 기능은 제공하지 않습니다. 영상에 실제로 입혀진 자막의 위치와 겹침은 hard 자막 MP4로 확인합니다. 플레이어의 자막 트랙·토글은 별도 설계와 브라우저 검증 전까지 보류합니다.
 macOS에서는 먼저 설치된 FFmpeg의 `subtitles` 필터를 확인합니다. Homebrew 기본 빌드에 없다면 libass를 포함한 `ffmpeg-full`의 실제 실행 파일을 `--ffmpeg`로 지정할 수 있습니다. 새 설치는 별도 권한을 따릅니다. 반환값 `subtitles: hard`, `media_status: ready`와 경고를 확인한 뒤 프레임에서 자막을 확인합니다. 현재 receipt에는 `caption_delivery` 대신 `subtitles`가 실제 결과 필드입니다.
 
 <a id="tts-disclosure-gate"></a>
