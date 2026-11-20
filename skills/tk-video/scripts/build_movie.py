@@ -409,26 +409,22 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
     notices = sorted({r["disclosure_notice"].strip() for r in tts_receipts
                       if r.get("disclosure_required") is True and isinstance(r.get("disclosure_notice"), str)
                       and r["disclosure_notice"].strip()})
-    missing_notices = []
-    for notice in notices:
-        try:
-            disclosure.check({**data, "captions": captions},
-                [{"disclosure_required": True, "disclosure_notice": notice}], end,
-                hard_captions=delivery == "hard" and caption_support, callouts_rendered=caption_support)
-        except ValueError as error:
-            if not str(error).startswith("AI disclosure is not visible throughout"):
-                raise
-            missing_notices.append(notice)
-    if missing_notices:
-        # Render the required notice in the assembly graph, including a card border/background.
+    # Always render required notices using a dedicated fixed-output overlay.
+    # Manifest callouts, captions and declarations are not substitutes for this style.
+    disclosure.check({**data, "captions": captions}, tts_receipts, end,
+                     hard_captions=delivery == "hard" and caption_support,
+                     callouts_rendered=caption_support) if not notices else None
+    if notices:
         ffmpeg, ffprobe, caption_support = media_tools(ffmpeg, True)
         if not caption_support:
-            return {"media_status": "blocked", "prerequisite": "ffmpeg-subtitles-filter", "output_created": False}
-        data = {**data, "callouts": list(data.get("callouts", [])) + [
-            {"start_ms": 0, "end_ms": end, "text": "\n".join(missing_notices), "x": 8, "y": 8}]}
-    disclosure_receipt = disclosure.check({**data, "captions": captions}, tts_receipts, end,
-        hard_captions=delivery == "hard" and caption_support,
-        callouts_rendered=caption_support)
+            return {"media_status": "blocked", "prerequisite": "ffmpeg-subtitles-filter",
+                    "check_only": check_only, "output_created": False}
+    disclosure_receipt = disclosure.check(
+        {**data, "disclosure_scene": [
+            {"start_ms": 0, "end_ms": end, "text": notice} for notice in notices]},
+        tts_receipts, end)
+    if notices:
+        disclosure_receipt["rendering"] = "fixed-bottom-right-overlay"
 
     source_warnings = []
     source_video = animation_source(data, root, ffprobe, source_warnings) if animation else None
@@ -558,6 +554,28 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
             prepared_filters, presentation_receipt = presentation.prepare(
                 data, captions if burn else [], width, height, end, layout["size_px"],
                 float(rate), ffmpeg, stage, env, warnings)
+        if notices:
+            # Measure glyph coverage in the selected libass font before any encoding.
+            metrics = presentation.TextMetrics(ffmpeg, stage, env)
+            notice_size = max(12, min(22, round(height * .018)))
+            margin = max(12, round(height * .025))
+            for notice in notices:
+                if "\\n" in notice or "\\r" in notice or "\n" in notice or "\r" in notice:
+                    raise ValueError("TTS disclosure must be a single line")
+                ink_width, ink_height, _, _ = metrics.line(notice, notice_size)
+                if ink_width > width - margin * 2 or ink_height > height - margin * 2:
+                    raise ValueError("TTS disclosure does not fit the output; shorten the notice")
+            # Applied after zoom, band and captions: no card, outline or position drift.
+            output_height = height + (layout["band_px"] if burn and band else 0)
+            disclosure_events = []
+            for notice in notices:
+                tags = (f"{{\\an3\\pos({width-margin},{output_height-margin})"
+                        f"\\fs{notice_size}\\c&HAAAAAA&\\alpha&H60&"
+                        "\\bord0\\shad0\\q2}")
+                disclosure_events.append(presentation.event(0, end, 10,
+                    tags + presentation.literal(notice)))
+            (stage / "disclosure.ass").write_text(
+                presentation.document(width, output_height, disclosure_events), encoding="utf-8")
         if check_only:
             return {"media_status": "failed" if errors else "ready", "check_only": True, "output_created": False,
                     "media_validation": {"status": "fail" if errors else "pass", "errors": errors},
@@ -626,6 +644,8 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
                             f"Alignment=2,Outline={0 if band else 1},Bold=1'")
             else:
                 filters += ",subtitles=filename=overlay-captions.ass"
+        if notices:
+            filters += ",subtitles=filename=disclosure.ass"
         if kind == ".mp4":
             cmd += ["-map", "0:v:0"]
             if audio is not None: cmd += ["-map", "1:a:0"]
