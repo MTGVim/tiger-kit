@@ -31,7 +31,7 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 | 아이디어와 결정 구체화 | [tk-grill](skills/tk-grill/SKILL.md) |
 | 추진 방향과 마일스톤 수립 | [tk-roadmap](skills/tk-roadmap/SKILL.md) |
 | 사용성 개선 및 신규 기능 발굴 | [tk-experience-review](skills/tk-experience-review/SKILL.md) |
-| Ralph 반복 작업용 계획 작성·점검 | [tk-ralplan](skills/tk-ralplan/SKILL.md) |
+| /goal용 목표 장부 작성·점검 | [tk-ralplan](skills/tk-ralplan/SKILL.md) |
 | 현재 작업을 다른 세션으로 인계 | [tk-handoff](skills/tk-handoff/SKILL.md) |
 
 스킬 호출에서 명령과 옵션은 `foo` 형태의 키워드를 사용합니다. 실제 CLI 명령의 플래그는 변경하지 않습니다.
@@ -47,14 +47,14 @@ using tk-roadmap, 다음 분기의 개선 방향과 우선순위를 정리해 �
 
 ### Ralph 반복 작업용 계획 준비
 
-`tk-ralplan`은 확정된 목표와 근거를 범용 Markdown 작업 계획으로 준비하고 점검합니다. Task·체크박스는 Ralphex와 호환되고, 설치된 Ralphex의 실행 옵션을 확인하여 현재 셸용 원샷 스크립트를 계획 옆에 생성합니다. 구현·리뷰 모델을 구체화하고 저비용 모델일수록 Task를 작게 나눕니다. 모델 라우팅과 충돌하는 사용자 수준 `CLAUDE.md` 또는 `AGENTS.md`에 Ralph 예외를 넣을지는 별도로 승인받으며, 외부 실행기를 자동 실행하거나 설치하지 않습니다.
+`tk-ralplan`은 인터뷰와 저장소 조사를 통해 목표·전체 성공 기준·Task·현재 상태·결정·검증 근거를 한 Markdown 장부로 준비하고 점검합니다. `### Task N:`와 체크박스는 Ralphex 호환 표기를 유지하지만 외부 Ralphex CLI, 모델 옵션, 원샷 스크립트는 사용하지 않습니다. 실행은 사용자가 지원을 확인한 Claude Code·Codex·Hermes의 `/goal`에 장부를 전달해 수행합니다.
 
 ```text
-using tk-ralplan, 현재 작업의 목표와 검증 기준을 장기 반복 실행용 계획 파일로 준비해 주세요.
+using tk-ralplan, 현재 작업의 목표와 검증 기준을 /goal용 장부로 준비해 주세요.
 using tk-ralplan check docs/plans/feature.md
 ```
 
-계획은 기본적으로 `.tigerkit/ralph/<slug>.md`에 작성하며, 현재 환경에 맞는 `<slug>.sh` 또는 `<slug>.ps1`과 복사용 실행 명령을 함께 제공합니다. Ralphex가 없으면 공식 설치를 제안합니다. `tk-ralplan`이 자동 실행하거나 완료를 보장하지 않습니다. `tk-goal`은 제거됐으며 재도입 판단 기준은 [ADR 0007](docs/adr/0007-retire-tk-goal-use-ralphex-plan.md)을 따릅니다.
+계획 장부는 기본적으로 `.tigerkit/ralph/<slug>.md`에 작성합니다. 준비된 장부를 호스트에서 `/goal <plan-path>`로 전달하며 인수 지원은 호스트에서 확인합니다. `tk-ralplan`은 외부 실행기·시작 스크립트를 만들거나 목표 실행을 직접 담당하지 않습니다. 과거 `tk-goal` 제거 및 새 방향은 [ADR 0007](docs/adr/0007-retire-tk-goal-use-ralphex-plan.md)을 따릅니다.
 
 ### 위임 모드
 
@@ -70,7 +70,7 @@ using tk-ralplan check docs/plans/feature.md
 | --- | --- | --- |
 | [tk-prep](skills/tk-prep/SKILL.md) | `hybrid` | 자연어 SWE 착수·구현 요청을 준비하고 승인된 로컬 구현·검증을 진행합니다. |
 | [tk-roadmap](skills/tk-roadmap/SKILL.md) | `hybrid` | 목표와 제약을 정리해 마일스톤을 만듭니다. |
-| [tk-ralplan](skills/tk-ralplan/SKILL.md) | `user` | 범용 목표·작업·검증 계획을 작성합니다. 기본 형식은 Ralphex 호환입니다. |
+| [tk-ralplan](skills/tk-ralplan/SKILL.md) | `user` | /goal용 목표·작업·현재 상태·검증 장부를 작성합니다. Task 형식은 Ralphex 호환입니다. |
 | [tk-audit](skills/tk-audit/SKILL.md) | `hybrid` | 저장소의 기술 일감을 읽기 전용으로 감사합니다. |
 | [tk-prototype](skills/tk-prototype/SKILL.md) | `hybrid` | UI·로직 대안을 비교하는 시제품을 만듭니다. |
 | [tk-experience-review](skills/tk-experience-review/SKILL.md) | `hybrid` | 사용자 경험과 외부 레퍼런스에서 개선·신규 기능 일감을 발굴합니다. |
