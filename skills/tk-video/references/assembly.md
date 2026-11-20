@@ -5,7 +5,7 @@
 
 `explainer` MP4의 정지 장면 조립은 실행 디렉터리의 `.movie-cache/`에 자막·고지 없는 lossless 장면을 보존합니다. frame 바이트, 출력 frame 수·FPS·치수와 ffmpeg identity가 같으면 장면을 재인코딩하지 않고 stream copy로 기본 영상을 연결합니다. 바뀐 장면만 인코딩하며 `scene_cache.hits/encoded`로 재사용을 보고합니다. 명시적 hold가 없으면 자막 길이가 hold를 바꿀 수 있으므로 자막만 바꿀 작업은 수용한 hold를 manifest에 고정합니다. 최종 hard 자막·고지는 기본 영상 위에 한 번의 인코딩으로 입힙니다. 촘촘한 `evidence` 캡처 frame마다 encoder를 시작하지 않도록 evidence는 기존 단일 concat 경로를 유지합니다. GIF와 연속 animation도 이 정지 장면 캐시를 사용하지 않습니다. 캐시 손상·다른 바이트는 덮어쓰지 않고 실패하며 소유한 실행 결과의 정리 정책을 따릅니다.
 
-필수 TTS 고지는 receipt에서 읽어 외곽선·배경이 있는 상시 callout 레이어로 기본 조립에 포함합니다. 별도 drawtext 재인코딩을 덧붙이지 않습니다. 겹침이 생기면 preflight에서 드러난 배치를 수정하고 처음·중간·마지막 decoded frame의 가독성을 확인합니다.
+필수 TTS 고지는 화면 오른쪽 아래에 작은 보조 회색 글자 한 줄로 반투명하게 오른쪽 정렬해 전체 구간에 고정 표시하며, 테두리·배경 상자·가로 구분선은 쓰지 않습니다. 확대·crop·자막 처리 뒤에 출력 프레임에 입힙니다. 크기·불투명도는 시작값이며 첫·중간·끝 decoded frame에서 읽을 수 있어야 합니다.
 
 - [입력과 타이밍](#inputs-and-timing)
 - [연속 렌더링 영상](#continuous-rendered-video)
@@ -192,14 +192,13 @@ python3 <loaded-package>/scripts/make_feedback_player.py --video <out.mp4> --cap
 <a id="narrated-output-bundle"></a>
 ## 설명 MP4 전달 묶음
 
-내레이션이 있는 직접 작성 설명은 hard 자막 MP4, 자막 없는 MP4, SRT를 기본으로 전달합니다. 내레이션이 없으면 hard MP4와 SRT를 전달하며, 명시적 soft/off 요청이 우선합니다. 같은 렌더·오디오·타임라인에서 별도 출력 이름과 manifest 사본으로 조립하고 각 receipt의 실제 경로와 측정 길이를 대조합니다. 자막 없는 사본은 `caption_box_color`와 `caption_box_alpha`를 제거하고 `caption_delivery: none`과 `caption_style: none`으로 만들되 `narration_requested`와 `tts_receipts` 및 화면 고지는 보존합니다. 피드백 플레이어에는 자막 없는 MP4와 자막본의 SRT를 함께 넘깁니다.
+내레이션이 있는 직접 작성 설명은 hard 자막 MP4, 자막 없는 MP4, SRT를 기본으로 전달합니다. 내레이션이 없으면 hard MP4와 SRT를 전달하며, 명시적 soft/off 요청이 우선합니다. 같은 렌더·오디오·타임라인에서 별도 출력 이름과 manifest 사본으로 조립하고 각 receipt의 실제 경로와 측정 길이를 대조합니다. 자막 없는 사본은 `caption_box_color`와 `caption_box_alpha`를 제거하고 `caption_delivery: none`과 `caption_style: none`으로 만들되 `narration_requested`와 `tts_receipts` 및 화면 고지는 보존합니다. 피드백 플레이어에는 자막 없는 MP4와 자막본의 SRT를 함께 넘깁니다. 현재 피드백 플레이어는 SRT의 cue를 영상 아래와 목록에만 표시하며, 영상 위 자막 on/off 기능은 제공하지 않습니다. 영상에 실제로 입혀진 자막의 위치와 겹침은 hard 자막 MP4로 확인합니다. 플레이어의 자막 트랙·토글은 별도 설계와 브라우저 검증 전까지 보류합니다.
 macOS에서는 먼저 설치된 FFmpeg의 `subtitles` 필터를 확인합니다. Homebrew 기본 빌드에 없다면 libass를 포함한 `ffmpeg-full`의 실제 실행 파일을 `--ffmpeg`로 지정할 수 있습니다. 새 설치는 별도 권한을 따릅니다. 반환값 `subtitles: hard`, `media_status: ready`와 경고를 확인한 뒤 프레임에서 자막을 확인합니다. 현재 receipt에는 `caption_delivery` 대신 `subtitles`가 실제 결과 필드입니다.
 
 <a id="tts-disclosure-gate"></a>
 ## TTS 고지 게이트
 
-TTS를 사용한 모든 합성 receipt를 실행 소유 폴더로 복사하여 `tts_receipts: ["/absolute/run/tts.json"]`에 전달합니다. 하나라도 `disclosure_required: true`이면 그 receipt의 `disclosure_notice`가 전체 영상에 보이도록 작성합니다. 이는 라이선스가 표시 위치·전 구간을 지정했다는 뜻이 아니라 이 워크플로의 누락 방지 계약입니다. 조립기는 실제로 그리는 callout, hard 자막, 또는 `disclosure_scene: [{start_ms, end_ms, text}]` 선언만 인정합니다. soft/off 자막과 지원 부재로 그리지 못하는 효과는 고지가 아닙니다. 첫·끝의 최대 1초만 허용하며 중간 공백은 허용하지 않습니다. 기존 표시와 자동 고지를 반영한 뒤에도 요구 문구가 빠지거나 receipt·구간이 잘못되었으면 인코딩 전에 실패합니다.
-장면이 직접 그리면 조립기는 픽셀을 입증하지 못하므로 반환한 `disclosure.notices[].human_action`에 따라 첫·중간·끝 프레임을 직접 확인합니다. 기존 hard 자막·callout 또는 `disclosure_scene` 선언이 요구 문구와 전체 구간을 이미 충족하면 중복 레이어를 추가하지 않습니다. 충족하지 못한 고지는 조립기가 좌상단의 배경·테두리가 있는 callout으로 전체 구간에 표시합니다. 표시 크기는 출력 높이에 비례하며 다른 callout·강조 영역·자막과의 겹침을 기존 presentation 검사로 확인합니다. 고지 배치가 충돌하면 manifest의 명시적 고지 callout이나 직접 그린 장면으로 조정한 뒤 다시 검사합니다. 자동 배치도 첫·중간·끝 decoded frame에서 실제 가독성을 확인하며 SRT와 피드백 플레이어에 고지 반복을 강제하지 않습니다.
+TTS를 사용한 모든 합성 receipt를 실행 소유 폴더로 복사하여 `tts_receipts: ["/absolute/run/tts.json"]`에 전달합니다. 하나라도 `disclosure_required: true`이면 그 receipt의 `disclosure_notice`가 전체 영상에 보이도록 작성합니다. 이는 라이선스가 표시 위치·전 구간을 지정했다는 뜻이 아니라 이 워크플로의 누락 방지 계약입니다. 조립기는 receipt의 필수 고지를 캡처·카드·Manim에 동일하게 적용하며, 화면 오른쪽 아래에 작은 보조 회색 글자 한 줄로 반투명하게 오른쪽 정렬해 전체 구간에 고정 표시합니다. 테두리·배경 상자·가로 구분선은 사용하지 않습니다. 필수 고지는 전용 ASS 레이어로 확대·crop·자막 처리 후 입히며, 기존 callout·hard 자막·`disclosure_scene` 선언은 이 레이어를 대체하지 않습니다. 명시적 고지 장면이 이미 있다면 중복 표시를 방지하도록 원본 장면을 정리합니다. 고지는 한 줄이어야 하며 출력 화면에 들어가지 않으면 조립을 실패 처리합니다. 고지는 위치를 옮기지 않고 강조·callout·자막이 오른쪽 아래 고지 영역을 피하도록 작성합니다. 크기·불투명도는 시작값이고 첫·중간·끝 decoded frame에서 가독성과 겹침을 직접 확인합니다. `scripts/disclosure.py`의 전 구간 검사도 유지합니다. SRT와 피드백 플레이어에 고지 반복은 강제하지 않습니다.
 
 <a id="feedback-revision-loop"></a>
 ## 피드백을 반영하는 새 판
