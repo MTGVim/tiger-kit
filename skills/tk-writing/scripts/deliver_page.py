@@ -10,7 +10,7 @@ import subprocess
 import sys
 
 
-def deliver(source: Path, output: Path) -> None:
+def deliver(source: Path, output: Path, owner_skill=None, source_path=None) -> None:
     source = source.resolve(strict=True)
     output = output.absolute()
     if output.exists():
@@ -27,7 +27,12 @@ def deliver(source: Path, output: Path) -> None:
         subprocess.run([sys.executable, str(scripts / script), *map(str, args)], check=True)
 
     try:
-        run("add_feedback_studio.py", "--input", source, "--output", output)
+        context_args = []
+        if owner_skill is not None:
+            context_args.extend(["--owner-skill", owner_skill])
+        if source_path is not None:
+            context_args.extend(["--source-path", source_path])
+        run("add_feedback_studio.py", "--input", source, "--output", output, *context_args)
         run("package_html.py", "--root", output.parent, "--name", output.name, output.name)
         run("package_html.py", "--root", output.parent, "--name", output.name, "--check", output.name)
         run("check_page.py", output, "--profile", "report", "--require-feedback-studio")
@@ -41,9 +46,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("source", type=Path)
     parser.add_argument("delivery", type=Path)
+    parser.add_argument("--owner-skill", help="originating tk-* workflow for feedback")
+    parser.add_argument("--source-path", type=Path, help="editable manuscript forwarded to feedback studio")
     args = parser.parse_args()
     try:
-        deliver(args.source, args.delivery)
+        deliver(args.source, args.delivery, args.owner_skill, args.source_path)
     except (OSError, ValueError, subprocess.CalledProcessError) as error:
         parser.exit(1, f"delivery failed: {error}\n")
     return 0
