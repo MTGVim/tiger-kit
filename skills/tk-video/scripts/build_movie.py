@@ -559,23 +559,22 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
             metrics = presentation.TextMetrics(ffmpeg, stage, env)
             notice_size = max(12, min(22, round(height * .018)))
             margin = max(12, round(height * .025))
-            for notice in notices:
-                if "\n" in notice or "\r" in notice:
-                    raise ValueError("TTS disclosure must be a single line")
-                ink_width, ink_height, _, _ = metrics.line(notice, notice_size)
-                if ink_width > width - margin * 2 or ink_height > height - margin * 2:
-                    raise ValueError("TTS disclosure does not fit the output; shorten the notice")
+            if any("\n" in notice or "\r" in notice for notice in notices):
+                raise ValueError("TTS disclosure must be a single line")
+            # Multiple receipts share one bottom-right line instead of overlapping.
+            notice_line = " · ".join(notices)
+            ink_width, ink_height, _, _ = metrics.line(notice_line, notice_size)
+            if ink_width > width - margin * 2 or ink_height > height - margin * 2:
+                raise ValueError("TTS disclosure does not fit the output; shorten the notice")
             # Applied after zoom, band and captions: no card, outline or position drift.
             output_height = height + (layout["band_px"] if burn and band else 0)
-            disclosure_events = []
-            for notice in notices:
-                tags = (f"{{\\an3\\pos({width-margin},{output_height-margin})"
-                        f"\\fs{notice_size}\\c&HAAAAAA&\\alpha&H60&"
-                        "\\bord0\\shad0\\q2}")
-                disclosure_events.append(presentation.event(0, end, 10,
-                    tags + presentation.literal(notice)))
+            tags = (f"{{\\an3\\pos({width-margin},{output_height-margin})"
+                    f"\\fs{notice_size}\\c&HAAAAAA&\\alpha&H60&"
+                    "\\bord0\\shad0\\q2}")
             (stage / "disclosure.ass").write_text(
-                presentation.document(width, output_height, disclosure_events), encoding="utf-8")
+                presentation.document(width, output_height, [
+                    presentation.event(0, end, 10, tags + presentation.literal(notice_line))
+                ]), encoding="utf-8")
         if check_only:
             return {"media_status": "failed" if errors else "ready", "check_only": True, "output_created": False,
                     "media_validation": {"status": "fail" if errors else "pass", "errors": errors},
