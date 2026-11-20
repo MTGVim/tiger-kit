@@ -38,7 +38,7 @@ metadata:
 ## 워크플로
 
 1. `hypothesis/success criteria`: 아이디어, 참조와 검증 질문에서 측정 가능한 기준을 도출합니다.
-2. `temporary path/boundary`: 저장소 사전 점검을 수행하고 기존 도구 체계·UI 스택·구성 요소·토큰, 임시 경로, 산출물 소유권과 `fake | real` 통합 경계를 선택합니다.
+2. `temporary path/boundary`: 저장소 경로를 사용할 때는 저장소 사전 점검을, 호스트 인라인 경로를 사용할 때는 호스트 출력 계약과 지정 경로 점검을 수행합니다. 기존 도구 체계·UI 스택·구성 요소·토큰, 임시 경로, 산출물 소유권과 `fake | real` 통합 경계를 선택합니다.
 3. `variants/harness`: 비교에 답하는 데 필요한 대안만 만들거나 현실적인 예시 I/O를 사용하는 `harness`를 만듭니다.
 4. `run`: 선택한 `variant`/`harness`를 실행하고 실제 출력 또는 스크린샷과 명령 결과를 수집합니다.
 
@@ -65,7 +65,7 @@ Screenshot: <absolute path | N/A>; actual inspection: yes | no | N/A
 
 미해결 UI 비교에서는 결정에 관련된 차원만 바꿉니다. 색상, 대비 또는 상태 식별이 질문인 경우 색상만 다른 대안도 유효하며 해당 비교에서 레이아웃과 동작은 유지합니다. 아키텍처, 흐름 또는 탐색은 그것이 실제 질문일 때만 바꿉니다. 로직에는 예시 입력/출력과 최소 어댑터를 사용하는 작은 순수 harness를 우선합니다.
 
-웹 prototype에서는 저장소 실행 명령, 설치된 UI 스택, 구성 요소와 디자인 토큰을 확인합니다. 의존성을 추가하거나 manifest/lockfile을 바꾸지 않고 안전하게 격리된 route/harness를 재사용합니다. 저장소·참조 디자인 토큰이 없는 독립 HTML에는 공통 테마 자산과 가독성·렌더링 요구사항을 위해 [HTML 출력](../tk-writing/references/html-output.md)을 읽습니다. 비교별 디자인 토큰과 prototype 탐색 예외를 유지합니다. 안전한 route/harness가 없고 사람에게 전달하는 한 페이지 비교 화면이 필요하면 `tk-writing`의 공용 한 페이지 빌더(`scripts/build_page.py`)로 조립합니다. 상호작용은 `[[figure:이름]]` 조각에 필요한 `<style>`·`<script>`와 함께 넣고 동작을 검증합니다. 제품 UI를 검증하기 위한 격리된 실행 harness는 기존 route/harness 정책을 따릅니다.
+웹 prototype에서 저장소를 사용할 때는 저장소 실행 명령, 설치된 UI 스택, 구성 요소와 디자인 토큰을 확인합니다. 의존성을 추가하거나 manifest/lockfile을 바꾸지 않고 안전하게 격리된 route/harness를 재사용합니다. 호스트 인라인 전달만 사용할 때는 해당 호스트 출력 계약과 독립 HTML의 렌더링 제약을 확인합니다. 저장소·참조 디자인 토큰이 없는 독립 HTML에는 공통 테마 자산과 가독성·렌더링 요구사항을 위해 [HTML 출력](../tk-writing/references/html-output.md)을 읽습니다. 비교별 디자인 토큰과 prototype 탐색 예외를 유지합니다. 안전한 route/harness가 없고 사람에게 전달하는 한 페이지 비교 화면이 필요하면 `tk-writing`의 공용 한 페이지 빌더(`scripts/build_page.py`)로 조립합니다. 상호작용은 `[[figure:이름]]` 조각에 필요한 `<style>`·`<script>`와 함께 넣고 동작을 검증합니다. 제품 UI를 검증하기 위한 격리된 실행 harness는 기존 route/harness 정책을 따릅니다.
 
 콘텐츠, 데이터와 상호작용 상태를 동일하게 유지하면서 결정에 관련된 개념 2–3개를 비교합니다. 기본적으로 넓은 화면에서는 2–3개 열을 나란히 배치하고 좁은 화면에서는 세로로 쌓습니다. 동시 렌더링이 개념이나 최소 가독성을 해칠 때만 명시적인 A/B 또는 A/B/C 전환을 사용합니다. 세 번째 선택지가 독립적인 가치를 더하지 않으면 A/B에서 멈춥니다. 저장소 근거가 이미 결정을 해결하면 prototype을 만들지 않습니다.
 
@@ -132,4 +132,4 @@ Screenshot: <absolute path | N/A>; actual inspection: yes | no | N/A
 <a id="host-inline-delivery"></a>
 채팅 안에서 직접 조작하는 독립 HTML 시제품이 목적이고, 호스트의 인라인 렌더링 스킬이 활성화되어 있으며 호스트가 지정한 출력 경로의 쓰기 가능성과 소유권을 확인했다면, 채팅 전용 단일 HTML은 해당 호스트의 출력 계약에 따라 인라인 전달을 우선합니다. 예를 들어 Orca에서는 `orca-native-chat:orca-chat-visuals`가 활성화되어 있고 `ORCA_CHAT_SCRATCH_DIR`에 쓸 수 있을 때만 해당 스킬의 계약에 따라 HTML을 저장하고 답변에 삽입합니다. 환경변수 이름만으로 호스트 계약이나 경로 안전성을 추정하지 않습니다. 이 예외는 제품 route, 실제 데이터나 네트워크 연동, 사용자가 명시한 파일 전달, 저장소 산출물 또는 피드백 보존이 필요한 요청에 적용하지 않습니다. 조건을 충족하지 못하면 아래의 기존 HTML 파일 전달 경로를 따릅니다. 어느 경로에서든 모의 동작과 실제 통합을 구분하고, `tk-browser-verify`의 브라우저 검증 및 제품 반영에 필요한 별도 승인을 유지합니다. 호스트 인라인 경로가 사용되더라도 저장소에 작성하는 다른 파일에는 기존 Git 제외 및 안전 경로 점검을 적용합니다.
 
-HTML을 사람에게 전달할 때는 현재 설치된 `tk-writing`의 [공통 피드백 후처리](../tk-writing/references/feedback-studio.md)를 적용합니다. `.tigerkit/prototypes/<slug>/`에는 기본 피드백 편집기 포함 전달본(명시적 제외 요청 시 제외본) 한 벌과 필요한 공개 자원을 두고, 사용자에게는 이 HTML 경로만 안내합니다. 원본·receipt는 공통 계약의 근거 폴더에 보존하며 상대 자원은 최종 전달 위치에서 검사합니다. 기존 전용 인터페이스·검증 의무를 유지합니다.
+호스트 인라인 전달 분기가 아닌 HTML 파일 전달본을 사람에게 전달할 때는 현재 설치된 `tk-writing`의 [공통 피드백 후처리](../tk-writing/references/feedback-studio.md)를 적용합니다. `.tigerkit/prototypes/<slug>/`에는 기본 피드백 편집기 포함 전달본(명시적 제외 요청 시 제외본) 한 벌과 필요한 공개 자원을 두고, 사용자에게는 이 HTML 경로만 안내합니다. 원본·receipt는 공통 계약의 근거 폴더에 보존하며 상대 자원은 최종 전달 위치에서 검사합니다. 기존 전용 인터페이스·검증 의무를 유지합니다.
