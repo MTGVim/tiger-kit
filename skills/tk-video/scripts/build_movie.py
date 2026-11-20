@@ -411,9 +411,9 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
                       and r["disclosure_notice"].strip()})
     # Always render required notices using a dedicated fixed-output overlay.
     # Manifest callouts, captions and declarations are not substitutes for this style.
-    disclosure.check({**data, "captions": captions}, tts_receipts, end,
-                     hard_captions=delivery == "hard" and caption_support,
-                     callouts_rendered=caption_support) if not notices else None
+    # Validate any author-supplied disclosure intervals without treating them as
+    # evidence that the required fixed overlay was rendered.
+    disclosure.check(data, [], end)
     if notices:
         ffmpeg, ffprobe, caption_support = media_tools(ffmpeg, True)
         if not caption_support:
@@ -560,7 +560,7 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
             notice_size = max(12, min(22, round(height * .018)))
             margin = max(12, round(height * .025))
             for notice in notices:
-                if "\\n" in notice or "\\r" in notice or "\n" in notice or "\r" in notice:
+                if "\n" in notice or "\r" in notice:
                     raise ValueError("TTS disclosure must be a single line")
                 ink_width, ink_height, _, _ = metrics.line(notice, notice_size)
                 if ink_width > width - margin * 2 or ink_height > height - margin * 2:
