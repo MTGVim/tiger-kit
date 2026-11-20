@@ -8,8 +8,9 @@
   # 제목                      첫 줄. 바로 다음 비어 있지 않은 줄은 부제(날짜, 작성자 등)
   ## 절 제목                  목차 항목이 된다. 제목 끝에 ` ~` 를 붙이면 조용한 절(한계, 부록)
   ### 소제목                  소제목. 아래가 전부 `- 라벨: 내용` 줄이면 카드가 된다
+                              카드 블록에는 `- 라벨: 내용` 줄만 둔다. 일반 문단을 섞으면 소제목이 된다
   ### [A1] 제목               카드 제목의 [..] 는 번호 배지. `### ~ 제목` 은 조용한 카드
-  > 문단                      결론 콜아웃
+  > 문단                      결론 콜아웃. 제목 바로 다음이 아니라 첫 `##` 절 안에 둔다
   | 표 |                      표. 구분 줄의 `---:` 는 오른쪽 정렬 숫자 열. 첫 칸이 `~ ` 로 시작하면 조용한 행
   - 항목 / 1. 항목            목록
   :::tiles                    `- 값 | 설명` 줄마다 숫자 타일
@@ -194,7 +195,8 @@ def card(h, lines):
     badge = f'<span class="badge">{esc(m.group(1))}</span>' if m else ''
     title = m.group(2) if m else h
     dl = ''.join(f'<dt>{esc(a)}</dt><dd>{inline(b)}</dd>' for a, b in lines)
-    return f'<article class="card{" quiet" if quiet else ""}"><h3>{badge}{esc(title)}</h3><dl>{dl}</dl></article>'
+    card_class = "card quiet" if quiet else "card"
+    return f'<article class="{card_class}"><h3>{badge}{esc(title)}</h3><dl>{dl}</dl></article>'
 
 
 def fields(txt):
@@ -218,6 +220,8 @@ def section(i, title, body):
         h, _, txt = blk.partition('\n')
         f = fields(txt)
         if f: run.append(card(h.strip(), f)); continue
+        if re.match(r'^(?:\[[^\]]+\]\s*|~\s*)', h.strip()) and re.search(r'(?m)^-\s+[^:]+:', txt):
+            print('경고: 카드처럼 보이는 ### 블록에 필드 이외의 본문이 있어 일반 소제목으로 처리합니다: ' + h.strip(), file=sys.stderr)
         flush()
         o.append(f'<h3 class="sub">{esc(h.strip())}</h3>' + render(split_blocks(txt.strip('\n'))))
     flush()
@@ -232,15 +236,15 @@ def build(md, a):
     title = m.group(1).strip()
     rest = [l for l in parts[0].splitlines()[1:] if l.strip()]
     if len(rest) > 1:
-        raise ValueError('put body text under a ## section; only one metadata line may follow the title')
+        raise ValueError('제목 다음에는 부제 한 줄만 둘 수 있습니다. 결론 콜아웃(> 문단)과 본문은 첫 ## 절 안에 작성하세요.')
     if len(parts) < 2:
-        raise ValueError('a report needs at least one ## section')
+        raise ValueError('보고서에 ## 절이 하나 이상 필요합니다. 결론 콜아웃은 첫 ## 절 안에 두세요.')
     meta = rest[0].strip() if rest else ''
     secs = []
     for i, p in enumerate(parts[1:], 1):
         t, _, body = p.partition('\n')
         if not t.strip():
-            raise ValueError('section titles must not be empty')
+            raise ValueError('## 절 제목이 비어 있습니다.')
         secs.append(section(i, t.strip(), body.strip('\n')))
     toc = ''.join(f'<li><a href="#{s}">{esc(t)}</a></li>' for s, t, _ in secs)
     css = Path(a.css).read_text(encoding='utf-8')
