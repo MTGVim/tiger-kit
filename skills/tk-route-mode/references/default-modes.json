@@ -24,7 +24,7 @@
   },
   "modes": {
     "standard": {
-      "description": "같은 계열의 최신 안정 버전을 우선하고, 최상위 effort는 별도 근거가 없으면 medium을 사용합니다.",
+      "description": "같은 계열의 최신 안정 버전을 우선하고, 역할과 공급자별 근거에 맞춰 effort를 설정합니다.",
       "providers": {
         "anthropic": {
           "light": {
@@ -46,18 +46,18 @@
             "effort": "low"
           },
           "standard": {
-            "model": "gpt-6.1-terra",
+            "model": "gpt-6.2-sol",
             "effort": "medium"
           },
           "top": {
             "model": "gpt-6.2-sol",
-            "effort": "medium"
+            "effort": "high"
           }
         }
       }
     },
     "economy": {
-      "description": "절약. 상위 티어만 한 칸 낮추고, 판단을 맡는 최상위와 경량은 유지합니다.",
+      "description": "절약. 경량 티어는 유지하고 구현·리뷰 effort를 낮춥니다. 최상위 effort는 공급자별로 조정합니다.",
       "providers": {
         "anthropic": {
           "light": {
@@ -79,7 +79,7 @@
             "effort": "low"
           },
           "standard": {
-            "model": "gpt-6.1-terra",
+            "model": "gpt-6.2-sol",
             "effort": "low"
           },
           "top": {
