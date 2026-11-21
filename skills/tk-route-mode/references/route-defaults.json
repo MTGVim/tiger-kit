@@ -1,0 +1,55 @@
+{
+  "version": 2,
+  "tiers": {
+    "light": "좁은 사실 수집, 탐색·분류, 기계적 검사",
+    "standard": "구현, 독립 리뷰",
+    "top": "아키텍처, 미지 문제 탐사·연구"
+  },
+  "efforts": {
+    "anthropic": [
+      "low",
+      "medium",
+      "high",
+      "xhigh",
+      "max"
+    ],
+    "openai": [
+      "low",
+      "medium",
+      "high",
+      "xhigh",
+      "max"
+    ]
+  },
+  "providers": {
+    "anthropic": {
+      "light": {
+        "model": "haiku",
+        "effort": "low"
+      },
+      "standard": {
+        "model": "sonnet",
+        "effort": "high"
+      },
+      "top": {
+        "model": "opus",
+        "effort": "medium"
+      }
+    },
+    "openai": {
+      "light": {
+        "model": "gpt-6-luna",
+        "effort": "low"
+      },
+      "standard": {
+        "model": "gpt-6.1-terra",
+        "effort": "medium"
+      },
+      "top": {
+        "model": "gpt-6.2-sol",
+        "effort": "medium"
+      }
+    }
+  },
+  "overrides": {}
+}
