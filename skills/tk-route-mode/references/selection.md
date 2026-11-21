@@ -15,9 +15,9 @@
 
 ## 도출 규칙
 
-- standard 모드의 light는 경량 모델 low, top은 최상위 모델 medium에서 시작합니다.
+- standard 모드의 light는 경량 모델 low에서 시작합니다. top은 기본적으로 최상위 모델 medium이며, 2026-11-21에 결정한 OpenAI 경로는 Sol 6.2 high를 사용합니다.
 - standard 티어는 상위 모델 medium에서 시작합니다. 지배된 칸이면 같은 모델의 high까지 확인합니다. 그래도 지배되면 같은 비용 이하에서 점수가 가장 높은 대체 칸을 사용합니다.
-- economy는 standard 티어에 선택된 모델의 effort를 한 단계 낮춘 뒤 같은 비용 이하에서 점수가 가장 높은 비지배 대안을 확인합니다. light와 top은 유지합니다.
+- economy는 standard 티어에 선택된 모델의 effort를 한 단계 낮춘 뒤 같은 비용 이하에서 점수가 가장 높은 비지배 대안을 확인합니다. light는 유지합니다. top은 Anthropic에서 유지하고 OpenAI에서는 medium으로 낮춥니다.
 - 필요한 벤치마크 칸이 누락되면 추정하지 않고 도출을 중단합니다.
 - 사용자 모드는 extends로 기존 모드를 상속하고 변경할 칸만 지정합니다. 경고는 대안을 설명하며 최종 선택은 사용자에게 있습니다.
 
@@ -26,8 +26,18 @@
 개별 작업의 승격은 [공통 위임 계약](../../tk-engineering/references/delegation.md)이 정합니다. standard는 high까지 높이고 더 필요하면 top으로 승격합니다. light 상한은 공급자별 대응표에서 정합니다. 명시된 사용자 effort 초기값이 공통 표보다 우선합니다.
 
 
-최상위 위임 티어의 초기 effort는 [위임 역할 표](../../tk-engineering/references/delegation.md)의 아키텍처·미지 문제 탐사 행을 근거로 정합니다. 해당 행의 초기값은 미검증이므로 기존 medium 도출값은 잠정 유지합니다. 원본 벤치마크 대조 전에는 high로 변경하지 않으며 economy의 top도 유지합니다.
+최상위 위임 티어의 초기 effort는 [위임 역할 표](../../tk-engineering/references/delegation.md)의 아키텍처·미지 문제 탐사 행을 근거로 정합니다. Anthropic top의 medium은 잠정 유지합니다. OpenAI top의 standard high와 economy medium은 2026-11-21의 사용자 결정으로 정한 운영값이며, 실제 호스트의 effort 지원과 작업 완료율을 검증하기 전까지 성능 우월성이 입증됐다고 주장하지 않습니다.
 
 ## GPT-6.2 Sol 출시 검토 (2026-11-18)
 
 [GPT-6.2 Sol 출시 평가](model-review-2026-11-18.md)를 참고합니다. 동일 effort의 종합 성능 및 작업시간 개선, 동등한 API 가격, 공식 모델 지원 수명주기를 함께 고려하여 **신규 OpenAI top 기본값은 `gpt-6.2-sol` / `medium`**으로 갱신했습니다. max effort의 코딩 지표 일부 하락을 medium에서의 중대한 회귀로 일반화하지 않습니다. 기존 Hermes 실효 위임 기록과 사용자 override는 자동 변경하지 않습니다.
+
+## 작업 완료 신뢰성 반영 (2026-11-21)
+
+지능 점수와 작업당 비용만으로 구현·독립 리뷰의 기본 모델을 정하지 않습니다. 같은 작업·호스트·권한·검증 조건에서 목표 달성, 남은 작업을 수행하지 않은 조기 종료, 승인된 작업의 불필요한 재확인, 실행·검증하지 않은 일을 완료했다고 보고한 횟수, 사용자 재지시 횟수를 구분합니다. 에이전트와 하네스의 실패 가능성도 분리합니다. 커뮤니티 후기는 위험 신호이며 통제된 성공률 측정으로 취급하지 않습니다.
+
+실제 Orca 세션의 조기 종료 사례와 관련 후기를 고려하여 OpenAI 신규 기본 경로에서 Terra 6.1을 제외하고, `standard`는 Sol 6.2 medium, `economy`는 Sol 6.2 low로 변경합니다. OpenAI top은 각각 high, medium입니다. Luna max와 Sol low를 비교한 코딩 에이전트 평가에서도 Sol low를 우선할 근거가 있으나, Orca 환경의 실제 완료율과 비용은 별도로 검증해야 합니다. Anthropic는 모델별 문제가 보고됐더라도 해당 구성에 대한 교체 근거가 부족하므로 변경하지 않습니다.
+
+번들 벤치마크는 GPT-6.1 Sol 기준의 과거 수치라서 GPT-6.2 Sol의 effort별 비용·지능 점수로 재해석하지 않습니다. `derive`는 이 오래된 데이터에서 Terra를 다시 도출하지 않고 승인된 기본값을 보존합니다. 향후 더 새로운 모델이 평가 자료에 포함되면 새 후보를 비교하되, 성능뿐 아니라 작업 완료 신뢰성을 평가하여 변경을 승인받습니다. 기존 사용자 override와 호스트 프로필은 자동 변경하지 않습니다.
+
+근거: [OpenAI 모델 릴리스](https://developers.openai.com/api/docs/changelog), [Sol 6.2 평가](https://artificialanalysis.ai/models/gpt-6-2-sol/), [이전 버전과의 비교](model-review-2026-11-18.md).
