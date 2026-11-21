@@ -157,7 +157,13 @@ def main() -> int:
             continue
         original = target.read_bytes() if target.exists() else None
         current = original.decode("utf-8") if original is not None else ""
-        route = managed_spans(current)["route-mode"]
+        found = managed_spans(current)
+        guidance = found["user-guidance"]
+        if guidance and guidance[0] == "old":
+            print("user-guidance marker migration proposed:", target)
+        if found["fluent-korean"]:
+            print("legacy fluent-korean block removal proposed:", target)
+        route = found["route-mode"]
         if route and route[0] == "old":
             if args.migrate_route_mode:
                 print(("migrating" if args.apply else "would migrate") + " route-mode markers:", target)
