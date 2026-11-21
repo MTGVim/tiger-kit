@@ -212,75 +212,46 @@ def _prefer_newer_release(candidate, preferred):
 
 
 def derive(data, bench):
-    """벤치마크에서 standard·economy 후보를 도출한다.
+    """벤치마크에서 standard·economy 모드를 도출한다.
 
-    과거 자료가 현재 출시 기본 모델보다 오래됐으면 승인된 번들 기본값을 유지한다.
-    최신 자료가 들어오면 standard는 상위 모델 medium, OpenAI top은 high,
-    economy는 구현 effort를 한 단계 낮추고 OpenAI top도 medium으로 낮춘다.
+    standard: light는 경량 모델 low, top은 최상위 모델 medium, standard는 상위 모델 medium.
+              칸이 경계선 밖이면 같은 모델 effort를 high까지 올려 보고, 그래도 밖이면 대체 칸을 쓴다.
+    economy:  standard 티어만 한 단계 낮춘다(같은 모델 effort 한 단계 아래, 경계선 밖이면 대체 칸).
     """
     bench = canonicalize_benchmark(bench)
     modes = {"standard": {"providers": {}}, "economy": {"providers": {}}}
-    release_modes = load(DEFAULTS)["modes"]
     for prov, (light, mid, top) in bench["tiers"].items():
-        if prov == "openai":
-            release_top = release_modes["standard"]["providers"]["openai"]["top"]["model"]
-            measured_top = _versioned_family(top)
-            default_top = _versioned_family(release_top)
-            # 비교 가능한 최신 모델이 없으면 구버전 점수로 Terra를 재추천하지 않는다.
-            # 동일 릴리스의 모델·effort 변경도 명시적인 사용자 결정으로 유지한다.
-            if not measured_top or (default_top and measured_top[1:] <= default_top[1:]):
-                for name in ("standard", "economy"):
-                    modes[name]["providers"][prov] = copy.deepcopy(release_modes[name]["providers"][prov])
-                continue
-            # 새 벤치마크의 mid가 옛 Terra에 남았다면 새 상위 모델을 표준 후보로 쓴다.
-            if mid == "gpt-6.1-terra":
-                mid = top
-
         order = data["efforts"][prov]
 
         def on_frontier(model, effort):
             if not bench["providers"].get(prov, {}).get(model, {}).get(effort):
                 raise ValueError("벤치마크에 필요한 모델 및 effort 칸이 없습니다")
             d = dominated(bench, prov, model, effort)
-            # Terra는 지능/비용 점수만으로 새 기본 경로에 재도입하지 않는다.
-            if prov == "openai" and d and d[0] == "gpt-6.1-terra":
-                d = None
             return {"model": d[0], "effort": d[1]} if d else {"model": model, "effort": effort}
 
         std = None
         for e in order[order.index("medium"):order.index("high") + 1]:
-            d = dominated(bench, prov, mid, e) if bench["providers"].get(prov, {}).get(mid, {}).get(e) else None
-            if bench["providers"].get(prov, {}).get(mid, {}).get(e) and not (d and not (prov == "openai" and d[0] == "gpt-6.1-terra")):
+            if bench["providers"].get(prov, {}).get(mid, {}).get(e) and not dominated(bench, prov, mid, e):
                 std = {"model": mid, "effort": e}
                 break
         std = std or on_frontier(mid, "medium")
         lower = order[max(order.index(std["effort"]) - 1, 0)]
-        common_light = on_frontier(light, "low")
-        top_standard = on_frontier(top, "high" if prov == "openai" else "medium")
-        top_economy = on_frontier(top, "medium")
-        # 더 최신 릴리스로 저장된 명시적 선택은 오래된 측정으로 하향하지 않는다.
-        for name, candidate in (("standard", top_standard), ("economy", top_economy)):
-            for preferred in (
-                release_modes.get(name, {}).get("providers", {}).get(prov, {}).get("top"),
-                data.get("modes", {}).get(name, {}).get("providers", {}).get(prov, {}).get("top"),
-            ):
-                if preferred:
-                    candidate = _prefer_newer_release(candidate, preferred)
-            if name == "standard":
-                top_standard = candidate
-            else:
-                top_economy = candidate
-        modes["standard"]["providers"][prov] = {
-            "light": common_light, "standard": std, "top": top_standard
-        }
-        modes["economy"]["providers"][prov] = {
-            "light": common_light, "standard": on_frontier(std["model"], lower), "top": top_economy
-        }
+        base = {"light": on_frontier(light, "low"), "top": on_frontier(top, "medium")}
+        # 오래된 벤치마크로 최신 안정 버전을 하향하지 않는다.
+        # 실제 호스트 적용 가능성과 사용자 승인은 스킬에서 확인한다.
+        release_default = load(DEFAULTS)["modes"]["standard"]["providers"].get(prov, {}).get("top")
+        current = data.get("modes", {}).get("standard", {}).get("providers", {}).get(prov, {}).get("top")
+        for preferred in (release_default, current):
+            if preferred:
+                base["top"] = _prefer_newer_release(base["top"], preferred)
+        modes["standard"]["providers"][prov] = {**base, "standard": std}
+        modes["economy"]["providers"][prov] = {**base, "standard": on_frontier(std["model"], lower)}
     for name, mode in modes.items():
         for tier, cell in mode["providers"].get("openai", {}).items():
             if cell["model"] in LEGACY_BENCHMARK_IDS or cell["model"] == "sol":
                 raise ValueError(f"{name}.openai.{tier}: 짧은 모델 별칭이 다시 생성됐습니다")
     return modes
+
 
 BEGIN, END = "<!-- route-mode:begin -->", "<!-- route-mode:end -->"
 
