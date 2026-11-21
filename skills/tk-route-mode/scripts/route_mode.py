@@ -238,7 +238,8 @@ def edit(data, sets, unsets):
     return updated
 
 
-BEGIN, END = "<!-- route-mode:begin -->", "<!-- route-mode:end -->"
+BEGIN, END = "<!-- TIGERKIT_ROUTE_MODE_BEGIN -->", "<!-- TIGERKIT_ROUTE_MODE_END -->"
+OLD_BEGIN, OLD_END = "<!-- route-mode:begin -->", "<!-- route-mode:end -->"
 
 
 def rule_block(prefix="tier-"):
@@ -251,15 +252,25 @@ def rule_block(prefix="tier-"):
             f"실행기 표식을 확인할 수 없다면 Ralph 세션이라고 추측하지 않는다.\n{END}\n")
 
 
+def rule_span_details(text):
+    """Return block span and marker version; reject mixed, partial or duplicate pairs."""
+    result = []
+    for kind, start, end in (("current", BEGIN, END), ("old", OLD_BEGIN, OLD_END)):
+        begin_count, end_count = text.count(start), text.count(end)
+        if begin_count == end_count == 0:
+            continue
+        if begin_count != 1 or end_count != 1 or text.index(start) >= text.index(end):
+            raise ValueError(f"route-mode 표시가 깨졌거나 여러 개임 ({kind}: begin {begin_count}, end {end_count})")
+        e = text.index(end) + len(end)
+        result.append((text.index(start), e + (1 if text[e:e + 1] == "\n" else 0), kind))
+    if len(result) > 1:
+        raise ValueError("route-mode 이전/신규 표시가 동시에 존재합니다")
+    return result[0] if result else None
+
+
 def rule_span(text):
-    """블록 위치 (시작, 끝) 또는 None. 표시가 깨졌거나 여러 개면 ValueError."""
-    b, e = text.count(BEGIN), text.count(END)
-    if b == e == 0:
-        return None
-    if b != 1 or e != 1 or text.index(BEGIN) > text.index(END):
-        raise ValueError(f"route-mode 표시가 깨졌거나 여러 개임 (begin {b}, end {e})")
-    end = text.index(END) + len(END)
-    return text.index(BEGIN), end + (1 if text[end:end + 1] == "\n" else 0)
+    details = rule_span_details(text)
+    return details[:2] if details else None
 
 
 def rule_apply(path, action, host, prefix="tier-", config=None):
@@ -269,10 +280,18 @@ def rule_apply(path, action, host, prefix="tier-", config=None):
     path = safe_path(path)
     original = path.read_bytes() if path.exists() else b""
     text = original.decode("utf-8")
-    span = rule_span(text)
+    details = rule_span_details(text)
+    span = details[:2] if details else None
     if action == "status":
         return "on" if span else "off"
-    if action == "on":
+    if action == "migrate":
+        if not details or details[2] != "old":
+            return "unchanged"
+        a, b = span
+        old_block = text[a:b]
+        new_block = old_block.replace(OLD_BEGIN, BEGIN, 1).replace(OLD_END, END, 1)
+        new = text[:a] + new_block + text[b:]
+    elif action == "on":
         block = rule_block(prefix)
         new = text[:span[0]] + block + text[span[1]:] if span else \
             text + ("" if not text or text.endswith("\n") else "\n") + block
@@ -332,7 +351,7 @@ def main(argv=None):
     m.add_argument("--save", action="store_true", help="승인 후 새 파일에 저장")
     m.add_argument("--accept-inactive-modes", action="store_true", help="사용하지 않는 과거 모드의 미이전 승인")
     r = sub.add_parser("rule", help="사용자 지침의 위임 규칙 블록 관리")
-    r.add_argument("action", choices=["on", "off", "status"])
+    r.add_argument("action", choices=["on", "off", "status", "migrate"])
     r.add_argument("--file", required=True)
     r.add_argument("--host", default="unknown")
     r.add_argument("--prefix", default="tier-")
