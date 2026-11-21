@@ -43,8 +43,10 @@ metadata:
 
 - 현재 실행 환경과 정확한 대상 파일을 확인합니다. Claude Code는 `~/.claude/CLAUDE.md`, Codex는 `~/.codex/AGENTS.md`, Hermes는 기존 `~/.hermes/SOUL.md`를 대상으로 합니다. Hermes의 `SOUL.md`가 없으면 생성하지 않고 건너뜁니다. 다른 경로나 환경변수 override를 사용하는 호스트는 자동 추정하지 않고 실제 설정을 확인합니다.
 - 읽기 전용 점검에는 설치된 패키지의 `python3 scripts/install_user_guidance.py --check --agent all`을 사용합니다. 단일 호스트만 지정했다면 `--agent claude-code`, `--agent codex` 또는 `--agent hermes-agent`를 사용합니다. 명령은 `tk-setup-skills` 패키지 디렉터리에서 실행합니다. 다른 홈이나 임의 경로를 편집하는 플래그는 없습니다.
-- 대상·현재 상태·정확한 변경 범위를 제시하고 **실제 사용자 레벨 설정 변경 승인을 별도로 확인**한 뒤 같은 인자로 `--apply`를 실행합니다. 스킬 설치 승인만으로 사용자 레벨 지침을 변경하지 않습니다.
-- 설치기는 기존 `MTGVIM_SHARED_AGENT_BASE` 마커 안의 내용만 갱신하고, 이전 `MTGVIM_FLUENT_KOREAN` 관리 블록만 제거합니다. 그 밖의 사용자 지침은 보존하고, 기존 파일은 백업한 뒤 수정합니다. 마커가 중복되거나 손상되어 있거나 대상·상위 디렉터리가 심볼릭 링크라면 수정하지 않습니다. 적용은 새로운 세션에서 다시 확인합니다.
+- 관리 마커의 정본은 `TIGERKIT_USER_GUIDANCE_BEGIN/END`와 `TIGERKIT_ROUTE_MODE_BEGIN/END`입니다(HTML 주석). 기존 `MTGVIM_SHARED_AGENT_BASE_START/END`, `MTGVIM_FLUENT_KOREAN_START/END`, `route-mode:begin/end`를 인식해 현재 파일별 사용 형태와 이전 필요 여부를 보여 줍니다. 구형 공통 지침은 사용자 지침을 설치할 때 새 형식으로 교체합니다.
+- 구형 `route-mode:begin/end`는 일반 `--check`에서 **별도의 이전 후보로만 제안**합니다. 이 스킬은 위임 규칙의 본문을 새로 생성하거나 바꾸지 않습니다. 사용자가 마커 이전을 승인하면 `--check --migrate-route-mode`로 마커만 바뀌는 내용을 미리 확인하고, 해당 승인 범위에서 `--apply --migrate-route-mode`를 실행합니다. `--apply`만 실행하면 route-mode 마커는 그대로 유지됩니다. `tk-route-mode`의 승인된 `rule migrate` 명령으로도 해당 마커만 이전할 수 있습니다.
+- 대상·현재 상태·정확한 변경 범위를 제시하고 **실제 사용자 레벨 설정 변경 승인을 별도로 확인**한 뒤 승인된 인자로 `--apply`를 실행합니다. 스킬 설치 승인만으로 사용자 레벨 지침을 변경하지 않습니다.
+- 설치기는 기존 관리 마커 안의 공통 지침만 갱신하고, 이전 `MTGVIM_FLUENT_KOREAN` 관리 블록을 제거합니다. 관리하지 않는 사용자 지침과 `route-mode` 본문은 보존하고, 기존 파일은 백업한 뒤 수정합니다. 구형·신형 마커의 중복, 순서 오류, 서로 겹친 영역이나 심볼릭 링크가 있으면 수정하지 않습니다. 적용은 새로운 세션에서 다시 확인합니다.
 - 소스 문구는 이 스킬의 설치 패키지에 포함되므로 `tigeryoo-ai-setup` 저장소가 없어도 설치할 수 있습니다. 이 지침은 문체와 사용자 메시지 전달에 관한 내용이며, 다른 스킬의 동작이나 발행·설치·자격 증명 접근 권한을 확장하지 않습니다.
 
 <a id="bootstrap-and-failure"></a>

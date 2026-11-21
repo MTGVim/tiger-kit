@@ -10,8 +10,14 @@ import shutil
 import tempfile
 import time
 
-SHARED_START = "<!-- MTGVIM_SHARED_AGENT_BASE_START -->"
-SHARED_END = "<!-- MTGVIM_SHARED_AGENT_BASE_END -->"
+SHARED_START = "<!-- TIGERKIT_USER_GUIDANCE_BEGIN -->"
+SHARED_END = "<!-- TIGERKIT_USER_GUIDANCE_END -->"
+OLD_SHARED_START = "<!-- MTGVIM_SHARED_AGENT_BASE_START -->"
+OLD_SHARED_END = "<!-- MTGVIM_SHARED_AGENT_BASE_END -->"
+ROUTE_START = "<!-- TIGERKIT_ROUTE_MODE_BEGIN -->"
+ROUTE_END = "<!-- TIGERKIT_ROUTE_MODE_END -->"
+OLD_ROUTE_START = "<!-- route-mode:begin -->"
+OLD_ROUTE_END = "<!-- route-mode:end -->"
 LEGACY_START = "<!-- MTGVIM_FLUENT_KOREAN_START -->"
 LEGACY_END = "<!-- MTGVIM_FLUENT_KOREAN_END -->"
 
@@ -28,21 +34,62 @@ def marker_range(text: str, start: str, end: str) -> tuple[int, int] | None:
     return i, j + len(end)
 
 
-def updated_text(original: str, body: str) -> str:
-    shared = marker_range(original, SHARED_START, SHARED_END)
-    legacy = marker_range(original, LEGACY_START, LEGACY_END)
-    if shared and legacy and max(shared[0], legacy[0]) < min(shared[1], legacy[1]):
-        raise ValueError("overlapping managed marker ranges")
+def managed_spans(text: str) -> dict[str, tuple[str, tuple[int, int]] | None]:
+    """Find managed regions and refuse partial, duplicate, mixed or overlapping markers."""
+    candidates = {
+        "user-guidance": (("current", SHARED_START, SHARED_END),
+                          ("old", OLD_SHARED_START, OLD_SHARED_END)),
+        "route-mode": (("current", ROUTE_START, ROUTE_END),
+                       ("old", OLD_ROUTE_START, OLD_ROUTE_END)),
+        "fluent-korean": (("old", LEGACY_START, LEGACY_END),),
+    }
+    found: dict[str, tuple[str, tuple[int, int]] | None] = {}
+    for name, versions in candidates.items():
+        matches = [(kind, span) for kind, begin, end in versions
+                   if (span := marker_range(text, begin, end)) is not None]
+        if len(matches) > 1:
+            raise ValueError(f"mixed or duplicate managed markers: {name}")
+        found[name] = matches[0] if matches else None
+    active = [(name, entry[1]) for name, entry in found.items() if entry]
+    for i, (left, (a, b)) in enumerate(active):
+        for right, (c, d) in active[i + 1:]:
+            if max(a, c) < min(b, d):
+                raise ValueError(f"overlapping managed regions: {left}, {right}")
+    return found
 
+
+def migrate_route_markers(text: str) -> str:
+    route = managed_spans(text)["route-mode"]
+    if route is None or route[0] == "current":
+        return text
+    _, (a, b) = route
+    original = text[a:b]
+    replacement = original.replace(OLD_ROUTE_START, ROUTE_START, 1).replace(
+        OLD_ROUTE_END, ROUTE_END, 1)
+    return text[:a] + replacement + text[b:]
+
+
+def updated_text(original: str, body: str, *, migrate_route: bool = False) -> str:
+    spans = managed_spans(original)
     text = original
-    if legacy:
-        text = text[:legacy[0]] + text[legacy[1]:]
-    shared = marker_range(text, SHARED_START, SHARED_END)
+    fluent = spans["fluent-korean"]
+    if fluent:
+        a, b = fluent[1]
+        text = text[:a] + text[b:]
+
+    guidance = managed_spans(text)["user-guidance"]
     replacement = SHARED_START + "\n" + body.rstrip() + "\n" + SHARED_END
-    if shared:
-        return text[:shared[0]] + replacement + text[shared[1]:]
-    separator = "\n\n" if text.strip() else ""
-    return text.rstrip("\n") + separator + replacement + "\n"
+    if guidance:
+        a, b = guidance[1]
+        text = text[:a] + replacement + text[b:]
+    else:
+        separator = "\n\n" if text.strip() else ""
+        text = text.rstrip("\n") + separator + replacement + "\n"
+
+    if migrate_route:
+        text = migrate_route_markers(text)
+    managed_spans(text)
+    return text
 
 
 def safe_target(home: Path, target: Path) -> None:
@@ -87,6 +134,8 @@ def main() -> int:
     mode.add_argument("--apply", action="store_true", help="backup and write approved changes")
     parser.add_argument("--agent", choices=("all", "claude-code", "codex", "hermes-agent"),
                         default="all", help="target one agent or all")
+    parser.add_argument("--migrate-route-mode", action="store_true",
+                        help="also migrate legacy route-mode marker names without changing their content")
     args = parser.parse_args()
 
     home = Path.home().absolute()
@@ -108,7 +157,19 @@ def main() -> int:
             continue
         original = target.read_bytes() if target.exists() else None
         current = original.decode("utf-8") if original is not None else ""
-        changed = updated_text(current, body).encode("utf-8")
+        found = managed_spans(current)
+        guidance = found["user-guidance"]
+        if guidance and guidance[0] == "old":
+            print("user-guidance marker migration proposed:", target)
+        if found["fluent-korean"]:
+            print("legacy fluent-korean block removal proposed:", target)
+        route = found["route-mode"]
+        if route and route[0] == "old":
+            if args.migrate_route_mode:
+                print(("migrating" if args.apply else "would migrate") + " route-mode markers:", target)
+            else:
+                print("route-mode marker migration available (requires --migrate-route-mode):", target)
+        changed = updated_text(current, body, migrate_route=args.migrate_route_mode).encode("utf-8")
         if changed == original:
             print("unchanged:", target)
         else:

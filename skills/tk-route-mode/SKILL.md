@@ -55,9 +55,11 @@ python3 scripts/route_mode.py migrate                # 읽기 전용 미리보�
 python3 scripts/route_mode.py migrate --save --accept-inactive-modes  # 마이그레이션 승인 후
 python3 scripts/route_mode.py apply --set openai.standard=gpt-6.2-sol:medium  # 변경 승인 후
 python3 scripts/route_mode.py apply --unset openai.standard             # override 해제 승인 후
+python3 scripts/route_mode.py rule status --file /absolute/path/to/AGENTS.md      # 구형·신형 마커를 모두 인식
+python3 scripts/route_mode.py rule migrate --file /absolute/path/to/AGENTS.md --host codex  # 별도 승인 후 마커만 이전
 ```
 
-내부 명령에 붙는 인자는 사용자 스킬 호출 인자가 아닙니다. `status`, `path`, `plan`, `validate`, 기본 `migrate`는 읽기 전용이며, `apply`, `migrate --save`, `rule on/off`는 쓰기 작업입니다. `derive`, `derive --save`, 모드 `use`·`add`·`list`·`update <mode>` 명령은 제거합니다.
+내부 명령에 붙는 인자는 사용자 스킬 호출 인자가 아닙니다. `status`, `path`, `plan`, `validate`, 기본 `migrate`와 `rule status`는 읽기 전용이며, `apply`, `migrate --save`, `rule on/off/migrate`는 쓰기 작업입니다. 지침 블록은 `TIGERKIT_ROUTE_MODE_BEGIN/END`를 사용합니다. 기존 `route-mode:begin/end`를 발견해도 `rule status`는 계속 인식하며, `rule migrate`는 승인 후 블록 본문을 바꾸지 않고 마커만 변환합니다. 변경 전 백업·적용 기록은 기존 방식으로 남깁니다. `tk-setup-skills`의 `user-guidance` 점검에서도 구형 마커의 이전을 별도로 제안할 수 있습니다. `derive`, `derive --save`, 모드 `use`·`add`·`list`·`update <mode>` 명령은 제거합니다.
 
 기본 파일은 `references/route-defaults.json`이며, 사용자 대응표는 `ROUTE_MODE_CONFIG` 또는 `$XDG_CONFIG_HOME/route-mode/routes.json` (XDG 설정이 없으면 `~/.config/route-mode/routes.json`)입니다. **v2 설정**에는 `version`, `tiers`, `efforts`, 단일 `providers`와 `overrides`만 둡니다. `standard`라는 **티어 키**는 유지하지만 `active`, `modes.standard`, `modes.economy`, `extends`는 저장하지 않습니다. 기존 `modes.json`을 발견해도 자동 전환하지 않습니다. 선택된 과거 활성 모드의 실효값과 사용자 override를 읽기 전용으로 미리 보고하고, 사용하지 않을 과거 모드 목록과 그 설정이 새 파일로 이동하지 않는다는 점을 승인받습니다. 이전 시 원본은 보존하고 지속 백업을 만든 뒤 새 파일에 저장합니다. 이미 존재하는 새 파일은 덮어쓰지 않습니다.
 
