@@ -45,6 +45,16 @@ using tk-grill, 새 기능의 요구사항을 함께 구체화해 주세요.
 using tk-roadmap, 다음 분기의 개선 방향과 우선순위를 정리해 주세요.
 ```
 
+### 사용자 공통 한국어 지침 설치
+
+`tk-setup-skills`에는 Claude Code의 `~/.claude/CLAUDE.md`, Codex의 `~/.codex/AGENTS.md`, Hermes의 기존 `~/.hermes/SOUL.md`에 적용할 한국어 대화 지침이 포함되어 있습니다. 개인 저장소 없이도 설치할 수 있습니다.
+
+```text
+using tk-setup-skills, user-guidance를 세 에이전트에 적용할 변경을 먼저 점검해 주세요.
+```
+
+사용자가 설치를 승인하면 해당 스킬의 `--apply` 절차로 백업 후 반영합니다. 예전 `fluent-korean` 관리 블록만 정리하고 사용자 작성 지침은 유지합니다. 자세한 내용은 [설치 절차](skills/tk-setup-skills/SKILL.md#user-guidance-install)를 참고합니다.
+
 ### Ralph 반복 작업용 계획 준비
 
 `tk-ralplan`은 인터뷰와 저장소 조사를 통해 목표·전체 성공 기준·Task·현재 상태·결정·검증 근거를 한 Markdown 장부로 준비하고 점검합니다. `### Task N:`와 체크박스는 Ralphex 호환 표기를 유지하지만 외부 Ralphex CLI, 모델 옵션, 원샷 스크립트는 사용하지 않습니다. 실행은 사용자가 지원을 확인한 Claude Code·Codex·Hermes의 `/goal`에 장부를 전달해 수행합니다.
