@@ -119,7 +119,7 @@ using tk-ralplan check docs/plans/feature.md
 | [tk-grill](skills/tk-grill/SKILL.md) | `hybrid` | 아이디어와 결정을 질문으로 구체화합니다. |
 | [tk-inquiry](skills/tk-inquiry/SKILL.md) | `hybrid` | 다른 담당자에게 보낼 질문 초안을 작성합니다. |
 | [tk-adhd](skills/tk-adhd/SKILL.md) | `hybrid` | 답변과 결과를 찾기 쉽게 구성합니다. |
-| [tk-rewrite](skills/tk-rewrite/SKILL.md) | `hybrid` | 기존 글의 맥락과 표현을 다듬습니다. |
+| [tk-rewrite](skills/tk-rewrite/SKILL.md) | `hybrid` | 기존 글의 어조·뉘앙스·독자 맥락을 요청에 맞춰 다듬습니다. |
 
 ### 세션·환경 관리
 
