@@ -301,6 +301,7 @@
     },
     "tk-setup-skills": {
       "requires": [
+        "tk-questioning",
         "tk-writing"
       ]
     },

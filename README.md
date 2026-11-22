@@ -12,7 +12,7 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 
 전체 설치의 갱신에도 위 명령을 사용하고, 기존 내용과 덮어쓰기 대상을 먼저 확인합니다. 지원 버전의 `skills update`는 복사 모드를 보존하지 않습니다. 선택 설치의 갱신은 기존 선택·호스트·범위를 유지하며 `tk-setup-skills`로 필요한 업무 스킬과 공통 의존성을 함께 준비합니다. 설치기는 의존성을 자동 해결하지 않습니다.
 
-`Claude Code`·`Hermes`는 `/tk-setup-skills`, `Codex`는 `$tk-setup-skills`로 호출합니다. 설치는 대상·범위를 승인한 뒤 실행합니다. 소스·설치본 검사와 gallery·legacy report CLI의 소유자 검사에는 `Python 3.9+`·`PyYAML`이 필요하며, 파서가 없으면 자동 설치하지 않고 중단합니다. 빈 대상의 카탈로그 계획은 표준 라이브러리만 사용합니다.
+`Claude Code`·`Hermes`는 `/tk-setup-skills`, `Codex`는 `$tk-setup-skills`로 호출합니다. **인자 없이 실행해도** 설치 환경을 읽기 전용으로 점검하고 스킬 설치·업데이트, 공통 지침, 사용법 가운데 필요한 기능을 안내합니다. 하고 싶은 일을 설명하면 관련 스킬 ID와 의존성·설치 위치를 조사해 제안하므로, 기술 식별자를 미리 입력할 필요가 없습니다. 설치는 출처·revision·대상·범위를 제시한 뒤 별도로 승인받아 실행합니다. 소스·설치본 검사와 gallery·legacy report CLI의 소유자 검사에는 `Python 3.9+`·`PyYAML`이 필요하며, 파서가 없으면 자동 설치하지 않고 중단합니다. 빈 대상의 카탈로그 계획은 표준 라이브러리만 사용합니다.
 
 모든 TigerKit 저작(질문 초안·영상 대본/자막·HTML·Markdown·스킬 본문·설명·협업 메시지)은 생성 전과 인계 전에 `tk-writing`의 [공통 저작 품질 관문](skills/tk-writing/references/authoring-gate.md)을 적용합니다. 기존 스킬이 범위·권한·출력 계약을 유지하며, 정확한 리터럴과 기계 출력은 보호하고 추가 에이전트·승인 라운드를 강제하지 않습니다.
 
