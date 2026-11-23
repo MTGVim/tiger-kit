@@ -2,6 +2,12 @@
 
 Orca가 실제 실행되는 환경에서 Bot Item·Orchestration의 사용 권한을 확인했을 때만 읽습니다. 명령은 참고 경로이며 **실제 설치본의 `orca skills get orchestration --full` 및 호스트 CLI 출력**으로 지원·인자·식별자를 확인합니다. 도구가 보이지 않거나 실패했는데 소스코드의 예시를 실행 증명으로 사용하지 않습니다.
 
+## 사용자에게 보이는 Workspace 소유권
+
+Bot과 연결된 Workspace는 여전히 **기존 프로젝트 Git 저장소의 Worktree**입니다. Bot Home 아래에 표시된다는 것은 Orca의 **Workspace lineage(부모 관계)**이지 코드가 Bot Home 디렉터리에 복사·이동된다는 뜻이 아닙니다. Sidebar의 Bot 아래에 소속되면서 프로젝트 저장소·브랜치·Git 경로는 그대로 유지합니다.
+
+Orca 설정의 `Hide bot workspaces`를 켜면 Bot에 연결된 Worktree는 프로젝트 섹션에서 중복 표시되지 않고 Bot 아래에서만 보여요. 이 표시 설정은 부모 관계를 고쳐 주지 않으므로 실제 `worktree ps`의 부모 식별자가 Bot Home인지 별도로 확인해야 합니다.
+
 ## Bot Chat의 Items
 
 Bot Home 및 Bot의 실제 채팅에서 권한이 확인되면 **Items를 사용자 업무의 정본**으로 사용합니다. 사용자와 대화하는 관리자 역할은 Bot Chat이 소유합니다. 등록 전에 해당 업무의 Item, 이미 연결된 PR·이슈·Dispatch와 활성 Worker를 조회해 중복을 피합니다. Item은 하나의 Bot·채팅에 속하므로 다른 Bot 또는 채팅의 소유권을 함부로 추정하지 않습니다.
@@ -18,7 +24,7 @@ Bot Home 및 Bot의 실제 채팅에서 권한이 확인되면 **Items를 사용
 
 ### Bot Home 하위 Workspace 생성
 
-Orca Bot Chat이 관리하는 새 코드·조사 작업의 기본 Worktree 배치는 **Bot Home의 하위**입니다. Bot Home은 Git 저장소가 아닌 Folder Workspace이므로 `--worktree new-child`뿐 아니라 정확한 `--repo`가 필요합니다. 실행 전에 `orca repo list --json`과 `orca worktree ps --json`으로 프로젝트·기존 Worker·부모를 확인하고 실제 실행 호스트의 사용 가능한 에이전트를 확인합니다.
+Orca Bot Chat이 관리하는 새 코드·조사 작업의 기본 배치는 **선택한 프로젝트 저장소에 만든 Worktree를 Orca의 Bot Home 사이드바 하위로 연결하는 것**입니다. Bot Home은 Git 저장소가 아닌 Folder Workspace이므로 `--worktree new-child`뿐 아니라 정확한 `--repo`가 필요합니다. 새 Git Worktree의 실제 디렉터리는 해당 프로젝트의 Orca 관리 위치에 보존하며 Bot Home 디렉터리에 옮기지 않습니다. 실행 전에 `orca repo list --json`과 `orca worktree ps --json`으로 프로젝트·기존 Worker·부모를 확인하고 실제 실행 호스트의 사용 가능한 에이전트를 확인합니다.
 
 Bot 자신의 로컬 채팅에서 이미 생성한 Item을 연결해 위임할 때는 설치본에서 인자를 확인한 다음 다음 형태를 사용합니다.
 
@@ -31,6 +37,7 @@ orca orchestration worker-start --environment local --item <item-number> \
 - **`--item`은 업무 연결, `--worktree new-child`는 부모 Worktree 연결**입니다. 어느 하나만으로 두 관계가 만들어진다고 추정하지 않습니다. `--worktree current`는 Bot Home 자체에서 실행하는 것이고 `new-top-level`은 하위로 배치하지 않습니다. 명시적인 사용자 요청이나 기존 격리 상태가 없는 새 Bot 코드 작업에 이 둘을 기본으로 사용하지 않습니다.
 - 다른 컴퓨터의 연결된 Orca 서버에서 실행해야 하면 `--item` 없이 `worker-start --on <server> --worktree new-child --repo id:<서버의-repo-id> --agent <agent-id> --spec "<업무>" --json`을 사용합니다. 성공 응답의 Dispatch ID를 확인한 뒤 Bot의 원래 채팅에서 `orca bot item link <item-number> dispatch:<dispatch-id> --json`으로 연결합니다. 원격 하위 관계는 실행 호스트의 cross-store lineage 지원이 있어야 하며, 지원되지 않는다는 경고가 나왔으면 top-level 생성 사실을 숨기지 않습니다.
 - 실행 응답을 받은 뒤 `orca orchestration worker-show --dispatch <dispatch-id> --json`, `orca bot item show <item-number> --json`, `orca worktree ps --json`에서 **실제 Dispatch·Item 링크·Bot Home 부모 관계**를 각각 확인합니다. Item에 연결되었어도 Workspace가 최상위이면 성공적인 Bot 하위 생성으로 보고하지 않습니다.
+- 이미지처럼 프로젝트 목록에만 보이는 기존 Worktree도 **사용자가 해당 Bot에게 소속시키기로 요청했다면**, 새 Worker 없이 현재 소유권과 실행 호스트를 확인해 부모 관계를 옮깁니다. 프로젝트의 Git 저장소·브랜치·소스 파일을 이동하거나 다시 clone하지 않습니다.
 - 이미 만든 Worker의 Workspace가 분리되어 있다면 **새 Worker를 만들지 않고** 먼저 현재 부모·Bot 소유권·실행 호스트를 조회합니다. 사용자 소유 또는 다른 Bot 소유 Workspace를 임의로 이동하지 않습니다. 현재 Bot이 소유한 같은 호스트의 Worktree로 확인되면 Bot Home 채팅에서 `orca worktree set --worktree <정확한-worker-selector> --parent-worktree current`를 이용해 연결을 복구하고 다시 `worktree ps`로 확인합니다. 원격 Worktree의 부모 변경은 `--parent-environment`와 해당 호스트의 cross-store 지원을 확인한 뒤 공식 계약으로 수행합니다. 불확실하면 그대로 두고 원인과 복구 조건을 보고합니다.
 
 
@@ -40,6 +47,15 @@ orca orchestration worker-start --environment local --item <item-number> \
 - Orca Worker 기본 지침은 하위 에이전트를 제한합니다. TigerKit 구현·독립 리뷰에서 하위 위임이 필요한 업무라면 **위임 브리프에서 그 허용 범위와 기존 사용자 권한을 명시**합니다. 독립 리뷰·검증 요구를 조용히 생략하거나 호스트 권한을 우회하지 않습니다.
 - 실제 Dispatch·Task ID가 주입된 Worker는 새 Item 또는 같은 작업의 새 Worker를 생성하지 않습니다. 질문·차단·`worker_done`은 Orchestration의 주입된 식별자·호스트 프로토콜을 따릅니다. Coordinator는 실제 `worker_done`과 Dispatch 상태를 확인하고 필요한 Item 상태를 갱신합니다.
 - 잘못된 시작·유실·응답 없음은 실행 종료 증명이 아닙니다. 기존 Task/Dispatch/Worker를 조회하고 호스트 공식 복구 절차를 따릅니다. 응답이 없다는 이유로 새로운 Worker를 중복 시작하지 않습니다.
+
+## `worker_done` 이후 리소스 정리
+
+`worker_done`은 **Task·Dispatch 결과 정산**이지 Worktree 삭제나 에이전트 프로세스 종료 명령이 아닙니다. 최신 Orca는 Bot Chat이 생성한 Worker(`new-child` 포함)의 기본 `keepOpenByDefault`를 `false`로 두고, 지원하는 호스트에서는 수락한 완료 보고 뒤 약 2분 후 유휴 Worker 터미널·세션을 자동 Release합니다. 하위 위임의 원래 Bot 세션이 확인되지 않거나 `--keep-open`이 설정됐거나 호스트가 오래된 경우 자동 종료를 장담하지 않습니다.
+
+- 완료 보고를 받으면 `orca orchestration worker-list --include-remote --json`과 `orca orchestration worker-show --dispatch <dispatch-id> --json`에서 실제 완료·프로세스 상태·`autoReleaseAt`·Keep open 여부를 확인합니다. Worker가 스스로 '보고했다'고 말한 것만으로 수락된 `worker_done`이라고 판정하지 않습니다.
+- 작업이 정산됐고 새 업무를 기다리지 않아 메모리 회수가 필요하면 `orca orchestration worker-release --dispatch <dispatch-id>`로 **그 Worker가 소유한 터미널만** Release합니다. 결과가 `retained`·`release_pending`·`release_unknown`이면 각 호스트의 복구 지침을 따릅니다. 완료되지 않은 작업이나 계속 필요한 Worker를 일괄 종료하지 않습니다.
+- Release 후에도 **Worktree와 Bot 아래의 목록은 남을 수 있습니다.** 보존된 Worktree의 존재만으로 RAM을 소비하는 에이전트가 계속 실행 중이라고 판단하지 않습니다. 목록을 줄이기 위한 Worktree 제거(`worktree rm`)는 소스·브랜치·미병합 변경의 손실 위험이 있으므로 완료 보고만으로 자동 수행하지 않습니다. 정리 권한과 Git 상태를 별도로 확인합니다.
+- 상태 확인이나 Release 때문에 대기·폴링 스크립트를 만들지 않습니다. 완료 메시지에 반응하는 기존 Orca 동작과 필요 시 일회성 조회만 사용합니다.
 
 ## 일반 Orca Coordinator
 
