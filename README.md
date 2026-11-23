@@ -33,6 +33,7 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 | 사용성 개선 및 신규 기능 발굴 | [tk-experience-review](skills/tk-experience-review/SKILL.md) |
 | 장기 목표·마일스톤과 /goal용 실행 장부 작성·점검 | [tk-ralplan](skills/tk-ralplan/SKILL.md) |
 | 현재 작업을 다른 세션으로 인계 | [tk-handoff](skills/tk-handoff/SKILL.md) |
+| AI의 설명·판단이 이상할 때 교정안 제안받기 | [tk-sowhat](skills/tk-sowhat/SKILL.md) |
 
 스킬 호출에서 명령과 옵션은 `foo` 형태의 키워드를 사용합니다. 실제 CLI 명령의 플래그는 변경하지 않습니다.
 
@@ -44,6 +45,7 @@ using tk-tasks, 이 개선 작업은 일감으로 남겨두고 기존 진행 중
 using tk-prep, 결제 버튼을 누르면 오류가 발생하는 원인만 조사해 주세요.
 using tk-grill, 새 기능의 요구사항을 함께 구체화해 주세요.
 using tk-ralplan, 다음 분기의 개선 목표와 마일스톤을 /goal 계획으로 정리해 주세요.
+using tk-sowhat, 방금 답변에서 무엇이 확실하고 무엇을 해야 하는지 다시 판단해 주세요. 실행은 승인 후에요.
 ```
 
 ### 사용자 공통 한국어 지침 설치
@@ -132,7 +134,7 @@ using tk-ralplan check docs/plans/feature.md
 | --- | --- | --- |
 | [tk-grill](skills/tk-grill/SKILL.md) | `hybrid` | 아이디어와 결정을 질문으로 구체화합니다. |
 | [tk-inquiry](skills/tk-inquiry/SKILL.md) | `hybrid` | 다른 담당자에게 보낼 질문 초안을 작성합니다. |
-| [tk-adhd](skills/tk-adhd/SKILL.md) | `hybrid` | 답변과 결과를 찾기 쉽게 구성합니다. |
+| [tk-sowhat](skills/tk-sowhat/SKILL.md) | `user` | 잘못된 판단과 설명을 읽기 전용으로 교정하고 실행 제안·승인 질문만 제공합니다. |
 | [tk-rewrite](skills/tk-rewrite/SKILL.md) | `hybrid` | 기존 글의 어조·뉘앙스·독자 맥락을 요청에 맞춰 다듬습니다. |
 
 ### 세션·환경 관리
