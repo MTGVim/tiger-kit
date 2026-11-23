@@ -1,11 +1,5 @@
 {
   "packages": {
-    "tk-adhd": {
-      "requires": [
-        "tk-questioning",
-        "tk-writing"
-      ]
-    },
     "tk-app-verify": {
       "requires": [
         "tk-artifacts",
@@ -305,6 +299,12 @@
       ]
     },
     "tk-skill-vet": {
+      "requires": [
+        "tk-questioning",
+        "tk-writing"
+      ]
+    },
+    "tk-sowhat": {
       "requires": [
         "tk-questioning",
         "tk-writing"
