@@ -1,3 +1,7 @@
+## 호스트 Task 연동 스킬 추가 (2026-11-24)
+
+`tk-tasks`를 추가했습니다. Orca Bot Chat의 Items와 필요 시 Orchestration을 먼저 활용하며, 일반 Claude Code·Codex·Hermes 세션에서는 실제로 제공되는 Todo/Task 도구만 사용합니다. 자체 Task 장부나 CLI는 설치하지 않습니다. 기존 `tk-prep` 등 업무 스킬은 설치된 `tk-tasks`의 공통 생명주기를 참조해 업무 시작과 상태·결과를 연결합니다. 선택 설치를 쓰고 있다면 `tk-setup-skills`로 변경된 의존성 폐쇄와 최신 패키지를 확인·갱신하세요. 설치 상태를 확인하지 않은 채 기존 사용자 환경에 적용되었다고 주장하지 않습니다.
+
 ## 진단 통합 및 로드맵 스킬 제거 (2026-11-24)
 
 독립 `tk-debug`는 `tk-prep`의 읽기 전용 진단 분기로 통합했습니다. 오류 원인 조사만 요청하면 `tk-prep/references/debug.md`를 읽어 코드·설정·Git을 수정하지 않고 보고합니다. 수정 요청에는 기존 `tk-prep` 승인·검증 절차를 적용합니다.
