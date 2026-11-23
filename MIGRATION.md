@@ -1,3 +1,16 @@
+## 진단 통합 및 로드맵 스킬 제거 (2026-11-24)
+
+독립 `tk-debug`는 `tk-prep`의 읽기 전용 진단 분기로 통합했습니다. 오류 원인 조사만 요청하면 `tk-prep/references/debug.md`를 읽어 코드·설정·Git을 수정하지 않고 보고합니다. 수정 요청에는 기존 `tk-prep` 승인·검증 절차를 적용합니다.
+
+독립 `tk-roadmap`은 제거했습니다. `tk-ralplan`이 사용하던 전략·우선순위·마일스톤 기준은 `tk-ralplan/references/strategy-planning.md`로 이전하고 출처·라이선스 고지도 보존했습니다. 기존 `.tigerkit/roadmap.md` 또는 사용자 문서는 자동 삭제·이관하지 않습니다. [ADR 0011](docs/adr/0011-consolidate-debug-and-roadmap.md)을 참고합니다.
+
+설치본에서 새 `tk-prep`·`tk-ralplan`과 필요한 의존성의 설치·정상 로드를 확인한 **뒤에만** 예전 스킬을 같은 설치 범위에서 제거하고, 기존 명시 호출·자동화·사용자 지침의 이름을 바꿉니다. 전역 설치 예시이며 프로젝트 설치는 대상과 범위를 맞춥니다.
+
+```bash
+npx skills list --global
+npx skills remove tk-debug tk-roadmap --global --agent claude-code codex hermes-agent
+```
+
 ## `tk-goal` 제거와 `/goal`용 `tk-ralplan` 장부 도입
 
 `tk-mission`에서 `tk-goal`로 전환했던 과거 절차는 더 이상 유효하지 않습니다. `tk-goal`은 장기 메인 LLM 세션에 위임과 목표 반복의 제어권을 두던 방식의 한계 때문에 제거했습니다. 해당 이름의 호출·`status`·`resume`·`pause`·`stop`은 더 이상 제공하지 않습니다. 제거 배경과 재도입 전 심사 기준은 [ADR 0007](docs/adr/0007-retire-tk-goal-use-ralphex-plan.md)을 참조합니다.

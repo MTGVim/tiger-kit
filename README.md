@@ -27,11 +27,10 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 | 하고 싶은 일 | 권장 시작 스킬 |
 | --- | --- |
 | 기능 개발, 수정 또는 리팩터링 | [tk-prep](skills/tk-prep/SKILL.md) |
-| 오류 원인 조사와 수정 | [tk-debug](skills/tk-debug/SKILL.md) |
+| 오류 원인 조사와 수정 | [tk-prep](skills/tk-prep/SKILL.md) |
 | 아이디어와 결정 구체화 | [tk-grill](skills/tk-grill/SKILL.md) |
-| 추진 방향과 마일스톤 수립 | [tk-roadmap](skills/tk-roadmap/SKILL.md) |
 | 사용성 개선 및 신규 기능 발굴 | [tk-experience-review](skills/tk-experience-review/SKILL.md) |
-| /goal용 목표 장부 작성·점검 | [tk-ralplan](skills/tk-ralplan/SKILL.md) |
+| 장기 목표·마일스톤과 /goal용 실행 장부 작성·점검 | [tk-ralplan](skills/tk-ralplan/SKILL.md) |
 | 현재 작업을 다른 세션으로 인계 | [tk-handoff](skills/tk-handoff/SKILL.md) |
 
 스킬 호출에서 명령과 옵션은 `foo` 형태의 키워드를 사용합니다. 실제 CLI 명령의 플래그는 변경하지 않습니다.
@@ -40,9 +39,9 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 
 ```text
 using tk-prep, 검색 화면에 필터 기능을 추가해 주세요.
-using tk-debug, 결제 버튼을 누르면 오류가 발생하는 원인을 찾아 주세요.
+using tk-prep, 결제 버튼을 누르면 오류가 발생하는 원인만 조사해 주세요.
 using tk-grill, 새 기능의 요구사항을 함께 구체화해 주세요.
-using tk-roadmap, 다음 분기의 개선 방향과 우선순위를 정리해 주세요.
+using tk-ralplan, 다음 분기의 개선 목표와 마일스톤을 /goal 계획으로 정리해 주세요.
 ```
 
 ### 사용자 공통 한국어 지침 설치
@@ -78,8 +77,7 @@ using tk-ralplan check docs/plans/feature.md
 
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
-| [tk-prep](skills/tk-prep/SKILL.md) | `hybrid` | 자연어 SWE 착수·구현 요청을 준비하고 승인된 로컬 구현·검증을 진행합니다. |
-| [tk-roadmap](skills/tk-roadmap/SKILL.md) | `hybrid` | 목표와 제약을 정리해 마일스톤을 만듭니다. |
+| [tk-prep](skills/tk-prep/SKILL.md) | `hybrid` | 읽기 전용 오류 진단과 자연어 SWE 착수·구현을 담당하고 승인된 로컬 구현·검증을 진행합니다. |
 | [tk-ralplan](skills/tk-ralplan/SKILL.md) | `user` | /goal용 목표·작업·현재 상태·검증 장부를 작성합니다. Task 형식은 Ralphex 호환입니다. |
 | [tk-audit](skills/tk-audit/SKILL.md) | `hybrid` | 저장소의 기술 일감을 읽기 전용으로 감사합니다. |
 | [tk-prototype](skills/tk-prototype/SKILL.md) | `hybrid` | UI·로직 대안을 비교하는 시제품을 만듭니다. |
@@ -91,7 +89,6 @@ using tk-ralplan check docs/plans/feature.md
 
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
-| [tk-debug](skills/tk-debug/SKILL.md) | `hybrid` | 오류·회귀의 원인을 조사하고 수정 권한과 진단 근거를 구분합니다. |
 | [tk-review](skills/tk-review/SKILL.md) | `hybrid` | 지정한 변경을 명세와 품질 기준으로 검토합니다. |
 | [tk-browser-verify](skills/tk-browser-verify/SKILL.md) | `hybrid` | Playwright CLI 기본 화면·동작 검증, 명시적 접근성 결함 탐색과 데모 캡처를 담당합니다. |
 | [tk-app-verify](skills/tk-app-verify/SKILL.md) | `hybrid` | 데스크톱 앱의 동작·화면·접근성을 검증합니다. |

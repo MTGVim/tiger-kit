@@ -29,7 +29,7 @@ TigerKit은 조합 가능한 Agent Skills 저장소입니다. 범용 workflow ru
 
 ## 실행·승인 경계
 
-- `tk-prep`은 대화형 준비와 승인된 격리 로컬 구현·검증·commit을 담당합니다. `direct/no-Seed | Ready Seed direct | SDD | handoff`는 실제 작업 구조에 맞게 선택합니다. `direct/no-Seed`에서는 SDD 상세 문서를 읽지 않습니다.
+- `tk-prep`은 오류 원인만 묻는 읽기 전용 진단과 대화형 구현 준비, 승인된 격리 로컬 구현·검증·commit을 담당합니다. 독립 `tk-debug`는 흡수하고 진단 절차는 `tk-prep/references/debug.md`에서 조건부로 읽습니다. `tk-roadmap`의 필요한 전략 기준은 `tk-ralplan/references/strategy-planning.md`로 옮깁니다. [ADR 0011](docs/adr/0011-consolidate-debug-and-roadmap.md)을 따릅니다. `direct/no-Seed | Ready Seed direct | SDD | handoff`는 실제 작업 구조에 맞게 선택합니다. `direct/no-Seed`에서는 SDD 상세 문서를 읽지 않습니다.
 - Ready Seed는 실제 지속 맥락이 필요할 때만 `.tigerkit/seed.md`에 만듭니다. 최종 승인 전 기존 Ready Seed를 보존합니다. 대화 없이 목표·근거·범위·확정 결정·AC/검증·함정·실행 방향을 복원할 수 있어야 하며, transcript·progress ledger·secret store로 쓰지 않습니다.
 - SDD 행동 정본은 `tk-engineering`이 소유합니다. 실제 자식 기능은 현재 호스트에서 확인합니다. 업무 실행 중 provider/model/effort routing, durable worker cursor, `.tigerkit/session.md`를 제품에 추가하지 않습니다.
 - 승인은 같은 작업의 필요한 후속 단계까지 보존하되 새 범위·보안·권한·발행을 추론하지 않습니다. 근거가 승인된 계약을 깨면 임의로 재해석하지 않고 준비·재승인으로 돌아갑니다.

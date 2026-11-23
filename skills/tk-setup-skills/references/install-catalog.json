@@ -71,12 +71,6 @@
         "tk-writing"
       ]
     },
-    "tk-debug": {
-      "requires": [
-        "tk-engineering",
-        "tk-writing"
-      ]
-    },
     "tk-domain": {
       "requires": [
         "tk-artifacts",
@@ -242,7 +236,6 @@
         "tk-grill",
         "tk-questioning",
         "tk-research",
-        "tk-roadmap",
         "tk-writing"
       ]
     },
@@ -278,13 +271,6 @@
       ]
     },
     "tk-rewrite": {
-      "requires": [
-        "tk-artifacts",
-        "tk-questioning",
-        "tk-writing"
-      ]
-    },
-    "tk-roadmap": {
       "requires": [
         "tk-artifacts",
         "tk-questioning",

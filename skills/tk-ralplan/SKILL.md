@@ -27,7 +27,7 @@ Ralphex의 `### Task N:` 및 체크박스 형태와 호환되는 기본 계획 �
 
 1. 목표, 수혜자, 현재 프로젝트 상태, 보존 동작, 포함·제외 범위, 사용자 결정·승인 경계와 **관찰 가능한 전체 성공 조건**을 확보합니다. 기존 합의를 재질문하지 않습니다.
 2. 실제 저장소의 소스·테스트·Git 상태·문서를 조사하고 기술 선택에 중요한 외부 사례는 [tk-research](../tk-research/SKILL.md)의 근거 원칙을 적용합니다. 확인한 사실·사용자 결정·가설·미검증 사항을 구분합니다.
-3. 중요한 선택이 미정이면 [tk-grill](../tk-grill/SKILL.md)의 결정 기준과 [tk-questioning](../tk-questioning/references/questions.md)의 승인 경계를 활용합니다. 형식적인 심층 인터뷰는 강제하지 않습니다. 장기 전략은 [tk-roadmap 전략 기준](../tk-roadmap/references/strategy-planning.md)을 참고합니다.
+3. 중요한 선택이 미정이면 [tk-grill](../tk-grill/SKILL.md)의 결정 기준과 [tk-questioning](../tk-questioning/references/questions.md)의 승인 경계를 활용합니다. 형식적인 심층 인터뷰는 강제하지 않습니다. 장기 전략이 필요하면 [전략 수립 기준](references/strategy-planning.md)을 참고합니다.
 4. 목표를 달성할 수 있는 단계와 선행 조건을 구성하고, 각 Task를 새 세션에서도 이해할 수 있는 범위·입력·검증 근거로 정의합니다. 모델별 CLI 인자나 별도 위임 정책을 생성하지 않고 실행 호스트와 기존 TigerKit의 능력 티어 및 독립 리뷰 정책에 맡깁니다.
 5. 파괴적 명령, 원격 push·PR·병합·배포, 비용 발생, 자격 증명 사용은 **계획 작성 승인만으로** 허용되지 않습니다. 필요한 권한과 누락된 승인을 장부에 구분합니다. 다른 승인된 작업까지 일괄 차단하지 않습니다.
 
