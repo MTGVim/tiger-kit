@@ -69,6 +69,17 @@ def validate(data, width, height, end):
         if start < previous_end:
             raise ValueError("highlights must be ordered and nonoverlapping; combine simultaneous rects")
         previous_end = stop
+        if not isinstance(row.get("outline", True), bool):
+            raise ValueError("highlight outline must be boolean")
+        color = row.get("outline_color", "FFCC00")
+        if not isinstance(color, str) or not re.fullmatch(r"[0-9A-Fa-f]{6}", color):
+            raise ValueError("highlight outline_color must be six RRGGBB hex digits")
+        if not 1 <= finite(row.get("outline_width", 4)) <= 32:
+            raise ValueError("highlight outline_width must be 1-32 pixels")
+        if not 0 <= finite(row.get("outline_radius", 8)) <= 100:
+            raise ValueError("highlight outline_radius must be 0-100 pixels")
+        if not 0 <= finite(row.get("outline_padding", 4)) <= max(width,height):
+            raise ValueError("highlight outline_padding must fit the frame")
         if not isinstance(row.get("zoom", True), bool):
             raise ValueError("highlight zoom must be boolean")
         if not 0 <= finite(row.get("margin", 32)) <= max(width, height):
@@ -109,6 +120,8 @@ def document(width, height, events):
             "-1,0,0,0,100,100,0,0,1,0,0,7,0,0,0,1\n"
             "Style: Square,Noto Sans CJK KR,24,&H00FFFFFF,&H00FFFFFF,&HFF000000,&H80000000,"
             "-1,0,0,0,100,100,0,0,4,8,0,7,0,0,0,1\n"
+            "Style: Disclosure,Noto Sans CJK KR,24,&H00FFFFFF,&H00FFFFFF,&H40000000,&H40000000,"
+            "-1,0,0,0,100,100,0,0,3,7,0,3,0,0,0,1\n"
             "[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n"
             + "\n".join(events) + "\n")
 
@@ -193,6 +206,34 @@ def shape(rect, radius, color, alpha="00", border=0, outline="CBD5E1"):
     x,y,w,h = rect
     return (f"{{\\an7\\pos({x:.4f},{y:.4f})\\p1\\bord{border}\\shad0\\1c&H{color}&"
             f"\\1a&H{alpha}&\\3c&H{outline}&\\3a&H{alpha}&}}"+rounded_path(w,h,radius))
+
+
+def highlight_events(rows, width, height):
+    """Draw source-coordinate outlines before zoom, with each ASS interval clipped to its highlight."""
+    events, receipts = [], []
+    for row in rows:
+        start, stop = rendered_interval(row)
+        if not row.get("outline", True):
+            continue
+        color = row.get("outline_color", "FFCC00")
+        bgr = color[4:6] + color[2:4] + color[0:2]
+        stroke = float(row.get("outline_width", 4))
+        pad = float(row.get("outline_padding", 4))
+        radius = float(row.get("outline_radius", 8))
+        for rect in row["rects"]:
+            x = max(stroke, float(rect["x"]) - pad)
+            y = max(stroke, float(rect["y"]) - pad)
+            right = min(width-stroke, float(rect["x"])+float(rect["w"])+pad)
+            bottom = min(height-stroke, float(rect["y"])+float(rect["h"])+pad)
+            if right <= x or bottom <= y:
+                raise ValueError("highlight outline has no drawable area after clipping")
+            path = rounded_path(right-x, bottom-y, radius)
+            tags = (f"{{\\an7\\pos({x:.4f},{y:.4f})\\p1\\bord{stroke:.4f}\\shad0"
+                    f"\\1a&HFF&\\3a&H00&\\3c&H{bgr}&}}")
+            events.append(event(start,stop,3,tags+path))
+            receipts.append({"start_ms":start,"end_ms":stop,"rect":[x,y,right-x,bottom-y],
+                             "color":color,"width":stroke,"radius":radius})
+    return events, receipts
 
 
 def text_events(block, x, y, start, stop, color="FFFFFF", center=False, square=False):
@@ -327,8 +368,10 @@ def prepare(data, captions, width, height, end, size, fps, ffmpeg, stage, env, w
     calls, call_events = callout_layout(rows,metrics,width,height)
     plans = zoom_plan(highlights,calls,width,height)
     filters = []
-    if call_events:
-        (stage/"callouts.ass").write_text(document(width,height,call_events),encoding="utf-8")
+    highlight_drawings, highlight_boxes = highlight_events(highlights,width,height)
+    # Source coordinates are authoritative; draw before the fixed-canvas zoom.
+    if call_events or highlight_drawings:
+        (stage/"callouts.ass").write_text(document(width,height,call_events+highlight_drawings),encoding="utf-8")
         filters.append("subtitles=filename=callouts.ass")
     zoom = zoom_filter(plans,width,height,fps)
     if zoom: filters.append(zoom)
@@ -337,7 +380,7 @@ def prepare(data, captions, width, height, end, size, fps, ffmpeg, stage, env, w
         events,boxes = caption_events(captions,style,metrics,width,height,size,plans,calls,float(fps),warnings,
                                     data.get("caption_box_color","000000"),data.get("caption_box_alpha",.5))
         (stage/"overlay-captions.ass").write_text(document(width,height,events),encoding="utf-8")
-    return filters,{"caption_style":style,"caption_boxes":boxes,"callout_boxes":calls,"zoom_plan":plans,
+    return filters,{"caption_style":style,"caption_boxes":boxes,"callout_boxes":calls,"highlight_boxes":highlight_boxes,"zoom_plan":plans,
                     "text_metrics":"libass-rendered-ink" if calls or boxes else None,
                     "caption_box_color":data.get("caption_box_color","000000") if boxes else None,
                     "caption_box_alpha":data.get("caption_box_alpha",.5) if boxes else None}
