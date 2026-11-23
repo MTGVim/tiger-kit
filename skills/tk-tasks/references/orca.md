@@ -20,7 +20,7 @@ Bot Home 및 Bot의 실제 채팅에서 권한이 확인되면 **Items를 사용
 
 ## Worker 감독과 중복 방지
 
-사용자가 실행을 요청했고 **현재 세션이 Coordinator**이며 이미 실행 중인 동일 Worker가 없을 때만 담당 스킬과 완료 조건을 담은 자급자족형 브리프로 Worker를 시작합니다. `planned` Item은 선행 조건이 해결되기 전에는 Worker를 만들지 않습니다.
+사용자가 실행을 요청했고 **현재 세션이 Coordinator**이며 이미 시작된 동일 업무의 주 Worker나 Workspace가 없을 때만 담당 스킬과 완료 조건을 담은 자급자족형 브리프로 Worker를 시작합니다. **Bot Item/독립 Task 한 개에 주 Worker 한 개, 프로젝트 Worktree 한 개**를 원칙으로 합니다. 작은 Todo, 내부 검증 라운드, 리뷰 의견과 후속 수정은 원래 Worker에 전달하며 새 Orca Worker·새 Worktree를 만들지 않습니다. 기존 Worker가 완료 보고한 뒤 추가 수정이 필요하면 원래 Dispatch에 `orchestration send --to dispatch:<dispatch-id>`로 후속 요청하여 동일 Worktree 재사용을 우선합니다. 원래 Worker가 복구 불가능하다는 근거 없이 대체 Worker를 시작하지 않습니다. `planned` Item은 선행 조건이 해결되기 전에는 Worker를 만들지 않습니다.
 
 ### Bot Home 하위 Workspace 생성
 
@@ -44,7 +44,7 @@ orca orchestration worker-start --environment local --item <item-number> \
 
 - 위임하기 전에 대상 Worker 실행 호스트에서 선택된 TigerKit 스킬과 필수 의존성을 실제로 찾고 로드할 수 있는지 확인합니다. Bot Home에 설치됐다는 사실만으로 다른 Worktree·SSH·WSL 호스트에서도 설치됐다고 가정하지 않습니다. 누락되면 무단 설치 대신 `tk-setup-skills`의 범위별 설치 계획을 안내하고, 가능한 독립 작업은 계속 진행합니다.
 - 브리프에는 원본 요청, 저장소·작업 식별, 허용된 변경 범위·기존 승인, 대상 스킬의 **실제 호출 지시**(`tk-prep`, `tk-review` 등), 검증·반환 계약을 적습니다. 설치되어 있다는 주장만으로 스킬 호출을 완료했다고 보지 않습니다.
-- Orca Worker 기본 지침은 하위 에이전트를 제한합니다. TigerKit 구현·독립 리뷰에서 하위 위임이 필요한 업무라면 **위임 브리프에서 그 허용 범위와 기존 사용자 권한을 명시**합니다. 독립 리뷰·검증 요구를 조용히 생략하거나 호스트 권한을 우회하지 않습니다.
+- Orca Worker 기본 지침은 하위 에이전트를 제한합니다. TigerKit 구현·독립 리뷰에서 하위 위임이 필요하면 **위임 브리프에 기존 사용자 승인 범위와 검증 역할을 명시**합니다. 이때 호스트가 지원하는 **동일 Workspace의 내부 서브에이전트**를 활용하고 별도 Orca Worktree·주 Worker를 내부 Todo마다 만들지 않습니다. 독립 리뷰·검증 요구를 생략하거나 호스트 권한을 우회하지 않습니다. 반드시 별도 Worktree가 필요한 예외는 이유와 영향을 사용자에게 설명하고 승인을 확인합니다.
 - 실제 Dispatch·Task ID가 주입된 Worker는 새 Item 또는 같은 작업의 새 Worker를 생성하지 않습니다. 질문·차단·`worker_done`은 Orchestration의 주입된 식별자·호스트 프로토콜을 따릅니다. Coordinator는 실제 `worker_done`과 Dispatch 상태를 확인하고 필요한 Item 상태를 갱신합니다.
 - 잘못된 시작·유실·응답 없음은 실행 종료 증명이 아닙니다. 기존 Task/Dispatch/Worker를 조회하고 호스트 공식 복구 절차를 따릅니다. 응답이 없다는 이유로 새로운 Worker를 중복 시작하지 않습니다.
 
@@ -53,8 +53,10 @@ orca orchestration worker-start --environment local --item <item-number> \
 `worker_done`은 **Task·Dispatch 결과 정산**이지 Worktree 삭제나 에이전트 프로세스 종료 명령이 아닙니다. 최신 Orca는 Bot Chat이 생성한 Worker(`new-child` 포함)의 기본 `keepOpenByDefault`를 `false`로 두고, 지원하는 호스트에서는 수락한 완료 보고 뒤 약 2분 후 유휴 Worker 터미널·세션을 자동 Release합니다. 하위 위임의 원래 Bot 세션이 확인되지 않거나 `--keep-open`이 설정됐거나 호스트가 오래된 경우 자동 종료를 장담하지 않습니다.
 
 - 완료 보고를 받으면 `orca orchestration worker-list --include-remote --json`과 `orca orchestration worker-show --dispatch <dispatch-id> --json`에서 실제 완료·프로세스 상태·`autoReleaseAt`·Keep open 여부를 확인합니다. Worker가 스스로 '보고했다'고 말한 것만으로 수락된 `worker_done`이라고 판정하지 않습니다.
-- 작업이 정산됐고 새 업무를 기다리지 않아 메모리 회수가 필요하면 `orca orchestration worker-release --dispatch <dispatch-id>`로 **그 Worker가 소유한 터미널만** Release합니다. 결과가 `retained`·`release_pending`·`release_unknown`이면 각 호스트의 복구 지침을 따릅니다. 완료되지 않은 작업이나 계속 필요한 Worker를 일괄 종료하지 않습니다.
-- Release 후에도 **Worktree와 Bot 아래의 목록은 남을 수 있습니다.** 보존된 Worktree의 존재만으로 RAM을 소비하는 에이전트가 계속 실행 중이라고 판단하지 않습니다. 목록을 줄이기 위한 Worktree 제거(`worktree rm`)는 소스·브랜치·미병합 변경의 손실 위험이 있으므로 완료 보고만으로 자동 수행하지 않습니다. 정리 권한과 Git 상태를 별도로 확인합니다.
+- 작업이 정산됐고 더 이상 Worker에 수정·검증을 맡길 필요가 없다면 `orca orchestration worker-release --dispatch <dispatch-id>`로 **그 Worker가 소유한 터미널만** Release합니다. Orca의 안전한 자동 Release는 그대로 사용합니다. 결과가 `retained`·`release_pending`·`release_unknown`이면 공식 복구 지침을 따르고, 완료되지 않은 작업이나 후속 작업이 남은 Worker는 무리하게 닫지 않습니다. 사용자에게 묻는 Worktree 삭제 승인과 Worker 터미널 Release는 서로 구분합니다.
+- Release 후에도 **Worktree와 Bot 아래의 목록은 남습니다.** 보존된 Worktree의 존재만으로 RAM을 소비하는 에이전트가 계속 실행 중이라고 판단하지 않습니다. Worktree는 `worker_done`이나 `done`만으로 자동 삭제되지 않습니다. Bot은 검증 결과를 인수한 다음 PR 열기·병합·변경 보류 등 **사용자에게 필요한 납품 결정을 먼저 처리**합니다. 추가 수정이나 검증이 필요하면 기존 Worker·Workspace를 재사용합니다.
+- 납품 결정이 끝나고 실제 Task가 완료되면 Bot은 **"이 작업의 Worktree도 정리할까요?"를 한 번만 질문**합니다. 사용자가 보존·삭제를 선택할 수 있도록 정확한 Worktree와 관련 PR·브랜치 및 정리 영향을 설명합니다. 답변이 없으면 보존하며, 이미 사용자가 해당 Task의 정리까지 명시적으로 승인했다면 중복 질문하지 않습니다. 완료한 Task는 기록으로 남기고 정리를 위한 새 Task를 만들거나 완료 상태를 취소하지 않습니다.
+- 삭제 승인을 받으면 `orca worktree ps --json`, `orca worktree show --worktree <정확한-selector> --json`과 Git 상태·발행 결과를 확인합니다. 해당 Task가 소유한 Worktree인지, 다른 활성 Worker가 없는지, 원격에 보존하지 않은 커밋·미추적 파일·미병합 변경·미완료 PR 작업이 없는지 확인한 경우에만 **정확한 한 Workspace**를 `orca worktree rm --worktree <정확한-selector> --json`으로 정리합니다. `--force`·`--delete-branch`를 사용하지 않고 호스트의 브랜치 보존 정책을 확인합니다. 위험하거나 실제 상태를 확인할 수 없으면 삭제하지 않고 남은 조건을 보고합니다. 이 과정에서 사용자 소유 다른 Worktree를 일괄 삭제하지 않습니다.
 - 상태 확인이나 Release 때문에 대기·폴링 스크립트를 만들지 않습니다. 완료 메시지에 반응하는 기존 Orca 동작과 필요 시 일회성 조회만 사용합니다.
 
 ## 일반 Orca Coordinator
