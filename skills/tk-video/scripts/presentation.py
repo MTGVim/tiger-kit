@@ -120,7 +120,7 @@ def document(width, height, events):
             "-1,0,0,0,100,100,0,0,1,0,0,7,0,0,0,1\n"
             "Style: Square,Noto Sans CJK KR,24,&H00FFFFFF,&H00FFFFFF,&HFF000000,&H80000000,"
             "-1,0,0,0,100,100,0,0,4,8,0,7,0,0,0,1\n"
-            "[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n"
+            "Style: Disclosure,Noto Sans CJK KR,24,&H00FFFFFF,&H00FFFFFF,&H40000000,&H40000000,"\n            "-1,0,0,0,100,100,0,0,3,7,0,3,0,0,0,1\n"\n            "[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n"
             + "\n".join(events) + "\n")
 
 
