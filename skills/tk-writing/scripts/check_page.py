@@ -180,7 +180,7 @@ def chrome_fallback(path, evidence, widths, dom_only=False):
     if not node:
         raise RuntimeError('Python Playwright and Node Chrome pipe unavailable; browser check not run')
     evidence.mkdir(parents=True, exist_ok=True)
-    script = Path(__file__).with_name('check_page_chrome.mjs')
+    script = Path(__file__).with_name('check-page-chrome.mjs')
     with tempfile.TemporaryDirectory(prefix='tk-page-runtime-') as temp:
         runtime = Path(temp) / 'runtime.js'
         runtime.write_text(RUNTIME, encoding='utf-8')
