@@ -1,2 +1,2 @@
 interface:
-  short_description: "[user/auto] 현재 현황을 확인하거나 인수인계를 작성·재개합니다."
+  short_description: "[user/auto] 현재 작업을 주제·시간별 파일로 인계하거나 기존 파일을 선택해 재개합니다."

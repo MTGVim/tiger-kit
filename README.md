@@ -32,7 +32,7 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 | 아이디어와 결정 구체화 | [tk-grill](skills/tk-grill/SKILL.md) |
 | 사용성 개선 및 신규 기능 발굴 | [tk-experience-review](skills/tk-experience-review/SKILL.md) |
 | 장기 목표·마일스톤과 /goal용 실행 장부 작성·점검 | [tk-ralplan](skills/tk-ralplan/SKILL.md) |
-| 현재 작업을 다른 세션으로 인계 | [tk-handoff](skills/tk-handoff/SKILL.md) |
+| 현재 작업을 파일로 인계하거나 재개 | [tk-handoff](skills/tk-handoff/SKILL.md) |
 | AI의 설명·판단이 이상할 때 교정안 제안받기 | [tk-sowhat](skills/tk-sowhat/SKILL.md) |
 
 스킬 호출에서 명령과 옵션은 `foo` 형태의 키워드를 사용합니다. 실제 CLI 명령의 플래그는 변경하지 않습니다.
@@ -45,6 +45,7 @@ using tk-tasks, 이 개선 작업은 일감으로 남겨두고 기존 진행 중
 using tk-prep, 결제 버튼을 누르면 오류가 발생하는 원인만 조사해 주세요.
 using tk-grill, 새 기능의 요구사항을 함께 구체화해 주세요.
 using tk-ralplan, 다음 분기의 개선 목표와 마일스톤을 /goal 계획으로 정리해 주세요.
+using tk-handoff, 현재 작업을 다음 세션에 인계해 주세요.
 using tk-sowhat, 방금 답변에서 무엇이 확실하고 무엇을 해야 하는지 다시 판단해 주세요. 실행은 승인 후에요.
 ```
 
@@ -61,6 +62,16 @@ using tk-setup-skills, user-guidance를 세 에이전트에 적용할 변경을 
 ### 업무 Task 관리
 
 `tk-tasks`는 구현·진단·조사·리뷰 등 독립 업무가 대화에서 사라지지 않도록 호스트의 작업 목록에 등록하고 추적합니다. 미완료 선행 업무에 의존하면 `planned` 의미로 보류하고, 즉시 수행 가능한 업무는 `in_progress` 의미로 착수합니다. Orca Bot에서는 Items를 우선 사용하며 독립 Task당 주 Worker·프로젝트 Worktree 하나를 Bot 아래에 연결합니다. 내부 Todo에 Worker를 추가 생성하지 않고, 검증과 PR 등 최종 납품을 마친 뒤 Worktree 정리를 사용자에게 한 번 묻습니다. Orca 외 환경에서는 기본 Todo 도구만 사용하며 자체 Task 파일·CLI·실행기를 추가하지 않습니다. 기존 업무 스킬이 구현과 검증을 계속 담당합니다.
+
+### 세션 인수인계
+
+`$tk-handoff`(Claude Code·Hermes에서는 `/tk-handoff`)는 현재 작업을
+`.tigerkit/handoffs/YYYYMMDD-HHmmss-<topic>.md`에 **새 파일**로 저장합니다.
+기존 스냅샷은 덮어쓰지 않습니다. `$tk-handoff resume`은 현재 worktree의 후보가 하나면
+그 파일을 사용하고, 둘 이상이면 `tk-questioning`으로 재개할 파일을 선택받습니다.
+`$tk-handoff resume <path>`로 파일을 직접 지정할 수도 있습니다.
+과거 `.tigerkit/handoff.md` 역시 재개 후보에 포함됩니다.
+현황만 채팅에 보여주는 분기는 없으며, worktree 삭제 전 필요한 인계 파일은 따로 보존해야 합니다.
 
 ### Ralph 반복 작업용 계획 준비
 
@@ -145,7 +156,7 @@ using tk-ralplan check docs/plans/feature.md
 | [tk-compound](skills/tk-compound/SKILL.md) | `user` | 완료 PR에서 반복 문제와 예방책을 찾습니다. |
 | [tk-grooming](skills/tk-grooming/SKILL.md) | `hybrid` | 스킬·지속 규칙을 감사하고 최근 7일의 관련 런타임 기록을 진단합니다. |
 | [tk-skill-vet](skills/tk-skill-vet/SKILL.md) | `hybrid` | 외부 스킬의 설치 전 보안 위험과 업데이트 동작을 정적으로 검토합니다. |
-| [tk-handoff](skills/tk-handoff/SKILL.md) | `hybrid` | 세션 현황을 확인하고 일반 또는 장기 작업 인계를 작성하고 복원합니다. |
+| [tk-handoff](skills/tk-handoff/SKILL.md) | `hybrid` | 세션의 인수인계 파일을 시간·주제별로 생성하고, 선택한 파일에서 작업을 재개합니다. |
 | [tk-route-mode](skills/tk-route-mode/SKILL.md) | `user` | 위임 티어별 기본/절약 모드를 설정하고 승인된 호스트 설정을 적용, 검증 및 복원합니다. |
 | [tk-setup-skills](skills/tk-setup-skills/SKILL.md) | `user` | 필요한 스킬과 공통 의존성의 설치·설정을 지원합니다. |
 | [tk-wizard](skills/tk-wizard/SKILL.md) | `hybrid` | 설정·인증·이관을 대화나 일회성 Bash Wizard로 안내합니다. |
