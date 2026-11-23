@@ -396,7 +396,7 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
     elif animation and delivery == "hard" and "caption_style" not in data:
         data = {**data, "caption_style": "overlay-rounded"}
     ffmpeg, ffprobe, caption_support = media_tools(
-        ffmpeg, (delivery == "hard" and data.get("caption_style", "band") != "none") or bool(data.get("callouts")))
+        ffmpeg, (delivery == "hard" and data.get("caption_style", "band") != "none") or bool(data.get("callouts")) or any(row.get("outline", True) for row in data.get("highlights", []) if isinstance(row,dict)))
     root = manifest.parent
     frames, end, captions = timeline(data, root, ffprobe)
     mode = data.get("mode", "evidence")
@@ -435,7 +435,7 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
         raise ValueError("scene audio cannot be combined with a separate full track")
     output = output.absolute()
     if output.resolve() != output or output.exists() or not output.parent.is_dir() or not output.is_relative_to(root):
-        raise ValueError("output must be a new run-owned path inside the manifest directory")
+        raise ValueError("output must be a new run-owned path inside the manifest directory; move the previous output to an archive directory (do not copy it) before rebuilding")
     kind = output.suffix.lower()
     if kind not in {".mp4", ".gif"}:
         raise ValueError("output must have an .mp4 or .gif suffix")
@@ -480,7 +480,7 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
             geometry = next(s for s in probe(image, ffprobe)["streams"] if s["codec_type"] == "video")
             if (int(geometry["width"]), int(geometry["height"])) != (source_width, source_height):
                 raise ValueError("presentation coordinates require equal-sized source frames")
-    presentation_blocked = bool(callouts) and not caption_support
+    presentation_blocked = (bool(callouts) or any(row.get("outline", True) for row in highlights)) and not caption_support
     if captions_blocked or presentation_blocked:
         return {"media_status": "blocked", "prerequisite": "ffmpeg-subtitles-filter",
                 "check_only": check_only, "output_created": False}
@@ -542,7 +542,9 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
         elif scene_voices and kind == ".gif":
             warnings.append("GIF has no audio; scene narration omitted")
         elif scene_voices and check_only:
-            audio_duration = end
+            # Match scene_audio(): its returned duration is the last audible sample,
+            # not the padded video timeline (which can end with silence).
+            audio_duration = max((start + duration for start, _, voice, duration in scenes if voice is not None), default=0)
         if narration_requested:
             if audio is None and not (check_only and scene_voices and kind == ".mp4"): errors.append("narration-missing")
             if caption_style != "none" and not captions:
@@ -569,11 +571,11 @@ def build(manifest: Path, output: Path, audio: Path | None = None, ffmpeg: str |
             # Applied after zoom, band and captions: no card, outline or position drift.
             output_height = height + (layout["band_px"] if burn and band else 0)
             tags = (f"{{\\an3\\pos({width-margin},{output_height-margin})"
-                    f"\\fs{notice_size}\\c&HAAAAAA&\\alpha&H60&"
-                    "\\bord0\\shad0\\q2}")
+                    f"\\fs{notice_size}\\1c&HFFFFFF&\\1a&H00&"
+                    "\\bord7\\shad0\\q2}")
             (stage / "disclosure.ass").write_text(
                 presentation.document(width, output_height, [
-                    presentation.event(0, end, 10, tags + presentation.literal(notice_line))
+                    presentation.event(0, end, 10, tags + presentation.literal(notice_line), "Disclosure")
                 ]), encoding="utf-8")
         if check_only:
             return {"media_status": "failed" if errors else "ready", "check_only": True, "output_created": False,
