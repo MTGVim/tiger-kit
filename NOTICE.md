@@ -423,16 +423,16 @@ TigerKit 평가는 배경 누락, 전체 문서의 조건 보존, 결정 권한,
 
 `Upstream` 테스트를 직접 실행하거나 외부 원시 평가 결과를 재현하지 않았으므로 해당 성과는 `unverified`입니다.
 
-## tk-roadmap 증류 출처
+## 전략 수립 기준의 증류 출처 (구 tk-roadmap)
 
 `phuryn/pm-skills`의 `outcome-roadmap`, `opportunity-solution-tree`, `prioritize-features`를
 커밋 `8607e3b077817f89bf4a9b623246219734ac3be0`에서 확인하여 성과 중심 기획과 대안 비교를 증류했습니다.
 `mattpocock/skills`의 `wayfinder`는 커밋 `c55ee46073ed923f86ce59a5eb3b6d895095d1b7`에서 확인하여
-미정 사항과 제외 범위를 구분하는 원칙만 보완했습니다. 두 출처는 현재 `tk-roadmap`의
-active upstream이 아니라 역사적 provenance이며, 현재 관계 메타데이터는 `origin: tigerkit`,
-`relationship: adapted`입니다.
-세부 `keep | adapt | omit` 판단은 [출처 기록](skills/tk-roadmap/references/sources.md)에 있으며,
-원본 MIT 저작권·라이선스 전문은 설치 패키지의 [고지 파일](skills/tk-roadmap/UPSTREAM-LICENSES.txt)에 포함합니다.
+미정 사항과 제외 범위를 구분하는 원칙만 보완했습니다. 독립 `tk-roadmap`은 폐기했으며,
+재사용하는 전략 기준은 `tk-ralplan`의 [전략 참조](skills/tk-ralplan/references/strategy-planning.md)에 통합했습니다.
+이 출처는 역사적 provenance이며, 세부 `keep | adapt | omit` 판단은
+[출처 기록](skills/tk-ralplan/references/strategy-sources.md), 원본 MIT 고지는
+[고지 파일](skills/tk-ralplan/UPSTREAM-LICENSES.txt)에 보존합니다.
 
 ## tk-rewrite: 편집 정당성과 요청 범위 (#372)
 
