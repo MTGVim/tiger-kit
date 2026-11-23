@@ -12,6 +12,7 @@
 ## 상태와 시점
 
 - 미완료 선행 Task가 있어 실행할 수 없거나 사용자가 나중으로 미뤘다면 **planned 의미**로 접수합니다. 그 밖의 실행 가능한 신규 업무는 **in_progress 의미**로 접수하고 실제 실행을 시작합니다. 단순 등록을 이유로 승인된 실행을 중지하지 않습니다.
+- 선행 Task의 완료·취소나 우선순위 변경을 관리자가 실제로 통지받은 경우 기존 `planned` 업무의 의존성을 다시 확인합니다. 선행 조건이 해결되고 기존 사용자 지시·승인으로 진행할 수 있으면 착수로 전환하며, 별도 알림·Wake 기능이 없는 호스트에서 자동 재개를 보장하지 않습니다. 폴링·상주 감시기는 만들지 않습니다.
 - Orca Bot Items에서는 `planned`, `in_progress`(CLI 인자 `in-progress`), `waiting`, `needs_you`, `done`, `canceled`를 사용합니다. `waiting`은 외부 작업·CI·다른 담당자 대기이고, `needs_you`는 실제 사용자 결정·권한 대기입니다. 결정과 실행 권한이 해결되면 재개합니다.
 - Orca Orchestration의 별도 상태는 `pending`, `ready`, `dispatched`, `completed`, `failed`, `blocked`입니다. 선행 의존성이 남은 Task는 `pending`, 실행 가능한 Task는 `ready`, 실제 Worker를 연결한 뒤에야 `dispatched`입니다. `ready`를 진행 중인 것으로, `dispatched`를 검증된 완료로 표현하지 않습니다.
 - 비-Orca 호스트에서는 기본 Todo/Task 도구가 지원하는 실제 상태만 사용합니다. `planned`·`in_progress`는 의도 분류 기준이지, 호스트에 없는 상태를 쓰거나 Todo를 영속 Task라고 주장하라는 뜻이 아닙니다. 도구가 없으면 상태 기록을 생략하고 작업을 계속합니다.
