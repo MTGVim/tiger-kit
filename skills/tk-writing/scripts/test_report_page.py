@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """Regression tests for the report builder and report-shell checks."""
+import os
+import shutil
 import sys
 import tempfile
 import unittest
@@ -66,6 +68,53 @@ class ReportPageTests(unittest.TestCase):
         js = Path(self.args.js).read_text(encoding="utf-8")
         self.assertIn("'80'", js)
         self.assertIn("'130'", js)
+
+    def test_report_zoom_keeps_toolbar_dimensions(self):
+        try:
+            from playwright.sync_api import sync_playwright
+        except ImportError:
+            if os.environ.get("REPORT_BROWSER_REQUIRED"):
+                self.fail("Playwright is required for report browser regression checks")
+            self.skipTest("Playwright is not installed")
+        html = build_page.build(self.manuscript, self.args)
+        evidence = Path("artifacts")
+        evidence.mkdir(exist_ok=True)
+        with sync_playwright() as playwright:
+            executable = (shutil.which("chromium") or shutil.which("google-chrome")
+                          or shutil.which("google-chrome-stable"))
+            browser = playwright.chromium.launch(headless=True, **(
+                {"executable_path": executable} if executable else {}))
+            try:
+                for width in (375, 1440):
+                    page = browser.new_page(viewport={"width": width, "height": 900})
+                    page.set_content(html, wait_until="load")
+                    select = page.locator("[data-ht-font-size]")
+                    select.wait_for()
+                    metrics = {}
+                    for size in ("100", "80", "130"):
+                        select.select_option(size)
+                        metrics[size] = page.evaluate("""() => {
+                            const rect = el => {
+                                const r = el.getBoundingClientRect();
+                                return [r.width, r.height];
+                            };
+                            return {
+                                bar: rect(document.querySelector('.rp-tools')),
+                                select: rect(document.querySelector('[data-ht-font-size]')),
+                                theme: rect(document.querySelector('.rp-tools .ht-theme-option > span')),
+                                rootFont: parseFloat(getComputedStyle(document.documentElement).fontSize)
+                            };
+                        }""")
+                        page.screenshot(path=str(evidence / f"report-zoom-{width}-{size}.png"))
+                    for size in ("80", "130"):
+                        for control in ("bar", "select", "theme"):
+                            for before, after in zip(metrics["100"][control], metrics[size][control]):
+                                self.assertAlmostEqual(before, after, delta=1,
+                                                       msg=f"{width}px {control} changed at {size}%")
+                        self.assertNotEqual(metrics["100"]["rootFont"], metrics[size]["rootFont"])
+                    page.close()
+            finally:
+                browser.close()
 
     def test_no_download_delivery_skips_packaging(self):
         with tempfile.TemporaryDirectory() as directory:
