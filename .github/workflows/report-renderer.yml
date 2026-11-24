@@ -1,0 +1,37 @@
+name: Report renderer checks
+
+on:
+  pull_request:
+    paths:
+      - "skills/tk-writing/**"
+      - ".github/workflows/report-renderer.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - name: Install browser test dependencies
+        run: |
+          python -m pip install playwright
+          python -m playwright install chromium
+      - name: Run report regression checks and zoom screenshots
+        run: python -m unittest discover -s skills/tk-writing/scripts -p 'test_report_page.py' -v
+        env:
+          REPORT_BROWSER_REQUIRED: "1"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: report-zoom-screenshots
+          path: artifacts/report-zoom-*.png
+          if-no-files-found: ignore

@@ -2,11 +2,12 @@
 """결정용 보고서 빌더: Markdown 원고 하나를 오프라인 HTML 한 장으로 만든다.
 
     build_page.py manuscript.md out.html [--figures DIR] [--css page.css] [--js page.js]
-                                           [--lang ko] [--toc-label 목차] [--allow-missing-figures]
+                                           [--lang ko] [--toc-label 목차] [--allow-missing-figures] [--no-download]
 
 원고 문법
   # 제목                      첫 줄. 바로 다음 비어 있지 않은 줄은 부제(날짜, 작성자 등)
   ## 절 제목                  목차 항목이 된다. 제목 끝에 ` ~` 를 붙이면 조용한 절(한계, 부록)
+  ## 절 제목 ~~               목차 항목 하나로 표시하며 본문을 접는 조용한 절(부록)
   ### 소제목                  소제목. 아래가 전부 `- 라벨: 내용` 줄이면 카드가 된다
                               카드 블록에는 `- 라벨: 내용` 줄만 둔다. 일반 문단을 섞으면 소제목이 된다
   ### [A1] 제목               카드 제목의 [..] 는 번호 배지. `### ~ 제목` 은 조용한 카드
@@ -206,11 +207,15 @@ def fields(txt):
 
 
 def section(i, title, body):
-    quiet = title.endswith(' ~')
-    title = title[:-2] if quiet else title
+    folded = title.endswith(' ~~')
+    quiet = folded or title.endswith(' ~')
+    title = title[:-3] if folded else title[:-2] if quiet else title
     sid = f's{i}'
     parts = re.split(r'^### ', body, flags=re.M)
-    o = [f'<section id="{sid}" aria-labelledby="{sid}-h"{" class=is-quiet" if quiet else ""}><h2 id="{sid}-h">{esc(title)}</h2>']
+    if folded:
+        o = [f'<section id="{sid}" class="is-quiet is-folded" aria-labelledby="{sid}-h"><details class="rp-fold"><summary><h2 id="{sid}-h">{esc(title)}</h2></summary>']
+    else:
+        o = [f'<section id="{sid}" aria-labelledby="{sid}-h"{" class=is-quiet" if quiet else ""}><h2 id="{sid}-h">{esc(title)}</h2>']
     if parts[0].strip(): o.append(render(split_blocks(parts[0].strip('\n'))))
     run = []
 
@@ -225,6 +230,8 @@ def section(i, title, body):
         flush()
         o.append(f'<h3 class="sub">{esc(h.strip())}</h3>' + render(split_blocks(txt.strip('\n'))))
     flush()
+    if folded:
+        o.append('</details>')
     o.append('</section>')
     return sid, title, '\n'.join(o)
 
@@ -249,6 +256,7 @@ def build(md, a):
     toc = ''.join(f'<li><a href="#{s}">{esc(t)}</a></li>' for s, t, _ in secs)
     css = Path(a.css).read_text(encoding='utf-8')
     js = Path(a.js).read_text(encoding='utf-8')
+    download_controls = '' if a.no_download else '<button type="button" data-ht-download aria-label="다운로드" hidden>다운로드</button><span data-ht-export-status role="status" hidden></span>'
     return f'''<!doctype html>
 <html lang="{esc(a.lang)}">
 <head>
@@ -264,7 +272,7 @@ def build(md, a):
 <div class="page">
 <div class="rp-bar">
 <nav class="toc" aria-label="{esc(a.toc_label)}"><details><summary><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M1 3h12M1 7h12M1 11h12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>{esc(a.toc_label)}</span></summary><ol>{toc}</ol></details></nav>
-<div class="rp-tools"><a class="rp-title" href="#top">{esc(title)}</a><fieldset class="ht-theme-control" data-ht-theme-control hidden><legend class="ht-visually-hidden">테마</legend><div class="ht-theme-buttons"></div></fieldset><button type="button" data-ht-download aria-label="다운로드" hidden>다운로드</button><span data-ht-export-status role="status" hidden></span></div>
+<div class="rp-tools"><a class="rp-title" href="#top">{esc(title)}</a><fieldset class="ht-theme-control" data-ht-theme-control hidden><legend class="ht-visually-hidden">테마</legend><div class="ht-theme-buttons"></div></fieldset>{download_controls}</div>
 </div>
 <header id="top"><h1>{esc(title)}</h1>{f'<p class="meta">{esc(meta)}</p>' if meta else ''}</header>
 <main>
@@ -286,6 +294,7 @@ def main():
     ap.add_argument('--figures'); ap.add_argument('--css', default=asset('page.css'))
     ap.add_argument('--js', default=asset('page.js')); ap.add_argument('--lang', default='ko')
     ap.add_argument('--toc-label', default='목차'); ap.add_argument('--allow-missing-figures', action='store_true')
+    ap.add_argument('--no-download', action='store_true', help='omit download button/status and export payload in report delivery')
     a = ap.parse_args()
     Ctx.figures = Path(a.figures) if a.figures else None
     Ctx.missing_ok = a.allow_missing_figures

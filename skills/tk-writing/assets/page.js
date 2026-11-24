@@ -150,7 +150,7 @@
     var select = document.createElement('select'); select.setAttribute('data-ht-font-size', '');
     select.setAttribute('aria-label', '글자 크기');
     select.title = '글자 크기';
-    var sizes = ['50', '75', '100', '125', '150', '175', '200'];
+    var sizes = ['50', '75', '80', '100', '125', '130', '150', '175', '200'];
     sizes.forEach(function (n) { var option = document.createElement('option'); option.value = n; option.textContent = n + '%'; select.appendChild(option); });
     function apply(value) {
       select.value = sizes.includes(value) ? value : '100';
