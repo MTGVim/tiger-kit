@@ -47,7 +47,8 @@ class ReportPageTests(unittest.TestCase):
         self.args.no_download = False
         page = build_page.build(self.manuscript, self.args)
         self.assertIn('<button type="button" data-ht-download', page)
-        self.assertIn('download button without embedded export', check_page.static_check(page))
+        self.assertTrue(any('download button without embedded export' in error
+                            for error in check_page.static_check(page)))
 
     def test_manual_toc_is_not_a_valid_report_shell(self):
         manual = '<html><body><h1>제목</h1><nav class="toc">목차</nav></body></html>'
