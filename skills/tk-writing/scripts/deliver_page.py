@@ -9,6 +9,8 @@ from pathlib import Path
 import subprocess
 import sys
 
+from check_page import Document
+
 
 def deliver(source: Path, output: Path, owner_skill=None, source_path=None) -> None:
     source = source.resolve(strict=True)
@@ -33,8 +35,11 @@ def deliver(source: Path, output: Path, owner_skill=None, source_path=None) -> N
         if source_path is not None:
             context_args.extend(["--source-path", source_path])
         run("add_feedback_studio.py", "--input", source, "--output", output, *context_args)
-        run("package_html.py", "--root", output.parent, "--name", output.name, output.name)
-        run("package_html.py", "--root", output.parent, "--name", output.name, "--check", output.name)
+        doc = Document()
+        doc.feed(output.read_text(encoding="utf-8"))
+        if doc.download:
+            run("package_html.py", "--root", output.parent, "--name", output.name, output.name)
+            run("package_html.py", "--root", output.parent, "--name", output.name, "--check", output.name)
         run("check_page.py", output, "--profile", "report", "--require-feedback-studio")
     except (subprocess.CalledProcessError, OSError):
         if output.exists() and output.is_file() and not output.is_symlink():

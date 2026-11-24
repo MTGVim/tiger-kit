@@ -26,6 +26,8 @@ class Document(HTMLParser):
         super().__init__()
         self.h1 = 0
         self.toc = 0
+        self.report_bar = 0
+        self.report_tools = 0
         self.ids = set()
         self.errors = []
         self.inert = 0
@@ -51,6 +53,10 @@ class Document(HTMLParser):
             self.h1 += 1
         if tag == 'nav' and 'toc' in attrs.get('class', '').split():
             self.toc += 1
+        if tag == 'div' and 'rp-bar' in attrs.get('class', '').split():
+            self.report_bar += 1
+        if tag == 'div' and 'rp-tools' in attrs.get('class', '').split():
+            self.report_tools += 1
         if attrs.get('id'):
             if attrs['id'] in self.ids:
                 self.errors.append('duplicate id: ' + attrs['id'])
@@ -70,8 +76,11 @@ def static_check(text, profile='report', require_studio=False):
     doc.feed(text)
     if doc.h1 != 1:
         doc.errors.append(f'expected one h1, found {doc.h1}')
-    if profile == 'report' and doc.toc != 1:
-        doc.errors.append(f'expected one report TOC, found {doc.toc}')
+    if profile == 'report':
+        if doc.report_bar != 1 or doc.report_tools != 1:
+            doc.errors.append('report profile expects build_page.py output (report shell missing; rebuild with build_page.py instead of adding a TOC by hand)')
+        elif doc.toc != 1:
+            doc.errors.append(f'report profile expects build_page.py output (one shell TOC); rebuild with build_page.py instead of adding a TOC by hand (found {doc.toc})')
     if profile == 'report' and doc.download and not doc.export:
         doc.errors.append('download button without embedded export; run package_html.py')
     if require_studio and doc.studio != 1:

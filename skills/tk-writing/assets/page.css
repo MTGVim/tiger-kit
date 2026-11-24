@@ -67,7 +67,7 @@ body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: 
 .toc a { display: block; padding: 7px 0; color: var(--muted); font-size: .8125rem; line-height: 1.4; text-decoration: none; }
 .toc a:hover { color: var(--text); text-decoration: none; }
 .toc a[aria-current] { color: var(--accent); font-weight: 700; background: none; }
-.rp-tools { position: sticky; gap: 12px; top: env(safe-area-inset-top, 0px); z-index: 40; box-sizing: border-box; height: var(--bar-h); display: flex; align-items: center; justify-content: flex-end; margin: 0 calc(50% - 50vw) 0; padding: 0 calc(var(--gutter) + env(safe-area-inset-right, 0px)) 0 var(--gutter); background: var(--bg); border-bottom: 1px solid var(--line); }
+.rp-tools { position: sticky; font-size: 14px; gap: 12px; top: env(safe-area-inset-top, 0px); z-index: 40; box-sizing: border-box; height: var(--bar-h); display: flex; align-items: center; justify-content: flex-end; margin: 0 calc(50% - 50vw) 0; padding: 0 calc(var(--gutter) + env(safe-area-inset-right, 0px)) 0 var(--gutter); background: var(--bg); border-bottom: 1px solid var(--line); }
 .rp-title { position: absolute; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 46rem); margin: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--text); font-size: 14px; font-weight: 600; text-align: center; text-decoration: none; visibility: hidden; opacity: 0; transition: opacity .15s; }
 .rp-title[data-shown] { visibility: visible; opacity: 1; }
 .rp-title:hover { color: var(--accent); }
@@ -92,7 +92,7 @@ body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: 
 }
 
 /* 테마 버튼: 서식은 직접 가진다. studio 가 같은 요소를 받아 쓰므로 클래스 이름은 studio 와 같다 */
-.rp-tools .ht-theme-control { flex: none; margin: 0; padding: 0; border: 0; min-inline-size: 0; width: max-content; max-width: 100%; font: 13px/1.3 inherit; }
+.rp-tools .ht-theme-control { flex: none; margin: 0; padding: 0; border: 0; min-inline-size: 0; width: max-content; max-width: 100%; font-family: inherit; font-size: 13px; line-height: 1.3; }
 .rp-tools .ht-theme-buttons { display: grid; grid-template-columns: repeat(3, auto); gap: 2px; padding: 2px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--bg); }
 .rp-tools .ht-theme-option { position: relative; cursor: pointer; }
 .rp-tools .ht-theme-option input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
@@ -126,6 +126,7 @@ th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom
 thead th { font-size: .8125rem; font-weight: 600; white-space: nowrap; background: var(--tint-2); color: var(--ink-h); border-bottom: 2px solid var(--accent); }
 tbody th { font-weight: 600; }
 tbody tr:nth-child(even) { background: var(--tint-1); }
+tbody td[rowspan], tbody th[rowspan] { background: var(--bg); }
 th.num, td.num { text-align: right; }
 td.num { white-space: nowrap; font-weight: 700; color: var(--ink-h); }
 tr.quiet th, tr.quiet td { color: var(--quiet-fg); background: var(--quiet-bg); }
@@ -165,6 +166,11 @@ tr.quiet td.num { color: var(--quiet-fg); }
 .note li { margin-bottom: .5em; }
 .note a { color: inherit; }
 section.is-quiet h2 { border-left-color: var(--quiet-bd); }
+/* 접힌 부록은 목록에서 절 하나로 남기고 본문만 숨긴다. */
+.rp-fold > summary { cursor: pointer; padding: 4px 0; }
+.rp-fold > summary h2 { display: inline-block; margin: 0; vertical-align: middle; }
+.rp-fold > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+.rp-fold[open] > summary { margin-bottom: 16px; }
 
 .sub { margin: 2rem 0 .75rem; font-size: 1.125rem; }
 .sub:first-child { margin-top: 0; }
