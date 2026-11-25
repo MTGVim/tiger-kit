@@ -27,7 +27,6 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 | 하고 싶은 일 | 권장 시작 스킬 |
 | --- | --- |
 | 기능 개발, 수정 또는 리팩터링 | [tk-prep](skills/tk-prep/SKILL.md) |
-| 일감 등록·진행 상태 확인·다음 작업 시작 | [tk-tasks](skills/tk-tasks/SKILL.md) |
 | 오류 원인 조사와 수정 | [tk-prep](skills/tk-prep/SKILL.md) |
 | 아이디어와 결정 구체화 | [tk-grill](skills/tk-grill/SKILL.md) |
 | 사용성 개선 및 신규 기능 발굴 | [tk-experience-review](skills/tk-experience-review/SKILL.md) |
@@ -41,7 +40,6 @@ npx --yes skills@1.7.4 add MTGVim/tiger-kit --global --agent claude-code codex h
 
 ```text
 using tk-prep, 검색 화면에 필터 기능을 추가해 주세요.
-using tk-tasks, 이 개선 작업은 일감으로 남겨두고 기존 진행 중인 작업을 확인해 주세요.
 using tk-prep, 결제 버튼을 누르면 오류가 발생하는 원인만 조사해 주세요.
 using tk-grill, 새 기능의 요구사항을 함께 구체화해 주세요.
 using tk-ralplan, 다음 분기의 개선 목표와 마일스톤을 /goal 계획으로 정리해 주세요.
@@ -58,10 +56,6 @@ using tk-setup-skills, user-guidance를 세 에이전트에 적용할 변경을 
 ```
 
 사용자가 설치를 승인하면 해당 스킬의 `--apply` 절차로 백업 후 반영합니다. 예전 `fluent-korean` 관리 블록만 정리하고 사용자 작성 지침은 유지합니다. 자세한 내용은 [설치 절차](skills/tk-setup-skills/SKILL.md#user-guidance-install)를 참고합니다.
-
-### 업무 Task 관리
-
-`tk-tasks`는 구현·진단·조사·리뷰 등 독립 업무가 대화에서 사라지지 않도록 호스트의 작업 목록에 등록하고 추적합니다. 미완료 선행 업무에 의존하면 `planned` 의미로 보류하고, 즉시 수행 가능한 업무는 `in_progress` 의미로 착수합니다. Orca Bot에서는 Items를 우선 사용하며 독립 Task당 주 Worker·프로젝트 Worktree 하나를 Bot 아래에 연결합니다. 내부 Todo에 Worker를 추가 생성하지 않고, 검증과 PR 등 최종 납품을 마친 뒤 Worktree 정리를 사용자에게 한 번 묻습니다. Orca 외 환경에서는 기본 Todo 도구만 사용하며 자체 Task 파일·CLI·실행기를 추가하지 않습니다. 기존 업무 스킬이 구현과 검증을 계속 담당합니다.
 
 ### 세션 인수인계
 
@@ -97,7 +91,6 @@ using tk-ralplan check docs/plans/feature.md
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
 | [tk-prep](skills/tk-prep/SKILL.md) | `hybrid` | 읽기 전용 오류 진단과 자연어 SWE 착수·구현을 담당하고 승인된 로컬 구현·검증을 진행합니다. |
-| [tk-tasks](skills/tk-tasks/SKILL.md) | `hybrid` | 자연어 일감을 호스트 Task에 등록·재개·추적합니다. Orca 우선, 다른 호스트는 기본 Todo만 활용합니다. |
 | [tk-ralplan](skills/tk-ralplan/SKILL.md) | `user` | /goal용 목표·작업·현재 상태·검증 장부를 작성합니다. Task 형식은 Ralphex 호환입니다. |
 | [tk-audit](skills/tk-audit/SKILL.md) | `hybrid` | 저장소의 기술 일감을 읽기 전용으로 감사합니다. |
 | [tk-prototype](skills/tk-prototype/SKILL.md) | `hybrid` | UI·로직 대안을 비교하는 시제품을 만듭니다. |
