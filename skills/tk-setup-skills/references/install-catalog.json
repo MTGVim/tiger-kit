@@ -20,7 +20,6 @@
         "tk-artifacts",
         "tk-questioning",
         "tk-repository-guidance",
-        "tk-tasks",
         "tk-ui-evidence",
         "tk-writing"
       ]
@@ -31,7 +30,6 @@
         "tk-engineering",
         "tk-questioning",
         "tk-repository-guidance",
-        "tk-tasks",
         "tk-ui-evidence",
         "tk-writing"
       ]
@@ -86,7 +84,6 @@
       "requires": [
         "tk-artifacts",
         "tk-questioning",
-        "tk-tasks",
         "tk-ui-evidence",
         "tk-writing"
       ]
@@ -104,7 +101,6 @@
       "requires": [
         "tk-artifacts",
         "tk-questioning",
-        "tk-tasks",
         "tk-writing"
       ]
     },
@@ -119,7 +115,6 @@
       "requires": [
         "tk-artifacts",
         "tk-questioning",
-        "tk-tasks",
         "tk-ui-evidence",
         "tk-writing"
       ]
@@ -165,7 +160,6 @@
         "tk-pr-guidance",
         "tk-questioning",
         "tk-repository-guidance",
-        "tk-tasks",
         "tk-ui-evidence",
         "tk-writing"
       ]
@@ -185,7 +179,6 @@
         "tk-pr-guidance",
         "tk-questioning",
         "tk-repository-guidance",
-        "tk-tasks",
         "tk-ui-evidence",
         "tk-writing"
       ]
@@ -195,7 +188,6 @@
         "tk-artifacts",
         "tk-pr-guidance",
         "tk-questioning",
-        "tk-tasks",
         "tk-ui-evidence",
         "tk-writing"
       ]
@@ -207,7 +199,6 @@
         "tk-pr-guidance",
         "tk-questioning",
         "tk-repository-guidance",
-        "tk-tasks",
         "tk-ui-evidence",
         "tk-writing"
       ]
@@ -217,7 +208,6 @@
         "tk-artifacts",
         "tk-engineering",
         "tk-questioning",
-        "tk-tasks",
         "tk-writing"
       ]
     },
@@ -240,7 +230,6 @@
         "tk-grill",
         "tk-questioning",
         "tk-research",
-        "tk-tasks",
         "tk-writing"
       ]
     },
@@ -256,7 +245,6 @@
         "tk-questioning",
         "tk-repository-guidance",
         "tk-setup-skills",
-        "tk-tasks",
         "tk-writing"
       ]
     },
@@ -272,7 +260,6 @@
         "tk-engineering",
         "tk-questioning",
         "tk-repository-guidance",
-        "tk-tasks",
         "tk-ui-evidence",
         "tk-writing"
       ]
@@ -305,12 +292,6 @@
       ]
     },
     "tk-sowhat": {
-      "requires": [
-        "tk-questioning",
-        "tk-writing"
-      ]
-    },
-    "tk-tasks": {
       "requires": [
         "tk-questioning",
         "tk-writing"
