@@ -1,6 +1,0 @@
-interface:
-  short_description: "[user/auto] 독립 업무를 놓치지 않고 호스트 Task에 등록하고 상태·위임을 관리합니다."
-  default_prompt: "tk-tasks로 현재 세션이 Coordinator인지 Worker인지 확인하세요. 이미 있는 Task를 재사용하고, 미완료 선행 업무가 있으면 planned, 그 외 즉시 수행할 업무면 in_progress로 관리하세요. Orca Bot Items와 Orchestration을 우선 활용하고, 다른 호스트에서는 기본 Todo 도구만 쓰세요. 실제 업무는 기존 담당 스킬에 맡기고 검증된 결과로 상태를 갱신하세요."
-
-policy:
-  allow_implicit_invocation: true
