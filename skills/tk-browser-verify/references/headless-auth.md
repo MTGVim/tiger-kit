@@ -41,7 +41,8 @@
 
 baseline 전에 준비 단계에서 준비 상태를 확립합니다. 공개 대상과 안전한 기존 세션에는 토큰
 입력이 필요하지 않습니다. 관련된 모든 소비자에 [worktree 로컬 인증](../../tk-artifacts/references/authentication.md)
-계약을 적용합니다. access 만료, 캡처 실패와 중단을 포함하여 baseline, after와 수정에 걸쳐 같은
+계약을 적용합니다.
+검증 대상 앱이 아니어도 검증 기준의 전제 데이터를 만들기 위해 다른 관리 앱/API를 사용하는 경우, 그 앱의 자격 증명에도 같은 headless-auth 입력 계약과 `.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json` 경로를 적용합니다. 해당 관리 앱의 초기 인증·갱신 경로를 먼저 조사하고, 입력 요청 전에 검증한 환경과 로그인 origin, 실제 필요한 필드를 구분해 명시합니다. 토큰 파일을 임의의 평문 경로로 따로 요청하지 않습니다. access 만료, 캡처 실패와 중단을 포함하여 baseline, after와 수정에 걸쳐 같은
 보호된 `.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json`을 유지합니다. 활성 작업
 인계에 비밀이 아닌 경로/대상 연결을 보존합니다. 재사용은 이 작업/worktree에서 검증한 애플리케이션/
 로그인 origin, 환경과 계정/역할로 제한됩니다. 일반 단계 정리가 아니라 명시적인 사용자 지시나
