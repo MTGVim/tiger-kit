@@ -3,7 +3,6 @@
   "requires": [
     "tk-artifacts",
     "tk-questioning",
-    "tk-tasks",
     "tk-writing"
   ]
 }
