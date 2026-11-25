@@ -1,6 +1,6 @@
 # ADR 0012: 호스트 Task를 우선 활용하는 업무 추적 스킬
 
-- 상태: Accepted (2026-11-24)
+- 상태: Superseded (2026-11-25, [ADR 0014](0014-retire-redundant-task-skill.md))
 
 ## 배경
 
