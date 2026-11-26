@@ -1,7 +1,7 @@
 <a id="illustration-styles"></a>
 # 스타일 색인
 
-조합을 추천할 때 이 색인만 읽습니다. 아래 43개 이름 중 선택한 카드만 열어 프롬프트에 반영합니다. 모든 파일을 순회해 선로드하지 않습니다. 카드의 권장 용도는 금지 목록이 아니며, 명시 스타일을 다른 스타일로 조용히 바꾸지 않습니다.
+조합을 추천할 때 이 색인만 읽습니다. 아래 43개 이름 중 선택한 카드만 열어 프롬프트에 반영합니다. 선택한 스타일에 필요한 파일만 읽습니다. 카드의 권장 용도는 참고하고 명시된 스타일은 그대로 유지합니다.
 
 | ID | 표현과 용도 |
 | --- | --- |
@@ -51,7 +51,7 @@
 
 ## 별칭과 조합
 
-`hand-drawn → sketch-notes`, `vector → vector-illustration`, `minimal-flat → notion`, `sci-fi → blueprint`, `poster → screen-print`를 허용하며 실제 선택 ID를 기록합니다. `scene`은 이 스킬에서는 콘텐츠 타입입니다. 스타일 이름으로 쓰면 사용자가 뜻한 구체적인 표현을 확인하고 `warm/watercolor` 중 하나로 몰래 바꾸지 않습니다.
+`hand-drawn → sketch-notes`, `vector → vector-illustration`, `minimal-flat → notion`, `sci-fi → blueprint`, `poster → screen-print`를 허용하며 실제 선택 ID를 기록합니다. `scene`은 이 스킬에서는 콘텐츠 타입입니다. 스타일 이름으로 쓰면 사용자가 뜻한 구체적인 표현을 확인해 해당 표현을 선택합니다.
 
 - `flowchart/framework`에는 연결선·라벨이 선명한 `technical-schematic`, `blueprint`, `vector-illustration`, `notion`, `sketch-notes`가 적합합니다.
 - `scene`에는 행동·장소를 표현하는 `warm`, `watercolor`, `storybook-watercolor`, `claymation`, `fantasy-animation`이 적합합니다.
