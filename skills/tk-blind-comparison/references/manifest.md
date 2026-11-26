@@ -35,23 +35,23 @@ python3 <package>/scripts/build_gallery.py summarize ratings.json --key <matchin
 python3 <package>/scripts/build_gallery.py summarize - --key <matching-run-directory>/answer-key.json --blind
 ```
 
-`--evidence-dir`은 `.tigerkit/evidence/tk-blind-comparison/<run-id>/` 아래의 새 경로로 지정하며 전달 폴더와 겹치거나 중첩하지 않습니다. 원본 HTML만 그곳에 보존하고 로컬 공개 자원은 전달 위치를 기준으로 검사·기록합니다. 기존 근거를 덮어쓰지 않습니다.
+`--evidence-dir`은 `.tigerkit/evidence/tk-blind-comparison/<run-id>/` 아래의 새 경로로 지정하며 전달 폴더와 겹치거나 중첩하지 않습니다. 원본 HTML만 그곳에 보존하고 로컬 공개 자원은 전달 위치를 기준으로 검사·기록합니다. 기존 근거를 보존하고 새 근거는 고유 경로에 기록합니다.
 build 전에 HTML 출력 선호 설정에 따라 `--theme`을 결정합니다. 출력 디렉터리는 점검된 Git 제외 실행 경로나 명시적인 목적지 아래의 새 디렉터리여야 합니다. 실행 파일은 symlink 상위 경로, 기존 목적지와 입력 파일을 포함한 목적지를 거부합니다.
 소유 스킬의 metadata 검증은 호출자가 먼저 수행해야 하는 Git 제외 및 출력 점검을 대체하지 않습니다.
 helper는 준비된 파일을 하나의 오프라인 HTML에 data URL로 포함하고 중립적인 ASCII `item-0001-slot-0001.ext` 표시용 사본도 유지합니다. 정답 키는 불투명 token을 원래 ID, 이름, 항목 콘텐츠 fingerprint, 비공개 실패와 seed 기반 레이블 순서에 연결합니다.
 채팅 전용 집계에서는 붙여넣은 JSON을 stdin(`ratings: -`)으로 전달하고 `--output`을 생략합니다. 명령은 입력이나 결과를 저장하지 않고 검증된 요약을 출력합니다. `--blind`는 키에서 도출된 신원을 불투명 ID와 익명 후보 별칭으로 대체합니다. 이 별칭은 항목별로 섞인 표시 레이블이 아닙니다. 승인된 신원 공개에서만 해당 옵션을 생략합니다.
 
-증분 build에서는 `--previous-key`를 재사용합니다. ID는 쉽게 추측할 수 있는 모델명 hash가 아니라 무작위 불투명 token에 연결됩니다. 후보 추가/제거 시 새 후보 집합으로 각 항목을 다시 섞고, 변경되지 않은 콘텐츠 fingerprint는 점수를 보존합니다. 관련 없는 비교에 study ID를 재사용하지 않습니다. 새 키를 export한 revision과 함께 유지합니다. HTML을 이동할 때는 로컬 파일 storage가 파일을 따라간다고 가정하지 말고 평가를 명시적으로 export/import합니다.
+증분 build에서는 `--previous-key`를 재사용합니다. ID는 쉽게 추측할 수 있는 모델명 hash가 아니라 무작위 불투명 token에 연결됩니다. 후보 추가/제거 시 새 후보 집합으로 각 항목을 다시 섞고, 변경되지 않은 콘텐츠 fingerprint는 점수를 보존합니다. study ID는 같은 연구의 증분 build에서만 재사용합니다. 새 키를 export한 revision과 함께 유지합니다. HTML을 이동할 때는 로컬 파일 storage가 파일을 따라간다고 가정하지 말고 평가를 명시적으로 export/import합니다.
 
 <a id="additional-public-evidence"></a>
 ## 추가 공개 근거
 
 출력에는 `annotation`(비어 있지 않은 일반 텍스트)과 `links`를 포함할 수 있습니다.
 `[{"label": "Mobile capture", "path": "prepared/mobile.png"}]` 형식을 사용합니다.
-링크는 준비된 PNG/JPEG/WebP, HTML, TXT 또는 PDF 사본을 허용합니다. 연결된 HTML은 자체 완결적으로 만듭니다. build 전에 문서 metadata, 제목, script, alt text, embedded 콘텐츠와 눈에 보이는 신원 단서를 정규화합니다. builder는 annotation, 레이블과 UTF-8 HTML/TXT 내용(디코딩한 HTML entity 포함)의 literal 후보 이름/ID를 점검합니다. binary metadata, PDF 텍스트, 인코딩/pixel/의미상 신원은 여전히 수동 확인이 필요합니다. 압축된 byte는 텍스트가 아닙니다. 제작자 원본 HTML이나 정답 키를 공개 링크로 제공하지 않습니다.
+링크는 준비된 PNG/JPEG/WebP, HTML, TXT 또는 PDF 사본을 허용합니다. 연결된 HTML은 자체 완결적으로 만듭니다. build 전에 문서 metadata, 제목, script, alt text, embedded 콘텐츠와 눈에 보이는 신원 단서를 정규화합니다. builder는 annotation, 레이블과 UTF-8 HTML/TXT 내용(디코딩한 HTML entity 포함)의 literal 후보 이름/ID를 점검합니다. binary metadata, PDF 텍스트, 인코딩/pixel/의미상 신원은 여전히 수동 확인이 필요합니다. 압축된 byte는 텍스트가 아닙니다. 공개 링크에는 익명화한 표시용 사본만 제공합니다.
 원본 파일명은 비공개로 유지하고 복사 이름은 `item-NNNN-slot-NNNN-link-NNNN.ext`를 사용합니다.
 
-이미지 카드는 언제나 중립 표시용 사본을 원본 크기로 새 tab에 여는 링크를 제공합니다. 이 로컬 링크를 위해 HTML과 표시용 사본을 함께 유지합니다. 주요 embedded media는 HTML만 이동해도 작동합니다. annotation은 escape된 텍스트이며 HTML이 아닙니다. 원본 파일은 수정하지 않습니다.
+이미지 카드는 언제나 중립 표시용 사본을 원본 크기로 새 tab에 여는 링크를 제공합니다. 이 로컬 링크를 위해 HTML과 표시용 사본을 함께 유지합니다. 주요 embedded media는 HTML만 이동해도 작동합니다. annotation은 escape된 텍스트이며 HTML이 아닙니다. 원본 파일은 그대로 보존합니다.
 이 필드가 없는 기존 출력은 정확히 같은 fingerprint 알고리즘을 유지합니다. 공개 근거를 추가/변경하면 해당 카드의 fingerprint가 바뀌므로 변경된 평가 대상에 이전 점수를 말없이 적용할 수 없습니다. 변경되지 않은 근거를 다시 build하면 fingerprint가 보존됩니다.
 
 
