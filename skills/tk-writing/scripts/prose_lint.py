@@ -114,19 +114,71 @@ def extract(text: str, suffix: str):
     return segments
 
 
+NEGATIVE_INSTRUCTION = re.compile(r'않습니다|않는다|금지|하지\s+마')
+ALTERNATIVE_INSTRUCTION = re.compile(r'대신|한\s+뒤(?:에)?|[가-힣]+만(?=\s|[.,;:!?)]|$)')
+LIST_PREFIX = re.compile(r'^\s*(?:[-+*]|\d+[.)])\s+')
+
+
+def normalize_sentence(value):
+    value = re.sub(r'`+[^`]*`+', '', value)
+    value = LIST_PREFIX.sub('', value)
+    return ' '.join(value.replace('**', '').replace('__', '').split())
+
+
+def skill_sentences(text, suffix):
+    # Join wrapped Markdown lines within the same paragraph/list item.
+    # Preserve the starting line and never join across a heading, list item,
+    # table cell, blank line, or protected block.
+    if suffix not in {'.html', '.htm', '.js', '.mjs'}:
+        text = re.sub(r'<!--.*?-->', lambda m: '\n' * m[0].count('\n'), text, flags=re.S)
+    lines = text.splitlines()
+    groups = []
+    for segment in extract(text, suffix):
+        if segment.scope == 'heading':
+            continue
+        if suffix in {'.html', '.htm', '.js', '.mjs'}:
+            groups.append([segment])
+            continue
+        original = lines[segment.line - 1].lstrip()
+        if original.startswith('|'):
+            for cell in segment.text.strip('|').split('|'):
+                if cell.strip():
+                    groups.append([Segment(segment.line, segment.scope, cell.strip())])
+            continue
+        new_block = LIST_PREFIX.match(original) or original.startswith('<')
+        previous = groups[-1][-1] if groups else None
+        if (previous and previous.line + 1 == segment.line and not new_block
+                and not lines[previous.line - 1].lstrip().startswith(('|', '<'))):
+            groups[-1].append(segment)
+        else:
+            groups.append([segment])
+    for group in groups:
+        paragraph = '\n'.join(segment.text for segment in group)
+        start = 0
+        for delimiter in list(re.finditer(r'(?<=[.!?。])\s+', paragraph)) + [None]:
+            end = delimiter.start() if delimiter else len(paragraph)
+            value = normalize_sentence(paragraph[start:end])
+            if value:
+                line = group[0].line + paragraph[:start].count('\n')
+                yield Segment(line, group[0].scope, value)
+            if delimiter:
+                start = delimiter.end()
+
+
 def check(text, suffix, rules, profile, allowed_headings=(), allowed_boundaries=()):
     findings = []
+    if profile == 'skill':
+        boundaries = {normalize_sentence(value) for value in allowed_boundaries}
+        for sentence in skill_sentences(text, suffix):
+            if sentence.text in boundaries:
+                continue
+            if NEGATIVE_INSTRUCTION.search(sentence.text) and not ALTERNATIVE_INSTRUCTION.search(sentence.text):
+                findings.append({'rule': 'negative-only-instruction', 'severity': 'warning',
+                                 'line': sentence.line, 'scope': sentence.scope,
+                                 'text': sentence.text, 'message': '대신 할 행동이나 실행 조건을 명시합니다. 순수 경계는 예외로 기록합니다.'})
     for segment in extract(text, suffix):
         if segment.scope == 'heading' and segment.text in allowed_headings:
             continue
-        if profile == 'skill':
-            for sentence in re.split(r'(?<=[.!?。])\s+', segment.text):
-                if sentence.strip() in allowed_boundaries or sentence.endswith('<!-- tk-boundary -->'):
-                    continue
-                if re.search(r'않습니다|않는다|금지|하지 마', sentence) and not re.search(r'대신|한 뒤에?|(?:[가-힣]+만)(?:\s|[.,]|$)', sentence):
-                    findings.append({'rule': 'negative-only-instruction', 'severity': 'warning',
-                                     'line': segment.line, 'scope': segment.scope,
-                                     'text': sentence, 'message': '대신 할 행동이나 실행 조건을 명시합니다. 순수 경계는 예외로 기록합니다.'})
         for rule in rules:
             if rule.get('profile') not in (None, profile):
                 continue
@@ -166,6 +218,8 @@ def main():
             for item in result['findings']:
                 print(f"{result['path']}:{item['line']}: {item['severity']} {item['rule']}: {item['message']}")
         print('Blockers:', sum(x['severity']=='error' for r in results for x in r['findings']))
+        if args.profile == 'skill':
+            print('Negative-only warnings:', sum(x['rule']=='negative-only-instruction' for r in results for x in r['findings']))
     return 1 if any(x['severity']=='error' for r in results for x in r['findings']) else 0
 
 
