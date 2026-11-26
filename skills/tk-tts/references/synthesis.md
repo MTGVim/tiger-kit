@@ -18,7 +18,7 @@
 
 발음이 개선되었다는 주장은 같은 엔진, 목소리와 설정으로 새로 만든 변경 전/후 파일을 청취하여 별도로 검증합니다. 원고 검토만으로는 음향 근거가 되지 않습니다.
 
-Qwen 경로를 선택했을 때만 화자 대체값 sohee와 명시적인 serena를 적용합니다. Apple Silicon에서 이 화자들이 필요하면 MLX 5bit를 선택할 수 있으며, voice 값만으로 Qwen을 선택하지 않습니다. 0.6B 모델은 instruct를 무시합니다. 지원하지 않는 style을 제안하거나 모델을 몰래 업그레이드하지 않습니다. ppaso는 Qwen speaker ID가 아니라 자체 모델 목소리를 사용합니다. 브라우저 발화는 내보낼 WAV 경로가 될 수 없습니다. 엔진 미지정 시 첫 추천은 플랫폼과 관계없이 Supertonic 3 한국어 ONNX CPU/F1입니다. 해당 upstream은 보관 처리되어 유지보수·보안 수정이 없으며 AI 합성 고지가 필요합니다. 유효한 저장 엔진 선호가 있으면 그 엔진을 먼저 추천하고, 추천만으로 합성하지 않습니다. Supertonic 3의 denoising 8단계와 speed 1.05는 고정되어 있습니다. Adapter는 고정된 공식 도우미를 사용하고 각 native chunk를 예측 길이로 자른 뒤 연결하며 도우미의 chunk 사이 0.3초 간격을 보존합니다. 작성한 문장 사이에 간격을 추가하지 않습니다. Style, 언어나 사용자 지정 목소리 제어는 노출하지 않습니다.
+Qwen 경로를 선택했을 때만 화자 대체값 sohee와 명시적인 serena를 적용합니다. Apple Silicon에서 이 화자들이 필요하면 MLX 5bit를 선택할 수 있으며, voice 값만으로 Qwen을 선택하지 않습니다. 0.6B 모델은 instruct를 무시합니다. 지원하지 않는 style을 제안하거나 모델을 몰래 업그레이드하지 않습니다. ppaso는 Qwen speaker ID가 아니라 자체 모델 목소리를 사용합니다. 브라우저 발화는 내보낼 WAV 경로가 될 수 없습니다. 엔진 미지정 시 첫 추천은 플랫폼과 관계없이 Supertonic 3 한국어 ONNX CPU/F1입니다. 해당 upstream은 보관 처리되어 유지보수·보안 수정이 없으며 AI 합성 고지가 필요합니다. 유효한 저장 엔진 선호가 있으면 그 엔진을 먼저 추천하고 합성은 선택이 확정된 뒤에 수행합니다. Supertonic 3의 denoising 8단계와 speed 1.05는 고정되어 있습니다. Adapter는 고정된 공식 도우미를 사용하고 각 native chunk를 예측 길이로 자른 뒤 연결하며 도우미의 chunk 사이 0.3초 간격을 보존합니다. 작성한 문장 사이에 간격을 추가하지 않습니다. Style, 언어나 사용자 지정 목소리 제어는 노출하지 않습니다.
 
 ```bash
 python -B scripts/qwen3.py --engine mlx --quantization 5 --text-file <script.txt> --output <new.wav> --speaker sohee
@@ -26,7 +26,7 @@ python -B scripts/ppaso.py --text-file <script.txt> --output <new.wav>
 python -B scripts/supertonic3.py --text-file <script.txt> --output <new.wav>
 ```
 
-텍스트를 수정한 뒤에는 새 WAV 경로를 사용하고 기존 출력을 보존합니다. 시작 전에 자체 마감 시간과 정체 한계를 설정한 새 실행 소유 프로세스에서 합성합니다. 다운로드/설정과 smoke는 측정과 분리합니다. 비교에는 계획한 최장 입력을 포함하고 기준과 동일한 문장/캐시 정책을 사용합니다. 모델은 순차 측정합니다. MLX는 Metal GPU와 cache_limit 0을 선택하고 해제된 문장 할당을 정리합니다. CPU/엔진으로 몰래 fallback하지 않습니다. Mac 프로세스의 최대 footprint는 RSS와 MLX active allocation과 구별합니다. 확보할 수 없는 값은 null로 남깁니다. 관찰된 실행은 일반적인 메모리 상한이 아닙니다. 전역 watcher/벤치마크 runner는 두지 않습니다.
+텍스트를 수정한 뒤에는 새 WAV 경로를 사용하고 기존 출력을 보존합니다. 시작 전에 자체 마감 시간과 정체 한계를 설정한 새 실행 소유 프로세스에서 합성합니다. 다운로드/설정과 smoke는 측정과 분리합니다. 비교에는 계획한 최장 입력을 포함하고 기준과 동일한 문장/캐시 정책을 사용합니다. 모델은 순차 측정합니다. MLX는 Metal GPU와 cache_limit 0을 선택하고 해제된 문장 할당을 정리합니다. CPU/엔진 대체가 필요하면 사용자에게 한계와 대안을 알려 선택을 받습니다. Mac 프로세스의 최대 footprint는 RSS와 MLX active allocation과 구별합니다. 확보할 수 없는 값은 null로 남깁니다. 관찰된 실행은 일반적인 메모리 상한이 아닙니다. 전역 watcher/벤치마크 runner는 두지 않습니다.
 
 측정한 앞부분 무음을 자르고 일관된 sample rate를 검증하며 유한 값으로 된 무음이 아닌 mono PCM16 WAV를 씁니다. 실제 길이, trim, revision과 human_action: listen은 receipt가 담당합니다. 제한된 캐시 목록은 새로운 최상위 항목과 스캔 한계를 명시하며 소유권의 증거나 완전한 재귀 감사가 아닙니다. 예상하지 못한 항목의 귀속을 확인한 뒤 정확한 실행 소유 경로를 정리합니다. Python -B는 bytecode 쓰기를 방지합니다. PYTHONDONTWRITEBYTECODE만으로는 격리된 Python -I에서 적용되지 않습니다. Supertonic 3 receipt는 `disclosure_required: true`와 `disclosure_notice`도 반환합니다. 사용자에게 오디오 또는 이를 사용하는 영상을 제공할 때 AI 합성을 명확히 고지하도록 알리고 해당 고지를 제안 문구로 제공합니다. Adapter는 음성 고지를 삽입하거나 영상을 편집하거나 후속 발행을 검증하지 않습니다. `human_action: listen`과 함께 그 책임을 명시적으로 유지합니다.
 

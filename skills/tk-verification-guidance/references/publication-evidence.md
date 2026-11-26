@@ -1,7 +1,7 @@
 <a id="publication-evidence-handoff"></a>
 # 발행 근거 인계
 
-Screenshot을 캡처하거나 검사한 이미지가 PR 검토를 뒷받침할 수 있을 때마다 이 문서를 읽습니다. 이 검증 담당자는 이미지 발행 메타데이터만 만들며 근거를 업로드하거나 발행하지 않습니다. 직접적인 trace, accessibility tree, DOM/런타임과 요청/응답 근거는 일반 검증 결과에 유지하며 이미지 manifest나 형식적인 screenshot을 요구하지 않습니다.
+Screenshot을 캡처하거나 검사한 이미지가 PR 검토를 뒷받침할 수 있을 때마다 이 문서를 읽습니다. 이 검증 담당자의 역할은 이미지 발행 메타데이터 작성으로 한정합니다. 업로드와 발행은 승인된 담당자가 수행합니다. 직접적인 trace, accessibility tree, DOM/런타임과 요청/응답 근거는 일반 검증 결과에 유지하며 이미지 manifest나 형식적인 screenshot을 요구하지 않습니다.
 
 <a id="exact-display-route"></a>
 ## 정확한 표시 경로
@@ -37,7 +37,7 @@ limitations: <none | exact limitation>
 
 `behavior`는 검사한 이미지 자체가 동작이나 눈에 보이는 최종 상태를 직접 입증한다는 뜻입니다. Trace나 그 밖의 비이미지 근거를 감싸는 용도가 아닙니다. Schema에는 구현 controller나 발행 스킬 필드가 없습니다. 소비자는 일반 필수 항목을 검증하며 생성 스킬을 알아볼 필요가 없습니다. 실행 출처는 소비자 분기 계약 밖의 검증 결과에 유지합니다.
 
-표현된 기준과 이미지 검사가 `Pass`일 때만 발행 manifest 항목을 출력합니다. `Fail | Blocked | Unverifiable`이면 실패 근거 계약에 따라 실행 소유 실패 산출물을 보존하고 실제 기준 상태를 반환하며 필수 이미지 발행을 차단 또는 검증 불가로 표시합니다. 실패하거나 미완료인 실행을 `verification_status: Pass`로 인코딩하지 않습니다.
+표현된 기준과 이미지 검사가 `Pass`일 때만 발행 manifest 항목을 출력합니다. `Fail | Blocked | Unverifiable`이면 실패 근거 계약에 따라 실행 소유 실패 산출물을 보존하고 실제 기준 상태를 반환하며 필수 이미지 발행을 차단 또는 검증 불가로 표시합니다. `verification_status: Pass`는 실제 완료 및 통과 근거가 있는 실행에만 사용합니다.
 
 검사한 이미지가 수용 판정이나 회귀 보존을 실질적으로 뒷받침하면 `evidence_required: true`를 설정합니다. 검토자에게 도움이 될 수 있지만 주장을 뒷받침하는 데 필요하지 않은, 검사한 선택적 이미지에만 `false`를 사용합니다. 없거나 검사하지 않은 이미지를 선택적 근거로 표현하지 않습니다.
 

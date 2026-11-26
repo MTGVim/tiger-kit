@@ -67,7 +67,7 @@
   `browser.isolated: true`, `browser.launchOptions.headless: true`와 실행 소유 `outputDir`를
   둡니다. 실제 설치 버전의 설정 schema와 기본 설정·환경 변수 영향을 확인합니다. 런타임의
   headless·프로필/컨텍스트·브라우저 버전과 실행 소유권을 입증한 뒤 `goto`로 대상에 진입합니다.
-  기본 headless라는 문구만으로 실제 실행 모드를 입증하지 않습니다. `--headed`, `--persistent`,
+  실제 실행 모드는 관찰 가능한 실행 근거로 확인합니다. `--headed`, `--persistent`,
   `--profile`, `attach`, CDP endpoint와 extension 연결을 기본 경로에 섞지 않습니다.
 - 번들 브라우저가 없다는 오류가 나도 자동으로 설치하지 않습니다. 이미 설치된 브랜드 브라우저가
   있으면 설치 버전의 설정 schema를 확인한 뒤, 같은 Playwright CLI의 실행 소유 설정에
