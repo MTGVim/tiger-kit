@@ -17,7 +17,7 @@ workspace를 만들거나 자식을 배정하기 전에 아래 **자원 제한**
 
 `EnterWorktree`, `WorktreeCreate`, `/worktree` 또는 `--worktree`처럼 에이전트가 호출할 수 있는 네이티브 기능이 있으면 우선하고, 이후 경로, 브랜치 또는 detached 상태와 HEAD를 새로 읽습니다. 안전한 네이티브 기능이 없을 때만 수동 `git worktree`를 사용합니다. 승인된 head에서 시작하고 충돌과 무관한 작업을 피하며 결과를 검증합니다. 격리를 위해 무관한 ignore 편집을 하거나 setup commit을 만들지 않습니다. 승인된 `.tigerkit/` workspace에 제외 설정이 필요할 때만 담당 SKILL.md의 산출물 경로 설정을 사용합니다.
 
-workspace 자식은 입증된 workspace를 전달받고 사용할 때만 격리된 것입니다. 다른 행의 workspace를 재사용하지 않습니다. 격리를 입증할 수 없으면 해당 PR만 `Held` 또는 `Blocked`로 보류하고 부모 checkout에서 변경하지 않습니다. 호스트가 관리하는 workspace lifecycle을 보존하고 정리는 명시적으로 승인된 실행 소유 범위로 한정합니다.
+workspace 자식은 입증된 workspace를 전달받고 사용할 때만 격리된 것입니다. 각 행은 해당 PR에 결합된 workspace만 사용합니다. 격리를 입증할 수 없으면 해당 PR만 `Held` 또는 `Blocked`로 보류하고 부모 checkout에서 변경하지 않습니다. 호스트가 관리하는 workspace lifecycle을 보존하고 정리는 명시적으로 승인된 실행 소유 범위로 한정합니다.
 
 <a id="child-scope-and-seed"></a>
 ## 자식 범위와 Seed
@@ -26,7 +26,7 @@ Sweep은 PR 큐 컨트롤러이며 작업 수준 SDD 컨트롤러가 아닙니�
 
 Sweep 전체 Seed를 만들지 않습니다. 자식은 담당자가 지속 맥락이나 SDD를 선택할 때만 마커와 정확한 PR/head를 가진 Ready `.tigerkit/seed.md`를 사용합니다. 답글만 수행하는 작업은 Seed도 격리만을 위한 workspace도 사용하지 않습니다. 순수 rebase는 담당자의 격리 계약을 따릅니다. Seed에는 피드백, 목표, 결정, 접근법, AC, 검증과 발행 경계를 포함합니다. 화면에 보이는 UI 텍스트에는 정확히 렌더링된 문자열 또는 검증된 진입 경로와 근거를 전달합니다. 의역, 식별자, enum 추론 또는 검증되지 않은 묶음 주장은 전달하지 않습니다.
 
-`pr-sweep.md`, `pr-respond.md` 또는 worker 영수증을 만들지 않습니다. 다른 PR 식별 정보의 Seed나 `sdd.md`를 재사용하지 않습니다.
+`pr-sweep.md`, `pr-respond.md` 또는 worker 영수증을 만들지 않습니다. Seed나 `sdd.md`는 현재 PR 식별 정보와 일치하는 경우에만 재사용합니다.
 
 <a id="resource-bounds"></a>
 ## 자원 제한

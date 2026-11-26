@@ -2,7 +2,7 @@
 # 작업에 맞는 실행 형태
 
 저장소 조사를 통해 구체적인 구현 구조를 확립한 뒤에만 선택합니다. 사용자에게는 분류 보고서가 아니라 실질적인 영향을 설명합니다.
-티켓 길이, 단순 파일 수 또는 UI 작업과 API 작업이 모두 있다는 사실로 형태를 결정하지 않습니다.
+실제 작업의 독립성·의존성과 검증 경계로 실행 형태를 결정합니다.
 
 여러 PR로 전달할 계획이 있을 때만 승인 전에 [병합 안전성](../../tk-pr-guidance/references/multi-pr-delivery.md)을 읽습니다.
 완전한 Unit 단위로 PR 그룹에 배정하고, 중간 병합 상태를 검증하며, 발행 시에도 그룹 구성을 유지합니다.
@@ -24,7 +24,7 @@
 근거가 있거나 명확한 작은 수정이면 추가 준비나 별도 prototype 없이 기존 direct 경로를 유지합니다.
 
 복잡성은 보호 수준을 높이는 방향으로만 작용할 수 있습니다. 순서는 대화 내 direct → Seed direct → SDD/재준비입니다. 편의를 위해 조용히 낮추지 않습니다.
-Direct/no-Seed는 SDD 지침을 읽지 않습니다. SDD를 선택한 뒤에만 [비공개 SDD](../../tk-engineering/references/sdd.md)를 읽습니다.
+Direct/no-Seed는 해당 직접 실행 지침만 읽습니다. SDD를 선택한 뒤에만 [비공개 SDD](../../tk-engineering/references/sdd.md)를 읽습니다.
 
 지속 맥락이 `seed`이거나, 실행이 `sdd`이거나, 결과가 `handoff`이면 승인 전에 [Ready Seed 계약](seed.md)을 읽습니다.
 승인 전에는 기존 Seed를 보존합니다. direct/no-Seed에서는 형식적인 절차를 만들기 위해 Seed 계약을 읽지 않습니다.
