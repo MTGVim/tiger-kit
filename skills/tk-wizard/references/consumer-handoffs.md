@@ -15,7 +15,7 @@
 - 해당하는 경우 대체 경로 자격과 이를 허용하는 근거입니다.
 
 최신 공식 문서보다 설치된/로컬 호스트 근거를 먼저 사용합니다.
-정확한 설정 파일, 범위, 명령 형태, UI literal과 재시작 지시를 도출하며 이를 만들지 않습니다.
+정확한 설정 파일, 범위, 명령 형태, UI literal과 재시작 지시는 확인한 근거에서 도출합니다.
 무관한 설정을 보존하고 사용자가 제어하는 최소 변경을 보여 줍니다. 호스트 설정을 조용히 편집하지 않습니다.
 
 <a id="browser-provider-setup"></a>
@@ -26,7 +26,7 @@
 Chrome DevTools MCP 등록·MCP 서버 추가·자동 attach를 기본 해결책으로 제시하지 않습니다.
 
 1. 이미 설치된 `playwright-cli`의 경로·`--version`·`--help`, 필요한 브라우저와 현재 호스트에서
-   발견되는 공식 `playwright-cli` Skill을 확인합니다. CLI가 있으면 재설치하지 않습니다.
+   발견되는 공식 `playwright-cli` Skill을 확인합니다. 설치된 CLI가 있으면 그대로 사용합니다.
 2. CLI가 없으면 [공식 설치 안내](https://github.com/microsoft/playwright-cli)의 패키지·Node 요구
    조건을 현재 시점에 확인합니다. 2026-11-03 확인 명령은 `npm install -g @playwright/cli@0.1.23`이며
    Node 18+를 요구합니다. 이것은 당시 배포 버전의 고정 예시이며 영구 최소 버전이 아닙니다.
