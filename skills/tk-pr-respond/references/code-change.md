@@ -1,7 +1,7 @@
 <a id="code-change-execution"></a>
 # 코드 변경 실행
 
-코드 변경 경로를 선택한 뒤 승인 요청 전에 이 참조를 읽습니다. workspace와 Seed 처리를 계획하는 데 읽기 전용으로 사용합니다. 계획에 대한 현재 승인이 있기 전에는 변경하지 않습니다. 답글만 수행하는 작업은 이 참조를 읽지 않습니다.
+코드 변경 경로를 선택한 뒤 승인 요청 전에 이 참조를 읽습니다. workspace와 Seed 처리를 계획하는 데 읽기 전용으로 사용합니다. 계획에 대한 현재 승인을 확인한 뒤에만 변경합니다. 코드 변경이 필요한 작업에서만 이 참조를 읽습니다.
 
 <a id="workspace-isolation"></a>
 ## Workspace 격리
@@ -22,7 +22,7 @@ branch/HEAD, linked-worktree 상태, 무관한 작업과 submodule 상태를 조
 
 문자열 리터럴을 제외한 일반 주석, 문서 또는 동작 보존을 입증할 수 있는 다른 텍스트이며 로컬 빌드/테스트나 런타임 검증이 필요하지 않을 때만 이 direct 경로를 사용합니다. 실행 가능한 문서, 에이전트 지침, compiler/linter 지시문, 설정, 동작 변경, 불확실한 영향, 여러 대응 commit과 rebase는 workspace 경로를 사용합니다. 해결 계획에 index-only 격리를 명시하고 정확히 그 경로를 포함하는 승인을 요구합니다. 일치하는 현재의 독립 작업 승인이나 부모 승인은 이미 이 요건을 충족합니다. worktree 계획을 설명한 뒤 조용히 전환하지 않습니다.
 
-1. 승인된 PR head를 `RESPONSE_BASE`로 고정합니다. 저장소/PR/브랜치/식별 정보를 새로 읽고 구성 전에 원격 head가 일치하도록 요구합니다. 부모 index를 새로 고치지 않은 채 부모의 HEAD/브랜치, 실제 index 바이트와 추적/미추적 작업 상태를 기록합니다. 기존 무관한 변경은 손대지 않고 이 commit의 입력으로 사용하지 않습니다.
+1. 승인된 PR head를 `RESPONSE_BASE`로 고정합니다. 저장소/PR/브랜치/식별 정보를 새로 읽고 구성 전에 원격 head가 일치하도록 요구합니다. 부모 index를 새로 고치지 않은 채 부모의 HEAD/브랜치, 실제 index 바이트와 추적/미추적 작업 상태를 기록합니다. 기존 무관한 변경은 그대로 보존하며 승인된 변경만 이 commit의 입력으로 사용합니다.
 2. 쓰기 전에 기존의 실제 적용 `.tigerkit/` 제외가 있어야 하며 산출물 경로 안전/소유권 검사를 통과해야 합니다.
    제외가 없으면 workspace 경로를 사용하거나 `Blocked`를 반환합니다. index-only에서 부모 ignore 설정을 실행하지 않습니다.
    후보 바이트와 처음에는 존재하지 않는 절대 경로 `GIT_INDEX_FILE`에 고유한 실행 소유 `.tigerkit/tmp/tk-pr-respond/<run-id>/`를 사용합니다. 변수 범위를 각 index 명령이나 subshell로 한정하고 이후 호출자 환경을 복원합니다. `-u` 없이 `git read-tree "$RESPONSE_BASE"`로 채웁니다. 부모 checkout이 아니라 정확한 해당 Git tree에서 소스 바이트와 파일 모드를 읽습니다. checkout, stage, reset, stash나 브랜치 전환을 하지 않으며 부모의 HEAD, 실제 index 또는 로컬 branch ref를 갱신하지 않습니다.

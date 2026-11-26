@@ -6,7 +6,7 @@
 <a id="fresh-evidence"></a>
 ## 최신 근거
 
-정확한 저장소와 번호로 GitHub에서 현재 열린 pull request를 읽습니다. base 저장소/ref/SHA, head 저장소/ref/SHA와 최신 `mergeable`, `mergeable_state` 값을 확보합니다. merge 가능성이 `null`이나 `unknown`이면 잠시 기다린 뒤 같은 pull request를 한 번 다시 읽습니다. 원격 PR head를 캐시된 상태나 로컬 브랜치 이름으로 대체하지 않습니다.
+정확한 저장소와 번호로 GitHub에서 현재 열린 pull request를 읽습니다. base 저장소/ref/SHA, head 저장소/ref/SHA와 최신 `mergeable`, `mergeable_state` 값을 확보합니다. merge 가능성이 `null`이나 `unknown`이면 잠시 기다린 뒤 같은 pull request를 한 번 다시 읽습니다. 원격 PR head는 현재 원격에서 확인한 값을 사용합니다.
 
 merge 가능 상태만으로 base 상태를 확정할 수 없다면 현재 base ref SHA를 읽고, base 저장소에서 그 정확한 SHA를 정확한 PR head SHA와 비교합니다. GitHub가 두 커밋 모두의 근거를 반환한 경우에만 비교를 사용합니다. fork 간 비교이거나 비교가 불가능한 경우에는 브랜치가 최신이라는 근거가 되지 않습니다.
 
@@ -44,6 +44,6 @@ rebase나 갱신 전에 결정을 정확한 base/head SHA에 연결합니다.
 - `behind`이거나 검증된 비교에서 `behind_by > 0`이면 PR head에 없는 커밋이 base에 있다는 뜻입니다. 브랜치 업데이트를 권고합니다. 검증된 브랜치 보호나 저장소 정책이 최신 base를 요구하는 경우에만 필수 업데이트라고 표현합니다. 사용자가 해당 작업을 승인하면 rebase가 TigerKit의 정식 경로가 됩니다. 리뷰 대응을 알리지 않고 이력 재작성으로 확대하지 않습니다.
 - 정확한 base/head 근거와 함께 최신 `clean` 상태가 확인되면 base 최신성을 위한 rebase가 필요하다는 근거가 없습니다.
 - `unstable`, `blocked`, `draft`, 실패한 검사, 해결되지 않은 피드백이나 누락된 리뷰만으로는 rebase가 필요하다고 볼 수 없습니다. 결정에 영향을 준다면 정확한 base 상태를 별도로 확인합니다.
-- 상태가 계속 불명확하고 정확한 비교도 불가능하다면 rebase 평가를 검증 불가로 보고합니다. 근거가 없다는 사실을 “rebase가 필요하지 않다”로 바꾸지 않습니다.
+- 상태가 계속 불명확하고 정확한 비교도 불가능하다면 rebase 평가를 검증 불가로 보고합니다. 근거가 없으면 rebase 필요 여부를 미확인으로 보고합니다.
 
 실질적인 결과를 자연어로 설명합니다. 충돌이 있는지, base가 앞서 있는지, rebase 필요성이 확인되지 않았는지, 상태를 검증하지 못했는지 설명합니다. 근거를 정확한 PR과 현재 SHA에 연결해 유지합니다.
