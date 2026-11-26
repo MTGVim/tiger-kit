@@ -114,11 +114,19 @@ def extract(text: str, suffix: str):
     return segments
 
 
-def check(text, suffix, rules, profile, allowed_headings=()):
+def check(text, suffix, rules, profile, allowed_headings=(), allowed_boundaries=()):
     findings = []
     for segment in extract(text, suffix):
         if segment.scope == 'heading' and segment.text in allowed_headings:
             continue
+        if profile == 'skill':
+            for sentence in re.split(r'(?<=[.!?。])\s+', segment.text):
+                if sentence.strip() in allowed_boundaries or sentence.endswith('<!-- tk-boundary -->'):
+                    continue
+                if re.search(r'않습니다|않는다|금지|하지 마', sentence) and not re.search(r'대신|한 뒤에?|(?:[가-힣]+만)(?:\s|[.,]|$)', sentence):
+                    findings.append({'rule': 'negative-only-instruction', 'severity': 'warning',
+                                     'line': segment.line, 'scope': segment.scope,
+                                     'text': sentence, 'message': '대신 할 행동이나 실행 조건을 명시합니다. 순수 경계는 예외로 기록합니다.'})
         for rule in rules:
             if rule.get('profile') not in (None, profile):
                 continue
@@ -134,9 +142,10 @@ def check(text, suffix, rules, profile, allowed_headings=()):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('files', nargs='+', type=Path)
-    parser.add_argument('--profile', choices=('prose', 'report'), default='prose')
+    parser.add_argument('--profile', choices=('prose', 'report', 'skill'), default='prose')
     parser.add_argument('--rules', type=Path, default=Path(__file__).resolve().parent.parent/'assets/prose-rules.json')
     parser.add_argument('--allow-heading', action='append', default=[], help='exact protected user heading; repeatable')
+    parser.add_argument('--allow-boundary', action='append', default=[], help='exact pure boundary sentence; repeatable')
     parser.add_argument('--json', action='store_true')
     args = parser.parse_args()
     try:
@@ -144,11 +153,11 @@ def main():
         results = []
         for path in args.files:
             raw = path.read_bytes()
-            findings = check(raw.decode('utf-8'), path.suffix.lower(), rules, args.profile, args.allow_heading)
+            findings = check(raw.decode('utf-8'), path.suffix.lower(), rules, args.profile, args.allow_heading, args.allow_boundary)
             results.append({'path': str(path), 'sha256': hashlib.sha256(raw).hexdigest(), 'findings': findings})
     except (OSError, ValueError, KeyError, re.error) as error:
         parser.exit(2, str(error) + '\n')
-    report = {'profile': args.profile, 'protected_headings': args.allow_heading, 'files': results,
+    report = {'profile': args.profile, 'protected_headings': args.allow_heading, 'protected_boundaries': args.allow_boundary, 'files': results,
               'limits': ['Static extraction does not cover computed UI, translated text, canvas, or semantics.']}
     if args.json:
         print(json.dumps(report, ensure_ascii=False, indent=2))
