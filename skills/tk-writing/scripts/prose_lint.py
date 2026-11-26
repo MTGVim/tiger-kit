@@ -115,7 +115,7 @@ def extract(text: str, suffix: str):
 
 
 NEGATIVE_INSTRUCTION = re.compile(r'않습니다|않는다|금지|하지\s+마')
-ALTERNATIVE_INSTRUCTION = re.compile(r'대신|한\s+뒤(?:에)?|[가-힣]+만(?=\s|[.,;:!?)]|$)')
+ALTERNATIVE_INSTRUCTION = re.compile(r'대신|한\s+뒤(?:에)?|(?:[가-힣]+(?<!지)(?<!다)|(?<=\s)|^)만(?=\s|[.,;:!?)]|$)')
 LIST_PREFIX = re.compile(r'^\s*(?:[-+*]|\d+[.)])\s+')
 
 

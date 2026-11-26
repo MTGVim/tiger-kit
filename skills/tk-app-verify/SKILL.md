@@ -50,9 +50,9 @@ UI 문구·경로를 인용·검증·전달할 때 [UI 근거](../tk-ui-evidence
 ## 준비와 권한
 
 탐색이나 상호작용 전에 [제공자 선택](../tk-verification-guidance/references/provider-selection.md)과 [공통 검증](../tk-verification-guidance/references/verification.md)을 읽습니다. 선택한 제공자의 [연동 지식](../tk-verification-guidance/references/provider-knowledge.md)과 [registry](../tk-verification-guidance/references/providers.json)에 있는 정식 URL만 읽고, 현재 host/tool/version/OS/권한을 확인합니다.
-부모, 세션 또는 저장된 명시적 선택을 사용합니다. 선택이 없으면 확인된 기능, 한계와 중단 영향을 함께 보여준 뒤 행동하기 전에 최종 질문 경계의 질문을 합니다. 확인된 기능과 현재 제공자 선택을 유지하고, 제공자 변경이나 native API 활성화가 필요하면 별도 결정을 받습니다.
+부모, 세션 또는 저장된 명시적 선택을 사용합니다. 선택이 없으면 확인된 기능, 한계와 중단 영향을 함께 보여준 뒤 행동하기 전에 최종 질문 경계의 질문을 합니다. 현재 제공자에서 실제로 확인한 활성 기능만 사용하고, 다른 제공자가 필요하면 사용자에게 선택을 요청합니다. 비활성화된 native API는 그대로 유지합니다.
 
-정확한 앱 식별 정보, process/build/candidate, 환경, 역할/locale, 대상 창, 기준, 초기 상태, 인증, 크기/배율, 근거 계획과 허용된 상호작용을 연결합니다. 안전하게 조사할 수 있는 사실은 현재 근거로 채우고 부모의 유효한 승인을 재사용하고 아직 필요한 결정만 질문합니다. 사용자가 결정해야 하는 대상이나 전달 방식이 없으면 `Blocked`입니다. 선택한 native 제공자를 사용할 수 없거나 접근 및 근거를 입증할 수 없으면 `Unverifiable`입니다. 앱 권한과 설정은 범위가 한정된 `tk-wizard` 인계로 해결합니다.
+정확한 앱 식별 정보, process/build/candidate, 환경, 역할/locale, 대상 창, 기준, 초기 상태, 인증, 크기/배율, 근거 계획과 허용된 상호작용을 연결합니다. 안전하게 조사할 수 있는 사실은 현재 근거로 채우며, 부모의 유효한 승인을 재사용하고 아직 필요한 결정만 질문합니다. 사용자가 결정해야 하는 대상이나 전달 방식이 없으면 `Blocked`입니다. 선택한 native 제공자를 사용할 수 없거나 접근 및 근거를 입증할 수 없으면 `Unverifiable`입니다. 앱 권한과 설정은 범위가 한정된 `tk-wizard` 인계로 해결합니다.
 인증 정보와 비공개 화면 내용은 채팅, 메모, 로그와 receipt에 넣지 않습니다. 호스트가 승인한 비밀 채널을 사용하고, 필수 인증 경로를 사용할 수 없으면 `Unverifiable`을 반환합니다.
 
 <a id="execution"></a>
