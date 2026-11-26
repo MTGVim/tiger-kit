@@ -19,6 +19,8 @@ TigerKit은 조합 가능한 Agent Skills 저장소입니다. 범용 workflow ru
 
 ## 조사와 지침 경제성
 
+- 스킬 본문과 참조의 행동 규칙은 금지 대상과 대신 할 행동을 함께 쓰거나 실행 조건을 긍정형으로 명시합니다. 권한 경계도 정확한 승인 후 실행처럼 표현합니다. 비밀 노출 금지처럼 대체 행동이 없는 순수 경계는 금지문으로 유지합니다. 변경한 본문은 `skills/tk-writing/scripts/prose_lint.py --profile skill <파일>`로 검사하고 경고를 문맥에 따라 검토합니다. 기존 권한과 실패 조건을 보존합니다.
+
 - skill·SDD·review 품질에 영향을 주는 변경은 먼저 최신 upstream을 고정 revision으로 조사합니다. SDD는 `obra/superpowers`를 primary upstream으로 삼습니다. 현재 구현·설계 근거·관련 검증을 함께 확인하고 읽지 못한 것은 `unverified`로 남깁니다.
 - TigerKit의 구체적인 차이와 `keep | adapt | omit` 판단을 기록합니다. 행동 계약과 실패 조건만 증류하고 제공자·모델 선택, 실행 framework, workspace나 전역 상태를 복사하지 않습니다. 차이가 입증되지 않으면 더 단순한 기존 계약을 유지합니다.
 - 항상 필요한 안전·권한 조건은 짧게 본문에 둡니다. 일부 분기만 필요한 기준은 그 분기의 정확한 pointer 뒤로 내립니다. description과 pointer는 본문을 요약하지 않고 읽을 조건을 명시합니다.
