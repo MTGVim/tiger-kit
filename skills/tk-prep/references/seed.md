@@ -13,7 +13,7 @@
 - 의미 중심의 Review Plan을 보존합니다. 여기에는 변경 의도, 원래 사고 또는 예상 시나리오, 예상되는 변경 결과, `must-not-change` 동작이나 시각 영역, 변경 책임 범위의 위험 경계, 필수 근거와 알려진 불확실성이 포함됩니다.
 - 실행 권고와, SDD의 경우 비공개 프로토콜의 정확한 `## Execution` 문법을 보존합니다.
 
-어떤 축이 준비되었거나 관련 없음을 나타내기 위한 준비 상태 행을 추가하지 않습니다. Seed에 검토자 수, 대화 기록, provider/model ID, reasoning 강도, 비밀, worker/wave routing, 영수증 또는 진행 상황을 저장하지 않습니다. 승인 전에는 기존 Ready Seed를 바이트 단위로 보존하고 `Status: Pending` 파일을 만들지 않습니다. TigerKit 소유임이 입증된 Seed만 교체합니다.
+어떤 축이 준비되었거나 관련 없음을 나타내기 위한 준비 상태 행을 추가하지 않습니다. Seed에 검토자 수, 대화 기록, provider/model ID, reasoning 강도, 비밀, worker/wave routing, 영수증 또는 진행 상황을 저장하지 않습니다. 승인 전에는 기존 Ready Seed를 바이트 단위로 보존합니다. 새 Seed는 승인 후에만 생성합니다. TigerKit 소유임이 입증된 Seed만 교체합니다.
 기존 Seed를 사용하기 전에 현재 작업 식별 정보를 확립합니다. 교체 전에는 소유권도 확립합니다.
 필수 근거가 없거나 모호하면 파일을 보존하고 Seed 의존 경로에 대해 `Blocked`를 반환합니다.
 담당 SKILL.md는 이 참조를 읽거나 기존 Seed를 사용하지 않고 direct/no-Seed를 처리합니다.
