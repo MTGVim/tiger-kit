@@ -30,10 +30,10 @@ hermes delegation config --show
 
 ## 새 세션에서의 실제 확인 기준
 
-1. `hermes delegation config --show`로 활성 `model_map` backend와 세 경로를 확인합니다. 파일 및 설정을 확인했다는 이유로 verified로 표시하지 않습니다.
+1. `hermes delegation config --show`로 활성 `model_map` backend와 세 경로를 확인합니다. verified는 실제 실행 증거까지 확인한 경우에만 표시합니다.
 2. **새 Hermes CLI 세션**을 시작하고 `delegate_task`의 현재 작업 스키마가 `option` 열거형 `light`·`standard`·`top`을 제공하는지 확인합니다. 실행 중 세션은 이전 도구 스키마를 유지할 수 있습니다.
 3. `option`을 각각 명시한 짧은 읽기 전용 작업을 위임합니다. 세 작업 동시 호출이 하위 작업 수 제한에 걸리면, 제한을 변경하지 않고 두 작업과 한 작업 등 허용된 수로 나누어 재시도합니다.
-4. 각 실행 결과의 `route` 메타데이터에서 선택 경로 `label`, `provider`, `model`, `reasoning_effort`와 노출된 `backend`를 목표와 대조합니다. 결과 본문에 모델 이름이 쓰였다는 사실만으로 실효값을 확정하지 않습니다.
+4. 각 실행 결과의 `route` 메타데이터에서 선택 경로 `label`, `provider`, `model`, `reasoning_effort`와 노출된 `backend`를 목표와 대조합니다. 실효값은 실제 위임 도구의 실행 근거로 확인합니다.
 5. `mapping`, 프로필별 플러그인 상태, 저장된 routes, 새 세션의 선택 가능 여부, 실제 위임과 실효 모델/effort를 **별도 항목**으로 남깁니다. 각 티어를 verified / mismatch / unverified로 판정하고 근거가 없으면 unverified를 유지합니다.
 
 **호스트 제약:** 현재 연동 도구가 `option` 입력을 제공하지 않는다면 그 표면에서는 세 경로를 명시적으로 시험할 수 없습니다. Hermes CLI에서 기능이 확인됐다는 이유로 다른 클라이언트나 통합 도구에서도 동일하게 지원한다고 주장하지 않습니다. 그런 표면에서 임의의 다른 위임 API로 실행한 결과는 Hermes route 검증이 아닙니다.
@@ -44,4 +44,4 @@ hermes delegation config --show
 
 ## 안전한 복구
 
-실패한 설치·모델 미지원·세션 스키마 갱신 실패는 성공으로 기록하지 않습니다. 스킬의 적용 기록과 승인받은 지속 백업으로 사용자 소유 설정의 변경 범위를 복구합니다. Hermes의 `/delegation default`는 별도 승인된 기본 backend 복원 수단이며 기존 모델 경로 정의를 삭제하지 않습니다. 인증정보와 다른 프로필의 설정을 건드리지 않습니다.
+설치 실패·모델 미지원·세션 스키마 갱신 실패는 각각 실제 실패 상태로 기록합니다. 스킬의 적용 기록과 승인받은 지속 백업으로 사용자 소유 설정의 변경 범위를 복구합니다. Hermes의 `/delegation default`는 별도 승인된 기본 backend 복원 수단이며 기존 모델 경로 정의를 삭제하지 않습니다. 인증정보와 다른 프로필의 설정을 건드리지 않습니다.
