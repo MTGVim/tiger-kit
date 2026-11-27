@@ -152,6 +152,9 @@ def main() -> int:
     for agent in selected:
         target = options[agent]
         safe_target(home, target)
+        if agent in ("claude-code", "codex") and not target.parent.is_dir():
+            print(f"skipped ({agent} not configured):", target)
+            continue
         if agent == "hermes-agent" and not target.is_file():
             print("skipped (SOUL.md not configured):", target)
             continue
@@ -179,9 +182,9 @@ def main() -> int:
         if args.apply:
             safe_target(home, target)
             atomic_write(target, changed, original)
-            print("updated:", target)
+            print("created:" if original is None else "updated:", target)
         else:
-            print("would update:", target)
+            print("would create:" if original is None else "would update:", target)
     return 0
 
 
